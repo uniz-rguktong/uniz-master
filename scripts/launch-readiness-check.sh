@@ -94,7 +94,8 @@ PY
   if [[ "$scode" == "403" ]]; then
     echo "  OK    signup blocked (HTTP 403)"
   elif [[ "$scode" == "201" || "$scode" == "409" ]]; then
-    echo "  WARN  signup still open (HTTP $scode) — security deploy not live yet"
+    echo "  FAIL  signup still open (HTTP $scode) — deploy security commit first"
+    FAIL=1
   else
     echo "  INFO  HTTP $scode"
   fi
