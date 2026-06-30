@@ -8,11 +8,17 @@
     />
     <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
     <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="uniZ" />
+    <link
+      rel="apple-touch-icon"
+      href="https://res.cloudinary.com/diipfzmyj/image/upload/w_180,h_180,c_fill,f_png,q_auto/v1773551873/91566992797-modified-removebg-preview-modified_t0cqyr.png"
+    />
     <meta
       name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
+      content="default"
     />
-    <meta name="theme-color" content="#1a1a1a" />
+    <meta name="theme-color" content="#fafafa" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
@@ -73,6 +79,103 @@
 
     <title>uniZ — Campus platform for RGUKT students</title>
 
+    <style>
+      #pwa-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.625rem;
+        background: linear-gradient(165deg, #fafafa 0%, #f4f4f5 48%, #fafafa 100%);
+        transition:
+          opacity 0.4s ease,
+          visibility 0.4s ease;
+      }
+
+      #pwa-splash.pwa-splash--hide {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      #pwa-splash img {
+        width: 4.5rem;
+        height: 4.5rem;
+        object-fit: contain;
+        margin-bottom: 0.25rem;
+      }
+
+      #pwa-splash .pwa-splash-tagline {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.125rem;
+        margin: 0;
+        padding: 0 1.25rem;
+        max-width: 20rem;
+        text-align: center;
+      }
+
+      #pwa-splash .pwa-splash-tagline-line {
+        font-family: "Pattaya", "Georgia", "Times New Roman", cursive;
+        font-size: clamp(1.125rem, 4.8vw, 1.5rem);
+        line-height: 1.25;
+        color: #27272a;
+        margin: 0;
+      }
+
+      #pwa-splash .pwa-splash-tagline-line--muted {
+        color: #71717a;
+      }
+
+      #pwa-splash .pwa-splash-sub {
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        color: #71717a;
+        margin: 0;
+      }
+
+      #pwa-splash .pwa-splash-bar {
+        position: absolute;
+        bottom: max(2.75rem, env(safe-area-inset-bottom, 0px));
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2.75rem;
+        height: 2px;
+        border-radius: 999px;
+        background: #e4e4e7;
+        overflow: hidden;
+      }
+
+      #pwa-splash .pwa-splash-bar span {
+        display: block;
+        height: 100%;
+        width: 45%;
+        border-radius: inherit;
+        background: #27272a;
+        animation: pwa-splash-slide 1.15s ease-in-out infinite;
+      }
+
+      @keyframes pwa-splash-slide {
+        0% {
+          transform: translateX(-120%);
+        }
+        100% {
+          transform: translateX(320%);
+        }
+      }
+    </style>
+
     <script>
       window.deferredPWAInstallPrompt = null;
       window.addEventListener("beforeinstallprompt", (e) => {
@@ -118,6 +221,23 @@
   </head>
 
   <body>
+    <div id="pwa-splash" role="status" aria-label="Loading uniZ">
+      <img
+        src="https://res.cloudinary.com/diipfzmyj/image/upload/w_144,h_144,c_fill,f_png,q_auto/v1773551873/91566992797-modified-removebg-preview-modified_t0cqyr.png"
+        alt=""
+        width="72"
+        height="72"
+        fetchpriority="high"
+      />
+      <p class="pwa-splash-tagline">
+        <span class="pwa-splash-tagline-line">__UNIZ_TAGLINE_LINE1__</span>
+        <span class="pwa-splash-tagline-line pwa-splash-tagline-line--muted"
+          >__UNIZ_TAGLINE_LINE2__</span
+        >
+      </p>
+      <p class="pwa-splash-sub">__UNIZ_CAMPUS_LABEL__</p>
+      <div class="pwa-splash-bar" aria-hidden="true"><span></span></div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

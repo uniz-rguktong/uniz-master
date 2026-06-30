@@ -1,3 +1,5 @@
+import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
+
 export const SITE_URL = "https://uniz.rguktong.in";
 export const SITE_NAME = "uniZ";
 
@@ -7,8 +9,7 @@ export const DEFAULT_OG_IMAGE =
 
 export const HOME_SEO = {
   title: "uniZ — Campus platform for RGUKT students",
-  description:
-    "Manage academics, semester registration, outpasses, and campus updates in one place. Built for RGUKT Ongole students.",
+  description: `Manage academics, semester registration, outpasses, and campus updates in one place. Built for ${UNIZ_CAMPUS_LABEL} students.`,
 } as const;
 
 export const homePageSchema = {
@@ -21,7 +22,7 @@ export const homePageSchema = {
       description: HOME_SEO.description,
       publisher: {
         "@type": "Organization",
-        name: "RGUKT Ongole",
+        name: UNIZ_CAMPUS_LABEL,
         url: "https://rguktong.in",
       },
     },

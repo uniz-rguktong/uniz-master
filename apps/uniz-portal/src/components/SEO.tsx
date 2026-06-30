@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL } from "../lib/seo";
+import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 
 interface SEOProps {
   title?: string;
@@ -64,7 +65,7 @@ export function SEO({
     upsertMeta("property", "og:image:width", "1200");
     upsertMeta("property", "og:image:height", "630");
     upsertMeta("property", "og:image:type", "image/jpeg");
-    upsertMeta("property", "og:image:alt", `${SITE_NAME} — RGUKT Ongole campus portal`);
+    upsertMeta("property", "og:image:alt", `${SITE_NAME} — ${UNIZ_CAMPUS_LABEL} campus portal`);
     upsertMeta("property", "og:url", canonicalUrl);
     upsertMeta("property", "og:type", type);
 

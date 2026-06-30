@@ -15,6 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/utils/toast-ref";
 import { BASE_URL } from "../../api/endpoints";
+import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 
 const VITE_CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const VITE_CLOUDINARY_UPLOAD_PRESET = import.meta.env
@@ -240,7 +241,7 @@ export default function AdminProfile() {
                 <p className="text-zinc-500 font-medium mt-1">
                   {profile?.designation ? `${profile.designation} • ` : ""}
                   {profile?.department ? `${profile.department} • ` : ""}
-                  RGUKT Ongole
+                  {UNIZ_CAMPUS_LABEL}
                 </p>
                 {isEditing && (
                   <button

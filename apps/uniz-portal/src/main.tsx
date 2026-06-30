@@ -56,6 +56,13 @@ if ("serviceWorker" in navigator) {
 
 import { PWAListener } from "./components/PWAListener.tsx";
 
+function dismissPWASplash() {
+  const splash = document.getElementById("pwa-splash");
+  if (!splash) return;
+  splash.classList.add("pwa-splash--hide");
+  window.setTimeout(() => splash.remove(), 450);
+}
+
 createRoot(document.getElementById("root")!).render(
   <RecoilRoot>
     <PWAListener />
@@ -66,3 +73,7 @@ createRoot(document.getElementById("root")!).render(
     </BrowserRouter>
   </RecoilRoot>,
 );
+
+requestAnimationFrame(() => {
+  requestAnimationFrame(dismissPWASplash);
+});
