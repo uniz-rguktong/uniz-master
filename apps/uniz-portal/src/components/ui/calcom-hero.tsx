@@ -1,3 +1,4 @@
+import { UNIZ_TAGLINE } from "@/constants/branding";
 import { motion } from "framer-motion";
 import { Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -696,7 +697,7 @@ export const CalcomHero = () => {
         {/* ── Hero copy ── */}
         <div className="flex flex-col items-center text-center mb-20 md:mb-24">
           <motion.h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-semibold text-zinc-950 leading-[1.0] tracking-[-0.05em] mb-6 max-w-6xl">
-            {"The better way to".split(" ").map((word, i) => (
+            {UNIZ_TAGLINE.line1.split(" ").map((word, i) => (
               <motion.span
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
@@ -708,7 +709,7 @@ export const CalcomHero = () => {
               </motion.span>
             ))}
             <br className="hidden md:block" />{" "}
-            {"navigate through university.".split(" ").map((word, i) => (
+            {UNIZ_TAGLINE.line2.split(" ").map((word, i) => (
               <motion.span
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
