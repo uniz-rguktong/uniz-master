@@ -22,6 +22,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import LoginScreen from "../../components/ui/login-1";
+import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { motion } from "framer-motion";
 import { prepareStudentSession } from "../../utils/studentSessionCache";
@@ -841,7 +842,7 @@ export default function Signin({ type }: SigninProps) {
         title={stepTitle}
         subtitle={stepSubtitle}
         heroTitle={undefined}
-        bottomText="RGUKT Ongole"
+        bottomText={UNIZ_CAMPUS_LABEL}
         role={type}
         stepKey={step}
       >

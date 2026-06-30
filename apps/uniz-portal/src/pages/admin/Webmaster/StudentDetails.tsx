@@ -55,6 +55,7 @@ import {
 import { toast } from "@/utils/toast-ref";
 import { parseJwt } from "../../../utils/security";
 import { resolveAdminPortalRole, resolveHodBranch } from "../../../utils/adminRole";
+import { formatDisplayText } from "../../../utils/displayText";
 
 const PAGE_SIZE = 25;
 const SEARCH_DEBOUNCE_MS = 450;
@@ -1339,7 +1340,7 @@ export default function StudentDetails() {
                       {(f.options as any[]).map((o) =>
                         typeof o === "string" ? (
                           <option key={o} value={o}>
-                            {o}
+                            {formatDisplayText(o)}
                           </option>
                         ) : (
                           <option key={o.v} value={o.v}>

@@ -336,7 +336,7 @@ export const apiData = {
         ]
       },
       {
-        "title": "Notice Invition quatation for selection of Providing Housekeeping Services on Outsourcing Basis at RGUKT ONGOLE Campus",
+        "title": "Notice Invition quatation for selection of Providing Housekeeping Services on Outsourcing Basis at RGUKT Ongole Campus",
         "date": "02-02-2026",
         "links": [
           {
@@ -3034,7 +3034,7 @@ export const apiData = {
               "presented a paper titled \" Analysis of OpenStack,  Eucalyptus, OpenNebula, Nimbus and CloudStack, IAAS clouds\" at the International  Conference on Intelligent  Computing and Sustainable System ( ICICSS 2018) organized by Akshaya College of Engineering and Technology (ACET) on 20,21 September 2018 at Coimbatore, TamilNadu, India."
             ],
             "Administrative Experience": [
-              "worked as deputy warden in RGUKT ONGOLE at RKValley during 2018-19"
+              "worked as deputy warden in RGUKT Ongole at RKValley during 2018-19"
             ],
             "Workshops": [
               "participated in  APSCHE workshop on global competitiveness jnanabheri ( knowledge summit) on 4-12-2018.",
@@ -3099,7 +3099,7 @@ export const apiData = {
               "Mobile Adhoc Networks"
             ],
             "Experience": [
-              "3.5 years[RGUKT-ONGOLE]",
+              "3.5 years[RGUKT-Ongole]",
               "15 Years[before -RGUKT]"
             ],
             "Additional Responsibilities": [
@@ -3144,7 +3144,7 @@ export const apiData = {
               "Data Science."
             ],
             "Experience": [
-              "3.5 years[RGUKT-ONGOLE]",
+              "3.5 years[RGUKT-Ongole]",
               "10 Years[before -RGUKT]"
             ],
             "Additional Responsibilities": [
