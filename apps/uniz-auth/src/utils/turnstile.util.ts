@@ -1,4 +1,6 @@
 import axios from "axios";
+import http from "http";
+import https from "https";
 
 /** Cloudflare Turnstile dummy secret — always passes (local/dev only). */
 const TURNSTILE_TEST_SECRET_ALWAYS_PASS =
@@ -7,7 +9,13 @@ const TURNSTILE_TEST_SECRET_ALWAYS_PASS =
 /** Real Turnstile tokens are long alphanumeric strings (with . _ -). */
 const TURNSTILE_TOKEN_PATTERN = /^[A-Za-z0-9._-]+$/;
 const TURNSTILE_MIN_TOKEN_LENGTH = 50;
-const TURNSTILE_VERIFY_TIMEOUT_MS = 1500;
+const TURNSTILE_VERIFY_TIMEOUT_MS = 800;
+
+const turnstileClient = axios.create({
+  timeout: TURNSTILE_VERIFY_TIMEOUT_MS,
+  httpAgent: new http.Agent({ keepAlive: true }),
+  httpsAgent: new https.Agent({ keepAlive: true }),
+});
 
 /**
  * Verifies a Cloudflare Turnstile token.
@@ -62,14 +70,13 @@ export const verifyTurnstileToken = async (
       formData.append("remoteip", clientIp);
     }
 
-    const response = await axios.post(
+    const response = await turnstileClient.post(
       "https://challenges.cloudflare.com/turnstile/v0/siteverify",
       formData.toString(),
       {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        timeout: TURNSTILE_VERIFY_TIMEOUT_MS,
       },
     );
 

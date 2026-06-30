@@ -135,8 +135,11 @@ export const login = async (req: Request, res: Response) => {
       : "Invalid staff ID, email, or password"
     : "Invalid username or password";
 
-  // Fail fast on captcha before email/DB resolution
-  const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+  // Verify captcha and resolve username in parallel (Turnstile is the slow step).
+  const [isHuman, username] = await Promise.all([
+    verifyTurnstileToken(captchaToken, req.ip),
+    resolveLoginIdentifier(req.body.username || "", allowEmailLogin),
+  ]);
 
   if (!isHuman) {
     return res.status(400).json({
@@ -144,11 +147,6 @@ export const login = async (req: Request, res: Response) => {
       message: "Security verification failed. Please try again.",
     });
   }
-
-  let username = await resolveLoginIdentifier(
-    req.body.username || "",
-    allowEmailLogin,
-  );
 
   try {
     const user = await prisma.authCredential.findFirst({
