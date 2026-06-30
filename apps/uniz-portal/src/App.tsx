@@ -21,6 +21,7 @@ const Admin = lazy(() => import("./pages/admin/index"));
 const Sidebar = lazy(() => import("./components/Sidebar"));
 const SEOLanding = lazy(() => import("./pages/seo-landing"));
 const Developers = lazy(() => import("./pages/Developers"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 
 // Admin Components
 const AddStudents = lazy(() => import("./pages/admin/AddStudents"));
@@ -187,6 +188,14 @@ export default function App() {
             element={
               <PageTransition>
                 <Developers />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/privacy"
+            element={
+              <PageTransition>
+                <PrivacyPolicy />
               </PageTransition>
             }
           />

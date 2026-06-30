@@ -1,0 +1,95 @@
+# uniZ — Google Play (Trusted Web Activity)
+
+Thin Android wrapper for [https://uniz.rguktong.in](https://uniz.rguktong.in). The Play Store app loads the **live website** — portal deploys update the app automatically. Web Push (VAPID) continues to work because TWA uses Chrome.
+
+## Package
+
+| Field | Value |
+|---|---|
+| Package ID | `in.rguktong.uniz` |
+| Host | `uniz.rguktong.in` |
+| Privacy policy | `https://uniz.rguktong.in/privacy` |
+
+## Prerequisites (one-time, outside repo)
+
+1. **Google Play Developer account** — [play.google.com/console](https://play.google.com/console) (~$25)
+2. **JDK 17+** and **Android SDK** (via Android Studio or `sdkmanager`)
+3. **Node 18+** for Bubblewrap
+
+## First-time setup
+
+From repo root:
+
+```bash
+# 1. Install Bubblewrap CLI
+npm install -g @bubblewrap/cli
+
+# 2. Generate Android project + upload keystore (interactive)
+bash apps/uniz-android-twa/init.sh
+
+# 3. Put upload-key SHA-256 into asset links (after keystore exists)
+bash apps/uniz-android-twa/sync-assetlinks.sh
+
+# 4. Deploy portal so assetlinks.json is live
+npm run deploy   # or your normal push → GHA deploy
+
+# 5. Verify Digital Asset Links
+bash apps/uniz-android-twa/verify-assetlinks.sh
+```
+
+## Build release AAB
+
+```bash
+cd apps/uniz-android-twa
+bubblewrap build
+# Output: android/app/build/outputs/bundle/release/app-release.aab
+```
+
+Upload `app-release.aab` to Play Console → **Internal testing** first.
+
+## After Play App Signing is enabled
+
+Google may re-sign with their key. Add **both** fingerprints to `public/.well-known/assetlinks.json`:
+
+- Upload key SHA-256 (from your keystore)
+- App signing key SHA-256 (Play Console → Setup → App signing → App signing key certificate)
+
+Run `sync-assetlinks.sh` again and redeploy the portal.
+
+## Play Console checklist (to go fully live)
+
+- [ ] Create app → default language English (India)
+- [ ] App name: **uniZ**
+- [ ] Short description + full description
+- [ ] App icon 512×512 (`apps/uniz-portal/public/icons/icon-512.png`)
+- [ ] Feature graphic 1024×500
+- [ ] Phone screenshots (sign-in, student home, academics)
+- [ ] Privacy policy URL: `https://uniz.rguktong.in/privacy`
+- [ ] Content rating questionnaire (IARC)
+- [ ] Data safety form (account info, academic info, push tokens — no sale)
+- [ ] Target audience / student app declaration
+- [ ] Upload AAB → internal test → closed test → production
+- [ ] Support email + developer contact
+
+## What updates without a new Play release
+
+- UI, features, API, push logic, splash screen — any portal deploy
+
+## What requires a new AAB upload
+
+- Package ID change
+- Launcher name/icon in Android shell
+- `minSdkVersion`, permissions, or TWA manifest version bump
+- Domain change away from `uniz.rguktong.in`
+
+## Files in this folder
+
+| File | Purpose |
+|---|---|
+| `twa-manifest.json` | Bubblewrap source config |
+| `init.sh` | First-time `bubblewrap init` |
+| `sync-assetlinks.sh` | Writes SHA-256 into portal `assetlinks.json` |
+| `verify-assetlinks.sh` | Checks Google asset link statement |
+| `.gitignore` | Keystore + generated `android/` (optional to commit android/) |
+
+**Never commit** `*.jks`, `*.keystore`, or Play service-account JSON. Store in password manager / CI secrets.

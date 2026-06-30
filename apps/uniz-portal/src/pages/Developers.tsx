@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import MeetTheDevelopersSection from "@/components/MeetTheDevelopersSection";
 import GlobeFeature from "@/components/ui/globe-feature-section";
 import { SEO } from "@/components/SEO";
+import { SiteLegalFooter } from "@/components/SiteLegalFooter";
 
 export default function Developers() {
   return (
@@ -36,6 +37,7 @@ export default function Developers() {
         </div>
         <GlobeFeature />
       </section>
+      <SiteLegalFooter />
     </div>
   );
 }
