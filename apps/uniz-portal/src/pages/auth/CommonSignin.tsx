@@ -348,14 +348,14 @@ function TurnstileWidget({
   }
 
   return (
-    <div className="flex min-h-[70px] items-center justify-center rounded-xl border border-zinc-100 bg-zinc-50/80 px-2 py-2">
+    <div className="flex min-h-[65px] items-center justify-center">
       <Turnstile
         ref={turnstileRef}
         siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-        injectScript={false}
+        scriptOptions={{ async: true, defer: true, appendTo: "head" }}
         options={{
           theme: "light",
-          size: "compact",
+          size: "normal",
           action: "login",
           retry: "auto",
           "refresh-expired": "auto",
@@ -402,6 +402,19 @@ function CaptchaStatus({
     return null;
   }
 
+  if (status === "error") {
+    return (
+      <div
+        className="rounded-xl border border-amber-100 bg-amber-50/80 px-3 py-2.5 text-center"
+        role="alert"
+      >
+        <p className="text-[11px] font-medium text-amber-800">
+          Security check could not load. Refresh the page or check your connection.
+        </p>
+      </div>
+    );
+  }
+
   if (hasToken || status === "ready") {
     return (
       <div
@@ -416,29 +429,7 @@ function CaptchaStatus({
     );
   }
 
-  if (status === "error") {
-    return (
-      <div
-        className="rounded-xl border border-amber-100 bg-amber-50/80 px-3 py-2.5 text-center"
-        role="alert"
-      >
-        <p className="text-[11px] font-medium text-amber-800">
-          Security check failed. Tap the checkbox above and try again.
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className="rounded-xl border border-zinc-100 bg-zinc-50/80 px-3 py-2.5 text-center"
-      role="status"
-    >
-      <p className="text-[11px] font-medium text-zinc-500">
-        Complete the security checkbox above, then tap Continue
-      </p>
-    </div>
-  );
+  return null;
 }
 
 // ─── Main Signin Component ────────────────────────────────────
