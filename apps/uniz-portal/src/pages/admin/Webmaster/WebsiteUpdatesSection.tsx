@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Globe,
-  Loader2,
   AlertTriangle,
   RefreshCw,
   Home,
@@ -11,31 +10,24 @@ import {
   Info,
   Users,
   Bell,
-  CheckCircle2,
-  Plus,
-  Trash2,
-  Upload,
   Search,
-  Pencil,
-  X,
-  ChevronRight,
   LayoutGrid,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "@/utils/toast-ref";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { LANDING_API_URL } from "../../../api/endpoints";
 import { SectionHeader } from "../../../components/admin/SectionHeader";
+import { WebsitePublishBar } from "@/components/admin/WebsitePublishBar";
 import {
   adminCardClass,
   adminLabelClass,
-  adminPrimaryButtonClass,
   adminGhostButtonClass,
-  adminTextareaClass,
-  adminChipClass,
-  adminDangerButtonClass,
   adminInputClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
+import { DeptStaffEditor } from "./DeptStaffEditor";
+import { WebsiteLiveEditor } from "./WebsiteLiveEditor";
 
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
@@ -129,10 +121,12 @@ export default function WebsiteUpdatesSection() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [editMode, setEditMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [contentVersion, setContentVersion] = useState(0);
+  const savedSnapshotRef = useRef<string>("");
 
   const activeSection = SECTIONS.find((s) => s.id === activeSectionId)!;
+  const isDeptStaff = activeSectionId === "departments";
 
   const filteredPages = useMemo(() => {
     if (!activeSection.pages) return [];
@@ -147,7 +141,6 @@ export default function WebsiteUpdatesSection() {
 
   useEffect(() => {
     setData(null);
-    setEditMode(false);
     setPageSearch("");
     if (activeSection.pages?.length) {
       setActivePage(activeSection.pages[0]);
@@ -166,7 +159,6 @@ export default function WebsiteUpdatesSection() {
     if (!isReady) return;
 
     setLoading(true);
-    setEditMode(false);
     try {
       const base = activeSection.endpoint;
       let url = `${LANDING_API_URL}${base.endsWith("/") ? base : base + "/"}`;
@@ -178,10 +170,14 @@ export default function WebsiteUpdatesSection() {
       url += (url.includes("?") ? "&" : "?") + "v=" + Date.now();
       const res = await fetch(url.replace(/([^:]\/)\/+/g, "$1"));
       if (!res.ok) throw new Error("Failed to fetch data");
-      setData(await res.json());
+      const json = await res.json();
+      setData(json);
+      savedSnapshotRef.current = JSON.stringify(json);
+      setContentVersion((v) => v + 1);
     } catch (err: any) {
       toast.error(err.message || "Connection refused");
       setData(null);
+      savedSnapshotRef.current = "";
     } finally {
       setLoading(false);
     }
@@ -190,6 +186,9 @@ export default function WebsiteUpdatesSection() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  const isDirty =
+    !!data && JSON.stringify(data) !== savedSnapshotRef.current;
 
   const handleCloudinaryUpload = async (file: File): Promise<string | null> => {
     if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
@@ -235,8 +234,8 @@ export default function WebsiteUpdatesSection() {
       });
 
       if (!res.ok) throw new Error("Save failed");
-      toast.success("Content saved");
-      setEditMode(false);
+      toast.success("Published to live website");
+      savedSnapshotRef.current = JSON.stringify(data);
       fetchData();
     } catch (err: any) {
       toast.error(err.message || "Server error occurred");
@@ -284,6 +283,12 @@ export default function WebsiteUpdatesSection() {
     ? `${activeSection.label} / ${formatPageLabel(activePage)}`
     : activeSection.label;
 
+  const pageLabel = activePage ? formatPageLabel(activePage) : activeSection.label;
+
+  const publishSubtitle = activePage
+    ? `Save to update ${activeSection.label} · ${pageLabel} on the live site`
+    : `Save to update ${activeSection.label} on the live site`;
+
   const SkeletonLoader = () => (
     <div className="space-y-5">
       {[1, 2, 3].map((i) => (
@@ -295,497 +300,6 @@ export default function WebsiteUpdatesSection() {
     </div>
   );
 
-  const WorkspaceActions = ({ compact = false }: { compact?: boolean }) => (
-    <div className={cn("flex items-center gap-2", compact && "flex-wrap")}>
-      {editMode ? (
-        <>
-          <button
-            type="button"
-            onClick={() => fetchData()}
-            className={adminGhostButtonClass}
-          >
-            <X size={14} /> Discard
-          </button>
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className={adminPrimaryButtonClass}
-          >
-            {saving ? (
-              <Loader2 size={14} className="animate-spin" />
-            ) : (
-              <CheckCircle2 size={14} />
-            )}
-            Save
-          </button>
-        </>
-      ) : (
-        <>
-          <button
-            type="button"
-            onClick={fetchData}
-            className={cn(adminGhostButtonClass, "w-10 px-0")}
-            title="Refresh"
-          >
-            <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
-          </button>
-          <button
-            type="button"
-            onClick={() => setEditMode(true)}
-            className={adminPrimaryButtonClass}
-          >
-            <Pencil size={14} /> Edit
-          </button>
-        </>
-      )}
-    </div>
-  );
-
-  const FieldInput = ({ label, value, onUpdate, isImage = false }: any) => {
-    const [localValue, setLocalValue] = useState(value);
-    const [uploading, setUploading] = useState(false);
-    const strVal = String(localValue ?? "");
-    const isLong = strVal.length > 80 || strVal.includes("\n");
-
-    useEffect(() => setLocalValue(value), [value]);
-
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      setUploading(true);
-      const url = await handleCloudinaryUpload(file);
-      if (url) {
-        setLocalValue(url);
-        onUpdate(url);
-        toast.success("Image updated");
-      }
-      setUploading(false);
-    };
-
-    const displayLabel = label.replace(/_/g, " ");
-
-    return (
-      <div className="group flex flex-col gap-1.5">
-        <div className="flex items-center justify-between gap-2">
-          <label className={cn(adminLabelClass, "normal-case capitalize")}>
-            {displayLabel}
-          </label>
-          {isImage && editMode && (
-            <label className="flex items-center gap-1 text-[10px] font-semibold text-zinc-400 hover:text-zinc-800 cursor-pointer transition-colors">
-              <input
-                type="file"
-                className="sr-only"
-                accept="image/*"
-                onChange={handleFileChange}
-                disabled={uploading}
-              />
-              {uploading ? (
-                <Loader2 size={12} className="animate-spin" />
-              ) : (
-                <Upload size={12} />
-              )}
-              {uploading ? "Uploading…" : "Upload"}
-            </label>
-          )}
-        </div>
-
-        {editMode ? (
-          typeof value === "boolean" ? (
-            <button
-              type="button"
-              onClick={() => onUpdate(!value)}
-              className={cn(
-                "h-10 px-3 rounded-xl text-[13px] font-medium flex items-center justify-between border transition-all duration-200",
-                value
-                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                  : "bg-zinc-50 text-zinc-500 border-zinc-200 hover:border-zinc-300",
-              )}
-            >
-              <span>{value ? "Enabled" : "Disabled"}</span>
-              <span
-                className={cn(
-                  "w-9 h-5 rounded-full relative transition-colors",
-                  value ? "bg-emerald-500" : "bg-zinc-300",
-                )}
-              >
-                <span
-                  className={cn(
-                    "absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform",
-                    value ? "translate-x-4" : "translate-x-0.5",
-                  )}
-                />
-              </span>
-            </button>
-          ) : (
-            <div className="space-y-2">
-              {isLong ? (
-                <textarea
-                  value={strVal}
-                  rows={3}
-                  onChange={(e) => setLocalValue(e.target.value)}
-                  onBlur={() => onUpdate(localValue)}
-                  className={adminTextareaClass}
-                />
-              ) : (
-                <input
-                  type="text"
-                  value={strVal}
-                  onChange={(e) => setLocalValue(e.target.value)}
-                  onBlur={() => onUpdate(localValue)}
-                  className={adminInputClass}
-                />
-              )}
-              {isImage && localValue && (
-                <div className="h-28 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/80">
-                  <img
-                    src={localValue}
-                    className="w-full h-full object-contain"
-                    alt="Preview"
-                  />
-                </div>
-              )}
-            </div>
-          )
-        ) : (
-          <div className="rounded-xl border border-zinc-200/80 bg-white px-3.5 py-2.5 transition-colors group-hover:border-zinc-300/80">
-            {isImage && value && (
-              <div className="mb-2.5 h-28 overflow-hidden rounded-lg bg-zinc-50 border border-zinc-100">
-                <img
-                  src={value}
-                  className="w-full h-full object-contain"
-                  alt=""
-                />
-              </div>
-            )}
-            <p className="text-[13px] text-zinc-700 leading-relaxed break-words">
-              {typeof value === "boolean"
-                ? value
-                  ? "Active"
-                  : "Disabled"
-                : strVal || "—"}
-            </p>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const DynamicForm: any = ({ obj, path = [], depth = 0 }: any) => {
-    const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
-    const [collapsedKeys, setCollapsedKeys] = useState<Record<string, boolean>>({});
-
-    const toggleKey = (key: string) =>
-      setCollapsedKeys((prev) => ({ ...prev, [key]: !prev[key] }));
-
-    if (obj === null || obj === undefined) return null;
-
-    if (Array.isArray(obj) && path.length === 0) {
-      return (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <h4 className={adminLabelClass}>Entries</h4>
-              <span className={adminChipClass}>{obj.length}</span>
-            </div>
-            {editMode && (
-              <button
-                type="button"
-                onClick={() => addArrayItem([], obj[0] || {})}
-                className={cn(adminGhostButtonClass, "h-9")}
-              >
-                <Plus size={14} /> Add
-              </button>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            {obj.map((item, idx) => {
-              const isExpanded = expandedIndex === idx;
-              const name =
-                item.name || item.title || item.label || `Entry ${idx + 1}`;
-              const image =
-                item.pic ||
-                item.image ||
-                item.imageUrl ||
-                item.url ||
-                item.thumbnail;
-              const sub = item.designation || item.dept || item.type || "";
-
-              return (
-                <motion.div
-                  key={idx}
-                  layout
-                  className={cn(
-                    adminCardClass,
-                    "overflow-hidden transition-shadow duration-200",
-                    isExpanded && "shadow-[0_8px_24px_-12px_rgba(10,10,10,0.12)] border-zinc-300",
-                  )}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setExpandedIndex(isExpanded ? null : idx)}
-                    className={cn(
-                      "w-full p-4 flex items-center gap-4 text-left transition-colors",
-                      isExpanded ? "bg-zinc-50/80" : "hover:bg-zinc-50/50",
-                    )}
-                  >
-                    <div className="w-12 h-12 rounded-xl bg-zinc-100 border border-zinc-200 overflow-hidden flex items-center justify-center shrink-0">
-                      {image ? (
-                        <img
-                          src={image}
-                          className="w-full h-full object-cover"
-                          alt=""
-                        />
-                      ) : (
-                        <Users size={18} className="text-zinc-300" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-zinc-900 text-sm truncate capitalize">
-                        {String(name).toLowerCase()}
-                      </p>
-                      {sub && (
-                        <p className="text-[10px] font-medium text-zinc-400 tracking-wide mt-0.5 truncate">
-                          {sub}
-                        </p>
-                      )}
-                    </div>
-                    <ChevronRight
-                      size={16}
-                      className={cn(
-                        "text-zinc-400 shrink-0 transition-transform duration-200",
-                        isExpanded && "rotate-90",
-                      )}
-                    />
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {isExpanded && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden"
-                      >
-                        <div className="px-5 pb-5 pt-1 border-t border-zinc-100">
-                          <div className="flex justify-end mb-3">
-                            {editMode && (
-                              <button
-                                type="button"
-                                onClick={() => deleteArrayItem([], idx)}
-                                className={cn(adminDangerButtonClass, "h-8 text-xs")}
-                              >
-                                <Trash2 size={13} /> Remove
-                              </button>
-                            )}
-                          </div>
-                          <DynamicForm
-                            obj={item}
-                            path={[idx.toString()]}
-                            depth={depth + 1}
-                          />
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      );
-    }
-
-    if (typeof obj !== "object") {
-      const key = path[path.length - 1] || "Value";
-      return (
-        <FieldInput
-          label={key}
-          value={obj}
-          onUpdate={(v: any) => updateNestedData(path, v)}
-          isImage={/pic|img|image|logo|icon|url/i.test(key)}
-        />
-      );
-    }
-
-    const scalarEntries: [string, unknown][] = [];
-    const complexEntries: [string, unknown][] = [];
-
-    Object.entries(obj).forEach(([key, value]) => {
-      if (
-        Array.isArray(value) ||
-        (typeof value === "object" && value !== null)
-      ) {
-        complexEntries.push([key, value]);
-      } else {
-        scalarEntries.push([key, value]);
-      }
-    });
-
-    return (
-      <div className="space-y-6">
-        {scalarEntries.length > 0 && (
-          <div
-            className={cn(
-              "grid gap-4",
-              depth === 0 ? "sm:grid-cols-2" : "grid-cols-1",
-            )}
-          >
-            {scalarEntries.map(([key, value]) => {
-              const currentPath = [...path, key];
-              return (
-                <FieldInput
-                  key={key}
-                  label={key}
-                  value={value}
-                  onUpdate={(v: any) => updateNestedData(currentPath, v)}
-                  isImage={/pic|img|image|logo|icon|url/i.test(key)}
-                />
-              );
-            })}
-          </div>
-        )}
-
-        {complexEntries.map(([key, value]) => {
-          const currentPath = [...path, key];
-          const sectionKey = currentPath.join(".");
-          const isCollapsed = collapsedKeys[sectionKey];
-
-          if (Array.isArray(value)) {
-            return (
-              <div
-                key={key}
-                className={cn(adminCardClass, "p-5 space-y-4")}
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleKey(sectionKey)}
-                  className="w-full flex items-center justify-between gap-3 text-left"
-                >
-                  <div className="flex items-center gap-2">
-                    <ChevronRight
-                      size={14}
-                      className={cn(
-                        "text-zinc-400 transition-transform",
-                        !isCollapsed && "rotate-90",
-                      )}
-                    />
-                    <h4 className={cn(adminLabelClass, "normal-case capitalize")}>
-                      {key.replace(/_/g, " ")}
-                    </h4>
-                    <span className={adminChipClass}>{value.length}</span>
-                  </div>
-                  {editMode && !isCollapsed && (
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addArrayItem(currentPath, value[0] || {});
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          addArrayItem(currentPath, value[0] || {});
-                        }
-                      }}
-                      className={cn(adminGhostButtonClass, "h-8 text-xs shrink-0")}
-                    >
-                      <Plus size={12} /> Add
-                    </span>
-                  )}
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {!isCollapsed && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="grid gap-3 pt-1">
-                        {value.map((item, idx) => (
-                          <div
-                            key={idx}
-                            className="rounded-xl border border-zinc-200/80 bg-zinc-50/40 p-4 relative"
-                          >
-                            <div className="absolute top-3 right-3 flex items-center gap-1.5">
-                              <span className="text-[9px] font-semibold text-zinc-300">
-                                #{idx + 1}
-                              </span>
-                              {editMode && (
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    deleteArrayItem(currentPath, idx)
-                                  }
-                                  className="p-1 text-zinc-300 hover:text-rose-500 transition-colors"
-                                >
-                                  <Trash2 size={12} />
-                                </button>
-                              )}
-                            </div>
-                            <DynamicForm
-                              obj={item}
-                              path={[...currentPath, idx.toString()]}
-                              depth={depth + 1}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          }
-
-          return (
-            <div key={key} className={cn(adminCardClass, "p-5")}>
-              <button
-                type="button"
-                onClick={() => toggleKey(sectionKey)}
-                className="w-full flex items-center gap-2 text-left mb-1"
-              >
-                <ChevronRight
-                  size={14}
-                  className={cn(
-                    "text-zinc-400 transition-transform",
-                    !isCollapsed && "rotate-90",
-                  )}
-                />
-                <h4 className={cn(adminLabelClass, "normal-case capitalize")}>
-                  {key.replace(/_/g, " ")}
-                </h4>
-              </button>
-              <AnimatePresence initial={false}>
-                {!isCollapsed && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="pt-3 pl-5 border-l-2 border-zinc-100"
-                  >
-                    <DynamicForm
-                      obj={value}
-                      path={currentPath}
-                      depth={depth + 1}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
-
   return (
     <div className="flex flex-col h-[calc(100vh-140px)] bg-[#fafafa] overflow-hidden">
       <div className="px-6 md:px-8 pt-6 pb-4 shrink-0">
@@ -793,12 +307,11 @@ export default function WebsiteUpdatesSection() {
           icon={<Globe size={18} />}
           eyebrow="Campus"
           title="Website Content"
-          subtitle="Manage landing pages — home, institute, academics, departments, and notifications."
+          subtitle="Edit the live RGUKT landing site — changes publish when you save."
         />
       </div>
 
       <div className="flex flex-1 min-h-0 border-t border-zinc-200/70">
-        {/* Sidebar */}
         <aside
           className={cn(
             "shrink-0 flex flex-col border-r border-zinc-200/70 bg-white transition-all duration-300 ease-out",
@@ -827,9 +340,7 @@ export default function WebsiteUpdatesSection() {
                     className={cn("mt-0.5 shrink-0", isActive ? "text-white" : "text-zinc-400")}
                   />
                   <div className="min-w-0">
-                    <p className="text-[13px] font-semibold tracking-tight">
-                      {section.label}
-                    </p>
+                    <p className="text-[13px] font-semibold tracking-tight">{section.label}</p>
                     <p
                       className={cn(
                         "text-[11px] mt-0.5 leading-snug",
@@ -865,35 +376,29 @@ export default function WebsiteUpdatesSection() {
                 </div>
               )}
               <div className="flex-1 overflow-y-auto custom-sidebar-scroll space-y-1 pr-0.5">
-                {filteredPages.map((page) => {
-                  const isPageActive = activePage === page;
-                  return (
-                    <button
-                      key={page}
-                      type="button"
-                      onClick={() => setActivePage(page)}
-                      className={cn(
-                        "w-full text-left px-3 py-2 rounded-lg text-[12px] font-medium transition-all duration-150",
-                        isPageActive
-                          ? "bg-zinc-100 text-zinc-900"
-                          : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800",
-                      )}
-                    >
-                      {formatPageLabel(page)}
-                    </button>
-                  );
-                })}
+                {filteredPages.map((page) => (
+                  <button
+                    key={page}
+                    type="button"
+                    onClick={() => setActivePage(page)}
+                    className={cn(
+                      "w-full text-left px-3 py-2 rounded-lg text-[12px] font-medium transition-all duration-150",
+                      activePage === page
+                        ? "bg-zinc-100 text-zinc-900"
+                        : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800",
+                    )}
+                  >
+                    {formatPageLabel(page)}
+                  </button>
+                ))}
                 {filteredPages.length === 0 && (
-                  <p className="text-[11px] text-zinc-400 px-2 py-4 text-center">
-                    No matches
-                  </p>
+                  <p className="text-[11px] text-zinc-400 px-2 py-4 text-center">No matches</p>
                 )}
               </div>
             </div>
           )}
         </aside>
 
-        {/* Main workspace */}
         <main className="flex-1 flex flex-col min-w-0 bg-[#fafafa]">
           <header className="shrink-0 sticky top-0 z-20 flex items-center justify-between gap-4 px-5 py-3.5 bg-white/90 backdrop-blur-md border-b border-zinc-200/70">
             <div className="flex items-center gap-3 min-w-0">
@@ -906,27 +411,28 @@ export default function WebsiteUpdatesSection() {
                 <LayoutGrid size={16} />
               </button>
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold text-zinc-400 tracking-wide">
-                  Workspace
-                </p>
-                <p className="text-sm font-semibold text-zinc-900 truncate">
-                  {breadcrumb}
-                </p>
+                <p className="text-[10px] font-semibold text-zinc-400 tracking-wide">Workspace</p>
+                <p className="text-sm font-semibold text-zinc-900 truncate">{breadcrumb}</p>
               </div>
-              {editMode && (
-                <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100 text-[10px] font-semibold tracking-wide">
-                  <Pencil size={10} /> Editing
-                </span>
-              )}
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#800000]/5 text-[#800000] border border-[#800000]/10 text-[10px] font-semibold tracking-wide">
+                <Sparkles size={10} /> Live editor
+              </span>
             </div>
-            <WorkspaceActions />
+            <button
+              type="button"
+              onClick={fetchData}
+              className={cn(adminGhostButtonClass, "w-10 px-0")}
+              title="Refresh"
+            >
+              <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
+            </button>
           </header>
 
           <div className="flex-1 overflow-y-auto custom-sidebar-scroll">
-            <div className="max-w-4xl mx-auto px-5 py-8">
+            <div className={cn("mx-auto px-5 py-8", "max-w-5xl")}>
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={`${activeSectionId}-${activePage ?? "root"}`}
+                  key={`${activeSectionId}-${activePage ?? "root"}-${contentVersion}`}
                   variants={contentVariants}
                   initial="initial"
                   animate="animate"
@@ -956,32 +462,44 @@ export default function WebsiteUpdatesSection() {
                         <RefreshCw size={14} /> Retry
                       </button>
                     </div>
+                  ) : isDeptStaff && activePage ? (
+                    <DeptStaffEditor
+                      data={data}
+                      deptCode={activePage}
+                      onChange={setData}
+                      onRefresh={fetchData}
+                      onUpload={handleCloudinaryUpload}
+                    />
                   ) : (
-                    <DynamicForm obj={data} />
+                    <WebsiteLiveEditor
+                      sectionId={activeSectionId}
+                      sectionLabel={activeSection.label}
+                      pageKey={activePage}
+                      pageLabel={pageLabel}
+                      sectionDescription={activeSection.description}
+                      data={data}
+                      loading={loading}
+                      onRefresh={fetchData}
+                      updateNestedData={updateNestedData}
+                      addArrayItem={addArrayItem}
+                      deleteArrayItem={deleteArrayItem}
+                      onUpload={handleCloudinaryUpload}
+                    />
                   )}
                 </motion.div>
               </AnimatePresence>
             </div>
           </div>
-
-          <AnimatePresence>
-            {editMode && (
-              <motion.div
-                initial={{ y: 80, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 80, opacity: 0 }}
-                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                className="shrink-0 sticky bottom-0 z-30 px-5 py-3 bg-white/95 backdrop-blur-md border-t border-zinc-200/70 flex items-center justify-between gap-4 md:hidden"
-              >
-                <p className="text-[12px] font-medium text-zinc-500">
-                  Unsaved edits
-                </p>
-                <WorkspaceActions compact />
-              </motion.div>
-            )}
-          </AnimatePresence>
         </main>
       </div>
+
+      <WebsitePublishBar
+        visible={isDirty && !loading}
+        saving={saving}
+        subtitle={publishSubtitle}
+        onDiscard={fetchData}
+        onPublish={handleSave}
+      />
     </div>
   );
 }
