@@ -24,6 +24,7 @@ import { usePWAInstall } from "../hooks/usePWAInstall";
 import { HeroBlock } from "../components/ui/hero-block-shadcnui";
 import { SEO } from "../components/SEO";
 import { HOME_SEO, homePageSchema } from "../lib/seo";
+import { SiteLegalFooter } from "../components/SiteLegalFooter";
 import { motion } from "framer-motion";
 import {
   LandingSection,
@@ -477,6 +478,7 @@ const Home = () => {
             </div>
           </motion.section>
       </main>
+      <SiteLegalFooter />
     </div>
   );
 };

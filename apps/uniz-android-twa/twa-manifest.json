@@ -1,0 +1,54 @@
+{
+  "packageId": "in.rguktong.uniz",
+  "host": "uniz.rguktong.in",
+  "name": "uniZ — Campus Platform",
+  "launcherName": "uniZ",
+  "display": "standalone",
+  "themeColor": "#FAFAFA",
+  "themeColorDark": "#FAFAFA",
+  "navigationColor": "#FAFAFA",
+  "navigationColorDark": "#FAFAFA",
+  "navigationDividerColor": "#E4E4E7",
+  "navigationDividerColorDark": "#E4E4E7",
+  "backgroundColor": "#FAFAFA",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://uniz.rguktong.in/icons/icon-512.png",
+  "maskableIconUrl": "https://uniz.rguktong.in/icons/icon-maskable-512.png",
+  "monochromeIconUrl": "https://uniz.rguktong.in/icons/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [
+    {
+      "name": "Sign in",
+      "shortName": "Sign in",
+      "url": "https://uniz.rguktong.in/student/signin",
+      "chosenIconUrl": "https://uniz.rguktong.in/icons/icon-192.png"
+    }
+  ],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://uniz.rguktong.in/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "playBilling": {
+      "enabled": false
+    },
+    "locationDelegation": {
+      "enabled": false
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "minSdkVersion": 23,
+  "orientation": "portrait",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "displayOverride": ["standalone", "minimal-ui"],
+  "appVersion": "1.0.0"
+}
