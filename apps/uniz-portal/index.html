@@ -2,10 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link
-      rel="icon"
-      href="https://res.cloudinary.com/diipfzmyj/image/upload/v1773551873/91566992797-modified-removebg-preview-modified_t0cqyr.png"
-    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -39,7 +36,7 @@
     />
     <meta
       property="og:image"
-      content="https://res.cloudinary.com/diipfzmyj/image/upload/w_1200,h_630,c_fill,f_jpg,q_auto/v1773551873/91566992797-modified-removebg-preview-modified_t0cqyr.png"
+      content="https://res.cloudinary.com/diipfzmyj/image/upload/w_1200,h_630,c_fill,f_jpg,q_auto/v1772885809/signIn_ojzi3w.png"
     />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -55,7 +52,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://res.cloudinary.com/diipfzmyj/image/upload/w_1200,h_630,c_fill,f_jpg,q_auto/v1773551873/91566992797-modified-removebg-preview-modified_t0cqyr.png"
+      content="https://res.cloudinary.com/diipfzmyj/image/upload/w_1200,h_630,c_fill,f_jpg,q_auto/v1772885809/signIn_ojzi3w.png"
     />
 
     <!-- Preload fonts -->
@@ -98,11 +95,12 @@
         pointer-events: none;
       }
 
-      #pwa-splash img {
-        width: 4.5rem;
-        height: 4.5rem;
-        object-fit: contain;
-        margin-bottom: 0.25rem;
+      #pwa-splash .pwa-splash-wordmark {
+        font-family: "Pattaya", "Georgia", "Times New Roman", cursive;
+        font-size: clamp(2.5rem, 10vw, 3.25rem);
+        line-height: 1;
+        color: #800000;
+        margin: 0 0 0.25rem;
       }
 
       #pwa-splash .pwa-splash-tagline {
@@ -219,13 +217,7 @@
 
   <body>
     <div id="pwa-splash" role="status" aria-label="Loading uniZ">
-      <img
-        src="https://res.cloudinary.com/diipfzmyj/image/upload/w_144,h_144,c_fill,f_png,q_auto/v1773551873/91566992797-modified-removebg-preview-modified_t0cqyr.png"
-        alt=""
-        width="72"
-        height="72"
-        fetchpriority="high"
-      />
+      <p class="pwa-splash-wordmark">uniZ.</p>
       <p class="pwa-splash-tagline">
         <span class="pwa-splash-tagline-line">__UNIZ_TAGLINE_LINE1__</span>
         <span class="pwa-splash-tagline-line pwa-splash-tagline-line--muted"
