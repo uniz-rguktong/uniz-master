@@ -794,12 +794,15 @@ export function WebsiteLiveEditor({
   const renderBody = () => {
     if (!data) return null;
 
-    if (sectionId === "home" && data.announcements) {
+    if (sectionId === "home") {
       return (
         <div className="space-y-6">
-          <AnnouncementsEditor items={data.announcements} helpers={helpers} />
-          {data.stats && <StatsEditor items={data.stats} helpers={helpers} />}
-          {data.images && <ImagesEditor items={data.images} helpers={helpers} />}
+          <AnnouncementsEditor
+            items={Array.isArray(data.announcements) ? data.announcements : []}
+            helpers={helpers}
+          />
+          <StatsEditor items={Array.isArray(data.stats) ? data.stats : []} helpers={helpers} />
+          <ImagesEditor items={Array.isArray(data.images) ? data.images : []} helpers={helpers} />
         </div>
       );
     }
@@ -863,7 +866,7 @@ export function WebsiteLiveEditor({
       {renderBody()}
       <p className="text-center text-[11px] text-slate-400 mt-8 flex items-center justify-center gap-1.5">
         <ExternalLink size={12} />
-        Changes publish to the live RGUKT landing site
+        Edits auto-publish to the live RGUKT landing site
       </p>
     </div>
   );
