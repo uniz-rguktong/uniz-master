@@ -5,6 +5,7 @@ type WebsitePublishBarProps = {
   visible: boolean;
   saving: boolean;
   subtitle: string;
+  autoSave?: boolean;
   onDiscard: () => void;
   onPublish: () => void;
 };
@@ -13,6 +14,7 @@ export function WebsitePublishBar({
   visible,
   saving,
   subtitle,
+  autoSave = false,
   onDiscard,
   onPublish,
 }: WebsitePublishBarProps) {
@@ -27,7 +29,9 @@ export function WebsitePublishBar({
         >
           <div className="flex items-center justify-between gap-4 px-5 py-3.5 rounded-2xl bg-zinc-900 text-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.45)] border border-zinc-700/50">
             <div className="min-w-0">
-              <p className="text-[13px] font-semibold truncate">Unpublished changes</p>
+              <p className="text-[13px] font-semibold truncate">
+                {saving ? "Publishing…" : autoSave ? "Auto-publishing" : "Unpublished changes"}
+              </p>
               <p className="text-[11px] text-zinc-400 truncate">{subtitle}</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -39,19 +43,26 @@ export function WebsitePublishBar({
               >
                 Discard
               </button>
-              <button
-                type="button"
-                onClick={onPublish}
-                disabled={saving}
-                className="h-9 px-4 rounded-lg bg-white text-zinc-900 text-[12px] font-bold flex items-center gap-1.5 hover:bg-zinc-100 transition-colors disabled:opacity-60"
-              >
-                {saving ? (
-                  <Loader2 size={14} className="animate-spin" />
-                ) : (
-                  <CheckCircle2 size={14} />
-                )}
-                Publish
-              </button>
+              {!autoSave && (
+                <button
+                  type="button"
+                  onClick={onPublish}
+                  disabled={saving}
+                  className="h-9 px-4 rounded-lg bg-white text-zinc-900 text-[12px] font-bold flex items-center gap-1.5 hover:bg-zinc-100 transition-colors disabled:opacity-60"
+                >
+                  {saving ? (
+                    <Loader2 size={14} className="animate-spin" />
+                  ) : (
+                    <CheckCircle2 size={14} />
+                  )}
+                  Publish
+                </button>
+              )}
+              {autoSave && saving && (
+                <div className="h-9 px-3 flex items-center">
+                  <Loader2 size={16} className="animate-spin text-zinc-300" />
+                </div>
+              )}
             </div>
           </div>
         </motion.div>
