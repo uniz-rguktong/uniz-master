@@ -12,9 +12,21 @@ Thin Android wrapper for [https://uniz.rguktong.in](https://uniz.rguktong.in). T
 
 ## Prerequisites (one-time, outside repo)
 
-1. **Google Play Developer account** — [play.google.com/console](https://play.google.com/console) (~$25)
+1. **Google Play Developer account** — [play.google.com/console](https://play.google.com/console) (~$25) — *Phase B*
 2. **JDK 17+** and **Android SDK** (via Android Studio or `sdkmanager`)
 3. **Node 18+** for Bubblewrap
+
+### Phase A — before paying (~30 min)
+
+```bash
+# One command: Bubblewrap check, JDK/SDK hints, local Play assets folder
+bash apps/uniz-android-twa/phase-a-setup.sh
+# or: npm run android:twa:phase-a
+```
+
+Install Android Studio if missing: [developer.android.com/studio](https://developer.android.com/studio) or `brew install --cask android-studio`.
+
+Play Console copy, icon, and templates land in **`~/Documents/uniZ-PlayStore/`** (not committed). Edit `support-email.txt` if needed.
 
 ## First-time setup
 

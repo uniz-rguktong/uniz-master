@@ -34,6 +34,7 @@
     "vault:vps:show": "bash ./scripts/vps-vault.sh show",
     "vault:vps:status": "bash ./scripts/vps-vault.sh status",
     "watch": "ssh -t -o StrictHostKeyChecking=no root@${VPS_HOST:-76.13.241.174} \"watch -n 1 'kubectl get hpa; echo; kubectl get pods'\"",
+    "android:twa:phase-a": "bash apps/uniz-android-twa/phase-a-setup.sh",
     "android:twa:init": "bash apps/uniz-android-twa/init.sh",
     "android:twa:assetlinks": "bash apps/uniz-android-twa/sync-assetlinks.sh",
     "android:twa:verify": "bash apps/uniz-android-twa/verify-assetlinks.sh"
