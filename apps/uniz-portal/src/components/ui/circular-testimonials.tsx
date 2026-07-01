@@ -40,6 +40,8 @@ interface FontSizes {
 interface CircularTestimonialsProps {
   testimonials: Testimonial[];
   autoplay?: boolean;
+  /** Smaller avatar, type, and spacing for mobile-first single-screen layouts. */
+  dense?: boolean;
   colors?: Colors;
   fontSizes?: FontSizes;
 }
@@ -47,6 +49,7 @@ interface CircularTestimonialsProps {
 export const CircularTestimonials = ({
   testimonials,
   autoplay = true,
+  dense = false,
   colors = {},
   fontSizes = {},
 }: CircularTestimonialsProps) => {
@@ -141,7 +144,10 @@ export const CircularTestimonials = ({
   };
 
   return (
-    <div className="testimonial-container" ref={containerRef}>
+    <div
+      className={`testimonial-container${dense ? " testimonial-container--dense" : ""}`}
+      ref={containerRef}
+    >
       <div className="testimonial-grid">
         <div
           className={`image-container${featuredActive ? " image-container--featured" : ""}`}
@@ -179,7 +185,7 @@ export const CircularTestimonials = ({
                   className="text-[#0077b5] hover:opacity-80 transition-opacity"
                   aria-label={`LinkedIn profile of ${activeTestimonial.name}`}
                 >
-                  <FaLinkedin size={24} />
+                  <FaLinkedin className="testimonial-linkedin" size={24} />
                 </a>
               </h3>
               <p
@@ -233,7 +239,7 @@ export const CircularTestimonials = ({
               onMouseLeave={() => setHoverPrev(false)}
               aria-label="Previous testimonial"
             >
-              <FaArrowLeft size={28} color={colorArrowFg} />
+              <FaArrowLeft className="testimonial-arrow-icon" size={28} color={colorArrowFg} />
             </button>
             <button
               type="button"
@@ -246,7 +252,7 @@ export const CircularTestimonials = ({
               onMouseLeave={() => setHoverNext(false)}
               aria-label="Next testimonial"
             >
-              <FaArrowRight size={28} color={colorArrowFg} />
+              <FaArrowRight className="testimonial-arrow-icon" size={28} color={colorArrowFg} />
             </button>
           </div>
         </div>
@@ -331,6 +337,112 @@ export const CircularTestimonials = ({
           }
           .arrow-buttons {
             padding-top: 0;
+          }
+        }
+        .testimonial-container--dense {
+          padding: 0.25rem 0;
+          max-width: 100%;
+        }
+        .testimonial-container--dense .testimonial-grid {
+          gap: 0.75rem;
+        }
+        .testimonial-container--dense .image-container {
+          width: 5.25rem;
+          height: 5.25rem;
+        }
+        .testimonial-container--dense .image-container--featured {
+          width: 6rem;
+          height: 6rem;
+        }
+        .testimonial-container--dense .designation {
+          margin-bottom: 0.5rem;
+        }
+        .testimonial-container--dense .quote {
+          line-height: 1.45;
+          display: -webkit-box;
+          -webkit-line-clamp: 4;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .testimonial-container--dense .arrow-buttons {
+          padding-top: 0.5rem;
+          gap: 0.65rem;
+          justify-content: center;
+        }
+        .testimonial-container--dense .arrow-button {
+          width: 2.15rem;
+          height: 2.15rem;
+        }
+        .testimonial-container--dense .testimonial-arrow-icon {
+          width: 14px;
+          height: 14px;
+        }
+        .testimonial-container--dense .testimonial-linkedin {
+          width: 18px;
+          height: 18px;
+        }
+        .testimonial-container--dense .name {
+          font-size: 1.05rem !important;
+          justify-content: center;
+        }
+        .testimonial-container--dense .designation {
+          font-size: 0.8rem !important;
+          text-align: center;
+        }
+        .testimonial-container--dense .quote {
+          font-size: 0.8125rem !important;
+          text-align: center;
+        }
+        .testimonial-container--dense .testimonial-content {
+          text-align: center;
+        }
+        @media (min-width: 768px) {
+          .testimonial-container--dense {
+            padding: 2rem;
+          }
+          .testimonial-container--dense .testimonial-grid {
+            gap: 5rem;
+          }
+          .testimonial-container--dense .image-container {
+            width: 14rem;
+            height: 14rem;
+            margin: 0;
+          }
+          .testimonial-container--dense .image-container--featured {
+            width: 17.5rem;
+            height: 17.5rem;
+          }
+          .testimonial-container--dense .quote {
+            display: block;
+            -webkit-line-clamp: unset;
+            overflow: visible;
+            text-align: left;
+            font-size: 1.25rem !important;
+            line-height: 1.75;
+          }
+          .testimonial-container--dense .name {
+            font-size: 1.75rem !important;
+            justify-content: flex-start;
+          }
+          .testimonial-container--dense .designation {
+            font-size: 1.25rem !important;
+            text-align: left;
+            margin-bottom: 2rem;
+          }
+          .testimonial-container--dense .testimonial-content {
+            text-align: left;
+          }
+          .testimonial-container--dense .testimonial-linkedin {
+            width: 24px;
+            height: 24px;
+          }
+          .testimonial-container--dense .testimonial-arrow-icon {
+            width: 28px;
+            height: 28px;
+          }
+          .testimonial-container--dense .arrow-buttons {
+            padding-top: 0;
+            justify-content: flex-start;
           }
         }
       `}</style>
