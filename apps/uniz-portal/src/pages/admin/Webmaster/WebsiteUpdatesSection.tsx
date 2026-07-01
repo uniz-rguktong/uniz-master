@@ -124,6 +124,8 @@ export default function WebsiteUpdatesSection() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [contentVersion, setContentVersion] = useState(0);
   const savedSnapshotRef = useRef<string>("");
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const handleSaveRef = useRef<(silent?: boolean) => Promise<void>>(async () => {});
 
   const activeSection = SECTIONS.find((s) => s.id === activeSectionId)!;
   const isDeptStaff = activeSectionId === "departments";
@@ -142,12 +144,17 @@ export default function WebsiteUpdatesSection() {
   useEffect(() => {
     setData(null);
     setPageSearch("");
+    setContentVersion((v) => v + 1);
     if (activeSection.pages?.length) {
       setActivePage(activeSection.pages[0]);
     } else {
       setActivePage(null);
     }
   }, [activeSectionId]);
+
+  useEffect(() => {
+    setContentVersion((v) => v + 1);
+  }, [activePage]);
 
   const fetchData = useCallback(async () => {
     const isReady =
@@ -173,7 +180,6 @@ export default function WebsiteUpdatesSection() {
       const json = await res.json();
       setData(json);
       savedSnapshotRef.current = JSON.stringify(json);
-      setContentVersion((v) => v + 1);
     } catch (err: any) {
       toast.error(err.message || "Connection refused");
       setData(null);
@@ -211,38 +217,58 @@ export default function WebsiteUpdatesSection() {
     }
   };
 
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      const token = getAuthToken();
-      const base = activeSection.endpoint;
-      let url = `${LANDING_API_URL}${base.endsWith("/") ? base : base + "/"}`;
-      if (activeSectionId === "notifications" && activePage) {
-        url += `?type=${activePage}`;
-      } else if (activePage) {
-        url += activePage;
+  const handleSave = useCallback(
+    async (silent = false) => {
+      if (!data || saving) return;
+      setSaving(true);
+      try {
+        const token = getAuthToken();
+        const base = activeSection.endpoint;
+        let url = `${LANDING_API_URL}${base.endsWith("/") ? base : base + "/"}`;
+        if (activeSectionId === "notifications" && activePage) {
+          url += `?type=${activePage}`;
+        } else if (activePage) {
+          url += activePage;
+        }
+        url += (url.includes("?") ? "&" : "?") + "v=" + Date.now();
+
+        const res = await fetch(url.replace(/([^:]\/)\/+/g, "$1"), {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!res.ok) throw new Error("Save failed");
+        const saved = await res.json().catch(() => data);
+        setData(saved);
+        savedSnapshotRef.current = JSON.stringify(saved);
+        if (!silent) toast.success("Published to live website");
+      } catch (err: any) {
+        toast.error(err.message || "Server error occurred");
+      } finally {
+        setSaving(false);
       }
-      url += (url.includes("?") ? "&" : "?") + "v=" + Date.now();
+    },
+    [activePage, activeSection.endpoint, activeSectionId, data, saving],
+  );
 
-      const res = await fetch(url.replace(/([^:]\/)\/+/g, "$1"), {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
+  handleSaveRef.current = handleSave;
 
-      if (!res.ok) throw new Error("Save failed");
-      toast.success("Published to live website");
-      savedSnapshotRef.current = JSON.stringify(data);
-      fetchData();
-    } catch (err: any) {
-      toast.error(err.message || "Server error occurred");
-    } finally {
-      setSaving(false);
-    }
-  };
+  useEffect(() => {
+    if (!isDirty || loading || saving || !data) return;
+
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      void handleSaveRef.current(true);
+    }, 1000);
+
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
+  }, [data, isDirty, loading, saving]);
 
   const updateNestedData = (path: string[], value: any) => {
     setData((prev: any) => {
@@ -261,9 +287,14 @@ export default function WebsiteUpdatesSection() {
 
   const deleteArrayItem = (path: string[], index: number) => {
     setData((prev: any) => {
+      if (!prev) return prev;
       const newData = JSON.parse(JSON.stringify(prev));
-      let current = newData;
-      for (let i = 0; i < path.length; i++) current = current[path[i]];
+      let current: any = newData;
+      for (let i = 0; i < path.length; i++) {
+        if (current == null) return prev;
+        current = current[path[i]];
+      }
+      if (!Array.isArray(current)) return prev;
       current.splice(index, 1);
       return newData;
     });
@@ -271,9 +302,14 @@ export default function WebsiteUpdatesSection() {
 
   const addArrayItem = (path: string[], template: any) => {
     setData((prev: any) => {
+      if (!prev) return prev;
       const newData = JSON.parse(JSON.stringify(prev));
-      let current = newData;
-      for (let i = 0; i < path.length; i++) current = current[path[i]];
+      let current: any = newData;
+      for (let i = 0; i < path.length; i++) {
+        if (current == null) return prev;
+        current = current[path[i]];
+      }
+      if (!Array.isArray(current)) return prev;
       current.push(JSON.parse(JSON.stringify(template)));
       return newData;
     });
@@ -285,9 +321,13 @@ export default function WebsiteUpdatesSection() {
 
   const pageLabel = activePage ? formatPageLabel(activePage) : activeSection.label;
 
-  const publishSubtitle = activePage
-    ? `Save to update ${activeSection.label} · ${pageLabel} on the live site`
-    : `Save to update ${activeSection.label} on the live site`;
+  const publishSubtitle = saving
+    ? "Saving to the live site…"
+    : isDirty
+      ? "Unsaved changes — publishing automatically…"
+      : activePage
+        ? `${activeSection.label} · ${pageLabel} is up to date`
+        : `${activeSection.label} is up to date`;
 
   const SkeletonLoader = () => (
     <div className="space-y-5">
@@ -307,7 +347,7 @@ export default function WebsiteUpdatesSection() {
           icon={<Globe size={18} />}
           eyebrow="Campus"
           title="Website Content"
-          subtitle="Edit the live RGUKT landing site — changes publish when you save."
+          subtitle="Edit the live RGUKT landing site — changes publish automatically."
         />
       </div>
 
@@ -494,11 +534,12 @@ export default function WebsiteUpdatesSection() {
       </div>
 
       <WebsitePublishBar
-        visible={isDirty && !loading}
+        visible={(isDirty || saving) && !loading}
         saving={saving}
+        autoSave
         subtitle={publishSubtitle}
         onDiscard={fetchData}
-        onPublish={handleSave}
+        onPublish={() => handleSave(false)}
       />
     </div>
   );
