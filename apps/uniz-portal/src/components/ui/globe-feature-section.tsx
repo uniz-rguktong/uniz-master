@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Github, ArrowUpRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { LandingSection } from "./landing-section";
 
 function StatPill({
@@ -30,7 +31,11 @@ function StatPill({
   );
 }
 
-export default function GlobeFeature() {
+export default function GlobeFeature({
+  hideTitleOnMobile = false,
+}: {
+  hideTitleOnMobile?: boolean;
+}) {
   const line1 = ["Make", "your", "first"];
   const line2 = ["contribution."];
 
@@ -52,7 +57,12 @@ export default function GlobeFeature() {
           </span>
         </motion.div>
 
-        <h2 className="text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[0.95] tracking-[-0.05em] text-zinc-950 mb-6">
+        <h2
+          className={cn(
+            "text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[0.95] tracking-[-0.05em] text-zinc-950 mb-6",
+            hideTitleOnMobile && "hidden md:block",
+          )}
+        >
           <span className="block">
             {line1.map((w, i) => (
               <motion.span
