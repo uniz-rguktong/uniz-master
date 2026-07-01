@@ -1,0 +1,29 @@
+uniZ is the official campus platform for RGUKT Ongole students and staff. Access academics, attendance, semester registration, outpass requests, campus notifications, and more — all in one place.
+
+FOR STUDENTS
+• View grades, CGPA, and semester results
+• Track attendance by subject and day
+• Register for semesters and manage academic records
+• Request outpass and track approval status
+• Receive push alerts for campus updates and deadlines
+• Browse institute news, notifications, and website content
+
+FOR STAFF & ADMIN
+• Secure staff portal for campus operations
+• Bulk academic uploads and student records
+• Campus communications and push alerts
+• Role-based access for deans, HODs, webmasters, and security
+
+BUILT FOR RGUKT ONGOLE
+uniZ is designed around how RGUKT Ongole runs day to day — from classroom attendance to hostel outpass workflows. Sign in with your college credentials and get a fast, mobile-friendly experience tuned for campus life.
+
+PRIVACY & SECURITY
+• HTTPS-only; college account sign-in
+• Privacy policy: https://uniz.rguktong.in/privacy
+• Academic data used only for app functionality — not sold to third parties
+
+REQUIREMENTS
+• Active RGUKT Ongole student or staff account
+• Internet connection for sync and notifications
+
+Support: webadmin@rguktong.ac.in
