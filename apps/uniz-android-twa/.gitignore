@@ -1,0 +1,9 @@
+# Signing keys and generated Android build output
+*.jks
+*.keystore
+android/
+.signing-key-info.json
+local.properties
+
+# Bubblewrap temp
+.appattest/
