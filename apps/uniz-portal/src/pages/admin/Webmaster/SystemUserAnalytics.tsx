@@ -4,7 +4,7 @@ import { ANALYTICS_SYSTEM_USERS, getAnalyticsHeaders } from "../../../api/endpoi
 import { KPICard } from "../AnalyticsUI";
 import { DonutChart } from "../../../components/ui/donut-chart";
 import { Card } from "../../../components/ui/card";
-import UploadHealthAnalytics from "./UploadHealthAnalytics";
+import IdentityInsightsPanel from "./IdentityInsightsPanel";
 import InstitutionAnalytics from "./InstitutionAnalytics";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDisplayText } from "@/utils/displayText";
@@ -62,7 +62,7 @@ export default function SystemUserAnalytics() {
 
   const roleData = useMemo(() => {
     const colors: Record<string, string> = {
-      STUDENT: "#3b82f6",
+      STUDENT: "#800000",
       DEAN: "hsl(142.1 76.2% 36.3%)",
       HOD: "hsl(47.9 95.8% 53.1%)",
       WEBMASTER: "hsl(262.1 83.3% 57.8%)",
@@ -202,7 +202,7 @@ export default function SystemUserAnalytics() {
           Operations
         </p>
         <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
-          Identity mix & data uploads
+          Identity mix & access health
         </h2>
       </div>
 
@@ -290,9 +290,8 @@ export default function SystemUserAnalytics() {
           </Card>
         </div>
 
-        {/* Reliability Graph */}
         <div className="lg:col-span-8 flex">
-          <UploadHealthAnalytics hideHeader={true} />
+          <IdentityInsightsPanel data={data} />
         </div>
       </div>
     </div>
