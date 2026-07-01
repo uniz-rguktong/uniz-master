@@ -5,7 +5,7 @@ export const SITE_NAME = "uniZ";
 
 /** 1200×630 JPG for link previews — no colons in URL (breaks some crawlers). */
 export const DEFAULT_OG_IMAGE =
-  "https://res.cloudinary.com/diipfzmyj/image/upload/w_1200,h_630,c_fill,f_jpg,q_auto/v1773551873/91566992797-modified-removebg-preview-modified_t0cqyr.png";
+  "https://res.cloudinary.com/diipfzmyj/image/upload/w_1200,h_630,c_fill,f_jpg,q_auto/v1772885809/signIn_ojzi3w.png";
 
 export const HOME_SEO = {
   title: "uniZ — Campus platform for RGUKT students",

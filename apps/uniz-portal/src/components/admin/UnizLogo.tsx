@@ -3,12 +3,11 @@ import { adminChipClass } from "@/components/admin/admin-ui";
 import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 
 const MAROON = "#800000";
-const MAROON_DARK = "#5c0000";
 
 type UnizLogoProps = {
-  /** Sidebar collapsed — show monogram only */
+  /** Sidebar collapsed — compact wordmark */
   collapsed?: boolean;
-  /** When collapsed, show "Z" monogram vs full mark */
+  /** When collapsed, show "Z." vs "uniZ." */
   abbreviate?: boolean;
   /** Larger wordmark for auth/marketing surfaces */
   size?: "md" | "lg";
@@ -18,35 +17,44 @@ type UnizLogoProps = {
   className?: string;
 };
 
-function Monogram({
-  letter = "u",
+function Wordmark({
   large = false,
+  compact = false,
+  short = false,
 }: {
-  letter?: string;
   large?: boolean;
+  compact?: boolean;
+  short?: boolean;
 }) {
   return (
-    <div
+    <p
       className={cn(
-        "relative flex shrink-0 items-center justify-center rounded-xl",
-        "shadow-[0_2px_8px_rgba(128,0,0,0.22)] ring-1 ring-[#800000]/15",
-        large ? "h-11 w-11" : "h-9 w-9",
+        "uniz-logo-wordmark shrink-0 leading-none",
+        compact
+          ? large
+            ? "text-[1.4rem]"
+            : "text-[1.2rem]"
+          : large
+            ? "text-[2.25rem]"
+            : "text-[1.55rem]",
       )}
-      style={{
-        background: `linear-gradient(145deg, ${MAROON} 0%, ${MAROON_DARK} 100%)`,
-      }}
-      aria-hidden
+      style={{ color: MAROON }}
     >
-      <span
-        className={cn(
-          "uniz-logo-wordmark leading-none text-white select-none",
-          large ? "text-[22px]" : "text-[18px]",
-        )}
-      >
-        {letter}
-      </span>
-      <span className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-b from-white/15 to-transparent" />
-    </div>
+      {short ? "Z." : "uniZ."}
+    </p>
+  );
+}
+
+function CampusLabel({ large = false }: { large?: boolean }) {
+  return (
+    <p
+      className={cn(
+        "font-semibold uppercase tracking-[0.12em] text-zinc-500",
+        large ? "mt-1 text-[9px]" : "mt-0.5 text-[8px]",
+      )}
+    >
+      {UNIZ_CAMPUS_LABEL}
+    </p>
   );
 }
 
@@ -69,15 +77,7 @@ export function UnizLogo({
         )}
       >
         <div className="flex min-w-0 flex-col gap-0.5">
-          <p
-            className={cn(
-              "uniz-logo-wordmark shrink-0 leading-none",
-              large ? "text-[2.25rem]" : "text-[1.85rem]",
-            )}
-            style={{ color: MAROON }}
-          >
-            uniZ.
-          </p>
+          <Wordmark large={large} />
           <span
             className={cn(
               "shrink-0 font-semibold uppercase text-zinc-500 tracking-[0.12em]",
@@ -101,44 +101,18 @@ export function UnizLogo({
     );
   }
 
-  if (collapsed && abbreviate) {
-    return (
-      <div className={cn("flex items-center justify-center", className)}>
-        <Monogram letter="Z" large={large} />
-      </div>
-    );
-  }
-
   if (collapsed) {
     return (
       <div className={cn("flex items-center justify-center", className)}>
-        <Monogram large={large} />
+        <Wordmark large={large} compact short={abbreviate} />
       </div>
     );
   }
 
   return (
-    <div className={cn("flex items-center gap-3", className)}>
-      <Monogram large={large} />
-      <div className="min-w-0 leading-none">
-        <p
-          className={cn(
-            "uniz-logo-wordmark leading-none",
-            large ? "text-[1.9rem]" : "text-[1.55rem]",
-          )}
-          style={{ color: MAROON }}
-        >
-          uniZ.
-        </p>
-        <p
-          className={cn(
-            "font-semibold uppercase tracking-[0.12em] text-zinc-500",
-            large ? "mt-1 text-[9px]" : "mt-0.5 text-[8px]",
-          )}
-        >
-          {UNIZ_CAMPUS_LABEL}
-        </p>
-      </div>
+    <div className={cn("min-w-0 leading-none", className)}>
+      <Wordmark large={large} />
+      <CampusLabel large={large} />
     </div>
   );
 }
