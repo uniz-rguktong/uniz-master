@@ -125,7 +125,7 @@ export default function InstitutionAnalytics() {
       {
         label: "On campus",
         value: onCampus,
-        color: "#3b82f6",
+        color: "#800000",
       },
       {
         label: "Off campus",
@@ -250,8 +250,12 @@ export default function InstitutionAnalytics() {
                     </div>
                     <div className="h-1.5 rounded-full bg-zinc-100 overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-zinc-900 transition-all duration-700"
-                        style={{ width: `${pct}%` }}
+                        className="h-full rounded-full transition-all duration-700"
+                        style={{
+                          width: `${pct}%`,
+                          background:
+                            "linear-gradient(90deg, #800000 0%, #a31f1f 100%)",
+                        }}
                       />
                     </div>
                   </motion.div>

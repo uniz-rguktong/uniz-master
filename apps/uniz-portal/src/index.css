@@ -100,6 +100,12 @@
     -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
   }
 
+  .uniz-logo-wordmark {
+    font-family: "Pattaya", cursive;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
   .uniz-primary-btn {
     @apply h-10 flex items-center justify-center font-medium text-sm rounded-full transition-all duration-200;
     @apply bg-zinc-900 text-white shadow-none ring-offset-2;
@@ -375,6 +381,8 @@
 }
 
 :root {
+  --uniz-maroon: #800000;
+  --uniz-maroon-light: #a31f1f;
   --navy-900: #18181b;
   --navy-800: #27272a;
   --navy-700: #3f3f46;

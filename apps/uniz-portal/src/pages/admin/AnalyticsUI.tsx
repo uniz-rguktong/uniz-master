@@ -50,7 +50,7 @@ export const KPICard = ({
       className="group rounded-2xl border border-zinc-200/70 bg-white p-5 flex flex-col gap-5 shadow-[0_1px_2px_rgba(10,10,10,0.03)] transition-all duration-200 hover:border-zinc-300"
     >
       <div className="flex items-start justify-between">
-        <div className="w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center ring-1 ring-inset ring-zinc-900/5 transition-colors group-hover:bg-zinc-900 group-hover:text-white">
+        <div className="w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center ring-1 ring-inset ring-zinc-900/5 transition-colors group-hover:bg-[#800000] group-hover:text-white">
           <Icon size={17} strokeWidth={2} className="text-zinc-500 transition-colors group-hover:text-white" />
         </div>
         <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5">
