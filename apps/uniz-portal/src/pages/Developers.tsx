@@ -13,7 +13,7 @@ export default function Developers() {
         canonical="https://uniz.rguktong.in/developers"
       />
 
-      <header className="max-w-7xl mx-auto px-6 py-6 flex items-center gap-4">
+      <header className="max-w-7xl mx-auto px-4 py-2 md:px-6 md:py-6 flex items-center gap-4">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
@@ -23,10 +23,22 @@ export default function Developers() {
         </Link>
       </header>
 
-      <MeetTheDevelopersSection subtitle="The minds behind UniZ." />
+      <MeetTheDevelopersSection
+        subtitle="The minds behind UniZ."
+        compact
+        fitScreen
+      />
+
+      {/* Mobile peek into the contribution section below */}
+      <div className="md:hidden border-t border-zinc-100 bg-zinc-50/80 px-4 py-3 text-center">
+        <p className="text-[1.05rem] font-semibold tracking-tight text-zinc-900 leading-tight">
+          Make your{" "}
+          <span className="text-zinc-400">first contribution.</span>
+        </p>
+      </div>
 
       <section className="border-t border-zinc-100 bg-zinc-50/40">
-        <div className="max-w-3xl mx-auto px-6 pt-16 pb-4 text-center">
+        <div className="max-w-3xl mx-auto px-6 pt-10 pb-2 md:pt-16 md:pb-4 text-center hidden md:block">
           <p className="text-[clamp(1.35rem,3vw,1.875rem)] font-semibold tracking-tight text-zinc-900 leading-snug">
             Wanna make it here?{" "}
             <span className="text-zinc-400">
@@ -34,7 +46,7 @@ export default function Developers() {
             </span>
           </p>
         </div>
-        <GlobeFeature />
+        <GlobeFeature hideTitleOnMobile />
       </section>
     </div>
   );
