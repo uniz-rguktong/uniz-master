@@ -5,6 +5,8 @@ const SITE_URL = "https://uniz.rguktong.in";
 
 const staticRoutes = [
   { path: "/", priority: 1.0, changefreq: "daily" },
+  { path: "/privacy", priority: 0.5, changefreq: "monthly" },
+  { path: "/developers", priority: 0.6, changefreq: "monthly" },
   { path: "/student-project-management", priority: 0.9, changefreq: "weekly" },
   { path: "/college-team-collaboration", priority: 0.9, changefreq: "weekly" },
   { path: "/academic-task-tracker", priority: 0.9, changefreq: "weekly" },
