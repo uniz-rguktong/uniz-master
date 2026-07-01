@@ -72,10 +72,10 @@ Run `sync-assetlinks.sh` again and redeploy the portal.
 
 - [ ] Create app → default language English (India)
 - [ ] App name: **uniZ**
-- [ ] Short description + full description
+- [ ] Short description + full description (`play-console-templates/`)
 - [ ] App icon 512×512 (`apps/uniz-portal/public/icons/icon-512.png`)
-- [ ] Feature graphic 1024×500
-- [ ] Phone screenshots (sign-in, student home, academics)
+- [ ] Feature graphic 1024×500 (`~/Documents/uniZ-PlayStore/feature-graphic/`)
+- [ ] Phone screenshots (`play-store-screenshots/` — 8 ready)
 - [ ] Privacy policy URL: `https://uniz.rguktong.in/privacy`
 - [ ] Content rating questionnaire (IARC)
 - [ ] Data safety form (account info, academic info, push tokens — no sale)
