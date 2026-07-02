@@ -5,7 +5,7 @@ metadata:
   labels:
     app: uniz-gateway-api
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: uniz-gateway-api
@@ -73,8 +73,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-gateway-api
-  minReplicas: 3
-  maxReplicas: 5
+  minReplicas: 1
+  maxReplicas: 2
   metrics:
     - type: Resource
       resource:
