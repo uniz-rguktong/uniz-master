@@ -35,6 +35,7 @@ const PRESERVE_ACRONYMS = new Set([
   "CIVIL",
   "CHEM",
   "MECH",
+  "AI/ML",
 ]);
 
 function titleCaseWord(word: string): string {

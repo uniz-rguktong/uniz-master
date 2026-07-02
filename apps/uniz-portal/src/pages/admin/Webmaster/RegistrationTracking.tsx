@@ -26,8 +26,9 @@ import {
   adminPageWrapClass,
   adminSelectClass,
 } from "../../../components/admin/admin-ui";
+import { ENGINEERING_BRANCH_OPTIONS } from "@/constants/branches";
 
-const BRANCH_OPTIONS = ["ALL", "CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"];
+const BRANCH_OPTIONS = [...ENGINEERING_BRANCH_OPTIONS];
 const YEAR_OPTIONS = ["ALL", "E1", "E2", "E3", "E4"];
 const STATUS_OPTIONS = [
   { v: "all", l: "All students" },
