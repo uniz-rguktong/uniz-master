@@ -269,15 +269,15 @@ export const CircularTestimonials = ({
         }
         .image-container {
           position: relative;
-          width: 12rem;
-          height: 12rem;
+          width: 13rem;
+          height: 13rem;
           margin: 0 auto;
           perspective: 1000px;
           transition: width 0.8s cubic-bezier(.4,2,.3,1), height 0.8s cubic-bezier(.4,2,.3,1);
         }
         .image-container--featured {
-          width: 14.5rem;
-          height: 14.5rem;
+          width: 16rem;
+          height: 16rem;
         }
         .testimonial-image {
           position: absolute;
@@ -327,13 +327,13 @@ export const CircularTestimonials = ({
             align-items: center;
           }
           .image-container {
-            width: 14rem;
-            height: 14rem;
+            width: 15.5rem;
+            height: 15.5rem;
             margin: 0;
           }
           .image-container--featured {
-            width: 17.5rem;
-            height: 17.5rem;
+            width: 19rem;
+            height: 19rem;
           }
           .arrow-buttons {
             padding-top: 0;
@@ -347,12 +347,12 @@ export const CircularTestimonials = ({
           gap: 0.75rem;
         }
         .testimonial-container--dense .image-container {
-          width: 5.25rem;
-          height: 5.25rem;
+          width: 7.5rem;
+          height: 7.5rem;
         }
         .testimonial-container--dense .image-container--featured {
-          width: 6rem;
-          height: 6rem;
+          width: 8.5rem;
+          height: 8.5rem;
         }
         .testimonial-container--dense .designation {
           margin-bottom: 0.5rem;
@@ -404,13 +404,13 @@ export const CircularTestimonials = ({
             gap: 5rem;
           }
           .testimonial-container--dense .image-container {
-            width: 14rem;
-            height: 14rem;
+            width: 15.5rem;
+            height: 15.5rem;
             margin: 0;
           }
           .testimonial-container--dense .image-container--featured {
-            width: 17.5rem;
-            height: 17.5rem;
+            width: 19rem;
+            height: 19rem;
           }
           .testimonial-container--dense .quote {
             display: block;
