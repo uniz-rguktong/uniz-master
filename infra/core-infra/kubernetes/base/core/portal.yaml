@@ -5,7 +5,7 @@ metadata:
   labels:
     app: uniz-portal
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: uniz-portal
@@ -54,8 +54,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-portal
-  minReplicas: 2
-  maxReplicas: 4
+  minReplicas: 1
+  maxReplicas: 2
   metrics:
     - type: Resource
       resource:
