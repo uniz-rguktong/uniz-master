@@ -169,7 +169,31 @@
           transform: translateX(320%);
         }
       }
+
+      /* Splash is for mobile PWA/TWA only — never on large desktop viewports */
+      @media (min-width: 1024px) {
+        #pwa-splash {
+          display: none !important;
+        }
+      }
+
+      html.pwa-splash-off #pwa-splash {
+        display: none !important;
+      }
     </style>
+
+    <script>
+      (function () {
+        var isLargeViewport = window.matchMedia("(min-width: 1024px)").matches;
+        var isStandalone =
+          window.matchMedia("(display-mode: standalone)").matches ||
+          window.matchMedia("(display-mode: fullscreen)").matches ||
+          window.navigator.standalone === true;
+        if (isLargeViewport && !isStandalone) {
+          document.documentElement.classList.add("pwa-splash-off");
+        }
+      })();
+    </script>
 
     <script>
       window.deferredPWAInstallPrompt = null;
