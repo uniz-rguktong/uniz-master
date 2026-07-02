@@ -15,3 +15,11 @@ export {
   getInternalSecret,
   isValidInternalSecret,
 } from "./internal-secret";
+export {
+  ENGINEERING_BRANCHES,
+  BRANCH_NAME_MAP,
+  normalizeBranchCode,
+  resolveStudentBranch,
+  DEFAULT_STUDENT_BRANCH,
+  type EngineeringBranch,
+} from "./branches";

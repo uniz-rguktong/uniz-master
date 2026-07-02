@@ -7,6 +7,7 @@ import axios from "axios";
 import { redis } from "../utils/redis.util";
 import { randomUUID } from "crypto";
 import { resolveHodBranch } from "../utils/hod.util";
+import { resolveStudentBranch } from "@uniz/shared";
 import {
   bootstrapCacheKey,
   invalidateStudentProfileCaches,
@@ -123,7 +124,7 @@ const mapStudentProfile = (profile: any) => ({
   gender: profile.gender,
   year: profile.year,
   semester: profile.semester,
-  branch: profile.branch,
+  branch: resolveStudentBranch(profile.branch),
   section: profile.section,
   roomno: profile.roomno,
   has_pending_requests: profile.isApplicationPending,
@@ -551,7 +552,10 @@ const pickStudentProfileUpdates = (body: Record<string, unknown>) => {
   const updates: Record<string, unknown> = {};
   for (const key of STUDENT_PROFILE_UPDATE_FIELDS) {
     if (body[key] !== undefined) {
-      updates[key] = body[key];
+      updates[key] =
+        key === "branch"
+          ? resolveStudentBranch(String(body[key] ?? ""))
+          : body[key];
     }
   }
   return updates;
@@ -660,15 +664,21 @@ export const createIndividualStudent = async (
     }
 
     // 2. Create or Update Student Profile
+    const profilePayload = {
+      ...studentData,
+      username,
+      branch: resolveStudentBranch(studentData.branch),
+    };
+
     const updated = await prisma.studentProfile.upsert({
       where: { username },
       update: {
-        ...studentData,
+        ...profilePayload,
         updatedAt: new Date(),
       },
       create: {
         id: randomUUID(),
-        ...studentData,
+        ...profilePayload,
       },
     });
 
