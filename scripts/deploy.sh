@@ -347,6 +347,10 @@ deploy_logic() {
       if [ "$USE_GHCR" == "true" ]; then
         if [ -z "${BUILT_IMAGES[$IMG]}" ]; then
           TAG="${DEPLOY_SHA:0:7}"
+          if ! ghcr_image_exists "$IMG" "$TAG"; then
+            echo "[Skip] GHCR image $IMG:$TAG not in registry — leaving $DEP on current image (build may have been skipped in CI)."
+            continue
+          fi
           BUILT_IMAGES[$IMG]=$TAG
           ((REBUILT_COUNT++)) || true
           ROLLBACK_TARGETS+=("$s")
