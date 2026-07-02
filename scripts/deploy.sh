@@ -531,6 +531,10 @@ deploy_logic() {
       if ! service_dir_changed_between "$DIR" "$PREV_SHA" "$NEW_HEAD"; then
         continue
       fi
+      if ! ghcr_image_exists "$IMG" "$want"; then
+        echo "[Verify] $DIR changed since ${PREV_SHA:0:7} but $IMG:$want not in GHCR — keeping :$(kubectl get deployment "$DEP" -o jsonpath="{.spec.template.spec.containers[?(@.name=='$CON')].image}" 2>/dev/null | sed 's/.*://' || echo unknown)"
+        continue
+      fi
       current=$(kubectl get deployment "$DEP" \
         -o jsonpath="{.spec.template.spec.containers[?(@.name=='$CON')].image}" 2>/dev/null \
         | sed 's/.*://' || true)
