@@ -18,6 +18,16 @@ apps/*/src/generated/
 *.xlsx
 tests/final_data/
 
+# Test fixtures & scripts with student PII / credentials (local only)
+tests/data/
+tests/students.json
+tests/second test logging in.txt
+tests/scripts/bulk_generate_test_data.js
+tests/scripts/export_e3_students.js
+tests/scripts/fill_both.js
+tests/scripts/fill_e3.js
+tests/scripts/fill_e3_sem2_grades_template.js
+
 # Vercel
 .vercel
 
