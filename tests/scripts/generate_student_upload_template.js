@@ -47,8 +47,7 @@ const TEMPLATE_HEADERS = [
 
 function parseArgs(argv) {
   const args = {
-    admission:
-      "/Users/sreecharandesu/Projects/Campus/Final ONGOLE-UG-ADMISSIONS2023-24_TOTALDATA_OFFICES_22092023-new final.xlsx",
+    admission: process.env.ADMISSION_XLSX || "",
     allocation: "",
     batch: "O23",
     year: "E1",
@@ -274,6 +273,13 @@ async function writeTemplate(rows, outputPath) {
 async function main() {
   const args = parseArgs(process.argv);
   const batchPrefix = args.batch.replace(/[^A-Z0-9]/gi, "").toUpperCase();
+
+  if (!args.admission) {
+    console.error(
+      "Missing admission file. Pass --admission /path/to/admissions.xlsx or set ADMISSION_XLSX.",
+    );
+    process.exit(1);
+  }
 
   if (!fs.existsSync(args.admission)) {
     console.error(`Admission file not found: ${args.admission}`);
