@@ -321,51 +321,67 @@ export default function StudentDetails() {
 
   const effectiveBranch = isHodReadOnly ? hodBranch : branch;
 
-  const enrichAttendance = useCallback(async (students: StudentRow[]) => {
-    if (!students.length) return;
-    const gen = ++enrichGenRef.current;
-    setEnriching(true);
-    const token = localStorage.getItem("admin_token");
-    const auth = `Bearer ${(token || "").replace(/"/g, "")}`;
-    const enriched = [...students];
+  const enrichAttendance = useCallback(
+    async (students: StudentRow[], fetchGen: number) => {
+      if (!students.length) return;
+      const enrichGen = ++enrichGenRef.current;
+      setEnriching(true);
+      const token = localStorage.getItem("admin_token");
+      const auth = `Bearer ${(token || "").replace(/"/g, "")}`;
+      const enriched = [...students];
 
-    for (let i = 0; i < students.length; i += ENRICH_CONCURRENCY) {
-      if (gen !== enrichGenRef.current) return;
-      const chunk = students.slice(i, i + ENRICH_CONCURRENCY);
-      const chunkResults = await Promise.all(
-        chunk.map(async (s) => {
-          try {
-            const res = await fetch(ADMIN_VIEW_STUDENT(s.username), {
-              headers: { Authorization: auth },
-            });
-            const data = await res.json();
-            if (data.success && data.student) {
-              return {
-                ...s,
-                attendance_pct: avgAttendance(data.student.attendance_summary),
-                cgpa: data.student.cgpa ?? s.cgpa,
-                total_backlogs: data.student.total_backlogs ?? s.total_backlogs,
-              };
+      for (let i = 0; i < students.length; i += ENRICH_CONCURRENCY) {
+        if (
+          enrichGen !== enrichGenRef.current ||
+          fetchGen !== fetchGenRef.current
+        ) {
+          return;
+        }
+        const chunk = students.slice(i, i + ENRICH_CONCURRENCY);
+        const chunkResults = await Promise.all(
+          chunk.map(async (s) => {
+            try {
+              const res = await fetch(ADMIN_VIEW_STUDENT(s.username), {
+                headers: { Authorization: auth },
+              });
+              const data = await res.json();
+              if (data.success && data.student) {
+                return {
+                  ...s,
+                  attendance_pct: avgAttendance(data.student.attendance_summary),
+                  cgpa: data.student.cgpa ?? s.cgpa,
+                  total_backlogs:
+                    data.student.total_backlogs ?? s.total_backlogs,
+                };
+              }
+            } catch {
+              /* keep row */
             }
-          } catch {
-            /* keep row */
-          }
-          return { ...s, attendance_pct: null };
-        }),
-      );
-      chunkResults.forEach((row, idx) => {
-        enriched[i + idx] = row;
-      });
-    }
+            return { ...s, attendance_pct: null };
+          }),
+        );
+        chunkResults.forEach((row, idx) => {
+          enriched[i + idx] = row;
+        });
+      }
 
-    if (gen !== enrichGenRef.current) return;
-    setRows(enriched);
-    setEnriching(false);
-  }, []);
+      if (
+        enrichGen !== enrichGenRef.current ||
+        fetchGen !== fetchGenRef.current
+      ) {
+        return;
+      }
+      setRows(enriched);
+      setEnriching(false);
+    },
+    [],
+  );
 
   const fetchStudents = useCallback(
     async (page = 1, overrides?: { query?: string }) => {
       const gen = ++fetchGenRef.current;
+      enrichGenRef.current += 1;
+      setEnriching(false);
       const q = (overrides?.query ?? query).trim();
       setLoading(true);
       try {
@@ -390,8 +406,11 @@ export default function StudentDetails() {
           const list: StudentRow[] = data.students || [];
           setRows(list);
           if (data.pagination) setPagination(data.pagination);
-          if (list.length === 0 && page === 1) toast.info("No students match these filters");
-          else if (list.length > 0) enrichAttendance(list);
+          if (list.length === 0 && page === 1) {
+            toast.info("No students match these filters");
+          } else if (list.length > 0) {
+            enrichAttendance(list, gen);
+          }
         } else {
           toast.error(data.msg || data.message || "Search failed");
           setRows([]);
@@ -402,7 +421,16 @@ export default function StudentDetails() {
         if (gen === fetchGenRef.current) setLoading(false);
       }
     },
-    [query, effectiveBranch, year, batch, intelligenceFilters, sortBy, sortDir, enrichAttendance],
+    [
+      query,
+      effectiveBranch,
+      year,
+      batch,
+      intelligenceFilters,
+      sortBy,
+      sortDir,
+      enrichAttendance,
+    ],
   );
 
   useEffect(() => {
