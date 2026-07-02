@@ -16,6 +16,7 @@ import {
   ANALYTICS_BRANCH_DISTRIBUTION,
   ANALYTICS_GRIEVANCE_SUMMARY,
   ANALYTICS_INSTITUTION_SNAPSHOT,
+  ADMIN_CAMPUS_PRESENCE_STATS,
   getAnalyticsHeaders,
 } from "../../../api/endpoints";
 import { webmasterInstitutionAnalyticsAtom } from "../../../store/atoms";
@@ -61,21 +62,62 @@ function AnalyticsCard({
 export default function InstitutionAnalytics() {
   const [cached, setCached] = useRecoilState(webmasterInstitutionAnalyticsAtom);
   const [loading, setLoading] = useState(!cached.fetched);
+  const [campusStats, setCampusStats] = useState<{
+    total_students: number;
+    on_campus: number;
+    off_campus: number;
+  } | null>(null);
+  const [campusStatsKey, setCampusStatsKey] = useState(0);
+
+  const refreshCampusStats = useCallback(async () => {
+    if (!isProdHost()) return;
+    try {
+      const res = await fetch(ADMIN_CAMPUS_PRESENCE_STATS, {
+        headers: {
+          ...getAnalyticsHeaders(),
+          "Cache-Control": "no-cache",
+        },
+        cache: "no-store",
+      });
+      const json = await res.json();
+      if (json?.success && json?.data) {
+        setCampusStats({
+          total_students: Number(json.data.total_students) || 0,
+          on_campus: Number(json.data.on_campus) || 0,
+          off_campus: Number(json.data.off_campus) || 0,
+        });
+      }
+    } catch (err) {
+      console.error("Campus presence stats failed:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshCampusStats();
+  }, [refreshCampusStats, campusStatsKey, cached.fetched]);
 
   useEffect(() => {
     if (!isProdHost()) {
       setLoading(false);
       return;
     }
+    if (cached.fetched) {
+      setLoading(false);
+      return;
+    }
 
     const fetchAll = async () => {
       try {
-        if (!cached.fetched) setLoading(true);
-        const headers = getAnalyticsHeaders();
+        setLoading(true);
+        const headers = {
+          ...getAnalyticsHeaders(),
+          "Cache-Control": "no-cache",
+        };
+        const fetchOpts = { headers, cache: "no-store" as RequestCache };
         const [snapRes, branchRes, grievanceRes] = await Promise.all([
-          fetch(ANALYTICS_INSTITUTION_SNAPSHOT, { headers }),
-          fetch(ANALYTICS_BRANCH_DISTRIBUTION, { headers }),
-          fetch(ANALYTICS_GRIEVANCE_SUMMARY, { headers }),
+          fetch(ANALYTICS_INSTITUTION_SNAPSHOT, fetchOpts),
+          fetch(ANALYTICS_BRANCH_DISTRIBUTION, fetchOpts),
+          fetch(ANALYTICS_GRIEVANCE_SUMMARY, fetchOpts),
         ]);
 
         const parse = async (res: Response) => {
@@ -104,14 +146,17 @@ export default function InstitutionAnalytics() {
     };
 
     fetchAll();
-  }, []);
+  }, [cached.fetched, setCached]);
 
   const snapshot = cached.snapshot;
   const branches = cached.branches;
   const grievances = cached.grievances;
 
-  const totalStudents = Number(snapshot?.total_students) || 0;
-  const onCampus = Number(snapshot?.on_campus) || 0;
+  const totalStudents =
+    campusStats?.total_students || Number(snapshot?.total_students) || 0;
+  const onCampus =
+    campusStats?.on_campus ??
+    (Number(snapshot?.on_campus) || 0);
   const campusPct =
     totalStudents > 0 ? Math.round((onCampus / totalStudents) * 100) : 0;
 

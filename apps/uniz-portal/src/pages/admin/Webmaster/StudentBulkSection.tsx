@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
+import { useSetRecoilState } from "recoil";
+import { webmasterInstitutionAnalyticsAtom } from "../../../store/atoms";
 import {
   Upload,
   Loader2,
   CheckCircle2,
   Download,
   ChevronDown,
+  Users,
+  Zap,
 } from "lucide-react";
 import {
   ADMIN_STUDENT_UPLOAD,
@@ -17,7 +21,7 @@ import {
 import { toast } from "@/utils/toast-ref";
 import { FileUploader } from "../../../components/ui/FileUploader";
 import { downloadFile } from "../../../api/apiClient";
-import { Users } from "lucide-react";
+import StudentBulkActionsPanel from "./StudentBulkActionsPanel";
 import { SectionHeader } from "../../../components/admin/SectionHeader";
 import {
   adminPageWrapClass,
@@ -34,10 +38,15 @@ import { cn } from "../../../utils/cn";
 import { ENGINEERING_BRANCHES } from "@/constants/branches";
 
 export default function StudentBulkSection() {
+  const resetInstitutionAnalytics = useSetRecoilState(
+    webmasterInstitutionAnalyticsAtom,
+  );
   const [file, setFile] = useState<File | null>(null);
   const [uploadId, setUploadId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<"upload" | "export">("upload");
+  const [activeTab, setActiveTab] = useState<"upload" | "export" | "actions">(
+    "upload",
+  );
   const [uploadSuccess, setUploadSuccess] = useState<boolean | null>(null);
   const [progress, setProgress] = useState<number>(0);
 
@@ -55,6 +64,21 @@ export default function StudentBulkSection() {
     "branch",
     "section",
   ]);
+
+  const refreshAnalytics = () =>
+    resetInstitutionAnalytics({
+      fetched: false,
+      snapshot: null,
+      branches: [],
+      grievances: [],
+    });
+
+  useEffect(() => {
+    if (sessionStorage.getItem("uniz_bulk_tab") === "actions") {
+      setActiveTab("actions");
+      sessionStorage.removeItem("uniz_bulk_tab");
+    }
+  }, []);
 
   const FIELD_GROUPS = {
     Core: [
@@ -217,7 +241,7 @@ export default function StudentBulkSection() {
         icon={<Users size={18} />}
         eyebrow="Students"
         title="Student Bulk Operations"
-        subtitle="Bulk onboard identities or extract global batch records."
+        subtitle="Upload, export, and apply cohort-wide status changes."
         actions={
           <div className={adminSegmentWrapClass}>
             <button
@@ -242,11 +266,24 @@ export default function StudentBulkSection() {
             >
               <Download size={13} /> Batch Export
             </button>
+            <button
+              onClick={() => setActiveTab("actions")}
+              className={cn(
+                "flex items-center gap-2",
+                activeTab === "actions"
+                  ? adminSegmentActiveClass
+                  : adminSegmentInactiveClass,
+              )}
+            >
+              <Zap size={13} /> Cohort Actions
+            </button>
           </div>
         }
       />
 
-      {activeTab === "upload" ? (
+      {activeTab === "actions" ? (
+        <StudentBulkActionsPanel onActionSuccess={refreshAnalytics} />
+      ) : activeTab === "upload" ? (
         <div className="w-full space-y-6">
           <div className="flex justify-end gap-2">
             <button

@@ -27,6 +27,9 @@ import {
   internalSyncStudentStats,
   createIndividualStudent,
   promoteCohort,
+  resetCampusPresence,
+  getCampusPresenceStats,
+  bulkStudentCohortAction,
   resolveLoginByEmail,
 } from "../controllers/profile.controller";
 
@@ -279,6 +282,21 @@ router.post(
 );
 
 router.post("/admin/student/promote", authMiddleware, promoteCohort);
+router.post(
+  "/admin/student/reset-campus-presence",
+  authMiddleware,
+  resetCampusPresence,
+);
+router.get(
+  "/admin/analytics/campus-presence",
+  authMiddleware,
+  getCampusPresenceStats,
+);
+router.post(
+  "/admin/student/cohort-action",
+  authMiddleware,
+  bulkStudentCohortAction,
+);
 
 router.get("/faculty/me", authMiddleware, getFacultyProfile);
 router.post(

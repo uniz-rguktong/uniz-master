@@ -119,8 +119,10 @@ async def get_faculty_course_stats(faculty_id: str):
     return await fetch_records(query, {"faculty_id": faculty_id})
 
 @router.get("/dean/campus-occupancy")
-@cache(expire=300)
-async def get_campus_occupancy():
+async def get_campus_occupancy(response: Response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
     query = """
         SELECT 
             COUNT(CASE WHEN "isPresentInCampus" = true THEN 1 END) as "Inside Campus",
@@ -157,8 +159,10 @@ async def get_grievance_trends():
     return await fetch_records(query)
 
 @router.get("/webmaster/institution-snapshot")
-@cache(expire=300)
-async def get_institution_snapshot():
+async def get_institution_snapshot(response: Response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
     query = """
         SELECT 
             COUNT(*) FILTER (WHERE "isSuspended" = false) as total_students,
