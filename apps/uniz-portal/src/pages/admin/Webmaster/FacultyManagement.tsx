@@ -74,6 +74,7 @@ const DEPARTMENTS = [
   "CIVIL",
   "CHEM",
   "MME",
+  "AI/ML",
   "CHEMISTRY",
   "PHYSICS",
   "ENGLISH",

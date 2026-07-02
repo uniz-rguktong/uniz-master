@@ -53,6 +53,7 @@ import {
   ADMIN_UPDATE_STUDENT,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { ENGINEERING_BRANCH_OPTIONS } from "@/constants/branches";
 import { parseJwt } from "../../../utils/security";
 import { resolveAdminPortalRole, resolveHodBranch } from "../../../utils/adminRole";
 import { formatDisplayText } from "../../../utils/displayText";
@@ -153,7 +154,7 @@ const COLUMN_API_FIELD: Record<string, string> = {
   total_backlogs: "totalBacklogs",
 };
 
-const BRANCH_OPTIONS = ["ALL", "CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME", "AI&ML"];
+const BRANCH_OPTIONS = [...ENGINEERING_BRANCH_OPTIONS];
 const YEAR_OPTIONS = ["ALL", "E1", "E2", "E3", "E4", "PASSED_OUT"];
 const GENDER_OPTIONS = ["ALL", "M", "F", "Other"];
 const CATEGORY_OPTIONS = ["ALL", "GENERAL", "OBC", "SC", "ST", "EWS"];

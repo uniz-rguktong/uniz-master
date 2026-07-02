@@ -31,6 +31,7 @@ import {
   adminSegmentInactiveClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
+import { ENGINEERING_BRANCHES } from "@/constants/branches";
 
 export default function StudentBulkSection() {
   const [file, setFile] = useState<File | null>(null);
@@ -123,6 +124,14 @@ export default function StudentBulkSection() {
     } catch (error) {
       toast.error("Failed to download template");
     }
+  };
+
+  const handleDownloadO23Template = () => {
+    const a = document.createElement("a");
+    a.href = "/assets/samples/Student_Upload_Template_O23.xlsx";
+    a.download = "Student_Upload_Template_O23.xlsx";
+    a.click();
+    toast.success("O23 prefilled template downloaded");
   };
 
   // Progress Polling
@@ -239,15 +248,25 @@ export default function StudentBulkSection() {
 
       {activeTab === "upload" ? (
         <div className="w-full space-y-6">
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={handleDownloadO23Template}
+              className={adminGhostButtonClass}
+            >
+              <Download size={14} />
+              O23 Prefilled Template
+            </button>
             <button
               onClick={handleDownloadTemplate}
               className={adminGhostButtonClass}
             >
               <Download size={14} />
-              Download Template
+              Blank Template
             </button>
           </div>
+          <p className="text-[12px] text-zinc-500">
+            Branch can be left as N/A for O23 until allocation data is available.
+          </p>
 
           <div className="w-full space-y-6">
             <div className={cn(adminCardClass, "overflow-hidden border-dashed border-zinc-300 bg-zinc-50/40 p-6")}>
@@ -302,7 +321,7 @@ export default function StudentBulkSection() {
                   className={adminSelectClass}
                 >
                   <option value="ALL">All Departments</option>
-                  {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
+                  {ENGINEERING_BRANCHES.map(
                     (b) => (
                       <option key={b}>{b}</option>
                     ),

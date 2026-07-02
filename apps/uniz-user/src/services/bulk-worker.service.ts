@@ -1,27 +1,14 @@
 import { prisma } from "../utils/prisma";
 import { redis } from "../utils/redis.util";
 import { invalidateStudentProfileCaches } from "../utils/student-cache.util";
+import { resolveStudentBranch } from "@uniz/shared";
 import axios from "axios";
 
 const AUTH_SERVICE_URL =
   process.env.AUTH_SERVICE_URL || "http://localhost:3001";
 const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
 
-const BRANCH_MAP: Record<string, string> = {
-  "COMPUTER SCIENCE AND ENGINEERING": "CSE",
-  "ELECTRONICS AND COMMUNICATION ENGINEERING": "ECE",
-  "ELECTRICAL AND ELECTRONICS ENGINEERING": "EEE",
-  "MECHANICAL ENGINEERING": "MECH",
-  "CIVIL ENGINEERING": "CIVIL",
-  "CHEMICAL ENGINEERING": "CHEM",
-  "METALLURGICAL AND MATERIALS ENGINEERING": "MME",
-  "METALLURGY AND MATERIALS ENGINEERING": "MME",
-};
-
-const mapBranch = (name: string) => {
-  const upper = (name || "").trim().toUpperCase();
-  return BRANCH_MAP[upper] || upper;
-};
+const mapBranch = (name: string) => resolveStudentBranch(name);
 
 export async function processNextStudentBatch() {
   const jobString = await redis.lpop("student:job:queue");
@@ -120,7 +107,12 @@ export async function processNextStudentBatch() {
             ? Math.floor(Math.random() * 4 + 1).toString()
             : section;
 
-        const finalBatch = (batchCol || "").toUpperCase();
+        const inferredBatch =
+          id.length >= 3 && /^[A-Z]\d{2}$/.test(id.substring(0, 3))
+            ? id.substring(0, 3)
+            : "";
+        const finalBatch = (batchCol || inferredBatch || majorityBatch || "")
+          .toUpperCase();
 
         const roomno = getVal(["room no", "roomno", "room_no", "hostel_room"]);
         const isInCampusRaw = getVal([
@@ -141,9 +133,11 @@ export async function processNextStudentBatch() {
               name,
               email: finalEmail,
               gender,
+              phone: phone || undefined,
               branch,
               year: finalYear,
               section: finalSection,
+              batch: finalBatch || undefined,
               category,
               campus,
               roomno: roomno || undefined,

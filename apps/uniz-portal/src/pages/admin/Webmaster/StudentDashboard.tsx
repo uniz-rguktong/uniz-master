@@ -28,6 +28,7 @@ import { BadgeCheck, Loader2 } from "lucide-react";
 import { BackgroundIconCloud } from "../../../components/illustrations/FloatingIllustrations";
 
 import { cn } from "../../../utils/cn";
+import { DEFAULT_STUDENT_BRANCH } from "@/constants/branches";
 import {
   adminCardClass,
   adminChipClass,
@@ -144,7 +145,7 @@ export default function StudentDashboard({
         <div className="flex flex-wrap items-center justify-center gap-2 mb-8 z-10">
           <span className={adminChipClass}>{student.username}</span>
           <span className={adminChipClass}>{student.batch || "O21"}</span>
-          <span className={adminChipClass}>{student.branch}</span>
+          <span className={adminChipClass}>{student.branch || DEFAULT_STUDENT_BRANCH}</span>
           <span className={adminChipClass}>{student.year}</span>
         </div>
 
@@ -211,7 +212,7 @@ export default function StudentDashboard({
               className="col-span-2 md:col-span-3 lg:col-span-2"
               valueClassName="break-all text-[12px] font-medium"
             />
-            <HeroInfo label="Branch" value={student.branch} icon={<Target size={14} />} />
+            <HeroInfo label="Branch" value={student.branch || DEFAULT_STUDENT_BRANCH} icon={<Target size={14} />} />
             <HeroInfo label="Batch" value={student.batch || "O21"} icon={<Zap size={14} />} />
             <HeroInfo
               label="Enrollment"
