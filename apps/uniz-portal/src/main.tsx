@@ -56,9 +56,24 @@ if ("serviceWorker" in navigator) {
 
 import { PWAListener } from "./components/PWAListener.tsx";
 
+function shouldShowPWASplash(): boolean {
+  if (window.matchMedia("(min-width: 1024px)").matches) {
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.matchMedia("(display-mode: fullscreen)").matches ||
+      (navigator as Navigator & { standalone?: boolean }).standalone === true;
+    if (!standalone) return false;
+  }
+  return !document.documentElement.classList.contains("pwa-splash-off");
+}
+
 function dismissPWASplash() {
   const splash = document.getElementById("pwa-splash");
   if (!splash) return;
+  if (!shouldShowPWASplash()) {
+    splash.remove();
+    return;
+  }
   splash.classList.add("pwa-splash--hide");
   window.setTimeout(() => splash.remove(), 450);
 }
