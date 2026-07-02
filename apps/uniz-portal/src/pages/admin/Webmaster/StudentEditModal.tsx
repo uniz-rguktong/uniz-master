@@ -28,6 +28,7 @@ import {
   adminSectionTitleClass,
 } from "../../../components/admin/admin-ui";
 import { X } from "lucide-react";
+import { ENGINEERING_BRANCHES } from "@/constants/branches";
 
 interface StudentEditModalProps {
   isOpen: boolean;
@@ -38,7 +39,7 @@ interface StudentEditModalProps {
   elevated?: boolean;
 }
 
-const BRANCHES = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME", "AI&ML"];
+const BRANCHES = [...ENGINEERING_BRANCHES];
 const YEARS = ["E1", "E2", "E3", "E4"];
 const SECTIONS = ["primary", "academic", "family"] as const;
 

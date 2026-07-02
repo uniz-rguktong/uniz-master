@@ -12,23 +12,6 @@ import { resolveHodBranch } from "../utils/hod.util";
 const AUTH_SERVICE_URL =
   process.env.AUTH_SERVICE_URL || "http://localhost:3001";
 
-const BRANCH_MAP: Record<string, string> = {
-  "COMPUTER SCIENCE AND ENGINEERING": "CSE",
-  "ELECTRONICS AND COMMUNICATION ENGINEERING": "ECE",
-  "ELECTRICAL AND ELECTRONICS ENGINEERING": "EEE",
-  "MECHANICAL ENGINEERING": "MECH",
-  "CIVIL ENGINEERING": "CIVIL",
-  "CHEMICAL ENGINEERING": "CHEM",
-  "METALLURGICAL AND MATERIALS ENGINEERING": "MME",
-  "METALLURGY AND MATERIALS ENGINEERING": "MME",
-  "ARTIFICAL INTELLIGENCE & ML": "AI&ML",
-};
-
-const mapBranch = (name: string) => {
-  const upper = name.trim().toUpperCase();
-  return BRANCH_MAP[upper] || upper;
-};
-
 // Helper for Excel generation
 const generateExcel = async (
   headers: string[][],
@@ -89,14 +72,14 @@ export const getStudentsTemplate = async (
       "Phone",
     ],
     [
-      "O210000",
+      "O230006",
       "ExampleStudent",
-      "o210000@rguktong.ac.in",
+      "o230006@rguktong.ac.in",
       "Male",
-      "CSE",
+      "N/A",
       "E1",
       "A",
-      "O21",
+      "O23",
       "C-101",
       "YES",
       "9876543210",

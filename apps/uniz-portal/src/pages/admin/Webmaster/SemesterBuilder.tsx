@@ -47,11 +47,11 @@ import {
   adminInputClass,
   adminPrimaryButtonClass,
 } from "../../../components/admin/admin-ui";
-import { cn } from "../../../utils/cn";
+import { ENGINEERING_BRANCHES } from "@/constants/branches";
 import RegistrationTracking from "./RegistrationTracking";
 import DirectPublishModal from "./DirectPublishModal";
 
-const BRANCHES = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"];
+const BRANCHES = [...ENGINEERING_BRANCHES];
 const YEARS = ["E1", "E2", "E3", "E4"];
 const SUBJECT_TYPES = [
   { id: "CORE", label: "Core", hint: "Auto-assigned, mandatory" },
