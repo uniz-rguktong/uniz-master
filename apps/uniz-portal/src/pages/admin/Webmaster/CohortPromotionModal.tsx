@@ -15,6 +15,7 @@ import {
   adminWarningTextClass,
   adminDangerInputClass,
 } from "../../../components/admin/admin-ui";
+import { ENGINEERING_BRANCH_OPTIONS } from "@/constants/branches";
 
 interface CohortPromotionModalProps {
   isOpen: boolean;
@@ -34,17 +35,7 @@ export default function CohortPromotionModal({
   const [confirmText, setConfirmText] = useState("");
 
   const years = ["E1", "E2", "E3", "E4", "PASSED_OUT"];
-  const branches = [
-    "ALL",
-    "CSE",
-    "ECE",
-    "EEE",
-    "MECH",
-    "CIVIL",
-    "CHEM",
-    "MME",
-    "AI&ML",
-  ];
+  const branches = [...ENGINEERING_BRANCH_OPTIONS];
 
   const handlePromote = async (e: React.FormEvent) => {
     e.preventDefault();
