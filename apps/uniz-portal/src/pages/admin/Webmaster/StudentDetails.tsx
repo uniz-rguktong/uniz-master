@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAdminSectionPath } from "@/utils/adminSectionRoutes";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -24,7 +26,6 @@ import {
 import StudentPerformanceModal from "./StudentPerformanceModal";
 import StudentDashboard from "./StudentDashboard";
 import StudentEditModal from "./StudentEditModal";
-import CohortPromotionModal from "./CohortPromotionModal";
 import { Pagination } from "../../../components/Pagination";
 import { cn } from "../../../utils/cn";
 import { SectionHeader } from "../../../components/admin/SectionHeader";
@@ -229,6 +230,7 @@ function cellValue(row: StudentRow, key: string, rowIndex: number) {
 }
 
 export default function StudentDetails() {
+  const navigate = useNavigate();
   const adminToken = localStorage.getItem("admin_token");
   const decoded = adminToken ? parseJwt(adminToken) : null;
   const username = (localStorage.getItem("username") || "").replace(/"/g, "");
@@ -292,7 +294,6 @@ export default function StudentDetails() {
   });
 
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [promotionModalOpen, setPromotionModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<any>(null);
 
   const [performanceModalOpen, setPerformanceModalOpen] = useState(false);
@@ -1059,10 +1060,13 @@ export default function StudentDetails() {
           <>
             <button
               type="button"
-              onClick={() => setPromotionModalOpen(true)}
+              onClick={() => {
+                sessionStorage.setItem("uniz_bulk_tab", "actions");
+                navigate(getAdminSectionPath("student_bulk"));
+              }}
               className={adminGhostButtonClass}
             >
-              <RefreshCw size={14} /> Bulk Promote
+              <RefreshCw size={14} /> Cohort Actions
             </button>
             <button
               type="button"
@@ -1827,12 +1831,6 @@ export default function StudentDetails() {
         onClose={() => setEditModalOpen(false)}
         student={editingStudent}
         elevated={drawerOpen}
-        onSuccess={() => fetchStudents(pagination.page)}
-      />
-
-      <CohortPromotionModal
-        isOpen={promotionModalOpen}
-        onClose={() => setPromotionModalOpen(false)}
         onSuccess={() => fetchStudents(pagination.page)}
       />
     </div>

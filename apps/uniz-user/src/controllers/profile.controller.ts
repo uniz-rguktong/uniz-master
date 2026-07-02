@@ -8,8 +8,10 @@ import { redis } from "../utils/redis.util";
 import { randomUUID } from "crypto";
 import { resolveHodBranch } from "../utils/hod.util";
 import { resolveStudentBranch } from "@uniz/shared";
+import { buildStudentCohortWhere } from "../utils/student-cohort.util";
 import {
   bootstrapCacheKey,
+  invalidateAllStudentProfileCaches,
   invalidateStudentProfileCaches,
   profileCacheKey,
 } from "../utils/student-cache.util";
@@ -2373,6 +2375,282 @@ export const promoteCohort = async (
       success: true,
       message: `Successfully promoted ${result.count} students from ${fromYear} to ${toYear}`,
       count: result.count
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/**
+ * Bulk reset campus IN/OUT presence for students (optional branch/year/batch filters).
+ */
+export const resetCampusPresence = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { presence = "IN", branch, year, batch } = req.body;
+  const targetIn = String(presence).toUpperCase() === "IN";
+
+  const user = req.user;
+  const allowedRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.SWO,
+    UserRole.SECURITY,
+  ];
+  if (!user || !allowedRoles.includes(user.role as UserRole)) {
+    return res.status(403).json({
+      success: false,
+      message: "Insufficient hierarchy for bulk campus presence reset",
+    });
+  }
+
+  try {
+    const where: any = {
+      isPresentInCampus: !targetIn,
+    };
+    if (branch && String(branch).toUpperCase() !== "ALL") {
+      where.branch = { equals: String(branch), mode: "insensitive" };
+    }
+    if (year && String(year).toUpperCase() !== "ALL") {
+      where.year = { equals: String(year), mode: "insensitive" };
+    }
+    if (batch && String(batch).toUpperCase() !== "ALL") {
+      where.batch = { equals: String(batch), mode: "insensitive" };
+    }
+
+    const result = await prisma.studentProfile.updateMany({
+      where,
+      data: {
+        isPresentInCampus: targetIn,
+        updatedAt: new Date(),
+      },
+    });
+
+    const cachesCleared = await invalidateAllStudentProfileCaches();
+
+    return res.json({
+      success: true,
+      message: `Marked ${result.count} student(s) as ${targetIn ? "IN campus" : "OUT of campus"}`,
+      count: result.count,
+      presence: targetIn ? "IN" : "OUT",
+      cachesCleared,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/** Live campus IN/OUT counts from StudentProfile (source of truth for admin dashboard). */
+export const getCampusPresenceStats = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const allowedRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.HOD,
+    UserRole.SWO,
+    UserRole.COE,
+    UserRole.SECURITY,
+  ];
+  if (!user || !allowedRoles.includes(user.role as UserRole)) {
+    return res.status(403).json({
+      success: false,
+      message: "Insufficient hierarchy for campus presence stats",
+    });
+  }
+
+  try {
+    const [total_students, on_campus, off_campus] = await Promise.all([
+      prisma.studentProfile.count(),
+      prisma.studentProfile.count({ where: { isPresentInCampus: true } }),
+      prisma.studentProfile.count({ where: { isPresentInCampus: false } }),
+    ]);
+
+    return res.json({
+      success: true,
+      data: { total_students, on_campus, off_campus },
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const COHORT_ADMIN_ROLES = [
+  UserRole.WEBMASTER,
+  UserRole.DEAN,
+  UserRole.DIRECTOR,
+  UserRole.COE,
+];
+
+const CAMPUS_COHORT_ROLES = [
+  ...COHORT_ADMIN_ROLES,
+  UserRole.SWO,
+  UserRole.SECURITY,
+];
+
+async function syncAuthSuspension(
+  usernames: string[],
+  suspended: boolean,
+): Promise<void> {
+  const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+  const chunkSize = 25;
+  for (let i = 0; i < usernames.length; i += chunkSize) {
+    const chunk = usernames.slice(i, i + chunkSize);
+    await Promise.allSettled(
+      chunk.map((username) =>
+        axios.post(
+          `${AUTH_SERVICE_URL}/admin/suspend`,
+          { username: username.toLowerCase(), suspended },
+          { headers: { "x-internal-secret": SECRET }, timeout: 5000 },
+        ),
+      ),
+    );
+  }
+}
+
+/** Unified bulk cohort actions: campus, promote, pending clear, suspend/unsuspend. */
+export const bulkStudentCohortAction = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { action, branch, year, batch, fromYear, toYear, presence } = req.body;
+
+  const user = req.user;
+  if (!user || !action) {
+    return res.status(400).json({
+      success: false,
+      message: "Action is required",
+    });
+  }
+
+  const filters = { branch, year, batch };
+  const actionKey = String(action).toLowerCase();
+
+  try {
+    if (actionKey === "campus_in" || actionKey === "campus_out") {
+      if (!CAMPUS_COHORT_ROLES.includes(user.role as UserRole)) {
+        return res.status(403).json({
+          success: false,
+          message: "Insufficient hierarchy for campus presence update",
+        });
+      }
+      const targetIn =
+        actionKey === "campus_in" ||
+        String(presence || "").toUpperCase() === "IN";
+      const where = buildStudentCohortWhere(filters, {
+        isPresentInCampus: !targetIn,
+      });
+      const result = await prisma.studentProfile.updateMany({
+        where,
+        data: { isPresentInCampus: targetIn, updatedAt: new Date() },
+      });
+      const cachesCleared = await invalidateAllStudentProfileCaches();
+      return res.json({
+        success: true,
+        message: `Marked ${result.count} student(s) as ${targetIn ? "IN campus" : "OUT of campus"}`,
+        count: result.count,
+        cachesCleared,
+      });
+    }
+
+    if (actionKey === "promote") {
+      if (!COHORT_ADMIN_ROLES.includes(user.role as UserRole)) {
+        return res.status(403).json({
+          success: false,
+          message: "Insufficient hierarchy for cohort promotion",
+        });
+      }
+      if (!fromYear || !toYear) {
+        return res.status(400).json({
+          success: false,
+          message: "fromYear and toYear are required",
+        });
+      }
+      const where = buildStudentCohortWhere(
+        { branch, batch },
+        { year: { equals: String(fromYear), mode: "insensitive" } },
+      );
+      const result = await prisma.studentProfile.updateMany({
+        where,
+        data: { year: toYear, updatedAt: new Date() },
+      });
+      return res.json({
+        success: true,
+        message: `Promoted ${result.count} student(s) from ${fromYear} to ${toYear}`,
+        count: result.count,
+      });
+    }
+
+    if (actionKey === "clear_pending") {
+      if (!CAMPUS_COHORT_ROLES.includes(user.role as UserRole)) {
+        return res.status(403).json({
+          success: false,
+          message: "Insufficient hierarchy to clear pending flags",
+        });
+      }
+      const where = buildStudentCohortWhere(filters, {
+        isApplicationPending: true,
+      });
+      const result = await prisma.studentProfile.updateMany({
+        where,
+        data: { isApplicationPending: false, updatedAt: new Date() },
+      });
+      await invalidateAllStudentProfileCaches();
+      return res.json({
+        success: true,
+        message: `Cleared pending request flag for ${result.count} student(s)`,
+        count: result.count,
+      });
+    }
+
+    if (actionKey === "suspend" || actionKey === "unsuspend") {
+      if (!COHORT_ADMIN_ROLES.includes(user.role as UserRole)) {
+        return res.status(403).json({
+          success: false,
+          message: "Insufficient hierarchy for bulk suspension",
+        });
+      }
+      const suspended = actionKey === "suspend";
+      const where = buildStudentCohortWhere(filters, {
+        isSuspended: !suspended,
+      });
+      const targets = await prisma.studentProfile.findMany({
+        where,
+        select: { username: true },
+      });
+      if (targets.length === 0) {
+        return res.json({
+          success: true,
+          message: `No students to ${suspended ? "suspend" : "restore"}`,
+          count: 0,
+        });
+      }
+      const result = await prisma.studentProfile.updateMany({
+        where: {
+          username: { in: targets.map((t) => t.username) },
+        },
+        data: { isSuspended: suspended, updatedAt: new Date() },
+      });
+      await syncAuthSuspension(
+        targets.map((t) => t.username),
+        suspended,
+      );
+      await invalidateAllStudentProfileCaches();
+      return res.json({
+        success: true,
+        message: `${suspended ? "Suspended" : "Restored"} ${result.count} student account(s)`,
+        count: result.count,
+      });
+    }
+
+    return res.status(400).json({
+      success: false,
+      message: `Unknown action: ${action}`,
     });
   } catch (err: any) {
     return res.status(500).json({ success: false, message: err.message });

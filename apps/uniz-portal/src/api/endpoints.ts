@@ -151,6 +151,9 @@ export const ADMIN_DELETE_STUDENT = (id: string) =>
 export const ADMIN_BULK_DELETE_STUDENTS = `${BASE_URL}/profile/admin/student/bulk-delete`;
 export const ADMIN_STUDENT_CREATE = `${BASE_URL}/profile/admin/student/create`;
 export const ADMIN_STUDENT_PROMOTE = `${BASE_URL}/profile/admin/student/promote`;
+export const ADMIN_STUDENT_RESET_CAMPUS_PRESENCE = `${BASE_URL}/profile/admin/student/reset-campus-presence`;
+export const ADMIN_CAMPUS_PRESENCE_STATS = `${BASE_URL}/profile/admin/analytics/campus-presence`;
+export const ADMIN_STUDENT_COHORT_ACTION = `${BASE_URL}/profile/admin/student/cohort-action`;
 
 // Student Bulk Management
 export const ADMIN_STUDENT_UPLOAD = `${BASE_URL}/profile/admin/student/upload`;
