@@ -7,6 +7,7 @@ import {
   Loader2,
   Trash2,
   ArrowLeft,
+  RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/api/apiClient";
@@ -31,6 +32,7 @@ import {
   adminGhostButtonClass,
   adminPrimaryButtonClass,
 } from "@/components/admin/admin-ui";
+import { getNotificationTypeMeta } from "@/lib/notificationTypeMeta";
 
 type InboxItem = {
   id: string;
@@ -175,12 +177,47 @@ export default function NotificationCenter({
 
   const shellClass = isAdmin
     ? cn(adminPageWrapClass, "pb-16 max-w-3xl mx-auto")
-    : "mx-auto max-w-3xl px-4 pb-10 pt-2 md:px-6 md:pt-4";
+    : "mx-auto max-w-2xl px-4 pb-12 pt-1 md:px-0 md:pt-0";
 
   const primaryBtn = isAdmin ? adminPrimaryButtonClass : portalPrimaryButtonClass;
   const ghostBtn = isAdmin ? adminGhostButtonClass : portalGhostButtonClass;
 
-  const header = (
+  const studentHeader = (
+    <header className="mb-5">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold tracking-tight text-navy-900 md:text-2xl">
+            Notifications
+          </h1>
+          <p className="mt-1 text-[13px] text-navy-400">
+            Campus alerts and account activity
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-1.5">
+          {unreadCount > 0 && (
+            <span className="rounded-full bg-navy-900 px-2.5 py-1 text-[10px] font-semibold text-white">
+              {unreadCount} new
+            </span>
+          )}
+          <button
+            type="button"
+            title="Refresh"
+            disabled={loading}
+            onClick={load}
+            className={cn(
+              ghostBtn,
+              "min-h-9 min-w-9 px-2 text-navy-400 hover:text-navy-700",
+            )}
+          >
+            <Loader2 className={cn("h-4 w-4 animate-spin", !loading && "hidden")} />
+            <RefreshCw className={cn("h-4 w-4", loading && "hidden")} />
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+
+  const adminHeader = (
     <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div>
         <button
@@ -206,112 +243,144 @@ export default function NotificationCenter({
     </header>
   );
 
+  const actionBar = (
+    <div
+      className={cn(
+        "mb-5 flex flex-wrap gap-1.5 rounded-2xl border p-1.5",
+        isAdmin
+          ? "border-zinc-200 bg-zinc-50"
+          : "border-zinc-100 bg-zinc-50/80",
+      )}
+    >
+      <button
+        type="button"
+        disabled={busy || unreadCount === 0}
+        onClick={markAllRead}
+        className={cn(
+          ghostBtn,
+          "min-h-9 flex-1 rounded-xl border-0 bg-transparent text-[12px] font-medium sm:flex-none sm:px-3",
+        )}
+      >
+        <CheckCheck className="h-3.5 w-3.5" />
+        Mark all read
+      </button>
+      <button
+        type="button"
+        disabled={busy}
+        onClick={clearRead}
+        className={cn(
+          ghostBtn,
+          "min-h-9 flex-1 rounded-xl border-0 bg-transparent text-[12px] font-medium sm:flex-none sm:px-3",
+        )}
+      >
+        <Trash2 className="h-3.5 w-3.5" />
+        Clear read
+      </button>
+      <button
+        type="button"
+        disabled={busy || items.length === 0}
+        onClick={clearAll}
+        className={cn(
+          ghostBtn,
+          "min-h-9 flex-1 rounded-xl border-0 bg-transparent text-[12px] font-medium text-rose-600 hover:text-rose-700 sm:flex-none sm:px-3",
+        )}
+      >
+        Clear all
+      </button>
+    </div>
+  );
+
   return (
     <div className={shellClass}>
-      {header}
-
-      <div className="mb-4 flex flex-wrap gap-2">
-        <button
-          type="button"
-          disabled={busy || unreadCount === 0}
-          onClick={markAllRead}
-          className={cn(ghostBtn, "min-h-10")}
-        >
-          <CheckCheck className="h-4 w-4" />
-          Mark all read
-        </button>
-        <button
-          type="button"
-          disabled={busy}
-          onClick={clearRead}
-          className={cn(ghostBtn, "min-h-10")}
-        >
-          <Trash2 className="h-4 w-4" />
-          Clear read
-        </button>
-        <button
-          type="button"
-          disabled={busy || items.length === 0}
-          onClick={clearAll}
-          className={cn(ghostBtn, "min-h-10 text-rose-600 hover:text-rose-700")}
-        >
-          Clear all
-        </button>
-      </div>
+      {isAdmin ? adminHeader : studentHeader}
+      {actionBar}
 
       {loading ? (
         <div className="flex justify-center py-16">
           <Loader2 className="h-8 w-8 animate-spin text-navy-400" />
         </div>
       ) : empty ? (
-        <div
-          className={cn(
-            portalCardClass,
-            "flex flex-col items-center justify-center px-6 py-16 text-center",
-          )}
-        >
-          <Bell className="mb-3 h-10 w-10 text-navy-300" />
-          <p className="text-sm font-medium text-navy-700">No notifications yet</p>
-          <p className="mt-1 text-[13px] text-navy-400">
-            Campus alerts and system messages will appear here.
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-zinc-50/50 px-6 py-14 text-center">
+          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
+            <Bell className="h-5 w-5 text-navy-300" />
+          </div>
+          <p className="text-sm font-medium text-navy-800">All caught up</p>
+          <p className="mt-1 max-w-xs text-[13px] text-navy-400">
+            New campus alerts will show up here.
           </p>
         </div>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-2.5">
           {items.map((item) => {
             const unread = !item.readAt;
             const highlighted = item.id === highlightId;
+            const meta = getNotificationTypeMeta(item.type, item.title);
+            const TypeIcon = meta.Icon;
             return (
               <li
                 key={item.id}
                 id={`notification-${item.id}`}
                 className={cn(
-                  portalCardClass,
-                  "p-4 transition-all",
-                  unread && "border-navy-300 bg-navy-50/30",
-                  highlighted && "ring-2 ring-navy-400 ring-offset-2",
+                  "relative overflow-hidden rounded-2xl border bg-white transition-all",
+                  isAdmin ? portalCardClass : "border-zinc-100 shadow-sm",
+                  unread && !isAdmin && "border-l-[3px] border-l-navy-900 border-zinc-100",
+                  unread && isAdmin && "border-navy-300 bg-navy-50/30",
+                  highlighted && "ring-2 ring-navy-300 ring-offset-2",
                 )}
               >
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3 p-4">
+                  <div
+                    className={cn(
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1",
+                      meta.bgClass,
+                    )}
+                    title={meta.label}
+                  >
+                    <TypeIcon className={cn("h-[18px] w-[18px]", meta.iconClass)} />
+                  </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="text-[15px] font-semibold text-navy-900">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <h2 className="text-[14px] font-semibold text-navy-900">
                         {item.title}
                       </h2>
                       {unread && (
-                        <span className="rounded-full bg-navy-900 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
-                          New
-                        </span>
+                        <span className="h-1.5 w-1.5 rounded-full bg-navy-900" />
                       )}
-                      <span className="text-[10px] font-medium uppercase tracking-wider text-navy-400">
-                        {item.type}
-                      </span>
                     </div>
-                    <p className="mt-2 whitespace-pre-wrap text-[13px] leading-relaxed text-navy-600">
+                    <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-navy-400">
+                      {meta.label}
+                    </p>
+                    <p className="mt-1.5 whitespace-pre-wrap text-[13px] leading-relaxed text-navy-600">
                       {item.body}
                     </p>
                     <p className="mt-2 text-[11px] text-navy-400">
                       {formatWhen(item.createdAt)}
                     </p>
                   </div>
-                  <div className="flex shrink-0 flex-col gap-1">
+                  <div className="flex shrink-0 gap-0.5">
                     {unread && (
                       <button
                         type="button"
                         title="Mark read"
                         onClick={() => markRead(item.id)}
-                        className={cn(ghostBtn, "min-h-9 px-2.5")}
+                        className={cn(
+                          ghostBtn,
+                          "min-h-8 min-w-8 rounded-lg px-0 text-navy-500",
+                        )}
                       >
-                        <Check className="h-4 w-4" />
+                        <Check className="h-3.5 w-3.5" />
                       </button>
                     )}
                     <button
                       type="button"
                       title="Delete"
                       onClick={() => deleteOne(item.id)}
-                      className={cn(ghostBtn, "min-h-9 px-2.5 text-rose-600")}
+                      className={cn(
+                        ghostBtn,
+                        "min-h-8 min-w-8 rounded-lg px-0 text-navy-400 hover:text-rose-600",
+                      )}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
@@ -321,7 +390,7 @@ export default function NotificationCenter({
         </ul>
       )}
 
-      {!empty && (
+      {isAdmin && !empty && (
         <button
           type="button"
           onClick={load}

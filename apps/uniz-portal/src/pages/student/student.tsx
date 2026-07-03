@@ -56,6 +56,7 @@ import { cn } from "@/lib/utils";
 import { Student } from "../../types";
 import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
 import { InlineError } from "../../components/feedback/InlineError";
+import { NotificationBellButton } from "../../components/NotificationBellButton";
 
 const STUDENT_LOCKED_PROFILE_FIELDS = new Set([
   "name",
@@ -643,13 +644,20 @@ export default function StudentProfilePage() {
           {/* Centered Avatar and Info */}
           <div className="flex flex-col items-center mt-4">
             {/* Avatar with upload state */}
-            <div
-              className="relative p-[4px] md:p-[5px] rounded-full mb-4"
-              style={{
-                background: "#2ebd59",
-                boxShadow: "0 0 0 1px rgba(46, 189, 89, 0.1)",
-              }}
-            >
+            <div className="relative">
+              <div
+                className="absolute -right-2 -top-1 z-30 md:-right-3"
+                title="Notifications"
+              >
+                <NotificationBellButton size="sm" />
+              </div>
+              <div
+                className="relative p-[4px] md:p-[5px] rounded-full mb-4"
+                style={{
+                  background: "#2ebd59",
+                  boxShadow: "0 0 0 1px rgba(46, 189, 89, 0.1)",
+                }}
+              >
               <div className="relative bg-zinc-50 p-[3px] rounded-full">
                 <div className="relative w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-[#004e43] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
                   {/* Profile image or initial */}
@@ -714,6 +722,7 @@ export default function StudentProfilePage() {
                 accept="image/*"
                 onChange={handleImageUpload}
               />
+            </div>
             </div>
 
             <div className="flex flex-col items-center gap-2.5 w-full max-w-xl px-3 mb-1.5 mt-1">

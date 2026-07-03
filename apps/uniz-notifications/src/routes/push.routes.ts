@@ -42,7 +42,7 @@ router.post("/subscribe", requireAuth, async (req: Request, res: Response) => {
 
 router.post("/internal/push", requireAuth, async (req, res) => {
   try {
-    const { username, title, body } = req.body;
+    const { username, title, body, type } = req.body;
     if (!username || !title || !body) {
       return res
         .status(400)
@@ -53,7 +53,7 @@ router.post("/internal/push", requireAuth, async (req, res) => {
       title: String(title),
       body: String(body),
       rawBody: true,
-      data: { type: "SYSTEM" },
+      data: { type: String(type || "SYSTEM") },
     });
 
     return res.status(200).json({ success: true, sent });

@@ -19,7 +19,6 @@ import {
   Home,
   HelpCircle,
   ClipboardCheck,
-  Bell,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -30,6 +29,7 @@ import {
   StudentPageSkeleton,
   studentContentSkeletonVariant,
 } from "./StudentPageSkeleton";
+import { NotificationBellButton } from "./NotificationBellButton";
 
 const Attendance = lazy(() => import("../pages/attendance/Attendance"));
 const OutpassOuting = lazy(() => import("../pages/student/outpass&outing"));
@@ -202,15 +202,6 @@ export default function Sidebar({ content }: MainContent) {
     },
 
     {
-      id: "notifications",
-      label: "Notifications",
-      href: "/student/notifications",
-      content: "notifications",
-      icon: Bell,
-      activeColor: "text-navy-900",
-      hoverColor: "hover:text-navy-700",
-    },
-    {
       id: "grievance",
       label: "Grievance",
       href: "/student/grievance",
@@ -267,12 +258,6 @@ export default function Sidebar({ content }: MainContent) {
     // Center tab — toggles academics panel
     { label: "Academics", icon: GraduationCap },
     {
-      label: "Alerts",
-      icon: Bell,
-      onClick: () => navigate("/student/notifications"),
-      isActive: content === "notifications",
-    },
-    {
       label: "Grievance",
       icon: AlertCircle,
       onClick: () => navigate("/student/grievance"),
@@ -300,13 +285,6 @@ export default function Sidebar({ content }: MainContent) {
       description: "Subject-wise attendance",
       onClick: () => navigate("/student/attendance"),
       isActive: content === "attendance",
-    },
-    {
-      label: "Notifications",
-      icon: Bell,
-      description: "Push alerts & history",
-      onClick: () => navigate("/student/notifications"),
-      isActive: content === "notifications",
     },
     {
       label: "Security",
@@ -381,12 +359,18 @@ export default function Sidebar({ content }: MainContent) {
             >
               uniZ
             </h1>
-            <button
-              onClick={() => setShowConfirm(true)}
-              className={`p-2 transition-all font-sans ${isScrolled ? "text-zinc-400 active:text-red-500" : "text-zinc-500 active:text-red-600"}`}
-            >
-              <LogOut size={22} />
-            </button>
+            <div className="flex items-center gap-2">
+              <NotificationBellButton
+                size="sm"
+                active={content === "notifications"}
+              />
+              <button
+                onClick={() => setShowConfirm(true)}
+                className={`p-2 transition-all font-sans ${isScrolled ? "text-zinc-400 active:text-red-500" : "text-zinc-500 active:text-red-600"}`}
+              >
+                <LogOut size={22} />
+              </button>
+            </div>
           </header>
 
           {/* Re-designed Desktop Header (Pharmacy App Style) */}
@@ -401,8 +385,9 @@ export default function Sidebar({ content }: MainContent) {
             </div>
 
             {/* Right: Profile */}
-            <div className="flex items-center gap-4">
-              <div className="text-right">
+            <div className="flex items-center gap-3">
+              <NotificationBellButton active={content === "notifications"} />
+              <div className="text-right hidden sm:block">
                 <p className="text-[14px] font-bold text-navy-900 leading-none">
                   {userData?.name || "Student User"}
                 </p>

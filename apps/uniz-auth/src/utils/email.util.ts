@@ -29,13 +29,14 @@ const sendPush = async (
   username: string,
   title: string,
   body: string,
+  type = "SYSTEM",
 ): Promise<number> => {
   if (process.env.SKIP_PUSH === "true") return 0;
   try {
     const url = `${NOTIFICATION_SERVICE_URL}/internal/push`;
     const res = await axios.post(
       url,
-      { username, title, body },
+      { username, title, body, type },
       {
         headers: { "x-internal-secret": INTERNAL_SECRET },
         timeout: 5000,
@@ -71,6 +72,7 @@ export const sendOtpPush = async (
     username,
     "UniZ Security Authentication",
     `Your secure verification code is ${otp}. To maintain account security, this code will remain valid for exactly 10 minutes.`,
+    "OTP",
   );
 };
 
@@ -122,6 +124,7 @@ export const sendLoginNotification = async (
     username,
     "Security Alert: New Login Detected",
     `An access attempt has been successfully identified on your UniZ account${deviceStr}. If you did not authorize this login, please take immediate action to secure your account by reviewing your active sessions and updating your password.`,
+    "LOGIN",
   );
   return true;
 };
@@ -134,6 +137,7 @@ export const sendPasswordChangeNotification = async (
     username,
     "Account Security: Password Updated",
     "We are writing to confirm that the password for your UniZ account has been successfully modified. If you did not initiate this change, please contact our administrative support team immediately to report unauthorized activity.",
+    "PASSWORD",
   );
   return true;
 };
@@ -147,6 +151,7 @@ export const sendProfileUpdateNotification = async (
     username,
     "Profile Information Updated",
     `This notification is to confirm that adjustments have been made to your professional profile. The modified fields include: ${updatedFields.join(", ")}.`,
+    "PROFILE",
   );
   return true;
 };
