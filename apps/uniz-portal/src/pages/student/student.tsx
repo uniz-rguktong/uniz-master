@@ -56,8 +56,6 @@ import { cn } from "@/lib/utils";
 import { Student } from "../../types";
 import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
 import { InlineError } from "../../components/feedback/InlineError";
-import { NotificationBellButton } from "../../components/NotificationBellButton";
-
 const STUDENT_LOCKED_PROFILE_FIELDS = new Set([
   "name",
   "gender",
@@ -645,12 +643,6 @@ export default function StudentProfilePage() {
           <div className="flex flex-col items-center mt-4">
             {/* Avatar with upload state */}
             <div className="relative">
-              <div
-                className="absolute -right-2 -top-1 z-30 md:-right-3"
-                title="Notifications"
-              >
-                <NotificationBellButton size="sm" />
-              </div>
               <div
                 className="relative p-[4px] md:p-[5px] rounded-full mb-4"
                 style={{
