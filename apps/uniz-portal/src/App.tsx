@@ -22,6 +22,10 @@ const Sidebar = lazy(() => import("./components/Sidebar"));
 const SEOLanding = lazy(() => import("./pages/seo-landing"));
 const Developers = lazy(() => import("./pages/Developers"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const NotificationDeepLink = lazy(() => import("./pages/NotificationDeepLink"));
+const AdminNotificationsPage = lazy(
+  () => import("./pages/admin/AdminNotificationsPage"),
+);
 
 // Admin Components
 const AddStudents = lazy(() => import("./pages/admin/AddStudents"));
@@ -158,10 +162,17 @@ const AuthRedirect = () => {
 };
 
 import { InstallPWA } from "./components/InstallPWA";
+import { usePushNavigation } from "./hooks/usePushNavigation";
+
+function PushNavigationBridge() {
+  usePushNavigation();
+  return null;
+}
 
 export default function App() {
   return (
     <>
+      <PushNavigationBridge />
       <InstallPWA />
       <Toaster defaultPosition="bottom-right" />
       <Suspense fallback={<LoadingFallback />}>
@@ -188,6 +199,14 @@ export default function App() {
             element={
               <PageTransition>
                 <Developers />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <PageTransition>
+                <NotificationDeepLink />
               </PageTransition>
             }
           />
@@ -416,6 +435,16 @@ export default function App() {
               </MaintenanceGuard>
             }
           />
+          <Route
+            path="/student/notifications"
+            element={
+              <MaintenanceGuard>
+                <PageTransition>
+                  <Sidebar content="notifications" />
+                </PageTransition>
+              </MaintenanceGuard>
+            }
+          />
 
           {/* Admin Protected Routes — legacy pages first, then shell catch-all */}
           <Route
@@ -537,6 +566,14 @@ export default function App() {
             element={
               <PageTransition>
                 <AddFaculty />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/admin/notifications"
+            element={
+              <PageTransition>
+                <AdminNotificationsPage />
               </PageTransition>
             }
           />

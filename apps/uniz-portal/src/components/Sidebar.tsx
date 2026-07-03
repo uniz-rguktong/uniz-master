@@ -19,6 +19,7 @@ import {
   Home,
   HelpCircle,
   ClipboardCheck,
+  Bell,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -43,6 +44,7 @@ const SeatingArrangement = lazy(
   () => import("../pages/student/components/SeatingArrangement"),
 );
 const HelpSupport = lazy(() => import("../pages/student/HelpSupport"));
+const NotificationCenter = lazy(() => import("../pages/NotificationCenter"));
 
 export { enableOutingsAndOutpasses } from "../pages/student/student";
 
@@ -57,6 +59,7 @@ interface MainContent {
     | "requestOutpass"
     | "attendance"
     | "grievance"
+    | "notifications"
     | "currentSemester"
     | "registration"
     | "seating"
@@ -199,6 +202,15 @@ export default function Sidebar({ content }: MainContent) {
     },
 
     {
+      id: "notifications",
+      label: "Notifications",
+      href: "/student/notifications",
+      content: "notifications",
+      icon: Bell,
+      activeColor: "text-navy-900",
+      hoverColor: "hover:text-navy-700",
+    },
+    {
       id: "grievance",
       label: "Grievance",
       href: "/student/grievance",
@@ -255,6 +267,12 @@ export default function Sidebar({ content }: MainContent) {
     // Center tab — toggles academics panel
     { label: "Academics", icon: GraduationCap },
     {
+      label: "Alerts",
+      icon: Bell,
+      onClick: () => navigate("/student/notifications"),
+      isActive: content === "notifications",
+    },
+    {
       label: "Grievance",
       icon: AlertCircle,
       onClick: () => navigate("/student/grievance"),
@@ -284,6 +302,13 @@ export default function Sidebar({ content }: MainContent) {
       isActive: content === "attendance",
     },
     {
+      label: "Notifications",
+      icon: Bell,
+      description: "Push alerts & history",
+      onClick: () => navigate("/student/notifications"),
+      isActive: content === "notifications",
+    },
+    {
       label: "Security",
       icon: Lock,
       description: "Change your password",
@@ -304,6 +329,7 @@ export default function Sidebar({ content }: MainContent) {
     registration: <Registration />,
     attendance: <Attendance />,
     grievance: <Grievance />,
+    notifications: <NotificationCenter portal="student" />,
     seating: <SeatingArrangement />,
     help: <HelpSupport />,
     error: <Error />,

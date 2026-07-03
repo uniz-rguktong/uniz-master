@@ -1,5 +1,6 @@
 import * as webpush from "web-push";
 import prisma from "../utils/prisma.util";
+import { createInboxEntry } from "./inbox.service";
 
 const publicVapidKey = process.env.VAPID_PUBLIC_KEY;
 const privateVapidKey = process.env.VAPID_PRIVATE_KEY;
@@ -18,6 +19,37 @@ if (!publicVapidKey || !privateVapidKey) {
 }
 
 export { publicVapidKey };
+
+async function persistInboxAndPath(
+  username: string,
+  payload: {
+    title: string;
+    body: string;
+    data?: Record<string, unknown>;
+    rawBody?: boolean;
+  },
+): Promise<{ notificationId?: string; path: string }> {
+  try {
+    const type = String(payload.data?.type || "GENERIC");
+    const entry = await createInboxEntry(username, {
+      title: payload.title,
+      body: payload.rawBody
+        ? payload.body
+        : `Dear ${payload.data?.name || username},\n\n${payload.body}`,
+      type,
+    });
+    const path = `/notifications?n=${entry.id}`;
+    await prisma.notificationInbox.update({
+      where: { id: entry.id },
+      data: { path },
+    });
+    return { notificationId: entry.id, path };
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[Push] Inbox persist failed for ${username}: ${message}`);
+    return { path: "/notifications" };
+  }
+}
 
 export const sendWebPush = async (
   username: string,
@@ -42,6 +74,11 @@ export const sendWebPush = async (
     if (subscriptions.length === 0) return 0;
 
     const recipientName = payload.name || username;
+    const { notificationId, path } = await persistInboxAndPath(username, {
+      ...payload,
+      data: { ...payload.data, name: recipientName },
+    });
+
     const pushPayload = JSON.stringify({
       title: payload.title,
       body: payload.rawBody
@@ -50,8 +87,15 @@ export const sendWebPush = async (
       image: payload.image,
       icon: "/assets/ongole_logo.png",
       badge: "/assets/ongole_logo.png",
-      tag: (payload.data?.tag as string) || `uniz-${username}-${Date.now()}`,
-      data: payload.data || {},
+      tag:
+        (payload.data?.tag as string) ||
+        `uniz-${username}-${notificationId || Date.now()}`,
+      data: {
+        ...(payload.data || {}),
+        notificationId,
+        path,
+        type: payload.data?.type || "GENERIC",
+      },
     });
 
     const results = await Promise.allSettled(

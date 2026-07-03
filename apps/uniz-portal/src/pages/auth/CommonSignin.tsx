@@ -4,7 +4,7 @@ import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { adminUsername, is_authenticated, resetTokenState } from "../../store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "@/utils/toast-ref";
 import {
   SIGNIN,
@@ -28,6 +28,7 @@ import { Turnstile } from "@marsidev/react-turnstile";
 import { motion } from "framer-motion";
 import { prepareStudentSession } from "../../utils/studentSessionCache";
 import { cn } from "@/lib/utils";
+import { getSafeReturnUrl } from "@/utils/returnUrl";
 import {
   portalGhostButtonClass,
   portalInputClass,
@@ -481,6 +482,24 @@ export default function Signin({ type }: SigninProps) {
   const setAdmin = useSetRecoilState<any>(adminUsername);
   const setAuth = useSetRecoilState(is_authenticated);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const postLoginPath = useCallback(
+    (portal: "student" | "admin" | "faculty") => {
+      const fromQuery = getSafeReturnUrl(searchParams.get("returnUrl"));
+      if (fromQuery) return fromQuery;
+      const pending = sessionStorage.getItem("uniz_pending_notification");
+      if (pending) {
+        sessionStorage.removeItem("uniz_pending_notification");
+        const safe = getSafeReturnUrl(pending);
+        if (safe) return safe;
+      }
+      if (portal === "student") return "/student";
+      if (portal === "admin") return "/admin";
+      return "/faculty";
+    },
+    [searchParams],
+  );
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -492,13 +511,13 @@ export default function Signin({ type }: SigninProps) {
     if (authState.is_authenticated && hasToken) {
       const redirectPath =
         authState.type === "student"
-          ? "/student"
+          ? postLoginPath("student")
           : authState.type === "admin"
-            ? "/admin"
-            : "/faculty";
+            ? postLoginPath("admin")
+            : postLoginPath("faculty");
       navigate(redirectPath, { replace: true });
     }
-  }, [authState, navigate, type]);
+  }, [authState, navigate, type, postLoginPath]);
 
   // Force reset state when switching between login modes
   useEffect(() => {
@@ -585,7 +604,7 @@ export default function Signin({ type }: SigninProps) {
         toast.success(`Welcome back, ${resolvedUsername}.`, {
           title: "Signed in",
         });
-        navigate("/student", { replace: true });
+        navigate(postLoginPath("student"), { replace: true });
       } else if (
         type === "admin" &&
         (data.role === "teacher" || data.role === "faculty") &&
@@ -600,7 +619,7 @@ export default function Signin({ type }: SigninProps) {
         toast.success(`Welcome, Professor ${resolvedUsername}.`, {
           title: "Signed in",
         });
-        navigate("/faculty", { replace: true });
+        navigate(postLoginPath("faculty"), { replace: true });
       } else if (type === "admin" && (token || data.success)) {
         localStorage.removeItem("student_token");
         localStorage.removeItem("faculty_token");
@@ -621,7 +640,7 @@ export default function Signin({ type }: SigninProps) {
         toast.success("Your admin session is ready.", {
           title: "Signed in",
         });
-        setTimeout(() => navigate("/admin", { replace: true }), 100);
+        setTimeout(() => navigate(postLoginPath("admin"), { replace: true }), 100);
       } else if (type === "faculty" && token) {
         localStorage.removeItem("student_token");
         localStorage.removeItem("admin_token");
@@ -632,7 +651,7 @@ export default function Signin({ type }: SigninProps) {
         toast.success(`Welcome, Professor ${resolvedUsername}.`, {
           title: "Signed in",
         });
-        navigate("/faculty", { replace: true });
+        navigate(postLoginPath("faculty"), { replace: true });
       } else {
         toast.error("Access denied: Invalid credentials for this portal.");
       }
@@ -652,6 +671,7 @@ export default function Signin({ type }: SigninProps) {
     setAuth,
     setAdmin,
     syncCaptchaToken,
+    postLoginPath,
   ]);
 
   const requestOtp = useCallback(async () => {

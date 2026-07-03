@@ -73,7 +73,8 @@ export function studentContentSkeletonVariant(
     content === "requestOuting" ||
     content === "requestOutpass" ||
     content === "grievance" ||
-    content === "help"
+    content === "help" ||
+    content === "notifications"
   ) {
     return "form";
   }
