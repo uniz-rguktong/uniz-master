@@ -8,18 +8,8 @@ import {
   useMemo,
 } from "react";
 import { useIsAuth } from "../hooks/is_authenticated";
-import {
-  Activity,
-  Lock,
-  Smartphone,
-  Megaphone,
-  CheckCircle2,
-  ClipboardList,
-  Bell,
-  GraduationCap,
-  Monitor,
-} from "lucide-react";
-import { PUBLIC_BANNERS, BASE_URL } from "../api/endpoints";
+import { Activity, Lock, Smartphone, Monitor } from "lucide-react";
+import { PUBLIC_BANNERS } from "../api/endpoints";
 import { usePWAInstall } from "../hooks/usePWAInstall";
 import { HeroBlock } from "../components/ui/hero-block-shadcnui";
 import { SEO } from "../components/SEO";
@@ -37,6 +27,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import FeaturedCarousel from "../components/FeaturedCarousel";
+import CampusUpdatesFeed from "../components/CampusUpdatesFeed";
 
 // Lazy load below-fold sections; FeaturedCarousel is eager (first below fold)
 const Timeline = lazy(() =>
@@ -107,115 +98,6 @@ const getPlatform = () => {
   if (/windows/.test(ua)) return { label: "Windows", PlatformIcon: Monitor };
   if (/linux/.test(ua)) return { label: "Linux", PlatformIcon: Monitor };
   return { label: "Desktop", PlatformIcon: Monitor };
-};
-
-// ─── Notification Icon Colors ────────────────────────────────────────────────
-
-const NOTIF_STYLES = [
-  {
-    bg: "bg-amber-50",
-    border: "border-amber-100",
-    Icon: Megaphone,
-    text: "text-amber-600",
-  },
-  {
-    bg: "bg-emerald-50",
-    border: "border-emerald-100",
-    Icon: CheckCircle2,
-    text: "text-emerald-600",
-  },
-  {
-    bg: "bg-blue-50",
-    border: "border-blue-100",
-    Icon: ClipboardList,
-    text: "text-blue-600",
-  },
-  {
-    bg: "bg-rose-50",
-    border: "border-rose-100",
-    Icon: Bell,
-    text: "text-rose-500",
-  },
-  {
-    bg: "bg-violet-50",
-    border: "border-violet-100",
-    Icon: GraduationCap,
-    text: "text-violet-600",
-  },
-];
-
-const getTimeAgo = (date: string | undefined) => {
-  if (!date) return "Just now";
-  const diff = Date.now() - new Date(date).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "Just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  return `${days}d ago`;
-};
-
-// ─── Component: Live Updates Feed ────────────────────────────────────────────
-
-const LiveUpdatesFeed = ({ notifications }: { notifications: any[] }) => {
-  if (!notifications.length) return null;
-
-  return (
-    <LandingSection>
-      <LandingSectionHeader
-        eyebrow="Live Updates"
-        title="Real-time campus events,"
-        titleMuted="piped directly to your feed."
-      />
-
-      <LandingCard className="shadow-[0_25px_60px_-20px_rgba(0,0,0,0.06)]">
-        <div className="divide-y divide-zinc-100/80">
-          {notifications.map((n, idx) => {
-            const accents = ["amber", "emerald", "blue", "default", "slate"] as const;
-            const accent = accents[idx % accents.length];
-
-            return (
-              <motion.a
-                key={idx}
-                href={n.link || "#"}
-                target={n.link ? "_blank" : undefined}
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, x: -12 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.08, duration: 0.4 }}
-                className="flex items-center gap-4 px-6 py-5 md:px-8 md:py-6 hover:bg-zinc-50/60 transition-colors group no-underline first:rounded-t-[2.5rem] last:rounded-b-[2.5rem]"
-              >
-                <div className="shrink-0 w-11 h-11 rounded-2xl bg-zinc-950 flex items-center justify-center shadow-[0_8px_24px_-8px_rgba(0,0,0,0.2)]">
-                  {(() => {
-                    const style = NOTIF_STYLES[idx % NOTIF_STYLES.length];
-                    return <style.Icon size={18} className="text-white" />;
-                  })()}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="mb-1.5">
-                    <LandingPill
-                      label={n.title || "Campus Update"}
-                      accent={accent}
-                    />
-                  </div>
-                  <p className="text-[14px] font-bold text-zinc-900 group-hover:text-zinc-950 transition-colors leading-snug line-clamp-2">
-                    {n.content}
-                  </p>
-                </div>
-
-                <span className="shrink-0 text-[11px] font-semibold text-zinc-400 tabular-nums">
-                  {getTimeAgo(n.createdAt)}
-                </span>
-              </motion.a>
-            );
-          })}
-        </div>
-      </LandingCard>
-    </LandingSection>
-  );
 };
 
 const Home = () => {
@@ -295,19 +177,6 @@ const Home = () => {
     },
   ];
 
-  const [notifications, setNotifications] = useState<any[]>([
-    {
-      title: "Campus Update",
-      content:
-        "New academic semester registration is now live. Please check your portals.",
-    },
-    {
-      title: "Campus Events",
-      content:
-        "Watch the notice board and student channels for upcoming workshops, sports, and cultural programs.",
-    },
-  ]);
-
   useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();
@@ -320,24 +189,12 @@ const Home = () => {
       signal: controller.signal,
     };
 
-    Promise.all([
-      fetch(PUBLIC_BANNERS, fetchOpts).then((res) =>
-        res.ok ? res.json() : null,
-      ),
-      fetch(`${BASE_URL}/cms/notifications`, fetchOpts).then((res) =>
-        res.ok ? res.json() : null,
-      ),
-    ])
-      .then(([bannerResult, notifResult]) => {
+    fetch(PUBLIC_BANNERS, fetchOpts)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((bannerResult) => {
         if (cancelled) return;
         if (bannerResult?.success) {
           setBanners(bannerResult.banners || []);
-        }
-        if (
-          notifResult?.success &&
-          notifResult.notifications?.updates?.length > 0
-        ) {
-          setNotifications(notifResult.notifications.updates);
         }
       })
       .catch(() => {})
@@ -380,7 +237,21 @@ const Home = () => {
       <HeroBlock />
 
       <main className="relative">
-        <LiveUpdatesFeed notifications={notifications} />
+        <CampusUpdatesFeed
+          variant="landing"
+          fallback={[
+            {
+              title: "Campus Update",
+              content:
+                "New academic semester registration is now live. Please check your portals.",
+            },
+            {
+              title: "Campus Events",
+              content:
+                "Watch the notice board and student channels for upcoming workshops, sports, and cultural programs.",
+            },
+          ]}
+        />
         <LandingDivider />
 
         {(!bannersReady || banners.length > 0) && (

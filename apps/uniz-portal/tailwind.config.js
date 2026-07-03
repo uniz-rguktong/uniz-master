@@ -115,7 +115,8 @@ module.exports = {
       },
 
       backgroundImage: {
-        "premium-gradient": "linear-gradient(to right, #f8fafc, #f1f5f9)",
+        "premium-gradient": "linear-gradient(to right, #ffffff, #ffffff)",
+        "portal-banner": "linear-gradient(to right, #0B2A47, #0F3B63)",
       },
 
       animation: {

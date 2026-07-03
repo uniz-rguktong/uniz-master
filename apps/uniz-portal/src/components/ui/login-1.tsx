@@ -39,9 +39,9 @@ export default function LoginScreen({
   const meta = roleMeta[role];
 
   return (
-    <div className="w-full min-h-screen overflow-x-hidden flex bg-[#fafafa] font-sans selection:bg-zinc-200 selection:text-zinc-950">
+    <div className="w-full min-h-screen overflow-x-hidden flex bg-white font-sans selection:bg-[#D4E8F5] selection:text-[#0B2A47]">
       {/* Left — cinematic hero */}
-      <div className="hidden lg:flex flex-1 relative overflow-hidden bg-zinc-950">
+      <div className="hidden lg:flex flex-1 relative overflow-hidden portal-banner-gradient">
         <div className="absolute inset-0">
           <img
             src="https://res.cloudinary.com/diipfzmyj/image/upload/v1772885809/signIn_ojzi3w.png"
@@ -49,8 +49,8 @@ export default function LoginScreen({
             className="h-full w-full object-cover scale-[1.02] opacity-90"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/55 to-zinc-950/25" />
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/90 via-zinc-950/35 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#081E33] via-[#0B2A47]/55 to-[#0F3B63]/25" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#081E33]/90 via-[#0B2A47]/35 to-transparent" />
 
         <div className="relative z-10 flex flex-1 flex-col p-10 xl:p-14">
           {onBack && (
@@ -121,7 +121,7 @@ export default function LoginScreen({
               </p>
             </motion.div>
 
-            <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_8px_24px_rgba(10,10,10,0.04)] sm:p-7">
+            <div className="rounded-2xl border border-[#D4E8F5] bg-white p-5 shadow-[0_1px_2px_rgba(11,42,71,0.04),0_8px_24px_rgba(11,42,71,0.06)] sm:p-7">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={stepKey || title}
@@ -131,7 +131,7 @@ export default function LoginScreen({
                   transition={{ duration: 0.25 }}
                   className="mb-6"
                 >
-                  <h1 className="text-[1.625rem] font-semibold text-zinc-950 tracking-[-0.03em] leading-tight">
+                  <h1 className="text-[1.625rem] font-semibold text-[#0B2A47] tracking-[-0.03em] leading-tight">
                     {title || (isLogin ? "Sign in" : "Create account")}
                   </h1>
                   {subtitle && (

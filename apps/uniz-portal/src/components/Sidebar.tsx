@@ -310,14 +310,14 @@ export default function Sidebar({ content }: MainContent) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-premium-gradient text-zinc-900 selection:bg-zinc-100 selection:text-zinc-900">
+    <div className="flex flex-col min-h-screen bg-white text-[#0B2A47] selection:bg-[#D4E8F5] selection:text-[#0B2A47]">
       <AnimatePresence>
         {showNotice && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="bg-gradient-to-r from-[#0B2A47] to-[#0F3B63] text-white py-2.5 px-6 flex items-center justify-between shadow-lg relative z-[100]"
+            className="portal-banner-gradient text-white py-2.5 px-6 flex items-center justify-between shadow-lg relative z-[100]"
           >
             <div className="flex-1 text-center text-[11px] md:text-[13px] font-sans font-bold tracking-tight">
               Outpass and outing feature has been currently disabled by the
@@ -348,10 +348,10 @@ export default function Sidebar({ content }: MainContent) {
         >
           {/* Mobile Header */}
           <header
-            className={`md:hidden sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16 transition-all duration-300 ${isScrolled ? "bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm" : "bg-transparent border-transparent"}`}
+            className={`md:hidden sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16 transition-all duration-300 border-b ${isScrolled ? "bg-white/95 backdrop-blur-xl border-[#D4E8F5] shadow-sm" : "bg-white border-transparent"}`}
           >
             <h1
-              className={`uniz-logo-wordmark text-3xl transition-colors duration-300 ${isScrolled ? "text-zinc-900" : "text-zinc-800"}`}
+              className={`uniz-logo-wordmark text-3xl transition-colors duration-300 ${isScrolled ? "text-[#0B2A47]" : "text-[#0B2A47]"}`}
             >
               uniZ
             </h1>
@@ -365,11 +365,11 @@ export default function Sidebar({ content }: MainContent) {
 
           {/* Re-designed Desktop Header (Pharmacy App Style) */}
           <header
-            className={`sticky top-0 z-40 p-4 px-8 md:pl-36 justify-between items-center hidden md:flex transition-all duration-300 ${isScrolled ? "bg-white/60 backdrop-blur-md border-b border-white/20 shadow-sm" : "bg-transparent border-transparent shadow-none"}`}
+            className={`sticky top-0 z-40 p-4 px-8 md:pl-36 justify-between items-center hidden md:flex transition-all duration-300 border-b ${isScrolled ? "bg-white/95 backdrop-blur-md border-[#D4E8F5] shadow-sm" : "bg-white border-transparent shadow-none"}`}
           >
             {/* Left: App Branding */}
             <div className="flex items-center gap-4">
-              <h1 className="uniz-logo-wordmark text-3xl text-zinc-800">
+              <h1 className="uniz-logo-wordmark text-3xl text-[#0B2A47]">
                 uniZ
               </h1>
             </div>
