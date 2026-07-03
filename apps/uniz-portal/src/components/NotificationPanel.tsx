@@ -5,8 +5,7 @@ import { GET_NOTIFICATIONS } from "../api/endpoints";
 import {
   adminCardClass,
   adminSectionTitleClass,
-  adminEyebrowClass,
-} from "./admin/admin-ui";
+  } from "./admin/admin-ui";
 
 // Types
 type Announcement = {

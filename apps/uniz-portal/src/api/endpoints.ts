@@ -28,6 +28,14 @@ export const LANDING_API_URL =
 
 // Notification service URL - routes through same-origin nginx proxy
 export const NOTIFICATION_SERVICE_URL = `${BASE_URL}/notifications`;
+export const NOTIFICATION_INBOX = `${NOTIFICATION_SERVICE_URL}/inbox`;
+export const NOTIFICATION_INBOX_READ = (id: string) =>
+  `${NOTIFICATION_SERVICE_URL}/inbox/${id}/read`;
+export const NOTIFICATION_INBOX_READ_ALL = `${NOTIFICATION_SERVICE_URL}/inbox/read-all`;
+export const NOTIFICATION_INBOX_CLEAR = (mode: "read" | "all") =>
+  `${NOTIFICATION_SERVICE_URL}/inbox/clear?mode=${mode}`;
+export const NOTIFICATION_INBOX_DELETE = (id: string) =>
+  `${NOTIFICATION_SERVICE_URL}/inbox/${id}`;
 
 // New Microservices Architecture Endpoints
 // Auth

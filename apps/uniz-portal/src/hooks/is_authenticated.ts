@@ -7,6 +7,7 @@ import { resolveAdminPortalRole } from "../utils/adminRole";
 import { toast } from "@/utils/toast-ref";
 import { initPushNotifications } from "../utils/pushNotifications";
 import { NOTIFICATION_SERVICE_URL } from "../api/endpoints";
+import { signInWithReturn } from "../utils/returnUrl";
 
 // Module-level singleton - shared across ALL useIsAuth instances in the app.
 // useRef(false) would NOT work here because useIsAuth is called by 10+ components,
@@ -45,8 +46,15 @@ export function useIsAuth() {
     };
 
     const authRedirectTarget = () => {
-      if (location.pathname.startsWith("/admin")) return "/admin/signin";
-      if (location.pathname.startsWith("/student")) return "/student/signin";
+      if (location.pathname.startsWith("/admin")) {
+        return signInWithReturn("admin", location.pathname + location.search);
+      }
+      if (location.pathname.startsWith("/student")) {
+        return signInWithReturn("student", location.pathname + location.search);
+      }
+      if (location.pathname.startsWith("/notifications")) {
+        return signInWithReturn("student", location.pathname + location.search);
+      }
       return "/";
     };
 
@@ -62,6 +70,7 @@ export function useIsAuth() {
       "/admin/signin",
       "/admin/signin/",
       "/admin/signin#",
+      "/notifications",
     ];
 
     const logoutAndRedirect = (reason: string) => {

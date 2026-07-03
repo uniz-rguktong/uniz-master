@@ -20,3 +20,17 @@ model PushSubscription {
 
   @@index([username])
 }
+
+model NotificationInbox {
+  id        String    @id @default(uuid()) @db.Uuid
+  username  String
+  title     String
+  body      String
+  type      String    @default("GENERIC")
+  path      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([username, createdAt(sort: Desc)])
+  @@index([username, readAt])
+}

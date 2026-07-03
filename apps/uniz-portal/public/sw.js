@@ -65,7 +65,10 @@ self.addEventListener("push", function (event) {
     // CRITICAL for background reliability: ensures the OS doesn't hide it immediately
     requireInteraction: true,
     data: {
-      url: (data.data && data.data.url) || "https://uniz.rguktong.in",
+      path:
+        (data.data && data.data.path) ||
+        "/notifications",
+      notificationId: (data.data && data.data.notificationId) || null,
       type: (data.data && data.data.type) || "GENERIC",
       ...(data.data || {}),
     },
@@ -91,25 +94,29 @@ self.addEventListener("notificationclick", function (event) {
 
   if (event.action === "dismiss") return;
 
-  const targetUrl =
-    (event.notification.data && event.notification.data.url) ||
-    "https://uniz.rguktong.in";
+  const payload = (event.notification && event.notification.data) || {};
+  const path =
+    (typeof payload.path === "string" && payload.path.startsWith("/")
+      ? payload.path
+      : null) || "/notifications";
+  const origin = self.location.origin;
+  const targetUrl = origin + path;
 
   event.waitUntil(
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then(function (clientList) {
-        // Focus existing tab if open
         for (const client of clientList) {
-          if (
-            (client.url === targetUrl ||
-              client.url.startsWith("https://uniz.rguktong.in")) &&
-            "focus" in client
-          ) {
-            return client.focus();
+          if (client.url && client.url.startsWith(origin) && "focus" in client) {
+            client.focus();
+            client.postMessage({
+              type: "NOTIFICATION_CLICK",
+              path: path,
+              notificationId: payload.notificationId || null,
+            });
+            return;
           }
         }
-        // Otherwise open a new tab
         if (self.clients.openWindow) {
           return self.clients.openWindow(targetUrl);
         }

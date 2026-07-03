@@ -6,6 +6,7 @@ import IORedis from "ioredis";
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
 import { createNotificationWorker } from "./worker/notification.worker";
 import pushRoutes from "./routes/push.routes";
+import inboxRoutes from "./routes/inbox.routes";
 import { publicVapidKey } from "./services/push.service";
 
 dotenv.config({ override: true });
@@ -33,6 +34,7 @@ app.get("/", (_req, res) => {
 });
 
 app.use("/", pushRoutes);
+app.use("/", inboxRoutes);
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", service: "uniz-notification-service" });
