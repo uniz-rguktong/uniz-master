@@ -135,8 +135,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student",
       content: "dashboard",
       icon: Home,
-      activeColor: "text-zinc-900",
-      hoverColor: "hover:text-zinc-900",
+      activeColor: "text-navy-900",
+      hoverColor: "hover:text-navy-700",
     },
     ...(enableOutingsAndOutpasses
       ? [
@@ -166,8 +166,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student/registration",
       content: "registration",
       icon: ClipboardCheck,
-      activeColor: "text-zinc-900",
-      hoverColor: "hover:text-zinc-900",
+      activeColor: "text-navy-900",
+      hoverColor: "hover:text-navy-700",
     },
     {
       id: "gradehub",
@@ -185,8 +185,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student/attendance",
       content: "attendance",
       icon: CalendarCheck,
-      activeColor: "text-zinc-900",
-      hoverColor: "hover:text-zinc-900",
+      activeColor: "text-navy-900",
+      hoverColor: "hover:text-navy-700",
     },
     {
       id: "resetpassword",
@@ -213,8 +213,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student/help",
       content: "help",
       icon: HelpCircle,
-      activeColor: "text-zinc-900",
-      hoverColor: "hover:text-zinc-900",
+      activeColor: "text-navy-900",
+      hoverColor: "hover:text-navy-700",
     },
   ];
 
@@ -351,7 +351,7 @@ export default function Sidebar({ content }: MainContent) {
             className={`md:hidden sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16 transition-all duration-300 border-b ${isScrolled ? "bg-white/95 backdrop-blur-xl border-[#D4E8F5] shadow-sm" : "bg-white border-transparent"}`}
           >
             <h1
-              className={`uniz-logo-wordmark text-3xl transition-colors duration-300 ${isScrolled ? "text-[#0B2A47]" : "text-[#0B2A47]"}`}
+              className="uniz-logo-wordmark text-3xl text-navy-900 transition-colors duration-300"
             >
               uniZ
             </h1>
@@ -369,7 +369,7 @@ export default function Sidebar({ content }: MainContent) {
           >
             {/* Left: App Branding */}
             <div className="flex items-center gap-4">
-              <h1 className="uniz-logo-wordmark text-3xl text-[#0B2A47]">
+              <h1 className="uniz-logo-wordmark text-3xl text-navy-900">
                 uniZ
               </h1>
             </div>
@@ -377,10 +377,10 @@ export default function Sidebar({ content }: MainContent) {
             {/* Right: Profile */}
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-[14px] font-bold text-zinc-900 leading-none">
+                <p className="text-[14px] font-bold text-navy-900 leading-none">
                   {userData?.name || "Student User"}
                 </p>
-                <p className="text-[11px] font-semibold text-zinc-400 mt-1 lowercase tracking-tight">
+                <p className="text-[11px] font-semibold text-navy-400 mt-1 lowercase tracking-tight">
                   {userData?.email || "N/A"}
                 </p>
               </div>
@@ -392,7 +392,7 @@ export default function Sidebar({ content }: MainContent) {
                     alt=""
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-zinc-900 text-white font-bold text-xs">
+                  <div className="w-full h-full flex items-center justify-center bg-navy-900 text-white font-bold text-xs">
                     {userData?.name?.charAt(0) || "S"}
                   </div>
                 )}

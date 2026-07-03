@@ -28,24 +28,42 @@ export function SectionHeader({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 md:flex-row md:items-end md:justify-between",
+        "flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between",
         className,
       )}
     >
-      <div className="flex items-start gap-3.5">
+      <div className="flex min-w-0 flex-1 items-center gap-4">
         {icon && (
-          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-900 text-white shadow-[0_1px_2px_rgba(10,10,10,0.16)]">
+          <div
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-portal-xl bg-navy-900 text-white shadow-whisper-navy [&_svg]:h-[18px] [&_svg]:w-[18px]"
+            aria-hidden
+          >
             {icon}
           </div>
         )}
-        <div className="space-y-1.5">
-          {eyebrow && <span className={adminEyebrowClass}>{eyebrow}</span>}
-          <h1 className={adminTitleClass}>{title}</h1>
-          {subtitle && <p className={adminSubtitleClass}>{subtitle}</p>}
+        <div className="min-w-0 flex flex-col gap-1">
+          {eyebrow && (
+            <div
+              className={cn(
+                adminEyebrowClass,
+                "flex items-center gap-1.5 leading-none [&_svg]:shrink-0",
+              )}
+            >
+              {eyebrow}
+            </div>
+          )}
+          <h1 className={cn(adminTitleClass, "leading-[1.12]")}>{title}</h1>
+          {subtitle && (
+            <p className={cn(adminSubtitleClass, "max-w-3xl leading-snug")}>
+              {subtitle}
+            </p>
+          )}
         </div>
       </div>
       {actions && (
-        <div className="flex flex-wrap items-center gap-2.5">{actions}</div>
+        <div className="flex shrink-0 flex-wrap items-center gap-2.5 lg:justify-end">
+          {actions}
+        </div>
       )}
     </div>
   );

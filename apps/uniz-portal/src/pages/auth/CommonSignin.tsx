@@ -27,6 +27,14 @@ import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { motion } from "framer-motion";
 import { prepareStudentSession } from "../../utils/studentSessionCache";
+import { cn } from "@/lib/utils";
+import {
+  portalGhostButtonClass,
+  portalInputClass,
+  portalLabelClass,
+  portalPrimaryButtonClass,
+  portalSecondaryButtonClass,
+} from "@/lib/portal-ui";
 
 type SigninProps = {
   type: "student" | "admin" | "faculty";
@@ -140,7 +148,7 @@ function OtpInput({
 
   return (
     <div className="space-y-2">
-      <label className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] block ml-1">
+      <label className={cn(portalLabelClass, "normal-case tracking-normal text-[12px]")}>
         Verification Code
       </label>
       <div className="flex gap-2.5 justify-center">
@@ -158,7 +166,7 @@ function OtpInput({
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
-            className="w-12 h-14 text-center text-xl font-semibold rounded-2xl border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:border-zinc-950 focus:ring-2 focus:ring-zinc-950/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-11 h-14 sm:w-12 text-center text-xl font-semibold rounded-portal-xl border border-navy-200 bg-white text-navy-900 focus:outline-none focus:border-navy-900 focus:ring-2 focus:ring-navy-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.25 }}
@@ -236,22 +244,33 @@ function PasswordStrength({ password }: { password: string }) {
   );
 }
 
-// ─── Shared login styles ──────────────────────────────────────
-const loginLabelClass =
-  "text-[12px] font-medium text-zinc-600 normal-case tracking-normal mb-1.5";
+// ─── Shared login styles (portal navy) ────────────────────────
+const loginLabelClass = cn(
+  portalLabelClass,
+  "normal-case tracking-normal !text-[12px] !font-medium !text-navy-600",
+);
 
-const loginInputClass =
-  "login-field !h-11 !rounded-xl !border-zinc-200 !bg-zinc-50/50 !text-[15px] !font-normal placeholder:!text-zinc-400 focus:!bg-white focus:!border-zinc-900 focus:!ring-2 focus:!ring-zinc-900/5 !shadow-none hover:!border-zinc-300 transition-all";
+const loginInputClass = cn(
+  portalInputClass,
+  "login-field !shadow-none hover:!border-navy-300",
+);
 
-const loginInputWithIconClass = `${loginInputClass} !pl-10 !pr-3.5`;
+const loginInputWithIconClass = cn(loginInputClass, "!pl-10 !pr-3.5");
 
-const loginInputPasswordClass = `${loginInputClass} !pl-10 !pr-10`;
+const loginInputPasswordClass = cn(loginInputClass, "!pl-10 !pr-10");
 
-const loginBtnClass =
-  "!rounded-xl w-full h-11 bg-zinc-950 hover:bg-zinc-800 text-white text-[15px] font-semibold disabled:opacity-40 disabled:cursor-not-allowed relative overflow-hidden group transition-all duration-200 !hover:translate-y-0 shadow-[0_1px_2px_rgba(10,10,10,0.12)]";
+const loginBtnClass = cn(
+  portalPrimaryButtonClass,
+  "w-full !min-h-12 !rounded-portal-xl text-[15px] !hover:translate-y-0",
+);
 
-const loginBtnShimmer =
-  "pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]";
+const loginSecondaryBtnClass = cn(
+  portalSecondaryButtonClass,
+  "w-full !min-h-12 !rounded-portal-xl text-[14px]",
+);
+
+const loginLinkBtnClass =
+  "inline-flex items-center justify-center min-h-11 text-[13px] font-semibold text-navy-600 hover:text-navy-900 transition-colors";
 
 const TURNSTILE_TEST_SITE_KEY_PREFIX = "1x00000000000000000000AA";
 
@@ -829,7 +848,7 @@ export default function Signin({ type }: SigninProps) {
         : "New password";
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
+    <div className="min-h-screen bg-white">
       <LoginScreen
         isLogin={step === "signin"}
         onBack={() => navigate("/")}
@@ -883,10 +902,10 @@ export default function Signin({ type }: SigninProps) {
                   autoComplete="current-password"
                   className={loginInputPasswordClass}
                 />
-                <div className="flex justify-end pt-1">
+                <div className="flex justify-end pt-0.5">
                   <button
                     type="button"
-                    className="text-[12px] text-zinc-500 hover:text-zinc-900 font-medium transition-colors"
+                    className={loginLinkBtnClass}
                     onClick={() => setStep("forgot")}
                   >
                     Forgot password?
@@ -929,7 +948,6 @@ export default function Signin({ type }: SigninProps) {
                       ? "Complete security check"
                       : "Continue"}
                 </span>
-                <span className={loginBtnShimmer} />
               </Button>
             </div>
           )}
@@ -996,15 +1014,14 @@ export default function Signin({ type }: SigninProps) {
                       ? "Complete security check"
                       : "Send code"}
                 </span>
-                <span className={loginBtnShimmer} />
               </Button>
-              <div className="text-center">
+              <div className="text-center pt-1">
                 <button
                   type="button"
-                  className="inline-flex items-center text-[13px] text-zinc-400 hover:text-zinc-950 font-medium transition-colors group"
+                  className={cn(portalGhostButtonClass, "w-full sm:w-auto")}
                   onClick={() => setStep("signin")}
                 >
-                  <ArrowLeft className="w-3.5 h-3.5 mr-1.5 group-hover:-translate-x-0.5 transition-transform" />
+                  <ArrowLeft className="w-4 h-4 shrink-0" />
                   Back to sign in
                 </button>
               </div>
@@ -1028,18 +1045,17 @@ export default function Signin({ type }: SigninProps) {
                     isLoading={isLoading}
                     onClick={handleVerifyOtp}
                   >
-                    <span className="relative z-10">Verify OTP</span>
-                    <span className={loginBtnShimmer} />
+                    <span className="relative z-10">Verify code</span>
                   </Button>
 
-                  <div className="rounded-2xl border border-[#D4E8F5] bg-[#F7FAFD] p-4 space-y-3">
-                    <p className="text-[12px] font-medium text-[#0F3B63] text-center leading-relaxed">
+                  <div className="rounded-portal-xl border border-navy-200 bg-navy-50/80 p-4 space-y-3">
+                    <p className="text-[12px] font-medium text-navy-700 text-center leading-relaxed">
                       Didn&apos;t get a push notification? Send the code to your
                       registered college email instead.
                     </p>
                     <button
                       type="button"
-                      className="w-full inline-flex items-center justify-center gap-2 rounded-xl border-2 border-[#0B2A47] bg-white px-4 py-3 text-[14px] font-bold text-[#0B2A47] shadow-sm transition-all hover:bg-[#0B2A47] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={loginSecondaryBtnClass}
                       onClick={requestEmailOtp}
                       disabled={isLoading}
                     >
@@ -1094,7 +1110,6 @@ export default function Signin({ type }: SigninProps) {
                     onClick={resetPassword}
                   >
                     <span className="relative z-10">Set new password</span>
-                    <span className={loginBtnShimmer} />
                   </Button>
                 </motion.div>
               )}

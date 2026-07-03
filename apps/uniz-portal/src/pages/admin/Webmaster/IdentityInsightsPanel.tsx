@@ -16,8 +16,8 @@ const STAFF_ROLES = new Set([
   "coe",
 ]);
 
-const MAROON = "#800000";
-const MAROON_LIGHT = "#a31f1f";
+const PORTAL_NAVY = "#0B2A47";
+const PORTAL_NAVY_MID = "#0F3B63";
 
 type RoleRow = {
   role?: string;
@@ -119,7 +119,7 @@ export default function IdentityInsightsPanel({ data }: IdentityInsightsPanelPro
           label="Staff & admin"
           value={staffCount.toLocaleString()}
           hint={`${staffShare.toFixed(1)}% of accounts`}
-          accent="text-[#800000]"
+          accent="text-navy-900"
         />
         <InsightStat
           icon={UserCheck}
@@ -163,7 +163,7 @@ export default function IdentityInsightsPanel({ data }: IdentityInsightsPanelPro
                         className="h-full rounded-full transition-all duration-700"
                         style={{
                           width: `${pct}%`,
-                          background: `linear-gradient(90deg, ${MAROON}, ${MAROON_LIGHT})`,
+                          background: `linear-gradient(90deg, ${PORTAL_NAVY}, ${PORTAL_NAVY_MID})`,
                         }}
                       />
                     </div>
@@ -203,7 +203,7 @@ export default function IdentityInsightsPanel({ data }: IdentityInsightsPanelPro
                 className="h-full rounded-l-full transition-all duration-700"
                 style={{
                   width: `${enablementPct}%`,
-                  background: `linear-gradient(90deg, ${MAROON}, ${MAROON_LIGHT})`,
+                  background: `linear-gradient(90deg, ${PORTAL_NAVY}, ${PORTAL_NAVY_MID})`,
                 }}
               />
               {totalDisabled > 0 && (
@@ -218,7 +218,7 @@ export default function IdentityInsightsPanel({ data }: IdentityInsightsPanelPro
               <span className="inline-flex items-center gap-1.5">
                 <span
                   className="w-2 h-2 rounded-full"
-                  style={{ background: MAROON }}
+                  style={{ background: PORTAL_NAVY }}
                 />
                 {totalActive.toLocaleString()} enabled
               </span>

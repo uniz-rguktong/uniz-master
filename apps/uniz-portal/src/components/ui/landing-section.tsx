@@ -1,6 +1,12 @@
 import { motion } from "framer-motion";
 import type { ReactNode, ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
+import {
+  landingContainerClass,
+  landingEyebrowClass,
+  landingLeadClass,
+  landingSectionYClass,
+} from "@/lib/landing-ui";
 
 /** Frosted card shell — matches calcom-hero feature cards */
 export const landingCardClass =
@@ -42,8 +48,8 @@ export function LandingSection({
   id?: string;
 }) {
   return (
-    <section id={id} className={cn("relative w-full py-20 md:py-28", className)}>
-      <div className="max-w-[1280px] mx-auto px-6">{children}</div>
+    <section id={id} className={cn("relative w-full", landingSectionYClass, className)}>
+      <div className={landingContainerClass}>{children}</div>
     </section>
   );
 }
@@ -86,9 +92,7 @@ export function LandingSectionHeader({
         )}
       >
         <div className="w-1.5 h-1.5 rounded-full bg-zinc-950 animate-pulse" />
-        <span className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
-          {eyebrow}
-        </span>
+        <span className={landingEyebrowClass}>{eyebrow}</span>
       </div>
       <h2
         className={cn(
@@ -102,12 +106,7 @@ export function LandingSectionHeader({
         )}
       </h2>
       {description && (
-        <p
-          className={cn(
-            "mt-5 text-[15px] md:text-[17px] text-zinc-500 font-medium leading-relaxed max-w-xl",
-            align === "center" && "max-w-2xl",
-          )}
-        >
+        <p className={cn(landingLeadClass, "mt-5", align === "center" && "max-w-2xl")}>
           {description}
         </p>
       )}

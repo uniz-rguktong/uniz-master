@@ -41,23 +41,23 @@ export default function LoginScreen({
   return (
     <div className="w-full min-h-screen overflow-x-hidden flex bg-white font-sans selection:bg-[#D4E8F5] selection:text-[#0B2A47]">
       {/* Left — cinematic hero */}
-      <div className="hidden lg:flex flex-1 relative overflow-hidden portal-banner-gradient">
+      <div className="hidden lg:flex flex-1 relative overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="https://res.cloudinary.com/diipfzmyj/image/upload/v1772885809/signIn_ojzi3w.png"
             alt=""
-            className="h-full w-full object-cover scale-[1.02] opacity-90"
+            className="h-full w-full object-cover scale-[1.02]"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#081E33] via-[#0B2A47]/55 to-[#0F3B63]/25" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#081E33]/90 via-[#0B2A47]/35 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent" />
 
         <div className="relative z-10 flex flex-1 flex-col p-10 xl:p-14">
           {onBack && (
             <button
               type="button"
               onClick={onBack}
-              className="inline-flex w-fit items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+              className="inline-flex w-fit items-center gap-1 rounded-portal-lg px-2 py-1.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white min-h-11"
             >
               <ChevronLeft className="h-4 w-4" />
               Back
@@ -99,7 +99,7 @@ export default function LoginScreen({
             <button
               type="button"
               onClick={onBack}
-              className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-950"
+              className="inline-flex items-center gap-1 rounded-portal-lg px-2 py-1.5 text-sm font-medium text-navy-600 transition-colors hover:bg-navy-50 hover:text-navy-900 min-h-11"
             >
               <ChevronLeft className="h-4 w-4" />
               Back
@@ -121,7 +121,7 @@ export default function LoginScreen({
               </p>
             </motion.div>
 
-            <div className="rounded-2xl border border-[#D4E8F5] bg-white p-5 shadow-[0_1px_2px_rgba(11,42,71,0.04),0_8px_24px_rgba(11,42,71,0.06)] sm:p-7">
+            <div className="rounded-portal-2xl border border-navy-200 bg-white p-5 shadow-whisper sm:p-7">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={stepKey || title}
@@ -131,7 +131,7 @@ export default function LoginScreen({
                   transition={{ duration: 0.25 }}
                   className="mb-6"
                 >
-                  <h1 className="text-[1.625rem] font-semibold text-[#0B2A47] tracking-[-0.03em] leading-tight">
+                  <h1 className="text-[1.625rem] font-semibold text-navy-900 tracking-[-0.03em] leading-tight">
                     {title || (isLogin ? "Sign in" : "Create account")}
                   </h1>
                   {subtitle && (
@@ -161,7 +161,7 @@ export default function LoginScreen({
                 <button
                   type="button"
                   onClick={onToggleMode}
-                  className="text-zinc-950 font-semibold hover:underline underline-offset-4 transition-colors"
+                  className="text-navy-900 font-semibold hover:underline underline-offset-4 transition-colors min-h-11 inline-flex items-center"
                 >
                   {isLogin ? "Sign up" : "Sign in"}
                 </button>

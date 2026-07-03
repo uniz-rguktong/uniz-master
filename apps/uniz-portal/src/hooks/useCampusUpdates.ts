@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { BASE_URL, GET_NOTIFICATIONS } from "@/api/endpoints";
+import { CAMPUS_UPDATES_FALLBACK } from "@/constants/campusUpdates";
 
 export type CampusUpdate = {
   _id?: string;
@@ -48,16 +49,16 @@ async function fetchCampusUpdates(signal?: AbortSignal): Promise<CampusUpdate[]>
   const headers = new Headers({
     "x-cms-api-key": CMS_API_KEY,
     "Content-Type": "application/json",
+    "Cache-Control": "no-cache",
   });
-  const opts: RequestInit = { method: "GET", headers, signal };
+  const opts: RequestInit = { method: "GET", headers, signal, cache: "no-store" };
 
-  for (const url of [`${BASE_URL}/cms/notifications`, GET_NOTIFICATIONS]) {
+  for (const url of [GET_NOTIFICATIONS, `${BASE_URL}/cms/notifications`]) {
     try {
       const res = await fetch(url, opts);
       if (!res.ok) continue;
       const json = await res.json();
-      const updates = visibleUpdates(extractUpdates(json));
-      if (updates.length > 0) return updates;
+      return visibleUpdates(extractUpdates(json));
     } catch {
       // try next endpoint
     }
@@ -66,9 +67,10 @@ async function fetchCampusUpdates(signal?: AbortSignal): Promise<CampusUpdate[]>
   return [];
 }
 
-export function useCampusUpdates(fallback: CampusUpdate[] = []) {
+export function useCampusUpdates(fallback: CampusUpdate[] = CAMPUS_UPDATES_FALLBACK) {
   const [updates, setUpdates] = useState<CampusUpdate[]>(fallback);
   const [loading, setLoading] = useState(true);
+  const [fromApi, setFromApi] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -77,7 +79,19 @@ export function useCampusUpdates(fallback: CampusUpdate[] = []) {
     fetchCampusUpdates(controller.signal)
       .then((items) => {
         if (cancelled) return;
-        if (items.length > 0) setUpdates(items);
+        if (items.length > 0) {
+          setUpdates(items);
+          setFromApi(true);
+        } else {
+          setUpdates(fallback);
+          setFromApi(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setUpdates(fallback);
+          setFromApi(false);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -89,7 +103,7 @@ export function useCampusUpdates(fallback: CampusUpdate[] = []) {
     };
   }, []);
 
-  return { updates, loading };
+  return { updates, loading, fromApi };
 }
 
 export function getTimeAgo(date: string | undefined) {

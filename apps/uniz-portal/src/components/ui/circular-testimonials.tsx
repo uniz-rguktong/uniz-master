@@ -42,6 +42,8 @@ interface CircularTestimonialsProps {
   autoplay?: boolean;
   /** Smaller avatar, type, and spacing for mobile-first single-screen layouts. */
   dense?: boolean;
+  /** Dot indicators and slide counter below the quote. */
+  showProgress?: boolean;
   colors?: Colors;
   fontSizes?: FontSizes;
 }
@@ -50,6 +52,7 @@ export const CircularTestimonials = ({
   testimonials,
   autoplay = true,
   dense = false,
+  showProgress = true,
   colors = {},
   fontSizes = {},
 }: CircularTestimonialsProps) => {
@@ -92,17 +95,21 @@ export const CircularTestimonials = ({
     };
   }, [autoplay, isInView, activeIndex, testimonialsLength, testimonials]);
 
+  const goToIndex = useCallback(
+    (index: number) => {
+      setActiveIndex(index);
+      if (autoplayTimeoutRef.current) clearTimeout(autoplayTimeoutRef.current);
+    },
+    [],
+  );
+
   const handleNext = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % testimonialsLength);
-    if (autoplayTimeoutRef.current) clearTimeout(autoplayTimeoutRef.current);
-  }, [testimonialsLength]);
+    goToIndex((activeIndex + 1) % testimonialsLength);
+  }, [activeIndex, goToIndex, testimonialsLength]);
 
   const handlePrev = useCallback(() => {
-    setActiveIndex(
-      (prev) => (prev - 1 + testimonialsLength) % testimonialsLength,
-    );
-    if (autoplayTimeoutRef.current) clearTimeout(autoplayTimeoutRef.current);
-  }, [testimonialsLength]);
+    goToIndex((activeIndex - 1 + testimonialsLength) % testimonialsLength);
+  }, [activeIndex, goToIndex, testimonialsLength]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -195,7 +202,9 @@ export const CircularTestimonials = ({
                   fontSize: fontSizeDesignation,
                 }}
               >
-                {activeTestimonial.designation}
+                <span className="designation-badge">
+                  {activeTestimonial.designation}
+                </span>
               </p>
               <motion.p
                 className="quote"
@@ -227,33 +236,59 @@ export const CircularTestimonials = ({
               </motion.p>
             </motion.div>
           </AnimatePresence>
-          <div className="arrow-buttons">
-            <button
-              type="button"
-              className="arrow-button prev-button"
-              onClick={handlePrev}
-              style={{
-                backgroundColor: hoverPrev ? colorArrowHoverBg : colorArrowBg,
-              }}
-              onMouseEnter={() => setHoverPrev(true)}
-              onMouseLeave={() => setHoverPrev(false)}
-              aria-label="Previous testimonial"
-            >
-              <FaArrowLeft className="testimonial-arrow-icon" size={28} color={colorArrowFg} />
-            </button>
-            <button
-              type="button"
-              className="arrow-button next-button"
-              onClick={handleNext}
-              style={{
-                backgroundColor: hoverNext ? colorArrowHoverBg : colorArrowBg,
-              }}
-              onMouseEnter={() => setHoverNext(true)}
-              onMouseLeave={() => setHoverNext(false)}
-              aria-label="Next testimonial"
-            >
-              <FaArrowRight className="testimonial-arrow-icon" size={28} color={colorArrowFg} />
-            </button>
+          <div className="controls-row">
+            <div className="arrow-buttons">
+              <button
+                type="button"
+                className="arrow-button prev-button"
+                onClick={handlePrev}
+                style={{
+                  backgroundColor: hoverPrev ? colorArrowHoverBg : colorArrowBg,
+                  color: hoverPrev ? "#ffffff" : colorArrowFg,
+                }}
+                onMouseEnter={() => setHoverPrev(true)}
+                onMouseLeave={() => setHoverPrev(false)}
+                aria-label="Previous testimonial"
+              >
+                <FaArrowLeft className="testimonial-arrow-icon" size={28} />
+              </button>
+              <button
+                type="button"
+                className="arrow-button next-button"
+                onClick={handleNext}
+                style={{
+                  backgroundColor: hoverNext ? colorArrowHoverBg : colorArrowBg,
+                  color: hoverNext ? "#ffffff" : colorArrowFg,
+                }}
+                onMouseEnter={() => setHoverNext(true)}
+                onMouseLeave={() => setHoverNext(false)}
+                aria-label="Next testimonial"
+              >
+                <FaArrowRight className="testimonial-arrow-icon" size={28} />
+              </button>
+            </div>
+
+            {showProgress && (
+              <div className="progress-row" aria-live="polite">
+                <div className="progress-dots">
+                  {testimonials.map((t, index) => (
+                    <button
+                      key={t.name}
+                      type="button"
+                      className={`progress-dot${index === activeIndex ? " progress-dot--active" : ""}`}
+                      onClick={() => goToIndex(index)}
+                      aria-label={`View ${t.name}`}
+                      aria-current={index === activeIndex ? "true" : undefined}
+                    />
+                  ))}
+                </div>
+                <span className="progress-counter">
+                  {String(activeIndex + 1).padStart(2, "0")}
+                  <span className="progress-counter-sep">/</span>
+                  {String(testimonialsLength).padStart(2, "0")}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -286,9 +321,9 @@ export const CircularTestimonials = ({
           height: 100%;
           object-fit: cover;
           border-radius: 50%;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-          border: 3px solid #fff;
-          outline: 1px solid rgba(228, 228, 231, 0.9);
+          box-shadow: 0 16px 48px rgba(11, 42, 71, 0.14);
+          border: 4px solid #fff;
+          outline: 2px solid #0b2a47;
         }
         .testimonial-content {
           display: flex;
@@ -300,15 +335,31 @@ export const CircularTestimonials = ({
           margin-bottom: 0.25rem;
         }
         .designation {
-          margin-bottom: 2rem;
+          margin-bottom: 1.5rem;
+        }
+        .designation-badge {
+          display: inline-flex;
+          align-items: center;
+          padding: 0.3rem 0.75rem;
+          border-radius: 9999px;
+          background: #f4f4f5;
+          border: 1px solid #e4e4e7;
+          font-size: 0.72em;
+          font-weight: 600;
+          letter-spacing: 0.02em;
         }
         .quote {
           line-height: 1.75;
         }
+        .controls-row {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+          padding-top: 2rem;
+        }
         .arrow-buttons {
           display: flex;
-          gap: 1.5rem;
-          padding-top: 3rem;
+          gap: 0.75rem;
         }
         .arrow-button {
           width: 2.7rem;
@@ -318,8 +369,48 @@ export const CircularTestimonials = ({
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: background-color 0.3s;
+          transition: background-color 0.25s, color 0.25s, transform 0.2s;
+          border: 1px solid transparent;
+          border-color: rgba(11, 42, 71, 0.08);
+        }
+        .arrow-button:active {
+          transform: scale(0.94);
+        }
+        .progress-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+        }
+        .progress-dots {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+        }
+        .progress-dot {
+          width: 0.4rem;
+          height: 0.4rem;
+          border-radius: 9999px;
+          background: #d4d4d8;
           border: none;
+          padding: 0;
+          cursor: pointer;
+          transition: width 0.25s, background-color 0.25s;
+        }
+        .progress-dot--active {
+          width: 1.5rem;
+          background: #0b2a47;
+        }
+        .progress-counter {
+          font-size: 0.7rem;
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          color: #a1a1aa;
+          font-variant-numeric: tabular-nums;
+        }
+        .progress-counter-sep {
+          margin: 0 0.15rem;
+          opacity: 0.5;
         }
         @media (min-width: 768px) {
           .testimonial-grid {
@@ -335,8 +426,11 @@ export const CircularTestimonials = ({
             width: 19rem;
             height: 19rem;
           }
-          .arrow-buttons {
-            padding-top: 0;
+          .controls-row {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 2.5rem;
           }
         }
         .testimonial-container--dense {
@@ -364,8 +458,11 @@ export const CircularTestimonials = ({
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
+        .testimonial-container--dense .controls-row {
+          padding-top: 0.75rem;
+          gap: 0.75rem;
+        }
         .testimonial-container--dense .arrow-buttons {
-          padding-top: 0.5rem;
           gap: 0.65rem;
           justify-content: center;
         }
@@ -440,8 +537,13 @@ export const CircularTestimonials = ({
             width: 28px;
             height: 28px;
           }
+          .testimonial-container--dense .controls-row {
+            padding-top: 2rem;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+          }
           .testimonial-container--dense .arrow-buttons {
-            padding-top: 0;
             justify-content: flex-start;
           }
         }

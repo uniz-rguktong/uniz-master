@@ -3,27 +3,37 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
+import {
+  portalGhostButtonClass,
+  portalPrimaryButtonClass,
+  portalSecondaryButtonClass,
+} from "@/lib/portal-ui";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-semibold tracking-tight ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy-900/20 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default:
+          "rounded-portal-xl bg-primary text-primary-foreground shadow-whisper-navy hover:bg-navy-800",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "rounded-portal-xl bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "rounded-portal-xl border border-navy-200 bg-background text-navy-700 hover:bg-navy-50 hover:text-navy-900",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "rounded-portal-xl bg-navy-50 text-navy-900 hover:bg-navy-100",
+        ghost:
+          "rounded-portal-xl text-navy-600 hover:bg-navy-50 hover:text-navy-900",
+        link: "text-navy-900 underline-offset-4 hover:underline",
+        portal: portalPrimaryButtonClass,
+        portalSecondary: portalSecondaryButtonClass,
+        portalGhost: portalGhostButtonClass,
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        default: "min-h-11 px-5 py-2",
+        sm: "min-h-9 rounded-portal-lg px-3 text-xs",
+        lg: "min-h-12 rounded-portal-xl px-8 text-[15px]",
+        icon: "h-11 w-11 rounded-portal-xl",
       },
     },
     defaultVariants: {

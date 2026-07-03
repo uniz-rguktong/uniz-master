@@ -1,163 +1,148 @@
 import { cn } from "@/lib/utils";
+import {
+  portalBannerGradientClass,
+  portalCardClass,
+  portalCardHoverClass,
+  portalChipClass,
+  portalDangerButtonClass,
+  portalEyebrowClass,
+  portalGhostButtonClass,
+  portalHeaderClass,
+  portalIconTileClass,
+  portalInputClass,
+  portalLabelClass,
+  portalModalDescClass,
+  portalModalShellClass,
+  portalModalTitleClass,
+  portalNumsClass,
+  portalPageClass,
+  portalPageWrapClass,
+  portalPrimaryButtonClass,
+  portalSectionTitleClass,
+  portalSelectClass,
+  portalSubtitleClass,
+  portalTextareaClass,
+  portalTitleClass,
+} from "@/lib/portal-ui";
 
 /* ============================================================
-   UniZ Admin — Design System
-   Premium, minimal, monochrome. Inspired by Linear / Vercel /
-   Raycast. Hairline borders, soft elevation, restrained type.
+   UniZ Admin — extends portal-ui tokens
+   Premium, minimal. Inspired by Linear / Vercel / Raycast.
    ============================================================ */
 
-/** Page shell — soft paper base, ink text, ink selection. */
-export const adminPageClass =
-  "flex min-h-screen bg-white relative overflow-hidden text-[#0B2A47] selection:bg-[#D4E8F5] selection:text-[#0B2A47]";
+export const adminPageClass = cn(portalPageClass, "flex overflow-hidden");
 
 export const adminSidebarOpenWidth = "w-[272px]";
 export const adminSidebarClosedWidth = "w-[76px]";
 
-/** Sidebar — crisp white rail, single hairline divider, no heavy glow. */
 export const adminSidebarClass = cn(
   "bg-white transition-[width] duration-300 ease-out z-50 flex flex-col h-screen",
-  "border-r border-[#D4E8F5]",
+  "border-r border-navy-200",
 );
 
 export const adminSidebarToggleClass =
-  "absolute -right-3 top-7 bg-white border border-zinc-200 rounded-full p-1 text-zinc-400 hover:text-zinc-900 hover:border-zinc-300 shadow-[0_1px_2px_rgba(10,10,10,0.06)] active:scale-95 transition-all z-50 hidden lg:flex items-center justify-center";
+  "absolute -right-3 top-7 bg-white border border-navy-200 rounded-full p-1 text-navy-400 hover:text-navy-900 hover:border-navy-300 shadow-whisper active:scale-95 transition-all z-50 hidden lg:flex items-center justify-center";
 
-/** Group label — small, quiet, wide tracking (no heavy weight). */
-export const adminNavGroupLabelClass =
-  "px-3 mb-1.5 text-[10px] font-semibold text-zinc-400 tracking-[0.02em]";
+export const adminNavGroupLabelClass = portalEyebrowClass;
 
-/** Active nav — portal navy, paper text, whisper-soft shadow. */
 export const adminNavActiveClass =
-  "bg-[#0B2A47] text-white shadow-[0_1px_2px_rgba(11,42,71,0.22)]";
+  "bg-navy-900 text-white shadow-whisper-navy";
 
 export const adminNavInactiveClass =
-  "text-zinc-500 hover:bg-[#F7FAFD] hover:text-[#0B2A47]";
+  "text-navy-500 hover:bg-navy-50 hover:text-navy-900";
 
 export const adminNavIconActiveClass = "text-white";
 export const adminNavIconInactiveClass =
-  "text-zinc-400 group-hover:text-zinc-700";
+  "text-navy-400 group-hover:text-navy-700";
 
-/** Header — flush paper bar, single hairline base. */
-export const adminHeaderClass =
-  "sticky top-0 z-40 px-6 md:px-10 h-16 flex items-center bg-white/90 backdrop-blur-md border-b border-[#D4E8F5]";
+export const adminHeaderClass = cn(portalHeaderClass, "px-6 md:px-10");
 
 export const adminAvatarButtonClass =
-  "w-9 h-9 rounded-full overflow-hidden bg-zinc-100 ring-1 ring-zinc-200/70 hover:ring-zinc-300 transition-all active:scale-95 shrink-0";
+  "w-9 h-9 rounded-full overflow-hidden bg-navy-50 ring-1 ring-navy-200 hover:ring-navy-300 transition-all active:scale-95 shrink-0";
 
 export const adminAvatarFallbackClass =
-  "w-full h-full flex items-center justify-center bg-[#0B2A47] text-white font-semibold text-[13px]";
+  "w-full h-full flex items-center justify-center bg-navy-900 text-white font-semibold text-[13px]";
 
 export const adminLogoutButtonClass =
-  "w-9 h-9 rounded-full bg-white border border-zinc-200/70 flex items-center justify-center text-zinc-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all active:scale-95";
+  "w-9 h-9 rounded-full bg-white border border-navy-200 flex items-center justify-center text-navy-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all active:scale-95";
 
-export const adminSearchInputClass =
-  "w-full bg-zinc-100/70 border border-transparent rounded-lg py-2 text-[13px] text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:border-zinc-300 focus:ring-2 focus:ring-zinc-900/5 transition-all font-medium";
+export const adminSearchInputClass = cn(
+  portalInputClass,
+  "h-10 py-2 bg-navy-50/70 border-transparent focus:bg-white",
+);
 
-/** Card — paper surface, hairline border, whisper shadow. */
-export const adminCardClass =
-  "rounded-2xl border border-zinc-200/70 bg-white shadow-[0_1px_2px_rgba(10,10,10,0.03)]";
+export const adminCardClass = cn(portalCardClass, "border-navy-200/80");
 
-/** Interactive card — subtle lift + border darken on hover. */
-export const adminCardHoverClass =
-  "transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-[0_4px_16px_-6px_rgba(10,10,10,0.10)]";
+export const adminCardHoverClass = portalCardHoverClass;
 
 export const adminHubCardClass = cn(adminCardClass, adminCardHoverClass);
 
-/* ── Reusable primitives ─────────────────────────────────────── */
+export const adminEyebrowClass = portalEyebrowClass;
 
-/** Eyebrow / kicker — quiet uppercase label above a heading. */
-export const adminEyebrowClass =
-  "inline-flex items-center gap-1.5 text-[10px] font-semibold text-zinc-400 tracking-[0.02em]";
+export const adminTitleClass = cn(
+  portalTitleClass,
+  "text-[1.625rem] md:text-[1.875rem] tracking-[-0.03em] leading-none",
+);
 
-/** Page / section title — tight, medium weight, no shout. */
-export const adminTitleClass =
-  "text-[26px] md:text-[30px] font-semibold tracking-[-0.02em] text-zinc-900 leading-tight";
+export const adminSubtitleClass = cn(
+  portalSubtitleClass,
+  "text-[13px] md:text-sm leading-snug",
+);
 
-export const adminSubtitleClass = "text-sm text-zinc-500 leading-relaxed";
+export const adminSectionTitleClass = portalSectionTitleClass;
 
-/** Section header inside cards. */
-export const adminSectionTitleClass =
-  "text-[15px] font-semibold tracking-[-0.01em] text-zinc-900";
-
-/** KPI / stat card. */
 export const adminStatCardClass = cn(
   adminCardClass,
-  "p-5 flex flex-col gap-4 transition-all duration-200 hover:border-zinc-300",
+  "p-5 flex flex-col gap-4 transition-all duration-200 hover:border-navy-300",
 );
 
 export const adminStatValueClass =
-  "text-[28px] font-semibold tracking-[-0.02em] text-zinc-900 leading-none tabular-nums";
+  "text-[28px] font-semibold tracking-[-0.02em] text-navy-900 leading-none tabular-nums";
 
-export const adminStatLabelClass = "text-[12.5px] font-medium text-zinc-500";
+export const adminStatLabelClass = "text-[12.5px] font-medium text-navy-500";
 
-/** Icon tile — neutral, inset feel. */
-export const adminIconTileClass =
-  "w-9 h-9 rounded-xl bg-zinc-100 text-zinc-600 flex items-center justify-center ring-1 ring-inset ring-zinc-900/5";
+export const adminIconTileClass = portalIconTileClass;
 
-/** Pill / chip — quiet status badge. */
-export const adminChipClass =
-  "inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-0.5 text-[11px] font-medium text-zinc-500";
+export const adminChipClass = portalChipClass;
 
-/** Tabular numbers helper. */
-export const adminNumsClass = "tabular-nums [font-feature-settings:'tnum']";
+export const adminNumsClass = portalNumsClass;
 
-/* ── Layout + form primitives (shared across every section) ───── */
+export const adminPageWrapClass = cn(portalPageWrapClass, "space-y-8 text-navy-900");
 
-/** Standard section page wrapper — consistent padding + rhythm. */
-export const adminPageWrapClass = "p-6 md:p-8 space-y-8 text-zinc-900";
+export const adminLabelClass = portalLabelClass;
 
-/** Field label — quiet, restrained (replaces loud font-semibold labels). */
-export const adminLabelClass =
-  "block text-[10px] font-semibold tracking-[0.02em] text-zinc-400";
+export const adminInputClass = portalInputClass;
 
-/** Text input. */
-export const adminInputClass =
-  "w-full h-11 px-3.5 bg-white border border-zinc-200 rounded-xl text-[13px] font-medium text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5 transition-all";
+export const adminSelectClass = portalSelectClass;
 
-/** Select (pair with a ChevronDown overlay). */
-export const adminSelectClass =
-  "w-full h-11 pl-3.5 pr-10 bg-white border border-zinc-200 rounded-xl text-[12px] font-semibold tracking-tight text-zinc-900 appearance-none cursor-pointer focus:outline-none focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5 transition-all disabled:opacity-50";
+export const adminTextareaClass = portalTextareaClass;
 
-/** Textarea. */
-export const adminTextareaClass =
-  "w-full px-3.5 py-3 bg-white border border-zinc-200 rounded-xl text-[13px] font-medium text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5 transition-all resize-none";
+export const adminPrimaryButtonClass = portalPrimaryButtonClass;
 
-/** Primary (ink) button. */
-export const adminPrimaryButtonClass =
-  "inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl bg-[#0B2A47] text-white text-[12px] font-semibold tracking-tight shadow-[0_1px_2px_rgba(11,42,71,0.16)] hover:bg-[#0F3B63] active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed";
+export const adminGhostButtonClass = portalGhostButtonClass;
 
-/** Secondary (paper) button. */
-export const adminGhostButtonClass =
-  "inline-flex items-center justify-center gap-2 h-11 px-4 rounded-xl bg-white border border-zinc-200 text-zinc-600 text-[12px] font-semibold hover:text-zinc-900 hover:border-zinc-300 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed";
+export const adminDangerButtonClass = portalDangerButtonClass;
 
-/** Destructive (subtle) button. */
-export const adminDangerButtonClass =
-  "inline-flex items-center justify-center gap-2 h-11 px-4 rounded-xl bg-white border border-zinc-200 text-zinc-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 text-[12px] font-semibold active:scale-[0.98] transition-all";
-
-/** Segmented control wrapper + segment states. */
 export const adminSegmentWrapClass =
-  "inline-flex items-center gap-1 p-1 rounded-xl bg-zinc-100 border border-zinc-200/70";
+  "inline-flex items-center gap-1 p-1 rounded-portal-xl bg-navy-50 border border-navy-200/80";
+
 export const adminSegmentActiveClass =
-  "px-4 py-1.5 rounded-lg text-[11px] font-semibold tracking-tight bg-white text-zinc-900 shadow-[0_1px_2px_rgba(10,10,10,0.06)] transition-all";
+  "px-4 py-1.5 rounded-portal-lg text-[11px] font-semibold tracking-tight bg-white text-navy-900 shadow-whisper transition-all";
+
 export const adminSegmentInactiveClass =
-  "px-4 py-1.5 rounded-lg text-[11px] font-semibold tracking-tight text-zinc-500 hover:text-zinc-900 transition-all";
+  "px-4 py-1.5 rounded-portal-lg text-[11px] font-semibold tracking-tight text-navy-500 hover:text-navy-900 transition-all";
 
-/* ── Modal / dialog primitives (match UpdatesSection) ─────────── */
+export const adminModalShellClass = portalModalShellClass;
 
-export const adminModalShellClass =
-  "p-0 overflow-hidden bg-white border border-zinc-200 rounded-2xl shadow-xl";
+export const adminModalTitleClass = portalModalTitleClass;
 
-export const adminModalTitleClass =
-  "text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]";
-
-export const adminModalDescClass = "text-[13px] text-zinc-500 leading-relaxed";
+export const adminModalDescClass = portalModalDescClass;
 
 export const adminModalCloseClass =
-  "absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10";
+  "absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10";
 
-export const adminWarningBannerClass = cn(
-  "flex gap-3 p-4 rounded-xl border border-amber-200/70 bg-amber-50/80",
-);
+export const adminWarningBannerClass =
+  "flex gap-3 p-4 rounded-portal-xl border border-amber-200/70 bg-amber-50/80";
 
 export const adminWarningTitleClass =
   "text-[12px] font-semibold text-amber-900";
@@ -165,4 +150,7 @@ export const adminWarningTitleClass =
 export const adminWarningTextClass = "text-[12px] text-amber-800/90 leading-relaxed";
 
 export const adminDangerInputClass =
-  "w-full h-11 px-3.5 bg-rose-50/60 border border-rose-200 rounded-xl text-[13px] font-medium text-rose-800 placeholder:text-rose-300 focus:outline-none focus:border-rose-300 focus:ring-2 focus:ring-rose-500/10 transition-all";
+  "w-full min-h-11 px-3.5 bg-rose-50/60 border border-rose-200 rounded-portal-xl text-[13px] font-medium text-rose-800 placeholder:text-rose-300 focus:outline-none focus:border-rose-300 focus:ring-2 focus:ring-rose-500/10 transition-all";
+
+/** Re-export for admin banners / notices */
+export { portalBannerGradientClass as adminBannerGradientClass };
