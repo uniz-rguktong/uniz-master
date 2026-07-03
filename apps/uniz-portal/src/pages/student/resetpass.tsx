@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Input } from "../../components/Input";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -7,6 +7,45 @@ import { useStudentData } from "../../hooks/student_info";
 import { toast } from "@/utils/toast-ref";
 import { CHANGE_PASS_ENDPOINT } from "../../api/endpoints";
 import { apiClient } from "../../api/apiClient";
+import { Check, Lock, Shield } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  portalEyebrowClass,
+  portalLabelClass,
+  portalPrimaryButtonClass,
+  portalSubtitleClass,
+  portalTitleClass,
+} from "@/lib/portal-ui";
+
+type Strength = { score: number; label: string; barClass: string };
+
+function validatePassword(pwd: string): Strength {
+  let score = 0;
+  if (pwd.length >= 8) score++;
+  if (/[0-9]/.test(pwd)) score++;
+  if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+  if (!pwd) return { score: 0, label: "", barClass: "bg-zinc-100" };
+  if (score <= 1) return { score, label: "Weak", barClass: "bg-rose-500" };
+  if (score === 2) return { score, label: "Fair", barClass: "bg-amber-500" };
+  return { score, label: "Strong", barClass: "bg-emerald-600" };
+}
+
+const REQUIREMENTS = [
+  { id: "len", label: "At least 8 characters", test: (p: string) => p.length >= 8 },
+  { id: "num", label: "Includes a number", test: (p: string) => /[0-9]/.test(p) },
+  {
+    id: "sym",
+    label: "Includes a symbol",
+    test: (p: string) => /[^A-Za-z0-9]/.test(p),
+  },
+] as const;
+
+const GUIDELINES = [
+  "Use at least 8 characters with numbers and symbols.",
+  "Choose a password you do not use on other sites.",
+  "Avoid personal details like your name or roll number.",
+] as const;
 
 export default function Resetpassword() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -18,14 +57,8 @@ export default function Resetpassword() {
   useStudentData();
   const [_isAuth, setAuth] = useRecoilState(is_authenticated);
 
-  // Password strength state
-  const [passwordStrength, setPasswordStrength] = useState({
-    score: 0,
-    label: "",
-    color: "",
-  });
+  const passwordStrength = useMemo(() => validatePassword(password), [password]);
 
-  // Handle input change
   const handleInputChange = useCallback(
     (setter: React.Dispatch<React.SetStateAction<string>>) =>
       (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,32 +67,6 @@ export default function Resetpassword() {
     [],
   );
 
-  // Validate password strength
-  const validatePassword = useCallback((pwd: string) => {
-    let score = 0;
-    if (pwd.length >= 8) score++;
-    if (/[0-9]/.test(pwd)) score++;
-    if (/[^A-Za-z0-9]/.test(pwd)) score++;
-
-    switch (score) {
-      case 0:
-      case 1:
-        return { score, label: "Weak", color: "bg-zinc-200" };
-      case 2:
-        return { score, label: "Moderate", color: "bg-zinc-400" };
-      case 3:
-        return { score, label: "Strong", color: "bg-zinc-900" };
-      default:
-        return { score: 0, label: "", color: "" };
-    }
-  }, []);
-
-  // Update password strength on new password change
-  useEffect(() => {
-    setPasswordStrength(validatePassword(password));
-  }, [password, validatePassword]);
-
-  // Handle Reset Password (Now Change Password)
   const handleResetPassword = async () => {
     if (!currentPassword) {
       toast.error("Please enter your current password");
@@ -70,7 +77,7 @@ export default function Resetpassword() {
       return;
     }
     if (passwordStrength.score < 3) {
-      toast.error("New password is too weak");
+      toast.error("New password does not meet all requirements");
       return;
     }
 
@@ -81,16 +88,14 @@ export default function Resetpassword() {
         {
           method: "POST",
           body: JSON.stringify({
-            currentPassword: currentPassword,
+            currentPassword,
             newPassword: password,
           }),
         },
       );
 
       if (data?.success) {
-        toast.success("Password updated successfully across all systems");
-
-        // Log out for security
+        toast.success("Password updated — please sign in again");
         localStorage.clear();
         setAuth({ is_authenticated: false, type: "" });
         navigateTo("/student/signin", { replace: true });
@@ -100,156 +105,160 @@ export default function Resetpassword() {
     }
   };
 
+  const passwordsMatch =
+    repassword.length > 0 && password === repassword;
+  const passwordsMismatch =
+    repassword.length > 0 && password !== repassword;
+
   return (
     <div className="font-sans text-zinc-900">
-      <div className="max-w-6xl mx-auto px-4 pb-10">
-        <div className="flex flex-col gap-1.5 md:mb-8 mb-4">
-          <p className="text-zinc-500 font-medium text-[13px]">
-            Account Security Terminal
+      <div className="mx-auto max-w-6xl px-4 pb-4 md:pb-10">
+        <header className="mb-2 flex flex-col gap-0.5 md:mb-6">
+          <p className={portalEyebrowClass}>Security</p>
+          <h1 className={cn(portalTitleClass, "mt-1")}>Change password</h1>
+          <p className={cn(portalSubtitleClass, "mt-2 max-w-md")}>
+            Use a strong password you do not use elsewhere. You will be signed
+            out on all devices after updating.
           </p>
-          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-zinc-900 leading-none">
-            Reset Password
-          </h1>
-        </div>
+        </header>
 
-        {/* Main Content */}
-        <div className="md:bg-white md:rounded-xl md:overflow-hidden md:border md:border-zinc-100 md:shadow-sm bg-transparent">
+        <div className="bg-transparent md:overflow-hidden md:rounded-xl md:border md:border-zinc-100 md:bg-white md:shadow-sm">
           <div className="md:flex">
-            {/* Form Section */}
-            {/* Form Section */}
-            <div className="md:w-2/3 py-6 px-0 md:p-8 md:px-10">
-              <div className="md:mb-8 mb-4"></div>
+            <div className="space-y-5 border-zinc-50 px-0 py-2 md:w-2/3 md:border-r md:space-y-6 md:p-10 md:py-6">
+              <Input
+                label="Current password"
+                type="password"
+                onchangeFunction={handleInputChange(setCurrentPassword)}
+                placeholder="Enter current password"
+                labelClassName={portalLabelClass}
+                icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
+              />
 
-              <div className="space-y-4 md:space-y-6">
-                {/* Current Password */}
-                <div>
-                  <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
-                    Current Password
-                  </label>
-                  <div className="relative group">
-                    <Input
-                      type="password"
-                      onchangeFunction={handleInputChange(setCurrentPassword)}
-                      placeholder="Enter current password"
-                      className="focus:border-zinc-900 focus:ring-zinc-900"
-                    />
-                  </div>
-                </div>
+              <div className="space-y-3">
+                <Input
+                  label="New password"
+                  type="password"
+                  onchangeFunction={handleInputChange(setPassword)}
+                  placeholder="Create a new password"
+                  labelClassName={portalLabelClass}
+                  icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
+                />
 
-                {/* New Password */}
-                <div>
-                  <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
-                    New Password
-                  </label>
-                  <div className="relative group">
-                    <Input
-                      type="password"
-                      onchangeFunction={handleInputChange(setPassword)}
-                      placeholder="Enter new password"
-                      className="focus:border-zinc-900 focus:ring-zinc-900"
-                    />
-                  </div>
-                  {password && (
-                    <div className="mt-3">
-                      <div className="flex items-center gap-3">
-                        <div className="h-2 flex-1 bg-zinc-100 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full transition-all duration-500 ${passwordStrength.color}`}
-                            style={{
-                              width: `${(passwordStrength.score / 3) * 100}%`,
-                            }}
-                          ></div>
-                        </div>
-                        <span className="text-[10px] font-bold tracking-wider text-zinc-400">
-                          {passwordStrength.label}
-                        </span>
+                {password && (
+                  <div className="space-y-2 px-0.5">
+                    <div className="flex items-center gap-3">
+                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-100">
+                        <div
+                          className={cn(
+                            "h-full rounded-full transition-all duration-300",
+                            passwordStrength.barClass,
+                          )}
+                          style={{
+                            width: `${Math.max(12, (passwordStrength.score / 3) * 100)}%`,
+                          }}
+                        />
                       </div>
+                      <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                        {passwordStrength.label}
+                      </span>
                     </div>
-                  )}
-                </div>
 
-                {/* Confirm New Password */}
-                <div>
-                  <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
-                    Confirm Password
-                  </label>
-                  <div className="relative group">
-                    <Input
-                      type="password"
-                      onchangeFunction={handleInputChange(setRePassword)}
-                      placeholder="Repeat new password"
-                      className="focus:border-zinc-900 focus:ring-zinc-900"
-                    />
+                    <ul className="grid gap-1.5 sm:grid-cols-1">
+                      {REQUIREMENTS.map((req) => {
+                        const met = req.test(password);
+                        return (
+                          <li
+                            key={req.id}
+                            className={cn(
+                              "flex items-center gap-2 text-[12px] font-medium transition-colors",
+                              met ? "text-zinc-800" : "text-zinc-400",
+                            )}
+                          >
+                            <span
+                              className={cn(
+                                "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border",
+                                met
+                                  ? "border-navy-900 bg-navy-900 text-white"
+                                  : "border-zinc-200 bg-white",
+                              )}
+                            >
+                              {met && <Check className="h-3 w-3" strokeWidth={3} />}
+                            </span>
+                            {req.label}
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </div>
-                </div>
+                )}
+              </div>
 
-                <button
-                  onClick={handleResetPassword}
-                  disabled={isLoading}
-                  className="w-full h-[50px] bg-black text-white rounded-xl font-bold text-sm transition-all  flex items-center justify-center gap-2"
-                >
-                  {isLoading ? "Updating..." : "Update Password"}
-                  {!isLoading}
-                </button>
+              <div className="space-y-1.5">
+                <Input
+                  label="Confirm new password"
+                  type="password"
+                  onchangeFunction={handleInputChange(setRePassword)}
+                  placeholder="Repeat new password"
+                  labelClassName={portalLabelClass}
+                  icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
+                  error={
+                    passwordsMismatch ? "Passwords do not match" : undefined
+                  }
+                />
+                {passwordsMatch && (
+                  <p className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700">
+                    <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                    Passwords match
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={handleResetPassword}
+                disabled={isLoading}
+                className={cn(portalPrimaryButtonClass, "w-full min-h-12 text-[15px]")}
+              >
+                {isLoading ? "Updating…" : "Update password"}
+              </button>
+
+              <div className="rounded-xl border border-zinc-100 bg-white p-4 shadow-sm md:hidden">
+                <div className="flex items-start gap-3">
+                  <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-900" strokeWidth={2} />
+                  <p className="text-[11px] font-medium leading-relaxed text-zinc-500">
+                    For your security, all active sessions are ended after a password
+                    change. Sign in again with your new password.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Info Section */}
-            <div className="hidden md:flex md:w-1/3 bg-zinc-50/50 p-6 md:p-8 border-l border-zinc-100 flex-col justify-between">
+            <div className="hidden flex-col justify-between bg-zinc-50/30 p-8 md:flex md:w-1/3">
               <div>
-                <h3 className="text-sm font-bold text-zinc-400 tracking-[0.14em] mb-6 flex items-center gap-2">
-                  Password Strength
+                <h3 className="mb-6 flex items-center gap-2 text-[10px] font-bold tracking-[0.14em] text-zinc-400">
+                  Password guidelines
                 </h3>
 
-                <div className="space-y-6">
-                  <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${password.length >= 8 ? "text-zinc-900" : "text-zinc-400"}`}
-                  >
-                    <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${password.length >= 8 ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-200"}`}
-                    >
-                      {/* ... */}
+                <div className="space-y-3 md:space-y-6">
+                  {GUIDELINES.map((text, index) => (
+                    <div key={text} className="flex items-start gap-4">
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-zinc-100 bg-white text-[10px] font-bold text-zinc-900 shadow-sm">
+                        {String(index + 1).padStart(2, "0")}
+                      </div>
+                      <p className="text-[13px] font-medium leading-relaxed text-zinc-500">
+                        {text}
+                      </p>
                     </div>
-                  </div>
-                  <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${/[0-9]/.test(password) ? "text-zinc-900" : "text-zinc-400"}`}
-                  >
-                    <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[0-9]/.test(password) ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-200"}`}
-                    >
-                      {/* ... */}
-                    </div>
-                  </div>
-                  <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${/[^A-Za-z0-9]/.test(password) ? "text-zinc-900" : "text-zinc-400"}`}
-                  >
-                    <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[^A-Za-z0-9]/.test(password) ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-200"}`}
-                    >
-                      {/* ... */}
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
-              <div className="mt-8 p-6 bg-zinc-50/50 rounded-xl border border-zinc-100 hidden md:block">
+              <div className="mt-12 rounded-xl border border-zinc-100 bg-white p-5 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <svg
-                    className="h-5 w-5 text-zinc-900 mt-0.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                    />
-                  </svg>
-                  <p className="text-[11px] font-medium text-zinc-400 leading-relaxed tracking-wider">
-                    Terminal security protocol will automatically log out all
-                    sessions after successful credential update.
+                  <Shield size={16} className="mt-0.5 text-zinc-900" />
+                  <p className="text-[11px] font-medium leading-relaxed text-zinc-500">
+                    For your security, all active sessions are ended after a password
+                    change. Sign in again with your new password.
                   </p>
                 </div>
               </div>

@@ -170,7 +170,7 @@ export default function InstitutionAnalytics() {
       {
         label: "On campus",
         value: onCampus,
-        color: "#800000",
+        color: "#0B2A47",
       },
       {
         label: "Off campus",
@@ -299,7 +299,7 @@ export default function InstitutionAnalytics() {
                         style={{
                           width: `${pct}%`,
                           background:
-                            "linear-gradient(90deg, #800000 0%, #a31f1f 100%)",
+                            "linear-gradient(90deg, #0B2A47 0%, #0F3B63 100%)",
                         }}
                       />
                     </div>

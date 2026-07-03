@@ -43,16 +43,16 @@ export const verifyTurnstileToken = async (
     return true;
   }
 
-  if (!token) {
-    return false;
-  }
-
-  // Local dev: test site key + test secret must stay paired (see setup-local.sh).
+  // Local dev: Cloudflare dummy secret — always passes (even without a client token).
   if (
     secretKey === TURNSTILE_TEST_SECRET_ALWAYS_PASS &&
     process.env.NODE_ENV !== "production"
   ) {
     return true;
+  }
+
+  if (!token) {
+    return false;
   }
 
   if (

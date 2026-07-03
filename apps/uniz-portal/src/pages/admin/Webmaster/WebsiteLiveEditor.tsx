@@ -120,7 +120,7 @@ function ImageUploadField({
       </label>
       <label
         className={cn(
-          "mt-2 block rounded-xl border border-dashed border-slate-200 hover:border-[#800000]/30 bg-slate-50/50 cursor-pointer overflow-hidden transition-colors",
+          "mt-2 block rounded-xl border border-dashed border-slate-200 hover:border-[#0B2A47]/30 bg-slate-50/50 cursor-pointer overflow-hidden transition-colors",
           uploading && "opacity-60 pointer-events-none",
         )}
       >
@@ -186,7 +186,7 @@ function SectionBlock({
     <section className={cn(adminCardClass, "overflow-hidden")}>
       <div className="px-5 py-4 border-b border-zinc-100 flex items-center justify-between gap-3 bg-white">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#800000]/5 text-[#800000] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-[#0B2A47]/5 text-[#0B2A47] flex items-center justify-center">
             <Icon size={16} />
           </div>
           <div>
@@ -197,7 +197,7 @@ function SectionBlock({
         <button
           type="button"
           onClick={onAdd}
-          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg bg-[#800000] hover:bg-[#6b0000] text-white text-[12px] font-semibold transition-colors"
+          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg bg-[#0B2A47] hover:bg-[#081E33] text-white text-[12px] font-semibold transition-colors"
         >
           <Plus size={14} />
           {addLabel}
@@ -227,10 +227,10 @@ function AnnouncementsEditor({
         <motion.div
           key={idx}
           layout
-          className="rounded-xl border border-slate-200 bg-white p-4 group hover:border-[#800000]/20 hover:shadow-sm transition-all"
+          className="rounded-xl border border-slate-200 bg-white p-4 group hover:border-[#0B2A47]/20 hover:shadow-sm transition-all"
         >
           <div className="flex items-start justify-between gap-3 mb-3">
-            <div className="flex items-center gap-2 text-[#800000]">
+            <div className="flex items-center gap-2 text-[#0B2A47]">
               <Megaphone size={14} />
               <span className="text-[10px] font-bold uppercase tracking-wide">
                 Ticker #{idx + 1}
@@ -295,7 +295,7 @@ function StatsEditor({
         {items.map((item, idx) => (
           <div
             key={idx}
-            className="rounded-xl border border-slate-200 bg-white p-4 group relative hover:border-[#800000]/20 transition-colors"
+            className="rounded-xl border border-slate-200 bg-white p-4 group relative hover:border-[#0B2A47]/20 transition-colors"
           >
             <button
               type="button"
@@ -304,7 +304,7 @@ function StatsEditor({
             >
               <Trash2 size={13} />
             </button>
-            <p className="text-2xl font-bold text-[#800000] mb-1 tabular-nums">
+            <p className="text-2xl font-bold text-[#0B2A47] mb-1 tabular-nums">
               <input
                 type="text"
                 value={item.value ?? ""}
@@ -417,11 +417,11 @@ function NotificationItemsEditor({
           <motion.div
             key={idx}
             layout
-            className="rounded-xl border border-slate-200 bg-white overflow-hidden group hover:border-[#800000]/25 hover:shadow-sm transition-all"
+            className="rounded-xl border border-slate-200 bg-white overflow-hidden group hover:border-[#0B2A47]/25 hover:shadow-sm transition-all"
           >
             <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
-                <Bell size={14} className="text-[#800000] shrink-0" />
+                <Bell size={14} className="text-[#0B2A47] shrink-0" />
                 <span className="text-[11px] font-semibold text-slate-500 truncate">
                   {item.title || `Entry ${idx + 1}`}
                 </span>
@@ -457,7 +457,7 @@ function NotificationItemsEditor({
                       const next = [...links, { label: "", url: "" }];
                       helpers.updateNestedData([...path, "links"], next);
                     }}
-                    className="text-[10px] font-semibold text-[#800000] hover:underline"
+                    className="text-[10px] font-semibold text-[#0B2A47] hover:underline"
                   >
                     + Add link
                   </button>
@@ -526,7 +526,7 @@ function AddPlaceholder({ label, onClick }: { label: string; onClick: () => void
     <button
       type="button"
       onClick={onClick}
-      className="w-full rounded-xl border-2 border-dashed border-slate-200 hover:border-[#800000]/35 py-6 flex items-center justify-center gap-2 text-slate-400 hover:text-[#800000] text-sm font-semibold transition-colors"
+      className="w-full rounded-xl border-2 border-dashed border-slate-200 hover:border-[#0B2A47]/35 py-6 flex items-center justify-center gap-2 text-slate-400 hover:text-[#0B2A47] text-sm font-semibold transition-colors"
     >
       <Plus size={18} />
       {label}
@@ -568,8 +568,8 @@ function GenericLiveForm({
               className={cn(
                 "rounded-xl border bg-white overflow-hidden transition-all group",
                 isExpanded
-                  ? "border-[#800000]/25 shadow-md ring-1 ring-[#800000]/10"
-                  : "border-slate-200 hover:border-[#800000]/20",
+                  ? "border-[#0B2A47]/25 shadow-md ring-1 ring-[#0B2A47]/10"
+                  : "border-slate-200 hover:border-[#0B2A47]/20",
               )}
             >
               <button

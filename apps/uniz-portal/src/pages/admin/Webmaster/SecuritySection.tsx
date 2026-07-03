@@ -1,68 +1,79 @@
-import { useState } from "react";
-import {
-  Lock,
-  Eye,
-  EyeOff,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Loader2,
-} from "lucide-react";
+import { useState, useCallback, useMemo } from "react";
+import { Check, Lock, Shield, Loader2 } from "lucide-react";
 import { toast } from "@/utils/toast-ref";
 import { ADMIN_RESET_PASS } from "../../../api/endpoints";
-import { cn } from "../../../utils/cn";
+import { cn } from "@/lib/utils";
+import { Input } from "../../../components/Input";
 import { SectionHeader } from "../../../components/admin/SectionHeader";
 import {
   adminPageWrapClass,
-  adminCardClass,
   adminLabelClass,
   adminPrimaryButtonClass,
 } from "../../../components/admin/admin-ui";
 
-function validateStrength(pwd: string) {
+type Strength = { score: number; label: string; barClass: string };
+
+function validatePassword(pwd: string): Strength {
   let score = 0;
   if (pwd.length >= 8) score++;
   if (/[0-9]/.test(pwd)) score++;
   if (/[^A-Za-z0-9]/.test(pwd)) score++;
-  const labels = ["", "Weak", "Moderate", "Strong"];
-  const colors = ["", "bg-red-500", "bg-amber-500", "bg-emerald-500"];
-  const texts = ["", "text-red-500", "text-amber-600", "text-emerald-600"];
-  return {
-    score,
-    label: labels[score],
-    barColor: colors[score],
-    textColor: texts[score],
-  };
+
+  if (!pwd) return { score: 0, label: "", barClass: "bg-zinc-100" };
+  if (score <= 1) return { score, label: "Weak", barClass: "bg-rose-500" };
+  if (score === 2) return { score, label: "Fair", barClass: "bg-amber-500" };
+  return { score, label: "Strong", barClass: "bg-emerald-600" };
 }
 
+const REQUIREMENTS = [
+  { id: "len", label: "At least 8 characters", test: (p: string) => p.length >= 8 },
+  { id: "num", label: "Includes a number", test: (p: string) => /[0-9]/.test(p) },
+  {
+    id: "sym",
+    label: "Includes a symbol",
+    test: (p: string) => /[^A-Za-z0-9]/.test(p),
+  },
+] as const;
+
+const GUIDELINES = [
+  "Use at least 8 characters with numbers and symbols.",
+  "Choose a password you do not use on other sites.",
+  "Avoid your staff ID, email, or other easy-to-guess details.",
+] as const;
+
 export default function SecuritySection({ username }: { username: string }) {
-  const [oldPw, setOldPw] = useState("");
-  const [newPw, setNewPw] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
-  const [showOld, setShowOld] = useState(false);
-  const [showNew, setShowNew] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const strength = validateStrength(newPw);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [repassword, setRePassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const passwordStrength = useMemo(() => validatePassword(password), [password]);
+
+  const handleInputChange = useCallback(
+    (setter: React.Dispatch<React.SetStateAction<string>>) =>
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        setter(event.target.value);
+      },
+    [],
+  );
 
   const handleSubmit = async () => {
-    if (!oldPw || !newPw || !confirmPw) {
+    if (!currentPassword || !password || !repassword) {
       toast.error("Please fill in all fields.");
       return;
     }
-    if (newPw !== confirmPw) {
+    if (password !== repassword) {
       toast.error("New passwords do not match.");
       return;
     }
-    if (strength.score < 3) {
-      toast.error(
-        "Password must be 8+ chars with a number and special character.",
-      );
+    if (passwordStrength.score < 3) {
+      toast.error("New password does not meet all requirements.");
       return;
     }
+
     const token = (localStorage.getItem("admin_token") || "").replace(/"/g, "");
+    setIsLoading(true);
     try {
-      setLoading(true);
       const res = await fetch(ADMIN_RESET_PASS, {
         method: "POST",
         headers: {
@@ -71,27 +82,34 @@ export default function SecuritySection({ username }: { username: string }) {
         },
         body: JSON.stringify({
           username,
-          password: oldPw,
-          new_password: newPw,
+          password: currentPassword,
+          new_password: password,
         }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        toast.success(data.msg || "Password changed! Signing you out…");
+        toast.success(data.msg || "Password updated — signing you out…");
         localStorage.removeItem("admin_token");
-        setTimeout(() => (window.location.href = "/admin/signin"), 2000);
+        setTimeout(() => {
+          window.location.href = "/admin/signin";
+        }, 2000);
       } else {
         toast.error(data.msg || "Failed to change password.");
       }
     } catch {
       toast.error("An error occurred.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
+  const passwordsMatch =
+    repassword.length > 0 && password === repassword;
+  const passwordsMismatch =
+    repassword.length > 0 && password !== repassword;
+
   return (
-    <div className={cn(adminPageWrapClass, "animate-in fade-in duration-700 pb-20")}>
+    <div className={cn(adminPageWrapClass, "animate-in fade-in duration-500 pb-20")}>
       <SectionHeader
         icon={<Lock size={18} />}
         eyebrow="Management"
@@ -99,137 +117,155 @@ export default function SecuritySection({ username }: { username: string }) {
         subtitle="Update your access credentials to maintain account integrity."
       />
 
-      <div className={cn(adminCardClass, "max-w-lg p-8 space-y-8")}>
-        <div className="space-y-6">
-          <PasswordInput
-            label="Current Access Key"
-            value={oldPw}
-            show={showOld}
-            onToggle={() => setShowOld(!showOld)}
-            onChange={setOldPw}
-          />
-
-          <div className="space-y-4">
-            <PasswordInput
-              label="New Security Password"
-              value={newPw}
-              show={showNew}
-              onToggle={() => setShowNew(!showNew)}
-              onChange={setNewPw}
+      <div className="bg-transparent md:overflow-hidden md:rounded-xl md:border md:border-zinc-100 md:bg-white md:shadow-sm">
+        <div className="md:flex">
+          <div className="space-y-5 border-zinc-50 px-0 py-2 md:w-2/3 md:border-r md:space-y-6 md:p-10 md:py-6">
+            <Input
+              label="Current password"
+              type="password"
+              onchangeFunction={handleInputChange(setCurrentPassword)}
+              placeholder="Enter current password"
+              labelClassName={adminLabelClass}
+              icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
             />
 
-            {/* Refined Strength Meter */}
-            {newPw && (
-              <div className="px-1 space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-1">
-                    {[1, 2, 3].map((step) => (
+            <div className="space-y-3">
+              <Input
+                label="New password"
+                type="password"
+                onchangeFunction={handleInputChange(setPassword)}
+                placeholder="Create a new password"
+                labelClassName={adminLabelClass}
+                icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
+              />
+
+              {password && (
+                <div className="space-y-2 px-0.5">
+                  <div className="flex items-center gap-3">
+                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-100">
                       <div
-                        key={step}
                         className={cn(
-                          "h-1 w-8 rounded-full transition-all duration-300",
-                          step <= strength.score
-                            ? strength.barColor
-                            : "bg-zinc-100",
+                          "h-full rounded-full transition-all duration-300",
+                          passwordStrength.barClass,
                         )}
+                        style={{
+                          width: `${Math.max(12, (passwordStrength.score / 3) * 100)}%`,
+                        }}
                       />
-                    ))}
+                    </div>
+                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                      {passwordStrength.label}
+                    </span>
                   </div>
-                  <span
-                    className={cn(
-                      "text-[11px] font-medium tracking-tight",
-                      strength.textColor,
-                    )}
-                  >
-                    {strength.label} Profile
-                  </span>
+
+                  <ul className="grid gap-1.5">
+                    {REQUIREMENTS.map((req) => {
+                      const met = req.test(password);
+                      return (
+                        <li
+                          key={req.id}
+                          className={cn(
+                            "flex items-center gap-2 text-[12px] font-medium transition-colors",
+                            met ? "text-zinc-800" : "text-zinc-400",
+                          )}
+                        >
+                          <span
+                            className={cn(
+                              "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border",
+                              met
+                                ? "border-navy-900 bg-navy-900 text-white"
+                                : "border-zinc-200 bg-white",
+                            )}
+                          >
+                            {met && <Check className="h-3 w-3" strokeWidth={3} />}
+                          </span>
+                          {req.label}
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
-              </div>
-            )}
-          </div>
-
-          <PasswordInput
-            label="Verify New Password"
-            value={confirmPw}
-            show={showConfirm}
-            onToggle={() => setShowConfirm(!showConfirm)}
-            onChange={setConfirmPw}
-          />
-
-          {newPw && confirmPw && (
-            <div className="flex items-center gap-2 px-1 text-[12px] font-medium">
-              {newPw === confirmPw ? (
-                <>
-                  <CheckCircle size={14} className="text-emerald-500" />
-                  <span className="text-emerald-600">Passwords match</span>
-                </>
-              ) : (
-                <>
-                  <XCircle size={14} className="text-rose-500" />
-                  <span className="text-rose-500">Mismatch detected</span>
-                </>
               )}
             </div>
-          )}
 
-          <div className="pt-2 space-y-5">
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className={cn(adminPrimaryButtonClass, "h-12 w-full")}
-            >
-              {loading ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <Lock size={16} />
+            <div className="space-y-1.5">
+              <Input
+                label="Confirm new password"
+                type="password"
+                onchangeFunction={handleInputChange(setRePassword)}
+                placeholder="Repeat new password"
+                labelClassName={adminLabelClass}
+                icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
+                error={
+                  passwordsMismatch ? "Passwords do not match" : undefined
+                }
+              />
+              {passwordsMatch && (
+                <p className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700">
+                  <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  Passwords match
+                </p>
               )}
-              Update Credentials
+            </div>
+
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className={cn(
+                adminPrimaryButtonClass,
+                "w-full min-h-12 py-3.5 text-[15px] md:py-4",
+              )}
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : null}
+              {isLoading ? "Updating…" : "Update password"}
             </button>
 
-            <div className="bg-amber-50/60 rounded-xl p-4 border border-amber-100 flex gap-3">
-              <AlertTriangle size={16} className="text-amber-500 shrink-0" />
-              <p className="text-[12px] text-amber-700 leading-relaxed">
-                You will be automatically signed out of the current session upon
-                a successful password update.
-              </p>
+            <div className="rounded-xl border border-zinc-100 bg-white p-4 shadow-sm md:hidden">
+              <div className="flex items-start gap-3">
+                <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-900" strokeWidth={2} />
+                <p className="text-[11px] font-medium leading-relaxed text-zinc-500">
+                  You will be signed out of this session after a successful
+                  password update. Sign in again with your new password.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="hidden flex-col justify-between bg-zinc-50/30 p-8 md:flex md:w-1/3">
+            <div>
+              <h3 className="mb-6 flex items-center gap-2 text-[10px] font-bold tracking-[0.14em] text-zinc-400">
+                Password guidelines
+              </h3>
+
+              <div className="space-y-3 md:space-y-6">
+                {GUIDELINES.map((text, index) => (
+                  <div key={text} className="flex items-start gap-4">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-zinc-100 bg-white text-[10px] font-bold text-zinc-900 shadow-sm">
+                      {String(index + 1).padStart(2, "0")}
+                    </div>
+                    <p className="text-[13px] font-medium leading-relaxed text-zinc-500">
+                      {text}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-12 rounded-xl border border-zinc-100 bg-white p-5 shadow-sm">
+              <div className="flex items-start gap-3">
+                <Shield size={16} className="mt-0.5 text-zinc-900" />
+                <p className="text-[11px] font-medium leading-relaxed text-zinc-500">
+                  For your security, all active sessions are ended after a
+                  password change. Sign in again with your new password on every
+                  device.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function PasswordInput({
-  label,
-  value,
-  show,
-  onToggle,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  show: boolean;
-  onToggle: () => void;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <div className="space-y-2">
-      <label className={adminLabelClass}>{label}</label>
-      <div className="flex items-center gap-2 bg-white border border-zinc-200 rounded-xl px-3.5 h-11 focus-within:border-zinc-400 focus-within:ring-2 focus-within:ring-zinc-900/5 transition-all">
-        <input
-          type={show ? "text" : "password"}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="••••••••"
-          className="flex-1 text-[13px] font-medium text-zinc-900 bg-transparent focus:outline-none"
-        />
-        <button
-          onClick={onToggle}
-          className="text-zinc-400 hover:text-zinc-700 transition-colors"
-        >
-          {show ? <EyeOff size={14} /> : <Eye size={14} />}
-        </button>
       </div>
     </div>
   );

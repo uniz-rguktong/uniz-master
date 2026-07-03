@@ -1,8 +1,7 @@
-"use client";
-
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
+import { portalCardClass } from "@/lib/portal-ui";
 
 // Define CardContext
 type CardContextType = {
@@ -24,12 +23,13 @@ const useCardContext = () => {
 
 // Variants
 const cardVariants = cva(
-  "flex flex-col items-stretch text-card-foreground rounded-xl",
+  "flex flex-col items-stretch text-card-foreground",
   {
     variants: {
       variant: {
-        default: "bg-card border border-border shadow-xs black/5",
-        accent: "bg-muted shadow-xs p-1",
+        default: "rounded-portal-xl bg-card border border-border shadow-whisper",
+        portal: cn(portalCardClass, "text-navy-900"),
+        accent: "rounded-portal-xl bg-muted shadow-whisper p-1",
       },
     },
     defaultVariants: {

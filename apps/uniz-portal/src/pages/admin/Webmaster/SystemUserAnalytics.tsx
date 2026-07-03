@@ -62,7 +62,7 @@ export default function SystemUserAnalytics() {
 
   const roleData = useMemo(() => {
     const colors: Record<string, string> = {
-      STUDENT: "#800000",
+      STUDENT: "#0B2A47",
       DEAN: "hsl(142.1 76.2% 36.3%)",
       HOD: "hsl(47.9 95.8% 53.1%)",
       WEBMASTER: "hsl(262.1 83.3% 57.8%)",

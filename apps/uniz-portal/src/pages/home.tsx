@@ -237,21 +237,7 @@ const Home = () => {
       <HeroBlock />
 
       <main className="relative">
-        <CampusUpdatesFeed
-          variant="landing"
-          fallback={[
-            {
-              title: "Campus Update",
-              content:
-                "New academic semester registration is now live. Please check your portals.",
-            },
-            {
-              title: "Campus Events",
-              content:
-                "Watch the notice board and student channels for upcoming workshops, sports, and cultural programs.",
-            },
-          ]}
-        />
+        <CampusUpdatesFeed variant="landing" />
         <LandingDivider />
 
         {(!bannersReady || banners.length > 0) && (

@@ -104,14 +104,16 @@
     font-family: "Pattaya", cursive;
     font-weight: 400;
     letter-spacing: -0.02em;
+    color: var(--portal-navy, #0b2a47);
   }
 
   .uniz-primary-btn {
-    @apply h-10 flex items-center justify-center font-medium text-sm rounded-full transition-all duration-200;
-    @apply bg-zinc-900 text-white shadow-none ring-offset-2;
-    @apply hover:bg-zinc-800 hover:-translate-y-[1px];
-    @apply focus:ring-2 focus:ring-zinc-900 focus:outline-none;
-    @apply disabled:bg-zinc-100 disabled:text-zinc-400 disabled:cursor-not-allowed;
+    @apply min-h-11 flex items-center justify-center font-semibold text-sm rounded-portal-xl transition-all duration-200;
+    @apply bg-navy-900 text-white shadow-whisper-navy;
+    @apply hover:bg-navy-800 active:scale-[0.98];
+    @apply focus:ring-2 focus:outline-none;
+    --tw-ring-color: rgb(11 42 71 / 0.2);
+    @apply disabled:bg-navy-100 disabled:text-navy-300 disabled:cursor-not-allowed;
   }
 
   .menu {
@@ -337,6 +339,27 @@
     animation-play-state: paused;
   }
 
+  .portal-updates-marquee {
+    animation: portal-updates-marquee var(--marquee-duration, 28s) linear infinite;
+  }
+
+  .landing-updates-marquee {
+    animation: portal-updates-marquee var(--marquee-duration, 28s) linear infinite;
+  }
+
+  .landing-updates-marquee:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes portal-updates-marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
   @keyframes iconBounce {
     0%,
     100% {
@@ -381,8 +404,18 @@
 }
 
 :root {
-  --uniz-maroon: #800000;
-  --uniz-maroon-light: #a31f1f;
+  --uniz-maroon: #0b2a47;
+  --uniz-maroon-light: #0f3b63;
+
+  /* Portal navy scale — default (overridden in .portal-theme) */
+  --portal-navy: #0b2a47;
+  --portal-navy-mid: #0f3b63;
+  --portal-navy-deep: #081e33;
+  --portal-navy-soft: #1a4a73;
+  --portal-navy-muted: #5a94b8;
+  --portal-navy-tint: #edf5fb;
+  --portal-navy-border: #d4e8f5;
+
   --navy-900: #18181b;
   --navy-800: #27272a;
   --navy-700: #3f3f46;
@@ -393,6 +426,18 @@
   --navy-200: #e4e4e7;
   --navy-100: #f4f4f5;
   --navy-50: #fafafa;
+
+  /* Layout rhythm */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-portal-lg: 12px;
+  --radius-portal-xl: 16px;
+  --radius-portal-2xl: 20px;
+
   --white: #ffffff;
   --bg-page: #f4f6f8;
   --card-bg: #ffffff;
@@ -449,6 +494,13 @@
 .portal-theme body {
   background-color: #ffffff;
   color: #0b2a47;
+}
+
+.portal-theme h1,
+.portal-theme h2,
+.portal-theme h3,
+.portal-theme h4 {
+  letter-spacing: -0.02em;
 }
 
 .portal-theme .bg-premium-gradient,

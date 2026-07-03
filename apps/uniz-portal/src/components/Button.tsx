@@ -31,20 +31,20 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const variants = {
       primary:
-        "bg-zinc-900 text-white hover:bg-zinc-900/95 shadow-none ring-zinc-900",
+        "bg-navy-900 text-white hover:bg-navy-800 shadow-whisper-navy ring-navy-900",
       secondary:
-        "bg-zinc-100 text-zinc-900 hover:bg-zinc-200/95 shadow-none ring-zinc-200",
+        "bg-navy-50 text-navy-900 hover:bg-navy-100 shadow-none ring-navy-200",
       outline:
-        "border border-zinc-300 bg-transparent hover:bg-zinc-50 text-zinc-700 ring-zinc-300",
-      danger: "bg-black text-white hover:bg-black/95 shadow-none ring-black",
+        "border border-navy-200 bg-transparent hover:bg-navy-50 text-navy-700 ring-navy-200",
+      danger: "bg-rose-600 text-white hover:bg-rose-700 shadow-none ring-rose-600",
       ghost:
-        "bg-transparent hover:bg-zinc-100/95 text-zinc-700 ring-zinc-100",
+        "bg-transparent hover:bg-navy-50 text-navy-600 ring-navy-100",
     };
 
     const sizes = {
-      sm: "h-8 px-4 text-[13px]",
-      md: "h-10 px-5 text-[14px]",
-      lg: "h-12 px-6 text-[16px]",
+      sm: "h-9 min-h-9 px-4 text-[13px] rounded-portal-lg",
+      md: "min-h-11 px-5 text-[14px] rounded-portal-xl",
+      lg: "min-h-12 px-6 text-[16px] rounded-portal-xl",
     };
 
     const finalIsLoading = isLoading || loading;
@@ -56,7 +56,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         onClick={finalOnClick}
         disabled={disabled || finalIsLoading}
         className={cn(
-          "inline-flex items-center justify-center rounded-full font-medium transition-all duration-200 ease-smooth focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none hover:-translate-y-[1px]",
+          "inline-flex items-center justify-center font-semibold transition-all duration-200 ease-smooth focus:outline-none focus:ring-2 focus:ring-navy-900/20 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]",
           variants[variant],
           sizes[size],
           className,

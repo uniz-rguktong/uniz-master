@@ -35,7 +35,7 @@ module.exports = {
         foreground: "#0f172a",
 
         primary: {
-          DEFAULT: "#4f46e5",
+          DEFAULT: "var(--portal-navy, #0B2A47)",
           foreground: "#ffffff",
         },
 
@@ -47,6 +47,16 @@ module.exports = {
         accent: {
           DEFAULT: "#eef2ff",
           foreground: "#312e81",
+        },
+
+        portal: {
+          DEFAULT: "var(--portal-navy, #0B2A47)",
+          mid: "var(--portal-navy-mid, #0F3B63)",
+          deep: "var(--portal-navy-deep, #081E33)",
+          soft: "var(--portal-navy-soft, #1A4A73)",
+          muted: "var(--portal-navy-muted, #5A94B8)",
+          tint: "var(--portal-navy-tint, #EDF5FB)",
+          border: "var(--portal-navy-border, #D4E8F5)",
         },
 
         blue: {
@@ -102,6 +112,21 @@ module.exports = {
         "2xl":
           "0 32px 64px -16px rgba(0,0,0,0.16), 0 16px 32px -8px rgba(0,0,0,0.08)",
         inner: "inset 0 2px 4px 0 rgba(0,0,0,0.04)",
+        whisper: "0 1px 2px rgba(11, 42, 71, 0.04)",
+        "whisper-md": "0 4px 16px -6px rgba(11, 42, 71, 0.08)",
+        "whisper-lg": "0 20px 50px -24px rgba(11, 42, 71, 0.12)",
+        "whisper-navy": "0 1px 2px rgba(11, 42, 71, 0.16)",
+        "whisper-landing": "0 20px 40px -15px rgba(0, 0, 0, 0.12)",
+      },
+
+      borderRadius: {
+        "portal-lg": "12px",
+        "portal-xl": "16px",
+        "portal-2xl": "20px",
+      },
+
+      spacing: {
+        portal: "32px",
       },
 
       transitionTimingFunction: {

@@ -42,7 +42,17 @@ import ProfileSemesterSubjects from "./components/ProfileSemesterSubjects";
 import SeatingArrangement, {
   fetchSeatingOnce,
 } from "./components/SeatingArrangement";
+import {
+  studentCancelButtonClass,
+  studentEditButtonClass,
+  studentInfoGridClass,
+  studentSaveButtonClass,
+  studentTabBarClass,
+  studentTabButtonActiveClass,
+  studentTabButtonInactiveClass,
+} from "@/lib/student-ui";
 import CampusUpdatesFeed from "../../components/CampusUpdatesFeed";
+import { cn } from "@/lib/utils";
 import { Student } from "../../types";
 import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
 import { InlineError } from "../../components/feedback/InlineError";
@@ -596,11 +606,11 @@ export default function StudentProfilePage() {
   ];
 
   return (
-    <div className="font-sans text-zinc-900 relative">
+    <div className="font-sans text-navy-900 relative overflow-x-hidden">
       {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
       <BackgroundIconCloud />
 
-      <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2">
+      <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2 overflow-x-hidden">
         {/* Profile Header */}
         <div className="flex flex-col items-center justify-center relative mb-8">
           {/* Actions - Top Right Absolute Position (Desktop Only) */}
@@ -612,14 +622,14 @@ export default function StudentProfilePage() {
                     setIsEditing(false);
                     refetch();
                   }}
-                  className="uniz-primary-btn h-auto px-4 py-1.5 bg-white text-zinc-600 border border-zinc-200 shadow-sm text-xs"
+                  className={studentCancelButtonClass}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="uniz-primary-btn h-auto px-4 py-1.5 text-xs inline-flex items-center"
+                  className={cn(studentSaveButtonClass, "h-auto")}
                 >
                   {isSubmitting && (
                     <Loader2 className="w-3 h-3 animate-spin mr-1" />
@@ -714,7 +724,7 @@ export default function StudentProfilePage() {
                 <button
                   type="button"
                   onClick={() => setIsEditing(true)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-[11px] font-bold text-zinc-600 shadow-sm hover:border-zinc-300 hover:text-zinc-900 transition-all"
+                  className={studentEditButtonClass}
                   title="Edit Profile"
                 >
                   <Pencil className="w-3.5 h-3.5 shrink-0" strokeWidth={2.25} />
@@ -759,14 +769,14 @@ export default function StudentProfilePage() {
                       setIsEditing(false);
                       refetch();
                     }}
-                    className="flex-1 max-w-[140px] py-2.5 bg-white text-zinc-600 border border-zinc-200 rounded-xl font-bold text-xs shadow-sm"
+                    className={cn(studentCancelButtonClass, "flex-1 max-w-[140px]")}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex-1 max-w-[140px] py-2.5 bg-zinc-900 text-white rounded-xl font-bold text-xs shadow-md shadow-zinc-100 flex items-center justify-center gap-2"
+                    className={cn(studentSaveButtonClass, "flex-1 max-w-[160px]")}
                   >
                     {isSubmitting && (
                       <Loader2 className="w-3 h-3 animate-spin" />
@@ -785,8 +795,8 @@ export default function StudentProfilePage() {
         <CampusUpdatesFeed variant="portal" className="mb-8" />
 
         {/* Tab Navigation */}
-        <div className="border-b border-zinc-200 mb-6 overflow-x-auto no-scrollbar">
-          <div className="flex gap-8 min-w-max">
+        <div className={cn(studentTabBarClass, "mb-6")}>
+          <div className="flex gap-6 md:gap-8 min-w-max">
             {[
               "personal",
               "academic",
@@ -799,17 +809,17 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                  className={`pb-3 relative text-[11px] font-bold tracking-[0.15em] capitalize transition-all ${
+                  className={
                     activeTab === tab
-                      ? "text-zinc-900"
-                      : "text-zinc-400 hover:text-zinc-600"
-                  }`}
+                      ? studentTabButtonActiveClass
+                      : studentTabButtonInactiveClass
+                  }
                 >
                   {tab}
                   {activeTab === tab && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-zinc-900 rounded-t-full"
+                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-navy-900 rounded-t-full"
                     />
                   )}
                 </button>
@@ -829,7 +839,7 @@ export default function StudentProfilePage() {
             {activeTab === "personal" && (
               <div className="space-y-6">
                 <SeatingSummaryWidget />
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className={studentInfoGridClass}>
                   {personalFields.map((f) => (
                     <InfoCard
                       key={f.name}

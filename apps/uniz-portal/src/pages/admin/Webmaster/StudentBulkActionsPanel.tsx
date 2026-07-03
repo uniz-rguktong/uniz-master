@@ -19,7 +19,7 @@ const toneBorder: Record<CohortActionConfig["tone"], string> = {
 };
 
 const toneIcon: Record<CohortActionConfig["tone"], string> = {
-  neutral: "bg-zinc-100 text-[#800000]",
+  neutral: "bg-zinc-100 text-[#0B2A47]",
   warning: "bg-amber-50 text-amber-700",
   danger: "bg-rose-50 text-rose-700",
 };

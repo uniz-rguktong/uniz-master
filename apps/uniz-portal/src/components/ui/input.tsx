@@ -1,13 +1,21 @@
 import { cn } from "@/lib/utils";
+import { portalInputClass } from "@/lib/portal-ui";
 import * as React from "react";
 
-const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-  ({ className, type, ...props }, ref) => {
+export interface InputProps extends React.ComponentProps<"input"> {
+  /** Apply portal navy form styling (min 44px touch target). */
+  portal?: boolean;
+}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, portal = false, ...props }, ref) => {
     return (
       <input
         type={type}
         className={cn(
-          "flex h-9 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm text-foreground transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50",
+          portal
+            ? portalInputClass
+            : "flex min-h-11 w-full rounded-portal-xl border border-navy-200 bg-background px-3.5 py-2 text-[15px] text-foreground transition-shadow placeholder:text-navy-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy-900/10 disabled:cursor-not-allowed disabled:opacity-50",
           type === "search" &&
             "[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none [&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none",
           type === "file" &&

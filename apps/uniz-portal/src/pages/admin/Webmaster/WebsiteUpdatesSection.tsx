@@ -454,7 +454,7 @@ export default function WebsiteUpdatesSection() {
                 <p className="text-[10px] font-semibold text-zinc-400 tracking-wide">Workspace</p>
                 <p className="text-sm font-semibold text-zinc-900 truncate">{breadcrumb}</p>
               </div>
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#800000]/5 text-[#800000] border border-[#800000]/10 text-[10px] font-semibold tracking-wide">
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0B2A47]/5 text-[#0B2A47] border border-[#0B2A47]/10 text-[10px] font-semibold tracking-wide">
                 <Sparkles size={10} /> Live editor
               </span>
             </div>

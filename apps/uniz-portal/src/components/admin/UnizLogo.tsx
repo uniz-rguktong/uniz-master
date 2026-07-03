@@ -2,8 +2,6 @@ import { cn } from "@/lib/utils";
 import { adminChipClass } from "@/components/admin/admin-ui";
 import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 
-const MAROON = "#800000";
-
 type UnizLogoProps = {
   /** Sidebar collapsed — compact wordmark */
   collapsed?: boolean;
@@ -29,7 +27,7 @@ function Wordmark({
   return (
     <p
       className={cn(
-        "uniz-logo-wordmark shrink-0 leading-none",
+        "uniz-logo-wordmark shrink-0 leading-none text-navy-900",
         compact
           ? large
             ? "text-[1.4rem]"
@@ -38,7 +36,6 @@ function Wordmark({
             ? "text-[2.25rem]"
             : "text-[1.55rem]",
       )}
-      style={{ color: MAROON }}
     >
       {short ? "Z." : "uniZ."}
     </p>

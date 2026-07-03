@@ -38,6 +38,7 @@ import {
   GET_SUBJECTS,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { cn } from "@/lib/utils";
 import { SectionHeader } from "../../../components/admin/SectionHeader";
 import {
   adminPageWrapClass,

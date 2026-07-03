@@ -1,4 +1,6 @@
 import { memo } from "react";
+import { cn } from "@/lib/utils";
+import { portalInputClass, portalLabelClass } from "@/lib/portal-ui";
 
 export const InfoCard = memo(
   ({
@@ -18,28 +20,31 @@ export const InfoCard = memo(
 
     return (
       <div
-        className={`bg-white p-5 rounded-xl border border-zinc-100 shadow-sm hover:border-zinc-100 transition-all duration-300 ${fullWidth ? "col-span-full" : ""}`}
+        className={cn(
+          "rounded-portal-xl border border-navy-200 bg-white p-4 md:p-5 shadow-whisper transition-all duration-200 hover:border-navy-300",
+          fullWidth && "col-span-full",
+        )}
       >
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-zinc-900">{icon}</span>
-          <span className="text-[10px] font-bold tracking-[0.14em] text-zinc-400">
-            {label}
-          </span>
+        <div className="flex items-center gap-2 mb-2.5">
+          <span className="text-navy-700">{icon}</span>
+          <span className={cn(portalLabelClass, "!mb-0")}>{label}</span>
         </div>
 
         {isLoading ? (
-          <div className="bg-zinc-50 rounded-lg w-3/4 h-6 animate-pulse"></div>
+          <div className="h-6 w-3/4 animate-pulse rounded-portal-lg bg-navy-50" />
         ) : isEditing && editable ? (
           type === "select" ? (
             <select
               name={name}
               value={value}
               onChange={handleChange}
-              className="w-full bg-zinc-50 text-zinc-900 text-[15px] font-semibold p-3.5 rounded-xl border border-zinc-100 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:outline-none transition-all appearance-none"
+              className={cn(portalInputClass, "font-semibold")}
             >
               <option value="">Select {label}</option>
               {(options || []).map((opt: any) => (
-                <option key={opt.v} value={opt.v}>{opt.l}</option>
+                <option key={opt.v} value={opt.v}>
+                  {opt.l}
+                </option>
               ))}
             </select>
           ) : (
@@ -48,17 +53,17 @@ export const InfoCard = memo(
               name={name}
               value={value}
               onChange={handleChange}
-              className="w-full bg-zinc-50 text-zinc-900 text-[15px] font-semibold p-3 rounded-xl border border-zinc-100 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:outline-none transition-all placeholder:text-zinc-400 placeholder:font-normal"
+              className={cn(portalInputClass, "font-semibold")}
               autoComplete="off"
               placeholder={`Enter ${label.toLowerCase()}`}
             />
           )
         ) : (
-          <p className="text-zinc-900 text-[15px] font-semibold truncate leading-tight tracking-normal px-1">
+          <p className="truncate px-0.5 text-[15px] font-semibold leading-tight tracking-normal text-navy-900">
             {value ? (
               value
             ) : (
-              <span className="text-zinc-300 font-medium italic text-sm">
+              <span className="text-sm font-medium italic text-navy-300">
                 No data
               </span>
             )}

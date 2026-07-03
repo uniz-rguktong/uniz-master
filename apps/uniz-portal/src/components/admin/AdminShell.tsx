@@ -271,7 +271,7 @@ export default function AdminShell({
                       {isActive && (
                         <motion.div
                           layoutId="adminActiveTabGlow"
-                          className="absolute inset-0 bg-[#800000] rounded-lg shadow-[0_1px_2px_rgba(128,0,0,0.22)]"
+                          className="absolute inset-0 bg-navy-900 rounded-lg shadow-whisper-navy"
                           initial={false}
                           transition={{ type: "spring", stiffness: 420, damping: 38 }}
                         />

@@ -47,8 +47,8 @@ const DockIconButton = React.forwardRef<HTMLButtonElement, DockIconButtonProps>(
         className={cn(
           "relative group p-3 rounded-xl transition-all duration-200 bg-transparent",
           isActive
-            ? activeColor || "text-zinc-900"
-            : `text-zinc-400 ${hoverColor || "hover:text-zinc-900"}`,
+            ? activeColor || "text-navy-900"
+            : `text-navy-400 ${hoverColor || "hover:text-navy-800"}`,
           className,
         )}
       >
@@ -56,7 +56,7 @@ const DockIconButton = React.forwardRef<HTMLButtonElement, DockIconButtonProps>(
         <span
           className={cn(
             "absolute left-full ml-4 px-2 py-1 rounded-md text-[10px] font-bold tracking-wider",
-            "bg-zinc-900 text-white shadow-lg pointer-events-none",
+            "bg-navy-900 text-white shadow-whisper-navy pointer-events-none",
             "opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-[300]",
           )}
         >
@@ -74,7 +74,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
       <div
         ref={ref}
         className={cn(
-          "inline-flex flex-col items-center bg-white border border-zinc-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-1.5 rounded-2xl gap-2",
+          "inline-flex flex-col items-center bg-white border border-navy-200 shadow-whisper p-1.5 rounded-portal-2xl gap-2",
           className,
         )}
       >

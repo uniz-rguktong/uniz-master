@@ -230,7 +230,7 @@ const NavItem = ({
     >
       <span
         className={cn(
-          "flex h-9 w-9 items-center justify-center rounded-full transition-all",
+          "flex h-11 w-11 items-center justify-center rounded-full transition-all",
           isActive ? "bg-[#0B2A47] text-white" : "text-zinc-400",
         )}
       >

@@ -29,7 +29,7 @@ export function Layout({ children }: LayoutProps) {
   if (shouldHideNavbar) {
     return (
       <div
-        className={`min-h-screen bg-white${location.pathname.includes("/admin") ? " min-w-[1280px]" : ""}`}
+        className={`min-h-screen bg-white overflow-x-hidden${location.pathname.includes("/admin") ? " min-w-[1280px]" : ""}`}
       >
         {children}
       </div>

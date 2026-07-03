@@ -168,7 +168,7 @@ export function DeptStaffEditor({
         <div className="px-6 py-8 md:px-10 md:py-10 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#800000]/70 mb-2">
+              <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#0B2A47]/70 mb-2">
                 RGUKT Ongole · {deptCode}
               </p>
               <h2 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
@@ -179,7 +179,7 @@ export function DeptStaffEditor({
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#800000]/5 text-[#800000] border border-[#800000]/10 text-[11px] font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0B2A47]/5 text-[#0B2A47] border border-[#0B2A47]/10 text-[11px] font-semibold">
                 <Sparkles size={12} />
                 Live editor
               </span>
@@ -203,7 +203,7 @@ export function DeptStaffEditor({
           <button
             type="button"
             onClick={addFaculty}
-            className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-[#800000] hover:bg-[#6b0000] text-white text-[13px] font-semibold shadow-sm transition-colors active:scale-[0.98]"
+            className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-[#0B2A47] hover:bg-[#081E33] text-white text-[13px] font-semibold shadow-sm transition-colors active:scale-[0.98]"
           >
             <UserPlus size={16} />
             Add faculty
@@ -236,8 +236,8 @@ export function DeptStaffEditor({
                 className={cn(
                   "group rounded-xl border bg-white overflow-hidden transition-all duration-200",
                   isExpanded
-                    ? "border-[#800000]/30 shadow-lg ring-2 ring-[#800000]/10"
-                    : "border-slate-200 hover:border-[#800000]/25 hover:shadow-md",
+                    ? "border-[#0B2A47]/30 shadow-lg ring-2 ring-[#0B2A47]/10"
+                    : "border-slate-200 hover:border-[#0B2A47]/25 hover:shadow-md",
                 )}
               >
                 <div className="flex gap-0 flex-col sm:flex-row">
@@ -275,14 +275,14 @@ export function DeptStaffEditor({
                         </span>
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-[#800000]/0 group-hover:bg-[#800000]/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="text-[10px] font-bold text-[#800000] bg-white/90 px-2 py-1 rounded-lg shadow-sm">
+                    <div className="absolute inset-0 bg-[#0B2A47]/0 group-hover:bg-[#0B2A47]/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="text-[10px] font-bold text-[#0B2A47] bg-white/90 px-2 py-1 rounded-lg shadow-sm">
                         Change photo
                       </span>
                     </div>
                     {uploadingIdx === idx && (
                       <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
-                        <Loader2 className="animate-spin text-[#800000]" size={24} />
+                        <Loader2 className="animate-spin text-[#0B2A47]" size={24} />
                       </div>
                     )}
                   </label>
@@ -368,7 +368,7 @@ export function DeptStaffEditor({
                     <div className="grid sm:grid-cols-2 gap-3 mb-4">
                       <div>
                         <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide flex items-center gap-1">
-                          <Mail size={10} className="text-[#800000]" /> Email
+                          <Mail size={10} className="text-[#0B2A47]" /> Email
                         </label>
                         <input
                           type="email"
@@ -420,7 +420,7 @@ export function DeptStaffEditor({
                     <button
                       type="button"
                       onClick={() => setExpandedBio(isExpanded ? null : idx)}
-                      className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#800000] hover:text-[#6b0000] transition-colors"
+                      className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#0B2A47] hover:text-[#081E33] transition-colors"
                     >
                       <ChevronDown
                         size={14}
@@ -497,9 +497,9 @@ export function DeptStaffEditor({
         <button
           type="button"
           onClick={addFaculty}
-          className="w-full rounded-xl border-2 border-dashed border-slate-200 hover:border-[#800000]/40 hover:bg-[#800000]/[0.02] py-10 flex flex-col items-center gap-2 text-slate-400 hover:text-[#800000] transition-all duration-200 group"
+          className="w-full rounded-xl border-2 border-dashed border-slate-200 hover:border-[#0B2A47]/40 hover:bg-[#0B2A47]/[0.02] py-10 flex flex-col items-center gap-2 text-slate-400 hover:text-[#0B2A47] transition-all duration-200 group"
         >
-          <div className="w-12 h-12 rounded-full bg-slate-100 group-hover:bg-[#800000]/10 flex items-center justify-center transition-colors">
+          <div className="w-12 h-12 rounded-full bg-slate-100 group-hover:bg-[#0B2A47]/10 flex items-center justify-center transition-colors">
             <Plus size={22} />
           </div>
           <span className="text-sm font-semibold">Add another faculty member</span>
