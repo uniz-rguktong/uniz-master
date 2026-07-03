@@ -3,6 +3,7 @@ import React, { Suspense } from "react";
 // import { useWebSocket } from "./hooks/useWebSocket";
 import { useAdminDesktopViewport } from "./hooks/useAdminDesktopViewport";
 import { useLocation } from "react-router-dom";
+import { usePortalTheme } from "./hooks/usePortalTheme";
 
 const Navbar = React.lazy(() => import("./components/Navbar"));
 
@@ -12,6 +13,7 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const location = useLocation();
+  usePortalTheme();
 
   useAdminDesktopViewport();
 
@@ -27,7 +29,7 @@ export function Layout({ children }: LayoutProps) {
   if (shouldHideNavbar) {
     return (
       <div
-        className={`min-h-screen bg-zinc-50/50${location.pathname.includes("/admin") ? " min-w-[1280px]" : ""}`}
+        className={`min-h-screen bg-white${location.pathname.includes("/admin") ? " min-w-[1280px]" : ""}`}
       >
         {children}
       </div>
@@ -38,7 +40,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div
-      className={`min-h-screen flex flex-col ${isHomePage ? "bg-white" : "bg-premium-gradient"} text-zinc-900 selection:bg-zinc-100 selection:text-zinc-900`}
+      className={`min-h-screen flex flex-col ${isHomePage ? "bg-white" : "bg-white portal-page-shell"} text-zinc-900 selection:bg-[#D4E8F5] selection:text-[#0B2A47]`}
     >
       <Suspense fallback={<LoadingAnim />}>
         <Navbar />
@@ -54,10 +56,10 @@ export function Layout({ children }: LayoutProps) {
 
 const LoadingAnim = () => {
   return (
-    <div className="flex items-center justify-center h-screen bg-premium-gradient">
+    <div className="flex items-center justify-center h-screen bg-white">
       <div className="relative flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-zinc-200 rounded-full"></div>
-        <div className="absolute w-12 h-12 border-4 border-zinc-900 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-[#D4E8F5] rounded-full"></div>
+        <div className="absolute w-12 h-12 border-4 border-[#0B2A47] border-t-transparent rounded-full animate-spin"></div>
       </div>
     </div>
   );

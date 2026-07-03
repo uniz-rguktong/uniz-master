@@ -86,8 +86,8 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                       className={cn(
                         "w-full flex items-center gap-3 rounded-2xl px-3 py-3 text-left transition-all active:scale-[0.99]",
                         item.isActive
-                          ? "bg-zinc-900 text-white"
-                          : "hover:bg-zinc-50 text-zinc-800",
+                          ? "bg-[#0B2A47] text-white"
+                          : "hover:bg-[#F7FAFD] text-[#0B2A47]",
                       )}
                     >
                       <span
@@ -95,7 +95,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                           "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
                           item.isActive
                             ? "bg-white/15 text-white"
-                            : "bg-zinc-100 text-zinc-700",
+                            : "bg-[#EDF5FB] text-[#0F3B63]",
                         )}
                       >
                         <Icon size={20} strokeWidth={2.25} />
@@ -131,8 +131,8 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
         </AnimatePresence>
 
         <nav
-          className="bg-white/95 backdrop-blur-xl border-t border-zinc-200/80 px-1 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
-          style={{ boxShadow: "0 -4px 24px rgba(0,0,0,0.04)" }}
+          className="bg-white/98 backdrop-blur-xl border-t border-[#D4E8F5] px-1 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+          style={{ boxShadow: "0 -4px 24px rgba(11,42,71,0.06)" }}
         >
           <div className="flex items-end justify-between">
             <div className="flex flex-1 justify-around">
@@ -156,7 +156,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                 onClick={() => setIsMoreOpen((open) => !open)}
                 className={cn(
                   "flex flex-col items-center gap-1 min-w-[64px] transition-all active:scale-95",
-                  isMoreOpen || moreActive ? "text-zinc-900" : "text-zinc-500",
+                  isMoreOpen || moreActive ? "text-[#0B2A47]" : "text-zinc-500",
                 )}
                 aria-label={isMoreOpen ? "Close academics menu" : "Open academics menu"}
                 aria-expanded={isMoreOpen}
@@ -165,8 +165,8 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                   className={cn(
                     "flex h-9 w-9 items-center justify-center rounded-full transition-colors",
                     isMoreOpen || moreActive
-                      ? "bg-zinc-900 text-white"
-                      : "bg-zinc-100 text-zinc-600",
+                      ? "bg-[#0B2A47] text-white"
+                      : "bg-[#EDF5FB] text-[#0F3B63]",
                   )}
                 >
                   {middleItem ? (
@@ -231,7 +231,7 @@ const NavItem = ({
       <span
         className={cn(
           "flex h-9 w-9 items-center justify-center rounded-full transition-all",
-          isActive ? "bg-zinc-900 text-white" : "text-zinc-400",
+          isActive ? "bg-[#0B2A47] text-white" : "text-zinc-400",
         )}
       >
         <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
@@ -239,7 +239,7 @@ const NavItem = ({
       <span
         className={cn(
           "text-[10px] font-bold tracking-tight max-w-[64px] truncate",
-          isActive ? "text-zinc-900" : "text-zinc-400",
+          isActive ? "text-[#0B2A47]" : "text-zinc-400",
         )}
       >
         {item.label}

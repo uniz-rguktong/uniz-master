@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 /** Page shell — soft paper base, ink text, ink selection. */
 export const adminPageClass =
-  "flex min-h-screen bg-[#fafafa] relative overflow-hidden text-zinc-900 selection:bg-zinc-900 selection:text-white";
+  "flex min-h-screen bg-white relative overflow-hidden text-[#0B2A47] selection:bg-[#D4E8F5] selection:text-[#0B2A47]";
 
 export const adminSidebarOpenWidth = "w-[272px]";
 export const adminSidebarClosedWidth = "w-[76px]";
@@ -16,7 +16,7 @@ export const adminSidebarClosedWidth = "w-[76px]";
 /** Sidebar — crisp white rail, single hairline divider, no heavy glow. */
 export const adminSidebarClass = cn(
   "bg-white transition-[width] duration-300 ease-out z-50 flex flex-col h-screen",
-  "border-r border-zinc-200/70",
+  "border-r border-[#D4E8F5]",
 );
 
 export const adminSidebarToggleClass =
@@ -26,12 +26,12 @@ export const adminSidebarToggleClass =
 export const adminNavGroupLabelClass =
   "px-3 mb-1.5 text-[10px] font-semibold text-zinc-400 tracking-[0.02em]";
 
-/** Active nav — uniZ maroon, paper text, whisper-soft shadow. */
+/** Active nav — portal navy, paper text, whisper-soft shadow. */
 export const adminNavActiveClass =
-  "bg-[#800000] text-white shadow-[0_1px_2px_rgba(128,0,0,0.22)]";
+  "bg-[#0B2A47] text-white shadow-[0_1px_2px_rgba(11,42,71,0.22)]";
 
 export const adminNavInactiveClass =
-  "text-zinc-500 hover:bg-zinc-100/70 hover:text-zinc-900";
+  "text-zinc-500 hover:bg-[#F7FAFD] hover:text-[#0B2A47]";
 
 export const adminNavIconActiveClass = "text-white";
 export const adminNavIconInactiveClass =
@@ -39,13 +39,13 @@ export const adminNavIconInactiveClass =
 
 /** Header — flush paper bar, single hairline base. */
 export const adminHeaderClass =
-  "sticky top-0 z-40 px-6 md:px-10 h-16 flex items-center bg-[#fafafa]/85 backdrop-blur-md border-b border-zinc-200/60";
+  "sticky top-0 z-40 px-6 md:px-10 h-16 flex items-center bg-white/90 backdrop-blur-md border-b border-[#D4E8F5]";
 
 export const adminAvatarButtonClass =
   "w-9 h-9 rounded-full overflow-hidden bg-zinc-100 ring-1 ring-zinc-200/70 hover:ring-zinc-300 transition-all active:scale-95 shrink-0";
 
 export const adminAvatarFallbackClass =
-  "w-full h-full flex items-center justify-center bg-[#800000] text-white font-semibold text-[13px]";
+  "w-full h-full flex items-center justify-center bg-[#0B2A47] text-white font-semibold text-[13px]";
 
 export const adminLogoutButtonClass =
   "w-9 h-9 rounded-full bg-white border border-zinc-200/70 flex items-center justify-center text-zinc-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all active:scale-95";
@@ -124,7 +124,7 @@ export const adminTextareaClass =
 
 /** Primary (ink) button. */
 export const adminPrimaryButtonClass =
-  "inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl bg-zinc-900 text-white text-[12px] font-semibold tracking-tight shadow-[0_1px_2px_rgba(10,10,10,0.16)] hover:bg-zinc-800 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl bg-[#0B2A47] text-white text-[12px] font-semibold tracking-tight shadow-[0_1px_2px_rgba(11,42,71,0.16)] hover:bg-[#0F3B63] active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed";
 
 /** Secondary (paper) button. */
 export const adminGhostButtonClass =

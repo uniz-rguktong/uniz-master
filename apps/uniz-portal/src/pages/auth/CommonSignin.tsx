@@ -20,6 +20,7 @@ import {
   Lock,
   ArrowLeft,
   CheckCircle2,
+  Mail,
 } from "lucide-react";
 import LoginScreen from "../../components/ui/login-1";
 import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
@@ -684,13 +685,16 @@ export default function Signin({ type }: SigninProps) {
             autoClose: 6000,
           },
         );
+        turnstileRef.current?.reset?.();
+        syncCaptchaToken(null);
+        setCaptchaStatus("loading");
         setStep("verifyOtp");
       }
     } finally {
       setIsLoading(false);
       setWaitingForCaptcha(false);
     }
-  }, [username, type]);
+  }, [username, type, syncCaptchaToken]);
 
   const requestEmailOtp = useCallback(async () => {
     const idError = validateLoginIdentifier(username, type);
@@ -700,16 +704,6 @@ export default function Signin({ type }: SigninProps) {
     }
 
     try {
-      if (
-        !(await ensureCaptchaToken(
-          captchaTokenRef,
-          turnstileRef,
-          setWaitingForCaptcha,
-        ))
-      ) {
-        return;
-      }
-
       setIsLoading(true);
 
       const data = await apiClient<{
@@ -1037,14 +1031,20 @@ export default function Signin({ type }: SigninProps) {
                     <span className="relative z-10">Verify OTP</span>
                     <span className={loginBtnShimmer} />
                   </Button>
-                  <div className="text-center space-y-3">
+
+                  <div className="rounded-2xl border border-[#D4E8F5] bg-[#F7FAFD] p-4 space-y-3">
+                    <p className="text-[12px] font-medium text-[#0F3B63] text-center leading-relaxed">
+                      Didn&apos;t get a push notification? Send the code to your
+                      registered college email instead.
+                    </p>
                     <button
                       type="button"
-                      className="text-[11px] text-zinc-500 hover:text-zinc-950 font-semibold tracking-wider transition-all disabled:opacity-50"
+                      className="w-full inline-flex items-center justify-center gap-2 rounded-xl border-2 border-[#0B2A47] bg-white px-4 py-3 text-[14px] font-bold text-[#0B2A47] shadow-sm transition-all hover:bg-[#0B2A47] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={requestEmailOtp}
                       disabled={isLoading}
                     >
-                      Resend via Email
+                      <Mail className="w-4 h-4 shrink-0" />
+                      {isLoading ? "Sending to email…" : "Resend via Email"}
                     </button>
                   </div>
                 </div>

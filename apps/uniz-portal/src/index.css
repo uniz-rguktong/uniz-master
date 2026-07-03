@@ -416,6 +416,112 @@
   --component-active-color-default: var(--accent-foreground);
 }
 
+/* ── Portal theme (student / admin / auth — not landing) ───────────────── */
+.portal-theme {
+  --portal-navy: #0b2a47;
+  --portal-navy-mid: #0f3b63;
+  --portal-navy-deep: #081e33;
+  --portal-navy-soft: #1a4a73;
+  --portal-navy-muted: #5a94b8;
+  --portal-navy-tint: #edf5fb;
+  --portal-navy-border: #d4e8f5;
+
+  --navy-900: #0b2a47;
+  --navy-800: #0f3b63;
+  --navy-700: #16466f;
+  --navy-600: #1e5a8c;
+  --navy-500: #2e7099;
+  --navy-400: #5a94b8;
+  --navy-300: #9bc0dc;
+  --navy-200: #d4e8f5;
+  --navy-100: #edf5fb;
+  --navy-50: #f7fafd;
+
+  --bg-page: #ffffff;
+  --card-bg: #ffffff;
+  --primary: #0b2a47;
+  --accent-foreground: #0b2a47;
+  --component-active-color: #0b2a47;
+  --component-active-color-default: #0b2a47;
+  --border: #d4e8f5;
+}
+
+.portal-theme body {
+  background-color: #ffffff;
+  color: #0b2a47;
+}
+
+.portal-theme .bg-premium-gradient,
+.portal-theme .portal-page-shell {
+  background: #ffffff !important;
+}
+
+.portal-theme .uniz-primary-btn {
+  background-color: var(--portal-navy);
+  color: #ffffff;
+}
+
+.portal-theme .uniz-primary-btn:hover:not(:disabled) {
+  background-color: var(--portal-navy-mid);
+}
+
+.portal-theme .uniz-primary-btn:focus {
+  --tw-ring-color: var(--portal-navy);
+}
+
+.portal-theme .menu {
+  --component-active-color: var(--portal-navy);
+  border-top-color: var(--portal-navy-border);
+}
+
+.portal-theme .menu__item.active::after {
+  background-color: var(--portal-navy);
+}
+
+.portal-theme .bg-zinc-900,
+.portal-theme .bg-zinc-950,
+.portal-theme .hover\:bg-zinc-900:hover {
+  background-color: var(--portal-navy) !important;
+}
+
+.portal-theme .hover\:bg-zinc-800:hover,
+.portal-theme .hover\:bg-black:hover {
+  background-color: var(--portal-navy-mid) !important;
+}
+
+.portal-theme .text-zinc-900,
+.portal-theme .text-zinc-950 {
+  color: var(--portal-navy);
+}
+
+.portal-theme .border-zinc-900,
+.portal-theme .border-zinc-950 {
+  border-color: var(--portal-navy);
+}
+
+.portal-theme .ring-zinc-900,
+.portal-theme .focus\:ring-zinc-900:focus {
+  --tw-ring-color: var(--portal-navy);
+}
+
+.portal-theme .bg-zinc-50\/50,
+.portal-theme .bg-zinc-50 {
+  background-color: #ffffff;
+}
+
+.portal-theme .border-zinc-100,
+.portal-theme .border-zinc-200 {
+  border-color: var(--portal-navy-border);
+}
+
+.portal-theme .portal-banner-gradient {
+  background: linear-gradient(
+    to right,
+    var(--portal-navy),
+    var(--portal-navy-mid)
+  );
+}
+
 .dark {
   --background: oklch(0 0 0);
 }

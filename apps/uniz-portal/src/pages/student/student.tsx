@@ -42,6 +42,7 @@ import ProfileSemesterSubjects from "./components/ProfileSemesterSubjects";
 import SeatingArrangement, {
   fetchSeatingOnce,
 } from "./components/SeatingArrangement";
+import CampusUpdatesFeed from "../../components/CampusUpdatesFeed";
 import { Student } from "../../types";
 import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
 import { InlineError } from "../../components/feedback/InlineError";
@@ -780,6 +781,8 @@ export default function StudentProfilePage() {
             )}
           </div>
         </div>
+
+        <CampusUpdatesFeed variant="portal" className="mb-8" />
 
         {/* Tab Navigation */}
         <div className="border-b border-zinc-200 mb-6 overflow-x-auto no-scrollbar">

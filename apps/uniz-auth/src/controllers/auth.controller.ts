@@ -367,17 +367,6 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
   let username = allowEmail
     ? (await resolveUsernameFromEmail(rawIdentifier)) || rawIdentifier
     : rawIdentifier.toUpperCase();
-  const captchaToken = req.body.captchaToken;
-
-  // Cloudflare Turnstile Verification
-  const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
-
-  if (!isHuman) {
-    return res.status(400).json({
-      code: "AUTH_CAPTCHA_FAILED",
-      message: "Security verification failed. Please try again.",
-    });
-  }
 
   try {
     const user = await prisma.authCredential.findFirst({
@@ -406,6 +395,9 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
         message: "No active OTP found. Please request a new one first.",
       });
     }
+
+    // Active OTP session means the user already passed Turnstile on /otp/request.
+    // Email resend is rate-limited separately and does not need a fresh captcha.
 
     // Higher resolution logic for all roles (Student/Faculty/Admin)
     let email = `${username.toLowerCase()}@rguktong.ac.in`;
