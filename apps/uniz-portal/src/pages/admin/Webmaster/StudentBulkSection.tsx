@@ -150,14 +150,6 @@ export default function StudentBulkSection() {
     }
   };
 
-  const handleDownloadO23Template = () => {
-    const a = document.createElement("a");
-    a.href = "/assets/samples/Student_Upload_Template_O23.xlsx";
-    a.download = "Student_Upload_Template_O23.xlsx";
-    a.click();
-    toast.success("O23 prefilled template downloaded");
-  };
-
   // Progress Polling
   useEffect(() => {
     let interval: any;
@@ -287,22 +279,16 @@ export default function StudentBulkSection() {
         <div className="w-full space-y-6">
           <div className="flex justify-end gap-2">
             <button
-              onClick={handleDownloadO23Template}
-              className={adminGhostButtonClass}
-            >
-              <Download size={14} />
-              O23 Prefilled Template
-            </button>
-            <button
               onClick={handleDownloadTemplate}
               className={adminGhostButtonClass}
             >
               <Download size={14} />
-              Blank Template
+              Download Template
             </button>
           </div>
           <p className="text-[12px] text-zinc-500">
-            Branch can be left as N/A for O23 until allocation data is available.
+            Use the template columns for student ID, name, email, branch, year,
+            section, and batch. Branch may be N/A until allocation is finalized.
           </p>
 
           <div className="w-full space-y-6">
