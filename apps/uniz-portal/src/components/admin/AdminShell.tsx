@@ -330,51 +330,72 @@ export default function AdminShell({
           </div>
         </nav>
 
-        {(showSidebarProfile || sidebarFooter) && (
-          <div className="mt-auto border-t border-zinc-100/80 p-3 pb-5">
-            {sidebarFooter}
-            {showSidebarProfile && (
-              <div
-                onClick={() => openProfile(avatarBtnRef)}
-                className={cn(
-                  "flex items-center py-1.5 hover:bg-zinc-50 rounded-xl transition-colors cursor-pointer group",
-                  isSidebarOpen ? "justify-start px-2" : "justify-center",
-                )}
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <button
-                    ref={avatarBtnRef}
-                    className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-zinc-100 flex items-center justify-center shadow-sm ring-1 ring-zinc-200/60 transition-transform group-hover:scale-105"
-                  >
-                    {profilePhoto ? (
-                      <img
-                        src={profilePhoto}
-                        className="w-full h-full object-cover"
-                        alt=""
-                      />
-                    ) : (
-                      <span className="text-zinc-600 font-bold text-[11px]">
-                        {initial}
-                      </span>
-                    )}
-                  </button>
-                  {isSidebarOpen && (
-                    <div className="min-w-0">
-                      <p className="text-[13px] font-bold text-zinc-900 truncate leading-tight">
-                        {profileName || username}
-                      </p>
-                      {roleLabel && (
-                        <p className="text-[9px] font-bold text-zinc-400 tracking-wider truncate mt-0.5">
-                          {roleLabel}
-                        </p>
-                      )}
-                    </div>
+        <div className="mt-auto border-t border-zinc-100/80 p-3 pb-5 space-y-3">
+          {sidebarFooter}
+          {showSidebarProfile && (
+            <div
+              onClick={() => openProfile(avatarBtnRef)}
+              className={cn(
+                "flex items-center py-1.5 hover:bg-zinc-50 rounded-xl transition-colors cursor-pointer group",
+                isSidebarOpen ? "justify-start px-2" : "justify-center",
+              )}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <button
+                  ref={avatarBtnRef}
+                  className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-zinc-100 flex items-center justify-center shadow-sm ring-1 ring-zinc-200/60 transition-transform group-hover:scale-105"
+                >
+                  {profilePhoto ? (
+                    <img
+                      src={profilePhoto}
+                      className="w-full h-full object-cover"
+                      alt=""
+                    />
+                  ) : (
+                    <span className="text-zinc-600 font-bold text-[11px]">
+                      {initial}
+                    </span>
                   )}
-                </div>
+                </button>
+                {isSidebarOpen && (
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-bold text-zinc-900 truncate leading-tight">
+                      {profileName || username}
+                    </p>
+                    {roleLabel && (
+                      <p className="text-[9px] font-bold text-zinc-400 tracking-wider truncate mt-0.5">
+                        {roleLabel}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+
+          {isSidebarOpen && (
+            <div className="px-2 pt-2 space-y-2">
+              <div className="rounded-xl bg-gradient-to-br from-navy-900 to-navy-800 p-3.5 text-white">
+                <p className="text-[10px] font-bold tracking-[0.12em] text-white/50 uppercase">
+                  Platform
+                </p>
+                <p className="text-[13px] font-semibold mt-1 leading-tight">
+                  uniZ Admin Console
+                </p>
+                <p className="text-[10px] text-white/40 font-medium mt-1.5 leading-relaxed">
+                  RGUKT Ongole &middot; Microservices v1.3
+                </p>
+              </div>
+            </div>
+          )}
+          {!isSidebarOpen && (
+            <div className="flex justify-center">
+              <div className="w-8 h-8 rounded-lg bg-navy-900 flex items-center justify-center" title="uniZ Admin Console">
+                <span className="text-white text-[10px] font-bold">Z</span>
+              </div>
+            </div>
+          )}
+        </div>
       </aside>
 
       <main
