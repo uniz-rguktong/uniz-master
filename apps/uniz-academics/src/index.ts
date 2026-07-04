@@ -27,9 +27,14 @@ app.get("/health", (req, res) => {
 
 import academicRoutes from "./routes/academic.routes";
 import queueRoutes from "./routes/queue.routes";
+import analyticsRoutes from "./routes/analytics.routes";
+import { authMiddleware } from "./middlewares/auth.middleware";
 
 // Internal Queue Routes (No Auth Middleware)
 app.use("/api/queue", queueRoutes);
+
+// Analytics Routes (Auth Required)
+app.use("/analytics", authMiddleware, analyticsRoutes);
 
 // General Academic Routes (With Auth Middleware)
 app.use("/", academicRoutes);

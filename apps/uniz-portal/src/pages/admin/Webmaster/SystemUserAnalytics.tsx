@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Users, Shield, UserCheck, UserX } from "lucide-react";
+import { Users, Shield, UserCheck, UserX, GraduationCap, BookOpen, AlertTriangle, CalendarClock } from "lucide-react";
 import { ANALYTICS_SYSTEM_USERS, getAnalyticsHeaders } from "../../../api/endpoints";
 import { KPICard } from "../AnalyticsUI";
 import { DonutChart } from "../../../components/ui/donut-chart";
@@ -9,6 +9,7 @@ import InstitutionAnalytics from "./InstitutionAnalytics";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDisplayText } from "@/utils/displayText";
 import { cn } from "../../../utils/cn";
+import { useAdminDashboardStats } from "../../../hooks/useAdminDashboardStats";
 
 import { useRecoilState } from "recoil";
 import { systemUserAnalyticsAtom } from "../../../store/atoms";
@@ -18,6 +19,8 @@ export default function SystemUserAnalytics() {
   const [cachedData, setCachedData] = useRecoilState(systemUserAnalyticsAtom);
   const [loading, setLoading] = useState(!cachedData.fetched);
   const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
+  const role = (localStorage.getItem("role") || "webmaster").toLowerCase().replace(/"/g, "");
+  const { data: academicStats, loading: statsLoading } = useAdminDashboardStats(role);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -150,6 +153,55 @@ export default function SystemUserAnalytics() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Academic Insights */}
+      {academicStats && (
+        <div className="space-y-4">
+          <div>
+            <p className="text-[11px] font-semibold text-zinc-400 tracking-[0.14em] uppercase">
+              Academic overview
+            </p>
+            <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
+              {academicStats.currentSemester || "Current Semester"}
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <KPICard
+              title="Total Students"
+              value={academicStats.totalStudents.toLocaleString()}
+              icon={GraduationCap}
+              badge="Enrolled"
+            />
+            <KPICard
+              title="Average GPA"
+              value={academicStats.avgGPA ?? "—"}
+              icon={BookOpen}
+              badge="Institution"
+            />
+            <KPICard
+              title="Backlogs"
+              value={academicStats.backlogCount}
+              icon={AlertTriangle}
+              badge={academicStats.backlogCount ? "At Risk" : "Clear"}
+              iconColor={academicStats.backlogCount ? "text-amber-500" : "text-emerald-500"}
+            />
+            <KPICard
+              title="Active Semesters"
+              value={academicStats.activeSemesters}
+              icon={CalendarClock}
+              badge="Running"
+            />
+          </div>
+        </div>
+      )}
+      {statsLoading && !academicStats && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+        </div>
+      )}
+
       <InstitutionAnalytics />
 
       <div>

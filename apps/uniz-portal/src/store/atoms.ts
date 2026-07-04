@@ -249,6 +249,26 @@ export const subjectsAtom = atom({
   },
 });
 
+export const adminDashboardStatsAtom = atom({
+  key: "adminDashboardStatsAtom",
+  default: {
+    fetched: false,
+    data: null as null | {
+      totalStudents: number;
+      totalSubjects: number;
+      activeSemesters: number;
+      totalFaculty: number;
+      avgGPA: number | null;
+      backlogCount: number;
+      lowAttendanceCount: number;
+      avgAttendancePct: number | null;
+      currentSemester: string | null;
+      registration: { registered: number; dropped: number };
+      branchPerformance?: { department: string; avg_grade: number; student_count: number }[];
+    },
+  },
+});
+
 export const deanOverviewAtom = atom({
   key: "deanOverviewAtom",
   default: {

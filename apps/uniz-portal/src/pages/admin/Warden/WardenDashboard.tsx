@@ -4,6 +4,10 @@ import {
   CheckCircle2,
   LayoutDashboard,
   ChevronLeft,
+  Users,
+  GraduationCap,
+  CalendarClock,
+  BookOpen,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { adminHubCardClass } from "@/components/admin/admin-ui";
@@ -12,6 +16,8 @@ import { useLogout } from "../../../hooks/useLogout";
 import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
 import ApproveComp from "../approve-comp";
 import UpdateStatus from "../../../components/UpdateStudentStatus";
+import { KPICard } from "../AnalyticsUI";
+import { useAdminDashboardStats } from "../../../hooks/useAdminDashboardStats";
 
 export default function WardenDashboard() {
   useIsAuth();
@@ -59,6 +65,7 @@ export default function WardenDashboard() {
   const navItems = navGroups.flatMap((group) => group.items);
 
   const { logout } = useLogout();
+  const { data: academicStats } = useAdminDashboardStats("warden");
 
   const renderContent = () => {
     switch (activeTab) {
@@ -134,6 +141,15 @@ export default function WardenDashboard() {
                 <LayoutDashboard size={280} />
               </div>
             </div>
+
+            {academicStats && (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <KPICard title="Total Students" value={academicStats.totalStudents.toLocaleString()} icon={Users} badge="Enrolled" />
+                <KPICard title="Avg Attendance" value={academicStats.avgAttendancePct != null ? `${academicStats.avgAttendancePct}%` : "—"} icon={BookOpen} badge="Institution" />
+                <KPICard title="Active Semesters" value={academicStats.activeSemesters} icon={CalendarClock} badge="Running" />
+                <KPICard title="Faculty" value={academicStats.totalFaculty} icon={GraduationCap} badge="On Record" />
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {navItems.slice(1).map((item) => (

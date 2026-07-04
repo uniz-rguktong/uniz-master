@@ -2,8 +2,10 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import {
   Users,
   Home,
-  CheckCircle2,
-  AlertCircle,
+  GraduationCap,
+  AlertTriangle,
+  UserX,
+  BookOpen,
   Loader2,
   Camera,
   BadgeCheck,
@@ -16,10 +18,10 @@ import {
 import {
   ANALYTICS_CAMPUS_OCCUPANCY,
   ANALYTICS_ACADEMIC_HEATMAP,
-  ANALYTICS_GRIEVANCE_TRENDS,
   getAnalyticsHeaders,
   BASE_URL,
 } from "../../../api/endpoints";
+import { useAdminDashboardStats } from "../../../hooks/useAdminDashboardStats";
 import { KPICard, SubjectHeatmap } from "../AnalyticsUI";
 import { DonutChart as DonutUI } from "@/components/ui/donut-chart";
 import { Card } from "@/components/ui/card";
@@ -62,8 +64,8 @@ export default function DeanOverview({ username }: { username: string }) {
   });
   const [occupancy, setOccupancy] = useState<any>(cachedData.occupancy);
   const [heatmap, setHeatmap] = useState<any[]>(cachedData.heatmap);
-  const [grievances, setGrievances] = useState<any>(cachedData.grievances);
   const [loading, setLoading] = useState(!cachedData.fetched);
+  const { data: academicStats } = useAdminDashboardStats("dean");
   const [selectedBranch, setSelectedBranch] = useState<string>("CSE");
   const [hoveredOccupancy, setHoveredOccupancy] = useState<string | null>(null);
 
@@ -162,27 +164,24 @@ export default function DeanOverview({ username }: { username: string }) {
       try {
         if (!cachedData.fetched) setLoading(true);
         const authHeaders = getAnalyticsHeaders();
-        const [occRes, hMapRes, gvRes] = await Promise.all([
+        const [occRes, hMapRes] = await Promise.all([
           fetch(ANALYTICS_CAMPUS_OCCUPANCY, { headers: authHeaders }),
           fetch(ANALYTICS_ACADEMIC_HEATMAP, { headers: authHeaders }),
-          fetch(ANALYTICS_GRIEVANCE_TRENDS, { headers: authHeaders }),
         ]);
 
-        const [occ, hmap, gv] = await Promise.all([
+        const [occ, hmap] = await Promise.all([
           occRes.json().catch(() => ({})),
           hMapRes.json().catch(() => []),
-          gvRes.json().catch(() => ({})),
         ]);
 
         setOccupancy(occ);
         setHeatmap(Array.isArray(hmap) ? hmap : []);
-        setGrievances(gv);
         setCachedData({
           fetched: true,
           profile: profile || cachedData.profile,
           occupancy: occ,
           heatmap: Array.isArray(hmap) ? hmap : [],
-          grievances: gv,
+          grievances: null,
         });
       } catch (err) {
         console.error("Dean analytics failed:", err);
@@ -213,48 +212,6 @@ export default function DeanOverview({ username }: { username: string }) {
       );
   }, [heatmap, selectedBranch]);
 
-  const grievanceData = useMemo(() => {
-    const hasData =
-      grievances && (grievances.trend?.length || grievances.feed?.length);
-    if (hasData) return grievances;
-
-    return {
-      resolutionRate: 94.5,
-      pendingCount: 12,
-      trend: [
-        { name: "Dec", count: 45 },
-        { name: "Jan", count: 32 },
-        { name: "Feb", count: 28 },
-        { name: "Mar", count: 18 },
-      ],
-      feed: [
-        {
-          time: "2 Hours Ago",
-          message: "Water Supply Resolved",
-          detail: "Hostel Block A-1 Primary Tank Repaired",
-          status: "success",
-        },
-        {
-          time: "1 Day Ago",
-          message: "Internet Downtime Reported",
-          detail: "Fiber cut detected near academic block",
-          status: "warning",
-        },
-        {
-          time: "2 Days Ago",
-          message: "MESS Complaint Logged",
-          detail: "Quality audit initiated for Dining Hall 2",
-          status: "error",
-        },
-        {
-          time: "3 Days Ago",
-          message: "Library Extension Approved",
-          detail: "24/7 access granted for E3 Students",
-          status: "success",
-        },
-      ],
-    };
-  }, [grievances]);
 
   const occupancyStats = useMemo(() => {
     const inside = Number(occupancy?.["Inside Campus"]) || 0;
@@ -270,20 +227,6 @@ export default function DeanOverview({ username }: { username: string }) {
       { value: outside, color: "hsl(214.7 95% 40%)", label: "Outside Campus" },
     ];
 
-    if (total === 0 && !occupancy) {
-      return {
-        total: 3450,
-        inside: 2800,
-        data: [
-          {
-            value: 2800,
-            color: "hsl(142.1 76.2% 36.3%)",
-            label: "Inside Campus",
-          },
-          { value: 650, color: "hsl(214.7 95% 40%)", label: "Outside Campus" },
-        ],
-      };
-    }
 
     return {
       total,
@@ -489,16 +432,17 @@ export default function DeanOverview({ username }: { username: string }) {
           badge={`${((occupancyStats.inside / occupancyStats.total) * 100 || 0).toFixed(0)}% Cap`}
         />
         <KPICard
-          title="Resolution Rate"
-          value={`${grievanceData.resolutionRate || 0}%`}
-          icon={CheckCircle2}
-          badge="Target Hit"
+          title="Average GPA"
+          value={academicStats?.avgGPA ?? "—"}
+          icon={GraduationCap}
+          badge={academicStats?.currentSemester || "Current"}
         />
         <KPICard
-          title="Pending Actions"
-          value={grievanceData.pendingCount || 0}
-          icon={AlertCircle}
-          badge="Urgent"
+          title="Backlogs"
+          value={academicStats?.backlogCount ?? "—"}
+          icon={AlertTriangle}
+          badge={academicStats?.backlogCount ? "Needs Attention" : "Clear"}
+          iconColor={academicStats?.backlogCount ? "text-amber-500" : "text-emerald-500"}
         />
       </div>
 
@@ -615,6 +559,45 @@ export default function DeanOverview({ username }: { username: string }) {
           </div>
         </div>
       </Card>
+      {/* Academic Insights */}
+      {academicStats && (
+        <div className="px-10 space-y-6">
+          <div>
+            <h2 className="text-xl font-semibold text-zinc-900 tracking-tight">Academic Insights</h2>
+            <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.4em] mt-1">
+              {academicStats.currentSemester || "CURRENT SEMESTER"}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <KPICard
+              title="Total Students"
+              value={academicStats.totalStudents.toLocaleString()}
+              icon={Users}
+              badge="Enrolled"
+            />
+            <KPICard
+              title="Low Attendance"
+              value={academicStats.lowAttendanceCount}
+              icon={UserX}
+              badge={`< 75%`}
+              iconColor={academicStats.lowAttendanceCount > 0 ? "text-red-500" : "text-emerald-500"}
+            />
+            <KPICard
+              title="Avg Attendance"
+              value={academicStats.avgAttendancePct != null ? `${academicStats.avgAttendancePct}%` : "—"}
+              icon={BookOpen}
+              badge="Institution"
+            />
+            <KPICard
+              title="Registrations"
+              value={academicStats.registration.registered.toLocaleString()}
+              icon={GraduationCap}
+              badge={academicStats.registration.dropped > 0 ? `${academicStats.registration.dropped} dropped` : "Active"}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Dynamic Branch Analytics Section */}
       <div className="w-full px-10">
         <SubjectHeatmap

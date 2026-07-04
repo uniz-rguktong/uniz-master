@@ -274,6 +274,10 @@ export const GET_SEATING_TEMPLATE = (
 export const UPLOAD_SEATING = `${BASE_URL}/academics/seating/upload`;
 export const GET_STUDENT_SEATING = `${BASE_URL}/academics/seating/student`;
 
+// Admin Dashboard Summary (academics service)
+export const ANALYTICS_ADMIN_SUMMARY = (role: string, department?: string) =>
+  `${BASE_URL}/academics/analytics/admin-summary?role=${role}${department ? `&department=${department}` : ""}`;
+
 // Analytics — always via main API gateway (avoids cross-subdomain CORS to landing-api).
 export const ANALYTICS_KEY =
   import.meta.env.VITE_ANALYTICS_KEY ||
