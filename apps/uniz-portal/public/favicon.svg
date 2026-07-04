@@ -2,12 +2,10 @@
   <rect width="64" height="64" rx="14" fill="#0B2A47"/>
   <text
     x="32"
-    y="46"
+    y="43"
     text-anchor="middle"
-    font-family="system-ui, -apple-system, sans-serif"
-    font-size="36"
-    font-weight="700"
+    font-family="Pattaya, Georgia, 'Times New Roman', serif"
+    font-size="28"
     fill="#FFFFFF"
-    letter-spacing="-1"
-  >Z</text>
+  >uniZ.</text>
 </svg>
