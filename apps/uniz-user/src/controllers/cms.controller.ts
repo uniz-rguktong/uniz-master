@@ -83,12 +83,18 @@ export const getPublicNotifications = async (req: Request, res: Response) => {
  * ADMIN ENDPOINTS (Restricted via RBAC)
  */
 
+const CMS_ALLOWED_ROLES = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
+
+function hasCmsAccess(role?: string): boolean {
+  return !!role && CMS_ALLOWED_ROLES.includes(role as UserRole);
+}
+
 // Banners
 export const getAdminBanners = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  if (req.user?.role !== UserRole.WEBMASTER)
+  if (!hasCmsAccess(req.user?.role))
     return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
   try {
     const banners = await prisma.banner.findMany({
@@ -104,7 +110,7 @@ export const createBanner = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  if (req.user?.role !== UserRole.WEBMASTER)
+  if (!hasCmsAccess(req.user?.role))
     return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
   const { title, text, imageUrl, isVisible } = req.body;
   try {
@@ -121,7 +127,7 @@ export const updateBanner = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  if (req.user?.role !== UserRole.WEBMASTER)
+  if (!hasCmsAccess(req.user?.role))
     return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
   const { id } = req.params;
   try {
@@ -139,7 +145,7 @@ export const deleteBanner = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  if (req.user?.role !== UserRole.WEBMASTER)
+  if (!hasCmsAccess(req.user?.role))
     return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
   const { id } = req.params;
   try {
@@ -156,7 +162,7 @@ export const createUpdate = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  if (req.user?.role !== UserRole.WEBMASTER)
+  if (!hasCmsAccess(req.user?.role))
     return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
   const { title, content, link, isVisible } = req.body;
   try {
@@ -173,7 +179,7 @@ export const updateUpdate = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  if (req.user?.role !== UserRole.WEBMASTER)
+  if (!hasCmsAccess(req.user?.role))
     return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
   const { id } = req.params;
   try {
@@ -191,7 +197,7 @@ export const deleteUpdate = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  if (req.user?.role !== UserRole.WEBMASTER)
+  if (!hasCmsAccess(req.user?.role))
     return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
   const { id } = req.params;
   try {
@@ -207,7 +213,7 @@ export const createTender = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  if (req.user?.role !== UserRole.WEBMASTER)
+  if (!hasCmsAccess(req.user?.role))
     return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
   const { title, description, pdfUrl, deadline, isVisible } = req.body;
   try {
@@ -231,7 +237,7 @@ export const toggleVisibility = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  if (req.user?.role !== UserRole.WEBMASTER)
+  if (!hasCmsAccess(req.user?.role))
     return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
   const { type, id } = req.params;
   const { isVisible } = req.body;
