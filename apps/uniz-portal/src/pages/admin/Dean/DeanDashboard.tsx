@@ -14,7 +14,6 @@ import {
   CalendarClock,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
-import { adminCardClass } from "@/components/admin/admin-ui";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
@@ -24,7 +23,7 @@ import UploadSection from "../Webmaster/UploadSection";
 import StudentBulkSection from "../Webmaster/StudentBulkSection";
 import SystemLogsSection from "../Webmaster/SystemLogsSection";
 import FacultyManagement from "../Webmaster/FacultyManagement";
-import DeanOverview from "./DeanOverview";
+import WebmasterOverview from "../Webmaster/WebmasterOverview";
 import SemesterApproval from "./SemesterApproval";
 import BannersSection from "../Webmaster/BannersSection";
 import UpdatesSection from "../Webmaster/UpdatesSection";
@@ -187,7 +186,7 @@ export default function DeanDashboard() {
       default:
         return (
           <div className="animate-in fade-in duration-500">
-            <DeanOverview username={username} />
+            <WebmasterOverview username={username} />
           </div>
         );
     }
