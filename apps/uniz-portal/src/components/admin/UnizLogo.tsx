@@ -37,7 +37,7 @@ function Wordmark({
             : "text-[1.55rem]",
       )}
     >
-      {short ? "Z." : "uniZ."}
+      uniZ.
     </p>
   );
 }
