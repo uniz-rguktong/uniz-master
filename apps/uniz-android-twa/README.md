@@ -10,7 +10,23 @@ Thin Android wrapper for [https://uniz.rguktong.in](https://uniz.rguktong.in). T
 | Host | `uniz.rguktong.in` |
 | Privacy policy | `https://uniz.rguktong.in/privacy` |
 
-## Prerequisites (one-time, outside repo)
+## Directory layout
+
+```
+uniz-android-twa/
+├── play-store/               # All Play Console assets (committed)
+│   ├── icon/                 #   App icon 512×512
+│   ├── feature-graphic/      #   Feature graphic 1024×500
+│   ├── screenshots/          #   Phone screenshots (8 ready)
+│   └── store-listing/        #   Short/full description + support email
+├── twa-manifest.json         # Bubblewrap source config
+├── init.sh                   # First-time bubblewrap init
+├── sync-assetlinks.sh        # Writes SHA-256 into portal assetlinks.json
+├── verify-assetlinks.sh      # Checks Google Digital Asset Links
+└── phase-a-setup.sh          # One-time tooling + asset verification
+```
+
+## Prerequisites (one-time)
 
 1. **Google Play Developer account** — [play.google.com/console](https://play.google.com/console) (~$25) — *Phase B*
 2. **JDK 17+** and **Android SDK** (via Android Studio or `sdkmanager`)
@@ -19,14 +35,11 @@ Thin Android wrapper for [https://uniz.rguktong.in](https://uniz.rguktong.in). T
 ### Phase A — before paying (~30 min)
 
 ```bash
-# One command: Bubblewrap check, JDK/SDK hints, local Play assets folder
 bash apps/uniz-android-twa/phase-a-setup.sh
 # or: npm run android:twa:phase-a
 ```
 
 Install Android Studio if missing: [developer.android.com/studio](https://developer.android.com/studio) or `brew install --cask android-studio`.
-
-Play Console copy, icon, and templates land in **`~/Documents/uniZ-PlayStore/`** (not committed). Edit `support-email.txt` if needed.
 
 ## First-time setup
 
@@ -72,10 +85,10 @@ Run `sync-assetlinks.sh` again and redeploy the portal.
 
 - [ ] Create app → default language English (India)
 - [ ] App name: **uniZ**
-- [ ] Short description + full description (`play-console-templates/`)
-- [ ] App icon 512×512 (`apps/uniz-portal/public/icons/icon-512.png`)
-- [ ] Feature graphic 1024×500 (`~/Documents/uniZ-PlayStore/feature-graphic/`)
-- [ ] Phone screenshots (`play-store-screenshots/` — 8 ready)
+- [ ] Short + full description (`play-store/store-listing/`)
+- [ ] App icon 512×512 (`play-store/icon/app-icon-512.png`)
+- [ ] Feature graphic 1024×500 (`play-store/feature-graphic/`)
+- [ ] Phone screenshots (`play-store/screenshots/` — 8 ready)
 - [ ] Privacy policy URL: `https://uniz.rguktong.in/privacy`
 - [ ] Content rating questionnaire (IARC)
 - [ ] Data safety form (account info, academic info, push tokens — no sale)
@@ -94,7 +107,7 @@ Run `sync-assetlinks.sh` again and redeploy the portal.
 - `minSdkVersion`, permissions, or TWA manifest version bump
 - Domain change away from `uniz.rguktong.in`
 
-## Files in this folder
+## Files
 
 | File | Purpose |
 |---|---|
@@ -102,6 +115,6 @@ Run `sync-assetlinks.sh` again and redeploy the portal.
 | `init.sh` | First-time `bubblewrap init` |
 | `sync-assetlinks.sh` | Writes SHA-256 into portal `assetlinks.json` |
 | `verify-assetlinks.sh` | Checks Google asset link statement |
-| `.gitignore` | Keystore + generated `android/` (optional to commit android/) |
+| `.gitignore` | Keystore + generated `android/` |
 
 **Never commit** `*.jks`, `*.keystore`, or Play service-account JSON. Store in password manager / CI secrets.

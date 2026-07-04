@@ -4,7 +4,7 @@ set -euo pipefail
 
 TWA_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$TWA_DIR/../.." && pwd)"
-ASSETS_DIR="${UNIZ_PLAY_ASSETS:-$HOME/Documents/uniZ-PlayStore}"
+PLAY_STORE="$TWA_DIR/play-store"
 
 echo "=== uniZ Play Store — Phase A setup ==="
 echo ""
@@ -65,40 +65,34 @@ else
   echo "      After install: open Android Studio → SDK Manager → accept licenses"
 fi
 
-# ── 4. Play Console asset folder (local, not committed) ───────────
-echo "[4/4] Preparing Play Console assets at: $ASSETS_DIR"
-mkdir -p "$ASSETS_DIR"/{store-listing,screenshots,feature-graphic,icon}
+# ── 4. Verify Play Store assets ──────────────────────────────────
+echo "[4/4] Play Store assets at: $PLAY_STORE"
 
-cp "$ROOT/apps/uniz-portal/public/icons/icon-512.png" "$ASSETS_DIR/icon/app-icon-512.png"
-cp "$TWA_DIR/play-console-templates/short-description.txt" "$ASSETS_DIR/store-listing/"
-cp "$TWA_DIR/play-console-templates/full-description.txt" "$ASSETS_DIR/store-listing/"
-cp "$TWA_DIR/play-console-templates/support-email.txt" "$ASSETS_DIR/store-listing/"
-cp "$TWA_DIR/play-console-templates/feature-graphic-template.svg" "$ASSETS_DIR/feature-graphic/"
-if command -v rsvg-convert >/dev/null 2>&1; then
-  rsvg-convert -w 1024 -h 500 \
-    "$TWA_DIR/play-console-templates/feature-graphic-template.svg" \
-    -o "$ASSETS_DIR/feature-graphic/feature-graphic-1024x500.png"
-  echo "      Exported feature-graphic-1024x500.png"
+if [[ ! -f "$PLAY_STORE/icon/app-icon-512.png" ]]; then
+  echo "      Copying icon from portal..."
+  mkdir -p "$PLAY_STORE/icon"
+  cp "$ROOT/apps/uniz-portal/public/icons/icon-512.png" "$PLAY_STORE/icon/app-icon-512.png"
 fi
-cp "$TWA_DIR/play-console-templates/SCREENSHOTS.md" "$ASSETS_DIR/screenshots/README.md"
 
-if [[ -f "$ROOT/apps/uniz-portal/public/developers-mobile-preview.png" ]]; then
-  cp "$ROOT/apps/uniz-portal/public/developers-mobile-preview.png" \
-    "$ASSETS_DIR/screenshots/00-developers-mobile-preview.png" 2>/dev/null || true
+if [[ ! -f "$PLAY_STORE/feature-graphic/feature-graphic-1024x500.png" ]] && command -v rsvg-convert >/dev/null 2>&1; then
+  echo "      Rendering feature graphic..."
+  mkdir -p "$PLAY_STORE/feature-graphic"
+  rsvg-convert -w 1024 -h 500 \
+    "$PLAY_STORE/feature-graphic/feature-graphic-template.svg" \
+    -o "$PLAY_STORE/feature-graphic/feature-graphic-1024x500.png"
 fi
 
 echo ""
 echo "=== Phase A checklist ==="
+echo "  [x] All Play Store assets in apps/uniz-android-twa/play-store/"
 echo "  [ ] Android Studio installed + SDK licenses accepted"
 echo "  [ ] JDK 17+ in PATH (java -version)"
 echo "  [ ] Bubblewrap: bubblewrap --version"
-echo "  [ ] Review $ASSETS_DIR/store-listing/*.txt"
-echo "  [ ] Export feature graphic 1024×500 (auto if rsvg-convert installed)"
-echo "  [ ] Add 2–8 phone screenshots to $ASSETS_DIR/screenshots/ (see README)"
+echo "  [ ] Review play-store/store-listing/*.txt"
 echo ""
 echo "Live URLs (already on production):"
-echo "  Privacy:    https://uniz.rguktong.in/privacy"
-echo "  Manifest:   https://uniz.rguktong.in/manifest.json"
+echo "  Privacy:     https://uniz.rguktong.in/privacy"
+echo "  Manifest:    https://uniz.rguktong.in/manifest.json"
 echo "  Asset links: https://uniz.rguktong.in/.well-known/assetlinks.json"
 echo ""
 echo "Phase B: When college pays → play.google.com/console → then run:"
