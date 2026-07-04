@@ -7,9 +7,14 @@ import {
   Bell,
   Smartphone,
   Layout,
+  Activity,
+  BookOpen,
+  GraduationCap,
+  Globe,
   CalendarClock,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
+import { adminCardClass } from "@/components/admin/admin-ui";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
@@ -23,8 +28,11 @@ import DeanOverview from "./DeanOverview";
 import SemesterApproval from "./SemesterApproval";
 import BannersSection from "../Webmaster/BannersSection";
 import UpdatesSection from "../Webmaster/UpdatesSection";
+import WebsiteUpdatesSection from "../Webmaster/WebsiteUpdatesSection";
 import PushNotificationSection from "../Webmaster/PushNotificationSection";
 import SecuritySection from "../Webmaster/SecuritySection";
+import CurriculumManager from "../Curriculum";
+import SemesterBuilder from "../Webmaster/SemesterBuilder";
 import { resolveAdminPortalRole } from "../../../utils/adminRole";
 import { parseJwt } from "../../../utils/security";
 
@@ -49,14 +57,16 @@ export default function DeanDashboard() {
             "dashboard",
             "student",
             "student_bulk",
-            "subjects",
             "attendance",
             "grades",
+            "subjects",
+            "semester_registration",
             "semester_review",
-            "faculty",
+            "faculty_mgmt",
             "system_logs",
             "banners",
             "updates",
+            "website_updates",
             "push_alerts",
             "security",
           ] as const),
@@ -100,16 +110,19 @@ export default function DeanDashboard() {
     },
     {
       group: "Students",
-      items: [{ id: "student", label: "Student Details", icon: Users }],
+      items: [
+        { id: "student", label: "Student Details", icon: Users },
+        { id: "student_bulk", label: "Student Bulk Ops", icon: Users },
+      ],
     },
     {
       group: "Academic",
       items: [
-        {
-          id: "semester_review",
-          label: "Semester Approvals",
-          icon: CalendarClock,
-        },
+        { id: "attendance", label: "Attendance Upload", icon: Layout },
+        { id: "grades", label: "Grades Upload", icon: GraduationCap },
+        { id: "subjects", label: "Manage Subjects", icon: BookOpen },
+        { id: "semester_registration", label: "Semester Registration", icon: CalendarClock },
+        { id: "semester_review", label: "Semester Approvals", icon: CalendarClock },
       ],
     },
     {
@@ -117,12 +130,17 @@ export default function DeanDashboard() {
       items: [
         { id: "banners", label: "Home Banners", icon: Layout },
         { id: "updates", label: "Campus Updates", icon: Bell },
+        { id: "website_updates", label: "Website Updates", icon: Globe },
         { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
       ],
     },
     {
       group: "Management",
-      items: [{ id: "security", label: "Security", icon: Lock }],
+      items: [
+        { id: "faculty_mgmt", label: "Faculty Management", icon: Users },
+        { id: "system_logs", label: "System & Logs", icon: Activity },
+        { id: "security", label: "Security", icon: Lock },
+      ],
     },
   ];
 
@@ -135,14 +153,16 @@ export default function DeanDashboard() {
       case "student_bulk":
         return <StudentBulkSection />;
       case "subjects":
-        return <SubjectManagement />;
+        return <CurriculumManager />;
+      case "semester_registration":
+        return <SemesterBuilder />;
       case "semester_review":
         return <SemesterApproval role={role} />;
       case "attendance":
         return <UploadSection type="attendance" />;
       case "grades":
         return <UploadSection type="grades" />;
-      case "faculty":
+      case "faculty_mgmt":
         return (
           <FacultyManagement
             deptRestrict={
@@ -158,6 +178,8 @@ export default function DeanDashboard() {
         return <BannersSection />;
       case "updates":
         return <UpdatesSection />;
+      case "website_updates":
+        return <WebsiteUpdatesSection />;
       case "push_alerts":
         return <PushNotificationSection />;
       case "security":
@@ -181,7 +203,7 @@ export default function DeanDashboard() {
       roleLabel={roleLabel}
       showSidebarProfile
       enableNavSearch
-      collapseBranding="abbreviate"
+      collapseBranding="hide"
       navSpacing="compact"
     >
       {renderContent()}

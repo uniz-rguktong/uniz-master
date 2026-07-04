@@ -7,10 +7,15 @@ import {
   Bell,
   Smartphone,
   Lock,
+  Activity,
+  BookOpen,
+  GraduationCap,
+  Globe,
+  CalendarClock,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
-import SecuritySection from "../Webmaster/SecuritySection";
 import WebmasterOverview from "../Webmaster/WebmasterOverview";
+import SecuritySection from "../Webmaster/SecuritySection";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
@@ -19,13 +24,13 @@ import FacultyManagement from "../Webmaster/FacultyManagement";
 import UploadSection from "../Webmaster/UploadSection";
 import BannersSection from "../Webmaster/BannersSection";
 import UpdatesSection from "../Webmaster/UpdatesSection";
+import WebsiteUpdatesSection from "../Webmaster/WebsiteUpdatesSection";
 import PushNotificationSection from "../Webmaster/PushNotificationSection";
 import StudentBulkSection from "../Webmaster/StudentBulkSection";
 import SystemLogsSection from "../Webmaster/SystemLogsSection";
-import SeatingUploadSection from "../Webmaster/SeatingUploadSection";
 import SubjectManagement from "../Webmaster/SubjectManagement";
-import UpdateStudentStatus from "../../../components/UpdateStudentStatus";
-import RoleManagement from "../RoleManagement";
+import CurriculumManager from "../Curriculum";
+import SemesterBuilder from "../Webmaster/SemesterBuilder";
 
 export default function DirectorDashboard() {
   useIsAuth();
@@ -41,19 +46,17 @@ export default function DirectorDashboard() {
         "dashboard",
         "student",
         "student_bulk",
-        "academic_mgmt",
         "attendance",
         "grades",
-        "banners",
-        "updates",
-        "push_alerts",
+        "subjects",
+        "semester_registration",
         "faculty_mgmt",
         "system_logs",
-        "exam_seating",
+        "banners",
+        "updates",
+        "website_updates",
+        "push_alerts",
         "security",
-        "roles",
-        "subjects",
-        "status_update",
       ] as const,
     [],
   );
@@ -67,23 +70,36 @@ export default function DirectorDashboard() {
     },
     {
       group: "Students",
-      items: [{ id: "student", label: "Student Details", icon: Users }],
+      items: [
+        { id: "student", label: "Student Details", icon: Users },
+        { id: "student_bulk", label: "Student Bulk Ops", icon: Users },
+      ],
     },
     {
       group: "Academic",
-      items: [],
+      items: [
+        { id: "attendance", label: "Attendance Upload", icon: Layout },
+        { id: "grades", label: "Grades Upload", icon: GraduationCap },
+        { id: "subjects", label: "Manage Subjects", icon: BookOpen },
+        { id: "semester_registration", label: "Semester Registration", icon: CalendarClock },
+      ],
     },
     {
       group: "Campus",
       items: [
         { id: "banners", label: "Home Banners", icon: Layout },
         { id: "updates", label: "Campus Updates", icon: Bell },
+        { id: "website_updates", label: "Website Updates", icon: Globe },
         { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
       ],
     },
     {
       group: "Management",
-      items: [{ id: "security", label: "Security", icon: Lock }],
+      items: [
+        { id: "faculty_mgmt", label: "Faculty Management", icon: Users },
+        { id: "system_logs", label: "System & Logs", icon: Activity },
+        { id: "security", label: "Security", icon: Lock },
+      ],
     },
   ];
 
@@ -95,10 +111,10 @@ export default function DirectorDashboard() {
         return <StudentDetails />;
       case "student_bulk":
         return <StudentBulkSection />;
-      case "status_update":
-        return <UpdateStudentStatus />;
       case "subjects":
-        return <SubjectManagement />;
+        return <CurriculumManager />;
+      case "semester_registration":
+        return <SemesterBuilder />;
       case "attendance":
         return <UploadSection type="attendance" />;
       case "grades":
@@ -107,18 +123,16 @@ export default function DirectorDashboard() {
         return <BannersSection />;
       case "updates":
         return <UpdatesSection />;
+      case "website_updates":
+        return <WebsiteUpdatesSection />;
       case "push_alerts":
         return <PushNotificationSection />;
       case "faculty_mgmt":
         return <FacultyManagement />;
       case "system_logs":
         return <SystemLogsSection />;
-      case "exam_seating":
-        return <SeatingUploadSection />;
       case "security":
         return <SecuritySection username={username} />;
-      case "roles":
-        return <RoleManagement />;
       default:
         return (
           <div className="animate-in fade-in duration-500">
