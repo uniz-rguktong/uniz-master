@@ -390,9 +390,7 @@ export default function AdminShell({
           )}
           {!isSidebarOpen && (
             <div className="flex justify-center">
-              <div className="w-8 h-8 rounded-lg bg-navy-900 flex items-center justify-center" title="uniZ Admin Console">
-                <span className="text-white text-[10px] font-bold">Z</span>
-              </div>
+              <UnizLogo collapsed abbreviate={false} />
             </div>
           )}
         </div>
