@@ -7,6 +7,7 @@ import axios from "axios";
 import * as ExcelJS from "exceljs";
 import { redis } from "../utils/redis.util";
 import { enforcePublishOtpRateLimit } from "../middlewares/publish-otp-ratelimit.middleware";
+import { generateRegistrationPdf } from "../utils/pdf.util";
 
 /**
  * @desc Initialize a new semester with branch allocations
@@ -2379,5 +2380,180 @@ export const getSemesterOverview = async (
   } catch (error) {
     console.error("Semester Overview Error:", error);
     res.status(500).json({ error: "Failed to fetch semester overview" });
+  }
+};
+
+/**
+ * @desc Download semester registration confirmation PDF
+ * @access Student (own) | Admin roles
+ */
+export const downloadRegistrationPdf = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
+
+  const targetStudentId = normalizeStudentId(
+    (req.query.studentId as string) || user.username,
+  );
+  const role = resolveEffectiveRole(user);
+  const adminRoles = new Set([
+    "webmaster",
+    "dean",
+    "director",
+    "coe",
+    "hod",
+    "ao",
+  ]);
+
+  if (role === "student") {
+    if (targetStudentId !== normalizeStudentId(user.username)) {
+      return res.status(403).json({ success: false, message: "Forbidden" });
+    }
+  } else if (!adminRoles.has(role)) {
+    return res.status(403).json({ success: false, message: "Not authorized" });
+  }
+
+  try {
+    let sem = null;
+    const semesterId = req.query.semesterId as string | undefined;
+    if (semesterId) {
+      sem = await prisma.academicSemester.findUnique({ where: { id: semesterId } });
+    } else {
+      sem = await prisma.academicSemester.findFirst({
+        where: {
+          status: { in: ["REGISTRATION_OPEN", "REGISTRATION_CLOSED", "APPROVED"] },
+          registrations: {
+            some: {
+              studentId: { equals: targetStudentId, mode: "insensitive" },
+              status: "REGISTERED",
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      if (!sem) {
+        sem = await prisma.academicSemester.findFirst({
+          orderBy: { createdAt: "desc" },
+        });
+      }
+    }
+
+    if (!sem) {
+      return res.status(404).json({
+        success: false,
+        message: "No semester found for registration slip.",
+      });
+    }
+
+    const registered = await prisma.registration.findMany({
+      where: {
+        studentId: { equals: targetStudentId, mode: "insensitive" },
+        semesterId: sem.id,
+        status: "REGISTERED",
+      },
+      include: { subject: true },
+      orderBy: { subject: { code: "asc" } },
+    });
+
+    if (!registered.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No registered subjects found for this semester.",
+      });
+    }
+
+    let profileName = targetStudentId;
+    let branch = "N/A";
+    let batch = "";
+    let year = "";
+    let campus = "Ongole";
+
+    try {
+      const searchRes = await axios.post(
+        `${USER_SERVICE_URL}/internal/bulk-profiles`,
+        { usernames: [targetStudentId] },
+        {
+          headers: {
+            "x-internal-secret": process.env.INTERNAL_SECRET || "uniz-core",
+          },
+          timeout: 10000,
+        },
+      );
+      const profile = searchRes.data?.profiles?.[0] || searchRes.data?.[0];
+      if (profile) {
+        profileName = profile.name || profileName;
+        branch = profile.branch || profile.department || branch;
+        batch = profile.batch || "";
+        year = profile.year || "";
+        campus = profile.campus || campus;
+      }
+    } catch {
+      // fallback to JWT claims
+      branch = (user as any).department || branch;
+      year = (user as any).year || year;
+    }
+
+    const regAllocations = await prisma.branchAllocation.findMany({
+      where: {
+        semesterId: sem.id,
+        subjectId: { in: registered.map((r) => r.subjectId) },
+        ...(branch !== "N/A"
+          ? { branch: { equals: branch, mode: "insensitive" } }
+          : {}),
+      },
+    });
+    const allocBySubject = new Map(
+      regAllocations.map((a) => [a.subjectId, a]),
+    );
+
+    const subjects = registered.map((r) => {
+      const alloc = allocBySubject.get(r.subjectId);
+      return {
+        code: r.subject.code,
+        name: alloc?.customName?.trim() || r.subject.name,
+        credits: alloc?.customCredits ?? r.subject.credits,
+        type: alloc?.subjectType || "CORE",
+      };
+    });
+
+    const totalCredits = subjects.reduce((acc, s) => acc + (s.credits || 0), 0);
+    const submittedAt =
+      registered[0]?.submittedAt || registered[0]?.createdAt || new Date();
+
+    const pdfBuffer = await generateRegistrationPdf({
+      username: targetStudentId,
+      name: profileName,
+      branch,
+      batch,
+      year,
+      campus,
+      semesterName: sem.name,
+      semesterId: sem.id,
+      registrationId: registered[0].id,
+      submittedAt,
+      subjects,
+      totalCredits,
+    });
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="REGISTRATION_${targetStudentId}_${sem.id}.pdf"`,
+    );
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate",
+    );
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    res.send(pdfBuffer);
+  } catch (error: any) {
+    console.error("Registration PDF Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to generate registration PDF.",
+    });
   }
 };
