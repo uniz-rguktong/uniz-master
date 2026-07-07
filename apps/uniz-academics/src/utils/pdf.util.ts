@@ -413,6 +413,54 @@ export interface RegistrationPdfData {
   totalCredits: number;
 }
 
+const HALF_A4: [number, number] = [595.28, 420.94];
+const REG_MARGIN = 20;
+
+const createHalfPagePdfBuffer = async (
+  draw: (doc: InstanceType<typeof PDFDocument>) => Promise<void> | void,
+): Promise<Buffer> => {
+  return new Promise<Buffer>((resolve, reject) => {
+    const doc = new PDFDocument({
+      size: HALF_A4,
+      margin: REG_MARGIN,
+      compress: false,
+    });
+    const chunks: Buffer[] = [];
+    doc.on("data", (chunk: Buffer) => chunks.push(chunk));
+    doc.on("end", () => resolve(Buffer.concat(chunks)));
+    doc.on("error", (err: Error) => reject(err));
+    const execute = async () => {
+      try {
+        await draw(doc);
+        doc.end();
+      } catch (err) {
+        reject(err);
+      }
+    };
+    void execute();
+  });
+};
+
+function parseSemesterDisplay(semesterName: string) {
+  const ay = semesterName.match(/AY\s*(\d{4}-\d{2})/i);
+  const sem = semesterName.match(/SEM[-\s]?([12])/i);
+  const academicYear = ay ? ay[1] : semesterName;
+  const semesterLabel = sem
+    ? sem[1] === "1"
+      ? "Semester I"
+      : "Semester II"
+    : semesterName;
+  return { academicYear, semesterLabel };
+}
+
+function formatSubjectType(type: string | undefined, index: number): string {
+  const t = (type || "CORE").toUpperCase();
+  if (t.includes("ELECTIVE") || t.includes("PE") || t.includes("OPEN")) {
+    return t.includes("OPEN") ? "Open Elective" : `Elective ${index}`;
+  }
+  return `Core ${index}`;
+}
+
 export const generateRegistrationPdf = async (
   data: RegistrationPdfData,
 ): Promise<Buffer> => {
@@ -420,231 +468,234 @@ export const generateRegistrationPdf = async (
     username,
     name,
     branch,
-    batch,
     year,
     campus,
     semesterName,
-    registrationId,
-    submittedAt,
     subjects,
-    totalCredits,
   } = data;
-  const logo = await getLogo();
-  const campusName =
-    campus && campus !== "N/A" ? campus.toUpperCase() : "ONGOLE";
-  const submittedStr = new Date(submittedAt).toLocaleString("en-IN", {
-    timeZone: "Asia/Kolkata",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
-  return createPdfBuffer(async (doc) => {
-    const { width, height } = doc.page;
-    const usableWidth = width - PAGE_MARGIN * 2;
+  const campusLabel =
+    campus && campus !== "N/A"
+      ? campus.charAt(0).toUpperCase() + campus.slice(1).toLowerCase()
+      : "Ongole";
+  const { academicYear, semesterLabel } = parseSemesterDisplay(semesterName);
+  const studentName = name === username ? username : name.toUpperCase();
+  const dept = branch === "N/A" ? "--" : branch.toUpperCase();
+  const yearLabel = year || "--";
 
-    doc
-      .rect(15, 15, width - 30, height - 30)
-      .lineWidth(1)
-      .strokeColor(PRIMARY_MAROON)
-      .stroke();
-    doc
-      .rect(20, 20, width - 40, height - 40)
-      .lineWidth(0.5)
-      .strokeColor(ACCENT_GOLD)
-      .stroke();
+  let coreIdx = 0;
+  let electiveIdx = 0;
 
-    if (logo) {
-      doc.image(logo, width / 2 - 35, 40, { width: 70 });
-    }
-    doc.y = 120;
+  return createHalfPagePdfBuffer(async (doc) => {
+    const left = REG_MARGIN;
+    const pageW = doc.page.width;
+    const pageH = doc.page.height;
+    const right = pageW - REG_MARGIN;
+    const contentW = right - left;
+    let y = REG_MARGIN;
 
-    doc
-      .fillColor(PRIMARY_MAROON)
-      .font("Helvetica-Bold")
-      .fontSize(16)
-      .text("RAJIV GANDHI UNIVERSITY OF KNOWLEDGE TECHNOLOGIES", {
-        align: "center",
-      });
-    doc
-      .fontSize(10)
-      .fillColor(SECONDARY_GRAY)
-      .text(`ANDHRA PRADESH - ${campusName} CAMPUS`, { align: "center" });
-    doc.moveDown(0.2);
-    doc
-      .fontSize(7)
-      .font("Helvetica-Oblique")
-      .text("(Established under AP Act 18 of 2008)", { align: "center" });
-
-    doc.moveDown(1.5);
-    doc.rect(PAGE_MARGIN, doc.y, usableWidth, 24).fill(HEADER_TINT);
-    doc
-      .fillColor(PRIMARY_MAROON)
-      .font("Helvetica-Bold")
-      .fontSize(11)
-      .text("COURSE REGISTRATION CONFIRMATION", PAGE_MARGIN, doc.y + 7, {
-        align: "center",
-      });
-    doc.moveDown(2);
-
-    const infoY = doc.y;
-    const colWidth = usableWidth / 2;
-    const drawInfo = (label: string, val: string, x: number, y: number) => {
-      doc.font("Helvetica").fontSize(8.5).fillColor(SECONDARY_GRAY).text(label, x, y);
-      doc
-        .font("Helvetica-Bold")
-        .fontSize(9.5)
-        .fillColor("#000000")
-        .text(val, x + 88, y);
+    const strokeBox = (x: number, yy: number, w: number, h: number) => {
+      doc.rect(x, yy, w, h).lineWidth(0.6).strokeColor("#000000").stroke();
     };
 
-    drawInfo("STUDENT ID:", username, PAGE_MARGIN, infoY);
-    drawInfo(
-      "STUDENT NAME:",
-      name === username ? "--" : name.toUpperCase(),
-      PAGE_MARGIN,
-      infoY + 16,
-    );
-    drawInfo(
-      "BRANCH:",
-      branch === "N/A" ? "--" : branch.toUpperCase(),
-      PAGE_MARGIN + colWidth,
-      infoY,
-    );
-    drawInfo(
-      "BATCH / YEAR:",
-      `${batch || "--"} / ${year || "--"}`,
-      PAGE_MARGIN + colWidth,
-      infoY + 16,
-    );
-    drawInfo("SEMESTER:", semesterName.toUpperCase(), PAGE_MARGIN, infoY + 32);
-    drawInfo("REF NO:", registrationId.slice(0, 8).toUpperCase(), PAGE_MARGIN + colWidth, infoY + 32);
-    drawInfo("SUBMITTED:", submittedStr, PAGE_MARGIN, infoY + 48);
-
-    doc.moveDown(4.5);
-
-    const tWidths = {
-      sn: usableWidth * 0.07,
-      code: usableWidth * 0.14,
-      name: usableWidth * 0.54,
-      credits: usableWidth * 0.12,
-      type: usableWidth * 0.13,
-    };
-
-    let tableY = doc.y;
-    doc.rect(PAGE_MARGIN, tableY, usableWidth, 22).fill(PRIMARY_MAROON);
-    doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(8);
-    doc.text("#", PAGE_MARGIN + 6, tableY + 7, { width: tWidths.sn });
-    doc.text("CODE", PAGE_MARGIN + tWidths.sn + 4, tableY + 7, {
-      width: tWidths.code,
-    });
-    doc.text("SUBJECT", PAGE_MARGIN + tWidths.sn + tWidths.code + 4, tableY + 7, {
-      width: tWidths.name,
-    });
-    doc.text(
-      "CR",
-      PAGE_MARGIN + tWidths.sn + tWidths.code + tWidths.name,
-      tableY + 7,
-      { width: tWidths.credits, align: "center" },
-    );
-    doc.text(
-      "TYPE",
-      PAGE_MARGIN + tWidths.sn + tWidths.code + tWidths.name + tWidths.credits,
-      tableY + 7,
-      { width: tWidths.type, align: "center" },
-    );
-
-    tableY += 22;
-    doc.fillColor("#000000").font("Helvetica").fontSize(8.5);
-
-    subjects.forEach((subject, idx) => {
-      const nameText = cleanSubjectName(subject.name);
-      const nameHeight = doc.heightOfString(nameText, {
-        width: tWidths.name - 8,
-      });
-      const rowHeight = Math.max(22, nameHeight + 8);
-
-      if (tableY + rowHeight > height - 140) {
-        doc.addPage();
-        tableY = PAGE_MARGIN;
-      }
-
-      if (idx % 2 === 1) {
-        doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill("#FAFAFA");
-      }
-
-      doc.fillColor("#000000");
-      doc.text(String(idx + 1), PAGE_MARGIN + 6, tableY + 6, {
-        width: tWidths.sn,
-      });
-      doc.text(subject.code, PAGE_MARGIN + tWidths.sn + 4, tableY + 6, {
-        width: tWidths.code,
-      });
-      doc.text(
-        nameText,
-        PAGE_MARGIN + tWidths.sn + tWidths.code + 4,
-        tableY + 6,
-        { width: tWidths.name - 8 },
-      );
-      doc.text(
-        subject.credits.toFixed(1),
-        PAGE_MARGIN + tWidths.sn + tWidths.code + tWidths.name,
-        tableY + 6,
-        { width: tWidths.credits, align: "center" },
-      );
-      doc.text(
-        (subject.type || "CORE").toUpperCase(),
-        PAGE_MARGIN + tWidths.sn + tWidths.code + tWidths.name + tWidths.credits,
-        tableY + 6,
-        { width: tWidths.type, align: "center" },
-      );
-
-      tableY += rowHeight;
-    });
-
-    doc.moveDown(1);
-    const totalY = tableY + 8;
-    doc
-      .rect(PAGE_MARGIN + usableWidth - 180, totalY, 180, 28)
-      .lineWidth(1)
-      .strokeColor(PRIMARY_MAROON)
-      .stroke();
+    // ── Header ──────────────────────────────────────────────────────
     doc
       .font("Helvetica-Bold")
-      .fontSize(10)
-      .fillColor(PRIMARY_MAROON)
-      .text(`TOTAL CREDITS: ${totalCredits.toFixed(1)}`, PAGE_MARGIN + usableWidth - 170, totalY + 9);
-
-    const footerY = height - 95;
-    doc
-      .fontSize(7.5)
-      .fillColor(SECONDARY_GRAY)
-      .font("Helvetica-Oblique")
+      .fontSize(9)
+      .fillColor("#000000")
       .text(
-        "* This is a system-generated registration confirmation. Verify subjects with Academic Affairs.",
-        PAGE_MARGIN,
-        footerY,
+        `Rajiv Gandhi University of Knowledge Technologies-${campusLabel}`,
+        left,
+        y,
+        { width: contentW, align: "center" },
       );
-
-    doc.font("Helvetica").fontSize(8).fillColor("#000000");
-    doc.text("Student signature", PAGE_MARGIN + 10, footerY + 28);
+    y += 12;
     doc
-      .moveTo(PAGE_MARGIN + 10, footerY + 48)
-      .lineTo(PAGE_MARGIN + 150, footerY + 48)
-      .strokeColor(BORDER_LIGHT)
-      .stroke();
+      .font("Helvetica")
+      .fontSize(8)
+      .text(
+        `Academic Year: ${academicYear}, ${semesterLabel}`,
+        left,
+        y,
+        { width: contentW, align: "center" },
+      );
+    y += 11;
+    doc.font("Helvetica-Bold").fontSize(9).text("Registration form", left, y, {
+      width: contentW,
+      align: "center",
+      underline: true,
+    });
+    y += 16;
 
-    doc.text("Academic Office", PAGE_MARGIN + usableWidth - 160, footerY + 28, {
-      width: 150,
+    // ── Student info grid ───────────────────────────────────────────
+    const officeW = 52;
+    const mainW = contentW - officeW;
+    const rowH = 20;
+    const gridH = rowH * 2;
+    const col1 = mainW * 0.38;
+    const col2 = mainW - col1;
+
+    strokeBox(left, y, mainW, gridH);
+    strokeBox(left + mainW, y, officeW, gridH);
+    strokeBox(left, y + rowH, mainW, rowH);
+    strokeBox(left + col1, y, col1, rowH);
+    strokeBox(left + col1, y + rowH, col1, rowH);
+
+    const cellPad = 4;
+    doc.font("Helvetica").fontSize(7).fillColor("#000000");
+    doc.text(`ID No.: ${username}`, left + cellPad, y + 6, { width: col1 - 8 });
+    doc.text(`Name of the Student: ${studentName}`, left + col1 + cellPad, y + 6, {
+      width: col2 - 8,
+    });
+    doc.text(`Department: ${dept}`, left + cellPad, y + rowH + 6, {
+      width: col1 - 8,
+    });
+    doc.text(`Year: ${yearLabel}`, left + col1 + cellPad, y + rowH + 6, {
+      width: col2 - 8,
+    });
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(7)
+      .text("Office", left + mainW + 6, y + gridH / 2 - 10, {
+        width: officeW - 12,
+        align: "center",
+      });
+    doc.text("Copy", left + mainW + 6, y + gridH / 2 + 0, {
+      width: officeW - 12,
       align: "center",
     });
-    doc
-      .moveTo(PAGE_MARGIN + usableWidth - 150, footerY + 48)
-      .lineTo(PAGE_MARGIN + usableWidth - 10, footerY + 48)
-      .strokeColor(BORDER_LIGHT)
-      .stroke();
+    y += gridH + 8;
+
+    // ── Registration Details ────────────────────────────────────────
+    doc.font("Helvetica-Bold").fontSize(8).text("Registration Details:", left, y, {
+      underline: true,
+    });
+    y += 12;
+
+    const cols = {
+      sn: contentW * 0.06,
+      name: contentW * 0.42,
+      code: contentW * 0.22,
+      type: contentW * 0.16,
+      credits: contentW * 0.14,
+    };
+    const headerH = 16;
+    const rowHeight = 13;
+    const tableX = left;
+
+    const colWidths = [cols.sn, cols.name, cols.code, cols.type, cols.credits];
+    const drawColLines = (rowY: number, h: number) => {
+      let lx = tableX;
+      for (let i = 0; i < colWidths.length - 1; i++) {
+        lx += colWidths[i];
+        doc
+          .moveTo(lx, rowY)
+          .lineTo(lx, rowY + h)
+          .lineWidth(0.6)
+          .strokeColor("#000000")
+          .stroke();
+      }
+    };
+
+    strokeBox(tableX, y, contentW, headerH);
+    drawColLines(y, headerH);
+    let cx = tableX;
+    doc.font("Helvetica-Bold").fontSize(6.5).fillColor("#000000");
+    const headers = [
+      { label: "S.No", w: cols.sn },
+      { label: "Name of the Subject", w: cols.name },
+      { label: "Subject Code", w: cols.code },
+      { label: "Type", w: cols.type },
+      { label: "Credits", w: cols.credits },
+    ];
+    for (const h of headers) {
+      doc.text(h.label, cx + 2, y + 4, { width: h.w - 4, align: "center" });
+      cx += h.w;
+    }
+    y += headerH;
+
+    doc.font("Helvetica").fontSize(6.5);
+    const maxRows = Math.min(subjects.length, 10);
+    for (let i = 0; i < maxRows; i++) {
+      const subject = subjects[i];
+      const isCore =
+        !subject.type ||
+        subject.type.toUpperCase().includes("CORE") ||
+        subject.type.toUpperCase() === "PE";
+      let typeLabel: string;
+      if (isCore) {
+        coreIdx += 1;
+        typeLabel = formatSubjectType("CORE", coreIdx);
+      } else {
+        electiveIdx += 1;
+        typeLabel = formatSubjectType(subject.type, electiveIdx);
+      }
+
+      strokeBox(tableX, y, contentW, rowHeight);
+      drawColLines(y, rowHeight);
+      cx = tableX;
+      const vals = [
+        String(i + 1),
+        cleanSubjectName(subject.name),
+        subject.code,
+        typeLabel,
+        String(subject.credits % 1 === 0 ? subject.credits : subject.credits.toFixed(1)),
+      ];
+      const widths = [cols.sn, cols.name, cols.code, cols.type, cols.credits];
+      for (let c = 0; c < vals.length; c++) {
+        doc.text(vals[c], cx + 2, y + 3, {
+          width: widths[c] - 4,
+          align: c === 0 || c >= 3 ? "center" : "left",
+        });
+        cx += widths[c];
+      }
+      y += rowHeight;
+    }
+
+    if (subjects.length > maxRows) {
+      doc
+        .fontSize(5.5)
+        .fillColor("#444444")
+        .text(`+ ${subjects.length - maxRows} more subject(s) on portal record`, left, y + 2);
+      y += 10;
+    }
+
+    y += 6;
+
+    // ── Instructions ────────────────────────────────────────────────
+    doc.font("Helvetica-Bold").fontSize(7).fillColor("#000000").text("Instructions:", left, y, {
+      underline: true,
+    });
+    y += 10;
+    doc.font("Helvetica").fontSize(6.5);
+    const instructions = [
+      "I am aware that minimum of 75% attendance is necessary during the semester to appear in EST Examinations.",
+      "I am aware of all the academic regulations circulated to me earlier.",
+      "I am aware that my application for scholarship will be stalled if my attendance falls below 75%.",
+    ];
+    for (const line of instructions) {
+      doc.text(`• ${line}`, left + 4, y, { width: contentW - 8 });
+      y += doc.heightOfString(`• ${line}`, { width: contentW - 8 }) + 2;
+    }
+
+    // ── Signatures ──────────────────────────────────────────────────
+    const sigY = pageH - REG_MARGIN - 28;
+    const sigW = contentW / 3;
+    const sigLabels = ["Student Signature", "Faculty Advisor", "Head of the Department"];
+    doc.font("Helvetica").fontSize(6.5).fillColor("#000000");
+    for (let i = 0; i < 3; i++) {
+      const sx = left + i * sigW;
+      doc
+        .moveTo(sx + 8, sigY)
+        .lineTo(sx + sigW - 8, sigY)
+        .lineWidth(0.5)
+        .strokeColor("#000000")
+        .stroke();
+      doc.text(sigLabels[i], sx, sigY + 4, {
+        width: sigW,
+        align: "center",
+      });
+    }
   });
 };
 

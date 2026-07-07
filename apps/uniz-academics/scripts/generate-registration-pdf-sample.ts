@@ -8,49 +8,29 @@ import { generateRegistrationPdf } from "../src/utils/pdf.util";
 
 async function main() {
   const sample = {
-    username: "O21CS0123",
-    name: "Sree Charan Desu",
-    branch: "CSE",
-    batch: "O21",
-    year: "E3",
+    username: "N240671",
+    name: "VANJARAPU SRAVYA",
+    branch: "PUC",
+    batch: "N24",
+    year: "P1",
     campus: "Ongole",
-    semesterName: "AY 2025-26 E3-SEM-1",
-    semesterId: "AY-2025-26-E3-SEM-1",
+    semesterName: "AY 2024-25 P1-SEM-2",
+    semesterId: "AY-2024-25-P1-SEM-2",
     registrationId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     submittedAt: new Date(),
     subjects: [
-      {
-        code: "CS301",
-        name: "Design and Analysis of Algorithms",
-        credits: 4,
-        type: "CORE",
-      },
-      {
-        code: "CS302",
-        name: "Database Management Systems",
-        credits: 4,
-        type: "CORE",
-      },
-      {
-        code: "CS303",
-        name: "Computer Networks",
-        credits: 3,
-        type: "CORE",
-      },
-      {
-        code: "CS3PE1",
-        name: "Cloud Computing",
-        credits: 3,
-        type: "ELECTIVE",
-      },
-      {
-        code: "HS301",
-        name: "Professional Ethics and Human Values",
-        credits: 2,
-        type: "CORE",
-      },
+      { code: "23PEG1201", name: "English-II", credits: 4, type: "CORE" },
+      { code: "23PMA1201", name: "Mathematics-II", credits: 5, type: "CORE" },
+      { code: "23PPY1201", name: "Physics-II", credits: 4, type: "CORE" },
+      { code: "23PPY1210", name: "Physics Lab-II", credits: 1, type: "CORE" },
+      { code: "23PCY1201", name: "Chemistry-II", credits: 4, type: "CORE" },
+      { code: "23PCY1210", name: "Chemistry Lab-II", credits: 1, type: "CORE" },
+      { code: "23PTE1201", name: "Telugu-II", credits: 3, type: "CORE" },
+      { code: "23PIT1201", name: "Open office&LATEX", credits: 2, type: "CORE" },
+      { code: "23PIT1210", name: "Open office&LATEX-LAB", credits: 1, type: "CORE" },
+      { code: "23PBE1202", name: "Elementary Biology", credits: 0, type: "CORE" },
     ],
-    totalCredits: 16,
+    totalCredits: 25,
   };
 
   const pdfBuffer = await generateRegistrationPdf(sample);
