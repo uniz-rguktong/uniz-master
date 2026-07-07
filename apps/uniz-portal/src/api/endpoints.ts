@@ -109,6 +109,10 @@ export const DOWNLOAD_GRADES = (semesterId: string) =>
   `${BASE_URL}/academics/grades/download/${semesterId}`;
 export const DOWNLOAD_ATTENDANCE = (semesterId: string) =>
   `${BASE_URL}/academics/attendance/download/${semesterId}`;
+export const DOWNLOAD_REGISTRATION = (semesterId?: string) =>
+  `${BASE_URL}/academics/student/registration/pdf${
+    semesterId ? `?semesterId=${encodeURIComponent(semesterId)}` : ""
+  }`;
 
 // Additional Legacy Endpoints
 export const UPDATE_STUDENT_STATUS = `${BASE_URL}/profile/student/status`;

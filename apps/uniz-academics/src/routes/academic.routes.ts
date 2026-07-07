@@ -49,6 +49,7 @@ import {
   requestDirectPublishCode,
   resendDirectPublishCode,
   confirmDirectPublish,
+  downloadRegistrationPdf,
 } from "../controllers/registration.controller";
 import {
   getSeatingTemplate,
@@ -145,6 +146,7 @@ router.delete("/dean/allocation/:id", deleteAllocation);
 router.get("/student/available", getAvailableSubjects);
 router.post("/student/register", registerSubjects);
 router.get("/student/current/:studentId", getCurrentSubjects);
+router.get("/student/registration/pdf", downloadRegistrationPdf);
 
 router.get("/export", exportAcademicData);
 router.get("/registrations/tracking", getRegistrationTracking);

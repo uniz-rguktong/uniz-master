@@ -4,9 +4,12 @@ import {
   GraduationCap,
   CheckCircle2,
   Info,
+  Download,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { downloadFile } from "@/api/apiClient";
+import { DOWNLOAD_REGISTRATION } from "@/api/endpoints";
 import {
   adminCardClass,
   adminChipClass,
@@ -98,6 +101,21 @@ export default function RegisteredSubjectsPanel({
               <span className={adminChipClass}>
                 {subjects.length} subjects · {totalCredits} credits
               </span>
+              {!compact && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    downloadFile(
+                      DOWNLOAD_REGISTRATION(semester.id),
+                      `REGISTRATION_${semester.id}.pdf`,
+                    )
+                  }
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-zinc-900 text-[10px] font-bold tracking-wide hover:bg-zinc-100 transition-colors"
+                >
+                  <Download className="w-3 h-3" />
+                  Download PDF
+                </button>
+              )}
             </div>
           </div>
           {!compact && (
