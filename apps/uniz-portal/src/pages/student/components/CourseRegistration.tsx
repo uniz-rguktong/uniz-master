@@ -41,6 +41,7 @@ type AllocRow = {
   subjectId: string;
   subject?: { id: string; code: string; name: string; credits: number };
   customName?: string;
+  customCode?: string;
   customCredits?: number;
   isMandatory?: boolean;
   electiveGroupId?: string;
@@ -66,7 +67,7 @@ function SubjectOption({
 }) {
   const credits = sub.customCredits ?? sub.subject?.credits ?? 0;
   const name = sub.customName || sub.subject?.name || "Subject";
-  const code = sub.subject?.code || "";
+  const code = sub.customCode?.trim() || sub.subject?.code || "";
 
   return (
     <button

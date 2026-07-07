@@ -461,9 +461,19 @@ function formatSubjectType(type: string | undefined, index: number): string {
   return `Core ${index}`;
 }
 
-export const generateRegistrationPdf = async (
+const FULL_A4_SIZE: [number, number] = [595.28, 841.89];
+
+type RegistrationFormLayout = {
+  offsetY: number;
+  formHeight: number;
+  pageWidth: number;
+};
+
+function drawRegistrationForm(
+  doc: InstanceType<typeof PDFDocument>,
   data: RegistrationPdfData,
-): Promise<Buffer> => {
+  layout: RegistrationFormLayout,
+) {
   const {
     username,
     name,
@@ -473,6 +483,7 @@ export const generateRegistrationPdf = async (
     semesterName,
     subjects,
   } = data;
+  const { offsetY, formHeight, pageWidth } = layout;
 
   const campusLabel =
     campus && campus !== "N/A"
@@ -486,13 +497,10 @@ export const generateRegistrationPdf = async (
   let coreIdx = 0;
   let electiveIdx = 0;
 
-  return createHalfPagePdfBuffer(async (doc) => {
-    const left = REG_MARGIN;
-    const pageW = doc.page.width;
-    const pageH = doc.page.height;
-    const right = pageW - REG_MARGIN;
-    const contentW = right - left;
-    let y = REG_MARGIN;
+  const left = REG_MARGIN;
+  const right = pageWidth - REG_MARGIN;
+  const contentW = right - left;
+  let y = offsetY + REG_MARGIN;
 
     const strokeBox = (x: number, yy: number, w: number, h: number) => {
       doc.rect(x, yy, w, h).lineWidth(0.6).strokeColor("#000000").stroke();
@@ -678,23 +686,102 @@ export const generateRegistrationPdf = async (
       y += doc.heightOfString(`• ${line}`, { width: contentW - 8 }) + 2;
     }
 
-    // ── Signatures ──────────────────────────────────────────────────
-    const sigY = pageH - REG_MARGIN - 28;
-    const sigW = contentW / 3;
-    const sigLabels = ["Student Signature", "Faculty Advisor", "Head of the Department"];
-    doc.font("Helvetica").fontSize(6.5).fillColor("#000000");
-    for (let i = 0; i < 3; i++) {
-      const sx = left + i * sigW;
-      doc
-        .moveTo(sx + 8, sigY)
-        .lineTo(sx + sigW - 8, sigY)
-        .lineWidth(0.5)
-        .strokeColor("#000000")
-        .stroke();
-      doc.text(sigLabels[i], sx, sigY + 4, {
-        width: sigW,
-        align: "center",
+  // ── Signatures ──────────────────────────────────────────────────
+  const sigY = offsetY + formHeight - REG_MARGIN - 28;
+  const sigW = contentW / 3;
+  const sigLabels = ["Student Signature", "Faculty Advisor", "Head of the Department"];
+  doc.font("Helvetica").fontSize(6.5).fillColor("#000000");
+  for (let i = 0; i < 3; i++) {
+    const sx = left + i * sigW;
+    doc
+      .moveTo(sx + 8, sigY)
+      .lineTo(sx + sigW - 8, sigY)
+      .lineWidth(0.5)
+      .strokeColor("#000000")
+      .stroke();
+    doc.text(sigLabels[i], sx, sigY + 4, {
+      width: sigW,
+      align: "center",
+    });
+  }
+}
+
+const createA4PdfBuffer = async (
+  draw: (doc: InstanceType<typeof PDFDocument>) => Promise<void> | void,
+): Promise<Buffer> => {
+  return new Promise<Buffer>((resolve, reject) => {
+    const doc = new PDFDocument({
+      size: FULL_A4_SIZE,
+      margin: 0,
+      compress: false,
+    });
+    const chunks: Buffer[] = [];
+    doc.on("data", (chunk: Buffer) => chunks.push(chunk));
+    doc.on("end", () => resolve(Buffer.concat(chunks)));
+    doc.on("error", (err: Error) => reject(err));
+    const execute = async () => {
+      try {
+        await draw(doc);
+        doc.end();
+      } catch (err) {
+        reject(err);
+      }
+    };
+    void execute();
+  });
+};
+
+export const generateRegistrationPdf = async (
+  data: RegistrationPdfData,
+): Promise<Buffer> => {
+  return createHalfPagePdfBuffer((doc) => {
+    drawRegistrationForm(doc, data, {
+      offsetY: 0,
+      formHeight: HALF_A4[1],
+      pageWidth: HALF_A4[0],
+    });
+  });
+};
+
+export const generateBulkRegistrationPdf = async (
+  students: RegistrationPdfData[],
+): Promise<Buffer> => {
+  if (!students.length) {
+    throw new Error("No registration slips to generate.");
+  }
+
+  const halfHeight = FULL_A4_SIZE[1] / 2;
+
+  return createA4PdfBuffer((doc) => {
+    for (let i = 0; i < students.length; i += 2) {
+      if (i > 0) {
+        doc.addPage({ size: FULL_A4_SIZE, margin: 0 });
+      }
+
+      drawRegistrationForm(doc, students[i], {
+        offsetY: 0,
+        formHeight: halfHeight,
+        pageWidth: FULL_A4_SIZE[0],
       });
+
+      if (i + 1 < students.length) {
+        doc
+          .save()
+          .dash(4, { space: 3 })
+          .strokeColor("#888888")
+          .lineWidth(0.5)
+          .moveTo(REG_MARGIN, halfHeight)
+          .lineTo(FULL_A4_SIZE[0] - REG_MARGIN, halfHeight)
+          .stroke()
+          .undash()
+          .restore();
+
+        drawRegistrationForm(doc, students[i + 1], {
+          offsetY: halfHeight,
+          formHeight: halfHeight,
+          pageWidth: FULL_A4_SIZE[0],
+        });
+      }
     }
   });
 };

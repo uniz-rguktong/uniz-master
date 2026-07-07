@@ -57,6 +57,7 @@ interface Allocation {
   subject: { name: string; code: string; credits: number };
   isApproved: boolean;
   customName?: string;
+  customCode?: string;
   customCredits?: number;
   facultyId?: string;
   isMandatory: boolean;
@@ -81,6 +82,7 @@ export default function SemesterRegistrationSection({
   );
   const [editFormData, setEditFormData] = useState({
     customName: "",
+    customCode: "",
     customCredits: 0,
     isMandatory: true,
     electiveGroupId: "",
@@ -262,6 +264,7 @@ export default function SemesterRegistrationSection({
     setEditingAllocation(item);
     setEditFormData({
       customName: item.customName || item.subject.name,
+      customCode: item.customCode || item.subject.code,
       customCredits: item.customCredits || item.subject.credits,
       isMandatory: item.isMandatory ?? true,
       electiveGroupId: item.electiveGroupId || "",
@@ -603,7 +606,7 @@ export default function SemesterRegistrationSection({
                                 {item.customName || item.subject.name}
                               </p>
                               <p className="text-[9px] text-zinc-400 tracking-[0.14em]">
-                                {item.subject.code} •{" "}
+                                {item.customCode || item.subject.code} •{" "}
                                 {item.customCredits || item.subject.credits}{" "}
                                 CREDITS
                               </p>
@@ -838,6 +841,21 @@ export default function SemesterRegistrationSection({
             <h3 className={adminModalTitleClass}>Adjust subject</h3>
             <p className={adminModalDescClass}>Update allocation details for this rollout.</p>
             <div className="space-y-5">
+              <div className="space-y-2">
+                <label className={adminLabelClass}>Academic code</label>
+                <input
+                  type="text"
+                  value={editFormData.customCode}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      customCode: e.target.value.toUpperCase(),
+                    })
+                  }
+                  className={adminInputClass}
+                  placeholder="Official subject code for this semester"
+                />
+              </div>
               <div className="space-y-2">
                 <label className={adminLabelClass}>Subject name</label>
                 <input
