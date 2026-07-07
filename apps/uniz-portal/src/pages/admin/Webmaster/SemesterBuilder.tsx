@@ -50,6 +50,7 @@ import {
 } from "../../../components/admin/admin-ui";
 import { ENGINEERING_BRANCHES } from "@/constants/branches";
 import RegistrationTracking from "./RegistrationTracking";
+import SemesterSubjectsManager from "./SemesterSubjectsManager";
 import DirectPublishModal from "./DirectPublishModal";
 
 const BRANCHES = [...ENGINEERING_BRANCHES];
@@ -249,6 +250,7 @@ export default function SemesterBuilder() {
   const [loading, setLoading] = useState(true);
   const [builderOpen, setBuilderOpen] = useState(false);
   const [trackingSem, setTrackingSem] = useState<any | null>(null);
+  const [manageSem, setManageSem] = useState<any | null>(null);
   const [publishSem, setPublishSem] = useState<any | null>(null);
 
   const fetchSemesters = async () => {
@@ -313,6 +315,15 @@ export default function SemesterBuilder() {
     );
   }
 
+  if (manageSem) {
+    return (
+      <SemesterSubjectsManager
+        semester={manageSem}
+        onBack={() => setManageSem(null)}
+      />
+    );
+  }
+
   return (
     <div className={cn(adminPageWrapClass, "animate-in fade-in duration-500")}>
       <SectionHeader
@@ -355,6 +366,7 @@ export default function SemesterBuilder() {
               onSetStatus={setStatus}
               onRemove={remove}
               onPublish={() => setPublishSem(sem)}
+              onManage={() => setManageSem(sem)}
               onTrack={
                 sem.status === "REGISTRATION_OPEN" ||
                 sem.status === "REGISTRATION_CLOSED"
@@ -419,6 +431,7 @@ function SemesterCard({
   onSetStatus,
   onRemove,
   onPublish,
+  onManage,
   onTrack,
 }: {
   sem: any;
@@ -427,6 +440,7 @@ function SemesterCard({
   onSetStatus: (id: string, status: string, label: string) => void;
   onRemove: (id: string, name: string) => void;
   onPublish: () => void;
+  onManage: () => void;
   onTrack?: () => void;
 }) {
   const canPublishDirect =
@@ -482,6 +496,12 @@ function SemesterCard({
       </div>
 
       <div className="relative flex flex-wrap items-center gap-2">
+        <ActionBtn
+          tone="ghost"
+          icon={<BookOpen size={14} />}
+          label="Manage subjects"
+          onClick={onManage}
+        />
         {sem.status === "DRAFT" && (
           <ActionBtn
             tone="primary"
@@ -556,11 +576,12 @@ function ActionBtn({
   icon: JSX.Element;
   label: string;
   onClick: () => void;
-  tone?: "primary" | "dark";
+  tone?: "primary" | "dark" | "ghost";
 }) {
   const tones: Record<string, string> = {
     primary: "bg-zinc-900 text-white hover:bg-zinc-800",
     dark: "bg-zinc-900 text-white hover:bg-black",
+    ghost: "bg-zinc-100 text-zinc-700 hover:bg-zinc-200",
   };
   return (
     <button
@@ -1346,6 +1367,11 @@ function SubjectsStep({
                   prev.map((x) => (x.key === s.key ? { ...x, name } : x)),
                 )
               }
+              onAcademicCodeChange={(academicCode) =>
+                setSubjects((prev) =>
+                  prev.map((x) => (x.key === s.key ? { ...x, academicCode } : x)),
+                )
+              }
               onRemove={() =>
                 setSubjects(subjects.filter((x: SubjectDraft) => x.key !== s.key))
               }
@@ -1553,18 +1579,26 @@ function SubjectsStep({
 function SubjectRow({
   s,
   onRename,
+  onAcademicCodeChange,
   onRemove,
 }: {
   s: SubjectDraft;
   onRename: (name: string) => void;
+  onAcademicCodeChange: (code: string) => void;
   onRemove: () => void;
 }) {
   const [editing, setEditing] = useState(false);
+  const [editingCode, setEditingCode] = useState(false);
   const [draftName, setDraftName] = useState(s.name);
+  const [draftAcademicCode, setDraftAcademicCode] = useState(s.academicCode);
 
   useEffect(() => {
     if (!editing) setDraftName(s.name);
   }, [s.name, editing]);
+
+  useEffect(() => {
+    if (!editingCode) setDraftAcademicCode(s.academicCode);
+  }, [s.academicCode, editingCode]);
 
   const commitRename = () => {
     const trimmed = draftName.trim();
@@ -1580,6 +1614,17 @@ function SubjectRow({
   const cancelRename = () => {
     setDraftName(s.name);
     setEditing(false);
+  };
+
+  const commitAcademicCode = () => {
+    const trimmed = draftAcademicCode.trim().toUpperCase();
+    if (trimmed !== s.academicCode) onAcademicCodeChange(trimmed);
+    setEditingCode(false);
+  };
+
+  const cancelAcademicCode = () => {
+    setDraftAcademicCode(s.academicCode);
+    setEditingCode(false);
   };
 
   const typeMeta: Record<string, string> = {
@@ -1631,7 +1676,43 @@ function SubjectRow({
           </button>
         )}
         <p className="text-[10px] font-bold text-zinc-400 tracking-wide mt-0.5">
-          {s.code} · {s.department} · {s.academicYear} · {s.credits || 0}C
+          <span className="font-mono">{s.code}</span>
+          {editingCode ? (
+            <span className="inline-flex items-center gap-1 ml-1">
+              · Academic:{" "}
+              <input
+                autoFocus
+                value={draftAcademicCode}
+                onChange={(e) => setDraftAcademicCode(e.target.value.toUpperCase())}
+                onBlur={commitAcademicCode}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    commitAcademicCode();
+                  }
+                  if (e.key === "Escape") {
+                    e.preventDefault();
+                    cancelAcademicCode();
+                  }
+                }}
+                className={cn(inputClass, "inline w-28 h-6 text-[10px] font-mono py-0 px-1")}
+              />
+            </span>
+          ) : (
+            <>
+              {" "}
+              · Academic:{" "}
+              <button
+                type="button"
+                onClick={() => setEditingCode(true)}
+                className="font-mono text-zinc-600 hover:text-zinc-900 underline-offset-2 hover:underline"
+              >
+                {s.academicCode || "set code"}
+              </button>
+            </>
+          )}
+          {" "}
+          · {s.department} · {s.academicYear} · {s.credits || 0}C
           {s.electiveGroupCode ? ` · ${s.electiveGroupCode}` : ""}
           {s.fromCatalog ? " · catalog" : " · custom"}
         </p>
