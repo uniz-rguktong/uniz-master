@@ -1300,6 +1300,15 @@ export const updateAllocation = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+  const role = resolveEffectiveRole(user);
+  const allowed = new Set(["webmaster", "coe", "dean", "director", "hod"]);
+  if (!allowed.has(role)) {
+    return res.status(403).json({ error: "Not authorized" });
+  }
+
   const { id } = req.params;
   const {
     customName,
