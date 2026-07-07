@@ -7,7 +7,7 @@ import axios from "axios";
 import * as ExcelJS from "exceljs";
 import { redis } from "../utils/redis.util";
 import { enforcePublishOtpRateLimit } from "../middlewares/publish-otp-ratelimit.middleware";
-import { generateRegistrationPdf } from "../utils/pdf.util";
+import { generateRegistrationPdf, generateBulkRegistrationPdf, RegistrationPdfData } from "../utils/pdf.util";
 
 /**
  * @desc Initialize a new semester with branch allocations
@@ -679,6 +679,11 @@ async function persistSemesterSubjects(
     const electiveGroupId = s.electiveGroupCode || s.electiveGroupId || "";
     const electiveGroupName = s.electiveGroupName || "";
     const electiveLimit = Number(s.electiveLimit) || 1;
+    const academicCode = String(
+      s.academicCode || s.customCode || "",
+    )
+      .trim()
+      .toUpperCase() || null;
 
     // Option B: upsert catalog entry; per-semester name/credits live on BranchAllocation.
     // Existing catalog rows keep their global name/credits (historical stability).
@@ -709,6 +714,7 @@ async function persistSemesterSubjects(
       update: {
         academicYear,
         customName: name,
+        customCode: academicCode,
         customCredits: credits || null,
         subjectType,
         isMandatory,
@@ -722,6 +728,7 @@ async function persistSemesterSubjects(
         semesterId,
         academicYear,
         customName: name,
+        customCode: academicCode,
         customCredits: credits || null,
         subjectType,
         isMandatory,
@@ -1296,6 +1303,7 @@ export const updateAllocation = async (
   const { id } = req.params;
   const {
     customName,
+    customCode,
     customCredits,
     isApproved,
     isMandatory,
@@ -1307,6 +1315,12 @@ export const updateAllocation = async (
       where: { id },
       data: {
         customName,
+        customCode:
+          customCode !== undefined
+            ? String(customCode || "")
+                .trim()
+                .toUpperCase() || null
+            : undefined,
         customCredits: customCredits ? Number(customCredits) : undefined,
         isApproved: isApproved !== undefined ? isApproved : undefined,
         isMandatory: isMandatory !== undefined ? isMandatory : undefined,
@@ -1812,7 +1826,8 @@ export const registerSubjects = async (
       subjects: registered.map((r: any) => {
         const alloc = allocBySubject.get(r.subjectId);
         return {
-          code: r.subject.code,
+          code: alloc?.customCode?.trim() || r.subject.code,
+          internalCode: r.subject.code,
           name: alloc?.customName?.trim() || r.subject.name,
           credits: alloc?.customCredits ?? r.subject.credits,
         };
@@ -1900,9 +1915,30 @@ export const getCurrentSubjects = async (
       orderBy: { subject: { code: "asc" } },
     });
 
+    const regAllocations = await prisma.branchAllocation.findMany({
+      where: {
+        semesterId: activeSem.id,
+        subjectId: { in: registrations.map((r) => r.subjectId) },
+      },
+    });
+    const allocBySubject = new Map(
+      regAllocations.map((a) => [a.subjectId, a]),
+    );
+
     res.json({
       semester: activeSem,
-      subjects: registrations,
+      subjects: registrations.map((r) => {
+        const alloc = allocBySubject.get(r.subjectId);
+        return {
+          ...r,
+          subject: {
+            ...r.subject,
+            code: alloc?.customCode?.trim() || r.subject.code,
+            name: alloc?.customName?.trim() || r.subject.name,
+            internalCode: r.subject.code,
+          },
+        };
+      }),
       alreadyRegistered: registrations.length > 0,
     });
   } catch (error) {
@@ -1928,7 +1964,8 @@ export const exportAcademicData = async (
       worksheet.columns = [
         { header: "Student ID", key: "studentId" },
         { header: "Batch", key: "batch" },
-        { header: "Subject Code", key: "code" },
+        { header: "Internal Code", key: "internalCode" },
+        { header: "Academic Code", key: "code" },
         { header: "Subject Name", key: "name" },
         { header: "Status", key: "status" },
         { header: "Registered At", key: "createdAt" },
@@ -1948,12 +1985,31 @@ export const exportAcademicData = async (
         include: { subject: true },
       });
 
+      const allocations = await prisma.branchAllocation.findMany({
+        where: { semesterId: semesterId as string },
+        select: {
+          subjectId: true,
+          branch: true,
+          customCode: true,
+          customName: true,
+        },
+      });
+      const allocBySubjectBranch = new Map(
+        allocations.map((a) => [`${a.subjectId}:${a.branch.toUpperCase()}`, a]),
+      );
+
       data.forEach((r: any) => {
+        const alloc =
+          allocBySubjectBranch.get(
+            `${r.subjectId}:${String(r.subject.department || branch || "").toUpperCase()}`,
+          ) ||
+          allocations.find((a) => a.subjectId === r.subjectId);
         worksheet.addRow({
           studentId: r.studentId,
           batch: (r as any).batch || "",
-          code: r.subject.code,
-          name: r.subject.name,
+          internalCode: r.subject.code,
+          code: alloc?.customCode?.trim() || r.subject.code,
+          name: alloc?.customName?.trim() || r.subject.name,
           status: r.status,
           createdAt: r.createdAt,
         });
@@ -2333,7 +2389,8 @@ export const getSemesterOverview = async (
           };
         }
         branchSummary[alloc.branch].subjects.push({
-          code: alloc.subject.code,
+          code: alloc.customCode?.trim() || alloc.subject.code,
+          internalCode: alloc.subject.code,
           name: alloc.customName || alloc.subject.name,
           credits: alloc.customCredits || alloc.subject.credits,
           year: alloc.academicYear,
@@ -2464,12 +2521,78 @@ export const downloadRegistrationPdf = async (
       });
     }
 
-    let profileName = targetStudentId;
-    let branch = "N/A";
-    let batch = "";
-    let year = "";
-    let campus = "Ongole";
+    const pdfData = await buildRegistrationPdfData(
+      targetStudentId,
+      sem,
+      registered,
+      user,
+    );
 
+    const pdfBuffer = await generateRegistrationPdf(pdfData);
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="REGISTRATION_${targetStudentId}_${sem.id}.pdf"`,
+    );
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate",
+    );
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    res.send(pdfBuffer);
+  } catch (error: any) {
+    console.error("Registration PDF Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to generate registration PDF.",
+    });
+  }
+};
+
+type RegistrationRow = {
+  id: string;
+  subjectId: string;
+  submittedAt: Date | null;
+  createdAt: Date;
+  subject: { code: string; name: string; credits: number };
+};
+
+async function buildRegistrationPdfData(
+  targetStudentId: string,
+  sem: { id: string; name: string },
+  registered: RegistrationRow[],
+  user: AuthenticatedRequest["user"],
+  profileOverride?: {
+    name?: string;
+    branch?: string;
+    batch?: string;
+    year?: string;
+    campus?: string;
+  } | null,
+  semesterAllocations?: Array<{
+    subjectId: string;
+    branch: string;
+    customName?: string | null;
+    customCode?: string | null;
+    customCredits?: number | null;
+    subjectType?: string | null;
+  }>,
+): Promise<RegistrationPdfData> {
+  let profileName = targetStudentId;
+  let branch = "N/A";
+  let batch = "";
+  let year = "";
+  let campus = "Ongole";
+
+  if (profileOverride) {
+    profileName = profileOverride.name || profileName;
+    branch = profileOverride.branch || branch;
+    batch = profileOverride.batch || "";
+    year = profileOverride.year || "";
+    campus = profileOverride.campus || campus;
+  } else {
     try {
       const searchRes = await axios.post(
         `${USER_SERVICE_URL}/internal/bulk-profiles`,
@@ -2490,56 +2613,239 @@ export const downloadRegistrationPdf = async (
         campus = profile.campus || campus;
       }
     } catch {
-      // fallback to JWT claims
-      branch = (user as any).department || branch;
-      year = (user as any).year || year;
+      branch = (user as any)?.department || branch;
+      year = (user as any)?.year || year;
     }
+  }
 
+  const branchKey = branch !== "N/A" ? branch.toUpperCase() : null;
+  let allocBySubject: Map<
+    string,
+    {
+      customName?: string | null;
+      customCode?: string | null;
+      customCredits?: number | null;
+      subjectType?: string | null;
+    }
+  >;
+
+  if (semesterAllocations) {
+    allocBySubject = new Map(
+      semesterAllocations
+        .filter(
+          (a) =>
+            !branchKey || String(a.branch).toUpperCase() === branchKey,
+        )
+        .map((a) => [a.subjectId, a]),
+    );
+  } else {
     const regAllocations = await prisma.branchAllocation.findMany({
       where: {
         semesterId: sem.id,
         subjectId: { in: registered.map((r) => r.subjectId) },
-        ...(branch !== "N/A"
+        ...(branchKey
           ? { branch: { equals: branch, mode: "insensitive" } }
           : {}),
       },
     });
-    const allocBySubject = new Map(
-      regAllocations.map((a) => [a.subjectId, a]),
+    allocBySubject = new Map(regAllocations.map((a) => [a.subjectId, a]));
+  }
+
+  const subjects = registered.map((r) => {
+    const alloc = allocBySubject.get(r.subjectId);
+    return {
+      code: alloc?.customCode?.trim() || r.subject.code,
+      name: alloc?.customName?.trim() || r.subject.name,
+      credits: alloc?.customCredits ?? r.subject.credits,
+      type: alloc?.subjectType || "CORE",
+    };
+  });
+
+  const totalCredits = subjects.reduce((acc, s) => acc + (s.credits || 0), 0);
+  const submittedAt =
+    registered[0]?.submittedAt || registered[0]?.createdAt || new Date();
+
+  return {
+    username: targetStudentId,
+    name: profileName,
+    branch,
+    batch,
+    year,
+    campus,
+    semesterName: sem.name,
+    semesterId: sem.id,
+    registrationId: registered[0].id,
+    submittedAt,
+    subjects,
+    totalCredits,
+  };
+}
+
+export const downloadBulkRegistrationPdfs = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
+
+  const role = resolveEffectiveRole(user);
+  const allowed = new Set(["webmaster", "coe", "dean", "director", "hod"]);
+  if (!allowed.has(role)) {
+    return res.status(403).json({ success: false, message: "Not authorized" });
+  }
+
+  const {
+    semesterId,
+    branch,
+    year,
+    batch,
+    query: searchQuery,
+  } = req.query;
+
+  try {
+    let sem = null;
+    if (semesterId) {
+      sem = await prisma.academicSemester.findUnique({
+        where: { id: semesterId as string },
+      });
+    } else {
+      sem = await prisma.academicSemester.findFirst({
+        where: {
+          status: { in: ["REGISTRATION_OPEN", "REGISTRATION_CLOSED", "APPROVED"] },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    }
+
+    if (!sem) {
+      return res.status(404).json({
+        success: false,
+        message: "No semester found for bulk registration download.",
+      });
+    }
+
+    let branchFilter =
+      branch && String(branch).toLowerCase() !== "all"
+        ? String(branch).toUpperCase()
+        : undefined;
+
+    if (role === "hod") {
+      branchFilter = resolveHodBranch(user);
+      if (!branchFilter) {
+        return res.status(400).json({
+          success: false,
+          message: "Could not determine HOD branch",
+        });
+      }
+    }
+
+    const yearFilter =
+      year && String(year).toLowerCase() !== "all"
+        ? String(year).toUpperCase()
+        : undefined;
+    const batchFilter =
+      batch && String(batch).toLowerCase() !== "all"
+        ? String(batch).toUpperCase()
+        : sem.batch
+          ? String(sem.batch).toUpperCase()
+          : undefined;
+
+    const searchBody: Record<string, unknown> = {
+      limit: 10000,
+      isSuspended: false,
+    };
+    if (branchFilter) searchBody.branch = branchFilter;
+    if (yearFilter) searchBody.year = yearFilter;
+    if (batchFilter) searchBody.batch = batchFilter;
+    if (searchQuery && String(searchQuery).trim()) {
+      searchBody.username = String(searchQuery).trim().toUpperCase();
+    }
+
+    const profilesRes = await axios.post(
+      `${USER_SERVICE_URL}/student/search`,
+      searchBody,
+      {
+        headers: { Authorization: req.headers.authorization || "" },
+        timeout: 60000,
+      },
     );
 
-    const subjects = registered.map((r) => {
-      const alloc = allocBySubject.get(r.subjectId);
-      return {
-        code: r.subject.code,
-        name: alloc?.customName?.trim() || r.subject.name,
-        credits: alloc?.customCredits ?? r.subject.credits,
-        type: alloc?.subjectType || "CORE",
-      };
+    const allStudents: any[] = profilesRes.data?.students || [];
+
+    const regs = await prisma.registration.findMany({
+      where: {
+        semesterId: sem.id,
+        status: "REGISTERED",
+      },
+      include: { subject: true },
+      orderBy: [{ studentId: "asc" }, { subject: { code: "asc" } }],
     });
 
-    const totalCredits = subjects.reduce((acc, s) => acc + (s.credits || 0), 0);
-    const submittedAt =
-      registered[0]?.submittedAt || registered[0]?.createdAt || new Date();
+    const regsByStudent = new Map<string, RegistrationRow[]>();
+    for (const r of regs) {
+      const id = normalizeStudentId(r.studentId);
+      const list = regsByStudent.get(id) || [];
+      list.push(r);
+      regsByStudent.set(id, list);
+    }
 
-    const pdfBuffer = await generateRegistrationPdf({
-      username: targetStudentId,
-      name: profileName,
-      branch,
-      batch,
-      year,
-      campus,
-      semesterName: sem.name,
-      semesterId: sem.id,
-      registrationId: registered[0].id,
-      submittedAt,
-      subjects,
-      totalCredits,
+    const registeredStudents = allStudents
+      .filter((s) => regsByStudent.has(normalizeStudentId(s.username)))
+      .sort((a, b) =>
+        String(a.username).localeCompare(String(b.username), undefined, {
+          numeric: true,
+        }),
+      );
+
+    if (!registeredStudents.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No registered students match these filters.",
+      });
+    }
+
+    const semesterAllocations = await prisma.branchAllocation.findMany({
+      where: { semesterId: sem.id },
     });
+
+    const pdfDataList: RegistrationPdfData[] = [];
+    for (const student of registeredStudents) {
+      const studentId = normalizeStudentId(student.username);
+      const registered = regsByStudent.get(studentId) || [];
+      if (!registered.length) continue;
+
+      const pdfData = await buildRegistrationPdfData(
+        studentId,
+        sem,
+        registered,
+        user,
+        {
+          name: student.name,
+          branch: student.branch || student.department,
+          batch: student.batch,
+          year: student.year,
+          campus: student.campus,
+        },
+        semesterAllocations,
+      );
+      pdfDataList.push(pdfData);
+    }
+
+    if (!pdfDataList.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No registration slips could be generated.",
+      });
+    }
+
+    const pdfBuffer = await generateBulkRegistrationPdf(pdfDataList);
+    const safeSem = sem.id.replace(/[^a-zA-Z0-9_-]/g, "_");
+    const branchSuffix = branchFilter ? `_${branchFilter}` : "";
+    const yearSuffix = yearFilter ? `_${yearFilter}` : "";
 
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="REGISTRATION_${targetStudentId}_${sem.id}.pdf"`,
+      `attachment; filename="REGISTRATION_BULK_${safeSem}${branchSuffix}${yearSuffix}.pdf"`,
     );
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
@@ -2550,10 +2856,10 @@ export const downloadRegistrationPdf = async (
     res.setHeader("Expires", "0");
     res.send(pdfBuffer);
   } catch (error: any) {
-    console.error("Registration PDF Error:", error);
+    console.error("Bulk Registration PDF Error:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to generate registration PDF.",
+      message: "Failed to generate bulk registration PDF.",
     });
   }
 };

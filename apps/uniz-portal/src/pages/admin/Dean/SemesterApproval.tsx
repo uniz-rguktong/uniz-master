@@ -515,7 +515,7 @@ function SubjectGroup({
                   {a.customName || a.subject?.name}
                 </p>
                 <p className="text-[10px] font-medium text-zinc-400 tracking-wide">
-                  {a.subject?.code} · {a.branch} · {a.academicYear} ·{" "}
+                  {a.customCode || a.subject?.code} · {a.branch} · {a.academicYear} ·{" "}
                   {a.customCredits || a.subject?.credits || 0}C
                   {a.electiveGroupId ? ` · ${a.electiveGroupId}` : ""}
                 </p>

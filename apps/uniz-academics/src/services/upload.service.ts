@@ -89,6 +89,72 @@ export async function processNextBatch() {
     allSubjects.map((s: any) => [s.code.trim().toUpperCase(), s]),
   );
 
+  const academicCodeLookup = new Map<
+    string,
+    Array<{ subject: any; semesterId: string }>
+  >();
+  const allocationRows = await prisma.branchAllocation.findMany({
+    where: { customCode: { not: null } },
+    include: { subject: true },
+  });
+  for (const alloc of allocationRows) {
+    const key = String(alloc.customCode || "")
+      .trim()
+      .toUpperCase();
+    if (!key) continue;
+    const list = academicCodeLookup.get(key) || [];
+    list.push({ subject: alloc.subject, semesterId: alloc.semesterId });
+    academicCodeLookup.set(key, list);
+  }
+
+  const resolveSubjectFromRowCode = (
+    rawCode: string,
+    academicSemesterId?: string,
+  ) => {
+    const code = String(rawCode || "").trim().toUpperCase();
+    if (!code) return null;
+
+    const direct = subjectMap.get(code);
+    if (direct) return direct;
+
+    const matches = academicCodeLookup.get(code) || [];
+    if (academicSemesterId) {
+      const scoped = matches.find((m) => m.semesterId === academicSemesterId);
+      if (scoped) return scoped.subject;
+    }
+    if (matches.length === 1) return matches[0].subject;
+    return null;
+  };
+
+  // Cache per-semester allocation overrides for snapshot labels
+  const allocationOverrideCache = new Map<
+    string,
+    { customName: string | null; customCode: string | null }
+  >();
+
+  const resolveAllocationOverrides = async (
+    subjectId: string,
+    academicSemesterId?: string,
+  ): Promise<{ customName: string | null; customCode: string | null }> => {
+    if (!academicSemesterId) {
+      return { customName: null, customCode: null };
+    }
+    const key = `${subjectId}:${academicSemesterId}`;
+    if (allocationOverrideCache.has(key)) {
+      return allocationOverrideCache.get(key)!;
+    }
+    const alloc = await prisma.branchAllocation.findFirst({
+      where: { subjectId, semesterId: academicSemesterId },
+      select: { customName: true, customCode: true },
+    });
+    const overrides = {
+      customName: alloc?.customName?.trim() || null,
+      customCode: alloc?.customCode?.trim() || null,
+    };
+    allocationOverrideCache.set(key, overrides);
+    return overrides;
+  };
+
   const getVal = (row: any, keys: string[]) => {
     // Assuming rowKeys is available in the scope, which it isn't in the provided snippet.
     // This part of the code seems to be missing context or `rowKeys` is defined elsewhere.
@@ -115,25 +181,16 @@ export async function processNextBatch() {
     return "";
   };
 
-  // Cache per-semester allocation overrides (custom elective names) for snapshot labels
-  const allocationCustomNameCache = new Map<string, string | null>();
-
+  // Legacy wrapper — prefer resolveAllocationOverrides for both name and code.
   const resolveAllocationCustomName = async (
     subjectId: string,
     academicSemesterId?: string,
   ): Promise<string | null> => {
-    if (!academicSemesterId) return null;
-    const key = `${subjectId}:${academicSemesterId}`;
-    if (allocationCustomNameCache.has(key)) {
-      return allocationCustomNameCache.get(key) ?? null;
-    }
-    const alloc = await prisma.branchAllocation.findFirst({
-      where: { subjectId, semesterId: academicSemesterId },
-      select: { customName: true },
-    });
-    const customName = alloc?.customName?.trim() || null;
-    allocationCustomNameCache.set(key, customName);
-    return customName;
+    const overrides = await resolveAllocationOverrides(
+      subjectId,
+      academicSemesterId,
+    );
+    return overrides.customName;
   };
 
   if (processedInThisRun === 0) {
@@ -163,11 +220,21 @@ export async function processNextBatch() {
               "studentid",
               "id",
             ]).toUpperCase();
-            const code = getVal(row, [
+            const internalCode = getVal(row, [
+              "internal code",
+              "internal subject code",
+              "catalog code",
+            ]).toUpperCase();
+            const academicCodeCol = getVal(row, [
+              "academic code",
+              "academic subject code",
+            ]).toUpperCase();
+            const legacyCode = getVal(row, [
               "subject code",
               "subjectcode",
               "code",
             ]).toUpperCase();
+            const code = internalCode || legacyCode || academicCodeCol;
             const semesterId = getVal(row, [
               "semester id",
               "semesterid",
@@ -228,18 +295,22 @@ export async function processNextBatch() {
               }
             }
 
-            const subject = subjectMap.get(code);
+            const subject = resolveSubjectFromRowCode(
+              code,
+              academicSemesterId || undefined,
+            );
             if (!subject) throw new Error(`Subject [${code}] not found`);
 
-            const customName = await resolveAllocationCustomName(
+            const overrides = await resolveAllocationOverrides(
               subject.id,
               academicSemesterId || undefined,
             );
             const snapshot = buildSubjectSnapshot({
               code: subject.code,
               catalogName: subject.name,
+              customCode: overrides.customCode,
               subjectNameOverride,
-              customName,
+              customName: overrides.customName,
               spreadsheetName: spreadsheetSubjectName,
             });
 
@@ -354,11 +425,21 @@ export async function processNextBatch() {
               "studentid",
               "id",
             ]).toUpperCase();
-            const code = getVal(row, [
+            const internalCode = getVal(row, [
+              "internal code",
+              "internal subject code",
+              "catalog code",
+            ]).toUpperCase();
+            const academicCodeCol = getVal(row, [
+              "academic code",
+              "academic subject code",
+            ]).toUpperCase();
+            const legacyCode = getVal(row, [
               "subject code",
               "subjectcode",
               "code",
             ]).toUpperCase();
+            const code = internalCode || legacyCode || academicCodeCol;
             const semesterId = getVal(row, [
               "semester id",
               "semesterid",
@@ -388,7 +469,15 @@ export async function processNextBatch() {
 
             if (!studentId || !code)
               throw new Error("Missing Student ID or Subject Code");
-            const subject = subjectMap.get(code);
+            const academicSemesterId = getVal(row, [
+              "academic semester id",
+              "academicsemesterid",
+              "semester record id",
+            ]);
+            const subject = resolveSubjectFromRowCode(
+              code,
+              academicSemesterId || undefined,
+            );
             if (!subject) throw new Error(`Subject not found: ${code}`);
 
             let finalBatch = batchCol;
@@ -409,21 +498,17 @@ export async function processNextBatch() {
               "subjectname",
               "subject title",
             ]);
-            const academicSemesterId = getVal(row, [
-              "academic semester id",
-              "academicsemesterid",
-              "semester record id",
-            ]);
 
-            const customName = await resolveAllocationCustomName(
+            const overrides = await resolveAllocationOverrides(
               subject.id,
               academicSemesterId || undefined,
             );
             const snapshot = buildSubjectSnapshot({
               code: subject.code,
               catalogName: subject.name,
+              customCode: overrides.customCode,
               subjectNameOverride,
-              customName,
+              customName: overrides.customName,
               spreadsheetName: spreadsheetSubjectName,
             });
 

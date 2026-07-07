@@ -113,6 +113,7 @@ export const DOWNLOAD_REGISTRATION = (semesterId?: string) =>
   `${BASE_URL}/academics/student/registration/pdf${
     semesterId ? `?semesterId=${encodeURIComponent(semesterId)}` : ""
   }`;
+export const DOWNLOAD_BULK_REGISTRATION = `${BASE_URL}/academics/registrations/pdf/bulk`;
 
 // Additional Legacy Endpoints
 export const UPDATE_STUDENT_STATUS = `${BASE_URL}/profile/student/status`;

@@ -64,6 +64,7 @@ const SUBJECT_TYPES = [
 type SubjectDraft = {
   key: string;
   code: string;
+  academicCode: string;
   name: string;
   credits: string;
   department: string;
@@ -637,6 +638,7 @@ function BuilderDrawer({
       {
         key: uid(),
         code,
+        academicCode: "",
         name: item.name,
         credits: String(item.credits ?? 0),
         department: item.department?.toUpperCase() || "",
@@ -681,6 +683,7 @@ function BuilderDrawer({
           submit: mode === "submit",
           subjects: subjects.map((s) => ({
             code: s.code,
+            academicCode: s.academicCode?.trim() || undefined,
             name: s.name,
             credits: Number(s.credits) || 0,
             department: s.department,
@@ -892,6 +895,7 @@ function blankSubject(): SubjectDraft {
   return {
     key: uid(),
     code: "",
+    academicCode: "",
     name: "",
     credits: "3",
     department: "",
@@ -1403,7 +1407,7 @@ function SubjectsStep({
               <div className="space-y-1">
                 <input
                   className={inputClass}
-                  placeholder="Code (CS301)"
+                  placeholder="Internal code (CS301)"
                   value={draft.code}
                   onChange={(e) => {
                     setCodeTouched(true);
@@ -1417,7 +1421,18 @@ function SubjectsStep({
                 )}
               </div>
               <input
-                className={`${inputClass} col-span-2`}
+                className={inputClass}
+                placeholder="Academic code (23CS301)"
+                value={draft.academicCode}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    academicCode: e.target.value.toUpperCase(),
+                  })
+                }
+              />
+              <input
+                className={inputClass}
                 placeholder="Subject name"
                 value={draft.name}
                 onChange={(e) => setDraft({ ...draft, name: e.target.value })}

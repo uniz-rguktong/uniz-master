@@ -28,11 +28,53 @@ import {
   buildSubjectSnapshot,
   displaySubjectCode,
   displaySubjectName,
+  resolveDisplaySubjectCode,
 } from "../utils/subject-snapshot.util";
 import { randomUUID } from "crypto";
 import { redis, notificationQueue } from "../utils/redis.util";
 import { processNextBatch } from "../services/upload.service";
 import { generateResultPdf, generateAttendancePdf } from "../utils/pdf.util";
+
+async function loadAcademicCodesBySubject(
+  subjectIds: string[],
+  opts?: { branch?: string; academicSemesterId?: string },
+): Promise<Map<string, string>> {
+  if (!subjectIds.length) return new Map();
+
+  let semesterId = opts?.academicSemesterId;
+  if (!semesterId) {
+    const sem = await prisma.academicSemester.findFirst({
+      where: {
+        status: {
+          in: ["REGISTRATION_OPEN", "REGISTRATION_CLOSED", "APPROVED"],
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    semesterId = sem?.id;
+  }
+  if (!semesterId) return new Map();
+
+  const branch =
+    opts?.branch && String(opts.branch).toUpperCase() !== "ALL"
+      ? String(opts.branch).toUpperCase()
+      : undefined;
+
+  const allocs = await prisma.branchAllocation.findMany({
+    where: {
+      semesterId,
+      subjectId: { in: subjectIds },
+      ...(branch ? { branch: { equals: branch, mode: "insensitive" } } : {}),
+    },
+    select: { subjectId: true, customCode: true },
+  });
+
+  return new Map(
+    allocs
+      .filter((a) => a.customCode?.trim())
+      .map((a) => [a.subjectId, a.customCode!.trim().toUpperCase()]),
+  );
+}
 
 // GPA calculation and templates now use database-provided subject credits.
 // GRADE_MAP and mapGradeToPoint are now imported from helpers.util
@@ -1867,7 +1909,8 @@ export const getGradesTemplate = async (
       [
         "Student ID",
         "Student Name",
-        "Subject Code",
+        "Internal Code",
+        "Academic Code",
         "Subject Name",
         "Subject Name Override", // Added
         "Semester ID",
@@ -1960,6 +2003,14 @@ export const getGradesTemplate = async (
       `[Academics] Processing template for ${students.length} students across ${activeSubjects.length} subjects.`,
     );
 
+    const academicCodes = await loadAcademicCodesBySubject(
+      activeSubjects.map((s: any) => s.id),
+      {
+        branch: branch as string | undefined,
+        academicSemesterId: semesterId as string | undefined,
+      },
+    );
+
     students.forEach((s: any) => {
       activeSubjects.forEach((sub: any) => {
         // If "ALL" branches selected, only map subjects that match the student's branch
@@ -1982,6 +2033,10 @@ export const getGradesTemplate = async (
           s.username,
           s.name,
           sub.code,
+          resolveDisplaySubjectCode({
+            customCode: academicCodes.get(sub.id),
+            catalogCode: sub.code,
+          }),
           sub.name,
           "", // Subject Name Override
           finalSemId,
@@ -2187,7 +2242,8 @@ export const getAttendanceTemplate = async (
       [
         "Student ID",
         "Student Name",
-        "Subject Code",
+        "Internal Code",
+        "Academic Code",
         "Subject Name",
         "Subject Name Override", // Added
         "Semester ID",
@@ -2245,6 +2301,14 @@ export const getAttendanceTemplate = async (
       `[Academics] Building attendance template for ${students.length} students x ${subjects.length} subjects.`,
     );
 
+    const academicCodes = await loadAcademicCodesBySubject(
+      subjects.map((s: any) => s.id),
+      {
+        branch: branch as string | undefined,
+        academicSemesterId: semesterId as string | undefined,
+      },
+    );
+
     students.forEach((s: any) => {
       subjects.forEach((sub: any) => {
         // If "ALL" branches selected, only map subjects that match the student's branch
@@ -2269,6 +2333,10 @@ export const getAttendanceTemplate = async (
           s.username,
           s.name,
           sub.code,
+          resolveDisplaySubjectCode({
+            customCode: academicCodes.get(sub.id),
+            catalogCode: sub.code,
+          }),
           sub.name,
           "", // Subject Name Override
           finalSemId,
@@ -2510,8 +2578,8 @@ export const downloadGrades = async (
         attemptNumber: g.attemptNumber,
         passDate: g.passDate || g.updatedAt,
         subject: {
-          code: g.subject.code,
-          name: g.subject.name,
+          code: displaySubjectCode(g),
+          name: displaySubjectName(g),
           credits: g.subject.credits,
         },
       })),
@@ -2660,8 +2728,8 @@ export const downloadAttendance = async (
         attendedClasses: r.attendedClasses,
         totalClasses: r.totalClasses,
         subject: {
-          code: r.subject.code,
-          name: r.subject.name,
+          code: displaySubjectCode(r),
+          name: displaySubjectName(r),
         },
       })),
     });

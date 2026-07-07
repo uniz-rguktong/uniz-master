@@ -5,13 +5,14 @@ import {
   CheckCircle2,
   ChevronDown,
   Clock,
+  Download,
   Loader2,
   Search,
   Users,
   UserX,
 } from "lucide-react";
-import { apiClient } from "../../../api/apiClient";
-import { REGISTRATION_TRACKING } from "../../../api/endpoints";
+import { apiClient, downloadFile } from "../../../api/apiClient";
+import { DOWNLOAD_BULK_REGISTRATION, REGISTRATION_TRACKING } from "../../../api/endpoints";
 import { SectionHeader } from "../../../components/admin/SectionHeader";
 import { Pagination } from "../../../components/Pagination";
 import { cn } from "../../../utils/cn";
@@ -24,6 +25,7 @@ import {
   adminInputClass,
   adminLabelClass,
   adminPageWrapClass,
+  adminPrimaryButtonClass,
   adminSelectClass,
 } from "../../../components/admin/admin-ui";
 import { ENGINEERING_BRANCH_OPTIONS } from "@/constants/branches";
@@ -83,6 +85,7 @@ export default function RegistrationTracking({
     totalPages: 1,
     total: 0,
   });
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
 
   const fetchTracking = useCallback(
     async (page = 1) => {
@@ -136,6 +139,25 @@ export default function RegistrationTracking({
     [summary.percent],
   );
 
+  const handleBulkPdfDownload = async () => {
+    setDownloadingPdf(true);
+    try {
+      const params = new URLSearchParams({ semesterId: semester.id });
+      if (branch !== "ALL") params.set("branch", branch);
+      if (year !== "ALL") params.set("year", year);
+      if (batch !== "ALL") params.set("batch", batch);
+      if (query.trim()) params.set("query", query.trim());
+
+      const safeSem = semester.id.replace(/[^a-zA-Z0-9_-]/g, "_");
+      await downloadFile(
+        `${DOWNLOAD_BULK_REGISTRATION}?${params.toString()}`,
+        `REGISTRATION_BULK_${safeSem}.pdf`,
+      );
+    } finally {
+      setDownloadingPdf(false);
+    }
+  };
+
   return (
     <div className={cn(adminPageWrapClass, "animate-in fade-in duration-500 pb-20")}>
       <button
@@ -151,6 +173,26 @@ export default function RegistrationTracking({
         eyebrow="Registration"
         title="Registration progress"
         subtitle={`Who has completed course registration for ${semester.name}.`}
+        actions={
+          <button
+            type="button"
+            onClick={() => void handleBulkPdfDownload()}
+            disabled={downloadingPdf || summary.registered === 0}
+            className={cn(
+              adminPrimaryButtonClass,
+              "inline-flex items-center gap-2 shrink-0",
+              (downloadingPdf || summary.registered === 0) &&
+                "opacity-60 cursor-not-allowed",
+            )}
+          >
+            {downloadingPdf ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Download size={16} />
+            )}
+            Download all forms (PDF)
+          </button>
+        }
       />
 
       {/* Summary */}

@@ -46,6 +46,7 @@ interface Allocation {
   subjectId: string;
   facultyId: string | null;
   customName: string | null;
+  customCode: string | null;
   customCredits: number | null;
   isApproved: boolean;
   batch?: string;
@@ -425,6 +426,17 @@ export default function DeanReview() {
             </div>
 
             <form onSubmit={handleUpdate} className="space-y-5">
+              <div className="space-y-2">
+                <label className={adminLabelClass}>Academic code</label>
+                <input
+                  value={editing.customCode || editing.subject.code}
+                  onChange={(e) =>
+                    setEditing({ ...editing, customCode: e.target.value.toUpperCase() })
+                  }
+                  className={adminInputClass}
+                  placeholder="Official code for sheets / slips"
+                />
+              </div>
               <div className="space-y-2">
                 <label className={adminLabelClass}>Subject name (custom for electives)</label>
                 <input
