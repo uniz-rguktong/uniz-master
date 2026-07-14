@@ -15,7 +15,7 @@
 | Portal npm name | `uniz` (workspace `apps/uniz-portal`) |
 | Local dev | `npm run dev` — gateway + auth + user + portal |
 | Full stack dev | `npm run dev:all` |
-| CI build | `npm run ci:build` → `scripts/ci-build.sh` |
+| CI build | `npm run ci:build` → `scripts/ci/ci-build.sh` |
 | Deploy | push to `main` → `.github/workflows/deploy.yml` |
 | Secrets template | `secrets.env.example` → copy to `secrets.env`, `npm run vault:sync` |
 
@@ -54,7 +54,7 @@ Each service: `apps/<name>/src/index.ts` → Express app → `src/routes/*.route
 
 Prisma (where used): `apps/<name>/prisma/schema.prisma` → generated at `src/generated/prisma/`.
 
-Monorepo Docker build: `docker/Dockerfile.service` with `SERVICE_DIR` + `WORKSPACE_NAME` build args (`scripts/deploy-common.sh`).
+Monorepo Docker build: `docker/prod/Dockerfile.service` with `SERVICE_DIR` + `WORKSPACE_NAME` build args (`scripts/deploy/deploy-common.sh`).
 
 ---
 
@@ -101,7 +101,7 @@ Schemas live at `apps/<service>/prisma/schema.prisma`. Single Postgres DB, separ
 | **uniz-files** | File metadata (if Prisma used) |
 | **uniz-mail** | Mail queue/logs (if Prisma used) |
 
-Migrations: `scripts/prisma-migrate-deploy-all.sh` (runs on VPS deploy).
+Migrations: `scripts/deploy/prisma-migrate-deploy-all.sh` (runs on VPS deploy).
 
 ---
 
@@ -207,30 +207,30 @@ Inbox endpoints (via gateway): `/api/v1/notifications/inbox`, `.../read`, `.../r
 
 `infra/core-infra/` — deployment YAMLs per service (e.g. `portal.yaml`, `auth-service.yaml`, `nginx/`).
 
-Service ↔ app dir mapping: `scripts/deploy-common.sh` → `infra_yaml_to_dir()`.
+Service ↔ app dir mapping: `scripts/deploy/deploy-common.sh` → `infra_yaml_to_dir()`.
 
 ### CI/CD (`.github/workflows/deploy.yml`)
 
 1. **Build monorepo** — `npm ci`, `build:shared`, `ci:build`, portal `vite build`
-2. **Plan GHCR builds** — `scripts/ci-plan-build-matrix.sh` (diff-based)
-3. **Build images** — parallel matrix, `scripts/ci-build-one-image.sh`
-4. **Deploy to VPS** — self-hosted runner, `scripts/ci-local-deploy.sh` → `ci-remote-deploy.sh` → `deploy.sh`
+2. **Plan GHCR builds** — `scripts/ci/ci-plan-build-matrix.sh` (diff-based)
+3. **Build images** — parallel matrix, `scripts/ci/ci-build-one-image.sh`
+4. **Deploy to VPS** — self-hosted runner, `scripts/ci/ci-local-deploy.sh` → `ci-remote-deploy.sh` → `deploy.sh`
 
 Concurrency: `vps-deploy-main` with `cancel-in-progress: true`.
 
-VPS work dir: `/root/uniz-master-main`. Secrets: `/root/uniz-secrets.env` via `scripts/render-vps-secrets.sh`.
+VPS work dir: `/root/uniz-master-main`. Secrets: `/root/uniz-secrets.env` via `scripts/deploy/render-vps-secrets.sh`.
 
 ### Important scripts
 
 | Script | Purpose |
 |--------|---------|
-| `scripts/deploy.sh` | Main VPS deploy orchestrator |
-| `scripts/deploy-common.sh` | Service list, GHCR build logic, change detection |
-| `scripts/ci-remote-deploy.sh` | GHA entry: git checkout SHA, flock, run deploy |
-| `scripts/prisma-migrate-deploy-all.sh` | Apply all Prisma migrations |
-| `scripts/prisma-generate-all.sh` | Generate all Prisma clients |
-| `scripts/setup-local.sh` | Local docker/k3s bootstrap |
-| `scripts/uniz-vault.sh` | Local secrets vault sync |
+| `scripts/deploy/deploy.sh` | Main VPS deploy orchestrator |
+| `scripts/deploy/deploy-common.sh` | Service list, GHCR build logic, change detection |
+| `scripts/ci/ci-remote-deploy.sh` | GHA entry: git checkout SHA, flock, run deploy |
+| `scripts/deploy/prisma-migrate-deploy-all.sh` | Apply all Prisma migrations |
+| `scripts/deploy/prisma-generate-all.sh` | Generate all Prisma clients |
+| `scripts/local/setup-local.sh` | Local docker/k3s bootstrap |
+| `scripts/ops/uniz-vault.sh` | Local secrets vault sync |
 
 ---
 
@@ -265,16 +265,16 @@ VPS work dir: `/root/uniz-master-main`. Secrets: `/root/uniz-secrets.env` via `s
 | Student profile API | `apps/uniz-user/src/routes/profile.routes.ts` |
 | Push notifications | `apps/uniz-notifications/` |
 | Gateway proxy rules | `apps/uniz-gateway/src/index.ts` |
-| Docker / K8s service list | `scripts/deploy-common.sh` → `UNIZ_SERVICES` |
+| Docker / K8s service list | `scripts/deploy/deploy-common.sh` → `UNIZ_SERVICES` |
 | GitHub Actions deploy | `.github/workflows/deploy.yml` |
 | Env var template | `secrets.env.example` |
 | Shared types | `packages/uniz-shared/src/` |
 | Service worker / PWA | `apps/uniz-portal/public/sw.js`, `InstallPWA.tsx` |
 | Notification bell (header) | `NotificationBellButton.tsx` |
 | Notification inbox UI | `NotificationCenter.tsx` |
-| Prisma migration (all) | `scripts/prisma-migrate-deploy-all.sh` |
-| VPS hardening (runs on deploy) | `scripts/harden-vps.sh` |
-| Cloudflare tunnel/DNS | `scripts/setup-cloudflare-tunnel.sh` |
+| Prisma migration (all) | `scripts/deploy/prisma-migrate-deploy-all.sh` |
+| VPS hardening (runs on deploy) | `scripts/deploy/harden-vps.sh` |
+| Cloudflare tunnel/DNS | `scripts/deploy/setup-cloudflare-tunnel.sh` |
 
 ---
 
@@ -300,7 +300,7 @@ uniz-master/
 ├── packages/uniz-shared/       # @uniz/shared
 ├── infra/core-infra/           # K8s manifests + nginx
 ├── scripts/                    # Deploy, CI, VPS, Prisma
-├── docker/Dockerfile.service   # Multi-service monorepo image
+├── docker/prod/Dockerfile.service   # Multi-service monorepo image
 ├── .github/workflows/deploy.yml
 ├── secrets.env.example
 └── package.json

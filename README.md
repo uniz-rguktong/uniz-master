@@ -98,6 +98,19 @@ npm run dev:all
 
 `secrets.env.example` ships with **dev-only** values (local DB, test Turnstile keys, dummy JWT, Cloudinary placeholders). Use **your own** Cloudinary keys for upload testing — **never** paste production credentials into the repo or commit `secrets.env`.
 
+### Docker Compose (full stack on laptop)
+
+Same product as production, without K3s. **Does not replace VPS** (VPS stays GitHub Actions → GHCR → kubectl).
+
+```bash
+cp .env.example .env
+make up && make seed
+# Portal: http://localhost:8080 (or WEB_PORT) — webmaster / password123
+```
+
+Details: [docker/README.md](docker/README.md). Layout: [STRUCTURE.md](STRUCTURE.md).
+
+
 
 ### Cloudinary (optional — uploads only)
 
@@ -112,7 +125,7 @@ VITE_CLOUDINARY_UPLOAD_PRESET=your_upload_preset
 
 Core login, academics, and outpass work fine without Cloudinary. Never commit real keys.
 
-**More detail:** [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md) · [CONTRIBUTING.md](./CONTRIBUTING.md)
+**More detail:** [docs/local/LOCAL_SETUP.md](./docs/local/LOCAL_SETUP.md) · [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## Local Development (quick)
 

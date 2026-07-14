@@ -3,10 +3,10 @@
 **Status:** Audit complete — fixes not started  
 **Date:** 2026-06-26  
 **Target:** All production API routes sub-500ms (p95)  
-**Audit script:** `scripts/audit-prod-latency.py`  
+**Audit script:** `scripts/ops/audit-prod-latency.py`  
 **Full action plan:** `docs/SUB_500MS_ACTION_PLAN.md`  
-**Authenticated test script:** `scripts/test-student-apis.sh`  
-**Auth latency audit:** `scripts/audit-auth-latency.py`  
+**Authenticated test script:** `scripts/ops/test-student-apis.sh`  
+**Auth latency audit:** `scripts/ops/audit-auth-latency.py`  
 **Master suite:** `scripts/run-latency-suite.sh`
 
 ---
@@ -37,7 +37,7 @@ This bypasses broken external SSL on `api-uniz.rguktong.in` through Cloudflare T
 Re-run from VPS:
 
 ```bash
-python3 scripts/audit-prod-latency.py
+python3 scripts/ops/audit-prod-latency.py
 ```
 
 Or in-cluster breakdown:
@@ -128,11 +128,11 @@ Intentional alias to user service — not a separate bottleneck.
 
 ### 3. External SSL on `api-uniz.rguktong.in`
 
-Blocks running `scripts/audit-prod-latency.py` from outside the VPS until tunnel/Total TLS is fixed.
+Blocks running `scripts/ops/audit-prod-latency.py` from outside the VPS until tunnel/Total TLS is fixed.
 
 ### 4. Authenticated endpoints not audited
 
-`scripts/test-student-apis.sh` exists but was not run. Academics/grades/attendance/DB-heavy paths may behave differently under load.
+`scripts/ops/test-student-apis.sh` exists but was not run. Academics/grades/attendance/DB-heavy paths may behave differently under load.
 
 ---
 
@@ -140,9 +140,9 @@ Blocks running `scripts/audit-prod-latency.py` from outside the VPS until tunnel
 
 ### Phase 0 — Baseline & Monitoring (~1 hour)
 
-1. Commit and wire **`scripts/audit-prod-latency.py`** into deploy or a weekly cron on the VPS.
+1. Commit and wire **`scripts/ops/audit-prod-latency.py`** into deploy or a weekly cron on the VPS.
 2. Fix external SSL on `api-uniz.rguktong.in` (Total TLS or tunnel ingress config) so prod can be measured from anywhere.
-3. Run authenticated audit with `scripts/test-student-apis.sh` using a prod student JWT — capture p50/p95 for top 20 mobile app routes.
+3. Run authenticated audit with `scripts/ops/test-student-apis.sh` using a prod student JWT — capture p50/p95 for top 20 mobile app routes.
 
 **Success criteria:** Repeatable audit script; full external HTTPS access to API.
 
@@ -241,7 +241,7 @@ Phase 1 (docs)  →  Phase 2 (health aggregate)  →  Phase 3 (cron map)  →  P
 
 ## Checklist When Resuming Work
 
-- [ ] Re-run `scripts/audit-prod-latency.py` and compare to baseline above
+- [ ] Re-run `scripts/ops/audit-prod-latency.py` and compare to baseline above
 - [ ] Confirm external `https://api-uniz.rguktong.in` SSL works
 - [ ] Phase 1: docs static build + `/health` probe
 - [ ] Phase 2: optional-service timeout on aggregate health

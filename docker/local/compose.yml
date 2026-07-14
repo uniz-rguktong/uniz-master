@@ -1,0 +1,386 @@
+# UniZ LOCAL / DEMO full stack (any OS):
+#   cp .env.example .env && make up && make seed
+#
+# ⚠️  LOCAL ONLY — production VPS does NOT use this file.
+#     Prod = GitHub Actions → GHCR → K3s (docker/prod/Dockerfile.service).
+#     Run via Makefile from repo root (compose context = monorepo root).
+
+x-service-build: &service-build
+  context: .
+  dockerfile: docker/local/Dockerfile.service.local
+
+x-common-env: &common-env
+  NODE_ENV: production
+  DOCKER_ENV: "true"
+  # Enables prisma db push on start — local Compose only (never set on VPS/K8s)
+  UNIZ_AUTO_DB_PUSH: "true"
+  JWT_SECURITY_KEY: ${JWT_SECURITY_KEY:-local-dev-key-123456}
+  INTERNAL_SECRET: ${INTERNAL_SECRET:-uniz-core}
+  INTERNAL_BOT_SECRET: ${INTERNAL_BOT_SECRET:-bot-secret-123}
+  REDIS_URL: redis://redis:6379
+  GATEWAY_URL: http://gateway:3000/api/v1
+  AUTH_SERVICE_URL: http://auth:3001
+  USER_SERVICE_URL: http://user:3002
+  OUTPASS_SERVICE_URL: http://outpass:3003
+  ACADEMICS_SERVICE_URL: http://academics:3004
+  FILES_SERVICE_URL: http://files:3005
+  MAIL_SERVICE_URL: http://mail:3006
+  NOTIFICATION_SERVICE_URL: http://notifications:3007
+  CRON_SERVICE_URL: http://cron:3008
+  CLIENT_URL: ${CLIENT_URL:-http://localhost:8080,http://127.0.0.1:8080,http://localhost:8081,http://127.0.0.1:8081,http://localhost:5173,http://127.0.0.1:5173}
+  TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-1x0000000000000000000000000000000AA}
+  VITE_TURNSTILE_SITE_KEY: ${VITE_TURNSTILE_SITE_KEY:-1x00000000000000000000AA}
+  CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-placeholder}
+  CLOUDINARY_UPLOAD_PRESET: ${CLOUDINARY_UPLOAD_PRESET:-placeholder}
+  AWS_REGION: ${AWS_REGION:-ap-south-1}
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-placeholder}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-placeholder}
+  SES_FROM_EMAIL: ${SES_FROM_EMAIL:-no-reply@localhost}
+  FORCE_GMAIL: "true"
+  INSTITUTION_LOGO_URL: ${INSTITUTION_LOGO_URL:-https://example.com/logo.png}
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: uniz_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-uniz_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - uniz_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-uniz_db}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  redis:
+    image: redis:7-alpine
+    container_name: uniz_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  auth:
+    build:
+      <<: *service-build
+      args:
+        SERVICE_DIR: apps/uniz-auth
+        WORKSPACE_NAME: uniz-auth-service
+    container_name: uniz_auth
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      PORT: 3001
+      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_auth
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  user:
+    build:
+      <<: *service-build
+      args:
+        SERVICE_DIR: apps/uniz-user
+        WORKSPACE_NAME: uniz-user-service
+    container_name: uniz_user
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      PORT: 3002
+      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_user
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3002/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  outpass:
+    build:
+      <<: *service-build
+      args:
+        SERVICE_DIR: apps/uniz-outpass
+        WORKSPACE_NAME: uniz-outpass-service
+    container_name: uniz_outpass
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      PORT: 3003
+      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_outpass
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3003/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  academics:
+    build:
+      <<: *service-build
+      args:
+        SERVICE_DIR: apps/uniz-academics
+        WORKSPACE_NAME: uniz-academics-service
+    container_name: uniz_academics
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      PORT: 3004
+      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_academics
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3004/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  files:
+    build:
+      <<: *service-build
+      args:
+        SERVICE_DIR: apps/uniz-files
+        WORKSPACE_NAME: uniz-files-service
+    container_name: uniz_files
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      PORT: 3005
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3005/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  mail:
+    build:
+      <<: *service-build
+      args:
+        SERVICE_DIR: apps/uniz-mail
+        WORKSPACE_NAME: uniz-mail-service
+    container_name: uniz_mail
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      PORT: 3006
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3006/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  notifications:
+    build:
+      <<: *service-build
+      args:
+        SERVICE_DIR: apps/uniz-notifications
+        WORKSPACE_NAME: uniz-notification-service
+    container_name: uniz_notifications
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      PORT: 3007
+      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_notifications
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3007/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  cron:
+    build:
+      <<: *service-build
+      args:
+        SERVICE_DIR: apps/uniz-cron
+        WORKSPACE_NAME: uniz-cron-service
+    container_name: uniz_cron
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      PORT: 3008
+      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_cron
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3008/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  gateway:
+    build:
+      <<: *service-build
+      args:
+        SERVICE_DIR: apps/uniz-gateway
+        WORKSPACE_NAME: uniz-production-gateway
+    container_name: uniz_gateway
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      PORT: 3000
+    ports:
+      - "${GATEWAY_PORT:-3000}:3000"
+    depends_on:
+      auth:
+        condition: service_healthy
+      user:
+        condition: service_healthy
+      outpass:
+        condition: service_healthy
+      academics:
+        condition: service_healthy
+      files:
+        condition: service_healthy
+      mail:
+        condition: service_healthy
+      notifications:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/v1/system/health/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  portal:
+    build:
+      context: .
+      dockerfile: docker/local/Dockerfile.portal
+      args:
+        VITE_API_URL: ${VITE_API_URL:-}
+        VITE_TURNSTILE_SITE_KEY: ${VITE_TURNSTILE_SITE_KEY:-1x00000000000000000000AA}
+        VITE_MAINTENANCE_MODE: ${VITE_MAINTENANCE_MODE:-false}
+        VITE_CLOUDINARY_CLOUD_NAME: ${VITE_CLOUDINARY_CLOUD_NAME:-}
+        VITE_CLOUDINARY_UPLOAD_PRESET: ${VITE_CLOUDINARY_UPLOAD_PRESET:-}
+    container_name: uniz_portal
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      gateway:
+        condition: service_healthy
+
+  seed:
+    build:
+      context: .
+      dockerfile: docker/local/Dockerfile.seed
+    container_name: uniz_seed
+    profiles: ["seed"]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable
+    depends_on:
+      auth:
+        condition: service_healthy
+      user:
+        condition: service_healthy
+      academics:
+        condition: service_healthy
+    restart: "no"
+
+volumes:
+  uniz_pg_data:
