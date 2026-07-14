@@ -86,7 +86,7 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}" \
-            'WORK_DIR="/root/uniz-master-main"; [ -f /root/.uniz_k8s_image_tags.json ] || { [ -d "$WORK_DIR" ] && bash "$WORK_DIR/scripts/dump-k8s-image-tags.sh" /root/.uniz_k8s_image_tags.json || true; }'
+            'WORK_DIR="/root/uniz-master-main"; [ -f /root/.uniz_k8s_image_tags.json ] || { [ -d "$WORK_DIR" ] && bash "$WORK_DIR/scripts/deploy/dump-k8s-image-tags.sh" /root/.uniz_k8s_image_tags.json || true; }'
           scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/root/.uniz_k8s_image_tags.json" \
             .uniz-k8s-image-tags.json 2>/dev/null || true
@@ -107,7 +107,7 @@ jobs:
           LAST_SUCCESSFUL_DEPLOY_SHA: ${{ env.LAST_SUCCESSFUL_DEPLOY_SHA }}
           K8S_IMAGE_MANIFEST: .uniz-k8s-image-tags.json
           COMMIT_MSG: ${{ github.event.head_commit.message }}
-        run: bash scripts/ci-plan-build-matrix.sh
+        run: bash scripts/ci/ci-plan-build-matrix.sh
 
   build-image:
     name: Build ${{ matrix.img }}
@@ -142,7 +142,7 @@ jobs:
           VITE_ANALYTICS_URL: ${{ secrets.VITE_ANALYTICS_URL }}
           VITE_ANALYTICS_API_KEY: ${{ secrets.VITE_ANALYTICS_API_KEY }}
           VITE_SCRAPER_URL: ${{ secrets.VITE_SCRAPER_URL }}
-        run: bash scripts/ci-build-one-image.sh "${{ matrix.dir }}" "${{ matrix.img }}"
+        run: bash scripts/ci/ci-build-one-image.sh "${{ matrix.dir }}" "${{ matrix.img }}"
 
   deploy:
     name: Deploy to VPS
@@ -215,7 +215,7 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_BEFORE_SHA: ${{ github.event.before }}
           GITHUB_ACTOR: ${{ github.actor }}
-        run: bash scripts/ci-local-deploy.sh
+        run: bash scripts/ci/ci-local-deploy.sh
 
       - name: Fetch VPS image manifest after deploy
         if: success() && steps.vps_deploy.outcome == 'success'

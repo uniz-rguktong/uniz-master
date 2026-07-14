@@ -1,0 +1,20 @@
+# LOCAL COMPOSE ONLY — FROM prebuilt uniz-deps:local (Makefile `deps`).
+# Production CI/VPS uses docker/prod/Dockerfile.service instead.
+ARG DEPS_IMAGE=uniz-deps:local
+FROM ${DEPS_IMAGE}
+
+ARG SERVICE_DIR=apps/uniz-auth
+
+COPY docker/prod/entrypoint-service.sh /entrypoint-service.sh
+RUN chmod +x /entrypoint-service.sh
+
+WORKDIR /app/${SERVICE_DIR}
+RUN if [ -f "prisma/schema.prisma" ]; then npx prisma generate; fi \
+  && npm run build \
+  && if [ -d "src/generated" ] && [ ! -d "dist/generated" ]; then \
+       mkdir -p dist && cp -r src/generated dist/generated; \
+     fi
+
+WORKDIR /app/${SERVICE_DIR}
+ENTRYPOINT ["/entrypoint-service.sh"]
+CMD ["npm", "start"]
