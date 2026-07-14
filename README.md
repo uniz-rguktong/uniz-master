@@ -13,9 +13,74 @@
 > **UNIZ SYSTEMS OPERATIONS 2026**
 > _The digital backbone for enterprise-scale educational administration, built on a robust, self-healing microservices architecture._
 
-## High-Performance Ecosystem Architecture
+## Repo map
 
-UniZ is a monorepo-managed microservices ecosystem designed for high availability, low latency, and enterprise-grade security. The system runs on a K3s cluster, ensuring automated scaling and resilience.
+Canonical layout: **[STRUCTURE.md](STRUCTURE.md)**.
+
+| Path | Role |
+|------|------|
+| `apps/` · `packages/` | Workspaces (stable — do not rename for CI/K3s) |
+| `docker/local/` | Laptop Compose demo (`make up`) |
+| `docker/prod/` | CI → GHCR → **K3s** images only |
+| `scripts/{ci,deploy,local,ops}/` | Audience-grouped tooling |
+| `docs/local/` | Contributor setup |
+| `infra/` | Kubernetes manifests |
+
+**Production is K3s.** Docker Compose never runs on the VPS.
+
+## Quick start (contributors)
+
+Clone and pick one local path. You do **not** need production passwords or VPS access.
+
+### A — Full stack in Docker (fastest demo)
+
+```bash
+git clone https://github.com/uniz-rguktong/uniz-master.git
+cd uniz-master
+cp .env.example .env
+make up && make seed
+# or: npm run docker:up && npm run docker:seed
+```
+
+| What | Where |
+|------|--------|
+| Portal | http://localhost:8080 (or `WEB_PORT`) |
+| API (via portal) | http://localhost:8080/api/v1 |
+| Gateway direct | http://localhost:3000/api/v1 |
+| Sign-in | `webmaster` / `password123` |
+
+Details: [docker/README.md](docker/README.md).
+
+### B — Hot-reload development
+
+```bash
+cp secrets.env.example secrets.env
+npm run setup:local
+npm run seed:local    # first time
+npm run dev:all
+```
+
+| What | Where |
+|------|--------|
+| Portal | http://localhost:5173 |
+| API gateway | http://localhost:3000/api/v1 |
+| Sign-in (after seed) | `webmaster` / `password123` |
+
+Full guide: [docs/local/LOCAL_SETUP.md](docs/local/LOCAL_SETUP.md) · [CONTRIBUTING.md](CONTRIBUTING.md).
+
+`secrets.env.example` and `.env.example` ship **dev-only** placeholders (local DB, test Turnstile, dummy JWT, Cloudinary placeholders). Never commit `secrets.env` or `.env`, and never paste production credentials into the repo.
+
+## Production (maintainers)
+
+Push to `main` → GitHub Actions builds with [`docker/prod/Dockerfile.service`](docker/prod/Dockerfile.service) → GHCR → `kubectl` on K3s.
+
+- Deploy entry: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
+- Migrations on VPS: `scripts/deploy/prisma-migrate-deploy-all.sh` (not Compose `db push`)
+- Local auto-migrate (`UNIZ_AUTO_DB_PUSH`) is **Compose-only** and never set in K8s
+
+## Architecture
+
+UniZ is a monorepo microservices ecosystem for high availability and edge-first security on K3s.
 
 ```mermaid
 graph TD
@@ -50,71 +115,26 @@ graph TD
     Redis -.->|Event Pulse| Mail
 ```
 
-## Key Innovation: Edge-First Security & Self-Healing
+1. **Edge Gateway** — Nginx routing, CORS, TLS; services on a private cluster network.
+2. **Horizontal scale** — K3s HPA under traffic spikes.
+3. **Data integrity** — Prisma + PostgreSQL 17 across academic workflows.
+4. **Async work** — Redis-backed queues for mail, notifications, audits.
 
-1.  **Edge Gateway**: Centralized Nginx routing with edge-level CORS management and SSL termination, isolating internal services in a private Kubernetes network.
-2.  **Horizontal Scalability**: Leveraging K3s HPA to dynamically provision resources during traffic spikes.
-3.  **Atomic Data Integrity**: Prisma-backed PostgreSQL 17 cluster ensuring ACID compliance across academic workflows.
-4.  **Asynchronous Efficiency**: Moving heavy tasks like distribution and auditing to Redis-backed background workers.
+## Technology stack
 
-## Technology Stack
+| Layer | Technology | Purpose |
+| :---- | :--------- | :------ |
+| Logic | Node.js (TypeScript) | Type-safe microservices |
+| Data | PostgreSQL 17 | Academic records |
+| ORM | Prisma | Access + migrations |
+| Cache / MQ | Redis | Sessions and jobs |
+| Containers | Docker | Local Compose + GHCR images |
+| Orchestration | K3s | Production only |
+| CI/CD | GitHub Actions | Build, test, VPS deploy |
 
-| Layer                | Technology           | Purpose                                              |
-| :------------------- | :------------------- | :--------------------------------------------------- |
-| **Logic**            | Node.js (TypeScript) | Scalable, type-safe microservice implementation.     |
-| **Data Engine**      | PostgreSQL 17        | Relational storage for critical academic records.    |
-| **ORM**              | Prisma               | Type-safe database access and automated migrations.  |
-| **Caching/MQ**       | Redis                | Session persistence and asynchronous job queuing.    |
-| **Containerization** | Docker               | Isolated, reproducible service environments.         |
-| **Orchestration**    | K3s (Kubernetes)     | Production cluster management and auto-scaling.      |
-| **CI/CD**            | GitHub Actions       | Automated build, test, and VPS deployment pipelines. |
+## Cloudinary (optional — uploads only)
 
-## For RGUKT contributors
-
-Anyone with a clone can run UniZ **locally**. You do **not** need production passwords, VPS access, or AWS keys to develop and open pull requests.
-
-```bash
-git clone https://github.com/uniz-rguktong/uniz-master.git
-cd uniz-master
-
-# 1. Create your local env from safe placeholders (never commit secrets.env)
-cp secrets.env.example secrets.env
-
-# 2. Start Postgres + Redis, install deps, sync env, run Prisma
-npm run setup:local
-
-# 3. Optional but recommended first time — sample users & academics data
-npm run seed:local
-
-# 4. Run the stack
-npm run dev:all
-```
-
-| What | Where |
-|------|--------|
-| Portal | http://localhost:5173 |
-| API gateway | http://localhost:3000/api/v1 |
-| Local sign-in (after seed) | `webmaster` / `password123` |
-
-`secrets.env.example` ships with **dev-only** values (local DB, test Turnstile keys, dummy JWT, Cloudinary placeholders). Use **your own** Cloudinary keys for upload testing — **never** paste production credentials into the repo or commit `secrets.env`.
-
-### Docker Compose (full stack on laptop)
-
-Same product as production, without K3s. **Does not replace VPS** (VPS stays GitHub Actions → GHCR → kubectl).
-
-```bash
-cp .env.example .env
-make up && make seed
-# Portal: http://localhost:8080 (or WEB_PORT) — webmaster / password123
-```
-
-Details: [docker/README.md](docker/README.md). Layout: [STRUCTURE.md](STRUCTURE.md).
-
-
-
-### Cloudinary (optional — uploads only)
-
-The repo **does not** ship real Cloudinary credentials. For local upload testing, create a free account at [cloudinary.com](https://cloudinary.com/) and put **your own** cloud name + unsigned upload preset into `secrets.env`:
+The repo **does not** ship real Cloudinary credentials. For local upload testing, use **your own** keys in `secrets.env`:
 
 ```bash
 CLOUDINARY_CLOUD_NAME=your_cloud_name
@@ -123,50 +143,24 @@ VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
 VITE_CLOUDINARY_UPLOAD_PRESET=your_upload_preset
 ```
 
-Core login, academics, and outpass work fine without Cloudinary. Never commit real keys.
-
-**More detail:** [docs/local/LOCAL_SETUP.md](./docs/local/LOCAL_SETUP.md) · [CONTRIBUTING.md](./CONTRIBUTING.md)
-
-## Local Development (quick)
-
-Works on **macOS**, **Linux**, **Windows (WSL2)**, and headless Linux environments.
-
-```bash
-git clone https://github.com/uniz-rguktong/uniz-master.git && cd uniz-master
-cp secrets.env.example secrets.env
-npm run setup:local
-npm run seed:local   # first time
-npm run dev:all
-```
-
-## Contributing
-
-We welcome contributions from the RGUKT community. See [CONTRIBUTING.md](./CONTRIBUTING.md) for PR workflow, builds, and conventions.
+Login, academics, and outpass work without Cloudinary. Never commit real keys.
 
 ## Environment & security
 
-UniZ separates **contributor local dev** from **production** so cloning the repo never exposes live secrets.
-
 | Layer | Who | Secrets | In git? |
 |-------|-----|---------|---------|
-| **Local dev** | Any contributor | `secrets.env` (from `secrets.env.example`) | **No** — gitignored |
-| **Production** | Maintainers only | VPS `/root/uniz-secrets.env` + GitHub Actions secrets | **No** |
-| **Example template** | Everyone | `secrets.env.example` | **Yes** — placeholders only |
+| Local hot-reload | Contributors | `secrets.env` from example | **No** |
+| Local Compose | Contributors | `.env` from `.env.example` | **No** |
+| Production | Maintainers | VPS `/root/uniz-secrets.env` + Actions secrets | **No** |
+| Templates | Everyone | `secrets.env.example`, `.env.example` | **Yes** — placeholders |
 
-**Contributors:** use `cp secrets.env.example secrets.env` and `npm run setup:local`. Production DB URLs, AWS keys, and VPS SSH keys are not shared via the repo.
-
-**Maintainers** (deploy team with VPS SSH access):
+**Maintainers** (VPS SSH):
 
 ```bash
-# In your local secrets.env (gitignored), set:
-# UNIZ_VPS_HOST, UNIZ_VPS_USER, UNIZ_VPS_SSH_KEY
-
-npm run vault:vps:status          # vault metadata, no values
-npm run vault:vps:list            # key names only
-npm run vault:vps:show -- KEY     # masked value
-npm run vault:vps -- reveal KEY   # full value — prompts + VPS audit log
+npm run vault:vps:status
+npm run vault:vps:list
+npm run vault:vps:show -- KEY
+npm run vault:vps -- reveal KEY
 ```
 
-Production deploys run through GitHub Actions; credentials are injected over SSH at deploy time — not stored in source control.
-
-**Do not** put real production passwords, API keys, or SSH private keys in the README, issues, or pull requests.
+Do **not** put production passwords, API keys, or SSH private keys in the README, issues, or PRs.
