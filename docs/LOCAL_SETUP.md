@@ -110,7 +110,7 @@ The example file is enough for local dev:
 - JWT and internal secrets use safe dev placeholders
 - Database URLs point at local Docker Postgres (`localhost:5432`)
 - Turnstile keys are [Cloudflare test keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/) (`1x000…`) — captcha always passes locally
-- Cloudinary, AWS, and production DNS tokens are optional locally
+- Cloudinary, AWS, and production DNS tokens are optional locally — for uploads, use **your own** free Cloudinary cloud name + unsigned preset (never commit real keys)
 
 You do **not** need to copy production values from the VPS.
 

@@ -96,7 +96,21 @@ npm run dev:all
 | API gateway | http://localhost:3000/api/v1 |
 | Local sign-in (after seed) | `webmaster` / `password123` |
 
-`secrets.env.example` ships with **dev-only** values (local DB, test Turnstile keys, dummy JWT). Edit `secrets.env` only if you need custom local settings — **never** paste production credentials into it or commit the file.
+`secrets.env.example` ships with **dev-only** values (local DB, test Turnstile keys, dummy JWT, Cloudinary placeholders). Use **your own** Cloudinary keys for upload testing — **never** paste production credentials into the repo or commit `secrets.env`.
+
+
+### Cloudinary (optional — uploads only)
+
+The repo **does not** ship real Cloudinary credentials. For local upload testing, create a free account at [cloudinary.com](https://cloudinary.com/) and put **your own** cloud name + unsigned upload preset into `secrets.env`:
+
+```bash
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_UPLOAD_PRESET=your_upload_preset
+VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
+VITE_CLOUDINARY_UPLOAD_PRESET=your_upload_preset
+```
+
+Core login, academics, and outpass work fine without Cloudinary. Never commit real keys.
 
 **More detail:** [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md) · [CONTRIBUTING.md](./CONTRIBUTING.md)
 
