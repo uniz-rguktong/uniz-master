@@ -1,6 +1,6 @@
 # Contributing to UniZ
 
-Thank you for contributing to UniZ. This guide matches the local workflow in [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md).
+Thank you for contributing to UniZ. This guide matches the local workflow in [docs/local/LOCAL_SETUP.md](./docs/local/LOCAL_SETUP.md).
 
 ## Architecture
 
@@ -23,7 +23,7 @@ UniZ is a **microservices monorepo**:
 | Docker | Postgres 17 + Redis via Compose |
 | npm | bundled with Node |
 
-See [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md) for macOS, Linux, WSL2, and Windows notes.
+See [docs/local/LOCAL_SETUP.md](./docs/local/LOCAL_SETUP.md) for macOS, Linux, WSL2, and Windows notes.
 
 ### Quick start
 
@@ -79,7 +79,7 @@ CI runs the same builds on every pull request to `main`.
 **No manual VPS steps are required.** When a PR merges to `main`:
 
 1. GitHub Actions builds the monorepo (shared, backends, portal).
-2. On success, the workflow SSHs to the VPS, checks out the exact commit, and runs `scripts/deploy.sh`.
+2. On success, the workflow SSHs to the VPS, checks out the exact commit, and runs `scripts/deploy/deploy.sh`.
 3. Only services changed in that push are rebuilt (like Vercel). Use `[rebuild portal]` or `[rebuild all]` in a commit message only when you need to force a specific rebuild.
 4. The job verifies rollouts and `https://api-uniz.rguktong.in/api/v1/system/health` before marking success.
 
@@ -102,7 +102,7 @@ The following are for **project maintainers** with VPS access. OSS contributors 
 
 | Script / command | Purpose |
 |------------------|---------|
-| `npm run deploy` / `scripts/deploy.sh` | Production VPS deployment |
+| `npm run deploy` / `scripts/deploy/deploy.sh` | Production VPS deployment |
 | `npm run vault:vps-audit` | Compare VPS vault keys |
 | `npm run watch` | Live kubectl view on VPS (`VPS_HOST` env) |
 | `scripts/redeploy_all_vps.sh` | Full image rebuild on VPS |

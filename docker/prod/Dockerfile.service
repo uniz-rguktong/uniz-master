@@ -1,0 +1,50 @@
+# Production / CI service image — SELF-CONTAINED (no uniz-deps:local).
+# GitHub Actions + scripts/deploy → GHCR → K3s.
+#
+#   docker build -f docker/prod/Dockerfile.service \
+#     --build-arg SERVICE_DIR=apps/uniz-auth \
+#     --build-arg WORKSPACE_NAME=uniz-auth-service \
+#     -t uniz-auth-service:prod .
+FROM node:20-alpine AS build
+ARG SERVICE_DIR=apps/uniz-auth
+ARG WORKSPACE_NAME=uniz-auth-service
+
+RUN apk add --no-cache openssl build-base g++ make python3
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+COPY packages ./packages
+COPY apps ./apps
+
+RUN npm ci --ignore-scripts \
+  && npm rebuild bcrypt 2>/dev/null || true \
+  && npm run build -w @uniz/shared
+
+WORKDIR /app/${SERVICE_DIR}
+RUN if [ -f "prisma/schema.prisma" ]; then npx prisma generate; fi \
+  && npm run build \
+  && if [ -d "src/generated" ] && [ ! -d "dist/generated" ]; then \
+       mkdir -p dist && cp -r src/generated dist/generated; \
+     fi
+
+# Runtime — non-root, no build toolchain
+FROM node:20-alpine AS runtime
+ARG SERVICE_DIR=apps/uniz-auth
+RUN apk add --no-cache openssl \
+  && addgroup -S uniz && adduser -S uniz -G uniz
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY --from=build /app/package.json /app/package-lock.json ./
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/packages ./packages
+COPY --from=build /app/apps ./apps
+COPY docker/prod/entrypoint-service.sh /entrypoint-service.sh
+RUN chmod +x /entrypoint-service.sh && chown -R uniz:uniz /app
+
+USER uniz
+WORKDIR /app/${SERVICE_DIR}
+ENTRYPOINT ["/entrypoint-service.sh"]
+CMD ["npm", "start"]
