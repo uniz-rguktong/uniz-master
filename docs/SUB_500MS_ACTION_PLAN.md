@@ -93,10 +93,10 @@ Backend tuning (Redis, indexes) helps **under load** but will **not** fix 800ms+
 | Script | Purpose |
 |--------|---------|
 | `scripts/run-latency-suite.sh` | Master runner |
-| `scripts/audit-prod-latency.py` | Public / health (`INSECURE_SSL=1` on macOS) |
-| `scripts/audit-auth-latency.py` | Authenticated routes (`TOKEN`, `STUDENT_USER`) |
-| `scripts/test-student-apis.sh` | Smoke + per-request ms |
-| `scripts/peak-load-profile.sh` | Peak-traffic profile |
+| `scripts/ops/audit-prod-latency.py` | Public / health (`INSECURE_SSL=1` on macOS) |
+| `scripts/ops/audit-auth-latency.py` | Authenticated routes (`TOKEN`, `STUDENT_USER`) |
+| `scripts/ops/test-student-apis.sh` | Smoke + per-request ms |
+| `scripts/ops/peak-load-profile.sh` | Peak-traffic profile |
 
 ### Measure like a browser (external)
 
@@ -105,11 +105,11 @@ Backend tuning (Redis, indexes) helps **under load** but will **not** fix 800ms+
 export TOKEN='<student_token>'
 export STUDENT_USER=O210008
 export INSECURE_SSL=1
-python3 scripts/audit-auth-latency.py
+python3 scripts/ops/audit-auth-latency.py
 
 # Origin (server only — confirms backend is fast)
 ssh root@76.13.241.174
-BASE_URL=https://127.0.0.1/api/v1 TOKEN='...' python3 scripts/audit-auth-latency.py
+BASE_URL=https://127.0.0.1/api/v1 TOKEN='...' python3 scripts/ops/audit-auth-latency.py
 ```
 
 ---

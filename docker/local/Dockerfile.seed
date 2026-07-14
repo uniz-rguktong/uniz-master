@@ -1,0 +1,5 @@
+ARG DEPS_IMAGE=uniz-deps:local
+FROM ${DEPS_IMAGE}
+WORKDIR /app
+COPY scripts ./scripts
+CMD ["npx", "ts-node", "--transpile-only", "--compiler-options", "{\"module\":\"commonjs\",\"moduleResolution\":\"node\"}", "scripts/local/seed-local.ts"]

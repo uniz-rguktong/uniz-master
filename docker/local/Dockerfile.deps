@@ -1,0 +1,16 @@
+# Shared monorepo deps + @uniz/shared — build ONCE, reuse for every service.
+#   docker build -f docker/Dockerfile.deps -t uniz-deps:local .
+FROM node:20-alpine
+
+RUN apk add --no-cache openssl python3 make g++
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+COPY packages ./packages
+# Only package.json / prisma / tsconfig / src needed for install+shared build
+COPY apps ./apps
+
+RUN npm ci --ignore-scripts \
+  && npm rebuild bcrypt 2>/dev/null || true \
+  && npm run build -w @uniz/shared
