@@ -1,8 +1,9 @@
 .PHONY: help deps up down logs seed restart ps
 
 COMPOSE := $(shell if docker compose version >/dev/null 2>&1; then echo "docker compose"; elif command -v docker-compose >/dev/null 2>&1; then echo "docker-compose"; else echo "docker compose"; fi)
+# Project dir must be repo root — otherwise context:. resolves under docker/local/
 COMPOSE_FILE := docker/local/compose.yml
-COMPOSE_CMD = $(COMPOSE) -f $(COMPOSE_FILE)
+COMPOSE_CMD = $(COMPOSE) --project-directory . -f $(COMPOSE_FILE)
 
 help:
 	@echo "LOCAL DEMO ONLY — production is K3s via GitHub Actions (see STRUCTURE.md)"

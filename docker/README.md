@@ -6,7 +6,7 @@
 
 ```bash
 cp .env.example .env   # from repo root
-make up && make seed
+make up && make seed   # uses --project-directory . so build context is the monorepo root
 ```
 
 | URL | Service |
