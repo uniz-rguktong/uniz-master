@@ -9,8 +9,8 @@ data:
   SMTP_HOST: "smtp.gmail.com"
   SMTP_PORT: "465"
   SMTP_SECURE: "true"
-  CLOUDINARY_CLOUD_NAME: "dgp5srab5"
-  CLOUDINARY_UPLOAD_PRESET: "uniz_upload"
+  CLOUDINARY_CLOUD_NAME: "your_cloud_name"
+  CLOUDINARY_UPLOAD_PRESET: "your_upload_preset"
   # Service Mappings (K8s internal DNS)
   AUTH_SERVICE_URL: "http://uniz-auth-service.default.svc.cluster.local:3001"
   USER_SERVICE_URL: "http://uniz-user-service.default.svc.cluster.local:3002"
@@ -26,6 +26,6 @@ data:
   # DB Connectivity (assuming pgbouncer service in k8s)
   REDIS_URL: "redis://uniz-redis:6379"
   EMAIL_USER: "noreply.uniz@gmail.com"
-  EMAIL_POOL: "noreply.uniz@gmail.com:pdke hcfz fltp qagc" # Format: "user1:pass1,user2:pass2"
-  VAPID_PUBLIC_KEY: "BBUDnL9QZfs1W_wmn1kCW7U81ISk0isqNro00JEIamFsQaMGqC3AO8nnK32jY94o3zCg0Thuz-Le1o3mH3Z8Thc"
-  VAPID_PRIVATE_KEY: "oWMk2dkJanNgjqhOAmcJ9cf4dLFaFQSmsvPyD1AlMzw"
+  EMAIL_POOL: "your_email@example.com:your_app_password" # Format: "user1:pass1,user2:pass2"
+  VAPID_PUBLIC_KEY: "REPLACE_WITH_VAPID_PUBLIC_KEY"
+  VAPID_PRIVATE_KEY: "REPLACE_WITH_VAPID_PRIVATE_KEY"
