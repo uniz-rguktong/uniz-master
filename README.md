@@ -34,13 +34,31 @@ Clone and pick one local path. You do **not** need production passwords or VPS a
 
 ### A — Full stack in Docker (fastest demo)
 
+Start Docker before running the stack:
+
+```bash
+# macOS with Colima
+colima start
+
+# Docker Desktop users: open Docker Desktop and wait until it is running
+docker info
+```
+
+If `docker info` reports a missing `.colima/default/docker.sock`, Colima is not
+running. Start it with `colima start`, then retry.
+
 ```bash
 git clone https://github.com/uniz-rguktong/uniz-master.git
 cd uniz-master
 cp .env.example .env
 make up && make seed
-# or: npm run docker:up && npm run docker:seed
 ```
+
+Alternatively, run `npm run docker:up && npm run docker:seed`.
+
+> Copy only the commands. A line beginning with `#` is explanatory text; some
+> Zsh configurations treat a pasted `#` line as a command and print
+> `zsh: command not found: #`.
 
 | What | Where |
 |------|--------|
