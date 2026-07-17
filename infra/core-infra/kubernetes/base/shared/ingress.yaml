@@ -1,31 +1,29 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  # Trigger redeploy to fix SSL
   name: uniz-ingress
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    # DNS-01 via Cloudflare — required while domains are Cloudflare-proxied
     cert-manager.io/cluster-issuer: "letsencrypt-prod-dns"
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    # Redirect www.* → apex host (e.g. www.uniz.rguktong.in → uniz.rguktong.in)
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - rguktong.in
-        - www.rguktong.in
-        - uniz.rguktong.in
-        - www.uniz.rguktong.in
-        - www.api.uniz.rguktong.in
+        # Frontends live on Cloudflare Pages; keep API hosts on VPS.
         - api-uniz.rguktong.in
+        - www.api.uniz.rguktong.in
         - landing-api.rguktong.in
         - www.landing-api.rguktong.in
+        # Apex /api only if traffic still hits VPS (Pages owns apex HTML)
+        - rguktong.in
+        - www.rguktong.in
       secretName: uniz-tls-cert
   rules:
+    # Landing FastAPI under apex /api (fallback if DNS still points here)
     - host: rguktong.in
       http:
         paths:
@@ -36,23 +34,6 @@ spec:
                 name: uniz-landing-backend-svc
                 port:
                   number: 8000
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: uniz-landing
-                port:
-                  number: 80
-    - host: uniz.rguktong.in
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: uniz-portal
-                port:
-                  number: 80
     - host: api-uniz.rguktong.in
       http:
         paths:

@@ -5,7 +5,9 @@ metadata:
   labels:
     app: uniz-portal
 spec:
-  replicas: 1
+  # Frontend on Cloudflare Pages. Keep image path for emergency rollback only.
+  # No HPA while replicas: 0.
+  replicas: 0
   selector:
     matchLabels:
       app: uniz-portal
@@ -28,10 +30,6 @@ spec:
             requests:
               cpu: "50m"
               memory: "128Mi"
-          lifecycle:
-            preStop:
-              exec:
-                command: ["/bin/sh", "-c", "sleep 15"]
 ---
 apiVersion: v1
 kind: Service
@@ -44,39 +42,3 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
----
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: uniz-portal
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: uniz-portal
-  minReplicas: 1
-  maxReplicas: 2
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 70
-  behavior:
-    scaleUp:
-      stabilizationWindowSeconds: 0
-      policies:
-        - type: Percent
-          value: 100
-          periodSeconds: 15
-        - type: Pods
-          value: 2
-          periodSeconds: 15
-      selectPolicy: Max
-    scaleDown:
-      stabilizationWindowSeconds: 300
-      policies:
-        - type: Percent
-          value: 10
-          periodSeconds: 60
