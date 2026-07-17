@@ -307,6 +307,8 @@ deploy_logic() {
       --dry-run=client -o yaml | kubectl apply -f -
     echo "[Infra] Ensuring Cloudflare www.* DNS records..."
     bash "$(dirname "$0")/ensure-cloudflare-www-dns.sh" || true
+    echo "[Infra] Configuring Cloudflare free CDN for portal/landing..."
+    bash "$(dirname "$0")/configure-cloudflare-portal-cdn.sh" || true
   fi
 
   echo "[Infra] Syncing host nginx TLS + www redirects..."
@@ -516,6 +518,7 @@ deploy_logic() {
     echo "[Infra] Ensuring www.* grey-cloud DNS (after tunnel sync)..."
     bash "$(dirname "$0")/ensure-cloudflare-www-dns.sh" || true
     bash "$(dirname "$0")/install-nginx-www-redirects.sh" 2>/dev/null || true
+    bash "$(dirname "$0")/configure-cloudflare-portal-cdn.sh" || true
   fi
 
   if [ -f "$(dirname "$0")/vps-storage-cleanup.sh" ]; then
