@@ -35,6 +35,7 @@ check "auth health" "$API_URL/auth/health" "*"
 check "cms notifications" "$API_URL/cms/notifications" "*"
 check "outpass gated" "$API_URL/requests/outpass/all" "503"
 check "comms health" "$API_URL/notifications/health" "*"
+check "grievance list auth" "$API_URL/grievance/list" "*"
 
 # Mail is folded into notifications — /mail/send requires internal secret (expect 403)
 mail_code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 15 -X POST "$API_URL/mail/send" -H "Content-Type: application/json" -d '{}' || echo "000")

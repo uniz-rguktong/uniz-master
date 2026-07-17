@@ -29,10 +29,7 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", service: "uniz-outpass-service" });
 });
 
-import grievanceRoutes from "../src/routes/grievance.routes";
-
-// Routes
-app.use("/grievance", grievanceRoutes); // New Grievance Route
+// Grievance moved to uniz-user-service.
 app.use("/", requestRoutes);
 
 // Error Handler

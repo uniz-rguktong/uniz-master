@@ -13,7 +13,7 @@
 | Auth | 1 | 2 | 50% |
 | User | 1 | 4 | 70% |
 | Academics | 1 | 3 | 70% |
-| Outpass | 1 | 1 | Grievance only; outpass API gated |
+| Outpass | 0 | — | Parked (grievance → user) |
 | Portal | 1 | 2 | 70% |
 | Notifications (comms) | 1 | — | Push + inbox + mail |
 | Mail / Files / Cron Deploy | 0 | — | Folded / CronJob-only |
