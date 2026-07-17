@@ -1,0 +1,182 @@
+---
+title: "Academics"
+description: "View your grades, attendance, and registered subjects for the current and past semesters."
+---
+
+The Academics section shows your grade history, attendance per subject, and the subjects you're registered for in the current semester.
+
+---
+
+## Grades
+
+### View your grades
+
+Open the **Academic** tab on your profile page. Your grades are shown grouped by semester. Each record includes the subject name, subject code, number of credits, and the grade awarded.
+
+**API response example:**
+
+```json
+{
+  "success": true,
+  "grades": [
+    {
+      "id": "abc-123",
+      "grade": "EX",
+      "semesterId": "E3S1",
+      "subject": {
+        "code": "CS3101",
+        "name": "Operating Systems",
+        "credits": 4
+      }
+    },
+    {
+      "id": "abc-456",
+      "grade": "A",
+      "semesterId": "E3S1",
+      "subject": {
+        "code": "CS3102",
+        "name": "Compiler Design",
+        "credits": 4
+      }
+    }
+  ],
+  "source": "cache"
+}
+```
+
+The `source` field will be `"cache"` or `"db"`. When served from cache, responses load in under 50ms.
+
+### Understanding grade values
+
+RGUKT uses a letter-grade system. The grades you may see in UniZ:
+
+| Grade | Description               |
+| ----- | ------------------------- |
+| `EX`  | Excellent — highest grade |
+| `A`   | Very Good                 |
+| `B`   | Good                      |
+| `C`   | Average                   |
+| `D`   | Below Average             |
+| `F`   | Fail                      |
+| `AB`  | Absent                    |
+
+::: info
+If no grade appears for a subject, results for that semester have not been
+  published yet. See the section below on published results.
+:::
+
+### Published results
+
+Faculty and administrators upload and then **publish** results before they become visible to you. Until results are published:
+
+- The subject appears in your registration list but shows no grade.
+- The portal does not display a placeholder or draft grade — the entry simply remains blank.
+
+When results are published, you receive an email notification and the grades appear automatically in the portal. You don't need to refresh or take any action.
+
+---
+
+## Attendance
+
+### View your attendance
+
+Your attendance is shown on the **Academic** tab alongside your grades. Each row shows the subject name, how many classes you attended, and the total classes held.
+
+**API response example:**
+
+```json
+{
+  "success": true,
+  "attendance": [
+    {
+      "id": "att-123",
+      "attendedClasses": 45,
+      "totalClasses": 50,
+      "subject": {
+        "code": "CS3101",
+        "name": "Operating Systems"
+      }
+    }
+  ]
+}
+```
+
+Your attendance percentage for a subject is:
+
+```
+(attendedClasses / totalClasses) × 100
+```
+
+In the example above: `(45 / 50) × 100 = 90%`.
+
+::: warning
+RGUKT requires a minimum attendance percentage to be eligible to sit
+  examinations. Check with your faculty for the current threshold — typically
+  75%. If you are below the threshold, contact your class coordinator
+  immediately.
+:::
+
+---
+
+## Current semester
+
+### View registered subjects
+
+The **Current Semester** section shows all subjects you are registered for in the active semester, along with each subject's code and credit value.
+
+The page header shows:
+
+- **Semester name** — e.g., `E3 SEM-1`
+- **Status** — e.g., `ONGOING`
+- **Total subjects** and **total credits** for the semester
+
+Each subject card shows:
+
+- Subject code (e.g., `CS3101`)
+- Subject name (e.g., `Operating Systems`)
+- Credit value
+
+::: info
+If you see "No Registered Subjects", you have not completed registration for
+  the active semester. Visit the registration portal while it is open, or
+  contact your academic section.
+:::
+
+If the page shows "No Active Semester", the administration has not yet opened a semester session for your batch. Check back later or contact your academic office.
+
+### Semester registration (in UniZ)
+
+Subject registration happens **inside the UniZ portal** when the administration opens a semester.
+
+  ### Wait for registration to open
+
+Your semester must be in `REGISTRATION_OPEN` status and inside the configured window (IST). The **Register** tab appears in the student mobile dock when registration is available.
+
+  ### Select subjects
+
+Mandatory subjects are pre-required. Elective groups let you pick up to the allowed number from each group (e.g. one open elective).
+
+  ### Confirm registration
+
+Submit once — you cannot change selections after successful registration for that semester. The API returns **409** if you try again.
+
+  ### Verify on your profile
+
+Registered subjects appear under **Current Semester** on the Academic tab.
+
+**API endpoints:**
+
+```bash
+GET  /api/v1/academics/student/available
+POST /api/v1/academics/student/register
+```
+
+See [Semester Registration API](/api/academics/registration) for request/response details.
+
+::: warning
+If registration is closed, outside the IST window, or you already registered, the portal shows the exact API error message — not a generic failure.
+:::
+
+::: tip
+Cross-check your registered subjects at the start of each semester. If a subject is missing, contact your academic section **before** the registration window closes.
+:::

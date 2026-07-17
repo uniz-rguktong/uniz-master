@@ -1,0 +1,12 @@
+:root {
+  --vp-c-brand-1: #94cb04;
+  --vp-c-brand-2: #a8dc2a;
+  --vp-c-brand-3: #7aab00;
+}
+
+.mermaid {
+  background: #111;
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+}

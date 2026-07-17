@@ -1,4 +1,3 @@
 #!/bin/sh
-set -eu
-mint dev --port 4000 --no-open &
+# Kept for compatibility with older compose/k8s references; image now runs nginx directly.
 exec nginx -g 'daemon off;'
