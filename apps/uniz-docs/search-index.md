@@ -12,6 +12,7 @@ Use Mintlify search (**Ctrl/Cmd + K**) with the keywords below. Every row links 
 | Full system picture | architecture, topology, mermaid, VPS, Cloudflare | [System overview](/system/overview) |
 | Where each host lives | Pages, api-uniz, landing-api, DNS | [Production topology](/system/topology) |
 | One HTTP request path | Traefik, gateway-api, proxy | [Request flow](/system/request-flow) |
+| Role action Mermaid maps | student, webmaster, HOD, dean, grievance, OTP | [Action flows](/system/action-flows) |
 | Postgres / Redis | database, redis, endpoints, backup | [Data stores](/system/data-stores) |
 | JWT, CORS, secrets | auth, INTERNAL_SECRET, CLIENT_URL | [Security](/system/security) |
 
@@ -25,7 +26,7 @@ Use Mintlify search (**Ctrl/Cmd + K**) with the keywords below. Every row links 
 | Academics | grades, attendance, registration | [Academics](/services/academics) |
 | Notifications | push, inbox, mail | [Notifications](/services/notifications) |
 | Landing CMS | FastAPI, analytics, landing-api | [Landing](/services/landing) |
-| Docs (this site) | Mintlify, /docs | [Docs service](/services/docs) |
+| Docs (this site) | VitePress, /docs | [Docs service](/services/docs) |
 | Parked / folded | outpass, mail, files, cron, nginx | [Parked services](/services/parked) |
 
 ## Deploy & change management
