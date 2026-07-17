@@ -161,35 +161,81 @@ const GENDER_OPTIONS = ["ALL", "M", "F", "Other"];
 const CATEGORY_OPTIONS = ["ALL", "GENERAL", "OBC", "SC", "ST", "EWS"];
 const CAMPUS_OPTIONS = ["ALL", "ONGOLE", "NIDADAVOLE"];
 
-const STICKY_COLS: Record<string, { left: string; z: string }> = {
-  checkbox: { left: "left-0", z: "z-20" },
-  row: { left: "left-10", z: "z-20" },
-  username: { left: "left-[5.5rem]", z: "z-20" },
-  name: { left: "left-[11.75rem]", z: "z-20" },
+/** Fixed widths so sticky `left` offsets stay aligned while scrolling. */
+const STICKY_W = {
+  checkbox: "w-10",
+  row: "w-12",
+  username: "w-[6.5rem]",
+  name: "w-[15rem]",
+} as const;
+
+const STICKY_COLS: Record<
+  string,
+  { left: string; z: string; leftNoCheckbox: string }
+> = {
+  checkbox: { left: "left-0", leftNoCheckbox: "left-0", z: "z-20" },
+  // checkbox 2.5rem -> #
+  row: { left: "left-10", leftNoCheckbox: "left-0", z: "z-20" },
+  // + row 3rem = 5.5rem (with checkbox) / 3rem (without)
+  username: {
+    left: "left-[5.5rem]",
+    leftNoCheckbox: "left-12",
+    z: "z-20",
+  },
+  // + username 6.5rem = 12rem (with) / 9.5rem (without)
+  name: {
+    left: "left-[12rem]",
+    leftNoCheckbox: "left-[9.5rem]",
+    z: "z-20",
+  },
 };
 
 function stickyCellClass(
   key: string,
   extra?: string,
-  isHeader = false,
+  opts?: {
+    isHeader?: boolean;
+    hideCheckbox?: boolean;
+    selected?: boolean;
+    striped?: boolean;
+  },
 ) {
   const sticky = STICKY_COLS[key];
   if (!sticky) return extra;
+  const isHeader = Boolean(opts?.isHeader);
+  const bg = isHeader
+    ? "bg-zinc-50"
+    : opts?.selected
+      ? "bg-zinc-100"
+      : opts?.striped
+        ? "bg-zinc-50"
+        : "bg-white group-hover/row:bg-zinc-50";
   return cn(
     extra,
     "sticky",
-    sticky.left,
+    opts?.hideCheckbox ? sticky.leftNoCheckbox : sticky.left,
     sticky.z,
-    isHeader ? "bg-zinc-50" : "bg-inherit",
-    key === "name" && "shadow-[4px_0_12px_-6px_rgba(10,10,10,0.12)]",
+    // Solid fills keep the Branch column from bleeding through while scrolling.
+    bg,
+    isHeader && "z-40",
+    key === "name" &&
+      "shadow-[4px_0_8px_-2px_rgba(10,10,10,0.14)] border-r border-zinc-200",
   );
 }
 
 const COLUMNS: { key: string; label: string; className?: string }[] = [
-  { key: "row", label: "#", className: "w-12 text-center" },
-  { key: "username", label: "Student ID", className: "min-w-[100px]" },
-  { key: "name", label: "Name", className: "min-w-[220px] max-w-[260px]" },
-  { key: "branch", label: "Branch", className: "w-20" },
+  { key: "row", label: "#", className: cn(STICKY_W.row, "text-center") },
+  {
+    key: "username",
+    label: "Student ID",
+    className: STICKY_W.username,
+  },
+  {
+    key: "name",
+    label: "Name",
+    className: cn(STICKY_W.name, "max-w-[15rem]"),
+  },
+  { key: "branch", label: "Branch", className: "w-20 min-w-[5rem]" },
   { key: "year", label: "Year", className: "w-16" },
   { key: "batch", label: "Batch", className: "w-16" },
   { key: "section", label: "Sec", className: "w-14" },
@@ -1486,8 +1532,8 @@ export default function StudentDetails() {
                   <th
                     className={stickyCellClass(
                       "checkbox",
-                      "w-10 px-2 py-2.5 border-r border-zinc-200",
-                      true,
+                      cn(STICKY_W.checkbox, "px-2 py-2.5 border-r border-zinc-200"),
+                      { isHeader: true },
                     )}
                   >
                     <button
@@ -1514,7 +1560,10 @@ export default function StudentDetails() {
                         stickyCellClass(
                           col.key,
                           "px-3 py-2.5 text-left text-[10px] font-semibold tracking-wide text-zinc-500 whitespace-nowrap border-r border-zinc-200 last:border-r-0",
-                          true,
+                          {
+                            isHeader: true,
+                            hideCheckbox: isHodReadOnly,
+                          },
                         ),
                         SORTABLE_KEYS.has(col.key) &&
                           "cursor-pointer hover:bg-zinc-100 select-none",
@@ -1531,25 +1580,33 @@ export default function StudentDetails() {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row, idx) => (
+                {rows.map((row, idx) => {
+                  const isSelected = selectedIds.has(row.username);
+                  const isActive =
+                    selectedRow?.username === row.username && !isSelected;
+                  const isStriped = idx % 2 === 1 && !isSelected && !isActive;
+                  return (
                   <tr
                     key={row.username}
                     onClick={() => openDetail(row)}
                     onDoubleClick={() => handleOpenPerformance(row)}
                     className={cn(
-                      "border-b border-zinc-200 cursor-pointer transition-colors",
-                      selectedIds.has(row.username) && "bg-zinc-100/90",
-                      selectedRow?.username === row.username && !selectedIds.has(row.username)
-                        ? "bg-zinc-100/80"
-                        : !selectedIds.has(row.username) && "hover:bg-zinc-50",
-                      idx % 2 === 1 && !selectedIds.has(row.username) && "bg-zinc-50/40",
+                      "group/row border-b border-zinc-200 cursor-pointer transition-colors",
+                      isSelected && "bg-zinc-100",
+                      isActive && "bg-zinc-100",
+                      !isSelected && !isActive && "hover:bg-zinc-50",
+                      isStriped && "bg-zinc-50",
                     )}
                   >
                     {!isHodReadOnly && (
                     <td
                       className={stickyCellClass(
                         "checkbox",
-                        "px-2 py-2 border-r border-zinc-200",
+                        cn(STICKY_W.checkbox, "px-2 py-2 border-r border-zinc-200"),
+                        {
+                          selected: isSelected || isActive,
+                          striped: isStriped,
+                        },
                       )}
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -1558,7 +1615,7 @@ export default function StudentDetails() {
                         onClick={() => toggleRowSelect(row.username)}
                         className="flex items-center justify-center w-full text-zinc-400 hover:text-zinc-900"
                       >
-                        {selectedIds.has(row.username) ? (
+                        {isSelected ? (
                           <CheckSquare size={15} className="text-zinc-900" />
                         ) : (
                           <Square size={15} />
@@ -1578,10 +1635,16 @@ export default function StudentDetails() {
                           stickyCellClass(
                             col.key,
                             "px-3 py-2.5 text-zinc-800 border-r border-zinc-200 last:border-r-0 font-medium align-top",
+                            {
+                              hideCheckbox: isHodReadOnly,
+                              selected: isSelected || isActive,
+                              striped: isStriped,
+                            },
                           ),
                           col.key !== "name" && "whitespace-nowrap",
                           col.key === "name" && "overflow-hidden",
                           col.key === "username" && "font-semibold text-zinc-900 tabular-nums",
+                          col.key === "branch" && "text-zinc-700",
                           col.key === "cgpa" && adminNumsClass,
                           col.key === "attendance_pct" && adminNumsClass,
                           !isHodReadOnly &&
@@ -1601,7 +1664,8 @@ export default function StudentDetails() {
                       <ChevronRight size={14} />
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
