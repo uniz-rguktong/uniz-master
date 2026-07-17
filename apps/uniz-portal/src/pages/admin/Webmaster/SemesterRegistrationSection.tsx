@@ -13,7 +13,7 @@ import {
   X,
   Upload,
 } from "lucide-react";
-import { apiClient, downloadFile } from "../../../api/apiClient";
+import { apiClient, apiRequest, downloadFile } from "../../../api/apiClient";
 import {
   SEMESTERS,
   INIT_SEMESTER,
@@ -349,9 +349,13 @@ export default function SemesterRegistrationSection({
   };
 
   const downloadSubjectTemplate = async () => {
+    if (!selectedSem) return;
+    const branch =
+      branchFilter === "all" ? undefined : branchFilter;
+    const year = yearFilter === "all" ? undefined : yearFilter;
     await downloadFile(
-      GET_REGISTRATION_SUBJECTS_TEMPLATE,
-      "registration-subjects-template.xlsx",
+      GET_REGISTRATION_SUBJECTS_TEMPLATE(selectedSem.id, branch, year),
+      `registration-subjects-${selectedSem.id}.xlsx`,
     );
   };
 
@@ -366,14 +370,22 @@ export default function SemesterRegistrationSection({
       form.append("file", subjectUploadFile);
       form.append("semesterId", selectedSem.id);
       form.append("dryRun", String(registrationDryRun));
-      form.append("approve", "true");
-      const res = await apiClient<any>(UPLOAD_REGISTRATION_SUBJECTS, {
+      const res = await apiRequest<any>(UPLOAD_REGISTRATION_SUBJECTS, {
         method: "POST",
         body: form,
       });
-      if (res) {
+      if (!res.ok) {
         setImportSummary(res);
-        toast.success(registrationDryRun ? "Subject dry-run complete" : "Subjects imported");
+        toast.error(res.message);
+        return;
+      }
+      if (res.data) {
+        setImportSummary(res.data);
+        toast.success(
+          registrationDryRun
+            ? "Subject dry-run complete"
+            : "Subjects uploaded for Dean/HOD review",
+        );
         fetchAllocations();
       }
     } finally {
@@ -394,12 +406,17 @@ export default function SemesterRegistrationSection({
       form.append("branch", registrationUploadBranch);
       form.append("dryRun", String(registrationDryRun));
       form.append("mode", "replace");
-      const res = await apiClient<any>(UPLOAD_REGISTRATION_RESPONSES, {
+      const res = await apiRequest<any>(UPLOAD_REGISTRATION_RESPONSES, {
         method: "POST",
         body: form,
       });
-      if (res) {
+      if (!res.ok) {
         setImportSummary(res);
+        toast.error(res.message);
+        return;
+      }
+      if (res.data) {
+        setImportSummary(res.data);
         toast.success(registrationDryRun ? "Registration dry-run complete" : "Registrations imported");
         fetchRegistrations();
       }
@@ -679,7 +696,9 @@ export default function SemesterRegistrationSection({
                       <div>
                         <p className="font-bold text-zinc-900 text-sm">Subject Excel</p>
                         <p className="text-xs text-zinc-500">
-                          Creates per-semester subjects and approved allocations.
+                          Download the semester template (all cores + elective options),
+                          fill or edit, then upload for Dean → HOD approval before
+                          students register.
                         </p>
                       </div>
                       <button
@@ -740,8 +759,12 @@ export default function SemesterRegistrationSection({
                 </div>
 
                 {importSummary && (
-                  <pre className="max-h-52 overflow-auto rounded-xl bg-zinc-950 p-4 text-xs text-zinc-100">
-                    {JSON.stringify(importSummary, null, 2)}
+                  <pre className="max-h-52 overflow-auto rounded-xl bg-zinc-950 p-4 text-xs text-zinc-100 whitespace-pre-wrap">
+                    {importSummary.errors?.length
+                      ? importSummary.errors
+                          .map((e: any) => e.message)
+                          .join("\n")
+                      : JSON.stringify(importSummary, null, 2)}
                   </pre>
                 )}
               </div>

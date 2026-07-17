@@ -32,7 +32,14 @@ export interface ApiOptions extends RequestInit {
 
 export type ApiResult<T> =
   | { ok: true; data: T }
-  | { ok: false; status: number; message: string; code?: string };
+  | {
+      ok: false;
+      status: number;
+      message: string;
+      code?: string;
+      errors?: Array<{ row?: number; studentId?: string; field?: string; message: string }>;
+      errorCount?: number;
+    };
 
 export async function apiClient<T = any>(
   endpoint: string,
@@ -166,6 +173,8 @@ export async function apiRequest<T = any>(
         status: response.status,
         message,
         code: data.code || (data as any).error?.code,
+        errors: (data as any).errors,
+        errorCount: (data as any).errorCount,
       };
     }
 
@@ -183,6 +192,14 @@ function extractApiErrorMessage(data: any): string {
   if (typeof data?.message === "string" && data.message.trim()) return data.message;
   if (typeof data?.msg === "string" && data.msg.trim()) return data.msg;
   if (typeof data?.error?.message === "string") return data.error.message;
+  if (Array.isArray(data?.errors) && data.errors.length > 0) {
+    const preview = data.errors
+      .slice(0, 5)
+      .map((e: any) => e.message)
+      .filter(Boolean)
+      .join(" ");
+    return preview || "Upload rejected due to validation errors";
+  }
   return "Request failed";
 }
 

@@ -6,6 +6,11 @@ import axios from "axios";
 import { UserRole } from "../shared/roles.enum";
 import { isValidInternalSecret } from "@uniz/shared";
 import { redis } from "../utils/redis.util";
+import {
+  studentUploadRejected,
+  validateStudentUploadHeaders,
+  validateStudentUploadRows,
+} from "../utils/student-upload-validation.util";
 import { processNextStudentBatch } from "../services/bulk-worker.service";
 import { resolveHodBranch } from "../utils/hod.util";
 
@@ -177,6 +182,16 @@ export const uploadStudents = async (req: any, res: Response) => {
     const total = rows.length;
     if (total === 0)
       return res.status(400).json({ success: false, message: "Empty file" });
+
+    const headerErrors = validateStudentUploadHeaders(headers);
+    if (headerErrors.length > 0) {
+      return res.status(400).json(studentUploadRejected(headerErrors));
+    }
+
+    const rowErrors = validateStudentUploadRows(rows);
+    if (rowErrors.length > 0) {
+      return res.status(400).json(studentUploadRejected(rowErrors));
+    }
 
     // Initialize progress in Redis
     await redis.setex(

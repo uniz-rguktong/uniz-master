@@ -20,6 +20,17 @@ export function mapGradeToPoint(val: string | number): number {
   return 0; // Default fail
 }
 
+export function isValidGradeValue(val: string | number | null | undefined): boolean {
+  if (val === null || val === undefined) return false;
+  if (typeof val === "number") return Number.isFinite(val);
+  const v = String(val).trim();
+  if (!v) return false;
+  const upper = v.toUpperCase();
+  if (GRADE_MAP[upper] !== undefined) return true;
+  const num = parseFloat(upper);
+  return Number.isFinite(num);
+}
+
 export function getGpaDialogue(cgpa: number): string {
   const elite = [
     "Phenomenal performance! You're in the top-tier of the university. 🏆",

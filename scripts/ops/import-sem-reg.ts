@@ -12,6 +12,7 @@ import {
 type Args = {
   apply: boolean;
   prod: boolean;
+  approve: boolean;
   dataDir: string;
   semesterName: string;
   semesterId: string;
@@ -58,6 +59,7 @@ function parseArgs(): Args {
   return {
     apply: argv.includes("--apply"),
     prod: argv.includes("--prod"),
+    approve: argv.includes("--approve"),
     dataDir: path.resolve(get("data-dir", "sem-reg")),
     semesterName: get("semester-name", "AY 2026-27 SEM-1"),
     semesterId: get("semester-id", "AY-2026-27-SEM-1").toUpperCase(),
@@ -126,7 +128,7 @@ async function main() {
     semesterName: args.semesterName,
     rows: subjectRows,
     dryRun,
-    approve: true,
+    approve: args.approve,
   });
   console.log("[sem-reg] subjects", JSON.stringify(subjectResult, null, 2));
 
@@ -137,8 +139,10 @@ async function main() {
     const result = await importRegistrationRows({
       semesterId: args.semesterId,
       rows,
-      mode: "replace", // latest parsed submission wins, then replace student semester rows.
+      mode: "replace",
       dryRun,
+      skipValidation: true,
+      strict: false,
     });
     branchResults[item.branch] = result;
     console.log(`[sem-reg] ${item.branch}`, JSON.stringify(result, null, 2));
