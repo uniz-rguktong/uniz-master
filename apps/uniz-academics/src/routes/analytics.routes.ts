@@ -47,7 +47,7 @@ router.get("/admin-summary", async (req: AuthenticatedRequest, res) => {
       attendanceWhere.subjectId = { in: deptSubjectIds };
     }
 
-    const [gradeAgg, failCount, allAttendance, totalRegistered, totalDropped] =
+    const [gradeAgg, failCount, allAttendance, registeredStudentIds, droppedStudentIds] =
       await Promise.all([
         prisma.grade.aggregate({
           where: gradeWhere,
@@ -62,19 +62,31 @@ router.get("/admin-summary", async (req: AuthenticatedRequest, res) => {
           select: { studentId: true, totalClasses: true, attendedClasses: true },
         }),
         semesterId
-          ? prisma.registration.count({
+          ? prisma.registration.groupBy({
+              by: ["studentId"],
               where: { semesterId, status: "REGISTERED" },
             })
-          : Promise.resolve(0),
+          : Promise.resolve([] as { studentId: string }[]),
         semesterId
-          ? prisma.registration.count({
+          ? prisma.registration.groupBy({
+              by: ["studentId"],
               where: { semesterId, status: "DROPPED" },
             })
-          : Promise.resolve(0),
+          : Promise.resolve([] as { studentId: string }[]),
       ]);
 
-    const distinctStudents = new Set(allAttendance.map((a) => a.studentId));
-    const totalStudents = distinctStudents.size || gradeAgg._count.id;
+    const distinctAttendanceStudents = new Set(
+      allAttendance.map((a) => a.studentId),
+    );
+    const registeredStudentCount = registeredStudentIds.length;
+    const droppedStudentCount = droppedStudentIds.length;
+
+    // "Enrolled" for the current semester = distinct registered students.
+    // Fall back to attendance/grades for older semesters without registration data.
+    const totalStudents =
+      registeredStudentCount ||
+      distinctAttendanceStudents.size ||
+      gradeAgg._count.id;
 
     const avgGPA = gradeAgg._avg.grade
       ? Number(gradeAgg._avg.grade.toFixed(2))
@@ -122,7 +134,10 @@ router.get("/admin-summary", async (req: AuthenticatedRequest, res) => {
       lowAttendanceCount,
       avgAttendancePct,
       currentSemester: latestSemester?.name || null,
-      registration: { registered: totalRegistered, dropped: totalDropped },
+      registration: {
+        registered: registeredStudentCount,
+        dropped: droppedStudentCount,
+      },
     };
 
     if (role === "dean" || role === "hod" || role === "director") {
