@@ -51,7 +51,7 @@ import {
   studentTabButtonActiveClass,
   studentTabButtonInactiveClass,
 } from "@/lib/student-ui";
-import CampusUpdatesFeed from "../../components/CampusUpdatesFeed";
+import NoticeBoard from "../../components/NoticeBoard";
 import { cn } from "@/lib/utils";
 import { Student } from "../../types";
 import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
@@ -793,7 +793,7 @@ export default function StudentProfilePage() {
           </div>
         </div>
 
-        <CampusUpdatesFeed variant="portal" className="mb-8" />
+        <NoticeBoard className="mb-8" />
 
         {/* Tab Navigation */}
         <div className={cn(studentTabBarClass, "mb-6")}>
