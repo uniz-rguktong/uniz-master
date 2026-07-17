@@ -23,11 +23,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: "1000m"
-              memory: "1024Mi"
+              cpu: "500m"
+              memory: "512Mi"
             requests:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: "50m"
+              memory: "128Mi"
           lifecycle:
             preStop:
               exec:
@@ -62,7 +62,7 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 50
+          averageUtilization: 70
   behavior:
     scaleUp:
       stabilizationWindowSeconds: 0
@@ -71,7 +71,7 @@ spec:
           value: 100
           periodSeconds: 15
         - type: Pods
-          value: 4
+          value: 2
           periodSeconds: 15
       selectPolicy: Max
     scaleDown:

@@ -13,12 +13,20 @@ import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
 import RequestManagement from "./RequestManagement";
 import GrievanceList from "./GrievanceList";
 import WebmasterOverview from "../Webmaster/WebmasterOverview";
+import { filterOutpassOutingTabs } from "@/config/featureFlags";
 
 export default function SWODashboard() {
   useIsAuth();
 
   const allowedTabs = useMemo(
-    () => ["dashboard", "outing", "outpass", "grievance", "security"] as const,
+    () =>
+      filterOutpassOutingTabs([
+        "dashboard",
+        "outing",
+        "outpass",
+        "grievance",
+        "security",
+      ] as const),
     [],
   );
   const { activeTab, setActiveTab } = useAdminSectionRoute(allowedTabs);

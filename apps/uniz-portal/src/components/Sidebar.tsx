@@ -5,7 +5,7 @@ import { useIsAuth } from "../hooks/is_authenticated";
 import { useLogout } from "../hooks/useLogout";
 import { useStudentData } from "../hooks/student_info";
 import { useState, useEffect, lazy, Suspense, useRef, type ReactElement } from "react";
-import { enableOutingsAndOutpasses } from "../pages/student/student";
+import { enableOutingsAndOutpasses } from "@/config/featureFlags";
 import {
   Clock,
   CalendarDays,
@@ -46,7 +46,7 @@ const SeatingArrangement = lazy(
 const HelpSupport = lazy(() => import("../pages/student/HelpSupport"));
 const NotificationCenter = lazy(() => import("../pages/NotificationCenter"));
 
-export { enableOutingsAndOutpasses } from "../pages/student/student";
+export { enableOutingsAndOutpasses } from "@/config/featureFlags";
 
 interface MainContent {
   content:
@@ -316,7 +316,7 @@ export default function Sidebar({ content }: MainContent) {
   return (
     <div className="flex flex-col min-h-screen bg-white text-[#0B2A47] selection:bg-[#D4E8F5] selection:text-[#0B2A47]">
       <AnimatePresence>
-        {showNotice && (
+        {!enableOutingsAndOutpasses && showNotice && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}

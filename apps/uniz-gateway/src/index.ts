@@ -100,6 +100,12 @@ const cacheMiddleware = async (
   // This prevents caching cross-user data leaking
   const userKey = req.headers["uid"] || req.headers["authorization"] || "guest";
   const cacheKey = `proxy_cache:${req.url}:${userKey}`;
+  const isPublicCms =
+    typeof req.url === "string" &&
+    (req.url.includes("/cms/notifications") ||
+      req.url.includes("/cms/banners") ||
+      req.url.includes("/cms/updates"));
+  const cacheTtlSeconds = isPublicCms ? 30 : 1;
 
   try {
     const cachedResponse = await redis.get(cacheKey);
@@ -127,9 +133,9 @@ const cacheMiddleware = async (
         headers: res.getHeaders(),
         status: res.statusCode,
       };
-      // Cache for 1 second to allow near real-time updates while protecting against bursts
+      // Cache brief TTL; public CMS notices get longer burst protection
       redis
-        .setex(cacheKey, 1, JSON.stringify(respToCache))
+        .setex(cacheKey, cacheTtlSeconds, JSON.stringify(respToCache))
         .catch((err: Error) => console.error("[Cache-Write-Error]", err));
     }
     return originalSend.apply(res, [body]);
@@ -421,6 +427,17 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
 
   if (!target) return res.status(404).json({ error: "Service Not Found" });
 
+  // Outpass/outing parked in production; grievance (same upstream) stays available.
+  const outpassOutingEnabled =
+    process.env.ENABLE_OUTPASS_OUTING === "true";
+  if (service === "requests" && !outpassOutingEnabled) {
+    return res.status(503).json({
+      success: false,
+      error: "Outpass and outing are currently disabled by administration",
+      code: "OUTPASS_OUTING_DISABLED",
+    });
+  }
+
   const subPath = proxyPathFromParams(req.params.path);
   const queryStart = req.originalUrl.indexOf("?");
   const queryString =
@@ -481,11 +498,17 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
       const isJson = contentType.includes("application/json");
 
       if (response.status === 200 && isJson) {
+        const isPublicCms =
+          req.url.includes("/cms/notifications") ||
+          req.url.includes("/cms/banners") ||
+          req.url.includes("/cms/updates") ||
+          service === "cms";
+        const cacheTtlSeconds = isPublicCms ? 30 : 2;
         // Only cache JSON responses to prevent binary blowup in Redis
         redis
           .setex(
             cacheKey,
-            2, // 2 second cache for blazing speed
+            cacheTtlSeconds,
             JSON.stringify({
               data: Buffer.from(response.data).toString("base64"),
               headers: response.headers,

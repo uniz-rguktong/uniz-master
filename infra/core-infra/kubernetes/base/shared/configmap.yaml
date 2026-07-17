@@ -5,6 +5,8 @@ metadata:
 data:
   NODE_ENV: "production"
   DOCKER_ENV: "true"
+  # Outpass/outing API (/requests). Grievance stays on outpass service regardless.
+  ENABLE_OUTPASS_OUTING: "false"
   GATEWAY_URL: "https://api-uniz.rguktong.in/api/v1"
   SMTP_HOST: "smtp.gmail.com"
   SMTP_PORT: "465"
