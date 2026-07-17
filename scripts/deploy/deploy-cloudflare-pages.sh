@@ -115,4 +115,7 @@ case "$TARGET" in
     ;;
 esac
 
+# After successful upload + domain attach: DNS must leave the VPS.
+bash "$ROOT/scripts/deploy/cutover-frontends-to-pages-dns.sh"
+
 echo "[pages] Frontend on Cloudflare Pages. Backend/DB/Redis remain on VPS."

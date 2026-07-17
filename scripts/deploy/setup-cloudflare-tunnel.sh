@@ -21,12 +21,10 @@ if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]] && [[ -f /root/uniz-secrets.env ]]; then
   set +a
 fi
 
-# Nested www.* (www.uniz, www.landing-api) are NOT in the tunnel — no free edge SSL.
-# Use ensure-cloudflare-www-dns.sh (grey A) + install-nginx-www-redirects.sh instead.
+# Portal + landing SPAs are on Cloudflare Pages — do NOT tunnel those hostnames
+# back to the VPS (would fight Pages DNS). Tunnel APIs only.
+# Nested www.* (www.landing-api) use ensure-cloudflare-www-dns.sh if needed.
 HOSTS=(
-  "rguktong.in"
-  "www.rguktong.in"
-  "uniz.rguktong.in"
   "api-uniz.rguktong.in"
   "landing-api.rguktong.in"
 )

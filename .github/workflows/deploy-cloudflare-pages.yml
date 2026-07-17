@@ -36,7 +36,11 @@ jobs:
           cache: npm
 
       - name: Install
-        run: npm ci --legacy-peer-deps
+        run: |
+          npm ci --legacy-peer-deps
+          # npm ci can skip platform-specific optional deps when the lockfile
+          # was generated on macOS; tailwind v4 needs the Linux binary.
+          npm i --no-save --legacy-peer-deps lightningcss-linux-x64-gnu @tailwindcss/oxide-linux-x64-gnu || true
 
       - name: Deploy to Cloudflare Pages
         env:

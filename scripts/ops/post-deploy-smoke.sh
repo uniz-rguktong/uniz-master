@@ -6,7 +6,9 @@
 set -euo pipefail
 
 PORTAL_URL="${PORTAL_URL:-https://uniz.rguktong.in}"
+LANDING_URL="${LANDING_URL:-https://rguktong.in}"
 API_URL="${API_URL:-https://api-uniz.rguktong.in/api/v1}"
+LANDING_API_URL="${LANDING_API_URL:-https://landing-api.rguktong.in}"
 FAIL=0
 
 check() {
@@ -24,11 +26,15 @@ check() {
 }
 
 echo "== UniZ post-deploy smoke =="
-echo "Portal: $PORTAL_URL"
-echo "API:    $API_URL"
+echo "Portal:     $PORTAL_URL"
+echo "Landing:    $LANDING_URL"
+echo "API:        $API_URL"
+echo "LandingAPI: $LANDING_API_URL"
 echo
 
-check "portal home" "$PORTAL_URL/"
+check "portal home (Pages)" "$PORTAL_URL/"
+check "landing home (Pages)" "$LANDING_URL/"
+check "landing API" "$LANDING_API_URL/" "*"
 check "gateway root" "${API_URL%/api/v1}/" "*"
 check "auth health" "$API_URL/auth/health" "*"
 # Some auth builds expose /health on the service directly via gateway path variants

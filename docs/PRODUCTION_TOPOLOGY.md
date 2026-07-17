@@ -50,18 +50,21 @@ flowchart LR
 | uniz-outpass-service | Outpass/outing gated; grievance on user |
 | uniz-mail / uniz-files / uniz-cron Deploy | Folded / CronJob-only |
 
-## Frontend deploy
+## Frontend deploy + DNS cutover
 
 ```bash
 # CI: .github/workflows/deploy-cloudflare-pages.yml
 # Manual:
 CLOUDFLARE_API_TOKEN=... bash scripts/deploy/deploy-cloudflare-pages.sh
+# DNS only (point FE hostnames at Pages, leave API on VPS):
+CLOUDFLARE_API_TOKEN=... bash scripts/deploy/cutover-frontends-to-pages-dns.sh
 ```
 
 Build env:
 - Portal: `VITE_API_URL=https://api-uniz.rguktong.in/api/v1`
 - Landing: `VITE_LANDING_API_URL=https://landing-api.rguktong.in`
 
+VPS ingress serves **API hosts only** (`api-uniz`, `landing-api`). Portal/landing Deployments stay at replicas 0.
 ## Feature flags
 
 | Flag | Default | Effect |
