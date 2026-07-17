@@ -1,19 +1,49 @@
-import { formatStatus } from "@/utils/displayText";
 import { useState, useEffect } from "react";
 import { apiClient } from "../../api/apiClient";
 import { GET_SEMESTER_OVERVIEW } from "../../api/endpoints";
-import { Book, ChevronRight, Layers } from "lucide-react";
+import RegisteredSubjectsPanel, {
+  type RegisteredSubjectRow,
+} from "./components/RegisteredSubjectsPanel";
 
 export default function CurrentSemester() {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<any>(null);
+  const [semester, setSemester] = useState<{
+    id: string;
+    name: string;
+    status: string;
+  } | null>(null);
+  const [subjects, setSubjects] = useState<RegisteredSubjectRow[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await apiClient<any>(GET_SEMESTER_OVERVIEW);
+        const res = await apiClient<{
+          semester: { id: string; name: string; status: string } | null;
+          data?: {
+            registrations?: Array<{
+              id: string;
+              subjectCode: string;
+              subjectName: string;
+              credits: number;
+              department?: string;
+              registeredAt?: string;
+            }>;
+          };
+        }>(GET_SEMESTER_OVERVIEW);
         if (res) {
-          setData(res);
+          setSemester(res.semester ?? null);
+          setSubjects(
+            (res.data?.registrations || []).map((r) => ({
+              id: r.id,
+              subject: {
+                code: r.subjectCode,
+                name: r.subjectName,
+                credits: r.credits,
+                department: r.department,
+              },
+              submittedAt: r.registeredAt,
+            })),
+          );
         }
       } catch (err) {
         console.error("Failed to fetch semester overview:", err);
@@ -28,7 +58,7 @@ export default function CurrentSemester() {
     return (
       <div className="flex h-[60vh] items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-zinc-900 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-zinc-900 border-t-transparent rounded-full animate-spin" />
           <p className="text-zinc-400 font-bold text-xs tracking-[0.14em]">
             Loading Semester Data...
           </p>
@@ -37,122 +67,18 @@ export default function CurrentSemester() {
     );
   }
 
-  if (!data?.semester) {
-    return (
-      <div className="max-w-4xl mx-auto py-10 text-center">
-        <div className="md:bg-white p-12 md:rounded-3xl md:border md:border-zinc-100 md:shadow-sm bg-transparent">
-          <Layers className="w-16 h-16 text-zinc-200 mx-auto mb-6" />
-          <h2 className="text-2xl font-semibold text-zinc-900 mb-2">
-            No Active Semester
-          </h2>
-          <p className="text-zinc-500 max-w-sm mx-auto">
-            The administration has not yet activated a semester session for your
-            batch.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  const { semester, data: studentData } = data;
-
   return (
-    <div className="max-w-5xl mx-auto pb-20">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-semibold tracking-[0.14em] rounded-full">
-              {formatStatus(semester.status)}
-            </span>
-          </div>
-          <h1 className="text-4xl font-semibold tracking-tight text-zinc-900 leading-none">
-            {semester.name}
-          </h1>
-          <p className="text-zinc-500 font-medium text-sm">
-            Current Academic Registration Details
-          </p>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="md:bg-white p-4 px-6 md:rounded-2xl md:border md:border-zinc-100 md:shadow-sm bg-transparent flex flex-col items-center">
-            <span className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
-              Subjects
-            </span>
-            <span className="text-2xl font-semibold text-zinc-900">
-              {studentData?.summary?.subjectCount || 0}
-            </span>
-          </div>
-          <div className="md:bg-white p-4 px-6 md:rounded-2xl md:border md:border-zinc-100 md:shadow-sm bg-transparent flex flex-col items-center">
-            <span className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
-              Total Credits
-            </span>
-            <span className="text-2xl font-semibold text-zinc-900">
-              {studentData?.summary?.totalCredits || 0}
-            </span>
-          </div>
-        </div>
+    <div className="max-w-5xl mx-auto pb-20 space-y-6">
+      <div>
+        <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 uppercase">
+          Current semester
+        </p>
+        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+          Your registered subjects
+        </h1>
       </div>
 
-      {/* Subjects List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {studentData?.registrations?.map((reg: any) => (
-          <div
-            key={reg.id}
-            className="group md:bg-white p-5 md:rounded-3xl md:border md:border-zinc-100 md:shadow-sm hover:shadow-xl hover:border-zinc-100 transition-all duration-300 relative overflow-hidden bg-transparent border-b border-zinc-100 last:border-0"
-          >
-            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-              <Book className="w-20 h-20" />
-            </div>
-
-            <div className="flex items-start justify-between mb-4">
-              <div className="w-12 h-12 bg-zinc-50 text-zinc-900 rounded-2xl flex items-center justify-center group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
-                <Book className="w-6 h-6" />
-              </div>
-              <div className="flex flex-col items-end">
-                <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] leading-none mb-1">
-                  Credits
-                </span>
-                <span className="text-lg font-semibold text-zinc-900 leading-none">
-                  {reg.credits}.0
-                </span>
-              </div>
-            </div>
-
-            <div className="relative z-10">
-              <span className="text-[10px] font-bold text-zinc-900 bg-zinc-50 px-2 py-0.5 rounded-md mb-2 inline-block">
-                {reg.subjectCode}
-              </span>
-              <h3 className="text-lg font-semibold text-zinc-900 tracking-tight leading-tight group-hover:text-zinc-900 transition-colors">
-                {reg.subjectName}
-              </h3>
-            </div>
-
-            <div className="mt-6 flex items-center justify-between border-t border-zinc-50 pt-4">
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                <span className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
-                  Verified Registration
-                </span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {(!studentData?.registrations ||
-        studentData.registrations.length === 0) && (
-        <div className="bg-amber-50 border border-amber-100 rounded-3xl p-10 text-center">
-          <h3 className="text-xl font-bold text-amber-900 mb-2">
-            No Registered Subjects
-          </h3>
-          <p className="text-amber-700/70 text-sm max-w-sm mx-auto font-medium">
-            You haven't completed your registration for the current semester
-            yet. Please visit the registration portal if open.
-          </p>
-        </div>
-      )}
+      <RegisteredSubjectsPanel semester={semester} subjects={subjects} />
     </div>
   );
 }
