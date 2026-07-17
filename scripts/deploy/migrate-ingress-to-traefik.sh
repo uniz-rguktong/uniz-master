@@ -4,7 +4,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-VALUES="$ROOT_DIR/infra/core-infra/kubernetes/base/shared/traefik/values.yaml"
+VALUES="$ROOT_DIR/infra/kubernetes/base/shared/traefik/values.yaml"
 
 info() { printf '%s\n' "$*"; }
 fail() { printf '❌ %s\n' "$*" >&2; exit 1; }

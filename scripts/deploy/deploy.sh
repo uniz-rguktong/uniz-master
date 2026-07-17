@@ -251,16 +251,16 @@ deploy_logic() {
   deploy_detect_changes "$@"
 
   ALL_SERVICES=("${UNIZ_SERVICES[@]}")
-  K_BASE="infra/core-infra/kubernetes/base/core"
+  K_BASE="infra/kubernetes/base/core"
   K_APPLY_PATH="$K_BASE"
-  [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
+  [ ! -d "$K_BASE" ] && K_BASE="infra/kubernetes/base"
 
   MANIFEST_PATH="/root/.uniz_k8s_image_tags.json"
   if [ "$USE_GHCR" == "true" ] || [ -f "$MANIFEST_PATH" ]; then
     bash "$(dirname "$0")/generate-production-kustomize.sh" \
       "$MANIFEST_PATH" "${DEPLOY_SHA:-}" || true
-    if [ -f "infra/core-infra/kubernetes/overlays/production/kustomization.yaml" ]; then
-      K_APPLY_PATH="infra/core-infra/kubernetes/overlays/production"
+    if [ -f "infra/kubernetes/overlays/production/kustomization.yaml" ]; then
+      K_APPLY_PATH="infra/kubernetes/overlays/production"
       echo "[Infra] Using production overlay (GHCR images from manifest)"
     fi
   fi
@@ -287,16 +287,16 @@ deploy_logic() {
   fi
 
   # Generate Infrastructure from templates
-  if [ -f "infra/core-infra/kubernetes/base/shared/secrets.yaml.template" ]; then
+  if [ -f "infra/kubernetes/base/shared/secrets.yaml.template" ]; then
     echo "[Infra] Generating secrets.yaml..."
-    envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > infra/core-infra/kubernetes/base/shared/secrets.yaml
+    envsubst < infra/kubernetes/base/shared/secrets.yaml.template > infra/kubernetes/base/shared/secrets.yaml
   fi
 
   # Apply Infrastructure
   echo "[Infra] Applying shared components..."
   # Stale ingress-nginx admission webhook blocks Ingress updates after controller removal
   kubectl delete validatingwebhookconfiguration ingress-nginx-admission 2>/dev/null || true
-  kubectl apply -k infra/core-infra/kubernetes/base/shared/ || true
+  kubectl apply -k infra/kubernetes/base/shared/ || true
 
   if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
     echo "[Infra] Syncing Cloudflare DNS token for cert-manager..."

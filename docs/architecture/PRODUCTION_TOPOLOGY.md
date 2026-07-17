@@ -1,6 +1,6 @@
 # UniZ Production Topology & Scaling
 
-**Source of truth:** this doc + Kubernetes manifests under `infra/core-infra/kubernetes/base/`.
+**Source of truth:** this doc + Kubernetes manifests under `infra/kubernetes/base/`.
 
 ## Where things run
 

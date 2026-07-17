@@ -45,7 +45,7 @@ The Files Service is the centralized asset management system for the UniZ ecosys
 
 ### Docker Deployment
 
-Refer to the `infra/core-infra` documentation for orchestrated deployment instructions.
+Refer to the `infra` documentation for orchestrated deployment instructions.
 
 ---
 
