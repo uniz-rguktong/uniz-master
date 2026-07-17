@@ -5,7 +5,9 @@ metadata:
   labels:
     app: uniz-gateway
 spec:
-  replicas: 2
+  # Parked: Traefik ingress → uniz-gateway-api directly (no nginx hop).
+  # Keep Deployment for rollback: scale up + point ingress back at this Service.
+  replicas: 0
   selector:
     matchLabels:
       app: uniz-gateway
@@ -50,41 +52,3 @@ spec:
       targetPort: 80
       nodePort: 30080
   type: NodePort
----
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: uniz-gateway-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: uniz-gateway
-  minReplicas: 2
-  maxReplicas: 6
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 60
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          type: Utilization
-          averageUtilization: 80
-  behavior:
-    scaleUp:
-      stabilizationWindowSeconds: 0
-      policies:
-        - type: Percent
-          value: 100
-          periodSeconds: 15
-    scaleDown:
-      stabilizationWindowSeconds: 600 # 10 minutes to prevent thrashing
-      policies:
-        - type: Percent
-          value: 10
-          periodSeconds: 60

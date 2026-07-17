@@ -8,7 +8,7 @@
 
 | Service | Min | Max | CPU target |
 |---------|-----|-----|------------|
-| Gateway nginx | 2 | 6 | 60% |
+| Gateway nginx | 0 | — | Parked (Traefik → gateway-api) |
 | Gateway API | 1 | 2 | 45% |
 | Auth | 1 | 2 | 50% |
 | User | 1 | 4 | 70% |
