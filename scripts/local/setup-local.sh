@@ -167,7 +167,7 @@ check_docker_cli
 configure_docker_host
 
 COMPOSE_CMD="$(resolve_compose_cmd)"
-COMPOSE_FILE="infra/core-infra/docker-compose.yml"
+COMPOSE_FILE="docker/local/compose.db.yml"
 
 info "🧹 Ensuring ports 5432 (Postgres) and 6379 (Redis) are free..."
 $COMPOSE_CMD -f "$COMPOSE_FILE" stop uniz-redis uniz-postgres >/dev/null 2>&1 || true
@@ -176,7 +176,7 @@ free_port 5432
 free_port 6379
 
 info "🏗️  Starting Postgres & Redis..."
-touch infra/core-infra/.env
+# Compose reads env from the shell / optional repo-root .env — do not require infra/.env
 export POSTGRES_USER="${POSTGRES_USER:-user}"
 export POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-password}"
 export POSTGRES_DB="${POSTGRES_DB:-uniz_db}"

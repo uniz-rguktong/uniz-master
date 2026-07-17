@@ -104,9 +104,8 @@
   "overrides": {
     "minimatch": "^10.2.3",
     "glob": "^10.3.10",
+    "vite": "^7.3.6",
     "esbuild": "^0.28.1",
-    "vite": {
-      "esbuild": "^0.28.1"
-    }
+    "launch-editor": "^2.14.1"
   }
 }
