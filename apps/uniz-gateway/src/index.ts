@@ -86,7 +86,7 @@ function applyCorsHeaders(
     );
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-cms-api-key, x-api-key, uid, role",
+      "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-cms-api-key, x-api-key, uid, role, Cache-Control, Pragma",
     );
     res.setHeader("Access-Control-Max-Age", "86400");
   }
