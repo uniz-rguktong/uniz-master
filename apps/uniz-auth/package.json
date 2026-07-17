@@ -24,6 +24,7 @@
     "@uniz/shared": "*",
     "axios": "^1.18.1",
     "bcryptjs": "^3.0.3",
+    "bullmq": "^5.80.7",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

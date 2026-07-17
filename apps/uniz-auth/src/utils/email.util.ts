@@ -1,4 +1,5 @@
 import axios from "axios";
+import { enqueueNotificationJob } from "./queue.util";
 
 const GATEWAY_URL =
   process.env.GATEWAY_URL ||
@@ -33,34 +34,36 @@ const sendPush = async (
 ): Promise<number> => {
   if (process.env.SKIP_PUSH === "true") return 0;
   try {
-    const url = `${NOTIFICATION_SERVICE_URL}/internal/push`;
-    const res = await axios.post(
-      url,
-      { username, title, body, type },
-      {
-        headers: { "x-internal-secret": INTERNAL_SECRET },
-        timeout: 5000,
-      },
-    );
-    const sentCount = res.data?.sent || 0;
-    console.log(
-      `[AUTH] Push notification to ${username} reached ${sentCount} devices.`,
-    );
-    return sentCount;
+    // Prefer queue so auth HTTP path never waits on web-push fan-out.
+    await enqueueNotificationJob("PUSH", {
+      username,
+      title,
+      body,
+      type,
+      rawBody: true,
+      data: { type },
+    });
+    return 1;
   } catch (e: any) {
-    const status = e.response?.status;
-    if (status && status < 500) {
-      console.warn(
-        `[AUTH] Push skipped for ${username} (${status}):`,
-        e.response?.data?.error || e.message,
+    // Fallback to direct HTTP if Redis/queue is unavailable.
+    try {
+      const url = `${NOTIFICATION_SERVICE_URL}/internal/push`;
+      const res = await axios.post(
+        url,
+        { username, title, body, type },
+        {
+          headers: { "x-internal-secret": INTERNAL_SECRET },
+          timeout: 5000,
+        },
       );
-    } else {
+      return res.data?.sent || 0;
+    } catch (err: any) {
       console.error(
-        `[AUTH] Failed to send push notification to ${username}:`,
-        e.message,
+        `[AUTH] Failed to queue/send push to ${username}:`,
+        err.message || e.message,
       );
+      return 0;
     }
-    return 0;
   }
 };
 
@@ -76,36 +79,103 @@ export const sendOtpPush = async (
   );
 };
 
+export async function resolveProfileEmail(username: string): Promise<string> {
+  let email = `${username.toLowerCase()}@rguktong.ac.in`;
+  try {
+    const rawUserUrl = (
+      process.env.USER_SERVICE_URL || "http://localhost:3002"
+    ).trim();
+    const USER_SERVICE = rawUserUrl.endsWith("/health")
+      ? rawUserUrl.slice(0, -7)
+      : rawUserUrl;
+
+    const endpoints = [
+      `student/${username}`,
+      `faculty/${username}`,
+      `admin/${username}`,
+    ];
+
+    for (const endpoint of endpoints) {
+      try {
+        const userRes = await axios.get(`${USER_SERVICE}/admin/${endpoint}`, {
+          headers: { "x-internal-secret": INTERNAL_SECRET },
+          timeout: 2000,
+        });
+        const data =
+          userRes.data?.student ||
+          userRes.data?.faculty ||
+          userRes.data?.data ||
+          userRes.data;
+        if (data?.email) {
+          email = data.email;
+          break;
+        }
+      } catch {
+        // try next
+      }
+    }
+  } catch {
+    // keep default campus email
+  }
+  return email;
+}
+
 export const sendOtpEmail = async (
   email: string,
   username: string,
   otp: string,
 ): Promise<boolean> => {
   try {
-    console.log(`Attempting to send OTP email via: ${MAIL_SERVICE_URL}/send`);
-    const res = await axios.post(
-      `${MAIL_SERVICE_URL}/send`,
-      {
-        type: "otp",
-        to: email,
-        data: { username, otp },
-      },
-      {
-        headers: { "x-internal-secret": INTERNAL_SECRET },
-        timeout: 5000,
-      },
-    );
-    console.log(
-      `[AUTH] OTP mail response: status=${res.status}, success=${res.data.success}`,
-    );
-    return res.data.success;
-  } catch (error: any) {
-    console.error(`Failed to send OTP email via Mail Service:`, {
-      url: `${MAIL_SERVICE_URL}/send`,
-      error: error.message,
-      code: error.code,
-      response: error.response?.data,
+    await enqueueNotificationJob("OTP_EMAIL", {
+      type: "otp",
+      to: email,
+      email,
+      username,
+      otp,
+      data: { username, otp },
     });
+    return true;
+  } catch (error: any) {
+    console.error(`[AUTH] Failed to queue OTP email for ${username}:`, {
+      error: error.message,
+    });
+    // Fallback to direct mail HTTP
+    try {
+      const res = await axios.post(
+        `${MAIL_SERVICE_URL}/send`,
+        {
+          type: "otp",
+          to: email,
+          data: { username, otp },
+        },
+        {
+          headers: { "x-internal-secret": INTERNAL_SECRET },
+          timeout: 5000,
+        },
+      );
+      return Boolean(res.data?.success);
+    } catch (err: any) {
+      console.error(`[AUTH] OTP email fallback also failed:`, err.message);
+      return false;
+    }
+  }
+};
+
+/** Queue push-first OTP delivery with email fallback in the notification worker. */
+export const queueOtpDelivery = async (
+  username: string,
+  otp: string,
+  email?: string,
+): Promise<boolean> => {
+  try {
+    await enqueueNotificationJob("OTP_DELIVER", {
+      username,
+      otp,
+      email: email || `${username.toLowerCase()}@rguktong.ac.in`,
+    });
+    return true;
+  } catch (error: any) {
+    console.error(`[AUTH] Failed to queue OTP_DELIVER for ${username}:`, error.message);
     return false;
   }
 };

@@ -51,6 +51,8 @@ import {
   confirmDirectPublish,
   downloadRegistrationPdf,
   downloadBulkRegistrationPdfs,
+  getRegistrationPdfJobStatus,
+  downloadRegistrationPdfJob,
   downloadRegistrationSubjectsTemplate,
   uploadRegistrationSubjects,
   uploadRegistrationResponses,
@@ -152,6 +154,11 @@ router.post("/student/register", registerSubjects);
 router.get("/student/current/:studentId", getCurrentSubjects);
 router.get("/student/registration/pdf", downloadRegistrationPdf);
 router.get("/registrations/pdf/bulk", downloadBulkRegistrationPdfs);
+router.get("/registrations/pdf/jobs/:jobId", getRegistrationPdfJobStatus);
+router.get(
+  "/registrations/pdf/jobs/:jobId/download",
+  downloadRegistrationPdfJob,
+);
 router.get("/registration/subjects/template", downloadRegistrationSubjectsTemplate);
 router.post(
   "/registration/subjects/upload",

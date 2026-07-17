@@ -9,6 +9,8 @@ import {
   sendOtpPush,
   sendLoginNotification,
   sendPasswordChangeNotification,
+  queueOtpDelivery,
+  resolveProfileEmail,
 } from "../utils/email.util";
 import { comparePassword, comparePasswordForUser, hashPassword } from "../utils/password.util";
 import { ErrorCode } from "../shared/error-codes";
@@ -284,71 +286,35 @@ export const requestOtp = async (req: Request, res: Response) => {
       data: { username, otp, expiresAt },
     });
 
-    // Send OTP via Push (Primary channel) with automatic Email fallback
-    const sentCount = await sendOtpPush(username, otp);
-
-    if (sentCount === 0) {
-      console.log(
-        `[AUTH] No active push channels for ${username}. Deploying email fallback...`,
-      );
-      // Higher resolution logic for all roles (Student/Faculty/Admin)
-      let email = `${username.toLowerCase()}@rguktong.ac.in`;
-      try {
-        const rawUserUrl = (
-          process.env.USER_SERVICE_URL || "http://localhost:3002"
-        ).trim();
-        const USER_SERVICE = rawUserUrl.endsWith("/health")
-          ? rawUserUrl.slice(0, -7)
-          : rawUserUrl;
-        const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
-
-        // Tiered lookup: start with student, then admin/faculty endpoints if needed
-        const endpoints = [
-          `student/${username}`,
-          `faculty/${username}`,
-          `admin/${username}`,
-        ];
-
-        for (const endpoint of endpoints) {
-          try {
-            const userRes = await axios.get(
-              `${USER_SERVICE}/admin/${endpoint}`,
-              {
-                headers: { "x-internal-secret": SECRET },
-                timeout: 2000,
-              },
-            );
-            const data =
-              userRes.data?.student ||
-              userRes.data?.faculty ||
-              userRes.data?.data ||
-              userRes.data;
-            if (data?.email) {
-              email = data.email;
-              break;
-            }
-          } catch (e) {}
-        }
-      } catch (e) {}
-
-      await sendOtpEmail(email, username, otp);
+    // Queue push-first delivery with email fallback in the notification worker.
+    const email = await resolveProfileEmail(username);
+    const queued = await queueOtpDelivery(username, otp, email);
+    if (!queued) {
+      // Last-resort inline path if Redis/queue is down.
+      const sentCount = await sendOtpPush(username, otp);
+      if (sentCount === 0) {
+        await sendOtpEmail(email, username, otp);
+        return res.json({
+          success: true,
+          deliveryMethod: "email",
+          email: email.replace(/(.{2})(.*)(?=@)/, (_m, a, b) => a + "*".repeat(b.length)),
+          message: "Security code successfully dispatched to your registered email.",
+        });
+      }
       return res.json({
         success: true,
-        deliveryMethod: "email",
-        email: email.replace(/(.{2})(.*)(?=@)/, (gp1, gp2, gp3) => {
-          return gp2 + "*".repeat(gp3.length);
-        }),
-        message: `Security code successfully dispatched to your registered email.`,
+        deliveryMethod: "push",
+        message: `Security code successfully pushed to ${sentCount} of your active devices.`,
       });
     }
 
-    console.log(
-      `[AUTH] OTP generated and pushed to ${sentCount} devices for ${username}.`,
-    );
+    console.log(`[AUTH] OTP queued for ${username} (push→email fallback).`);
     return res.json({
       success: true,
-      deliveryMethod: "push",
-      message: `Security code successfully pushed to ${sentCount} of your active devices.`,
+      deliveryMethod: "queued",
+      queued: true,
+      message:
+        "Security code is being delivered to your devices (or email if push is unavailable).",
     });
   } catch (error) {
     console.error("[AUTH] Security OTP Request Error:", error);
@@ -398,54 +364,13 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
 
     // Active OTP session means the user already passed Turnstile on /otp/request.
     // Email resend is rate-limited separately and does not need a fresh captcha.
-
-    // Higher resolution logic for all roles (Student/Faculty/Admin)
-    let email = `${username.toLowerCase()}@rguktong.ac.in`;
-    try {
-      const rawUserUrl = (
-        process.env.USER_SERVICE_URL || "http://localhost:3002"
-      ).trim();
-      const USER_SERVICE = rawUserUrl.endsWith("/health")
-        ? rawUserUrl.slice(0, -7)
-        : rawUserUrl;
-      const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
-
-      const endpoints = [
-        `student/${username}`,
-        `faculty/${username}`,
-        `admin/${username}`,
-      ];
-
-      for (const endpoint of endpoints) {
-        try {
-          const userRes = await axios.get(`${USER_SERVICE}/admin/${endpoint}`, {
-            headers: { "x-internal-secret": SECRET },
-            timeout: 2000,
-          });
-          const data =
-            userRes.data?.student ||
-            userRes.data?.faculty ||
-            userRes.data?.data ||
-            userRes.data;
-          if (data?.email) {
-            email = data.email;
-            break;
-          }
-        } catch (e) {}
-      }
-    } catch (e) {}
-
-    // Send via Resend (High priority on-demand)
-    sendOtpEmail(email, username, lastOtp.otp).catch((err: any) => {
-      console.error(
-        `[AUTH] Manual email OTP fallback failed for ${username}:`,
-        err,
-      );
-    });
+    const email = await resolveProfileEmail(username);
+    await sendOtpEmail(email, username, lastOtp.otp);
 
     return res.json({
       success: true,
       deliveryMethod: "email",
+      queued: true,
       message:
         "Security code successfully dispatched to your registered email.",
     });
