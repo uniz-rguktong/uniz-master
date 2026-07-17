@@ -95,7 +95,7 @@ verify_deployment() {
     done
     # Multi-service deploy on a small VPS: gate only the critical path.
     if [ "${#deps[@]}" -gt 3 ]; then
-      local critical=(uniz-gateway-api uniz-auth-service uniz-user-service uniz-portal uniz-landing)
+      local critical=(uniz-gateway-api uniz-auth-service uniz-user-service)
       local filtered=() d c
       for c in "${critical[@]}"; do
         for d in "${deps[@]}"; do
@@ -112,8 +112,6 @@ verify_deployment() {
       uniz-gateway-api
       uniz-auth-service
       uniz-user-service
-      uniz-portal
-      uniz-landing
     )
   fi
   local rollout_timeout="${ROLLOUT_TIMEOUT:-300s}"

@@ -13,27 +13,14 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        # Frontends live on Cloudflare Pages; keep API hosts on VPS.
+        # Frontends (portal + landing SPA) live on Cloudflare Pages.
+        # VPS ingress serves APIs only.
         - api-uniz.rguktong.in
         - www.api.uniz.rguktong.in
         - landing-api.rguktong.in
         - www.landing-api.rguktong.in
-        # Apex /api only if traffic still hits VPS (Pages owns apex HTML)
-        - rguktong.in
-        - www.rguktong.in
       secretName: uniz-tls-cert
   rules:
-    # Landing FastAPI under apex /api (fallback if DNS still points here)
-    - host: rguktong.in
-      http:
-        paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: uniz-landing-backend-svc
-                port:
-                  number: 8000
     - host: api-uniz.rguktong.in
       http:
         paths:
