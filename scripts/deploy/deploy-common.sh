@@ -43,15 +43,15 @@ rebuild_tag_to_dir() {
 
 MONOREPO_SERVICES="uniz-academics uniz-auth uniz-user uniz-outpass uniz-files uniz-mail uniz-notifications uniz-cron uniz-gateway"
 
+# Default CI/deploy image matrix. Mail + files apps remain in the monorepo for
+# local use, but production runtime folds them into notifications and user.
+# Set BUILD_OPTIONAL=true or SERVICES=... to rebuild retired images.
 UNIZ_SERVICES=(
   "uniz-academics:uniz-academics-service:uniz-academics-service:academics-service"
   "uniz-auth:uniz-auth-service:uniz-auth-service:auth-service"
   "uniz-cron:uniz-cron-service:uniz-storage-cleanup-job:storage-cleaner"
-  "uniz-cron:uniz-cron-service:uniz-cron-service:cron-worker"
   "uniz-outpass:uniz-outpass-service:uniz-maintenance-job:cron-worker"
-  "uniz-files:uniz-files-service:uniz-files-service:files-service"
   "uniz-gateway:uniz-gateway-api:uniz-gateway-api:gateway-api"
-  "uniz-mail:uniz-mail-service:uniz-mail-service:mail-service"
   "uniz-notifications:uniz-notification-service:uniz-notification-service:notification-service"
   "uniz-outpass:uniz-outpass-service:uniz-outpass-service:outpass-service"
   "uniz-portal:uniz-portal:uniz-portal:portal"
@@ -60,6 +60,17 @@ UNIZ_SERVICES=(
   "uniz-user:uniz-user-service:uniz-user-service:user-service"
   "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
 )
+
+# Retired always-on images (code kept). Included when BUILD_OPTIONAL=true.
+UNIZ_OPTIONAL_SERVICES=(
+  "uniz-files:uniz-files-service:uniz-files-service:files-service"
+  "uniz-mail:uniz-mail-service:uniz-mail-service:mail-service"
+  "uniz-cron:uniz-cron-service:uniz-cron-service:cron-worker"
+)
+
+if [ "${BUILD_OPTIONAL:-false}" = "true" ]; then
+  UNIZ_SERVICES+=("${UNIZ_OPTIONAL_SERVICES[@]}")
+fi
 
 uses_monorepo_dockerfile() {
   local DIR="$1"

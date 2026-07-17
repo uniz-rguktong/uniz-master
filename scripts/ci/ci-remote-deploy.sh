@@ -62,4 +62,21 @@ flock -x "$LOCK_FILE" bash -ce '
 
 ec="$(cat "$EXIT_FILE")"
 echo "[Deploy] Finished with exit code $ec"
+
+if [ "$ec" = "0" ]; then
+  echo "[Smoke] Running post-deploy smoke checks..."
+  if PORTAL_URL="${PORTAL_URL:-https://uniz.rguktong.in}" \
+    API_URL="${API_URL:-https://api-uniz.rguktong.in/api/v1}" \
+    bash ./scripts/ops/post-deploy-smoke.sh; then
+    echo "[Smoke] OK"
+  else
+    echo "[Smoke] WARN — smoke checks failed (deploy itself succeeded)"
+  fi
+
+  # Scale down retired always-on Deployments if they linger from prior releases
+  kubectl scale deploy/uniz-mail-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
+  kubectl scale deploy/uniz-files-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
+  kubectl scale deploy/uniz-cron-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
+fi
+
 exit "$ec"

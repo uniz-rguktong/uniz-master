@@ -44,6 +44,7 @@ model Grade {
   @@index([studentId])
   @@index([batch])
   @@index([semesterId])
+  @@index([studentId, semesterId])
 }
 
 model Attendance {
@@ -65,6 +66,7 @@ model Attendance {
   @@index([studentId])
   @@index([batch])
   @@index([semesterId])
+  @@index([studentId, semesterId])
 }
 
 enum SemesterStatus {

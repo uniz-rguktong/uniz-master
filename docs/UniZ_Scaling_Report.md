@@ -13,8 +13,10 @@
 | Auth | 1 | 2 | 50% |
 | User | 1 | 4 | 70% |
 | Academics | 1 | 3 | 70% |
-| Outpass | 1 | 1 | 70% (grievance; outing/outpass API gated off) |
+| Outpass | 1 | 1 | Grievance only; outpass API gated |
 | Portal | 1 | 2 | 70% |
+| Notifications (comms) | 1 | — | Push + inbox + mail |
+| Mail / Files / Cron Deploy | 0 | — | Folded / CronJob-only |
 
 Older claims of gateway-api 3→15 or auth 2→10 are **obsolete** and unsafe on a small VPS.
 

@@ -163,16 +163,19 @@ const serviceMap: Record<string, string> = {
     "http://uniz-outpass-service.default.svc.cluster.local:3003",
   files:
     process.env.FILES_SERVICE_URL ||
-    "http://uniz-files-service.default.svc.cluster.local:3005",
+    process.env.USER_SERVICE_URL ||
+    "http://uniz-user-service.default.svc.cluster.local:3002",
   mail:
     process.env.MAIL_SERVICE_URL ||
-    "http://uniz-mail-service.default.svc.cluster.local:3006",
+    process.env.NOTIFICATION_SERVICE_URL ||
+    "http://uniz-notification-service.default.svc.cluster.local:3007",
   notifications:
     process.env.NOTIFICATION_SERVICE_URL ||
     "http://uniz-notification-service.default.svc.cluster.local:3007",
   cron:
     process.env.CRON_SERVICE_URL ||
-    "http://uniz-cron-service.default.svc.cluster.local:3008",
+    process.env.OUTPASS_SERVICE_URL ||
+    "http://uniz-outpass-service.default.svc.cluster.local:3003",
   grievance:
     process.env.OUTPASS_SERVICE_URL ||
     "http://uniz-outpass-service.default.svc.cluster.local:3003",

@@ -5,7 +5,8 @@ metadata:
   labels:
     app: uniz-mail-service
 spec:
-  replicas: 1
+  # Folded into uniz-notification-service (comms). Keep file for local/emergency.
+  replicas: 0
   selector:
     matchLabels:
       app: uniz-mail-service
