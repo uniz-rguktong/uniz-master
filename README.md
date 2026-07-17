@@ -9,9 +9,13 @@
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS%20SES-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
 
-> **UNIZ SYSTEMS OPERATIONS 2026**
-> _The digital backbone for enterprise-scale educational administration, built on a robust, self-healing microservices architecture._
+> Campus platform for RGUKT Ongole — Cloudflare Pages frontends, Traefik + gateway-api on a K3s VPS, Postgres + Redis, Cloudinary uploads, AWS SES email, and VitePress docs.
+
+**Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Handover (Notion):** same architecture + action flows as this README.
 
 ## Repo map
 
@@ -20,32 +24,23 @@ Canonical layout: **[STRUCTURE.md](STRUCTURE.md)**.
 | Path | Role |
 |------|------|
 | `apps/` · `packages/` | Workspaces (stable — do not rename for CI/K3s) |
+| `apps/uniz-docs/` | In-house VitePress docs (served at `/docs`) |
 | `docker/local/` | Laptop Compose demo (`make up`) |
 | `docker/prod/` | CI → GHCR → **K3s** images only |
 | `scripts/{ci,deploy,local,ops}/` | Audience-grouped tooling |
-| `docs/local/` | Contributor setup |
+| `docs/local/` | Contributor setup notes |
 | `infra/` | Kubernetes manifests |
 
-**Production is K3s.** Docker Compose never runs on the VPS.
+**Production is K3s on one VPS.** Portal and Landing SPAs deploy to Cloudflare Pages. Docs, APIs, Postgres, and Redis run on the VPS.
 
-## Quick start (contributors)
+<details>
+<summary><strong>Local setup — click to expand</strong></summary>
 
-Clone and pick one local path. You do **not** need production passwords or VPS access.
+<br/>
+
+You do **not** need production passwords or VPS access.
 
 ### A — Full stack in Docker (fastest demo)
-
-Start Docker before running the stack:
-
-```bash
-# macOS with Colima
-colima start
-
-# Docker Desktop users: open Docker Desktop and wait until it is running
-docker info
-```
-
-If `docker info` reports a missing `.colima/default/docker.sock`, Colima is not
-running. Start it with `colima start`, then retry.
 
 ```bash
 git clone https://github.com/uniz-rguktong/uniz-master.git
@@ -54,17 +49,10 @@ cp .env.example .env
 make up && make seed
 ```
 
-Alternatively, run `npm run docker:up && npm run docker:seed`.
-
-> Copy only the commands. A line beginning with `#` is explanatory text; some
-> Zsh configurations treat a pasted `#` line as a command and print
-> `zsh: command not found: #`.
-
 | What | Where |
 |------|--------|
 | Portal | http://localhost:8080 (or `WEB_PORT`) |
 | API (via portal) | http://localhost:8080/api/v1 |
-| Gateway direct | http://localhost:3000/api/v1 |
 | Sign-in | `webmaster` / `password123` |
 
 Details: [docker/README.md](docker/README.md).
@@ -82,86 +70,181 @@ npm run dev:all
 |------|--------|
 | Portal | http://localhost:5173 |
 | API gateway | http://localhost:3000/api/v1 |
+| Docs (optional) | `npm run docs:dev` → http://localhost:3333/docs/ |
 | Sign-in (after seed) | `webmaster` / `password123` |
 
 Full guide: [docs/local/LOCAL_SETUP.md](docs/local/LOCAL_SETUP.md) · [CONTRIBUTING.md](CONTRIBUTING.md).
 
-`secrets.env.example` and `.env.example` ship **dev-only** placeholders (local DB, test Turnstile, dummy JWT, Cloudinary placeholders). Never commit `secrets.env` or `.env`, and never paste production credentials into the repo.
+### Manual / troubleshooting
+
+```bash
+# Postgres + Redis only
+docker compose -f infra/core-infra/docker-compose.yml up -d uniz-redis uniz-postgres
+npm install
+npm run vault:sync
+npm run prisma:generate
+# then: npm run setup:local  OR  make up
+```
+
+### Seed
+
+```bash
+npm run seed:local
+```
+
+### Windows
+
+Use WSL2 + Docker Desktop. Prefer bash for `setup-local.sh`.
+
+`secrets.env.example` and `.env.example` ship **dev-only** placeholders. Never commit `secrets.env` or `.env`.
+
+</details>
 
 ## Production (maintainers)
 
-Push to `main` → GitHub Actions builds with [`docker/prod/Dockerfile.service`](docker/prod/Dockerfile.service) → GHCR → `kubectl` on K3s.
+Push to `main` → GitHub Actions builds GHCR images → `kubectl` on K3s; Cloudflare Pages builds portal/landing.
 
-- Deploy entry: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
-- Migrations on VPS: `scripts/deploy/prisma-migrate-deploy-all.sh` (not Compose `db push`)
-- Local auto-migrate (`UNIZ_AUTO_DB_PUSH`) is **Compose-only** and never set in K8s
+- VPS deploy: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
+- Frontends: [`.github/workflows/deploy-cloudflare-pages.yml`](.github/workflows/deploy-cloudflare-pages.yml)
+- Migrations on VPS: `scripts/deploy/prisma-migrate-deploy-all.sh`
+- In-house docs: [https://api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) (`apps/uniz-docs`, Traefik → `uniz-docs-service`)
 
 ## Architecture
 
-UniZ is a monorepo microservices ecosystem for high availability and edge-first security on K3s.
+Cloudflare owns the public edge and static SPAs. The VPS owns APIs, **docs**, CMS backend, Postgres, and Redis. **Cloudinary** stores uploads; **AWS SES** sends mail.
 
 ```mermaid
-graph TD
-    subgraph Users ["Access Layer"]
-        Student["Student Portal"]
-        Admin["Admin/Faculty Portal"]
-    end
+flowchart TB
+  Users["Students, Faculty<br/>Admins, Visitors"] --> CF["Cloudflare Edge"]
 
-    subgraph Edge ["Edge Layer"]
-        Nginx["Nginx Ingress / Gateway"]
-        Auth_Edge["JWT & RBAC Validation"]
-    end
+  CF --> Portal["Portal SPA<br/>uniz.rguktong.in<br/>Cloudflare Pages"]
+  CF --> Landing["Landing SPA<br/>rguktong.in<br/>Cloudflare Pages"]
+  CF --> API["API<br/>api-uniz.rguktong.in"]
+  CF --> Docs["Docs<br/>api-uniz.rguktong.in/docs"]
+  CF --> LandingAPI["Landing CMS<br/>landing-api.rguktong.in"]
 
-    subgraph Services ["Core Microservices"]
-        Academics["Academics"]
-        Auth["Auth Service"]
-        Profiles["User/Profile Service"]
-        Outpass["Outpass & Approval Engine"]
-        Mail["Mail & Notification Service"]
-    end
+  API --> Traefik["Traefik<br/>VPS ingress"]
+  Docs --> Traefik
+  LandingAPI --> Traefik
 
-    subgraph Data ["Persistence & State"]
-        PG[(PostgreSQL 17)]
-        Redis[(Redis Cache & Queue)]
-    end
+  Traefik --> GW["gateway-api<br/>Express router + Redis cache"]
+  Traefik --> DocsSvc["docs service<br/>static VitePress"]
+  Traefik --> LandingBE["landing-backend<br/>FastAPI CMS"]
 
-    Student & Admin -->|TLS| Nginx
-    Nginx --> Auth_Edge
-    Auth_Edge --> Academics & Auth & Profiles & Outpass
-    Academics & Profiles & Outpass -->|Prisma| PG
-    Auth & Mail --> Redis
-    Redis -.->|Event Pulse| Mail
+  GW --> Auth["Auth"]
+  GW --> User["User<br/>profiles, CMS, files"]
+  GW --> Academics["Academics"]
+  GW --> Notif["Notifications<br/>inbox, push, email"]
+
+  Auth --> PG[("Postgres")]
+  User --> PG
+  Academics --> PG
+  Notif --> PG
+  LandingBE --> PG
+
+  GW --> Redis[("Redis")]
+  Academics --> Redis
+  Notif --> Redis
+
+  User --> Cloudinary["Cloudinary<br/>images and file uploads"]
+  Notif --> SES["AWS SES<br/>transactional email"]
+
+  Portal -.->|browser calls API| API
+  Landing -.->|browser calls CMS| LandingAPI
 ```
 
-1. **Edge Gateway** — Nginx routing, CORS, TLS; services on a private cluster network.
-2. **Horizontal scale** — K3s HPA under traffic spikes.
-3. **Data integrity** — Prisma + PostgreSQL 17 across academic workflows.
-4. **Async work** — Redis-backed queues for mail, notifications, audits.
+| Piece | Role |
+|-------|------|
+| **Cloudflare Pages** | Portal + Landing SPAs (static HTML/JS/CSS) |
+| **Traefik** | VPS ingress / TLS edge — chooses which pod gets the request |
+| **gateway-api** | App router (not a load balancer): path → Auth / User / Academics / Notifications + Redis cache |
+| **Auth / User / Academics / Notifications** | Always-on K3s services |
+| **Docs** | Static VitePress at `api-uniz.rguktong.in/docs` (VPS, not Pages) |
+| **Landing-backend** | FastAPI public CMS (Compose on host) |
+| **Postgres** | Source of truth |
+| **Redis** | Short-lived cache / queues |
+| **Cloudinary** | Profile photos and file uploads (URLs stored in Postgres) |
+| **AWS SES** | OTP, password reset, campus email via Notifications |
+
+Parked at 0 replicas: portal/landing pods, nginx gateway hop, outpass, standalone mail/files/cron Deployments (work folded into user + notifications).
+
+## Action flows
+
+Canonical Mermaid maps for every major role action live in the docs site:
+
+**[Action flows](https://api-uniz.rguktong.in/docs/system/action-flows)** · source: [`apps/uniz-docs/system/action-flows.md`](apps/uniz-docs/system/action-flows.md)
+
+| Role | What they do |
+|------|----------------|
+| **Student** | Login, OTP reset, profile, grades, attendance, registration + PDF, notices, grievance, inbox |
+| **Webmaster / COE / Director** | Students bulk, grades/attendance upload, semester builder, CMS, push, password resets |
+| **Dean** | Allocations, semester advance, academics + CMS |
+| **HOD** | Branch semester approval, registration tracking |
+| **SWO** | List / resolve / delete grievances |
+| **Faculty** | Profile, student search, password |
+| **Security / Caretaker / Warden** | Gate / approve flows when outpass flag is on |
+
+### Request path (one glance)
+
+```mermaid
+sequenceDiagram
+  participant Browser
+  participant CF as Cloudflare
+  participant Traefik
+  participant GW as gateway-api
+  participant Svc as Microservice
+  participant PG as Postgres
+
+  Browser->>CF: SPA or API call
+  CF->>Traefik: api-uniz / docs / landing-api
+  Traefik->>GW: /api/v1/...
+  GW->>Svc: Auth / User / Academics / Notifications
+  Svc->>PG: read or write
+```
+
+### Docs path
+
+```mermaid
+flowchart LR
+  Browser --> CF[Cloudflare]
+  CF --> DocsURL[api-uniz.../docs]
+  DocsURL --> Traefik
+  Traefik --> DocsSvc[uniz-docs-service]
+```
 
 ## Technology stack
 
 | Layer | Technology | Purpose |
 | :---- | :--------- | :------ |
-| Logic | Node.js (TypeScript) | Type-safe microservices |
-| Data | PostgreSQL 17 | Academic records |
-| ORM | Prisma | Access + migrations |
-| Cache / MQ | Redis | Sessions and jobs |
-| Containers | Docker | Local Compose + GHCR images |
-| Orchestration | K3s | Production only |
-| CI/CD | GitHub Actions | Build, test, VPS deploy |
+| Frontends | React SPAs on Cloudflare Pages | Portal + public landing |
+| Docs | VitePress on VPS | `api-uniz.rguktong.in/docs` |
+| Edge | Cloudflare + Traefik | CDN, TLS, ingress |
+| API | Node.js (TypeScript) + Express gateway | Microservices + routing |
+| Data | PostgreSQL 17 + Prisma | Academic and campus records |
+| Cache / MQ | Redis + BullMQ | Gateway cache and jobs |
+| Uploads | Cloudinary | Images and files |
+| Email | AWS SES (via Notifications) | Transactional mail |
+| Containers | Docker + GHCR | Service images |
+| Orchestration | K3s | Production VPS |
+| CI/CD | GitHub Actions | Build, test, deploy |
 
-## Cloudinary (optional — uploads only)
+## Cloudinary and AWS SES
 
-The repo **does not** ship real Cloudinary credentials. For local upload testing, use **your own** keys in `secrets.env`:
+Uploads and mail are **managed SaaS**, not VPS disks.
 
 ```bash
+# secrets.env / production vault — use your own values
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_UPLOAD_PRESET=your_upload_preset
 VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
 VITE_CLOUDINARY_UPLOAD_PRESET=your_upload_preset
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+AWS_REGION=ap-south-1
+SES_FROM_EMAIL=no-reply@example.com
 ```
 
-Login, academics, and outpass work without Cloudinary. Never commit real keys.
+Login and academics work without Cloudinary. Local/dev mail can fall back to Gmail when SES is unset. Never commit real keys.
 
 ## Environment & security
 
@@ -178,7 +261,6 @@ Login, academics, and outpass work without Cloudinary. Never commit real keys.
 npm run vault:vps:status
 npm run vault:vps:list
 npm run vault:vps:show -- KEY
-npm run vault:vps -- reveal KEY
 ```
 
 Do **not** put production passwords, API keys, or SSH private keys in the README, issues, or PRs.

@@ -34,6 +34,7 @@ export default defineConfig({
             { text: 'System overview', link: '/system/overview' },
             { text: 'Production topology', link: '/system/topology' },
             { text: 'Request flow', link: '/system/request-flow' },
+            { text: 'Action flows', link: '/system/action-flows' },
             { text: 'Data stores', link: '/system/data-stores' },
             { text: 'Security model', link: '/system/security' },
           ],
