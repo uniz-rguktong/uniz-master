@@ -2832,15 +2832,17 @@ async function buildRegistrationPdfData(
     allocBySubject = new Map(regAllocations.map((a) => [a.subjectId, a]));
   }
 
-  // Prefer registration allocation metadata when profile fields are missing.
+  // Prefer registration allocation metadata when profile fields are missing,
+  // and prefer allocation academic year for the slip (profile year can lag).
   if ((!branch || branch === "N/A") && matchedAllocs[0]?.branch) {
     branch = matchedAllocs[0].branch;
   }
-  if (!year) {
-    year =
-      matchedAllocs.find((a) => a.academicYear)?.academicYear ||
-      (user as any)?.year ||
-      "";
+  const allocYear =
+    matchedAllocs.find((a) => a.academicYear)?.academicYear || "";
+  if (allocYear) {
+    year = allocYear;
+  } else if (!year) {
+    year = (user as any)?.year || "";
   }
   if (!batch) {
     batch =
