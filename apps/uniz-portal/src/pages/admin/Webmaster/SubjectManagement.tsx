@@ -235,13 +235,14 @@ export default function SubjectManagement() {
             className="bg-white border border-zinc-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Departments</option>
+            <option value="AIML">AIML</option>
+            <option value="CE">CE</option>
             <option value="CSE">CSE</option>
             <option value="ECE">ECE</option>
             <option value="EEE">EEE</option>
-            <option value="MECH">MECH</option>
+            <option value="ME">ME</option>
             <option value="CIVIL">CIVIL</option>
-            <option value="CHEM">CHEMICAL</option>
-            <option value="MME">MME</option>
+            <option value="MECH">MECH</option>
           </select>
           <ChevronDown
             className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
@@ -318,7 +319,10 @@ export default function SubjectManagement() {
                     <BookText size={18} />
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-                    <SubjectCode code={sub.code} />
+                    <SubjectCode
+                      code={sub.displayCode || sub.code}
+                      academicCode={sub.academicCode}
+                    />
                     <h3 className="text-[14px] font-bold text-zinc-900 tracking-tight leading-tight line-clamp-2">
                       {sub.name}
                     </h3>

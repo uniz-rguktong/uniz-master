@@ -1548,62 +1548,68 @@ export const getSubjects = async (req: AuthenticatedRequest, res: Response) => {
   const p = Math.max(1, Number(page));
   const l = Math.max(1, Math.min(500, Number(limit)));
   const skip = (p - 1) * l;
-  const deptFilter =
+  const deptRaw =
     department && String(department).toUpperCase() !== "ALL"
-      ? String(department).trim()
+      ? String(department).trim().toUpperCase()
       : "";
+  // UI historically used CIVIL/MECH; catalog rows use CE/ME.
+  const deptAliases: Record<string, string[]> = {
+    CIVIL: ["CIVIL", "CE"],
+    CE: ["CE", "CIVIL"],
+    MECH: ["MECH", "ME"],
+    ME: ["ME", "MECH"],
+  };
+  const deptValues = deptRaw
+    ? deptAliases[deptRaw] || [deptRaw]
+    : [];
 
   try {
     const where: any = {};
+    const and: any[] = [];
+
     if (search) {
-      where.OR = [
-        { name: { contains: search as string, mode: "insensitive" } },
-        { code: { contains: search as string, mode: "insensitive" } },
-      ];
+      const q = String(search).trim();
+      and.push({
+        OR: [
+          { name: { contains: q, mode: "insensitive" } },
+          { code: { contains: q, mode: "insensitive" } },
+          {
+            branchAllocations: {
+              some: {
+                customCode: { contains: q, mode: "insensitive" },
+              },
+            },
+          },
+        ],
+      });
     }
-    if (deptFilter) {
-      where.department = { equals: deptFilter, mode: "insensitive" };
+    if (deptValues.length === 1) {
+      where.department = { equals: deptValues[0], mode: "insensitive" };
+    } else if (deptValues.length > 1) {
+      and.push({
+        OR: deptValues.map((d) => ({
+          department: { equals: d, mode: "insensitive" },
+        })),
+      });
     }
     if (semester && String(semester).toUpperCase() !== "ALL") {
-      const semRaw = String(semester).trim();
-      const levelMatch = semRaw.match(/^E([1-4])-(SEM-[12])$/i);
-      const semClause = levelMatch
-        ? {
-            OR: [
-              { code: { contains: levelMatch[0], mode: "insensitive" } },
-              {
-                AND: [
-                  {
-                    semester: {
-                      equals: levelMatch[2],
-                      mode: "insensitive",
-                    },
-                  },
-                  {
-                    code: {
-                      contains: `E${levelMatch[1]}-`,
-                      mode: "insensitive",
-                    },
-                  },
-                ],
-              },
-            ],
-          }
-        : {
-            OR: [
-              { semester: { contains: semRaw, mode: "insensitive" } },
-              { code: { contains: semRaw, mode: "insensitive" } },
-            ],
-          };
-
-      if (where.AND) where.AND.push(semClause);
-      else where.AND = [semClause];
+      const semRaw = String(semester).trim().toUpperCase();
+      // Subject.semester stores labels like "E4-SEM-1" (not bare "SEM-1").
+      // Prefer exact match; also accept contains for legacy "CSE-E4-SEM-1" rows.
+      and.push({
+        OR: [
+          { semester: { equals: semRaw, mode: "insensitive" } },
+          { semester: { endsWith: `-${semRaw}`, mode: "insensitive" } },
+          { semester: { contains: semRaw, mode: "insensitive" } },
+        ],
+      });
     }
+    if (and.length) where.AND = and;
 
     let subjects: any[];
     let total: number;
 
-    if (deptFilter) {
+    if (deptValues.length) {
       // Single department — straightforward paginated query.
       [subjects, total] = await Promise.all([
         prisma.subject.findMany({
@@ -1647,9 +1653,26 @@ export const getSubjects = async (req: AuthenticatedRequest, res: Response) => {
       subjects = interleaved.slice(skip, skip + l);
     }
 
+    const academicCodes = await loadAcademicCodesBySubject(
+      subjects.map((s) => s.id),
+    );
+
+    const enriched = subjects.map((s) => {
+      const academicCode =
+        academicCodes.get(s.id) ||
+        extractAcademicCodeFromInternal(s.code) ||
+        null;
+      return {
+        ...s,
+        academicCode,
+        // Prefer academic code for UI display; keep internal `code` for edits/joins.
+        displayCode: academicCode || s.code,
+      };
+    });
+
     return res.json({
       success: true,
-      subjects,
+      subjects: enriched,
       meta: {
         total,
         page: p,
@@ -1664,6 +1687,17 @@ export const getSubjects = async (req: AuthenticatedRequest, res: Response) => {
       .json({ success: false, message: "Failed to fetch subjects" });
   }
 };
+
+/** SEMREG-…-{academicCode}-{hash} → academicCode (e.g. 23CS3104). */
+function extractAcademicCodeFromInternal(code?: string | null): string | null {
+  const raw = String(code || "").trim();
+  if (!raw) return null;
+  if (!/^SEMREG-/i.test(raw)) return raw.toUpperCase();
+  const parts = raw.split("-");
+  if (parts.length < 3) return null;
+  const candidate = parts[parts.length - 2]?.trim();
+  return candidate ? candidate.toUpperCase() : null;
+}
 export const addSubject = async (req: AuthenticatedRequest, res: Response) => {
   const { code, name, credits, department, semester } = req.body;
   const user = req.user;
