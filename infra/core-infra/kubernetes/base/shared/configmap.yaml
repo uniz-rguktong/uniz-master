@@ -18,16 +18,18 @@ data:
   USER_SERVICE_URL: "http://uniz-user-service.default.svc.cluster.local:3002"
   ACADEMICS_SERVICE_URL: "http://uniz-academics-service.default.svc.cluster.local:3004"
   OUTPASS_SERVICE_URL: "http://uniz-outpass-service.default.svc.cluster.local:3003"
-  FILES_SERVICE_URL: "http://uniz-files-service.default.svc.cluster.local:3005"
-  MAIL_SERVICE_URL: "http://uniz-mail-service.default.svc.cluster.local:3006"
+  # Files folded into user-service (/image/upload)
+  FILES_SERVICE_URL: "http://uniz-user-service.default.svc.cluster.local:3002"
+  # Mail folded into notification/comms service (/send)
+  MAIL_SERVICE_URL: "http://uniz-notification-service.default.svc.cluster.local:3007"
   NOTIFICATION_SERVICE_URL: "http://uniz-notification-service.default.svc.cluster.local:3007"
-  CRON_SERVICE_URL: "http://uniz-cron-service.default.svc.cluster.local:3008"
+  # Cron HTTP path retired — maintenance uses outpass CronJob image
+  CRON_SERVICE_URL: "http://uniz-outpass-service.default.svc.cluster.local:3003"
   LANDING_API_URL: "http://uniz-landing-backend-svc.default.svc.cluster.local:8000"
   CLIENT_URL: "https://uniz.rguktong.in,https://www.uniz.rguktong.in,http://localhost:3000,http://localhost:5173"
   NEXT_PUBLIC_ASSETS_URL: "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
-  # DB Connectivity (assuming pgbouncer service in k8s)
   REDIS_URL: "redis://uniz-redis:6379"
   EMAIL_USER: "noreply.uniz@gmail.com"
-  EMAIL_POOL: "your_email@example.com:your_app_password" # Format: "user1:pass1,user2:pass2"
+  EMAIL_POOL: "your_email@example.com:your_app_password"
   VAPID_PUBLIC_KEY: "REPLACE_WITH_VAPID_PUBLIC_KEY"
   VAPID_PRIVATE_KEY: "REPLACE_WITH_VAPID_PRIVATE_KEY"

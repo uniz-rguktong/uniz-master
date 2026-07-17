@@ -17,23 +17,32 @@ This document must match those manifests — do not invent higher replica ceilin
 | uniz-gateway (nginx) | 2 | 2→6 | Edge rate limit |
 | uniz-gateway-api | 1 | 1→2 | Redis short-TTL cache; public CMS ~30s |
 | uniz-auth-service | 1 | 1→2 | Login bursts |
-| uniz-user-service | 1 | 1→4 | Profiles / CMS banners |
+| uniz-user-service | 1 | 1→4 | Profiles, CMS banners/notices, `/image/upload` |
 | uniz-academics-service | 1 | 1→3 | Grades, attendance, registration |
 | uniz-outpass-service | 1 | 1→1 | **Grievance only** while outpass/outing disabled |
-| uniz-mail-service | 1 | none | Email sender |
-| uniz-notification-service | 1 | none | Web push / inbox |
-| uniz-files-service | 1 | none | Upload proxy |
+| uniz-notification-service | 1 | none | **Comms**: push + inbox + mail `/send` |
 | uniz-landing | 1 | none | Marketing site |
 | uniz-docs-service | 1 | none | Docs |
 
-## Parked / CronJob-only
+## Parked / folded / CronJob-only
 
 | Unit | Status |
 |------|--------|
-| uniz-cron-service Deployment | **Not applied** (removed from kustomization). Storage cleanup remains a CronJob. |
-| Outpass/outing student+admin UI | Off unless `VITE_ENABLE_OUTPASS_OUTING=true` at portal build |
-| `/api/v1/requests/*` | 503 unless `ENABLE_OUTPASS_OUTING=true` on gateway ConfigMap |
-| Grievance (`/api/v1/grievance/*`) | Still served by outpass-service |
+| uniz-cron-service Deployment | Not applied; storage cleanup CronJob only |
+| uniz-mail-service Deployment | Folded into notifications; replicas 0 / not in kustomization |
+| uniz-files-service Deployment | Folded into user; replicas 0 / not in kustomization |
+| Outpass/outing student+admin UI | Off unless `VITE_ENABLE_OUTPASS_OUTING=true` |
+| `/api/v1/requests/*` | 503 unless `ENABLE_OUTPASS_OUTING=true` |
+| Grievance (`/api/v1/grievance/*`) | Served by outpass-service |
+
+## CMS ownership (no FastAPI rewrite)
+
+| Path prefix | Owner |
+|-------------|-------|
+| `/api/v1/cms/api/*` | Landing FastAPI (website pages, institute, departments) |
+| `/api/v1/cms/notifications`, `/banners`, `/admin/*` | User-service (portal notices/banners) |
+
+Treat gateway as the CMS facade. Full DB unification is deferred.
 
 ## Feature flags
 
@@ -43,22 +52,23 @@ This document must match those manifests — do not invent higher replica ceilin
 | `ENABLE_OUTPASS_OUTING` | `uniz-config` ConfigMap | `false` | Gateway allows `/requests` |
 | `VITE_MAINTENANCE_MODE` | Portal image build | `false` | Full portal maintenance page |
 
-To re-enable outpass/outing later: set both flags to `true`, rebuild portal, roll gateway ConfigMap, optionally raise outpass HPA max.
-
 ## Capacity guidance (≈4 vCPU VPS)
-
-Prefer roughly:
 
 - Postgres + Redis: ~1.0–1.5 vCPU
 - gateway-api + academics + auth: ~1.5–2.0 vCPU
-- Portal + landing + idle services: ~0.5 vCPU
+- Portal + landing + idle: ~0.5 vCPU
 
-Avoid over-scheduling HPA maxima that sum far beyond cluster CPU.
+## CI image builds
 
-## Deferred consolidations
+Default matrix builds core services only. Retired images (`mail`, `files`, always-on `cron` worker) rebuild when `BUILD_OPTIONAL=true` or via scoped `SERVICES=`.
 
-After this slim runtime is stable:
+## Ops
 
-1. Merge mail + notifications into one comms runtime.
-2. Fold files uploads into user/academics owners.
-3. Unify landing CMS vs user-service CMS ownership.
+```bash
+bash scripts/ops/post-deploy-smoke.sh
+bash scripts/ops/backup-postgres.sh
+kubectl get hpa,deploy
+kubectl logs -f -l app=uniz-gateway-api
+```
+
+See also [MONITORING.md](./MONITORING.md) and [UniZ_Scaling_Report.md](./UniZ_Scaling_Report.md).

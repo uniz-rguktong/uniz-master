@@ -7,6 +7,7 @@ import { attributionMiddleware } from "./middlewares/attribution.middleware";
 import { createNotificationWorker } from "./worker/notification.worker";
 import pushRoutes from "./routes/push.routes";
 import inboxRoutes from "./routes/inbox.routes";
+import emailRoutes from "./mail/routes/email.routes";
 import { publicVapidKey } from "./services/push.service";
 
 dotenv.config({ override: true });
@@ -21,23 +22,34 @@ const app = express();
 app.set("trust proxy", 1);
 app.use(helmet());
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
 app.use(attributionMiddleware);
 
 app.get("/", (_req, res) => {
   res.json({
     service: "uniz-notification-service",
+    role: "comms",
     status: "running",
-    endpoints: { health: "/health", subscribe: "/subscribe" },
+    endpoints: {
+      health: "/health",
+      subscribe: "/subscribe",
+      mailSend: "/send",
+    },
     vapidPublicKey: publicVapidKey || null,
   });
 });
 
 app.use("/", pushRoutes);
 app.use("/", inboxRoutes);
+// Mail API preserved at /send (gateway strips /api/v1/mail → /send)
+app.use("/", emailRoutes);
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok", service: "uniz-notification-service" });
+  res.json({
+    status: "ok",
+    service: "uniz-notification-service",
+    capabilities: ["push", "inbox", "mail"],
+  });
 });
 
 app.use((req, res) => {

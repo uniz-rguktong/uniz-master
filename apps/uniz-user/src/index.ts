@@ -25,12 +25,15 @@ app.get("/health", (req, res) => {
 import profileRoutes from "./routes/profile.routes";
 import cmsRoutes from "./routes/cms.routes";
 import queueRoutes from "./routes/queue.routes";
+import filesRoutes from "./routes/files.routes";
 
 // Background Job Worker Trigger (Internal only)
 app.use("/api/queue", queueRoutes);
 
 app.use("/", profileRoutes);
 app.use("/", cmsRoutes);
+// Former files-service upload path (gateway /api/v1/files → /image/upload)
+app.use("/", filesRoutes);
 
 // Startup self-healing: Check for stuck student jobs
 import { processNextStudentBatch } from "./services/bulk-worker.service";

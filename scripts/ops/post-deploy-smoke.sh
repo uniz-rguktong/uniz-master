@@ -34,6 +34,16 @@ check "auth health" "$API_URL/auth/health" "*"
 # Some auth builds expose /health on the service directly via gateway path variants
 check "cms notifications" "$API_URL/cms/notifications" "*"
 check "outpass gated" "$API_URL/requests/outpass/all" "503"
+check "comms health" "$API_URL/notifications/health" "*"
+
+# Mail is folded into notifications — /mail/send requires internal secret (expect 403)
+mail_code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 15 -X POST "$API_URL/mail/send" -H "Content-Type: application/json" -d '{}' || echo "000")
+if [[ "$mail_code" == "403" || "$mail_code" == "400" || "$mail_code" == "401" ]]; then
+  echo "OK  mail route live ($mail_code) $API_URL/mail/send"
+else
+  echo "FAIL mail route (got $mail_code, want 403/400/401) $API_URL/mail/send"
+  FAIL=1
+fi
 
 if [[ "$FAIL" -ne 0 ]]; then
   echo

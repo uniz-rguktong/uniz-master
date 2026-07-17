@@ -7,10 +7,12 @@ resources:
   - cron-job.yaml
   # Always-on cron Deployment retired — storage cleanup runs as CronJob only.
   # - cron-service.yaml
-  - files-service.yaml
+  # Files folded into user-service (FILES_SERVICE_URL → user)
+  # - files-service.yaml
   - gateway-api.yaml
   - gateway.yaml
-  - mail-service.yaml
+  # Mail folded into notification/comms (MAIL_SERVICE_URL → notifications)
+  # - mail-service.yaml
   - notification-service.yaml
   - outpass-service.yaml
   - portal.yaml

@@ -5,7 +5,8 @@ metadata:
   labels:
     app: uniz-files-service
 spec:
-  replicas: 1
+  # Folded into uniz-user-service (/image/upload). Keep file for local/emergency.
+  replicas: 0
   selector:
     matchLabels:
       app: uniz-files-service
