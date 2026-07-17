@@ -12,7 +12,9 @@ export type CampusUpdate = {
   createdAt?: string;
 };
 
-const CMS_API_KEY = "uniz-landing-v1-key";
+const CMS_API_KEY =
+  (import.meta.env.VITE_CMS_PUBLIC_API_KEY as string | undefined)?.trim() ||
+  "uniz-landing-v1-key";
 const EMPTY_UPDATES: CampusUpdate[] = [];
 
 function extractUpdates(payload: unknown): CampusUpdate[] {
@@ -46,19 +48,33 @@ function visibleUpdates(items: CampusUpdate[]) {
 }
 
 async function fetchCampusUpdates(signal?: AbortSignal): Promise<CampusUpdate[]> {
+  // GET only — avoid Content-Type so browsers skip an unnecessary preflight.
   const headers = new Headers({
     "x-cms-api-key": CMS_API_KEY,
-    "Content-Type": "application/json",
-    "Cache-Control": "no-cache",
+    Accept: "application/json",
   });
-  const opts: RequestInit = { method: "GET", headers, signal, cache: "no-store" };
+  const opts: RequestInit = {
+    method: "GET",
+    headers,
+    signal,
+    cache: "no-store",
+    mode: "cors",
+    credentials: "omit",
+  };
 
-  for (const url of [GET_NOTIFICATIONS, `${BASE_URL}/cms/notifications`]) {
+  const urls = Array.from(
+    new Set([GET_NOTIFICATIONS, `${BASE_URL}/cms/notifications`]),
+  );
+
+  for (const url of urls) {
     try {
       const res = await fetch(url, opts);
       if (!res.ok) continue;
       const json = await res.json();
-      return visibleUpdates(extractUpdates(json));
+      const items = visibleUpdates(extractUpdates(json));
+      if (items.length > 0) return items;
+      // Successful empty payload — stop; do not fall through as error.
+      return items;
     } catch {
       // try next endpoint
     }
@@ -101,7 +117,7 @@ export function useCampusUpdates(fallback: CampusUpdate[] = EMPTY_UPDATES) {
       cancelled = true;
       controller.abort();
     };
-    // fallback is a stable module constant for NoticeBoard; landing may pass CAMPUS_UPDATES_FALLBACK
+    // fallback is a stable module constant for NoticeBoard
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

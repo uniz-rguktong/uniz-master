@@ -20,9 +20,12 @@ export const cmsPublicGuard = (
   // 2. Check Origin (CORS Origin Matching)
   const origin = req.headers.origin;
   const allowedOrigins = [
+    "https://uniz.rguktong.in",
+    "https://rguktong.in",
+    "https://www.rguktong.in",
     "https://uniz.sreecharandesu.in",
     "https://uniz-rgukt.vercel.app",
-    "http://localhost:3000", // Local development
+    "http://localhost:3000",
     "http://localhost:5173",
     "http://localhost:5174",
     "http://127.0.0.1:5173",

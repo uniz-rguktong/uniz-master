@@ -125,7 +125,23 @@ export default function NoticeBoard({
     );
   }
 
-  if (items.length === 0) return null;
+  if (items.length === 0) {
+    return (
+      <section className={cn("space-y-2", className)} aria-label="Notice board">
+        <div className="flex items-center gap-2">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-navy-200 bg-navy-50 text-navy-700">
+            <Pin size={13} strokeWidth={2.5} />
+          </span>
+          <h2 className="text-[13px] md:text-sm font-bold uppercase tracking-[0.12em] text-navy-900">
+            Notice board
+          </h2>
+        </div>
+        <p className="rounded-portal-xl border border-dashed border-navy-200 bg-navy-50/40 px-4 py-3 text-[12px] text-navy-500">
+          No campus notices right now.
+        </p>
+      </section>
+    );
+  }
 
   const visible = expanded ? items : items.slice(0, COLLAPSED_COUNT);
   const hiddenCount = items.length - COLLAPSED_COUNT;
