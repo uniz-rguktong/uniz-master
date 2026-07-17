@@ -2719,6 +2719,7 @@ export const downloadRegistrationPdf = async (
 type RegistrationRow = {
   id: string;
   subjectId: string;
+  batch?: string | null;
   submittedAt: Date | null;
   createdAt: Date;
   subject: { code: string; name: string; credits: number };
@@ -2739,6 +2740,8 @@ async function buildRegistrationPdfData(
   semesterAllocations?: Array<{
     subjectId: string;
     branch: string;
+    academicYear?: string | null;
+    batch?: string | null;
     customName?: string | null;
     customCode?: string | null;
     customCredits?: number | null;
@@ -2769,7 +2772,11 @@ async function buildRegistrationPdfData(
           timeout: 10000,
         },
       );
-      const profile = searchRes.data?.profiles?.[0] || searchRes.data?.[0];
+      // User service returns { students: [...] } (not profiles).
+      const profile =
+        searchRes.data?.students?.[0] ||
+        searchRes.data?.profiles?.[0] ||
+        (Array.isArray(searchRes.data) ? searchRes.data[0] : null);
       if (profile) {
         profileName = profile.name || profileName;
         branch = profile.branch || profile.department || branch;
@@ -2778,12 +2785,22 @@ async function buildRegistrationPdfData(
         campus = profile.campus || campus;
       }
     } catch {
-      branch = (user as any)?.department || branch;
-      year = (user as any)?.year || year;
+      // Fall through — branch/year can still be recovered from allocations.
     }
   }
 
   const branchKey = branch !== "N/A" ? branch.toUpperCase() : null;
+  type AllocRow = {
+    subjectId: string;
+    branch: string;
+    academicYear?: string | null;
+    batch?: string | null;
+    customName?: string | null;
+    customCode?: string | null;
+    customCredits?: number | null;
+    subjectType?: string | null;
+  };
+  let matchedAllocs: AllocRow[] = [];
   let allocBySubject: Map<
     string,
     {
@@ -2795,14 +2812,12 @@ async function buildRegistrationPdfData(
   >;
 
   if (semesterAllocations) {
-    allocBySubject = new Map(
-      semesterAllocations
-        .filter(
-          (a) =>
-            !branchKey || String(a.branch).toUpperCase() === branchKey,
-        )
-        .map((a) => [a.subjectId, a]),
+    matchedAllocs = semesterAllocations.filter(
+      (a) =>
+        registered.some((r) => r.subjectId === a.subjectId) &&
+        (!branchKey || String(a.branch).toUpperCase() === branchKey),
     );
+    allocBySubject = new Map(matchedAllocs.map((a) => [a.subjectId, a]));
   } else {
     const regAllocations = await prisma.branchAllocation.findMany({
       where: {
@@ -2813,7 +2828,25 @@ async function buildRegistrationPdfData(
           : {}),
       },
     });
+    matchedAllocs = regAllocations;
     allocBySubject = new Map(regAllocations.map((a) => [a.subjectId, a]));
+  }
+
+  // Prefer registration allocation metadata when profile fields are missing.
+  if ((!branch || branch === "N/A") && matchedAllocs[0]?.branch) {
+    branch = matchedAllocs[0].branch;
+  }
+  if (!year) {
+    year =
+      matchedAllocs.find((a) => a.academicYear)?.academicYear ||
+      (user as any)?.year ||
+      "";
+  }
+  if (!batch) {
+    batch =
+      matchedAllocs.find((a) => a.batch)?.batch ||
+      registered.find((r) => r.batch)?.batch ||
+      "";
   }
 
   const subjects = registered.map((r) => {
