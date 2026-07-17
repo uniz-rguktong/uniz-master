@@ -14,7 +14,7 @@ spec:
   tls:
     - hosts:
         # Frontends (portal + landing SPA) live on Cloudflare Pages.
-        # VPS ingress serves APIs only.
+        # VPS ingress serves APIs only — straight to gateway-api (no nginx hop).
         - api-uniz.rguktong.in
         - www.api.uniz.rguktong.in
         - landing-api.rguktong.in
@@ -28,9 +28,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: uniz-gateway
+                name: uniz-gateway-api
                 port:
-                  number: 80
+                  number: 3000
     - host: landing-api.rguktong.in
       http:
         paths:

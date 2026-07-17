@@ -82,6 +82,9 @@ if [ "$ec" = "0" ]; then
   kubectl scale deploy/uniz-portal --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl delete hpa uniz-portal --ignore-not-found=true 2>/dev/null || true
   kubectl scale deploy/uniz-landing --replicas=0 --ignore-not-found=true 2>/dev/null || true
+  # nginx hop removed: Traefik → gateway-api
+  kubectl scale deploy/uniz-gateway --replicas=0 --ignore-not-found=true 2>/dev/null || true
+  kubectl delete hpa uniz-gateway-hpa --ignore-not-found=true 2>/dev/null || true
 fi
 
 exit "$ec"

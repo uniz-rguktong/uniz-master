@@ -17,24 +17,24 @@ flowchart LR
   users[Users] --> cf[Cloudflare_Pages_CDN]
   cf --> portal[Portal_SPA]
   cf --> landing[Landing_SPA]
-  portal --> api[api-uniz_VPS]
+  portal --> api[api-uniz_Traefik_VPS]
   landing --> landingApi[landing-api_VPS]
-  api --> auth[Auth]
-  api --> user[User]
-  api --> academics[Academics]
-  api --> comms[Notifications_Comms]
+  api --> gwApi[gateway-api]
+  gwApi --> auth[Auth]
+  gwApi --> user[User]
+  gwApi --> academics[Academics]
+  gwApi --> comms[Notifications_Comms]
   auth --> pg[(Postgres)]
   user --> pg
   academics --> pg
   academics --> redis[(Redis)]
-  comms --> redis
-```
+  comms --> redis```
 
 ## Always-on VPS services
 
 | Deployment | Replicas | Notes |
 |------------|----------|-------|
-| uniz-gateway / gateway-api | HPA | Edge proxy + cache |
+| uniz-gateway-api | HPA 1–2 | Express router + Redis cache (edge = Traefik) |
 | uniz-auth-service | HPA | Login |
 | uniz-user-service | HPA | Profiles, CMS notices, files upload, grievance |
 | uniz-academics-service | HPA | Grades, attendance, registration |
@@ -45,6 +45,7 @@ flowchart LR
 
 | Unit | Why |
 |------|-----|
+| uniz-gateway (nginx) | Traefik → gateway-api directly |
 | uniz-portal | Served from Cloudflare Pages |
 | uniz-landing | Served from Cloudflare Pages |
 | uniz-outpass-service | Outpass/outing gated; grievance on user |
