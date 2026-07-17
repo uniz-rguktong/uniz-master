@@ -62,7 +62,7 @@ spec:
     kind: Deployment
     name: uniz-academics-service
   minReplicas: 1
-  maxReplicas: 3
+  maxReplicas: 4
   metrics:
     - type: Resource
       resource:

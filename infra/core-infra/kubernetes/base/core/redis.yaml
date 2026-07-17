@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-redis
+  labels:
+    app: uniz-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uniz-redis
+  template:
+    metadata:
+      labels:
+        app: uniz-redis
+    spec:
+      priorityClassName: uniz-high-priority
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          args:
+            - redis-server
+            - --maxmemory
+            - 384mb
+            - --maxmemory-policy
+            - allkeys-lru
+            - --save
+            - ""
+            - --appendonly
+            - "no"
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 10
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-redis
+spec:
+  selector:
+    app: uniz-redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
