@@ -1,11 +1,20 @@
 import { useState, useEffect } from "react";
+import { useRecoilValue } from "recoil";
+import { student } from "../../store";
 import { apiClient } from "../../api/apiClient";
-import { GET_SEMESTER_OVERVIEW } from "../../api/endpoints";
+import { GET_CURRENT_SUBJECTS } from "../../api/endpoints";
 import RegisteredSubjectsPanel, {
   type RegisteredSubjectRow,
 } from "./components/RegisteredSubjectsPanel";
 
 export default function CurrentSemester() {
+  const userData = useRecoilValue<any>(student);
+  const studentId = (
+    userData?.username ||
+    localStorage.getItem("username") ||
+    ""
+  ).replace(/"/g, "");
+
   const [loading, setLoading] = useState(true);
   const [semester, setSemester] = useState<{
     id: string;
@@ -15,33 +24,41 @@ export default function CurrentSemester() {
   const [subjects, setSubjects] = useState<RegisteredSubjectRow[]>([]);
 
   useEffect(() => {
+    if (!studentId) {
+      setLoading(false);
+      return;
+    }
     const fetchData = async () => {
       try {
+        // Same source as Academics registration tab — avoids overview unwrap bug.
         const res = await apiClient<{
           semester: { id: string; name: string; status: string } | null;
-          data?: {
-            registrations?: Array<{
-              id: string;
-              subjectCode: string;
-              subjectName: string;
+          subjects?: Array<{
+            id: string;
+            createdAt?: string;
+            submittedAt?: string;
+            subject?: {
+              code: string;
+              name: string;
               credits: number;
               department?: string;
-              registeredAt?: string;
-            }>;
-          };
-        }>(GET_SEMESTER_OVERVIEW);
+            };
+          }>;
+        }>(GET_CURRENT_SUBJECTS(studentId));
         if (res) {
           setSemester(res.semester ?? null);
           setSubjects(
-            (res.data?.registrations || []).map((r) => ({
+            (res.subjects || []).map((r) => ({
               id: r.id,
-              subject: {
-                code: r.subjectCode,
-                name: r.subjectName,
-                credits: r.credits,
-                department: r.department,
-              },
-              submittedAt: r.registeredAt,
+              subject: r.subject
+                ? {
+                    code: r.subject.code,
+                    name: r.subject.name,
+                    credits: r.subject.credits,
+                    department: r.subject.department,
+                  }
+                : undefined,
+              submittedAt: r.submittedAt || r.createdAt,
             })),
           );
         }
@@ -52,7 +69,7 @@ export default function CurrentSemester() {
       }
     };
     fetchData();
-  }, []);
+  }, [studentId]);
 
   if (loading) {
     return (
