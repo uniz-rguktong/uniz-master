@@ -11,6 +11,7 @@ import {
   Zap,
   BookOpen,
   X,
+  Upload,
 } from "lucide-react";
 import { apiClient, downloadFile } from "../../../api/apiClient";
 import {
@@ -23,6 +24,9 @@ import {
   GET_REGISTRATIONS,
   BASE_URL,
   GET_SUBJECTS,
+  GET_REGISTRATION_SUBJECTS_TEMPLATE,
+  UPLOAD_REGISTRATION_RESPONSES,
+  UPLOAD_REGISTRATION_SUBJECTS,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 import { cn } from "../../../utils/cn";
@@ -114,6 +118,11 @@ export default function SemesterRegistrationSection({
   });
   const [subjectSearchQuery, setSubjectSearchQuery] = useState("");
   const [publishSem, setPublishSem] = useState<Semester | null>(null);
+  const [subjectUploadFile, setSubjectUploadFile] = useState<File | null>(null);
+  const [registrationUploadFile, setRegistrationUploadFile] = useState<File | null>(null);
+  const [registrationUploadBranch, setRegistrationUploadBranch] = useState("CSE");
+  const [registrationDryRun, setRegistrationDryRun] = useState(true);
+  const [importSummary, setImportSummary] = useState<any>(null);
 
   const role = (() => {
     try {
@@ -337,6 +346,66 @@ export default function SemesterRegistrationSection({
       semesterId: selectedSem.id,
       branch: branchFilter,
     });
+  };
+
+  const downloadSubjectTemplate = async () => {
+    await downloadFile(
+      GET_REGISTRATION_SUBJECTS_TEMPLATE,
+      "registration-subjects-template.xlsx",
+    );
+  };
+
+  const uploadSubjectSheet = async () => {
+    if (!selectedSem || !subjectUploadFile) {
+      toast.error("Select a subject Excel file first");
+      return;
+    }
+    setLoading(true);
+    try {
+      const form = new FormData();
+      form.append("file", subjectUploadFile);
+      form.append("semesterId", selectedSem.id);
+      form.append("dryRun", String(registrationDryRun));
+      form.append("approve", "true");
+      const res = await apiClient<any>(UPLOAD_REGISTRATION_SUBJECTS, {
+        method: "POST",
+        body: form,
+      });
+      if (res) {
+        setImportSummary(res);
+        toast.success(registrationDryRun ? "Subject dry-run complete" : "Subjects imported");
+        fetchAllocations();
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const uploadRegistrationResponses = async () => {
+    if (!selectedSem || !registrationUploadFile) {
+      toast.error("Select a Google Form response file first");
+      return;
+    }
+    setLoading(true);
+    try {
+      const form = new FormData();
+      form.append("file", registrationUploadFile);
+      form.append("semesterId", selectedSem.id);
+      form.append("branch", registrationUploadBranch);
+      form.append("dryRun", String(registrationDryRun));
+      form.append("mode", "replace");
+      const res = await apiClient<any>(UPLOAD_REGISTRATION_RESPONSES, {
+        method: "POST",
+        body: form,
+      });
+      if (res) {
+        setImportSummary(res);
+        toast.success(registrationDryRun ? "Registration dry-run complete" : "Registrations imported");
+        fetchRegistrations();
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -580,6 +649,103 @@ export default function SemesterRegistrationSection({
                 )}
               </div>
             </div>
+
+            {role === "webmaster" && (
+              <div className="bg-white rounded-xl border border-zinc-100 p-6 space-y-5">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-zinc-900">
+                      Bulk semester data import
+                    </h3>
+                    <p className="text-sm text-zinc-500">
+                      Upload subject allocations and Google Form responses. Duplicate
+                      student submissions use the latest timestamp and replace older
+                      rows for this semester.
+                    </p>
+                  </div>
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
+                    <input
+                      type="checkbox"
+                      checked={registrationDryRun}
+                      onChange={(e) => setRegistrationDryRun(e.target.checked)}
+                    />
+                    Dry run
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  <div className="rounded-xl border border-zinc-100 p-5 space-y-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="font-bold text-zinc-900 text-sm">Subject Excel</p>
+                        <p className="text-xs text-zinc-500">
+                          Creates per-semester subjects and approved allocations.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={downloadSubjectTemplate}
+                        className="px-4 py-2 rounded-lg bg-zinc-50 text-zinc-600 text-xs font-bold"
+                      >
+                        Template
+                      </button>
+                    </div>
+                    <input
+                      type="file"
+                      accept=".xlsx,.xls"
+                      onChange={(e) => setSubjectUploadFile(e.target.files?.[0] || null)}
+                      className="block w-full text-xs text-zinc-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={uploadSubjectSheet}
+                      disabled={loading || !subjectUploadFile}
+                      className={cn(adminPrimaryButtonClass, "w-full justify-center")}
+                    >
+                      <Upload size={16} /> {registrationDryRun ? "Dry-run subjects" : "Import subjects"}
+                    </button>
+                  </div>
+
+                  <div className="rounded-xl border border-zinc-100 p-5 space-y-4">
+                    <div>
+                      <p className="font-bold text-zinc-900 text-sm">Registration Form export</p>
+                      <p className="text-xs text-zinc-500">
+                        Imports Google Form responses with latest-submission wins.
+                      </p>
+                    </div>
+                    <select
+                      value={registrationUploadBranch}
+                      onChange={(e) => setRegistrationUploadBranch(e.target.value)}
+                      className={adminSelectClass}
+                    >
+                      {["CSE", "ECE", "CE", "EEE", "ME", "AIML"].map((b) => (
+                        <option key={b} value={b}>{b}</option>
+                      ))}
+                    </select>
+                    <input
+                      type="file"
+                      accept=".xlsx,.xls"
+                      onChange={(e) => setRegistrationUploadFile(e.target.files?.[0] || null)}
+                      className="block w-full text-xs text-zinc-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={uploadRegistrationResponses}
+                      disabled={loading || !registrationUploadFile}
+                      className={cn(adminPrimaryButtonClass, "w-full justify-center")}
+                    >
+                      <Upload size={16} /> {registrationDryRun ? "Dry-run registrations" : "Import registrations"}
+                    </button>
+                  </div>
+                </div>
+
+                {importSummary && (
+                  <pre className="max-h-52 overflow-auto rounded-xl bg-zinc-950 p-4 text-xs text-zinc-100">
+                    {JSON.stringify(importSummary, null, 2)}
+                  </pre>
+                )}
+              </div>
+            )}
 
             {activeViewTab === "allocations" ? (
               <div className="bg-white rounded-xl border border-zinc-100 overflow-hidden shadow-none">

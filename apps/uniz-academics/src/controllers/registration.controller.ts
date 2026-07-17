@@ -8,6 +8,14 @@ import * as ExcelJS from "exceljs";
 import { redis } from "../utils/redis.util";
 import { enforcePublishOtpRateLimit } from "../middlewares/publish-otp-ratelimit.middleware";
 import { generateRegistrationPdf, generateBulkRegistrationPdf, RegistrationPdfData } from "../utils/pdf.util";
+import {
+  buildSubjectTemplateWorkbook,
+  importRegistrationRows,
+  parseRegistrationFormWorkbook,
+  parseSubjectCatalogWorkbook,
+  upsertSemesterSubjectCatalog,
+  type RegistrationImportMode,
+} from "../services/semester-registration-import.service";
 
 /**
  * @desc Initialize a new semester with branch allocations
@@ -774,6 +782,120 @@ export const addSemesterSubjects = async (
   } catch (error: any) {
     console.error("Add Semester Subjects Error:", error);
     res.status(500).json({ error: "Failed to add subjects" });
+  }
+};
+
+/**
+ * @desc Download the webmaster subject upload template
+ * @access Webmaster, Dean, Director
+ */
+export const downloadRegistrationSubjectsTemplate = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  if (!isSemesterAdmin(req.user?.role as string)) {
+    return res.status(403).json({ error: "Semester admin access required" });
+  }
+
+  const buffer = await buildSubjectTemplateWorkbook();
+  res.setHeader(
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  );
+  res.setHeader(
+    "Content-Disposition",
+    'attachment; filename="registration-subjects-template.xlsx"',
+  );
+  res.send(buffer);
+};
+
+/**
+ * @desc Upload semester subjects / allocations from webmaster Excel
+ * @access Webmaster, Dean, Director
+ */
+export const uploadRegistrationSubjects = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  if (!isSemesterAdmin(req.user?.role as string)) {
+    return res.status(403).json({ error: "Semester admin access required" });
+  }
+  const { semesterId, dryRun, approve } = req.body as {
+    semesterId?: string;
+    dryRun?: string | boolean;
+    approve?: string | boolean;
+  };
+  if (!semesterId) {
+    return res.status(400).json({ error: "semesterId is required" });
+  }
+  if (!req.file?.buffer) {
+    return res.status(400).json({ error: "Excel file is required" });
+  }
+
+  try {
+    const semester = await prisma.academicSemester.findUnique({
+      where: { id: semesterId },
+    });
+    if (!semester) return res.status(404).json({ error: "Semester not found" });
+
+    const rows = await parseSubjectCatalogWorkbook(req.file.buffer);
+    const result = await upsertSemesterSubjectCatalog({
+      semesterId,
+      semesterName: semester.name,
+      rows,
+      dryRun: dryRun === true || dryRun === "true",
+      approve: approve === true || approve === "true",
+    });
+    res.json(result);
+  } catch (error: any) {
+    console.error("Registration subject upload failed:", error);
+    res.status(500).json({ error: error.message || "Subject upload failed" });
+  }
+};
+
+/**
+ * @desc Import Google Form registration responses for a semester
+ * @access Webmaster, Dean, Director
+ */
+export const uploadRegistrationResponses = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  if (!isSemesterAdmin(req.user?.role as string)) {
+    return res.status(403).json({ error: "Semester admin access required" });
+  }
+  const { semesterId, branch, dryRun, mode } = req.body as {
+    semesterId?: string;
+    branch?: string;
+    dryRun?: string | boolean;
+    mode?: RegistrationImportMode;
+  };
+  if (!semesterId) {
+    return res.status(400).json({ error: "semesterId is required" });
+  }
+  if (!req.file?.buffer) {
+    return res.status(400).json({ error: "Excel file is required" });
+  }
+
+  try {
+    const semester = await prisma.academicSemester.findUnique({
+      where: { id: semesterId },
+    });
+    if (!semester) return res.status(404).json({ error: "Semester not found" });
+
+    const rows = await parseRegistrationFormWorkbook(req.file.buffer, branch);
+    const result = await importRegistrationRows({
+      semesterId,
+      rows,
+      mode: mode === "skip" ? "skip" : "replace",
+      dryRun: dryRun === true || dryRun === "true",
+    });
+    res.json(result);
+  } catch (error: any) {
+    console.error("Registration response import failed:", error);
+    res
+      .status(500)
+      .json({ error: error.message || "Registration import failed" });
   }
 };
 
