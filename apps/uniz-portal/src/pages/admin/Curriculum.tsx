@@ -41,6 +41,8 @@ interface Subject {
   department: string;
   semester: string;
   credits: number;
+  academicCode?: string | null;
+  displayCode?: string | null;
 }
 
 const SEARCH_DEBOUNCE_MS = 400;
@@ -78,7 +80,8 @@ export default function CurriculumManager() {
   const fetchGenRef = useRef(0);
   const hasLoadedRef = useRef(false);
 
-  const departments = ["CSE", "ECE", "EEE", "CIVIL", "MECH"];
+  // Match live catalog departments (CE/ME aliases still work in the API).
+  const departments = ["AIML", "CE", "CSE", "ECE", "EEE", "ME"];
   const semesters = [
     "E1-SEM-1",
     "E1-SEM-2",
@@ -365,7 +368,10 @@ export default function CurriculumManager() {
 
               {/* Card Body */}
               <div className="mb-5 space-y-2">
-                <SubjectCode code={sub.code} />
+                <SubjectCode
+                  code={sub.displayCode || sub.code}
+                  academicCode={sub.academicCode}
+                />
                 <h3 className="text-[16px] font-semibold text-zinc-900 line-clamp-2 leading-tight">
                   {sub.name}
                 </h3>
@@ -556,6 +562,8 @@ export default function CurriculumManager() {
                             {d}
                           </option>
                         ))}
+                        <option value="CIVIL">CIVIL</option>
+                        <option value="MECH">MECH</option>
                       </select>
                     </div>
                     <div className="space-y-2">
