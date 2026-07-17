@@ -7,10 +7,10 @@ description: "Replica matrix, what to raise on burst days, and why maxing every 
 
 | Deployment | Min | Max | CPU target |
 |------------|-----|-----|------------|
-| gateway-api | 1 | 2 | ~45% |
-| auth | 1 | 2 | ~50% |
+| gateway-api | 1 | 3 | ~45% |
+| auth | 1 | 3 | ~50% |
 | user | 1 | 4 | ~70% |
-| academics | 1 | 3 | ~70% |
+| academics | 1 | 4 | ~70% |
 | notifications | 1 | 1 | — |
 | nginx gateway | 0 | — | parked |
 
@@ -41,6 +41,18 @@ CONFIRM=1 CONCURRENCY=80 DURATION_SEC=90 \
 The script refuses to run without `CONFIRM=1`, caps load at 200 concurrent workers and 180 seconds, and leaves scale-down to the HPA stabilization window. Use it off-peak; it proves HPA behavior, not total campus user capacity.
 
 `TLS_VERIFY` defaults to `0` because the current production API health audit already notes external certificate-chain issues from script clients. Set `TLS_VERIFY=1` once the API certificate path is clean.
+
+## Verify authenticated capacity
+
+Generate short-lived test JWTs on the VPS, then provide them one per line without committing the token file:
+
+```bash
+CONFIRM=1 TOKEN_FILE=/tmp/uniz-capacity-tokens \
+  CONCURRENCY=500 DURATION_SEC=45 THINK_TIME_MS=3000 \
+  node scripts/ops/test-authenticated-capacity.js
+```
+
+The 2026-07-17 production run passed with 500 distinct students, 149 requests/second, zero errors, and p95 275 ms. Keep a realistic think time: a closed-loop test with no pause measures request saturation, not simultaneous students.
 
 ## Hard limit
 

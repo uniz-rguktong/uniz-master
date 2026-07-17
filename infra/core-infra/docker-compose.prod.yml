@@ -14,6 +14,26 @@ services:
   uniz-postgres:
     image: postgres:17-alpine
     container_name: uniz-postgres
+    command:
+      - postgres
+      - -c
+      - max_connections=200
+      - -c
+      - shared_buffers=2GB
+      - -c
+      - effective_cache_size=8GB
+      - -c
+      - maintenance_work_mem=256MB
+      - -c
+      - effective_io_concurrency=200
+      - -c
+      - random_page_cost=1.1
+      - -c
+      - max_wal_size=2GB
+      - -c
+      - idle_in_transaction_session_timeout=60s
+      - -c
+      - log_min_duration_statement=500ms
     ports:
       - "127.0.0.1:5432:5432"
     environment:
