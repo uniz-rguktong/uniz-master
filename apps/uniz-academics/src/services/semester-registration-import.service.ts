@@ -143,9 +143,46 @@ function normalizeStudentId(value: unknown): string {
   return norm(value).replace(/\s+/g, "").toUpperCase();
 }
 
+/** Accept only campus IDs like O210008 / S220011. */
+export function isValidCampusStudentId(value: unknown): boolean {
+  return /^[OS]\d{6}$/.test(normalizeStudentId(value));
+}
+
+/**
+ * Recover a campus ID from messy form input:
+ * emails (o210008@...), leading-zero typos (0210008), N/I/RO prefixes, etc.
+ */
+export function coerceCampusStudentId(value: unknown): string {
+  const raw = normalizeStudentId(value);
+  if (!raw) return "";
+  if (isValidCampusStudentId(raw)) return raw;
+
+  const emailLike = raw.match(/^([OS]\d{6})(?:@|$)/);
+  if (emailLike) return emailLike[1];
+
+  const embedded = raw.match(/([OS]\d{6})/);
+  if (embedded) return embedded[1];
+
+  const leadingZero = raw.match(/^0(\d{6})$/);
+  if (leadingZero) return `O${leadingZero[1]}`;
+
+  const sixDigits = raw.match(/^(\d{6})$/);
+  if (sixDigits) return `O${sixDigits[1]}`;
+
+  const niTypo = raw.match(/^[NI](\d{6})$/);
+  if (niTypo) return `O${niTypo[1]}`;
+
+  const roTypo = raw.match(/^RO(\d{6})$/);
+  if (roTypo) return `O${roTypo[1]}`;
+
+  const owTypo = raw.match(/^OW(\d{5})$/);
+  if (owTypo) return `O2${owTypo[1]}`;
+
+  return "";
+}
+
 function studentIdFromEmail(value: unknown): string {
-  const match = norm(value).toLowerCase().match(/^([os]\d{6})@/);
-  return match ? match[1].toUpperCase() : "";
+  return coerceCampusStudentId(value);
 }
 
 function excelDate(value: unknown): Date {
@@ -522,10 +559,10 @@ export async function parseRegistrationFormWorkbook(
       const layout = FORM_LAYOUT[band];
 
       const studentId =
-        normalizeStudentId(cellText(row, layout.id)) ||
-        studentIdFromEmail(submitterEmail) ||
-        studentIdFromEmail(cellText(row, layout.email));
-      if (!studentId) return;
+        coerceCampusStudentId(cellText(row, layout.id)) ||
+        coerceCampusStudentId(submitterEmail) ||
+        coerceCampusStudentId(cellText(row, layout.email));
+      if (!studentId || !isValidCampusStudentId(studentId)) return;
 
       const subjects = layout.subjects.flatMap((subjectCol) =>
         splitSubjectSelections(cellText(row, subjectCol))
