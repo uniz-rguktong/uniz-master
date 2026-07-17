@@ -53,6 +53,16 @@ Treat gateway as the CMS facade. Full DB unification is deferred.
 | `ENABLE_OUTPASS_OUTING` | `uniz-config` ConfigMap | `false` | Gateway allows `/requests` |
 | `VITE_MAINTENANCE_MODE` | Portal image build | `false` | Full portal maintenance page |
 
+## Frontend CDN (Cloudflare — $0)
+
+Portal and landing stay on the VPS origin. Cloudflare (zone already on `rguktong.in`) provides free edge caching:
+
+- Orange-cloud DNS for `uniz.rguktong.in` / `rguktong.in`
+- Cache Rules: long TTL for static assets (js/css/fonts/images); bypass HTML, `/sw.js`, `/api/*`
+- Applied by `scripts/deploy/configure-cloudflare-portal-cdn.sh` during deploy (uses `CLOUDFLARE_API_TOKEN`)
+
+API (`api-uniz.rguktong.in`) is not edge-cached. Backend + Postgres + Redis remain on the VPS.
+
 ## Capacity guidance (≈4 vCPU VPS)
 
 - Postgres + Redis: ~1.0–1.5 vCPU
