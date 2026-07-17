@@ -121,7 +121,7 @@ Canonical layout: **[STRUCTURE.md](STRUCTURE.md)**.
 ---
 
 <details>
-<summary><h2>HOW TO SET UP LOCALLY</h2></summary>
+<summary><h2>okay, but how to setup this locally ? </h2></summary>
 
 <br/>
 
