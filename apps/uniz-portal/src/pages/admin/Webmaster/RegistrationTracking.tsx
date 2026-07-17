@@ -71,6 +71,9 @@ export default function RegistrationTracking({
   );
   const [year, setYear] = useState("ALL");
   const [batch, setBatch] = useState(semester.batch ? semester.batch.toUpperCase() : "ALL");
+  const [availableBatches, setAvailableBatches] = useState<string[]>(() =>
+    semester.batch ? [semester.batch.toUpperCase()] : [],
+  );
   const [status, setStatus] = useState("all");
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<TrackingRow[]>([]);
@@ -111,6 +114,16 @@ export default function RegistrationTracking({
         setSummary(
           data?.summary || { eligible: 0, registered: 0, pending: 0, percent: 0 },
         );
+        const batches = Array.isArray(data?.filterOptions?.batches)
+          ? data.filterOptions.batches
+              .map((value: unknown) => String(value).toUpperCase())
+              .filter(Boolean)
+          : [];
+        if (batches.length) {
+          setAvailableBatches((current) =>
+            [...new Set([...current, ...batches])].sort(),
+          );
+        }
         if (data?.pagination) setPagination(data.pagination);
       } catch {
         setRows([]);
@@ -149,9 +162,13 @@ export default function RegistrationTracking({
       if (query.trim()) params.set("query", query.trim());
 
       const safeSem = semester.id.replace(/[^a-zA-Z0-9_-]/g, "_");
+      const filterSuffix = [batch, branch, year]
+        .filter((value) => value !== "ALL")
+        .map((value) => value.replace(/[^a-zA-Z0-9_-]/g, "_"))
+        .join("_");
       await downloadFile(
         `${DOWNLOAD_BULK_REGISTRATION}?${params.toString()}`,
-        `REGISTRATION_BULK_${safeSem}.pdf`,
+        `REGISTRATION_BULK_${safeSem}${filterSuffix ? `_${filterSuffix}` : ""}.pdf`,
       );
     } finally {
       setDownloadingPdf(false);
@@ -190,7 +207,9 @@ export default function RegistrationTracking({
             ) : (
               <Download size={16} />
             )}
-            Download all forms (PDF)
+            {branch !== "ALL" || batch !== "ALL" || year !== "ALL"
+              ? "Download filtered forms (PDF)"
+              : "Download all forms (PDF)"}
           </button>
         }
       />
@@ -272,7 +291,7 @@ export default function RegistrationTracking({
               label: "Batch",
               value: batch,
               onChange: setBatch,
-              options: ["ALL", semester.batch || "O21"].filter(
+              options: ["ALL", ...availableBatches].filter(
                 (v, i, a) => a.indexOf(v) === i,
               ),
             },
@@ -302,7 +321,7 @@ export default function RegistrationTracking({
                 >
                   {Array.isArray(f.options) &&
                     (typeof f.options[0] === "string"
-                      ? f.options.map((o) => (
+                      ? (f.options as string[]).map((o) => (
                           <option key={o} value={o}>
                             {o}
                           </option>
