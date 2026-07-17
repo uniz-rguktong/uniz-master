@@ -228,19 +228,17 @@ export async function downloadFile(
     }
   }
 
+  // Only Authorization — do NOT send Cache-Control as a request header.
+  // It is not in the gateway CORS Allow-Headers list, so Chrome preflight
+  // succeeds (204) then blocks the real GET as a CORS error ("Failed to fetch").
   const authHeaders = {
     ...(cleanToken ? { Authorization: `Bearer ${cleanToken}` } : {}),
-  };
-
-  const noCacheHeaders = {
-    ...authHeaders,
-    "Cache-Control": "no-cache",
   };
 
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: noCacheHeaders,
+      headers: authHeaders,
       cache: "no-store",
     });
 
@@ -265,7 +263,7 @@ export async function downloadFile(
           apiBase,
         );
 
-        const ready = await pollPdfJob(statusPath, noCacheHeaders, jobId);
+        const ready = await pollPdfJob(statusPath, authHeaders, jobId);
         if (!ready) {
           toast.error("PDF generation timed out. Please try again.", {
             id: `pdf-job-${jobId}`,
@@ -275,7 +273,7 @@ export async function downloadFile(
 
         const fileRes = await fetch(downloadPath, {
           method: "GET",
-          headers: noCacheHeaders,
+          headers: authHeaders,
           cache: "no-store",
         });
         if (!fileRes.ok) {
