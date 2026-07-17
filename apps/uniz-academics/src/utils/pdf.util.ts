@@ -536,24 +536,38 @@ function drawRegistrationForm(
     y += 16;
 
     // ── Student info grid ───────────────────────────────────────────
+    // 2×2: ID | Name  /  Dept | Year  + Office Copy strip on the right.
+    // Draw outer boxes + one vertical/horizontal divider only — do NOT
+    // stroke a col1-wide box inside the name column (that left empty cells).
     const officeW = 52;
     const mainW = contentW - officeW;
     const rowH = 20;
     const gridH = rowH * 2;
-    const col1 = mainW * 0.38;
+    // Narrower left column so long names fit cleanly in the name cell.
+    const col1 = mainW * 0.32;
     const col2 = mainW - col1;
 
     strokeBox(left, y, mainW, gridH);
     strokeBox(left + mainW, y, officeW, gridH);
-    strokeBox(left, y + rowH, mainW, rowH);
-    strokeBox(left + col1, y, col1, rowH);
-    strokeBox(left + col1, y + rowH, col1, rowH);
+    doc
+      .moveTo(left, y + rowH)
+      .lineTo(left + mainW, y + rowH)
+      .lineWidth(0.6)
+      .strokeColor("#000000")
+      .stroke();
+    doc
+      .moveTo(left + col1, y)
+      .lineTo(left + col1, y + gridH)
+      .lineWidth(0.6)
+      .strokeColor("#000000")
+      .stroke();
 
     const cellPad = 4;
     doc.font("Helvetica").fontSize(7).fillColor("#000000");
     doc.text(`ID No.: ${username}`, left + cellPad, y + 6, { width: col1 - 8 });
     doc.text(`Name of the Student: ${studentName}`, left + col1 + cellPad, y + 6, {
       width: col2 - 8,
+      ellipsis: false,
     });
     doc.text(`Department: ${dept}`, left + cellPad, y + rowH + 6, {
       width: col1 - 8,
