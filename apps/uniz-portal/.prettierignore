@@ -4,4 +4,5 @@ dist
 prisma/generated
 package-lock.json
 *.json
-!postman/collections/*.json
+!docs/api/postman/collections/*.json
+!docs/api/postman/globals/*.json
