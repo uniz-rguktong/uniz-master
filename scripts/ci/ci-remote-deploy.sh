@@ -79,6 +79,9 @@ if [ "$ec" = "0" ]; then
   kubectl scale deploy/uniz-cron-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl scale deploy/uniz-outpass-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl delete hpa uniz-outpass-service-hpa --ignore-not-found=true 2>/dev/null || true
+  kubectl scale deploy/uniz-portal --replicas=0 --ignore-not-found=true 2>/dev/null || true
+  kubectl delete hpa uniz-portal --ignore-not-found=true 2>/dev/null || true
+  kubectl scale deploy/uniz-landing --replicas=0 --ignore-not-found=true 2>/dev/null || true
 fi
 
 exit "$ec"

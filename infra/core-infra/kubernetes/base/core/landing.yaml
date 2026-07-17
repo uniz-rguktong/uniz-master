@@ -5,7 +5,8 @@ metadata:
   labels:
     app: uniz-landing
 spec:
-  replicas: 1
+  # Marketing site on Cloudflare Pages. Keep for emergency rollback only.
+  replicas: 0
   selector:
     matchLabels:
       app: uniz-landing
@@ -22,8 +23,8 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: 50m
+              memory: 64Mi
             limits:
               cpu: 500m
               memory: 256Mi

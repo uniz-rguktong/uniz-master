@@ -13,8 +13,8 @@
 | Auth | 1 | 2 | 50% |
 | User | 1 | 4 | 70% |
 | Academics | 1 | 3 | 70% |
-| Outpass | 0 | — | Parked (grievance → user) |
-| Portal | 1 | 2 | 70% |
+| Portal / Landing | 0 | — | Cloudflare Pages |
+| Outpass | 0 | — | Parked |
 | Notifications (comms) | 1 | — | Push + inbox + mail |
 | Mail / Files / Cron Deploy | 0 | — | Folded / CronJob-only |
 

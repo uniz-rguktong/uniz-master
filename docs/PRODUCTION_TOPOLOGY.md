@@ -1,85 +1,79 @@
 # UniZ Production Topology & Scaling
 
-**Source of truth:** Kubernetes manifests under `infra/core-infra/kubernetes/base/`.
-This document must match those manifests — do not invent higher replica ceilings than the VPS can schedule.
+**Source of truth:** this doc + Kubernetes manifests under `infra/core-infra/kubernetes/base/`.
 
-## Traffic model
+## Where things run
 
-- Steady campus load: tens of RPS.
-- Burst windows (results, registration, notices): short spikes; design for caching + backend/DB headroom.
-- Do not reserve equal CPU for frontend and backend. Portal is mostly static nginx; hot path is gateway-api + academics + auth + Postgres/Redis.
+| Layer | Where | Hosts |
+|-------|--------|--------|
+| **Portal SPA** | Cloudflare Pages (free CDN) | `uniz.rguktong.in` |
+| **Landing SPA** | Cloudflare Pages (free CDN) | `rguktong.in` |
+| **API gateway + services** | VPS (K3s) | `api-uniz.rguktong.in` |
+| **Landing CMS API** | VPS | `landing-api.rguktong.in` |
+| **Postgres + Redis** | VPS | internal only |
 
-## Always-on production services
+```mermaid
+flowchart LR
+  users[Users] --> cf[Cloudflare_Pages_CDN]
+  cf --> portal[Portal_SPA]
+  cf --> landing[Landing_SPA]
+  portal --> api[api-uniz_VPS]
+  landing --> landingApi[landing-api_VPS]
+  api --> auth[Auth]
+  api --> user[User]
+  api --> academics[Academics]
+  api --> comms[Notifications_Comms]
+  auth --> pg[(Postgres)]
+  user --> pg
+  academics --> pg
+  academics --> redis[(Redis)]
+  comms --> redis
+```
 
-| Deployment | Base replicas | HPA min→max | Notes |
-|------------|---------------|-------------|-------|
-| uniz-portal | 1 | 1→2 | Light CPU; static assets |
-| uniz-gateway (nginx) | 2 | 2→6 | Edge rate limit |
-| uniz-gateway-api | 1 | 1→2 | Redis short-TTL cache; public CMS ~30s |
-| uniz-auth-service | 1 | 1→2 | Login bursts |
-| uniz-user-service | 1 | 1→4 | Profiles, CMS banners/notices, `/image/upload`, **grievance** |
-| uniz-academics-service | 1 | 1→3 | Grades, attendance, registration |
-| uniz-outpass-service | **0** | — | Parked; outpass/outing gated; maintenance CronJob image only |
-| uniz-notification-service | 1 | none | **Comms**: push + inbox + mail `/send` |
-| uniz-landing | 1 | none | Marketing site |
-| uniz-docs-service | 1 | none | Docs |
+## Always-on VPS services
 
-## Parked / folded / CronJob-only
+| Deployment | Replicas | Notes |
+|------------|----------|-------|
+| uniz-gateway / gateway-api | HPA | Edge proxy + cache |
+| uniz-auth-service | HPA | Login |
+| uniz-user-service | HPA | Profiles, CMS notices, files upload, grievance |
+| uniz-academics-service | HPA | Grades, attendance, registration |
+| uniz-notification-service | 1 | Push + mail (comms) |
+| landing-backend | 1 | FastAPI for website CMS |
 
-| Unit | Status |
-|------|--------|
-| uniz-cron-service Deployment | Not applied; storage cleanup CronJob only |
-| uniz-mail-service Deployment | Folded into notifications; replicas 0 / not in kustomization |
-| uniz-files-service Deployment | Folded into user; replicas 0 / not in kustomization |
-| uniz-outpass-service Deployment | **replicas: 0** — grievance moved to user; revive when outing/outpass enabled |
-| Outpass/outing student+admin UI | Off unless `VITE_ENABLE_OUTPASS_OUTING=true` |
-| `/api/v1/requests/*` (non-grievance) | 503 unless `ENABLE_OUTPASS_OUTING=true` |
-| Grievance (`/api/v1/grievance/*`, `/requests/grievance/*`) | **user-service** |
+## Parked on VPS (replicas 0)
 
-## CMS ownership (no FastAPI rewrite)
+| Unit | Why |
+|------|-----|
+| uniz-portal | Served from Cloudflare Pages |
+| uniz-landing | Served from Cloudflare Pages |
+| uniz-outpass-service | Outpass/outing gated; grievance on user |
+| uniz-mail / uniz-files / uniz-cron Deploy | Folded / CronJob-only |
 
-| Path prefix | Owner |
-|-------------|-------|
-| `/api/v1/cms/api/*` | Landing FastAPI (website pages, institute, departments) |
-| `/api/v1/cms/notifications`, `/banners`, `/admin/*` | User-service (portal notices/banners) |
+## Frontend deploy
 
-Treat gateway as the CMS facade. Full DB unification is deferred.
+```bash
+# CI: .github/workflows/deploy-cloudflare-pages.yml
+# Manual:
+CLOUDFLARE_API_TOKEN=... bash scripts/deploy/deploy-cloudflare-pages.sh
+```
+
+Build env:
+- Portal: `VITE_API_URL=https://api-uniz.rguktong.in/api/v1`
+- Landing: `VITE_LANDING_API_URL=https://landing-api.rguktong.in`
 
 ## Feature flags
 
-| Flag | Where | Default | Effect |
-|------|-------|---------|--------|
-| `VITE_ENABLE_OUTPASS_OUTING` | Portal image build | `false` | Student/admin outpass UI |
-| `ENABLE_OUTPASS_OUTING` | `uniz-config` ConfigMap | `false` | Gateway allows `/requests` |
-| `VITE_MAINTENANCE_MODE` | Portal image build | `false` | Full portal maintenance page |
-
-## Frontend CDN (Cloudflare — $0)
-
-Portal and landing stay on the VPS origin. Cloudflare (zone already on `rguktong.in`) provides free edge caching:
-
-- Orange-cloud DNS for `uniz.rguktong.in` / `rguktong.in`
-- Cache Rules: long TTL for static assets (js/css/fonts/images); bypass HTML, `/sw.js`, `/api/*`
-- Applied by `scripts/deploy/configure-cloudflare-portal-cdn.sh` during deploy (uses `CLOUDFLARE_API_TOKEN`)
-
-API (`api-uniz.rguktong.in`) is not edge-cached. Backend + Postgres + Redis remain on the VPS.
-
-## Capacity guidance (≈4 vCPU VPS)
-
-- Postgres + Redis: ~1.0–1.5 vCPU
-- gateway-api + academics + auth: ~1.5–2.0 vCPU
-- Portal + landing + idle: ~0.5 vCPU
-
-## CI image builds
-
-Default matrix builds core services only. Retired images (`mail`, `files`, always-on `cron` worker) rebuild when `BUILD_OPTIONAL=true` or via scoped `SERVICES=`.
+| Flag | Default | Effect |
+|------|---------|--------|
+| `VITE_ENABLE_OUTPASS_OUTING` | false | Portal outpass UI |
+| `ENABLE_OUTPASS_OUTING` | false | Gateway `/requests` (non-grievance) |
+| `VITE_MAINTENANCE_MODE` | false | Portal maintenance page |
 
 ## Ops
 
 ```bash
 bash scripts/ops/post-deploy-smoke.sh
 bash scripts/ops/backup-postgres.sh
-kubectl get hpa,deploy
-kubectl logs -f -l app=uniz-gateway-api
+kubectl get deploy,hpa
 ```
-
-See also [MONITORING.md](./MONITORING.md) and [UniZ_Scaling_Report.md](./UniZ_Scaling_Report.md).
