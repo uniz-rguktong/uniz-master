@@ -8,6 +8,16 @@ import * as ExcelJS from "exceljs";
 import { redis } from "../utils/redis.util";
 import { enforcePublishOtpRateLimit } from "../middlewares/publish-otp-ratelimit.middleware";
 import { generateRegistrationPdf, generateBulkRegistrationPdf, RegistrationPdfData } from "../utils/pdf.util";
+import {
+  buildSubjectTemplateWorkbook,
+  importRegistrationRows,
+  parseRegistrationFormWorkbook,
+  parseSubjectCatalogWorkbook,
+  upsertSemesterSubjectCatalog,
+  type RegistrationImportMode,
+} from "../services/semester-registration-import.service";
+import { validateRegistrationSubjectIds } from "../services/registration-validation.service";
+import { uploadRejected } from "../utils/excel-strict-validation.util";
 
 /**
  * @desc Initialize a new semester with branch allocations
@@ -381,14 +391,27 @@ async function getPendingHodBranches(semesterId: string): Promise<string[]> {
     .map(([branch]) => branch);
 }
 
-async function openSemesterRegistration(semesterId: string) {
+async function openSemesterRegistration(
+  semesterId: string,
+  opts?: { force?: boolean },
+) {
+  if (!opts?.force) {
+    const pendingBranches = await getPendingHodBranches(semesterId);
+    if (pendingBranches.length > 0) {
+      throw new Error(
+        `Cannot open registration: pending HOD approval for ${pendingBranches.join(", ")}`,
+      );
+    }
+  } else {
+    await prisma.branchAllocation.updateMany({
+      where: { semesterId },
+      data: { status: "APPROVED", isApproved: true },
+    });
+  }
+
   await prisma.academicSemester.update({
     where: { id: semesterId },
     data: { status: "REGISTRATION_OPEN" },
-  });
-  await prisma.branchAllocation.updateMany({
-    where: { semesterId },
-    data: { status: "APPROVED", isApproved: true },
   });
 }
 
@@ -537,7 +560,7 @@ export const confirmDirectPublish = async (
         .json({ error: "This semester registration is closed" });
     }
 
-    await openSemesterRegistration(id);
+    await openSemesterRegistration(id, { force: true });
     await redis.del(redisKey);
 
     await NOTIFY({
@@ -778,6 +801,177 @@ export const addSemesterSubjects = async (
 };
 
 /**
+ * @desc Download the webmaster subject upload template
+ * @access Webmaster, Dean, Director
+ */
+export const downloadRegistrationSubjectsTemplate = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  if (!isSemesterAdmin(req.user?.role as string)) {
+    return res.status(403).json({ error: "Semester admin access required" });
+  }
+
+  const { semesterId, branch, year } = req.query;
+  const buffer = await buildSubjectTemplateWorkbook({
+    semesterId: semesterId ? String(semesterId) : undefined,
+    branch: branch ? String(branch) : undefined,
+    academicYear: year ? String(year) : undefined,
+  });
+  const suffix = semesterId ? `-${String(semesterId)}` : "";
+  res.setHeader(
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  );
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename="registration-subjects-template${suffix}.xlsx"`,
+  );
+  res.send(buffer);
+};
+
+/**
+ * @desc Upload semester subjects / allocations from webmaster Excel
+ * @access Webmaster, Dean, Director
+ */
+export const uploadRegistrationSubjects = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  if (!isSemesterAdmin(req.user?.role as string)) {
+    return res.status(403).json({ error: "Semester admin access required" });
+  }
+  const { semesterId, dryRun, approve } = req.body as {
+    semesterId?: string;
+    dryRun?: string | boolean;
+    approve?: string | boolean;
+  };
+  if (!semesterId) {
+    return res.status(400).json({ error: "semesterId is required" });
+  }
+  if (!req.file?.buffer) {
+    return res.status(400).json({ error: "Excel file is required" });
+  }
+
+  try {
+    const semester = await prisma.academicSemester.findUnique({
+      where: { id: semesterId },
+    });
+    if (!semester) return res.status(404).json({ error: "Semester not found" });
+
+    const rows = await parseSubjectCatalogWorkbook(req.file.buffer);
+    const role = req.user?.role as string;
+    const forceApprove =
+      approve === true || approve === "true"
+        ? isWebmaster(role) || role === "coe"
+        : false;
+    const isDryRun = dryRun === true || dryRun === "true";
+    const result = await upsertSemesterSubjectCatalog({
+      semesterId,
+      semesterName: semester.name,
+      rows,
+      dryRun: isDryRun,
+      approve: forceApprove,
+    });
+
+    if (result.errors.length > 0) {
+      return res.status(400).json(
+        uploadRejected(
+          result.errors.map((e) => ({
+            row: e.row,
+            message: e.message,
+          })),
+        ),
+      );
+    }
+
+    if (
+      !isDryRun &&
+      !forceApprove &&
+      semester.status === "DRAFT"
+    ) {
+      await prisma.academicSemester.update({
+        where: { id: semesterId },
+        data: { status: "DEAN_REVIEW" },
+      });
+      await NOTIFY({
+        target: "dean",
+        title: "Action Required: Subject Catalog Review 🎓",
+        body: `Hello {{name}}, Webmaster uploaded subjects for "${semester.name}". Please review allocations and electives.`,
+      });
+    }
+
+    res.json(result);
+  } catch (error: any) {
+    console.error("Registration subject upload failed:", error);
+    res.status(500).json({ error: error.message || "Subject upload failed" });
+  }
+};
+
+/**
+ * @desc Import Google Form registration responses for a semester
+ * @access Webmaster, Dean, Director
+ */
+export const uploadRegistrationResponses = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  if (!isSemesterAdmin(req.user?.role as string)) {
+    return res.status(403).json({ error: "Semester admin access required" });
+  }
+  const { semesterId, branch, dryRun, mode, skipValidation } = req.body as {
+    semesterId?: string;
+    branch?: string;
+    dryRun?: string | boolean;
+    mode?: RegistrationImportMode;
+    skipValidation?: string | boolean;
+  };
+  if (!semesterId) {
+    return res.status(400).json({ error: "semesterId is required" });
+  }
+  if (!req.file?.buffer) {
+    return res.status(400).json({ error: "Excel file is required" });
+  }
+
+  try {
+    const semester = await prisma.academicSemester.findUnique({
+      where: { id: semesterId },
+    });
+    if (!semester) return res.status(404).json({ error: "Semester not found" });
+
+    const isDryRun = dryRun === true || dryRun === "true";
+    const rows = await parseRegistrationFormWorkbook(req.file.buffer, branch);
+    const result = await importRegistrationRows({
+      semesterId,
+      rows,
+      mode: mode === "skip" ? "skip" : "replace",
+      dryRun: isDryRun,
+      skipValidation: skipValidation === true || skipValidation === "true",
+      strict: true,
+    });
+
+    if (result.errors.length > 0) {
+      return res.status(400).json(
+        uploadRejected(
+          result.errors.map((e) => ({
+            row: e.row,
+            studentId: e.studentId,
+            message: e.message,
+          })),
+        ),
+      );
+    }
+
+    res.json(result);
+  } catch (error: any) {
+    console.error("Registration response import failed:", error);
+    res
+      .status(500)
+      .json({ error: error.message || "Registration import failed" });
+  }
+};
+
+/**
  * @desc List elective groups for a semester
  */
 export const getElectiveGroups = async (
@@ -916,7 +1110,13 @@ export const advanceSemester = async (
             body: `Hello {{name}}, Dean approved "${semester.name}". Please review your branch subjects and electives.`,
           };
         } else if (role !== "dean") {
-          // webmaster override can push straight to open
+          const pendingBranches = await getPendingHodBranches(id);
+          if (pendingBranches.length > 0) {
+            return res.status(400).json({
+              error: `All HOD branches must approve before opening registration. Pending: ${pendingBranches.join(", ")}`,
+              pendingBranches,
+            });
+          }
           await openSemesterRegistration(id);
           nextStatus = "REGISTRATION_OPEN";
           notify = {
@@ -984,13 +1184,6 @@ export const advanceSemester = async (
       where: { id },
       data: { status: nextStatus as any },
     });
-
-    if (nextStatus === "REGISTRATION_OPEN" && action === "approve") {
-      await prisma.branchAllocation.updateMany({
-        where: { semesterId: id },
-        data: { status: "APPROVED", isApproved: true },
-      });
-    }
 
     if (notify) await NOTIFY(notify);
 
@@ -1685,50 +1878,13 @@ export const registerSubjects = async (
       studentBranch = allocations[0].branch;
     }
 
-    // Check mandatory subjects
-    const mandatoryMissing = allocations
-      .filter((a: any) => a.isMandatory)
-      .filter((a: any) => !subjectIds.includes(a.subjectId));
-
-    if (mandatoryMissing.length > 0) {
+    // Check mandatory subjects and elective group limits (shared with bulk import)
+    const validation = validateRegistrationSubjectIds(subjectIds, allocations);
+    if (!validation.ok) {
       return res.status(400).json({
-        error: `Missing mandatory subjects: ${mandatoryMissing.map((m: any) => m.subject.name).join(", ")}`,
-        attribution: "SreeCharan", // matching error structure
+        error: validation.error,
+        attribution: "SreeCharan",
       });
-    }
-
-    // Check elective group limits
-    const electiveGroups: Record<
-      string,
-      { limit: number; names: string[]; selectedCount: number }
-    > = {};
-    allocations.forEach((a: any) => {
-      if (a.electiveGroupId && a.electiveGroupId.trim() !== "") {
-        if (!electiveGroups[a.electiveGroupId]) {
-          electiveGroups[a.electiveGroupId] = {
-            limit: a.electiveLimit || 1,
-            names: [],
-            selectedCount: 0,
-          };
-        }
-        electiveGroups[a.electiveGroupId].names.push(a.subject.name);
-        if (subjectIds.includes(a.subjectId)) {
-          electiveGroups[a.electiveGroupId].selectedCount++;
-        }
-      }
-    });
-
-    for (const [groupId, group] of Object.entries(electiveGroups)) {
-      if (group.selectedCount > group.limit) {
-        return res.status(400).json({
-          error: `Group ${groupId}: You can only select ${group.limit} subjects from: ${group.names.join(", ")}`,
-        });
-      }
-      if (group.selectedCount < group.limit) {
-        return res.status(400).json({
-          error: `Group ${groupId}: Please select exactly ${group.limit} subjects from: ${group.names.join(", ")}`,
-        });
-      }
     }
 
     // 3. Perform subject registration (atomic — block duplicate semester enrollments)

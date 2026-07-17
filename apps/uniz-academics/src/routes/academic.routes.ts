@@ -51,6 +51,9 @@ import {
   confirmDirectPublish,
   downloadRegistrationPdf,
   downloadBulkRegistrationPdfs,
+  downloadRegistrationSubjectsTemplate,
+  uploadRegistrationSubjects,
+  uploadRegistrationResponses,
 } from "../controllers/registration.controller";
 import {
   getSeatingTemplate,
@@ -149,6 +152,17 @@ router.post("/student/register", registerSubjects);
 router.get("/student/current/:studentId", getCurrentSubjects);
 router.get("/student/registration/pdf", downloadRegistrationPdf);
 router.get("/registrations/pdf/bulk", downloadBulkRegistrationPdfs);
+router.get("/registration/subjects/template", downloadRegistrationSubjectsTemplate);
+router.post(
+  "/registration/subjects/upload",
+  upload.single("file"),
+  uploadRegistrationSubjects,
+);
+router.post(
+  "/registration/upload",
+  upload.single("file"),
+  uploadRegistrationResponses,
+);
 
 router.get("/export", exportAcademicData);
 router.get("/registrations/tracking", getRegistrationTracking);

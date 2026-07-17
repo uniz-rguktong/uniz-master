@@ -135,6 +135,20 @@ export const GET_SUBJECTS = `${BASE_URL}/academics/subjects`;
 export const ADD_SUBJECT = `${BASE_URL}/academics/subjects/add`;
 export const UPLOAD_ATTENDANCE = `${BASE_URL}/academics/attendance/upload`;
 export const UPLOAD_GRADES = `${BASE_URL}/academics/grades/upload`;
+export const GET_REGISTRATION_SUBJECTS_TEMPLATE = (
+  semesterId?: string,
+  branch?: string,
+  year?: string,
+) => {
+  const params = new URLSearchParams();
+  if (semesterId) params.set("semesterId", semesterId);
+  if (branch && branch !== "all") params.set("branch", branch);
+  if (year && year !== "all") params.set("year", year);
+  const qs = params.toString();
+  return `${BASE_URL}/academics/registration/subjects/template${qs ? `?${qs}` : ""}`;
+};
+export const UPLOAD_REGISTRATION_SUBJECTS = `${BASE_URL}/academics/registration/subjects/upload`;
+export const UPLOAD_REGISTRATION_RESPONSES = `${BASE_URL}/academics/registration/upload`;
 export const UPLOAD_IMAGE = `${BASE_URL}/files/image/upload`;
 
 export const GET_ATTENDANCE_TEMPLATE = (

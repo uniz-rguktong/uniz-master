@@ -34,6 +34,15 @@ import { randomUUID } from "crypto";
 import { redis, notificationQueue } from "../utils/redis.util";
 import { processNextBatch } from "../services/upload.service";
 import { generateResultPdf, generateAttendancePdf } from "../utils/pdf.util";
+import {
+  loadTemplateSubjectsFromSemester,
+  resolveAcademicSemesterId,
+} from "../utils/semester-subject.util";
+import {
+  validateAttendanceUploadRows,
+  validateGradesUploadRows,
+} from "../services/academic-upload-validation.service";
+import { uploadRejected } from "../utils/excel-strict-validation.util";
 
 async function loadAcademicCodesBySubject(
   subjectIds: string[],
@@ -42,6 +51,9 @@ async function loadAcademicCodesBySubject(
   if (!subjectIds.length) return new Map();
 
   let semesterId = opts?.academicSemesterId;
+  if (semesterId) {
+    semesterId = (await resolveAcademicSemesterId(semesterId)) || semesterId;
+  }
   if (!semesterId) {
     const sem = await prisma.academicSemester.findFirst({
       where: {
@@ -1975,30 +1987,20 @@ export const getGradesTemplate = async (
       console.log(`[Academics] Found ${students.length} students via search.`);
     }
 
-    const subjects = await prisma.subject.findMany({
-      where: {
-        department:
-          branch && String(branch).toUpperCase() !== "ALL"
-            ? (branch as string)
-            : undefined,
-        semester: semesterId
-          ? { contains: semesterId as string, mode: "insensitive" }
-          : undefined,
-        code:
-          year && String(year).toUpperCase() !== "ALL"
-            ? { contains: year as string, mode: "insensitive" }
-            : undefined,
-      },
+    const resolvedSemesterId = await resolveAcademicSemesterId(
+      semesterId as string | undefined,
+    );
+    const { subjects } = await loadTemplateSubjectsFromSemester({
+      academicSemesterId: resolvedSemesterId || (semesterId as string),
+      branch: branch as string | undefined,
+      academicYear: year as string | undefined,
+      batch: batch as string | undefined,
+      subjectCode: subjectCodeStr,
+      approvedOnly: true,
     });
     console.log(`[Academics] Found ${subjects.length} matching subjects.`);
 
-    const activeSubjects = isAllSubjects
-      ? subjects
-      : subjects.filter(
-          (s: any) =>
-            s.code.toUpperCase() === subjectCodeStr ||
-            s.code.toUpperCase().includes(subjectCodeStr),
-        );
+    const activeSubjects = subjects;
     console.log(
       `[Academics] Processing template for ${students.length} students across ${activeSubjects.length} subjects.`,
     );
@@ -2007,7 +2009,7 @@ export const getGradesTemplate = async (
       activeSubjects.map((s: any) => s.id),
       {
         branch: branch as string | undefined,
-        academicSemesterId: semesterId as string | undefined,
+        academicSemesterId: resolvedSemesterId || (semesterId as string),
       },
     );
 
@@ -2023,23 +2025,19 @@ export const getGradesTemplate = async (
           return;
         }
 
-        const rowSemId = (semesterId as string) || sub.semester;
-        const finalSemId =
-          rowSemId && year && !rowSemId.includes(String(year).toUpperCase())
-            ? `${String(year).toUpperCase()}-${rowSemId.toUpperCase()}`
-            : rowSemId;
+        const rowSemId = sub.semester;
 
         headers.push([
           s.username,
           s.name,
           sub.code,
           resolveDisplaySubjectCode({
-            customCode: academicCodes.get(sub.id),
+            customCode: sub.academicCode || academicCodes.get(sub.id),
             catalogCode: sub.code,
           }),
           sub.name,
           "", // Subject Name Override
-          finalSemId,
+          rowSemId,
           "", // Grade
           "", // Pass Date
           "", // Is Remedial
@@ -2100,20 +2098,30 @@ export const uploadGrades = async (req: any, res: Response) => {
       headers.push(cell.value ? String(cell.value).trim() : "");
     }
 
-    // Header Validation
-    const requiredHeaders = [
-      "Student ID",
-      "Subject Code",
-      "Semester ID",
-      "Grade (EX, A, B, C, D, E, R)",
-    ];
-    const missingHeaders = requiredHeaders.filter((h) => !headers.includes(h));
+    // Header Validation — Subject Code or Academic Code required
+    const hasStudentId = headers.includes("Student ID");
+    const hasSemesterId = headers.includes("Semester ID");
+    const hasGrade = headers.includes("Grade (EX, A, B, C, D, E, R)");
+    const hasSubjectCode =
+      headers.includes("Subject Code") ||
+      headers.includes("Academic Code") ||
+      headers.includes("Internal Code");
 
-    if (missingHeaders.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: `Invalid Excel format. Missing required columns: ${missingHeaders.join(", ")}`,
-      });
+    if (!hasStudentId || !hasSemesterId || !hasGrade || !hasSubjectCode) {
+      const missing: string[] = [];
+      if (!hasStudentId) missing.push("Student ID");
+      if (!hasSubjectCode) missing.push("Subject Code or Academic Code");
+      if (!hasSemesterId) missing.push("Semester ID");
+      if (!hasGrade) missing.push("Grade (EX, A, B, C, D, E, R)");
+      return res.status(400).json(
+        uploadRejected(
+          missing.map((field) => ({
+            field,
+            message: `Missing required column: ${field}`,
+          })),
+          `Invalid Excel format. Missing required columns: ${missing.join(", ")}`,
+        ),
+      );
     }
 
     worksheet.eachRow((row, rowNumber) => {
@@ -2131,6 +2139,11 @@ export const uploadGrades = async (req: any, res: Response) => {
       }
       rows.push(rowData);
     });
+
+    const validationErrors = await validateGradesUploadRows(rows);
+    if (validationErrors.length > 0) {
+      return res.status(400).json(uploadRejected(validationErrors));
+    }
 
     const total = rows.length; // 1. Upload to Cloudinary (AWAIT for Audit consistency)
     const uploadToCloudinary = async (buffer: Buffer, filename: string) => {
@@ -2281,20 +2294,15 @@ export const getAttendanceTemplate = async (
     const students = profilesRes.data.students || [];
     console.log(`[Academics] Found ${students.length} students via search.`);
 
-    const subjects = await prisma.subject.findMany({
-      where: {
-        department:
-          branch && String(branch).toUpperCase() !== "ALL"
-            ? (branch as string)
-            : undefined,
-        semester: semesterId
-          ? { contains: semesterId as string, mode: "insensitive" }
-          : undefined,
-        code:
-          year && String(year).toUpperCase() !== "ALL"
-            ? { contains: year as string, mode: "insensitive" }
-            : undefined,
-      },
+    const resolvedSemesterId = await resolveAcademicSemesterId(
+      semesterId as string | undefined,
+    );
+    const { subjects } = await loadTemplateSubjectsFromSemester({
+      academicSemesterId: resolvedSemesterId || (semesterId as string),
+      branch: branch as string | undefined,
+      academicYear: year as string | undefined,
+      batch: batch as string | undefined,
+      approvedOnly: true,
     });
     console.log(`[Academics] Found ${subjects.length} subjects.`);
     console.log(
@@ -2305,7 +2313,7 @@ export const getAttendanceTemplate = async (
       subjects.map((s: any) => s.id),
       {
         branch: branch as string | undefined,
-        academicSemesterId: semesterId as string | undefined,
+        academicSemesterId: resolvedSemesterId || (semesterId as string),
       },
     );
 
@@ -2322,24 +2330,19 @@ export const getAttendanceTemplate = async (
           return;
         }
 
-        const rowSemId = (semesterId as string) || sub.semester;
-        // Standardize to YEAR-SEM-ID if not already prefixed
-        const finalSemId =
-          rowSemId && year && !rowSemId.includes(String(year).toUpperCase())
-            ? `${String(year).toUpperCase()}-${rowSemId.toUpperCase()}`
-            : rowSemId;
+        const rowSemId = sub.semester;
 
         headers.push([
           s.username,
           s.name,
           sub.code,
           resolveDisplaySubjectCode({
-            customCode: academicCodes.get(sub.id),
+            customCode: sub.academicCode || academicCodes.get(sub.id),
             catalogCode: sub.code,
           }),
           sub.name,
           "", // Subject Name Override
-          finalSemId,
+          rowSemId,
           "", // Total
           "", // Attended
           batch || "", // Batch
@@ -2385,21 +2388,31 @@ export const uploadAttendance = async (req: any, res: Response) => {
       headers.push(cell.value ? String(cell.value).trim() : "");
     }
 
-    // Header Validation
-    const requiredHeaders = [
-      "Student ID",
-      "Subject Code",
-      "Semester ID",
-      "Total Classes Occurred",
-      "Total Classes Attended",
-    ];
-    const missingHeaders = requiredHeaders.filter((h) => !headers.includes(h));
+    const hasStudentId = headers.includes("Student ID");
+    const hasSemesterId = headers.includes("Semester ID");
+    const hasTotal = headers.includes("Total Classes Occurred");
+    const hasAttended = headers.includes("Total Classes Attended");
+    const hasSubjectCode =
+      headers.includes("Subject Code") ||
+      headers.includes("Academic Code") ||
+      headers.includes("Internal Code");
 
-    if (missingHeaders.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: `Invalid Excel format. Missing required columns: ${missingHeaders.join(", ")}`,
-      });
+    if (!hasStudentId || !hasSemesterId || !hasTotal || !hasAttended || !hasSubjectCode) {
+      const missing: string[] = [];
+      if (!hasStudentId) missing.push("Student ID");
+      if (!hasSubjectCode) missing.push("Subject Code or Academic Code");
+      if (!hasSemesterId) missing.push("Semester ID");
+      if (!hasTotal) missing.push("Total Classes Occurred");
+      if (!hasAttended) missing.push("Total Classes Attended");
+      return res.status(400).json(
+        uploadRejected(
+          missing.map((field) => ({
+            field,
+            message: `Missing required column: ${field}`,
+          })),
+          `Invalid Excel format. Missing required columns: ${missing.join(", ")}`,
+        ),
+      );
     }
 
     worksheet.eachRow((row, rowNumber) => {
@@ -2417,6 +2430,11 @@ export const uploadAttendance = async (req: any, res: Response) => {
       }
       rows.push(rowData);
     });
+
+    const validationErrors = await validateAttendanceUploadRows(rows);
+    if (validationErrors.length > 0) {
+      return res.status(400).json(uploadRejected(validationErrors));
+    }
 
     const total = rows.length; // 1. Upload to Cloudinary (AWAIT for Audit consistency)
     const uploadToCloudinaryAtt = async (buffer: Buffer, filename: string) => {
