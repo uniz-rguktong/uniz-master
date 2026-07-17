@@ -44,6 +44,7 @@ import {
 import { useRecoilState } from "recoil";
 import { subjectsAtom } from "../../../store/atoms";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { SubjectCode } from "@/components/admin/SubjectCode";
 
 export default function SubjectManagement() {
   const [subjectsState, setSubjectsState] = useRecoilState(subjectsAtom);
@@ -316,13 +317,9 @@ export default function SubjectManagement() {
                   <div className="p-2.5 bg-zinc-50 rounded-lg text-zinc-900 border border-zinc-100 transition-colors duration-300">
                     <BookText size={18} />
                   </div>
-                  <div className="flex flex-col min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-semibold tracking-[0.14em] text-zinc-400">
-                        {sub.code}
-                      </span>
-                    </div>
-                    <h3 className="text-[14px] font-bold text-zinc-900 tracking-tight leading-tight truncate">
+                  <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                    <SubjectCode code={sub.code} />
+                    <h3 className="text-[14px] font-bold text-zinc-900 tracking-tight leading-tight line-clamp-2">
                       {sub.name}
                     </h3>
                   </div>

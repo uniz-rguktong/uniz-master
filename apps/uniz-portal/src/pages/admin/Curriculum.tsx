@@ -31,6 +31,7 @@ import {
   adminModalTitleClass,
   adminModalDescClass,
 } from "../../components/admin/admin-ui";
+import { SubjectCode } from "../../components/admin/SubjectCode";
 import { cn } from "../../utils/cn";
 
 interface Subject {
@@ -363,11 +364,9 @@ export default function CurriculumManager() {
               </div>
 
               {/* Card Body */}
-              <div className="space-y-1 mb-5">
-                <p className="text-[11px] font-semibold text-zinc-400 tracking-[0.12em]">
-                  {sub.code}
-                </p>
-                <h3 className="text-[16px] font-semibold text-zinc-900 line-clamp-1 leading-tight">
+              <div className="mb-5 space-y-2">
+                <SubjectCode code={sub.code} />
+                <h3 className="text-[16px] font-semibold text-zinc-900 line-clamp-2 leading-tight">
                   {sub.name}
                 </h3>
               </div>
