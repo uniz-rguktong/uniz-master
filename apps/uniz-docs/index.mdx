@@ -1,86 +1,41 @@
 ---
 title: "UniZ Documentation"
-description: "The university intelligence engine for RGUKT — manage academics, outpass, attendance, and campus operations in one platform."
+description: "Complete UniZ docs — architecture, services, deploy, APIs, and role guides for RGUKT."
 ---
 
-Welcome to UniZ, the enterprise-grade university administration platform built for RGUKT. UniZ unifies student academics, outpass management, attendance tracking, and campus operations into a single intelligent ecosystem accessible from any device.
+Welcome to UniZ documentation. Use search (**Ctrl/Cmd + K**) or the [Search index](/search-index) to find **how something is implemented** and **what to change**.
 
 <CardGroup cols={2}>
-  <Card title="Quick Start" icon="rocket" href="/quickstart">
-    Get up and running with UniZ in minutes — install the app and log in.
+  <Card title="System architecture" icon="sitemap" href="/system/overview">
+    Mermaid maps of Pages, Traefik, gateway-api, and data stores.
   </Card>
-  <Card title="Roles & Access" icon="users" href="/roles">
-    Understand the different roles and what each user can do on the platform.
+  <Card title="Search index" icon="magnifying-glass" href="/search-index">
+    Keyword table for every major topic.
   </Card>
-  <Card title="API Reference" icon="code" href="/api/auth/login">
-    Explore the full REST API with request and response examples.
+  <Card title="Deploy & ops" icon="rocket" href="/ops/deploy">
+    VPS GHCR deploy, Cloudflare Pages, runbooks.
   </Card>
-  <Card title="Student Guide" icon="graduation-cap" href="/students/login">
-    Step-by-step guides for students — grades, outpass, attendance, and more.
+  <Card title="API gateway map" icon="code" href="/api/platform/gateway">
+    Every /api/v1 prefix → upstream service.
+  </Card>
+  <Card title="Student guide" icon="graduation-cap" href="/students/login">
+    Login, academics, profile.
+  </Card>
+  <Card title="How to add an API" icon="plus" href="/howto/add-api-route">
+    Service → gateway → portal → docs checklist.
   </Card>
 </CardGroup>
 
-## What you can do with UniZ
+## Production shape (one glance)
 
-UniZ is designed for every role in the university ecosystem — students, faculty, wardens, security, and administrators all have tailored features built for their workflows.
-
-<CardGroup cols={2}>
-  <Card
-    title="View Grades & Attendance"
-    icon="chart-bar"
-    href="/students/academics"
-  >
-    Students access real-time academic records including grades, GPA, and
-    subject-wise attendance.
-  </Card>
-  <Card
-    title="Semester Registration"
-    icon="clipboard-list"
-    href="/students/academics"
-  >
-    Register subjects in-portal when your semester window is open — mandatory
-    and elective groups enforced automatically.
-  </Card>
-  <Card
-    title="Outpass & Outing Requests"
-    icon="door-open"
-    href="/students/outpass"
-  >
-    Submit and track outpass or outing requests through a multi-level approval
-    workflow.
-  </Card>
-  <Card title="Admin Approvals" icon="check-circle" href="/admin/approvals">
-    Caretakers, wardens, and directors approve or reject requests from a unified
-    dashboard.
-  </Card>
-  <Card title="Semester Builder" icon="calendar" href="/admin/semester-registration">
-    Webmasters configure semesters, open IST registration windows, and track
-    student enrollment.
-  </Card>
-  <Card title="Security Gate Portal" icon="shield" href="/admin/security">
-    Security staff verify and manage student campus entry and exit in real time.
-  </Card>
-</CardGroup>
-
-## Get started in three steps
-
-<Steps>
-  <Step title="Install the app">
-    Open the UniZ portal in your browser and install it as a PWA on your device
-    — works on iOS, Android, and desktop.
-  </Step>
-  <Step title="Log in with your credentials">
-    Use your university-issued username and password to log in. Students use the
-    Student Portal; faculty and staff use the Admin Portal.
-  </Step>
-  <Step title="Start using your features">
-    Students can immediately view grades and request outpasses. Admins and
-    faculty have role-specific dashboards ready on first login.
-  </Step>
-</Steps>
+```mermaid
+flowchart LR
+  FE[Cloudflare Pages\nportal + landing] --> API[VPS Traefik]
+  API --> GW[gateway-api]
+  GW --> Svc[auth user academics notifications]
+  Svc --> Data[(Postgres + Redis)]
+```
 
 <Note>
-  UniZ is built by RGUKT students, for RGUKT students. If you run into issues,
-  use the Help & Support section inside the portal or contact your system
-  administrator.
+  Outpass/outing UI and `/api/v1/requests/*` (except grievance) are **disabled** in production. See [Feature flags](/ops/feature-flags).
 </Note>

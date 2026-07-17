@@ -1,7 +1,11 @@
 ---
 title: "Outpass"
-description: "Submit and manage multi-day leave requests. Outpasses require sequential approval from a caretaker, warden, SWO, and finally the dean or director before a student may leave campus."
+description: "Submit and manage multi-day leave requests. Disabled in production unless ENABLE_OUTPASS_OUTING=true."
 ---
+
+<Warning>
+  In current production the gateway returns **503** for `/api/v1/requests/*` (except grievance). Scale outpass and set flags before using these endpoints — [Revive outpass](/howto/revive-outpass).
+</Warning>
 
 An outpass is a multi-day leave request. After you submit one, it moves through a chain of approvers before the student is permitted to exit. Use the [Approvals](/api/requests/approvals) endpoints to advance or reject a request at each level.
 

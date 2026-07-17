@@ -24,7 +24,52 @@
             "pages": [
               "introduction",
               "quickstart",
-              "roles"
+              "roles",
+              "search-index"
+            ]
+          },
+          {
+            "group": "System Architecture",
+            "pages": [
+              "system/overview",
+              "system/topology",
+              "system/request-flow",
+              "system/data-stores",
+              "system/security"
+            ]
+          },
+          {
+            "group": "Services",
+            "pages": [
+              "services/gateway",
+              "services/auth",
+              "services/user",
+              "services/academics",
+              "services/notifications",
+              "services/landing",
+              "services/docs",
+              "services/parked"
+            ]
+          },
+          {
+            "group": "Deploy & Ops",
+            "pages": [
+              "ops/deploy",
+              "ops/cloudflare-pages",
+              "ops/feature-flags",
+              "ops/runbooks",
+              "health"
+            ]
+          },
+          {
+            "group": "How it works / How to change",
+            "pages": [
+              "howto/find-anything",
+              "howto/add-api-route",
+              "howto/change-frontend",
+              "howto/database-migrations",
+              "howto/scale-and-hpa",
+              "howto/revive-outpass"
             ]
           },
           {
@@ -32,8 +77,8 @@
             "pages": [
               "students/login",
               "students/academics",
-              "students/outpass",
-              "students/profile"
+              "students/profile",
+              "students/outpass"
             ]
           },
           {
@@ -59,6 +104,13 @@
         "tab": "API Reference",
         "groups": [
           {
+            "group": "Platform",
+            "pages": [
+              "api/platform/gateway",
+              "api/platform/health"
+            ]
+          },
+          {
             "group": "Authentication",
             "pages": [
               "api/auth/login",
@@ -76,20 +128,29 @@
             ]
           },
           {
-            "group": "Outpass & Outing",
-            "pages": [
-              "api/requests/outpass",
-              "api/requests/outing",
-              "api/requests/approvals",
-              "api/requests/grievances"
-            ]
-          },
-          {
-            "group": "Profiles",
+            "group": "Profiles & CMS",
             "pages": [
               "api/profile/student",
               "api/profile/faculty",
-              "api/profile/admin"
+              "api/profile/admin",
+              "api/cms/notices"
+            ]
+          },
+          {
+            "group": "Comms & Files",
+            "pages": [
+              "api/comms/notifications",
+              "api/comms/mail",
+              "api/comms/files"
+            ]
+          },
+          {
+            "group": "Requests (gated)",
+            "pages": [
+              "api/requests/grievances",
+              "api/requests/outpass",
+              "api/requests/outing",
+              "api/requests/approvals"
             ]
           }
         ]
