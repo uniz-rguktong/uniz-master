@@ -23,7 +23,7 @@ uniz-master/
 │   ├── architecture/        # topology, monitoring, scaling, URLs
 │   ├── api/postman/         # Postman collections + globals
 │   └── internal/            # brain/, features/, perf/, reports/, archive/
-├── infra/                   # K3s manifests (core-infra/kubernetes)
+├── infra/                   # K3s manifests, nginx, compose
 ├── .github/workflows/       # CI + VPS deploy + Cloudflare Pages
 ├── Makefile                 # make up / seed (local only)
 ├── package.json             # workspaces root
@@ -43,7 +43,7 @@ Compose never runs on the VPS. Production images use `docker/prod/Dockerfile.ser
 
 ## Do not rename
 
-`apps/*`, `packages/*`, `docker/prod/`, `infra/core-infra/kubernetes/**`, and `.github/workflows/*` are wired into CI and K3s — keep paths stable.
+`apps/*`, `packages/*`, `docker/prod/`, `infra/kubernetes/**`, and `.github/workflows/*` are wired into CI and K3s — keep paths stable.
 
 ## Local-only (gitignored)
 

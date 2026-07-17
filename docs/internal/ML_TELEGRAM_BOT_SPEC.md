@@ -67,7 +67,7 @@ When a user submits a query (e.g., _"What is my current attendance?"_), the ML m
 
 1.  **Environment Setup**:
     - Clone `uniz-master`.
-    - Retrieve database credentials from `infra/core-infra/.env`.
+    - Retrieve database credentials from `infra/.env`.
 2.  **Bot Initialization**:
     - Build a Python Flask/FastAPI service.
     - Implement `python-telegram-bot` for webhook/polling management.

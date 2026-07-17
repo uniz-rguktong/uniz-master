@@ -81,10 +81,10 @@ pm2 startup
 
 ### 2. Nginx Proximity Config
 
-Deploy the optimized Nginx configuration located in `infra/core-infra/nginx/` to the system:
+Deploy the optimized Nginx configuration located in `infra/nginx/` to the system:
 
 ```bash
-sudo cp infra/core-infra/nginx/nginx_optimized.conf /etc/nginx/nginx.conf
+sudo cp infra/nginx/nginx_optimized.conf /etc/nginx/nginx.conf
 sudo nginx -t && sudo systemctl restart nginx
 ```
 

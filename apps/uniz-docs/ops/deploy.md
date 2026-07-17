@@ -34,7 +34,7 @@ flowchart LR
 
 ## What gets deployed
 
-Changed services rebuild as GHCR images `ghcr.io/uniz-rguktong/...`. Kustomize under `infra/core-infra/kubernetes/base/` is applied; image tags updated on Deployments.
+Changed services rebuild as GHCR images `ghcr.io/uniz-rguktong/...`. Kustomize under `infra/kubernetes/base/` is applied; image tags updated on Deployments.
 
 ## Manual / emergency
 

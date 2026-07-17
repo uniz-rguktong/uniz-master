@@ -39,8 +39,8 @@ if [[ -f /etc/nginx/sites-available/uniz-api ]]; then
 fi
 
 echo "[migrate-api] Applying k8s ingress + configmap..."
-kubectl apply -f "$ROOT/infra/core-infra/kubernetes/base/shared/configmap.yaml"
-kubectl apply -f "$ROOT/infra/core-infra/kubernetes/base/shared/ingress.yaml"
+kubectl apply -f "$ROOT/infra/kubernetes/base/shared/configmap.yaml"
+kubectl apply -f "$ROOT/infra/kubernetes/base/shared/ingress.yaml"
 kubectl rollout restart deployment/uniz-gateway deployment/uniz-gateway-api 2>/dev/null || true
 
 echo "[migrate-api] Rebuilding portal (embeds VITE_API_URL at build time)..."

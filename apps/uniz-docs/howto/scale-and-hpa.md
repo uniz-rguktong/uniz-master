@@ -14,7 +14,7 @@ description: "Replica matrix, what to raise on burst days, and why maxing every 
 | notifications | 1 | 1 | — |
 | nginx gateway | 0 | — | parked |
 
-Manifests: `infra/core-infra/kubernetes/base/core/*.yaml`.
+Manifests: `infra/kubernetes/base/core/*.yaml`.
 
 ## Burst day playbook
 

@@ -205,7 +205,7 @@ Inbox endpoints (via gateway): `/api/v1/notifications/inbox`, `.../read`, `.../r
 
 ### K8s manifests
 
-`infra/core-infra/` — deployment YAMLs per service (e.g. `portal.yaml`, `auth-service.yaml`, `nginx/`).
+`infra/` — deployment YAMLs per service (e.g. `portal.yaml`, `auth-service.yaml`, `nginx/`).
 
 Service ↔ app dir mapping: `scripts/deploy/deploy-common.sh` → `infra_yaml_to_dir()`.
 
@@ -298,7 +298,7 @@ uniz-master/
 │   ├── uniz-landing-backend/
 │   └── uniz-android-twa/
 ├── packages/uniz-shared/       # @uniz/shared
-├── infra/core-infra/           # K8s manifests + nginx
+├── infra/           # K8s manifests + nginx
 ├── scripts/                    # Deploy, CI, VPS, Prisma
 ├── docker/prod/Dockerfile.service   # Multi-service monorepo image
 ├── .github/workflows/deploy.yml

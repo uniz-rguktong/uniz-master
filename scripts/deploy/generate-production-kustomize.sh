@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build infra/core-infra/kubernetes/overlays/production from image manifest.
+# Build infra/kubernetes/overlays/production from image manifest.
 # Prevents kubectl apply from resetting deployments to uniz-*:local (ImagePullBackOff on scale-up).
 set -euo pipefail
 
@@ -9,7 +9,7 @@ source "$(dirname "$0")/deploy-common.sh"
 
 MANIFEST="${1:-/root/.uniz_k8s_image_tags.json}"
 DEPLOY_SHA="${2:-}"
-OVERLAY="$ROOT/infra/core-infra/kubernetes/overlays/production"
+OVERLAY="$ROOT/infra/kubernetes/overlays/production"
 REGISTRY="${IMAGE_REGISTRY:-ghcr.io/uniz-rguktong}"
 
 mkdir -p "$OVERLAY"

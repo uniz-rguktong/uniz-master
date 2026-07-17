@@ -1,4 +1,4 @@
-# UniZ Core Infrastructure - Orchestration & Deployment
+# UniZ Infrastructure - Orchestration & Deployment
 
 ![Docker](https://img.shields.io/badge/Docker-24.x-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-1.28-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)
@@ -11,7 +11,7 @@
 
 ## Architecture Overview
 
-The Core Infrastructure module manages the environmental state and deployment orchestration for the entire UniZ ecosystem. It centralizes Kubernetes manifests, Docker Compose configurations, and system-wide scripts used for initializing databases, managing gateway routing, and executing global health checks. This repository is designed to support both local development via Docker and production-grade scaling via Kubernetes.
+The Infrastructure module manages the environmental state and deployment orchestration for the entire UniZ ecosystem. It centralizes Kubernetes manifests, Docker Compose configurations, and system-wide scripts used for initializing databases, managing gateway routing, and executing global health checks. This repository is designed to support both local development via Docker and production-grade scaling via Kubernetes.
 
 ## Service Map & Port Allocation
 
