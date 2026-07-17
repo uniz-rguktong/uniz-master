@@ -15,11 +15,25 @@ self.addEventListener("activate", (event) => {
 });
 
 // ─── Fetch Event (Required for PWA Installability) ───────────────────────────
+// Do NOT intercept cross-origin API calls (api-uniz.*) or /api/* — wrapping them
+// in event.respondWith(fetch()) duplicates the request in DevTools and can break
+// long-lived PDF job polling / binary downloads.
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-  // SPA navigations and API calls should not use a cache fallback that returns undefined.
   if (event.request.mode === "navigate") return;
 
+  let url;
+  try {
+    url = new URL(event.request.url);
+  } catch {
+    return;
+  }
+
+  // Let the page talk to the API gateway directly (one request, full CORS/auth).
+  if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith("/api/")) return;
+
+  // Same-origin static assets only — passthrough, no offline cache for APIs.
   event.respondWith(
     fetch(event.request).catch(function () {
       return caches.match(event.request).then(function (cached) {

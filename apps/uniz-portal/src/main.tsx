@@ -44,7 +44,7 @@ initializeGlobalInterceptor();
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/sw.js?v=3")
+      .register("/sw.js?v=4")
       .then((registration) => {
         console.log("[SW] Registered globally:", registration.scope);
       })

@@ -56,6 +56,15 @@ proxy.on("error", (err: Error, req: any, res: any) => {
   }
 });
 
+proxy.on("proxyRes", (proxyRes: any, req: any, res: any) => {
+  // Helmet on upstream sets CORP same-origin; that blocks the portal host
+  // from reading PDF/binary bodies even when CORS ACAO is present.
+  if (proxyRes.headers) {
+    delete proxyRes.headers["cross-origin-resource-policy"];
+  }
+  applyCorsHeaders(req, res);
+});
+
 // 1. Compression (Drastically reduces payload size)
 app.use(compression() as unknown as express.RequestHandler);
 
@@ -475,6 +484,9 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
   // Bypass Warp Engine for binary files or download routes to prevent corruption
   const isBinaryRequest =
     req.url.includes("/download/") ||
+    req.url.includes("/download?") ||
+    /\/download$/i.test(req.url) ||
+    /\/pdf\/jobs\/[^/]+\/download/i.test(req.url) ||
     req.url.endsWith(".pdf") ||
     req.url.endsWith(".xlsx") ||
     req.url.endsWith(".zip");
@@ -556,10 +568,12 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
           .catch(() => {});
       }
 
-      // Restore headers from upstream
-      Object.entries(response.headers).forEach(([k, v]) =>
-        res.setHeader(k, v as string),
-      );
+      // Restore headers from upstream (drop CORP so browser can read
+      // cross-origin PDF/JSON from api-uniz when portal is on another host).
+      Object.entries(response.headers).forEach(([k, v]) => {
+        if (String(k).toLowerCase() === "cross-origin-resource-policy") return;
+        res.setHeader(k, v as string);
+      });
       return res.status(response.status).send(response.data);
     } catch (e: any) {
       console.error("[Warp-Engine-Error]", e.message);

@@ -10,7 +10,13 @@ dotenv.config({ override: true });
 const app = express();
 const PORT = process.env.PORT || 3004;
 
-app.use(helmet());
+app.use(
+  helmet({
+    // Portal (uniz.rguktong.in) calls this API cross-origin; default CORP
+    // same-origin blocks reading PDF/binary responses in the browser.
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  }),
+);
 // app.use(compression());
 // app.use(cors());
 

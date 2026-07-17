@@ -232,51 +232,79 @@ export async function downloadFile(
     ...(cleanToken ? { Authorization: `Bearer ${cleanToken}` } : {}),
   };
 
+  const noCacheHeaders = {
+    ...authHeaders,
+    "Cache-Control": "no-cache",
+  };
+
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: authHeaders,
+      headers: noCacheHeaders,
+      cache: "no-store",
     });
 
-    // Async PDF jobs return 202 + jobId; poll then download.
-    if (response.status === 202) {
+    const contentType = String(response.headers.get("content-type") || "");
+    const looksJson = contentType.includes("application/json");
+
+    // Async PDF jobs return 202 + jobId (some proxies may surface 200 + queued).
+    if (response.status === 202 || (response.ok && looksJson)) {
       const queued = await response.json().catch(() => ({}));
-      const jobId = queued?.jobId as string | undefined;
-      if (!jobId) {
-        toast.error("Download queued but no job id was returned");
-        return;
-      }
-      toast.loading("Preparing PDF…", { id: `pdf-job-${jobId}` });
-      const statusPath =
-        typeof queued.monitorUrl === "string" && queued.monitorUrl.startsWith("http")
-          ? queued.monitorUrl
-          : `${BASE_URL_FROM_ENDPOINT(url)}/academics/registrations/pdf/jobs/${jobId}`;
-      const downloadPath =
-        typeof queued.downloadUrl === "string" && queued.downloadUrl.startsWith("http")
-          ? queued.downloadUrl
-          : `${BASE_URL_FROM_ENDPOINT(url)}/academics/registrations/pdf/jobs/${jobId}/download`;
+      if (queued?.queued && queued?.jobId) {
+        const jobId = String(queued.jobId);
+        toast.loading("Preparing PDF…", { id: `pdf-job-${jobId}` });
+        const apiBase = BASE_URL_FROM_ENDPOINT(url);
+        const statusPath = resolveApiPath(
+          queued.monitorUrl,
+          `${apiBase}/academics/registrations/pdf/jobs/${jobId}`,
+          apiBase,
+        );
+        const downloadPath = resolveApiPath(
+          queued.downloadUrl,
+          `${apiBase}/academics/registrations/pdf/jobs/${jobId}/download`,
+          apiBase,
+        );
 
-      const ready = await pollPdfJob(statusPath, authHeaders, jobId);
-      if (!ready) {
-        toast.error("PDF generation timed out. Please try again.", {
-          id: `pdf-job-${jobId}`,
+        const ready = await pollPdfJob(statusPath, noCacheHeaders, jobId);
+        if (!ready) {
+          toast.error("PDF generation timed out. Please try again.", {
+            id: `pdf-job-${jobId}`,
+          });
+          return;
+        }
+
+        const fileRes = await fetch(downloadPath, {
+          method: "GET",
+          headers: noCacheHeaders,
+          cache: "no-store",
         });
+        if (!fileRes.ok) {
+          const data = await fileRes.json().catch(() => ({}));
+          handleHttpError(fileRes.status, data, true, downloadPath);
+          toast.dismiss(`pdf-job-${jobId}`);
+          return;
+        }
+        const fileType = String(fileRes.headers.get("content-type") || "");
+        if (fileType.includes("application/json")) {
+          const data = await fileRes.json().catch(() => ({}));
+          toast.error(data.message || "PDF download failed", {
+            id: `pdf-job-${jobId}`,
+          });
+          return;
+        }
+        const blob = await fileRes.blob();
+        const name = ensurePdfFilename(queued.filename || fileName);
+        triggerBrowserDownload(blob, name);
+        toast.success("Download started", { id: `pdf-job-${jobId}` });
         return;
       }
 
-      const fileRes = await fetch(downloadPath, {
-        method: "GET",
-        headers: authHeaders,
-      });
-      if (!fileRes.ok) {
-        const data = await fileRes.json().catch(() => ({}));
-        handleHttpError(fileRes.status, data, true, downloadPath);
-        toast.dismiss(`pdf-job-${jobId}`);
+      // JSON response already consumed — never fall through to blob().
+      if (!response.ok || queued?.success === false) {
+        handleHttpError(response.status, queued, true, url);
         return;
       }
-      const blob = await fileRes.blob();
-      triggerBrowserDownload(blob, queued.filename || fileName);
-      toast.success("Download started", { id: `pdf-job-${jobId}` });
+      toast.error(queued?.message || "Unexpected JSON response for download");
       return;
     }
 
@@ -290,21 +318,46 @@ export async function downloadFile(
     triggerBrowserDownload(blob, fileName);
     toast.success("Download started");
   } catch (error: any) {
-    toast.error("Failed to download file. Please try again.");
+    const detail = error?.message ? ` (${error.message})` : "";
+    toast.error(`Failed to download file${detail}. Please try again.`);
     console.error("Download error:", error);
   }
 }
 
 function BASE_URL_FROM_ENDPOINT(endpoint: string): string {
   try {
-    const u = new URL(endpoint);
-    // strip trailing /api/v1/... down to origin + /api/v1 if present
+    const u = new URL(endpoint, typeof window !== "undefined" ? window.location.origin : undefined);
     const idx = u.pathname.indexOf("/api/v1");
     if (idx >= 0) return `${u.origin}/api/v1`;
     return u.origin;
   } catch {
-    return "";
+    return typeof window !== "undefined" ? `${window.location.origin}/api/v1` : "";
   }
+}
+
+/** Join relative API paths like `/academics/...` onto `/api/v1`. */
+function resolveApiPath(
+  maybeRelative: unknown,
+  fallback: string,
+  apiBase: string,
+): string {
+  if (typeof maybeRelative !== "string" || !maybeRelative.trim()) return fallback;
+  const raw = maybeRelative.trim();
+  if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
+  if (raw.startsWith("/api/v1/")) {
+    try {
+      return `${new URL(apiBase).origin}${raw}`;
+    } catch {
+      return raw;
+    }
+  }
+  if (raw.startsWith("/")) return `${apiBase.replace(/\/$/, "")}${raw}`;
+  return `${apiBase.replace(/\/$/, "")}/${raw}`;
+}
+
+function ensurePdfFilename(name: string): string {
+  const base = String(name || "download").trim() || "download";
+  return /\.pdf$/i.test(base) ? base : `${base}.pdf`;
 }
 
 async function pollPdfJob(
@@ -315,7 +368,10 @@ async function pollPdfJob(
 ): Promise<boolean> {
   const started = Date.now();
   while (Date.now() - started < timeoutMs) {
-    const res = await fetch(statusUrl, { headers });
+    const res = await fetch(statusUrl, {
+      headers,
+      cache: "no-store",
+    });
     if (res.ok) {
       const data = await res.json().catch(() => ({}));
       if (data.status === "done") return true;
