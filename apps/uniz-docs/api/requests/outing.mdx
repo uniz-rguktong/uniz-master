@@ -1,7 +1,11 @@
 ---
 title: "Outing"
-description: "Submit and list short-duration same-day exit requests. Outings are simpler than outpasses and are typically used for brief trips off campus within a single day."
+description: "Same-day outing API. Disabled in production unless ENABLE_OUTPASS_OUTING=true — see Revive outpass."
 ---
+
+<Warning>
+  Production gateway returns **503** for outing routes while outpass is parked. See [Revive outpass](/howto/revive-outpass).
+</Warning>
 
 An outing is a short-duration, same-day exit request. Unlike an [outpass](/api/requests/outpass) — which covers multi-day absences and requires a full approval chain — an outing covers a brief window on a single day with a simpler workflow.
 

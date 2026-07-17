@@ -1,0 +1,38 @@
+---
+title: "Docs service (Mintlify)"
+description: "This documentation site — apps/uniz-docs, served at /docs via gateway proxy."
+---
+
+## Role
+
+Mintlify MDX documentation for UniZ operators and API consumers.
+
+| | |
+|--|--|
+| **Code** | `apps/uniz-docs/` |
+| **Config** | `docs.json` (navigation) |
+| **K8s** | `uniz-docs-service:3333` |
+| **Public URL** | `https://api-uniz.rguktong.in/docs` |
+
+## Runtime (current)
+
+Dockerfile runs `mint dev` behind nginx (`docker-entrypoint.sh`). Gateway proxies `/docs` → docs Service. Health: nginx `/health` returns JSON quickly; root `/` hits Mintlify.
+
+<Warning>
+  Running Mintlify **dev** in production is CPU-heavy. Long-term: `mintlify export` → static nginx or Cloudflare Pages (`docs.rguktong.in`), then park the Deployment.
+</Warning>
+
+## How to edit these docs
+
+1. Edit/add MDX under `apps/uniz-docs/`
+2. Register the page in `docs.json`
+3. Preview: `cd apps/uniz-docs && npx mintlify dev`
+4. Commit & push — VPS deploy rebuilds `uniz-docs-service` when docs paths change
+5. Keep [search-index](/search-index) updated when adding major topics
+
+## Writing standards
+
+- YAML frontmatter: `title`, `description` (searchable)
+- Prefer Mermaid for architecture
+- Link to **file paths** so “how was this implemented?” is grep-friendly
+- Flag production-gated features (outpass) clearly

@@ -1,29 +1,47 @@
 ---
 title: "Health Check"
-description: "Per-service and platform health endpoints"
+description: "Per-service /health and gateway aggregate /api/v1/system/health — probes, cache, troubleshooting."
 ---
 
 ## Service health
 
-Each microservice exposes a health endpoint. Responses include `attribution` metadata on all JSON payloads.
+Each microservice exposes `/health` (gateway prefixes it under `/api/v1/<service>/health`).
 
 ```bash
-curl https://api-uniz.rguktong.in/api/v1/auth/health
+curl -s https://api-uniz.rguktong.in/api/v1/auth/health
+curl -s https://api-uniz.rguktong.in/api/v1/notifications/health
 ```
 
-**200 OK**
+Typical **200**:
 
 ```json
 {
   "status": "ok",
   "service": "uniz-auth-service",
-  "attribution": "SreeCharan",
-  "meta": { "attribution": "SreeCharan" }
+  "attribution": "SreeCharan"
 }
 ```
 
-## Platform health
+## Platform aggregate
 
-`GET /api/v1/system/health` (via gateway) returns aggregated status for all services — Auth, User, Academics, Outpass, Mail, Notifications, and Docs.
+```bash
+curl -s https://api-uniz.rguktong.in/api/v1/system/health | jq .status
+```
 
-See [Admin Profile — System health check](/api/profile/admin#system-health-check) for the full response schema.
+See [Platform health API](/api/platform/health) for cache behavior and optional services.
+
+## Docs pod
+
+```bash
+curl -s https://api-uniz.rguktong.in/docs/health
+```
+
+Nginx in the docs container returns JSON without rendering Mintlify.
+
+## Troubleshooting
+
+| Observation | Action |
+|-------------|--------|
+| `files` / `mail` unhealthy | ConfigMap must point to user / notifications URLs |
+| Stale `down` after fix | `redis-cli DEL gateway:system_health_aggregate` |
+| Docs slow in aggregate | Optional service; prefer `/docs/health` path in probes |

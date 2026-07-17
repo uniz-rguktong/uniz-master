@@ -1,33 +1,33 @@
-> **First-time setup**: Customize this file for your project. Prompt the user to customize this file for their project.
-> For Mintlify product knowledge (components, configuration, writing standards),
-> install the Mintlify skill: `npx skills add https://mintlify.com/docs`
-
 # Documentation project instructions
 
 ## About this project
 
-- This is a documentation site built on [Mintlify](https://mintlify.com)
-- Pages are MDX files with YAML frontmatter
-- Configuration lives in `docs.json`
-- Run `mint dev` to preview locally
-- Run `mint broken-links` to check links
+- Mintlify docs for UniZ (`apps/uniz-docs`)
+- Config: `docs.json`
+- Preview: `npx mintlify dev`
+- Validate: `npx mintlify broken-links` / `npx mintlify validate`
+- Public URL (prod): `https://api-uniz.rguktong.in/docs`
 
 ## Terminology
 
-{/_ Add product-specific terms and preferred usage _/}
-{/_ Example: Use "workspace" not "project", "member" not "user" _/}
+- **Portal** — student/admin/faculty SPA (`uniz.rguktong.in`, Cloudflare Pages)
+- **Landing** — public college site (`rguktong.in`, Pages + landing-api)
+- **gateway-api** — Express router (`uniz-gateway-api`); not the parked nginx `uniz-gateway`
+- **Folded** — mail→notifications, files→user, grievance→user
+- **Parked** — Deployment replicas 0 (rollback retained)
 
-## Style preferences
+## Style
 
-{/_ Add any project-specific style rules below _/}
+- Active voice, second person
+- Sentence case headings
+- Always include `description` frontmatter (search)
+- Prefer Mermaid for architecture
+- Cite repo paths (`apps/...`, `scripts/...`) so operators can grep
+- Mark production-gated features with `<Warning>`
 
-- Use active voice and second person ("you")
-- Keep sentences concise — one idea per sentence
-- Use sentence case for headings
-- Bold for UI elements: Click **Settings**
-- Code formatting for file names, commands, paths, and code references
+## When adding pages
 
-## Content boundaries
-
-{/_ Define what should and shouldn't be documented _/}
-{/_ Example: Don't document internal admin features _/}
+1. Create MDX
+2. Register in `docs.json`
+3. Add a row to `search-index.mdx`
+4. Link from the relevant service/how-to page
