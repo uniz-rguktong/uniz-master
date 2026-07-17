@@ -1,6 +1,11 @@
 import * as crypto from "crypto";
 import * as ExcelJS from "exceljs";
 import prisma from "../utils/prisma.util";
+import {
+  canonicalSubjectSemester,
+  deriveSemesterSuffix,
+} from "../utils/semester-subject.util";
+import { validateRegistrationSubjectIds } from "./registration-validation.service";
 
 export type SubjectImportRow = {
   branch: string;
@@ -89,6 +94,30 @@ function normalizeLoose(value: unknown): string {
     .replace(/[^A-Z0-9]+/g, " ")
     .trim()
     .replace(/\s+/g, " ");
+}
+
+/** Strip form/catalog noise so "Foo (NPTEL)-Elective -2" aligns with "Foo". */
+function normalizeSubjectName(value: unknown): string {
+  let text = normalizeLoose(value);
+  text = text
+    .replace(/\bNPTEL\b/g, " ")
+    .replace(/\bOPEN ELECTIVE\b/g, " ")
+    .replace(/\bELECTIVE\b/g, " ")
+    .replace(/\bCORE\b/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return text;
+}
+
+function looksLikeSubjectSelection(raw: string): boolean {
+  const value = norm(raw);
+  if (!value) return false;
+  if (!/^[A-Za-z0-9]/.test(value)) return false;
+  if (!/-/.test(value)) return false;
+  const upper = value.toUpperCase().replace(/\s+/g, "");
+  if (upper.includes("IHEREBYSUBMIT") || upper.includes("IAFFIRMTHAT")) return false;
+  if (/^SEMESTER\s*-?\s*I\b/i.test(value)) return false;
+  return true;
 }
 
 function canonicalBranch(value: unknown): string {
@@ -228,11 +257,116 @@ function cellText(row: ExcelJS.Row, index: number): string {
   return norm(value);
 }
 
+function headerIndexMap(row: ExcelJS.Row): Map<string, number> {
+  const map = new Map<string, number>();
+  row.eachCell((cell, col) => {
+    const key = norm(cell.value).toLowerCase().replace(/\s+/g, " ");
+    if (key) map.set(key, col);
+  });
+  return map;
+}
+
+function colByHeader(
+  row: ExcelJS.Row,
+  headers: Map<string, number>,
+  aliases: string[],
+): string {
+  for (const alias of aliases) {
+    const idx = headers.get(alias.toLowerCase());
+    if (idx) return cellText(row, idx);
+  }
+  return "";
+}
+
+function parseFlatSubjectCatalogWorkbook(
+  workbook: ExcelJS.Workbook,
+): SubjectImportRow[] {
+  const sheet = workbook.worksheets[0];
+  if (!sheet) return [];
+
+  let headerRow = 1;
+  let headers = headerIndexMap(sheet.getRow(headerRow));
+  if (!headers.has("branch") && !headers.has("subject code")) {
+    sheet.eachRow((row, rowNumber) => {
+      const probe = headerIndexMap(row);
+      if (probe.has("branch") && probe.has("subject code")) {
+        headerRow = rowNumber;
+        headers = probe;
+      }
+    });
+  }
+
+  const rows: SubjectImportRow[] = [];
+  sheet.eachRow((row, rowNumber) => {
+    if (rowNumber <= headerRow) return;
+
+    const branch = canonicalBranch(
+      colByHeader(row, headers, ["branch", "department"]),
+    );
+    const academicYear = colByHeader(row, headers, [
+      "academic year",
+      "year",
+    ]).toUpperCase();
+    const batch = colByHeader(row, headers, ["batch"]).toUpperCase();
+    const officialCode = normUpper(
+      colByHeader(row, headers, ["subject code", "official code", "code"]),
+    );
+    const subjectName = colByHeader(row, headers, ["subject name", "name"]);
+    const typeRaw = colByHeader(row, headers, ["type", "subject type"]);
+    const mode = colByHeader(row, headers, ["theory/lab/project", "mode"]);
+    const credits = Number(colByHeader(row, headers, ["credits"]) || 0);
+    const delivery = colByHeader(row, headers, [
+      "regular/nptel/elective",
+      "delivery",
+    ]);
+    const electiveGroupCode = colByHeader(row, headers, [
+      "elective group",
+      "elective group code",
+    ]);
+    const electiveLimitRaw = colByHeader(row, headers, ["elective limit"]);
+    const electiveLimit = Number(electiveLimitRaw || 0);
+
+    if (!branch || !academicYear || !officialCode || !subjectName) return;
+
+    const inferred = inferSubjectType(typeRaw || delivery);
+    rows.push({
+      branch,
+      academicYear,
+      batch,
+      officialCode,
+      subjectName,
+      subjectType: inferred.subjectType,
+      mode,
+      credits: Number.isFinite(credits) ? credits : 0,
+      delivery,
+      electiveGroupCode: electiveGroupCode || inferred.electiveGroupCode,
+      electiveGroupName:
+        colByHeader(row, headers, ["elective group name"]) ||
+        inferred.electiveGroupName,
+      electiveLimit:
+        electiveLimit > 0 ? electiveLimit : inferred.electiveLimit,
+    });
+  });
+
+  return rows;
+}
+
 export async function parseSubjectCatalogWorkbook(
   buffer: Buffer,
 ): Promise<SubjectImportRow[]> {
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(buffer as any);
+
+  const firstSheet = workbook.worksheets[0];
+  if (firstSheet) {
+    const probe = headerIndexMap(firstSheet.getRow(1));
+    if (probe.has("branch") && probe.has("subject code")) {
+      return parseFlatSubjectCatalogWorkbook(workbook).filter(
+        (r) => r.branch && r.academicYear && r.officialCode,
+      );
+    }
+  }
+
   const rows: SubjectImportRow[] = [];
 
   workbook.eachSheet((sheet) => {
@@ -277,6 +411,51 @@ export async function parseSubjectCatalogWorkbook(
   return rows.filter((r) => r.branch && r.academicYear && r.officialCode);
 }
 
+export function validateSubjectCatalogRows(rows: SubjectImportRow[]): ImportError[] {
+  const errors: ImportError[] = [];
+  if (!rows.length) {
+    errors.push({
+      message:
+        "No valid subject rows found. Download the semester template and fill Branch, Academic Year, Batch, Subject Code, and Subject Name for every row.",
+    });
+    return errors;
+  }
+
+  const seen = new Map<string, number>();
+  rows.forEach((row, idx) => {
+    const rowNo = idx + 2;
+    if (!/^E[1-4]$/.test(row.academicYear)) {
+      errors.push({
+        row: rowNo,
+        message: `Row ${rowNo}: Academic Year must be E1, E2, E3, or E4 (got "${row.academicYear}").`,
+      });
+    }
+    if (!row.batch || !/^O\d{2}$/i.test(row.batch)) {
+      errors.push({
+        row: rowNo,
+        message: `Row ${rowNo}: Batch must be like O23 (got "${row.batch || ""}").`,
+      });
+    }
+    if (row.credits < 0 || !Number.isFinite(row.credits)) {
+      errors.push({
+        row: rowNo,
+        message: `Row ${rowNo}: Credits must be 0 or greater for "${row.officialCode} - ${row.subjectName}".`,
+      });
+    }
+    const key = `${row.branch}|${row.academicYear}|${row.batch}|${row.officialCode}|${normalizeLoose(row.subjectName)}`;
+    if (seen.has(key)) {
+      errors.push({
+        row: rowNo,
+        message: `Row ${rowNo}: Duplicate subject "${row.officialCode} - ${row.subjectName}" for ${row.branch}/${row.academicYear}/${row.batch} (also at row ${seen.get(key)}).`,
+      });
+    } else {
+      seen.set(key, rowNo);
+    }
+  });
+
+  return errors;
+}
+
 function splitSubjectSelections(value: string): string[] {
   return value
     .split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
@@ -291,14 +470,29 @@ export function parseSubjectSelection(raw: string): {
   type: string;
 } | null {
   const value = norm(raw);
-  if (!value) return null;
-  const codeMatch = value.match(/^([A-Za-z0-9][A-Za-z0-9\s]*?)-/);
+  if (!looksLikeSubjectSelection(value)) return null;
+  const codeMatch = value.match(/^([A-Za-z0-9][A-Za-z0-9\s]*?)\s*-/);
   if (!codeMatch) return null;
   const code = normUpper(codeMatch[1]);
-  const rest = value.slice(codeMatch[0].length);
-  const lastDash = rest.lastIndexOf("-");
-  const name = lastDash >= 0 ? rest.slice(0, lastDash).trim() : rest.trim();
-  const type = lastDash >= 0 ? rest.slice(lastDash + 1).trim() : "";
+  if (!/^[A-Z0-9]{5,}$/.test(code)) return null;
+  let rest = value.slice(codeMatch[0].length).trim();
+  // Forms often append "-Elective -2" / "-Core" after the title.
+  let type = "";
+  const typeMatch = rest.match(
+    /\s*-\s*((?:OPEN\s+)?ELECTIVE|CORE|PE|LAB)(?:\s*-\s*\d+)?\s*$/i,
+  );
+  if (typeMatch) {
+    type = typeMatch[1].trim();
+    rest = rest.slice(0, typeMatch.index).trim();
+  } else {
+    const trailingNum = rest.match(/\s*-\s*(\d+)\s*$/);
+    if (trailingNum) {
+      type = trailingNum[1];
+      rest = rest.slice(0, trailingNum.index).trim();
+    }
+  }
+  const name = rest.replace(/^-+|-+$/g, "").trim();
+  if (!name || name.length < 3) return null;
   return { raw: value, code, name, type };
 }
 
@@ -374,13 +568,18 @@ export async function upsertSemesterSubjectCatalog(opts: {
   dryRun?: boolean;
   approve?: boolean;
 }) {
-  const errors: ImportError[] = [];
+  const errors: ImportError[] = [
+    ...validateSubjectCatalogRows(opts.rows),
+  ];
   const validRows = opts.rows.filter((row, idx) => {
     const missing = ["branch", "academicYear", "batch", "officialCode", "subjectName"].filter(
       (key) => !norm((row as any)[key]),
     );
     if (missing.length > 0) {
-      errors.push({ row: idx + 1, message: `Missing ${missing.join(", ")}` });
+      errors.push({
+        row: idx + 2,
+        message: `Row ${idx + 2}: Missing ${missing.join(", ")}`,
+      });
       return false;
     }
     return true;
@@ -389,6 +588,19 @@ export async function upsertSemesterSubjectCatalog(opts: {
   if (opts.dryRun) {
     return {
       dryRun: true,
+      semesterId: opts.semesterId,
+      parsedRows: opts.rows.length,
+      validRows: validRows.length,
+      subjectsUpserted: 0,
+      allocationsUpserted: 0,
+      electiveGroupsUpserted: 0,
+      errors,
+    };
+  }
+
+  if (errors.length > 0) {
+    return {
+      dryRun: false,
       semesterId: opts.semesterId,
       parsedRows: opts.rows.length,
       validRows: validRows.length,
@@ -419,7 +631,10 @@ export async function upsertSemesterSubjectCatalog(opts: {
           name: row.subjectName,
           credits: row.credits,
           department: row.branch,
-          semester: `${row.academicYear}-${deriveSemesterSuffix(opts.semesterName)}`,
+          semester: canonicalSubjectSemester(
+            row.academicYear,
+            opts.semesterName,
+          ),
         },
         create: {
           id: code,
@@ -427,33 +642,39 @@ export async function upsertSemesterSubjectCatalog(opts: {
           name: row.subjectName,
           credits: row.credits,
           department: row.branch,
-          semester: `${row.academicYear}-${deriveSemesterSuffix(opts.semesterName)}`,
+          semester: canonicalSubjectSemester(
+            row.academicYear,
+            opts.semesterName,
+          ),
         },
       });
       subjectsUpserted++;
 
       const inferred = inferSubjectType(row.subjectType);
-      if (!inferred.isMandatory && inferred.electiveGroupCode) {
+      const groupCode = row.electiveGroupCode || inferred.electiveGroupCode;
+      const groupName = row.electiveGroupName || inferred.electiveGroupName;
+      const groupLimit = row.electiveLimit || inferred.electiveLimit;
+      if (!inferred.isMandatory && groupCode) {
         await tx.electiveGroup.upsert({
           where: {
             semesterId_branch_groupCode: {
               semesterId: opts.semesterId,
               branch: row.branch,
-              groupCode: inferred.electiveGroupCode,
+              groupCode,
             },
           },
           update: {
             academicYear: row.academicYear,
-            groupName: inferred.electiveGroupName,
-            selectionLimit: row.electiveLimit || inferred.electiveLimit,
+            groupName,
+            selectionLimit: groupLimit,
           },
           create: {
             semesterId: opts.semesterId,
             branch: row.branch,
             academicYear: row.academicYear,
-            groupCode: inferred.electiveGroupCode,
-            groupName: inferred.electiveGroupName,
-            selectionLimit: row.electiveLimit || inferred.electiveLimit,
+            groupCode,
+            groupName,
+            selectionLimit: groupLimit,
           },
         });
         electiveGroupsUpserted++;
@@ -475,9 +696,9 @@ export async function upsertSemesterSubjectCatalog(opts: {
           customCredits: integerCreditOverride(row.credits),
           subjectType: inferred.subjectType,
           isMandatory: inferred.isMandatory,
-          electiveGroupId: inferred.electiveGroupCode,
-          electiveGroupName: inferred.electiveGroupName,
-          electiveLimit: row.electiveLimit || inferred.electiveLimit,
+          electiveGroupId: groupCode,
+          electiveGroupName: groupName,
+          electiveLimit: groupLimit,
           status: opts.approve ? "APPROVED" : "DEAN_PENDING",
           isApproved: Boolean(opts.approve),
         },
@@ -492,9 +713,9 @@ export async function upsertSemesterSubjectCatalog(opts: {
           customCredits: integerCreditOverride(row.credits),
           subjectType: inferred.subjectType,
           isMandatory: inferred.isMandatory,
-          electiveGroupId: inferred.electiveGroupCode,
-          electiveGroupName: inferred.electiveGroupName,
-          electiveLimit: row.electiveLimit || inferred.electiveLimit,
+          electiveGroupId: groupCode,
+          electiveGroupName: groupName,
+          electiveLimit: groupLimit,
           status: opts.approve ? "APPROVED" : "DEAN_PENDING",
           isApproved: Boolean(opts.approve),
         },
@@ -515,13 +736,41 @@ export async function upsertSemesterSubjectCatalog(opts: {
   };
 }
 
-function deriveSemesterSuffix(semesterName: string): string {
-  const match = semesterName.match(/SEM[-\s]?([12])/i);
-  return match ? `SEM-${match[1]}` : "SEM-1";
+function subjectMatchKey(code: string, name: string): string {
+  return `${normUpper(code)}|${normalizeSubjectName(name)}`;
 }
 
-function subjectMatchKey(code: string, name: string): string {
-  return `${normUpper(code)}|${normalizeLoose(name)}`;
+function resolveAllocationMatch<T extends {
+  customCode: string | null;
+  customName: string | null;
+  subject: { code: string; name: string };
+}>(
+  selected: { code: string; name: string },
+  allocationByKey: Map<string, T>,
+  allocationsByCode: Map<string, T[]>,
+): T | undefined {
+  const exact = allocationByKey.get(subjectMatchKey(selected.code, selected.name));
+  if (exact) return exact;
+
+  const code = normUpper(selected.code);
+  const wanted = normalizeSubjectName(selected.name);
+  if (!wanted) return undefined;
+
+  const candidates = allocationsByCode.get(code) || [];
+  const exactName = candidates.filter(
+    (alloc) =>
+      normalizeSubjectName(alloc.customName || alloc.subject.name) === wanted,
+  );
+  if (exactName.length === 1) return exactName[0];
+
+  // Tolerate catalog typos / truncated form titles under shared XX codes.
+  const fuzzy = candidates.filter((alloc) => {
+    const have = normalizeSubjectName(alloc.customName || alloc.subject.name);
+    if (!have) return false;
+    return have.includes(wanted) || wanted.includes(have);
+  });
+  if (fuzzy.length === 1) return fuzzy[0];
+  return undefined;
 }
 
 export async function importRegistrationRows(opts: {
@@ -529,29 +778,88 @@ export async function importRegistrationRows(opts: {
   rows: RegistrationImportRow[];
   mode?: RegistrationImportMode;
   dryRun?: boolean;
+  skipValidation?: boolean;
+  strict?: boolean;
 }): Promise<RegistrationImportResult> {
   const mode = opts.mode || "replace";
+  const strict = opts.strict !== false;
   const errors: ImportError[] = [];
+  if (!opts.rows.length) {
+    errors.push({
+      message:
+        "No registration responses parsed. Export the Google Form responses as Excel and ensure Timestamp, Email, Year, and subject columns are present.",
+    });
+    return {
+      dryRun: Boolean(opts.dryRun),
+      mode,
+      semesterId: opts.semesterId,
+      parsedRows: 0,
+      importedStudents: 0,
+      skippedStudents: 0,
+      registrationsCreated: 0,
+      errors,
+    };
+  }
+
   const allocations = await prisma.branchAllocation.findMany({
     where: { semesterId: opts.semesterId, isApproved: true },
     include: { subject: true },
   });
-  const allocationByKey = new Map<string, (typeof allocations)[number]>();
-  for (const alloc of allocations) {
-    allocationByKey.set(
-      subjectMatchKey(alloc.customCode || alloc.subject.code, alloc.customName || alloc.subject.name),
-      alloc,
-    );
+  if (!allocations.length) {
+    errors.push({
+      message:
+        "No approved subject allocations exist for this semester. Upload and approve the subject catalog before importing registrations.",
+    });
+    return {
+      dryRun: Boolean(opts.dryRun),
+      mode,
+      semesterId: opts.semesterId,
+      parsedRows: opts.rows.length,
+      importedStudents: 0,
+      skippedStudents: 0,
+      registrationsCreated: 0,
+      errors,
+    };
   }
 
-  let importedStudents = 0;
+  type PreparedRow = {
+    row: RegistrationImportRow;
+    uniqueSubjectIds: string[];
+  };
+  const prepared: PreparedRow[] = [];
   let skippedStudents = 0;
-  let registrationsCreated = 0;
 
   for (const row of opts.rows) {
+    const rowAllocations = allocations.filter(
+      (a) =>
+        a.branch.toUpperCase() === row.branch.toUpperCase() &&
+        (!row.academicYear ||
+          !a.academicYear ||
+          a.academicYear.toUpperCase() === row.academicYear.toUpperCase()),
+    );
+    const allocationByKeyRow = new Map<string, (typeof allocations)[number]>();
+    const allocationsByCodeRow = new Map<
+      string,
+      Array<(typeof allocations)[number]>
+    >();
+    for (const alloc of rowAllocations) {
+      const code = normUpper(alloc.customCode || alloc.subject.code);
+      allocationByKeyRow.set(
+        subjectMatchKey(code, alloc.customName || alloc.subject.name),
+        alloc,
+      );
+      const list = allocationsByCodeRow.get(code) || [];
+      list.push(alloc);
+      allocationsByCodeRow.set(code, list);
+    }
+
     const subjectIds: string[] = [];
     for (const selected of row.subjects) {
-      const match = allocationByKey.get(subjectMatchKey(selected.code, selected.name));
+      const match = resolveAllocationMatch(
+        selected,
+        allocationByKeyRow,
+        allocationsByCodeRow,
+      );
       if (!match) {
         errors.push({
           studentId: row.studentId,
@@ -568,18 +876,55 @@ export async function importRegistrationRows(opts: {
       continue;
     }
 
-    const existingCount = await prisma.registration.count({
-      where: {
-        studentId: { equals: row.studentId, mode: "insensitive" },
-        semesterId: opts.semesterId,
-        status: "REGISTERED",
-      },
-    });
-
-    if (mode === "skip" && existingCount > 0) {
-      skippedStudents++;
-      continue;
+    if (!opts.skipValidation) {
+      const validation = validateRegistrationSubjectIds(
+        uniqueSubjectIds,
+        rowAllocations,
+      );
+      if (!validation.ok) {
+        errors.push({
+          studentId: row.studentId,
+          message: `Student ${row.studentId}: ${validation.error}`,
+        });
+        continue;
+      }
     }
+
+    if (mode === "skip") {
+      const existingCount = await prisma.registration.count({
+        where: {
+          studentId: { equals: row.studentId, mode: "insensitive" },
+          semesterId: opts.semesterId,
+          status: "REGISTERED",
+        },
+      });
+      if (existingCount > 0) {
+        skippedStudents++;
+        continue;
+      }
+    }
+
+    prepared.push({ row, uniqueSubjectIds });
+  }
+
+  if (strict && errors.length > 0) {
+    return {
+      dryRun: Boolean(opts.dryRun),
+      mode,
+      semesterId: opts.semesterId,
+      parsedRows: opts.rows.length,
+      importedStudents: 0,
+      skippedStudents,
+      registrationsCreated: 0,
+      errors,
+    };
+  }
+
+  let importedStudents = 0;
+  let registrationsCreated = 0;
+
+  for (const item of prepared) {
+    const { row, uniqueSubjectIds } = item;
 
     if (opts.dryRun) {
       importedStudents++;
@@ -625,10 +970,30 @@ export async function importRegistrationRows(opts: {
   };
 }
 
-export async function buildSubjectTemplateWorkbook(): Promise<Buffer> {
+export async function buildSubjectTemplateWorkbook(opts?: {
+  semesterId?: string;
+  branch?: string;
+  academicYear?: string;
+}): Promise<Buffer> {
   const workbook = new ExcelJS.Workbook();
+
+  const instructions = workbook.addWorksheet("Instructions");
+  instructions.addRow(["Semester Registration Subject Template"]);
+  instructions.addRow([
+    "1. Fill one row per subject allocation (core, lab, and each elective option).",
+  ]);
+  instructions.addRow([
+    "2. Electives sharing a code (e.g. 23CS41XX) must use the same Elective Group; set Elective Limit to how many a student picks (1, 2, 3).",
+  ]);
+  instructions.addRow([
+    "3. Upload without approve — Dean reviews, then HODs approve branch subjects, then open registration for students.",
+  ]);
+  instructions.addRow([
+    "4. RGUKT multi-sheet workbooks (sheet name = branch) are also accepted.",
+  ]);
+
   const sheet = workbook.addWorksheet("Subjects");
-  sheet.columns = [
+  const columns = [
     { header: "Branch", key: "branch", width: 12 },
     { header: "Academic Year", key: "academicYear", width: 14 },
     { header: "Batch", key: "batch", width: 10 },
@@ -641,6 +1006,43 @@ export async function buildSubjectTemplateWorkbook(): Promise<Buffer> {
     { header: "Elective Group", key: "electiveGroupCode", width: 18 },
     { header: "Elective Limit", key: "electiveLimit", width: 14 },
   ];
+  sheet.columns = columns;
+
+  if (opts?.semesterId) {
+    const { loadTemplateSubjectsFromSemester } = await import(
+      "../utils/semester-subject.util"
+    );
+    const { subjects } = await loadTemplateSubjectsFromSemester({
+      academicSemesterId: opts.semesterId,
+      branch: opts.branch,
+      academicYear: opts.academicYear,
+      approvedOnly: false,
+    });
+
+    if (subjects.length > 0) {
+      for (const sub of subjects) {
+        const typeLabel = sub.isMandatory
+          ? "Core"
+          : sub.electiveGroupName || sub.subjectType || "Elective";
+        sheet.addRow({
+          branch: sub.department,
+          academicYear: sub.academicYear || "",
+          batch: sub.batch || "",
+          officialCode: sub.academicCode || sub.code,
+          subjectName: sub.name,
+          subjectType: typeLabel,
+          mode: sub.name.toLowerCase().includes("lab") ? "Lab" : "Theory",
+          credits: sub.credits,
+          delivery: sub.isMandatory ? "Regular" : "NPTEL/Elective",
+          electiveGroupCode: sub.electiveGroupId || "",
+          electiveLimit: sub.isMandatory ? "" : sub.electiveLimit || 1,
+        });
+      }
+      return Buffer.from(await workbook.xlsx.writeBuffer());
+    }
+  }
+
+  // Example rows when no semester data exists yet.
   sheet.addRow({
     branch: "CSE",
     academicYear: "E2",
@@ -651,6 +1053,8 @@ export async function buildSubjectTemplateWorkbook(): Promise<Buffer> {
     mode: "Theory",
     credits: 4,
     delivery: "Regular",
+    electiveGroupCode: "",
+    electiveLimit: "",
   });
   sheet.addRow({
     branch: "CSE",
@@ -664,6 +1068,45 @@ export async function buildSubjectTemplateWorkbook(): Promise<Buffer> {
     delivery: "NPTEL/Elective-4",
     electiveGroupCode: "ELECTIVE-4",
     electiveLimit: 1,
+  });
+  sheet.addRow({
+    branch: "CSE",
+    academicYear: "E4",
+    batch: "O21",
+    officialCode: "23CS41XX",
+    subjectName: "Introduction to Internet of Things (NPTEL)",
+    subjectType: "Elective-4",
+    mode: "Theory",
+    credits: 3,
+    delivery: "NPTEL/Elective-4",
+    electiveGroupCode: "ELECTIVE-4",
+    electiveLimit: 1,
+  });
+  sheet.addRow({
+    branch: "CE",
+    academicYear: "E4",
+    batch: "O21",
+    officialCode: "23CE41XX",
+    subjectName: "Sustainable Transportation Systems",
+    subjectType: "Elective-2",
+    mode: "Theory",
+    credits: 3,
+    delivery: "NPTEL/Elective-2",
+    electiveGroupCode: "ELECTIVE-2",
+    electiveLimit: 2,
+  });
+  sheet.addRow({
+    branch: "CE",
+    academicYear: "E4",
+    batch: "O21",
+    officialCode: "23CE41XX",
+    subjectName: "Ground Improvement",
+    subjectType: "Elective-2",
+    mode: "Theory",
+    credits: 3,
+    delivery: "NPTEL/Elective-2",
+    electiveGroupCode: "ELECTIVE-2",
+    electiveLimit: 2,
   });
   return Buffer.from(await workbook.xlsx.writeBuffer());
 }

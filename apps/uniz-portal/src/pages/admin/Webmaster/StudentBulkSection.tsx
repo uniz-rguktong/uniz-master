@@ -123,6 +123,14 @@ export default function StudentBulkSection() {
         body: formData,
       });
       const data = await res.json();
+      if (!res.ok || data.success === false) {
+        const detail =
+          Array.isArray(data.errors) && data.errors.length
+            ? data.errors.map((e: any) => e.message).join("\n")
+            : data.message || data.msg || "Upload failed";
+        toast.error(detail);
+        return;
+      }
       if (data.success) {
         setUploadId(data.uploadId || "checking");
         setUploadSuccess(null);

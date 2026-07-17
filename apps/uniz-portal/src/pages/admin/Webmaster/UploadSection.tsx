@@ -128,7 +128,12 @@ export default function UploadSection({ type }: { type: UploadType }) {
         method: "POST",
         headers: {},
         body: formData as any,
-      });
+      }, false);
+
+      if (!res) {
+        setUploadSuccess(false);
+        return;
+      }
 
       if (res && res.success) {
         if (res.uploadId) {

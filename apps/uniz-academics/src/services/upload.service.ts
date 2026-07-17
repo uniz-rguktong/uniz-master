@@ -1,5 +1,6 @@
 import { redis } from "../utils/redis.util";
 import prisma from "../utils/prisma.util";
+import { resolveAcademicSemesterId } from "../utils/semester-subject.util";
 import { mapGradeToPoint } from "../utils/helpers.util";
 import { buildSubjectSnapshot } from "../utils/subject-snapshot.util";
 import { invalidateStudentAcademicCaches } from "../utils/student-cache.util";
@@ -107,7 +108,7 @@ export async function processNextBatch() {
     academicCodeLookup.set(key, list);
   }
 
-  const resolveSubjectFromRowCode = (
+  const resolveSubjectFromRowCode = async (
     rawCode: string,
     academicSemesterId?: string,
   ) => {
@@ -118,8 +119,18 @@ export async function processNextBatch() {
     if (direct) return direct;
 
     const matches = academicCodeLookup.get(code) || [];
-    if (academicSemesterId) {
-      const scoped = matches.find((m) => m.semesterId === academicSemesterId);
+    const resolvedSemesterId = academicSemesterId
+      ? await resolveAcademicSemesterId(academicSemesterId)
+      : null;
+    const semesterCandidates = [
+      academicSemesterId,
+      resolvedSemesterId,
+    ].filter(Boolean) as string[];
+
+    if (semesterCandidates.length) {
+      const scoped = matches.find((m) =>
+        semesterCandidates.includes(m.semesterId),
+      );
       if (scoped) return scoped.subject;
     }
     if (matches.length === 1) return matches[0].subject;
@@ -136,15 +147,19 @@ export async function processNextBatch() {
     subjectId: string,
     academicSemesterId?: string,
   ): Promise<{ customName: string | null; customCode: string | null }> => {
-    if (!academicSemesterId) {
+    const resolvedSemesterId = academicSemesterId
+      ? await resolveAcademicSemesterId(academicSemesterId)
+      : null;
+    const semesterId = resolvedSemesterId || academicSemesterId;
+    if (!semesterId) {
       return { customName: null, customCode: null };
     }
-    const key = `${subjectId}:${academicSemesterId}`;
+    const key = `${subjectId}:${semesterId}`;
     if (allocationOverrideCache.has(key)) {
       return allocationOverrideCache.get(key)!;
     }
     const alloc = await prisma.branchAllocation.findFirst({
-      where: { subjectId, semesterId: academicSemesterId },
+      where: { subjectId, semesterId },
       select: { customName: true, customCode: true },
     });
     const overrides = {
@@ -295,7 +310,7 @@ export async function processNextBatch() {
               }
             }
 
-            const subject = resolveSubjectFromRowCode(
+            const subject = await resolveSubjectFromRowCode(
               code,
               academicSemesterId || undefined,
             );
@@ -474,7 +489,7 @@ export async function processNextBatch() {
               "academicsemesterid",
               "semester record id",
             ]);
-            const subject = resolveSubjectFromRowCode(
+            const subject = await resolveSubjectFromRowCode(
               code,
               academicSemesterId || undefined,
             );
