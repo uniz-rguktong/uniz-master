@@ -33,7 +33,7 @@ Prisma schemas live per service under `apps/uniz-*/prisma/` (where applicable). 
 bash scripts/ops/backup-postgres.sh
 ```
 
-Also CronJob: `infra/core-infra/kubernetes/base/core/postgres-backup-job.yaml`.
+Also CronJob: `infra/kubernetes/base/core/postgres-backup-job.yaml`.
 
 ## Redis
 

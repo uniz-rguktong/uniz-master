@@ -14,7 +14,7 @@ graph TD
     subgraph "DEV OPS & SOURCE MANAGEMENT" [1. Monorepo Structure]
         ROOT[uniz-master]
         ROOT --> APPS[apps/]
-        ROOT --> INFRA[infra/core-infra/]
+        ROOT --> INFRA[infra/]
         ROOT --> SCR[scripts/]
         ROOT --> DOCS[docs/]
 
@@ -65,7 +65,7 @@ graph TD
 The root codebase has been structuralized for enterprise-grade management:
 
 - **`apps/`**: Contains all 10 frontend and backend microservices. Each is a standalone repository synced via the vault.
-- **`infra/core-infra/`**: Centralized Kubernetes manifests, Docker Compose files, and PostgreSQL/Redis configuration.
+- **`infra/`**: Centralized Kubernetes manifests, Docker Compose files, and PostgreSQL/Redis configuration.
 - **`docs/`**: Technical blueprints, scaling reports, and project history.
 - **`scripts/`**: Automation tools for synchronization, service management, and stress testing.
 - **`docs/api/postman/`**: Complete API collection for developer onboarding.

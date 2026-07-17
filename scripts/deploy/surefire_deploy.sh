@@ -41,7 +41,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 "/bin/bash -s" << 'EOF'
     "uniz-outpass:uniz-outpass-service:uniz-outpass-service:outpass-service"
     "uniz-portal:uniz-portal:uniz-portal:portal"
     "uniz-user:uniz-user-service:uniz-user-service:user-service"
-    "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
+    "infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
   )
 
   declare -A BUILT

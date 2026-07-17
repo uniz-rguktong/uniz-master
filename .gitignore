@@ -49,7 +49,7 @@ secrets.yaml
 secrets.env.vps.backup
 *.vps.backup
 !secrets.yaml.template
-infra/core-infra/test_output/
+infra/test_output/
 node_modules
 
 # Real semester registration exports (PII)

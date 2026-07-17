@@ -81,7 +81,7 @@ flowchart TB
 | `apps/uniz-docs` | This Mintlify site |
 | `apps/uniz-outpass` | Outpass/outing (parked in prod) |
 | `packages/uniz-shared` | Shared TypeScript types/utils |
-| `infra/core-infra/kubernetes` | K3s manifests (source of truth for replicas) |
+| `infra/kubernetes` | K3s manifests (source of truth for replicas) |
 | `scripts/deploy`, `scripts/ops` | Deploy + runbooks |
 
 ## Read next

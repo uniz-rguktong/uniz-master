@@ -94,7 +94,7 @@ The system is a **microservices-based monorepo** using a centralized API Gateway
 - **`apps/`**: Source code for all microservices.
   - `uniz-gateway/src/index.ts`: **Critical**. Contains the Regex Router logic.
   - `uniz-*/src/`: Individual service logic.
-- **`infra/core-infra/`**:
+- **`infra/`**:
   - `docker-compose.prod.yml`: Production orchestration file.
   - `nginx/`: Nginx configuration templates (Warning: Production may differ).
 - **`scripts/`**: Automation scripts.

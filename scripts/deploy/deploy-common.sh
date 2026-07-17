@@ -58,7 +58,7 @@ UNIZ_SERVICES=(
   "uniz-landing:uniz-landing:uniz-landing:landing"
   "uniz-docs:uniz-docs-service:uniz-docs-service:docs-service"
   "uniz-user:uniz-user-service:uniz-user-service:user-service"
-  "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
+  "infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
 )
 
 # Retired always-on images (code kept). Included when BUILD_OPTIONAL=true.
@@ -220,9 +220,9 @@ deploy_detect_changes() {
     [ -z "$f" ] && continue
     # Only infra that changes container image contents should trigger GHCR rebuilds.
     # Kubernetes deployment/HPA/replica YAML is applied via kubectl — not baked into images.
-    if [[ "$f" =~ ^infra/core-infra/nginx/ ]]; then
+    if [[ "$f" =~ ^infra/nginx/ ]]; then
       INFRA_CHANGED_DIRS["uniz-gateway"]=1
-      INFRA_CHANGED_DIRS["infra/core-infra/nginx"]=1
+      INFRA_CHANGED_DIRS["infra/nginx"]=1
     fi
   done <<< "$CHANGED_FILES"
 }
