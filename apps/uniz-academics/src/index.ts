@@ -29,6 +29,7 @@ import academicRoutes from "./routes/academic.routes";
 import queueRoutes from "./routes/queue.routes";
 import analyticsRoutes from "./routes/analytics.routes";
 import { authMiddleware } from "./middlewares/auth.middleware";
+import { startRegistrationPdfWorker } from "./workers/registration-pdf.queue";
 
 // Internal Queue Routes (No Auth Middleware)
 app.use("/api/queue", queueRoutes);
@@ -38,6 +39,9 @@ app.use("/analytics", authMiddleware, analyticsRoutes);
 
 // General Academic Routes (With Auth Middleware)
 app.use("/", academicRoutes);
+
+// Capped PDF generation worker (keeps PDFKit off the request path)
+startRegistrationPdfWorker();
 
 // Startup self-healing: Check for stuck jobs
 import { processNextBatch } from "./services/upload.service";

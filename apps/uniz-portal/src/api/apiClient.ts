@@ -228,13 +228,57 @@ export async function downloadFile(
     }
   }
 
+  const authHeaders = {
+    ...(cleanToken ? { Authorization: `Bearer ${cleanToken}` } : {}),
+  };
+
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        ...(cleanToken ? { Authorization: `Bearer ${cleanToken}` } : {}),
-      },
+      headers: authHeaders,
     });
+
+    // Async PDF jobs return 202 + jobId; poll then download.
+    if (response.status === 202) {
+      const queued = await response.json().catch(() => ({}));
+      const jobId = queued?.jobId as string | undefined;
+      if (!jobId) {
+        toast.error("Download queued but no job id was returned");
+        return;
+      }
+      toast.loading("Preparing PDF…", { id: `pdf-job-${jobId}` });
+      const statusPath =
+        typeof queued.monitorUrl === "string" && queued.monitorUrl.startsWith("http")
+          ? queued.monitorUrl
+          : `${BASE_URL_FROM_ENDPOINT(url)}/academics/registrations/pdf/jobs/${jobId}`;
+      const downloadPath =
+        typeof queued.downloadUrl === "string" && queued.downloadUrl.startsWith("http")
+          ? queued.downloadUrl
+          : `${BASE_URL_FROM_ENDPOINT(url)}/academics/registrations/pdf/jobs/${jobId}/download`;
+
+      const ready = await pollPdfJob(statusPath, authHeaders, jobId);
+      if (!ready) {
+        toast.error("PDF generation timed out. Please try again.", {
+          id: `pdf-job-${jobId}`,
+        });
+        return;
+      }
+
+      const fileRes = await fetch(downloadPath, {
+        method: "GET",
+        headers: authHeaders,
+      });
+      if (!fileRes.ok) {
+        const data = await fileRes.json().catch(() => ({}));
+        handleHttpError(fileRes.status, data, true, downloadPath);
+        toast.dismiss(`pdf-job-${jobId}`);
+        return;
+      }
+      const blob = await fileRes.blob();
+      triggerBrowserDownload(blob, queued.filename || fileName);
+      toast.success("Download started", { id: `pdf-job-${jobId}` });
+      return;
+    }
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
@@ -243,19 +287,61 @@ export async function downloadFile(
     }
 
     const blob = await response.blob();
-    const downloadUrl = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = downloadUrl;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(downloadUrl);
+    triggerBrowserDownload(blob, fileName);
     toast.success("Download started");
   } catch (error: any) {
     toast.error("Failed to download file. Please try again.");
     console.error("Download error:", error);
   }
+}
+
+function BASE_URL_FROM_ENDPOINT(endpoint: string): string {
+  try {
+    const u = new URL(endpoint);
+    // strip trailing /api/v1/... down to origin + /api/v1 if present
+    const idx = u.pathname.indexOf("/api/v1");
+    if (idx >= 0) return `${u.origin}/api/v1`;
+    return u.origin;
+  } catch {
+    return "";
+  }
+}
+
+async function pollPdfJob(
+  statusUrl: string,
+  headers: Record<string, string>,
+  jobId: string,
+  timeoutMs = 180_000,
+): Promise<boolean> {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    const res = await fetch(statusUrl, { headers });
+    if (res.ok) {
+      const data = await res.json().catch(() => ({}));
+      if (data.status === "done") return true;
+      if (data.status === "failed") {
+        toast.error(data.message || "PDF generation failed", {
+          id: `pdf-job-${jobId}`,
+        });
+        return false;
+      }
+      const pct = Number(data.percent || 0);
+      toast.loading(`Preparing PDF… ${pct}%`, { id: `pdf-job-${jobId}` });
+    }
+    await new Promise((r) => setTimeout(r, 1200));
+  }
+  return false;
+}
+
+function triggerBrowserDownload(blob: Blob, fileName: string) {
+  const downloadUrl = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = downloadUrl;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(downloadUrl);
 }
 
 function handleHttpError(

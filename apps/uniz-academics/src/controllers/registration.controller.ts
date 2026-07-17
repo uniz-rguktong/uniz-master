@@ -9,6 +9,14 @@ import { redis } from "../utils/redis.util";
 import { enforcePublishOtpRateLimit } from "../middlewares/publish-otp-ratelimit.middleware";
 import { generateRegistrationPdf, generateBulkRegistrationPdf, RegistrationPdfData } from "../utils/pdf.util";
 import {
+  enqueueRegistrationPdfJob,
+  getPdfProgress,
+  getPdfResult,
+  registerRegistrationPdfBuilder,
+  type RegistrationPdfJobData,
+} from "../workers/registration-pdf.queue";
+import { randomUUID } from "crypto";
+import {
   buildSubjectTemplateWorkbook,
   importRegistrationRows,
   parseRegistrationFormWorkbook,
@@ -2624,7 +2632,7 @@ export const getSemesterOverview = async (
 };
 
 /**
- * @desc Download semester registration confirmation PDF
+ * @desc Download semester registration confirmation PDF (queued)
  * @access Student (own) | Admin roles
  */
 export const downloadRegistrationPdf = async (
@@ -2687,49 +2695,74 @@ export const downloadRegistrationPdf = async (
       });
     }
 
-    const registered = await prisma.registration.findMany({
+    const registeredCount = await prisma.registration.count({
       where: {
         studentId: { equals: targetStudentId, mode: "insensitive" },
         semesterId: sem.id,
         status: "REGISTERED",
       },
-      include: { subject: true },
-      orderBy: { subject: { code: "asc" } },
     });
 
-    if (!registered.length) {
+    if (!registeredCount) {
       return res.status(404).json({
         success: false,
         message: "No registered subjects found for this semester.",
       });
     }
 
-    const pdfData = await buildRegistrationPdfData(
-      targetStudentId,
-      sem,
-      registered,
-      user,
-    );
+    // Sync escape hatch for tiny/local debugging
+    if (String(req.query.sync || "") === "1") {
+      const registered = await prisma.registration.findMany({
+        where: {
+          studentId: { equals: targetStudentId, mode: "insensitive" },
+          semesterId: sem.id,
+          status: "REGISTERED",
+        },
+        include: { subject: true },
+        orderBy: { subject: { code: "asc" } },
+      });
+      const pdfData = await buildRegistrationPdfData(
+        targetStudentId,
+        sem,
+        registered,
+        user,
+      );
+      const pdfBuffer = await generateRegistrationPdf(pdfData);
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="REGISTRATION_${targetStudentId}_${sem.id}.pdf"`,
+      );
+      res.setHeader("Content-Type", "application/pdf");
+      return res.send(pdfBuffer);
+    }
 
-    const pdfBuffer = await generateRegistrationPdf(pdfData);
+    const jobId = randomUUID();
+    const filename = `REGISTRATION_${targetStudentId}_${sem.id}.pdf`;
+    await enqueueRegistrationPdfJob({
+      jobId,
+      kind: "single",
+      semesterId: sem.id,
+      studentId: targetStudentId,
+      requestedBy: user.username,
+      role,
+      authHeader: String(req.headers.authorization || ""),
+      filename,
+    });
 
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="REGISTRATION_${targetStudentId}_${sem.id}.pdf"`,
-    );
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate",
-    );
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-    res.send(pdfBuffer);
+    return res.status(202).json({
+      success: true,
+      queued: true,
+      jobId,
+      filename,
+      monitorUrl: `/academics/registrations/pdf/jobs/${jobId}`,
+      downloadUrl: `/academics/registrations/pdf/jobs/${jobId}/download`,
+      message: "Registration PDF queued. Poll monitorUrl then download.",
+    });
   } catch (error: any) {
     console.error("Registration PDF Error:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to generate registration PDF.",
+      message: "Failed to queue registration PDF.",
     });
   }
 };
@@ -2968,117 +3001,217 @@ export const downloadBulkRegistrationPdfs = async (
           ? String(sem.batch).toUpperCase()
           : undefined;
 
-    const searchBody: Record<string, unknown> = {
-      limit: 10000,
-      isSuspended: false,
-    };
-    if (branchFilter) searchBody.branch = branchFilter;
-    if (yearFilter) searchBody.year = yearFilter;
-    if (batchFilter) searchBody.batch = batchFilter;
-    if (searchQuery && String(searchQuery).trim()) {
-      searchBody.username = String(searchQuery).trim().toUpperCase();
-    }
-
-    const profilesRes = await axios.post(
-      `${USER_SERVICE_URL}/student/search`,
-      searchBody,
-      {
-        headers: { Authorization: req.headers.authorization || "" },
-        timeout: 60000,
-      },
-    );
-
-    const allStudents: any[] = profilesRes.data?.students || [];
-
-    const regs = await prisma.registration.findMany({
-      where: {
-        semesterId: sem.id,
-        status: "REGISTERED",
-      },
-      include: { subject: true },
-      orderBy: [{ studentId: "asc" }, { subject: { code: "asc" } }],
-    });
-
-    const regsByStudent = new Map<string, RegistrationRow[]>();
-    for (const r of regs) {
-      const id = normalizeStudentId(r.studentId);
-      const list = regsByStudent.get(id) || [];
-      list.push(r);
-      regsByStudent.set(id, list);
-    }
-
-    const registeredStudents = allStudents
-      .filter((s) => regsByStudent.has(normalizeStudentId(s.username)))
-      .sort((a, b) =>
-        String(a.username).localeCompare(String(b.username), undefined, {
-          numeric: true,
-        }),
-      );
-
-    if (!registeredStudents.length) {
-      return res.status(404).json({
-        success: false,
-        message: "No registered students match these filters.",
-      });
-    }
-
-    const semesterAllocations = await prisma.branchAllocation.findMany({
-      where: { semesterId: sem.id },
-    });
-
-    const pdfDataList: RegistrationPdfData[] = [];
-    for (const student of registeredStudents) {
-      const studentId = normalizeStudentId(student.username);
-      const registered = regsByStudent.get(studentId) || [];
-      if (!registered.length) continue;
-
-      const pdfData = await buildRegistrationPdfData(
-        studentId,
-        sem,
-        registered,
-        user,
-        {
-          name: student.name,
-          branch: student.branch || student.department,
-          batch: student.batch,
-          year: student.year,
-          campus: student.campus,
-        },
-        semesterAllocations,
-      );
-      pdfDataList.push(pdfData);
-    }
-
-    if (!pdfDataList.length) {
-      return res.status(404).json({
-        success: false,
-        message: "No registration slips could be generated.",
-      });
-    }
-
-    const pdfBuffer = await generateBulkRegistrationPdf(pdfDataList);
     const safeSem = sem.id.replace(/[^a-zA-Z0-9_-]/g, "_");
     const branchSuffix = branchFilter ? `_${branchFilter}` : "";
     const yearSuffix = yearFilter ? `_${yearFilter}` : "";
     const batchSuffix = batchFilter ? `_${batchFilter}` : "";
+    const filename = `REGISTRATION_BULK_${safeSem}${batchSuffix}${branchSuffix}${yearSuffix}.pdf`;
 
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="REGISTRATION_BULK_${safeSem}${batchSuffix}${branchSuffix}${yearSuffix}.pdf"`,
-    );
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate",
-    );
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-    res.send(pdfBuffer);
+    const jobId = randomUUID();
+    await enqueueRegistrationPdfJob({
+      jobId,
+      kind: "bulk",
+      semesterId: sem.id,
+      branch: branchFilter,
+      year: yearFilter,
+      batch: batchFilter,
+      query: searchQuery ? String(searchQuery) : undefined,
+      requestedBy: user.username,
+      role,
+      authHeader: String(req.headers.authorization || ""),
+      filename,
+    });
+
+    return res.status(202).json({
+      success: true,
+      queued: true,
+      jobId,
+      filename,
+      monitorUrl: `/academics/registrations/pdf/jobs/${jobId}`,
+      downloadUrl: `/academics/registrations/pdf/jobs/${jobId}/download`,
+      message: "Bulk registration PDF queued. Poll monitorUrl then download.",
+    });
   } catch (error: any) {
     console.error("Bulk Registration PDF Error:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to generate bulk registration PDF.",
+      message: "Failed to queue bulk registration PDF.",
     });
   }
 };
+
+export const getRegistrationPdfJobStatus = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
+  const jobId = String(req.params.jobId || "");
+  if (!jobId) {
+    return res.status(400).json({ success: false, message: "jobId required" });
+  }
+  const progress = await getPdfProgress(jobId);
+  if (!progress) {
+    return res.status(404).json({ success: false, message: "Job not found" });
+  }
+  return res.json({
+    success: true,
+    jobId,
+    ...progress,
+    downloadUrl:
+      progress.status === "done"
+        ? `/academics/registrations/pdf/jobs/${jobId}/download`
+        : undefined,
+  });
+};
+
+export const downloadRegistrationPdfJob = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
+  const jobId = String(req.params.jobId || "");
+  const progress = await getPdfProgress(jobId);
+  if (!progress) {
+    return res.status(404).json({ success: false, message: "Job not found" });
+  }
+  if (progress.status !== "done") {
+    return res.status(409).json({
+      success: false,
+      message: `PDF not ready (status=${progress.status})`,
+      ...progress,
+    });
+  }
+  const buffer = await getPdfResult(jobId);
+  if (!buffer) {
+    return res.status(410).json({
+      success: false,
+      message: "PDF expired. Please request a new download.",
+    });
+  }
+  const filename = String(progress.filename || `registration-${jobId}.pdf`);
+  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Cache-Control", "no-store");
+  return res.send(buffer);
+};
+
+async function buildSinglePdfFromJob(data: RegistrationPdfJobData) {
+  const sem = await prisma.academicSemester.findUnique({
+    where: { id: data.semesterId },
+  });
+  if (!sem) throw new Error("Semester not found");
+  const studentId = normalizeStudentId(data.studentId);
+  const registered = await prisma.registration.findMany({
+    where: {
+      studentId: { equals: studentId, mode: "insensitive" },
+      semesterId: sem.id,
+      status: "REGISTERED",
+    },
+    include: { subject: true },
+    orderBy: { subject: { code: "asc" } },
+  });
+  if (!registered.length) throw new Error("No registered subjects");
+
+  const pdfData = await buildRegistrationPdfData(
+    studentId,
+    sem,
+    registered,
+    { username: data.requestedBy, role: data.role } as any,
+  );
+  const buffer = await generateRegistrationPdf(pdfData);
+  return { buffer, filename: data.filename };
+}
+
+async function buildBulkPdfFromJob(data: RegistrationPdfJobData) {
+  const sem = await prisma.academicSemester.findUnique({
+    where: { id: data.semesterId },
+  });
+  if (!sem) throw new Error("Semester not found");
+
+  const searchBody: Record<string, unknown> = {
+    limit: 10000,
+    isSuspended: false,
+  };
+  if (data.branch) searchBody.branch = data.branch;
+  if (data.year) searchBody.year = data.year;
+  if (data.batch) searchBody.batch = data.batch;
+  if (data.query) searchBody.username = String(data.query).trim().toUpperCase();
+
+  const profilesRes = await axios.post(
+    `${USER_SERVICE_URL}/student/search`,
+    searchBody,
+    {
+      headers: { Authorization: data.authHeader || "" },
+      timeout: 60000,
+    },
+  );
+  const allStudents: any[] = profilesRes.data?.students || [];
+
+  const regs = await prisma.registration.findMany({
+    where: { semesterId: sem.id, status: "REGISTERED" },
+    include: { subject: true },
+    orderBy: [{ studentId: "asc" }, { subject: { code: "asc" } }],
+  });
+
+  const regsByStudent = new Map<string, RegistrationRow[]>();
+  for (const r of regs) {
+    const id = normalizeStudentId(r.studentId);
+    const list = regsByStudent.get(id) || [];
+    list.push(r);
+    regsByStudent.set(id, list);
+  }
+
+  const registeredStudents = allStudents
+    .filter((s) => regsByStudent.has(normalizeStudentId(s.username)))
+    .sort((a, b) =>
+      String(a.username).localeCompare(String(b.username), undefined, {
+        numeric: true,
+      }),
+    );
+
+  if (!registeredStudents.length) {
+    throw new Error("No registered students match these filters");
+  }
+
+  const semesterAllocations = await prisma.branchAllocation.findMany({
+    where: { semesterId: sem.id },
+  });
+
+  const pdfDataList: RegistrationPdfData[] = [];
+  for (const student of registeredStudents) {
+    const studentId = normalizeStudentId(student.username);
+    const registered = regsByStudent.get(studentId) || [];
+    if (!registered.length) continue;
+    const pdfData = await buildRegistrationPdfData(
+      studentId,
+      sem,
+      registered,
+      { username: data.requestedBy, role: data.role } as any,
+      {
+        name: student.name,
+        branch: student.branch || student.department,
+        batch: student.batch,
+        year: student.year,
+        campus: student.campus,
+      },
+      semesterAllocations,
+    );
+    pdfDataList.push(pdfData);
+  }
+
+  if (!pdfDataList.length) {
+    throw new Error("No registration slips could be generated");
+  }
+
+  const buffer = await generateBulkRegistrationPdf(pdfDataList);
+  return { buffer, filename: data.filename };
+}
+
+registerRegistrationPdfBuilder({
+  buildSingle: buildSinglePdfFromJob,
+  buildBulk: buildBulkPdfFromJob,
+});

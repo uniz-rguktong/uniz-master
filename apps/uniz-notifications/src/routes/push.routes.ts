@@ -3,6 +3,7 @@ import axios from "axios";
 import prisma from "../utils/prisma.util";
 import { requireAuth, requireAdmin } from "../middlewares/auth.middleware";
 import { sendWebPush } from "../services/push.service";
+import { enqueueNotificationJob } from "../utils/queue.util";
 
 const USER_SERVICE_URL =
   process.env.USER_SERVICE_URL || "http://uniz-user-service:3002";
@@ -151,45 +152,32 @@ router.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       });
     }
 
-    const targetUsernames = targetUsers.map((u) => u.username.toLowerCase());
-    const subscriptions = await prisma.pushSubscription.findMany({
-      where: { username: { in: targetUsernames } },
-    });
-
-    if (subscriptions.length === 0) {
-      return res.status(200).json({ success: true, status: "no_subscribers", sent: 0 });
+    if (targetUsers.length === 0) {
+      return res.status(200).json({ success: true, status: "no_targets", sent: 0 });
     }
 
-    const results = await Promise.allSettled(
-      targetUsers.flatMap((u) => {
-        const userSubs = subscriptions.filter(
-          (s: { username: string }) => s.username.toUpperCase() === u.username.toUpperCase(),
-        );
-        const personalizedBody =
-          `Dear ${u.name || u.username},\n\n` +
-          String(body)
-            .replace(/{{name}}/g, u.name || u.username)
-            .replace(/{{username}}/g, u.username);
-        const personalizedTitle = String(title)
-          .replace(/{{name}}/g, u.name || u.username)
-          .replace(/{{username}}/g, u.username);
+    // Fan out in chunks so the HTTP request returns immediately.
+    const chunkSize = 100;
+    const jobIds: (string | number | undefined)[] = [];
+    for (let i = 0; i < targetUsers.length; i += chunkSize) {
+      const chunk = targetUsers.slice(i, i + chunkSize);
+      const job = await enqueueNotificationJob("PUSH_BROADCAST", {
+        users: chunk,
+        title: String(title),
+        body: String(body),
+        image,
+      });
+      jobIds.push(job.id);
+    }
 
-        return userSubs.map(() =>
-          sendWebPush(u.username, {
-            title: personalizedTitle,
-            body: personalizedBody,
-            rawBody: true,
-            image,
-            data: { type: "BROADCAST" },
-          }),
-        );
-      }),
-    );
-
-    const succeeded = results.filter((r) => r.status === "fulfilled").length;
-    const failed = results.filter((r) => r.status === "rejected").length;
-
-    res.json({ success: true, status: "done", sent: succeeded, failed, total: subscriptions.length });
+    return res.status(202).json({
+      success: true,
+      status: "queued",
+      queued: true,
+      targets: targetUsers.length,
+      jobs: jobIds.length,
+      jobIds,
+    });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

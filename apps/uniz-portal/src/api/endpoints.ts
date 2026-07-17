@@ -112,6 +112,10 @@ export const DOWNLOAD_REGISTRATION = (semesterId?: string) =>
     semesterId ? `?semesterId=${encodeURIComponent(semesterId)}` : ""
   }`;
 export const DOWNLOAD_BULK_REGISTRATION = `${BASE_URL}/academics/registrations/pdf/bulk`;
+export const REGISTRATION_PDF_JOB = (jobId: string) =>
+  `${BASE_URL}/academics/registrations/pdf/jobs/${jobId}`;
+export const REGISTRATION_PDF_JOB_DOWNLOAD = (jobId: string) =>
+  `${BASE_URL}/academics/registrations/pdf/jobs/${jobId}/download`;
 
 // Additional Legacy Endpoints
 export const UPDATE_STUDENT_STATUS = `${BASE_URL}/profile/student/status`;
