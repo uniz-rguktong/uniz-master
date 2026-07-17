@@ -44,7 +44,8 @@
     "android:twa:phase-a": "bash apps/uniz-android-twa/phase-a-setup.sh",
     "android:twa:init": "bash apps/uniz-android-twa/init.sh",
     "android:twa:assetlinks": "bash apps/uniz-android-twa/sync-assetlinks.sh",
-    "android:twa:verify": "bash apps/uniz-android-twa/verify-assetlinks.sh"
+    "android:twa:verify": "bash apps/uniz-android-twa/verify-assetlinks.sh",
+    "postinstall": "node scripts/ci/prune-vitepress-vite.cjs && node scripts/ci/fix-vitepress-lock.cjs"
   },
   "dependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -86,10 +87,13 @@
     "follow-redirects": "^1.15.11",
     "uuid": "^11.1.1",
     "bcrypt": "^6.0.0",
-    "vite": {
-      "esbuild": "^0.28.1"
-    },
+    "vite": "^7.3.6",
     "esbuild": "^0.28.1",
+    "launch-editor": "^2.14.1",
+    "vitepress": {
+      "vite": "6.4.3",
+      "esbuild": "0.28.1"
+    },
     "uniz": {
       "tailwindcss": "3.4.15",
       "@types/react": "18.3.12",

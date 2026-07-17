@@ -2,14 +2,14 @@
  * Build a Student_Upload_Template.xlsx from Ongole admission (+ optional branch allocation) data.
  *
  * Usage:
- *   node tests/scripts/generate_student_upload_template.js \
+ *   node scripts/ops/k6/scripts/generate_student_upload_template.js \
  *     --admission "/path/to/O23-admissions.xlsx" \
  *     --batch O23 \
  *     --year E1 \
- *     --output tests/data/o23.xlsx
+ *     --output /tmp/o23.xlsx
  *
  * Optional branch allocation file (add when available):
- *   --allocation tests/data/O23_BranchAllocationData.xlsx
+ *   --allocation /path/to/O23_BranchAllocationData.xlsx
  */
 
 const ExcelJS = require("exceljs");

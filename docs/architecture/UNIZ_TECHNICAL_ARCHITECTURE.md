@@ -68,7 +68,7 @@ The root codebase has been structuralized for enterprise-grade management:
 - **`infra/core-infra/`**: Centralized Kubernetes manifests, Docker Compose files, and PostgreSQL/Redis configuration.
 - **`docs/`**: Technical blueprints, scaling reports, and project history.
 - **`scripts/`**: Automation tools for synchronization, service management, and stress testing.
-- **`postman/`**: Complete API collection for developer onboarding.
+- **`docs/api/postman/`**: Complete API collection for developer onboarding.
 - **`tests/`**: Global end-to-end integration tests.
 
 ---

@@ -166,7 +166,7 @@ Full guide: [docs/local/LOCAL_SETUP.md](docs/local/LOCAL_SETUP.md) · [CONTRIBUT
 
 ```bash
 # Postgres + Redis only
-docker compose -f infra/core-infra/docker-compose.yml up -d uniz-redis uniz-postgres
+docker compose -f docker/local/compose.db.yml up -d uniz-redis uniz-postgres
 npm install
 npm run vault:sync
 npm run prisma:generate
