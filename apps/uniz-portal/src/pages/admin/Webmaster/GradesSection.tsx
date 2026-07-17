@@ -162,7 +162,13 @@ export default function GradesSection() {
       });
 
       const res = await response.json();
-      if (res.success) {
+      if (!response.ok || res.success === false) {
+        const detail =
+          Array.isArray(res.errors) && res.errors.length
+            ? res.errors.map((e: any) => e.message).join("\n")
+            : res.message || "Upload failed";
+        toast.error(detail);
+      } else if (res.success) {
         toast.success("Excel processed. Background ingestion started.");
         setUploadFile(null);
       } else {

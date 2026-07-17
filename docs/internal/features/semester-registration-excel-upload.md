@@ -1,7 +1,7 @@
 # Semester Registration — Excel Bulk Upload
 
-**Status:** Planned (future integration)  
-**Last reviewed:** 2026-07-07  
+**Status:** In implementation
+**Last reviewed:** 2026-07-17
 **Related (shipped):** Registration confirmation PDF — `GET /academics/student/registration/pdf`
 
 ---
@@ -47,32 +47,79 @@ Students still see registered subjects in the portal and can download the offici
 | Progress | `GET /academics/upload/progress?uploadId=` |
 | Admin UI reference | `apps/uniz-portal/src/pages/admin/AddGrades.tsx` |
 
-### Not built yet
+### Bulk import paths
 
-- `POST /academics/registration/upload`
-- `GET /academics/registration/template`
-- `REGISTRATIONS` job type in `upload.service.ts`
-- Admin upload page (e.g. `AddRegistration.tsx`)
-- Shared validation helper extracted from `registerSubjects`
+| Piece | Location |
+|-------|----------|
+| Subject template | `GET /academics/registration/subjects/template` |
+| Subject upload | `POST /academics/registration/subjects/upload` |
+| Google Form response import | `POST /academics/registration/upload` |
+| Parser/import service | `apps/uniz-academics/src/services/semester-registration-import.service.ts` |
+| Maintainer importer | `scripts/ops/import-sem-reg.ts` |
+| Admin UI | `SemesterRegistrationSection.tsx` bulk import panel |
+
+Both upload endpoints accept `dryRun=true`. Registration imports use `mode=replace`
+for real Google Form data so the latest duplicate submission wins.
 
 ---
 
-## Proposed Excel format (long format)
+## Subject Excel format
 
-One row = one student–subject registration (maps directly to `Registration`).
+Webmaster subject upload accepts either:
 
-| Student ID | Subject Code | Semester ID |
-|------------|--------------|-------------|
-| O21CS0123  | CS301        | AY-2025-26-E3-SEM-1 |
-| O21CS0123  | CS302        | AY-2025-26-E3-SEM-1 |
+- The RGUKT subject workbook shape (`26-27 Subjects Sem-1 (CSE&AIML).xlsx`)
+  with one sheet per branch and `E2-O23 Batch` / `E3-O22 Batch` / `E4-O21 Batch`
+  section headers.
+- The generated template from `GET /academics/registration/subjects/template`.
 
-**Preferred:** Pre-filled template (like grades):
+Template columns:
 
-1. Fetch eligible students from user service (`branch`, `year`, `batch`)
-2. Fetch approved `BranchAllocation` rows for the semester
-3. Pre-fill mandatory subjects; admin fills electives only
+| Branch | Academic Year | Batch | Subject Code | Subject Name | Type | Theory/Lab/Project | Credits | Regular/NPTEL/Elective | Elective Group | Elective Limit |
+|--------|---------------|-------|--------------|--------------|------|--------------------|---------|-------------------------|----------------|----------------|
 
-Avoid wide format (one column per subject) unless we add an unpivot step — harder to validate.
+Official Excel codes are stored as `BranchAllocation.customCode`. The DB
+`Subject.code` uses a stable internal semester code to avoid collisions from
+placeholder electives such as `23CS41XX`.
+
+## Registration Excel / Google Form format
+
+The importer supports the current Google Form export shape:
+
+| Year section | Student fields | Subject fields |
+|--------------|----------------|----------------|
+| E2 / O23 | Columns 4-7 | Column 8 |
+| E3 / O22 | Columns 10-13 | Column 14 |
+| E4 / O21 | Columns 16-19 | Columns 20+ (branch-specific electives) |
+
+The parser unpivots these year-specific columns and deduplicates by student ID
+using the latest timestamp.
+
+---
+
+## Maintainer import for real `sem-reg/`
+
+The real data folder contains student PII and is ignored by git.
+
+Dry-run locally:
+
+```bash
+npm run sem-reg:dry-run
+```
+
+Apply locally:
+
+```bash
+npm run sem-reg:import:local
+```
+
+Production apply is intentionally guarded and must be run by a maintainer on the
+VPS after a DB backup:
+
+```bash
+SEM_REG_BACKUP_CONFIRMED=true \
+SEM_REG_PROD_IMPORT_CONFIRMED=AY-2026-27-SEM-1 \
+ts-node scripts/ops/import-sem-reg.ts --prod --apply
+```
 
 ---
 
