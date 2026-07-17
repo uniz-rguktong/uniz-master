@@ -2,8 +2,6 @@
 
 [![Manual VPS Deployment](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml)
 
-> Campus platform for RGUKT Ongole — Cloudflare Pages frontends, Traefik + gateway-api on a K3s VPS, Postgres + Redis, Cloudinary uploads, AWS SES email, and VitePress docs.
-
 **Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Action flows:** [docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) · **Handover:** [Notion](https://app.notion.com/p/3a01ace6b28c819dbd07cf907944c082)
 
 ## Architecture
