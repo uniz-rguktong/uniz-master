@@ -1,3 +1,7 @@
+# LEGACY always-on cron worker.
+# Production applies CronJobs only (storage-cleanup-job.yaml).
+# This Deployment is intentionally excluded from kustomization.yaml.
+# Keep file for local experiments / emergency restore.
 apiVersion: v1
 kind: Service
 metadata:
@@ -15,7 +19,7 @@ kind: Deployment
 metadata:
   name: uniz-cron-service
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: uniz-cron-service

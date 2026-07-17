@@ -5,6 +5,9 @@ metadata:
   labels:
     app: uniz-outpass-service
 spec:
+  # Kept at 1 for grievance APIs. Outpass/outing /requests are gated by
+  # ENABLE_OUTPASS_OUTING=false on the gateway. Scale to 0 only if grievances
+  # are also intentionally offline.
   replicas: 1
   selector:
     matchLabels:
@@ -33,11 +36,11 @@ spec:
                 name: uniz-secrets
           resources:
             limits:
-              cpu: "1000m"
+              cpu: "500m"
               memory: "512Mi"
             requests:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: "50m"
+              memory: "128Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -61,7 +64,7 @@ spec:
     kind: Deployment
     name: uniz-outpass-service
   minReplicas: 1
-  maxReplicas: 5
+  maxReplicas: 1
   metrics:
     - type: Resource
       resource:

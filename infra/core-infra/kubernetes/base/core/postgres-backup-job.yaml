@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: uniz-postgres-backup
+  labels:
+    app: uniz-postgres-backup
+spec:
+  # Daily 01:30 — adjust timezone via cluster TZ. Suspend until hostPath/secret wired on VPS.
+  schedule: "30 1 * * *"
+  suspend: true
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: postgres:17-alpine
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -euo pipefail
+                  STAMP=$(date +%Y%m%d-%H%M%S)
+                  OUT="/backups/uniz_${STAMP}.sql.gz"
+                  echo "Backing up to $OUT"
+                  pg_dump "$DATABASE_URL" | gzip -c >"$OUT"
+                  find /backups -name 'uniz_*.sql.gz' -mtime +14 -delete || true
+                  ls -lh "$OUT"
+              env:
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uniz-secrets
+                      key: ACADEMICS_DATABASE_URL
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+          volumes:
+            - name: backups
+              hostPath:
+                path: /var/backups/uniz
+                type: DirectoryOrCreate

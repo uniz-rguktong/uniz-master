@@ -38,6 +38,7 @@ import {
 } from "@/components/admin/admin-ui";
 import { parseJwt } from "../../utils/security";
 import { resolveAdminPortalRole } from "../../utils/adminRole";
+import { enableOutingsAndOutpasses } from "@/config/featureFlags";
 
 const QuickActionButton = ({
   onClick,
@@ -130,7 +131,7 @@ export default function Admin() {
 
   // Define actions using a cleaner data structure
   const priorityActions = [];
-  if (isCaretaker) {
+  if (isCaretaker && enableOutingsAndOutpasses) {
     priorityActions.push({
       onClick: () => navigate("/admin/approveouting"),
       title: "Approve Outings",

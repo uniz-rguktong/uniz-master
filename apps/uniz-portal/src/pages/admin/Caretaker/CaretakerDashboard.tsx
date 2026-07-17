@@ -18,18 +18,23 @@ import ApproveComp from "../approve-comp";
 import UpdateStatus from "../../../components/UpdateStudentStatus";
 import { KPICard } from "../AnalyticsUI";
 import { useAdminDashboardStats } from "../../../hooks/useAdminDashboardStats";
+import {
+  enableOutingsAndOutpasses,
+  filterOutpassOutingTabs,
+  filterOutpassOutingNavItems,
+} from "@/config/featureFlags";
 
 export default function CaretakerDashboard() {
   useIsAuth();
 
   const allowedTabs = useMemo(
     () =>
-      [
+      filterOutpassOutingTabs([
         "dashboard",
         "approve_outing",
         "approve_outpass",
         "status_update",
-      ] as const,
+      ] as const),
     [],
   );
   const { activeTab, setActiveTab } = useAdminSectionRoute(allowedTabs);
@@ -52,17 +57,25 @@ export default function CaretakerDashboard() {
       group: null,
       items: [{ id: "dashboard", label: "Overview", icon: LayoutDashboard }],
     },
-    {
-      group: "Approvals",
-      items: [
-        { id: "approve_outing", label: "Approve Outings", icon: CheckCircle2 },
-        {
-          id: "approve_outpass",
-          label: "Approve Outpasses",
-          icon: CheckCircle2,
-        },
-      ],
-    },
+    ...(enableOutingsAndOutpasses
+      ? [
+          {
+            group: "Approvals",
+            items: filterOutpassOutingNavItems([
+              {
+                id: "approve_outing",
+                label: "Approve Outings",
+                icon: CheckCircle2,
+              },
+              {
+                id: "approve_outpass",
+                label: "Approve Outpasses",
+                icon: CheckCircle2,
+              },
+            ]),
+          },
+        ]
+      : []),
     {
       group: "Students",
       items: [

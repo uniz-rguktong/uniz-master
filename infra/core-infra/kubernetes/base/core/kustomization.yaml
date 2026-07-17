@@ -5,7 +5,8 @@ resources:
   - academics-service.yaml
   - auth-service.yaml
   - cron-job.yaml
-  - cron-service.yaml
+  # Always-on cron Deployment retired — storage cleanup runs as CronJob only.
+  # - cron-service.yaml
   - files-service.yaml
   - gateway-api.yaml
   - gateway.yaml
@@ -14,6 +15,7 @@ resources:
   - outpass-service.yaml
   - portal.yaml
   - storage-cleanup-job.yaml
+  - postgres-backup-job.yaml
   - user-service.yaml
   - docs-service.yaml
   - landing.yaml

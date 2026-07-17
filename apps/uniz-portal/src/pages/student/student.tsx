@@ -56,6 +56,9 @@ import { cn } from "@/lib/utils";
 import { Student } from "../../types";
 import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
 import { InlineError } from "../../components/feedback/InlineError";
+import { enableOutingsAndOutpasses } from "@/config/featureFlags";
+
+export { enableOutingsAndOutpasses } from "@/config/featureFlags";
 const STUDENT_LOCKED_PROFILE_FIELDS = new Set([
   "name",
   "gender",
@@ -130,8 +133,6 @@ function ProfileSkeleton() {
     </div>
   );
 }
-
-export const enableOutingsAndOutpasses = false;
 
 //
 //

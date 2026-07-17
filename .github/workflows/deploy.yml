@@ -137,6 +137,8 @@ jobs:
           IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
+          VITE_MAINTENANCE_MODE: ${{ secrets.VITE_MAINTENANCE_MODE }}
+          VITE_ENABLE_OUTPASS_OUTING: ${{ secrets.VITE_ENABLE_OUTPASS_OUTING }}
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
           CLOUDINARY_UPLOAD_PRESET: ${{ secrets.CLOUDINARY_UPLOAD_PRESET }}
           VITE_ANALYTICS_URL: ${{ secrets.VITE_ANALYTICS_URL }}
@@ -190,6 +192,7 @@ jobs:
           CRON_DATABASE_URL: ${{ secrets.CRON_DATABASE_URL }}
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_MAINTENANCE_MODE: ${{ secrets.VITE_MAINTENANCE_MODE }}
+          VITE_ENABLE_OUTPASS_OUTING: ${{ secrets.VITE_ENABLE_OUTPASS_OUTING }}
           VITE_SCRAPER_URL: ${{ secrets.VITE_SCRAPER_URL }}
           VITE_ANALYTICS_URL: ${{ secrets.VITE_ANALYTICS_URL }}
           VITE_ANALYTICS_API_KEY: ${{ secrets.VITE_ANALYTICS_API_KEY }}

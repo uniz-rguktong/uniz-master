@@ -31,6 +31,10 @@ import WebsiteUpdatesSection from "./WebsiteUpdatesSection";
 import PushNotificationSection from "./PushNotificationSection";
 import StudentBulkSection from "./StudentBulkSection";
 import SystemLogsSection from "./SystemLogsSection";
+import {
+  enableOutingsAndOutpasses,
+  filterOutpassOutingTabs,
+} from "@/config/featureFlags";
 
 export default function WebmasterDashboard() {
   useIsAuth();
@@ -46,7 +50,7 @@ export default function WebmasterDashboard() {
 
   const allowedTabs = useMemo(
     () =>
-      [
+      filterOutpassOutingTabs([
         "dashboard",
         "student",
         ...(role === "webmaster" || role === "coe" ? ["student_bulk"] : []),
@@ -68,7 +72,7 @@ export default function WebmasterDashboard() {
         "website_updates",
         "push_alerts",
         "security",
-      ] as const,
+      ] as const),
     [role],
   );
 
@@ -94,8 +98,12 @@ export default function WebmasterDashboard() {
             group: "Welfare",
             items: [
               { id: "grievances", label: "Grievances", icon: BookOpen },
-              { id: "outpass", label: "Outpass Logs", icon: GraduationCap },
-              { id: "outings", label: "Outing Protocol", icon: Activity },
+              ...(enableOutingsAndOutpasses
+                ? [
+                    { id: "outpass", label: "Outpass Logs", icon: GraduationCap },
+                    { id: "outings", label: "Outing Protocol", icon: Activity },
+                  ]
+                : []),
             ],
           },
         ]
