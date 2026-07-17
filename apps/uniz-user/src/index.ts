@@ -9,7 +9,13 @@ dotenv.config({ override: true });
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-app.use(helmet());
+// Portal/Landing are on different hosts (Cloudflare Pages). Default Helmet
+// CORP=same-origin blocks browser reads of CMS/public JSON even when CORS passes.
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  }),
+);
 app.use(compression());
 // app.use(cors());
 app.use(express.json());
