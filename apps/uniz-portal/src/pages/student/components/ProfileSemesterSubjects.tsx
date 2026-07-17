@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
-import { GET_SEMESTER_OVERVIEW } from "../../../api/endpoints";
+import { GET_CURRENT_SUBJECTS } from "../../../api/endpoints";
 import RegisteredSubjectsPanel, {
   type RegisteredSubjectRow,
 } from "./RegisteredSubjectsPanel";
@@ -26,30 +26,37 @@ export default function ProfileSemesterSubjects({
     (async () => {
       try {
         setLoading(true);
+        // Same endpoint as Academics → My subjects. Avoid GET_SEMESTER_OVERVIEW:
+        // apiClient unwraps nested `data` and drops `semester`.
         const res = await apiClient<{
           semester: { id: string; name: string; status: string } | null;
-          data?: {
-            registrations?: Array<{
-              id: string;
-              subjectCode: string;
-              subjectName: string;
+          subjects?: Array<{
+            id: string;
+            createdAt?: string;
+            submittedAt?: string;
+            subject?: {
+              code: string;
+              name: string;
               credits: number;
-              registeredAt?: string;
-            }>;
-          };
-        }>(GET_SEMESTER_OVERVIEW, {}, false);
+              department?: string;
+            };
+          }>;
+        }>(GET_CURRENT_SUBJECTS(studentId), {}, false);
 
         if (cancelled) return;
         setSemester(res?.semester ?? null);
         setSubjects(
-          (res?.data?.registrations || []).map((r) => ({
+          (res?.subjects || []).map((r) => ({
             id: r.id,
-            subject: {
-              code: r.subjectCode,
-              name: r.subjectName,
-              credits: r.credits,
-            },
-            submittedAt: r.registeredAt,
+            subject: r.subject
+              ? {
+                  code: r.subject.code,
+                  name: r.subject.name,
+                  credits: r.subject.credits,
+                  department: r.subject.department,
+                }
+              : undefined,
+            submittedAt: r.submittedAt || r.createdAt,
           })),
         );
       } catch {
@@ -75,10 +82,6 @@ export default function ProfileSemesterSubjects({
   }
 
   return (
-    <RegisteredSubjectsPanel
-      semester={semester}
-      subjects={subjects}
-      compact
-    />
+    <RegisteredSubjectsPanel semester={semester} subjects={subjects} compact />
   );
 }
