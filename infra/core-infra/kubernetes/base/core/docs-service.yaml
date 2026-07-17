@@ -23,32 +23,32 @@ spec:
             - containerPort: 3333
           resources:
             limits:
-              cpu: "500m"
-              memory: "1Gi"
+              cpu: "200m"
+              memory: "128Mi"
             requests:
-              cpu: "50m"
-              memory: "256Mi"
+              cpu: "10m"
+              memory: "32Mi"
           startupProbe:
             httpGet:
-              path: /
+              path: /health
               port: 3333
-            periodSeconds: 5
-            timeoutSeconds: 5
-            failureThreshold: 24
+            periodSeconds: 3
+            timeoutSeconds: 2
+            failureThreshold: 10
           readinessProbe:
             httpGet:
-              path: /
+              path: /health
               port: 3333
             periodSeconds: 10
-            timeoutSeconds: 5
+            timeoutSeconds: 2
             failureThreshold: 3
           livenessProbe:
             httpGet:
-              path: /
+              path: /health
               port: 3333
-            initialDelaySeconds: 10
+            initialDelaySeconds: 5
             periodSeconds: 30
-            timeoutSeconds: 5
+            timeoutSeconds: 2
             failureThreshold: 3
 ---
 apiVersion: v1

@@ -1,0 +1,203 @@
+---
+title: "Login"
+description: "Authenticate students and administrators to obtain a JWT token for accessing protected endpoints."
+---
+
+All login endpoints are **unauthenticated**. On success, you receive a `token` that must be sent as `Authorization: Bearer <token>` on every subsequent request.
+
+::: warning
+Login endpoints are rate-limited per IP. Repeated failed attempts will result
+  in a `429 Too Many Requests` response.
+:::
+
+---
+
+## General login
+
+`POST /auth/login`
+
+Authenticates any user — student or admin — and returns a JWT with the caller's role. Use the role-specific endpoints (`/auth/login/student`, `/auth/login/admin`) when you need to restrict which account types are accepted.
+
+**Auth required:** No
+
+### Request body
+
+  The student roll number (e.g. `O210008`) or admin username (e.g. `director`).
+
+  The account password.
+
+### Response
+
+- `success` — `true` on successful authentication.
+
+- `token` — Signed JWT. Pass this value in the `Authorization: Bearer` header for all
+  authenticated requests.
+
+- `role` — The role assigned to this account. Possible values: `student`, `director`,
+  `dean`, `warden_male`, `warden_female`, `caretaker_male`, `caretaker_female`,
+  `security`, `webmaster`.
+
+- `username` — The username that was authenticated.
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api-uniz.rguktong.in/api/v1/auth/login \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "username": "O210008",
+    "password": "password123"
+  }'
+```
+
+**200 OK — student**
+
+```json
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "role": "student",
+  "username": "O210008"
+}
+```
+
+**200 OK — admin**
+
+```json
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "role": "director",
+  "username": "director"
+}
+```
+
+### Error responses
+
+| Status                  | Meaning                          |
+| ----------------------- | -------------------------------- |
+| `401 Unauthorized`      | Incorrect password.              |
+| `403 Forbidden`         | Account is suspended.            |
+| `429 Too Many Requests` | Rate limit exceeded for this IP. |
+
+---
+
+## Student login
+
+`POST /auth/login/student`
+
+Identical to general login but rejects credentials that do not belong to a `student` role. Use this endpoint in student-facing clients to prevent admins from signing in through the student app.
+
+**Auth required:** No
+
+### Request body
+
+  Student roll number (e.g. `O210008`).
+
+  The student's password.
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api-uniz.rguktong.in/api/v1/auth/login/student \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "username": "O210008",
+    "password": "password123"
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "role": "student",
+  "username": "O210008"
+}
+```
+
+### Error responses
+
+| Status                  | Meaning                                                             |
+| ----------------------- | ------------------------------------------------------------------- |
+| `401 Unauthorized`      | Incorrect password.                                                 |
+| `403 Forbidden`         | Account is suspended, or the account belongs to a non-student role. |
+| `429 Too Many Requests` | Rate limit exceeded for this IP.                                    |
+
+---
+
+## Admin login
+
+`POST /auth/login/admin`
+
+Authenticates administrative accounts only. Rejects student credentials.
+
+**Auth required:** No
+
+### Request body
+
+  Admin username (e.g. `director`, `dean_cse`, `warden_male`,
+  `caretaker_female`, `security_admin`).
+
+  The admin's password.
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api-uniz.rguktong.in/api/v1/auth/login/admin \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "username": "director",
+    "password": "director@uniz"
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "role": "director",
+  "username": "director"
+}
+```
+
+### Error responses
+
+| Status                  | Meaning                                                         |
+| ----------------------- | --------------------------------------------------------------- |
+| `401 Unauthorized`      | Incorrect password.                                             |
+| `403 Forbidden`         | Account is suspended, or the account belongs to a student role. |
+| `429 Too Many Requests` | Rate limit exceeded for this IP.                                |
+
+---
+
+## Logout
+
+`POST /auth/logout`
+
+Clears the server-side session. The client should also discard the stored JWT.
+
+**Auth required:** No
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api-uniz.rguktong.in/api/v1/auth/logout \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true
+}
+```

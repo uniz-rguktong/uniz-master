@@ -1,11 +1,17 @@
 {
   "name": "uniz-docs",
-  "version": "1.0.0",
-  "description": "UniZ Technical Documentation Service",
-  "main": "index.js",
+  "version": "2.0.0",
+  "private": true,
+  "description": "UniZ in-house documentation (VitePress static site)",
+  "type": "module",
   "scripts": {
-    "dev": "npx mint dev --port 3333",
-    "build": "echo 'No build step required for Mintlify docs'",
-    "start": "npx mint dev --port 3333"
+    "dev": "vitepress dev --port 3333 --host 0.0.0.0",
+    "build": "vitepress build",
+    "preview": "vitepress preview --port 3333 --host 0.0.0.0",
+    "start": "vitepress preview --port 3333 --host 0.0.0.0"
+  },
+  "devDependencies": {
+    "mermaid": "^11.16.0",
+    "vitepress": "^1.6.3"
   }
 }

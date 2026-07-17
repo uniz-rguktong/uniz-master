@@ -1,0 +1,400 @@
+---
+title: "Academic Management"
+description: "How deans, directors, and webmasters manage grades, semesters, student records, and banners in UniZ."
+---
+
+The academic management section covers everything from viewing batch grades and running bulk updates to uploading new student cohorts and managing homepage banners. These features are available to the **dean**, **director**, and **webmaster** roles.
+
+## Viewing batch grades
+
+Fetch grades for an entire batch at once using the batch grades endpoint. You can filter by branch, year, semester, and optionally limit results to failed students only.
+
+**Endpoint:** `GET /academics/grades/batch`
+
+```bash
+GET https://api-uniz.rguktong.in/api/v1/academics/grades/batch?branch=CSE&year=E2&semesterId=SEM-1&failedOnly=false
+Authorization: Bearer 
+```
+
+| Query parameter | Example          | Description                                  |
+| --------------- | ---------------- | -------------------------------------------- |
+| `branch`        | `CSE`            | Filter by branch (CSE, ECE, EEE, etc.)       |
+| `year`          | `E2`             | Filter by year (E1–E4)                       |
+| `semesterId`    | `SEM-1`          | Semester identifier                          |
+| `failedOnly`    | `true` / `false` | Return only failed grade records when `true` |
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "summary": {
+    "totalStudents": 3,
+    "totalRecords": 7,
+    "failedRecords": 2,
+    "timestamp": "2026-02-01T10:00:00Z"
+  },
+  "students": [
+    {
+      "studentId": "O210139",
+      "name": "DAMARLA SEETHA RAM PRAVEEN",
+      "branch": "CSE",
+      "year": "E2",
+      "records": [
+        {
+          "subjectCode": "E2-SEM-1-CSE-3",
+          "subjectName": "Design & Analysis of Algorithms",
+          "grade": 0,
+          "credits": 4,
+          "semesterId": "SEM-1"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Bulk updating grades via JSON
+
+Use this endpoint to update multiple grades directly without uploading an Excel file. This is the preferred method for re-evaluations or small corrections.
+
+**Endpoint:** `POST /academics/grades/bulk-update`
+
+```bash
+POST https://api-uniz.rguktong.in/api/v1/academics/grades/bulk-update
+Authorization: Bearer 
+Content-Type: application/json
+```
+
+```json
+{
+  "updates": [
+    {
+      "studentId": "O210008",
+      "subjectId": "550e8400-e29b-41d4-a716-446655440001",
+      "semesterId": "SEM-1",
+      "grade": "EX"
+    },
+    {
+      "studentId": "O210009",
+      "subjectId": "550e8400-e29b-41d4-a716-446655440002",
+      "semesterId": "SEM-1",
+      "grade": 9.5
+    }
+  ]
+}
+```
+
+The `grade` field accepts either a letter grade string (`"EX"`, `"A"`, `"B"`, etc.) or a numeric grade point value.
+
+::: tip
+Use `GET /academics/grades/batch` first to retrieve the correct `subjectId`
+  values before constructing a bulk-update payload. Incorrect subject IDs will
+  be silently skipped.
+:::
+
+## Uploading grades via Excel
+
+For large-scale grade entry, download a pre-filled template, fill in grades, and upload the file.
+
+  ### Download the grade template
+
+Fetch the Excel template for a specific batch. The file comes pre-filled with student IDs for the selected branch, year, and semester.
+
+    ```bash
+    GET https://api-uniz.rguktong.in/api/v1/academics/grades/template?branch=CSE&year=E1&semester=SEM-1&subjectCode=E1-SEM-1-CSE-1
+    Authorization: Bearer 
+    ```
+
+    Save the returned `.xlsx` file to your computer.
+
+  ### Fill in the grades
+
+Open the template in Excel or Google Sheets. Fill in the `grade` column for each student. Do not modify the student ID column or the sheet structure.
+
+  ### Upload the completed file
+
+Submit the filled file to the upload endpoint. The system processes the records in batches.
+
+    ```bash
+    POST https://api-uniz.rguktong.in/api/v1/academics/grades/upload
+    Authorization: Bearer 
+    Content-Type: multipart/form-data
+    ```
+
+    The response includes a success count, failure count, and a list of any errors.
+
+  ### Monitor upload progress
+
+Poll the upload progress endpoint to track the background job.
+
+    ```bash
+    GET https://api-uniz.rguktong.in/api/v1/academics/grades/upload/progress
+    Authorization: Bearer 
+    ```
+
+    ```json
+    {
+      "success": true,
+      "progress": {
+        "status": "processing",
+        "percent": 45,
+        "processed": 150,
+        "total": 330
+      }
+    }
+    ```
+
+    When `status` returns `"completed"`, the upload is finished.
+
+## Downloading grade and attendance reports
+
+Use the template endpoint with specific filters to download grade reports for any combination of branch, year, semester, and subject. Reports are returned as `.xlsx` files.
+
+For attendance data, staff with the appropriate role can access attendance records through the student profile endpoints filtered by batch parameters.
+
+## Publishing results by email
+
+::: warning
+This action is restricted to the **director** role only. It triggers a
+  background bulk-email job that sends report cards to all students for the
+  specified semester. Confirm the grades are finalized before publishing.
+:::
+
+**Endpoint:** `POST /academics/grades/publish-email`
+
+```bash
+POST https://api-uniz.rguktong.in/api/v1/academics/grades/publish-email
+Authorization: Bearer 
+Content-Type: application/json
+```
+
+```json
+{
+  "semesterId": "SEM-1"
+}
+```
+
+After triggering the job, monitor its progress:
+
+```bash
+GET https://api-uniz.rguktong.in/api/v1/academics/grades/publish/progress
+Authorization: Bearer 
+```
+
+```json
+{
+  "success": true,
+  "progress": {
+    "status": "processing",
+    "percent": 72,
+    "processed": 238,
+    "total": 330
+  }
+}
+```
+
+## Bulk uploading students
+
+Use the Add Students feature to onboard a new batch or add records for a new semester. Supported file formats are `.xlsx`, `.xls`, and `.csv`.
+
+  ### Configure the batch parameters
+
+Select the **Year** (E1–E4), **Semester**, and **Branch** for the student cohort you are uploading. These values are attached to every student record in the upload.
+
+  ### Download the student template
+
+```bash
+    GET https://api-uniz.rguktong.in/api/v1/admin/student/template
+    Authorization: Bearer 
+    ```
+
+    The downloaded `.xlsx` file contains the required column headers for the import. Do not modify the headers.
+
+  ### Fill in the spreadsheet
+
+Add one row per student. Do not change the column headers.
+
+    | Column | Example | Notes |
+    |---|---|---|
+    | `Username` | `O210008` | University roll number |
+    | `FullName` | `DESU SreeCharan` | Full name in uppercase |
+    | `Email` | `o210008@rguktong.ac.in` | Institutional email |
+
+  ### Upload the spreadsheet
+
+```bash
+    POST https://api-uniz.rguktong.in/api/v1/admin/student/upload
+    Authorization: Bearer 
+    Content-Type: multipart/form-data
+    ```
+
+    Send the file as `multipart/form-data` with the field name `file`. A successful upload returns a `jobId` you can use with the progress endpoint to track background processing.
+
+## Individual student management
+
+For granular control, administrators can provision and modify individual student identities manually without using bulk spreadsheets. This is ideal for adding late admissions or correcting specific profile parameters.
+
+### Provisioning a new student
+
+Manual provisioning creates both the authentication credentials and the academic profile in one atomic operation.
+
+**Endpoint:** `POST /profile/admin/student/create`
+
+```bash
+POST https://api-uniz.rguktong.in/api/v1/profile/admin/student/create
+Authorization: Bearer 
+Content-Type: application/json
+```
+
+```json
+{
+  "username": "O210008",
+  "name": "DESU SreeCharan",
+  "email": "o210008@rguktong.ac.in",
+  "gender": "M",
+  "branch": "CSE",
+  "year": "E1",
+  "semester": "SEM-1",
+  "section": "A",
+  "batch": "O21",
+  "cgpa": 9.2,
+  "motivation": "Strive for excellence in every academic pursuit."
+}
+```
+
+::: info
+Provisioning a new student automatically generates a default password: `{username.toLowerCase()}@rguktong`. The student can change this upon their first login.
+:::
+
+### Modifying an existing record
+
+To update any parameter of an existing student (academic, personal, or family), use the selective update endpoint.
+
+**Endpoint:** `PUT /profile/admin/student/:username`
+
+```bash
+PUT https://api-uniz.rguktong.in/api/v1/profile/admin/student/O210008
+Authorization: Bearer 
+Content-Type: application/json
+```
+
+```json
+{
+  "cgpa": 9.4,
+  "roomno": "C-102",
+  "isPresentInCampus": true
+}
+```
+
+## Banner management
+
+Webmasters create and manage homepage banners visible to all students in the UniZ portal. Banners support a title, description text, and an image.
+
+::: info
+Only the **webmaster** role can create and publish banners. The director and
+  dean can view banners but cannot modify them.
+:::
+
+### Creating a banner
+
+**Endpoint:** `POST /profile/admin/banners`
+
+```bash
+POST https://api-uniz.rguktong.in/api/v1/profile/admin/banners
+Authorization: Bearer 
+Content-Type: application/json
+```
+
+```json
+{
+  "title": "Holiday Notice",
+  "text": "The campus will be closed on 15th August for Independence Day.",
+  "imageUrl": "https://example.com/banners/holiday.jpg"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "banners": [
+    {
+      "id": "ban-456",
+      "title": "Holiday Notice",
+      "text": "The campus will be closed on 15th August for Independence Day.",
+      "imageUrl": "https://...",
+      "isPublished": false,
+      "createdAt": "2026-08-01T09:00:00Z"
+    }
+  ]
+}
+```
+
+New banners are created as drafts (`isPublished: false`) and are not visible to students until you publish them.
+
+## Global cohort promotion protocol
+
+The Global Cohort Promotion protocol allows administrators to bulk upgrade the academic year for entire student batches (e.g., E1 to E2).
+
+### Bulk Promoting Students
+
+**Endpoint:** `POST /profile/admin/student/promote`
+
+```bash
+POST https://api-uniz.rguktong.in/api/v1/profile/admin/student/promote
+Authorization: Bearer 
+Content-Type: application/json
+```
+
+```json
+{
+  "fromYear": "E3",
+  "toYear": "E4",
+  "branch": "CSE"
+}
+```
+
+- **fromYear**: The current academic year of the cohort (e.g., "E3", "E1").
+- **toYear**: The destination year (e.g., "E4", "PASSED_OUT").
+- **branch**: (Optional) Filter by department (e.g., "CSE"). Use "ALL" or omit to promote the entire year.
+
+**Safety mechanism**: The administrative interface requires explicit text confirmation ("PROMOTE") before executing this destructive operation.
+
+**Restrictions**: This protocol is only accessible to WEBMASTER, DEAN, and DIRECTOR roles.
+
+### Publishing and unpublishing a banner
+
+**Endpoint:** `POST /profile/admin/banners/:id/publish`
+
+```bash
+POST https://api-uniz.rguktong.in/api/v1/profile/admin/banners/ban-456/publish
+Authorization: Bearer 
+Content-Type: application/json
+```
+
+To publish:
+
+```json
+{
+  "publish": true
+}
+```
+
+To unpublish (revert to draft):
+
+```json
+{
+  "publish": false
+}
+```
+
+### Viewing all banners
+
+```bash
+GET https://api-uniz.rguktong.in/api/v1/profile/admin/banners
+Authorization: Bearer 
+```
+
+This returns all banners regardless of published status. The student-facing view only shows banners where `isPublished: true`.

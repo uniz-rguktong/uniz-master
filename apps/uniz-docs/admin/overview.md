@@ -1,0 +1,104 @@
+---
+title: "Admin Overview"
+description: "How administrative staff log in and navigate the UniZ admin portal — covering roles, the dashboard, and key functions."
+---
+
+The UniZ admin portal gives non-student staff a dedicated interface for managing approvals, academic data, campus security, announcements, and **semester registration**. Every administrative role — caretaker, warden, SWO, HOD, dean, director, and webmaster — uses the same portal with a role-appropriate view.
+
+## Logging in
+
+All admin accounts use the same login endpoint as students. The `role` field in the response determines which dashboard and features you can access.
+
+**Endpoint:** `POST /auth/login`
+
+```bash
+POST https://api-uniz.rguktong.in/api/v1/auth/login
+Content-Type: application/json
+```
+
+```json
+{
+  "username": "warden_male",
+  "password": "your_password"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "token": "eyJ...",
+  "role": "warden_male",
+  "username": "warden_male"
+}
+```
+
+Store the returned token and include it as a `Bearer` token in the `Authorization` header for all subsequent requests.
+
+::: info
+Admin usernames follow a fixed pattern: `director`, `dean_cse`, `warden_male`,
+  `warden_female`, `caretaker_male`, `caretaker_female`, `security_admin`, and
+  `webmaster`. Contact your system administrator if you do not have your
+  credentials.
+:::
+
+## Role-based access
+
+Each admin role has a tailored view of the portal. The table below maps roles to their primary responsibilities.
+
+| Role      | Username pattern                      | Primary access                                        |
+| --------- | ------------------------------------- | ----------------------------------------------------- |
+| Director  | `director`                            | Final approvals, student search, academic publishing  |
+| Dean      | `dean_cse`                            | Final approvals, grade management, academic oversight |
+| Warden    | `warden_male` / `warden_female`       | Outpass approvals (second level)                      |
+| Caretaker | `caretaker_male` / `caretaker_female` | Outpass approvals (first level)                       |
+| SWO       | `swo`                                 | Outpass approvals, grievance resolution               |
+| HOD       | `hod_cse`, etc.                       | Department students (read-only), registration tracking |
+| Security  | `security_admin`                      | Gate check-in and check-out                           |
+| Webmaster | `webmaster`                           | Semester builder, banners, bulk uploads, system health |
+
+## What the dashboard shows
+
+When you log in, the dashboard surfaces the information most relevant to your role.
+
+- **Caretakers and wardens** see a queue of pending outpass requests assigned to their level.
+- **Security staff** see the access control terminal with real-time student presence data.
+- **Dean and director** see pending final-approval requests, student search, and academic controls.
+- **HOD** sees department-scoped student details and registration tracking.
+- **SWO** manages grievance queue and outpass escalations.
+- **Webmaster** sees semester builder, banner management, and announcement tools.
+
+The portal automatically hides features your role cannot access. You do not need to configure anything — access is determined by the `role` returned at login.
+
+## System health
+
+You can check the status of all UniZ backend services at any time without authentication.
+
+**Endpoint:** `GET /system/health`
+
+```bash
+GET https://api-uniz.rguktong.in/api/v1/system/health
+```
+
+```json
+{
+  "success": true,
+  "services": [
+    { "name": "Auth Service", "status": "UP", "latency": "120ms" },
+    { "name": "Mail Service", "status": "UP", "latency": "45ms" }
+  ]
+}
+```
+
+Use this endpoint to verify that the platform is operational before performing bulk operations like grade uploads or result publishing.
+
+## Key admin sections
+
+- **[Approvals](/admin/approvals)**
+
+  - **[Academic management](/admin/academics)**
+
+  - **[Security portal](/admin/security)**
+
+  - **[Banners](/admin/academics)**
