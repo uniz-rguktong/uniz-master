@@ -36,6 +36,8 @@
     "vault:vps:list": "bash ./scripts/ops/vps-vault.sh list",
     "vault:vps:show": "bash ./scripts/ops/vps-vault.sh show",
     "vault:vps:status": "bash ./scripts/ops/vps-vault.sh status",
+    "sem-reg:dry-run": "ts-node scripts/ops/import-sem-reg.ts",
+    "sem-reg:import:local": "ts-node scripts/ops/import-sem-reg.ts --apply",
     "watch": "ssh -t -o StrictHostKeyChecking=no root@${VPS_HOST:-76.13.241.174} \"watch -n 1 'kubectl get hpa; echo; kubectl get pods'\"",
     "android:twa:phase-a": "bash apps/uniz-android-twa/phase-a-setup.sh",
     "android:twa:init": "bash apps/uniz-android-twa/init.sh",
