@@ -25,14 +25,22 @@ fi
 
 export CLOUDFLARE_API_TOKEN
 
+ZONE_NAME="${ZONE_NAME:-rguktong.in}"
 ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-}"
+# Zone-scoped tokens often cannot list /accounts — resolve via zone instead.
+if [[ -z "$ACCOUNT_ID" ]]; then
+  ACCOUNT_ID=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+    "https://api.cloudflare.com/client/v4/zones?name=${ZONE_NAME}" \
+    | python3 -c 'import sys,json; r=json.load(sys.stdin).get("result") or []; print((r[0].get("account") or {}).get("id","") if r else "")')
+fi
 if [[ -z "$ACCOUNT_ID" ]]; then
   ACCOUNT_ID=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
     "https://api.cloudflare.com/client/v4/accounts?per_page=1" \
     | python3 -c 'import sys,json; r=json.load(sys.stdin).get("result") or []; print(r[0]["id"] if r else "")')
 fi
 if [[ -z "$ACCOUNT_ID" ]]; then
-  echo "[pages] Could not resolve Cloudflare account id" >&2
+  echo "[pages] Could not resolve Cloudflare account id." >&2
+  echo "[pages] Set GitHub secret CLOUDFLARE_ACCOUNT_ID, or grant the token Account Read + Pages Edit." >&2
   exit 1
 fi
 export CLOUDFLARE_ACCOUNT_ID="$ACCOUNT_ID"
