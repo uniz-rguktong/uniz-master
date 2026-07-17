@@ -41,5 +41,5 @@ GW_STATUS_URL=https://api-uniz.rguktong.in/api/v1/system/health \
 SKIP_OTP=true \
 INTERNAL_SECRET=uniz-core \
 MAP_LOCALHOST=false \
-node infra/core-infra/tests/comprehensive_test.js
+node infra/tests/comprehensive_test.js
 ```

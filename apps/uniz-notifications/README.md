@@ -45,7 +45,7 @@ The Notification Service is the primary event bus and real-time dispatcher for t
 
 ### Docker Deployment
 
-Refer to the `infra/core-infra` documentation for orchestrated deployment instructions.
+Refer to the `infra` documentation for orchestrated deployment instructions.
 
 ---
 

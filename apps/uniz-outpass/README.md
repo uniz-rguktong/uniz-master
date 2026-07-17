@@ -52,7 +52,7 @@ The Outpass Service is the primary workflow engine for student movement requests
 
 ### Docker Deployment
 
-Refer to the `infra/core-infra` documentation for orchestrated deployment instructions.
+Refer to the `infra` documentation for orchestrated deployment instructions.
 
 ---
 

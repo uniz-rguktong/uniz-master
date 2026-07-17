@@ -63,7 +63,7 @@ The infrastructure has transitioned from a "Dumb Pipe" setup to **Edge-Managed R
 | Path                 | Purpose                                                                |
 | :------------------- | :--------------------------------------------------------------------- |
 | `/apps/`             | Contains all microservice source code (`uniz-*`).                      |
-| `/infra/core-infra/` | Contains K8s manifests (`kubernetes/base/`) and legacy Docker Compose. |
+| `/infra/` | Contains K8s manifests (`kubernetes/base/`) and legacy Docker Compose. |
 | `/scripts/`          | Helper scripts for dev, deployment, and DB management.                 |
 | `/package.json`      | Root scripts for installing dependencies and managing the monorepo.    |
 

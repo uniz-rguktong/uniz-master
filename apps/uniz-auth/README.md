@@ -52,7 +52,7 @@ The Auth Service acts as the primary Identity Provider (IdP) for the UniZ ecosys
 
 ### Docker Deployment
 
-Refer to the `infra/core-infra` documentation for orchestrated deployment instructions.
+Refer to the `infra` documentation for orchestrated deployment instructions.
 
 ---
 

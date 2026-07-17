@@ -17,6 +17,8 @@ export interface ToastInput {
   variant?: Variant;
   duration?: number;
   autoClose?: number;
+  /** Stable id so loading → success/error can replace the same toast. */
+  id?: string;
   icon?: ReactNode;
   position?: string;
   actions?: {
@@ -58,6 +60,7 @@ export function showToast({
   variant = "default",
   duration = 4000,
   autoClose,
+  id,
   icon,
   actions,
   onDismiss,
@@ -140,7 +143,11 @@ export function showToast({
           createElement(X, { className: "h-4 w-4" }),
         ),
       ),
-    { duration: finalDuration, position: "bottom-right" },
+    {
+      id,
+      duration: finalDuration,
+      position: "bottom-right",
+    },
   );
 }
 
@@ -154,27 +161,39 @@ export const toast = {
       typeof optionsOrTitle === "object"
         ? { message, variant: "success", ...optionsOrTitle }
         : { message, title: optionsOrTitle, variant: "success" };
-    showToast(props);
+    return showToast(props);
   },
   error: (message: string, optionsOrTitle?: string | Partial<ToastInput>) => {
     const props: ToastInput =
       typeof optionsOrTitle === "object"
         ? { message, variant: "error", ...optionsOrTitle }
         : { message, title: optionsOrTitle, variant: "error" };
-    showToast(props);
+    return showToast(props);
   },
   warning: (message: string, optionsOrTitle?: string | Partial<ToastInput>) => {
     const props: ToastInput =
       typeof optionsOrTitle === "object"
         ? { message, variant: "warning", ...optionsOrTitle }
         : { message, title: optionsOrTitle, variant: "warning" };
-    showToast(props);
+    return showToast(props);
   },
   info: (message: string, optionsOrTitle?: string | Partial<ToastInput>) => {
     const props: ToastInput =
       typeof optionsOrTitle === "object"
         ? { message, variant: "default", ...optionsOrTitle }
         : { message, title: optionsOrTitle, variant: "default" };
-    showToast(props);
+    return showToast(props);
+  },
+  /** Persistent progress toast (PDF jobs, long uploads). Pass `id` to update in place. */
+  loading: (message: string, options?: Partial<ToastInput>) => {
+    return showToast({
+      message,
+      variant: "default",
+      duration: Number.POSITIVE_INFINITY,
+      ...options,
+    });
+  },
+  dismiss: (id?: string) => {
+    hotToast.dismiss(id);
   },
 };

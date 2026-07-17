@@ -3,7 +3,7 @@ title: "Production topology"
 description: "Where UniZ runs in production — Cloudflare Pages vs VPS K3s, parked pods, HPA limits, and hostnames."
 ---
 
-Canonical ops doc in the repo: [`docs/architecture/PRODUCTION_TOPOLOGY.md`](https://github.com/uniz-rguktong/uniz-master/blob/main/docs/architecture/PRODUCTION_TOPOLOGY.md). Manifests under `infra/core-infra/kubernetes/base/`.
+Canonical ops doc in the repo: [`docs/architecture/PRODUCTION_TOPOLOGY.md`](https://github.com/uniz-rguktong/uniz-master/blob/main/docs/architecture/PRODUCTION_TOPOLOGY.md). Manifests under `infra/kubernetes/base/`.
 
 ## Hosts
 
@@ -60,7 +60,7 @@ CI belt-and-suspenders: `scripts/ci/ci-remote-deploy.sh` re-scales these to 0 af
 
 ## Ingress (Kubernetes)
 
-File: `infra/core-infra/kubernetes/base/shared/ingress.yaml`
+File: `infra/kubernetes/base/shared/ingress.yaml`
 
 ```mermaid
 flowchart LR

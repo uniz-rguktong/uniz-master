@@ -51,7 +51,7 @@ The UniZ Edge Gateway is the intelligent entry point for the entire platform. In
 
 ### Docker Deployment
 
-Refer to the `infra/core-infra` documentation for information on the Nginx-based Gateway container.
+Refer to the `infra` documentation for information on the Nginx-based Gateway container.
 
 ---
 

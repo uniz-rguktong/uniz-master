@@ -52,7 +52,7 @@ The User Service manages the lifecycle of all identities within the UniZ platfor
 
 ### Docker Deployment
 
-Refer to the `infra/core-infra` documentation for orchestrated deployment instructions.
+Refer to the `infra` documentation for orchestrated deployment instructions.
 
 ---
 

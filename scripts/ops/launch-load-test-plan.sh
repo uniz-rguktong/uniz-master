@@ -13,7 +13,7 @@
 #   TOKEN='eyJ...' CONCURRENCY=50 bash scripts/ops/peak-load-profile.sh
 #
 # Phase D — login storm (DB-heavy, max 200, off-peak only):
-#   CONCURRENT_USERS=50 node infra/core-infra/setup-helper/stress_test_login.js
+#   CONCURRENT_USERS=50 node infra/setup-helper/stress_test_login.js
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -24,7 +24,7 @@ case "$PHASE" in
   health)
     echo "=== Phase A: health endpoint (${CONCURRENCY} workers, 60s) ==="
     CONCURRENT_USERS="${CONCURRENCY}" TOTAL_DURATION_SEC=60 \
-      node "$ROOT/infra/core-infra/setup-helper/stress_test_health.js"
+      node "$ROOT/infra/setup-helper/stress_test_health.js"
     ;;
   synthetic)
     echo "=== Phase B: synthetic users (CONCURRENCY=$CONCURRENCY) ==="
@@ -42,7 +42,7 @@ case "$PHASE" in
   login)
     echo "=== Phase D: login stress (off-peak only) ==="
     CONCURRENT_USERS="${CONCURRENT_USERS:-$CONCURRENCY}" \
-      node "$ROOT/infra/core-infra/setup-helper/stress_test_login.js"
+      node "$ROOT/infra/setup-helper/stress_test_login.js"
     ;;
   *)
     echo "Usage: $0 {health|synthetic|peak|login}"

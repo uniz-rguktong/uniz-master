@@ -44,7 +44,7 @@ The Mail Service acts as the unified communication gateway for all microservices
 
 ### Docker Deployment
 
-Refer to the `infra/core-infra` documentation for orchestrated deployment instructions.
+Refer to the `infra` documentation for orchestrated deployment instructions.
 
 ---
 
