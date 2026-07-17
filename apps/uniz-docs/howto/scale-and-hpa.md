@@ -56,4 +56,4 @@ The 2026-07-17 production run passed with 500 distinct students, 149 requests/se
 
 ## Hard limit
 
-One 4 vCPU node: simultaneous HPA max across all services will thrash. Scale for the **hot path** only. Details in `docs/UniZ_Scaling_Report.md`.
+One 4 vCPU node: simultaneous HPA max across all services will thrash. Scale for the **hot path** only. Details in `docs/architecture/UniZ_Scaling_Report.md`.

@@ -1,6 +1,6 @@
 # Docker
 
-## Local / demo (Compose)
+## Local / demo (full stack Compose)
 
 **File:** [`local/compose.yml`](local/compose.yml)
 
@@ -19,6 +19,16 @@ make up && make seed   # uses --project-directory . so build context is the mono
 - Portal: `Dockerfile.portal` + nginx
 - Seed: `--profile seed`
 - Auto-migrate only when `UNIZ_AUTO_DB_PUSH=true` (Compose sets this). Never on K8s.
+
+## Local / hot-reload (DB only)
+
+**File:** [`local/compose.db.yml`](local/compose.db.yml)
+
+Postgres + Redis only for `npm run setup:local` / `npm run dev:all`.
+
+```bash
+docker compose -f docker/local/compose.db.yml up -d uniz-redis uniz-postgres
+```
 
 Day-to-day hot reload: `npm run setup:local` + `npm run dev:all` — see [docs/local/LOCAL_SETUP.md](../docs/local/LOCAL_SETUP.md).
 

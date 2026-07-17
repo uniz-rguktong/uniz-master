@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Authenticated student API latency audit (production).
 
-Requires JWT in TOKEN env (see docs/SUB_500MS_ACTION_PLAN.md).
+Requires JWT in TOKEN env (see docs/internal/perf/SUB_500MS_ACTION_PLAN.md).
 
   export TOKEN='...'   # from localStorage student_token or mint-student-token.sh
   export STUDENT_USER=O210008
@@ -122,7 +122,7 @@ def main() -> int:
     runs = args.runs
 
     if not TOKEN:
-        print("ERROR: Set TOKEN (see docs/SUB_500MS_ACTION_PLAN.md)", file=sys.stderr)
+        print("ERROR: Set TOKEN (see docs/internal/perf/SUB_500MS_ACTION_PLAN.md)", file=sys.stderr)
         print("  Browser: localStorage student_token on uniz.rguktong.in", file=sys.stderr)
         return 1
 

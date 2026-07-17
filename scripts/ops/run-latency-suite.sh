@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Master latency verification suite — public + authenticated (optional load).
-# Does NOT store credentials. See docs/SUB_500MS_ACTION_PLAN.md
+# Does NOT store credentials. See docs/internal/perf/SUB_500MS_ACTION_PLAN.md
 #
 # Usage:
 #   # Public only

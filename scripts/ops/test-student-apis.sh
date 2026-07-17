@@ -36,7 +36,7 @@ test_api() {
 if [ -z "${TOKEN:-}" ]; then
   if [ -z "$PASS" ]; then
     echo "Set TOKEN (browser localStorage student_token) or STUDENT_PASS for login."
-    echo "See docs/SUB_500MS_ACTION_PLAN.md"
+    echo "See docs/internal/perf/SUB_500MS_ACTION_PLAN.md"
     exit 1
   fi
   echo "=== Login (needs captchaToken — use scripts/ops/mint-student-token.sh) ==="
