@@ -11,7 +11,6 @@ import {
   getTimeAgo,
   useCampusUpdates,
 } from "@/hooks/useCampusUpdates";
-import { CAMPUS_UPDATES_FALLBACK } from "@/constants/campusUpdates";
 
 const COLLAPSED_COUNT = 4;
 const NEW_WINDOW_MS = 48 * 60 * 60 * 1000;
@@ -99,16 +98,14 @@ function NoticeCard({ update }: { update: CampusUpdate }) {
 
 type NoticeBoardProps = {
   className?: string;
-  fallback?: CampusUpdate[];
   maxItems?: number;
 };
 
 export default function NoticeBoard({
   className,
-  fallback = CAMPUS_UPDATES_FALLBACK,
   maxItems = 12,
 }: NoticeBoardProps) {
-  const { updates, loading } = useCampusUpdates(fallback);
+  const { updates, loading } = useCampusUpdates();
   const [expanded, setExpanded] = useState(false);
 
   const items = useMemo(

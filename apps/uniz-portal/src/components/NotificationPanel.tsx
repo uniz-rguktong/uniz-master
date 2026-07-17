@@ -24,34 +24,6 @@ type NotificationItem = {
   link: string;
 };
 
-const CAREERS: NotificationItem[] = [
-  {
-    id: "1",
-    title: "Recruitment of Assistant Professors (Contract) - CSE & ECE Depts",
-    dateRange: "Apply by 15-11-2025",
-    type: "career",
-    color: "border-l-red-500",
-    link: "#",
-  },
-  {
-    id: "2",
-    title:
-      "Walk-in Interview for Residential Medical Officer @ Campus Hospital",
-    dateRange: "20-11-2025",
-    type: "career",
-    color: "border-l-blue-500",
-    link: "#",
-  },
-  {
-    id: "3",
-    title: "JRF Position available in Dept of Physics (SERB Project)",
-    dateRange: "Apply by 30-11-2025",
-    type: "career",
-    color: "border-l-yellow-500",
-    link: "#",
-  },
-];
-
 const Scroller = ({
   children,
   height = "h-[300px]",
@@ -306,7 +278,7 @@ export function NotificationPanel() {
           onMouseLeave={() => setNotifyPaused(false)}
         >
           <Scroller height="h-full" isPaused={isNotifyPaused}>
-            {(activeTab === "tenders" ? tenders : CAREERS).map((item) => (
+            {(activeTab === "tenders" ? tenders : []).map((item) => (
               <div
                 key={item.id}
                 onClick={() => window.open(item.link, "_blank")}

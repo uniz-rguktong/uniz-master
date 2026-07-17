@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { BASE_URL, GET_NOTIFICATIONS } from "@/api/endpoints";
-import { CAMPUS_UPDATES_FALLBACK } from "@/constants/campusUpdates";
 
 export type CampusUpdate = {
   _id?: string;
@@ -14,6 +13,7 @@ export type CampusUpdate = {
 };
 
 const CMS_API_KEY = "uniz-landing-v1-key";
+const EMPTY_UPDATES: CampusUpdate[] = [];
 
 function extractUpdates(payload: unknown): CampusUpdate[] {
   if (!payload || typeof payload !== "object") return [];
@@ -67,8 +67,8 @@ async function fetchCampusUpdates(signal?: AbortSignal): Promise<CampusUpdate[]>
   return [];
 }
 
-export function useCampusUpdates(fallback: CampusUpdate[] = CAMPUS_UPDATES_FALLBACK) {
-  const [updates, setUpdates] = useState<CampusUpdate[]>(fallback);
+export function useCampusUpdates(fallback: CampusUpdate[] = EMPTY_UPDATES) {
+  const [updates, setUpdates] = useState<CampusUpdate[]>([]);
   const [loading, setLoading] = useState(true);
   const [fromApi, setFromApi] = useState(false);
 
@@ -101,6 +101,8 @@ export function useCampusUpdates(fallback: CampusUpdate[] = CAMPUS_UPDATES_FALLB
       cancelled = true;
       controller.abort();
     };
+    // fallback is a stable module constant for NoticeBoard; landing may pass CAMPUS_UPDATES_FALLBACK
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { updates, loading, fromApi };
