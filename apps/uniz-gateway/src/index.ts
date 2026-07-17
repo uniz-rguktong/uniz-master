@@ -3,11 +3,20 @@ import cors from "cors";
 import axios from "axios";
 import path from "path";
 import compression from "compression";
+import crypto from "crypto";
 import Redis from "ioredis";
 import httpProxy from "http-proxy";
 import http from "http";
 import dotenv from "dotenv";
 dotenv.config({ override: true });
+
+function cacheIdentityKey(req: express.Request): string {
+  const auth = String(req.headers["authorization"] || "").trim();
+  const uid = String(req.headers["uid"] || "").trim();
+  const raw = auth || uid || "guest";
+  // Full hash — never truncate tokens (JWTs share a long common Bearer prefix).
+  return crypto.createHash("sha256").update(raw).digest("hex");
+}
 
 // Pre-configured Axios instance for internal communications with Keep-Alive
 const internalClient = axios.create({
@@ -477,18 +486,33 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
     req.url.includes("/student/me") ||
     req.url.includes("/grades") ||
     req.url.includes("/attendance") ||
-    req.url.includes("/bootstrap");
+    req.url.includes("/bootstrap") ||
+    req.url.includes("/inbox") ||
+    req.url.includes("/notifications");
+
+  const isPublicCms =
+    req.url.includes("/cms/notifications") ||
+    req.url.includes("/cms/banners") ||
+    req.url.includes("/cms/updates") ||
+    service === "cms";
+
+  // Authenticated GETs only cache when explicitly public CMS; identity hash
+  // still partitions any future authenticated cache entries.
+  const hasAuth = Boolean(
+    String(req.headers["authorization"] || "").trim() ||
+      String(req.headers["uid"] || "").trim(),
+  );
+  const mayCache = !hasAuth || isPublicCms;
 
   if (
     req.method === "GET" &&
     req.headers["cache-control"] !== "no-cache" &&
     !isBinaryRequest &&
-    !isSensitive
+    !isSensitive &&
+    mayCache
   ) {
-    // Generate unique key based on URL and User Context (Auth Token / User-Agent)
-    const userKey =
-      req.headers["authorization"] || req.headers["uid"] || "guest";
-    const cacheKey = `p3:${service}:${Buffer.from(req.url).toString("base64")}:${Buffer.from(userKey).toString("base64").substring(0, 16)}`;
+    const identity = cacheIdentityKey(req);
+    const cacheKey = `p4:${service}:${Buffer.from(req.url).toString("base64")}:${identity}`;
 
     try {
       const cached = await redis.get(cacheKey);
@@ -517,11 +541,6 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
       const isJson = contentType.includes("application/json");
 
       if (response.status === 200 && isJson) {
-        const isPublicCms =
-          req.url.includes("/cms/notifications") ||
-          req.url.includes("/cms/banners") ||
-          req.url.includes("/cms/updates") ||
-          service === "cms";
         const cacheTtlSeconds = isPublicCms ? 30 : 2;
         // Only cache JSON responses to prevent binary blowup in Redis
         redis
