@@ -2355,6 +2355,23 @@ export const getRegistrationTracking = async (
       };
     });
 
+    const filterOptions = {
+      branches: [
+        ...new Set(
+          enriched
+            .map((student) => String(student.branch || "").toUpperCase())
+            .filter(Boolean),
+        ),
+      ].sort(),
+      batches: [
+        ...new Set(
+          enriched
+            .map((student) => String(student.batch || "").toUpperCase())
+            .filter(Boolean),
+        ),
+      ].sort(),
+    };
+
     const summary = {
       eligible: enriched.length,
       registered: enriched.filter((s) => s.registered).length,
@@ -2396,6 +2413,7 @@ export const getRegistrationTracking = async (
         academicYear: sem.academicYear,
       },
       summary,
+      filterOptions,
       students,
       pagination: { page: pageNum, totalPages, total },
     });
@@ -3042,10 +3060,11 @@ export const downloadBulkRegistrationPdfs = async (
     const safeSem = sem.id.replace(/[^a-zA-Z0-9_-]/g, "_");
     const branchSuffix = branchFilter ? `_${branchFilter}` : "";
     const yearSuffix = yearFilter ? `_${yearFilter}` : "";
+    const batchSuffix = batchFilter ? `_${batchFilter}` : "";
 
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="REGISTRATION_BULK_${safeSem}${branchSuffix}${yearSuffix}.pdf"`,
+      `attachment; filename="REGISTRATION_BULK_${safeSem}${batchSuffix}${branchSuffix}${yearSuffix}.pdf"`,
     );
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
