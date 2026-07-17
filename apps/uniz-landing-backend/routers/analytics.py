@@ -153,7 +153,7 @@ async def get_academic_heatmap():
 async def get_grievance_trends():
     query = """
         SELECT category, status, COUNT(*) as count 
-        FROM uniz_outpass."Grievance" 
+        FROM uniz_user."Grievance" 
         GROUP BY category, status
     """
     return await fetch_records(query)
@@ -195,7 +195,7 @@ async def get_branch_distribution():
 async def get_grievance_summary():
     query = """
         SELECT category, status, COUNT(*) as count
-        FROM uniz_outpass."Grievance"
+        FROM uniz_user."Grievance"
         GROUP BY category, status
         ORDER BY count DESC
     """

@@ -23,19 +23,14 @@ app.get("/health", (req, res) => {
 });
 
 import requestRoutes from "./routes/request.routes";
-import grievanceRoutes from "./routes/grievance.routes";
 import maintenanceRoutes from "./routes/maintenance.routes";
 
-// Consolidated Routing
-// 1. Grievance routes (handles both /grievance/list and /list if prefix stripped)
-app.use("/grievance", grievanceRoutes);
-app.use("/api/v1/requests/grievance", grievanceRoutes); // Direct match fallback
-app.use("/", grievanceRoutes);
+// Grievance moved to uniz-user-service. Outpass/outing remain here (parked via gateway flag).
 
-// 2. Request routes (handles history, outpass, etc.)
+// 1. Request routes (outpass / outing)
 app.use("/", requestRoutes);
 
-// 3. Scheduled maintenance (formerly uniz-cron)
+// 2. Scheduled maintenance (formerly uniz-cron)
 app.use("/", maintenanceRoutes);
 
 // 404 Handler with internal path logging

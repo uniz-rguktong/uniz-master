@@ -144,3 +144,21 @@ model PushSubscription {
 
   @@index([username])
 }
+
+/// Campus welfare grievances (moved from uniz-outpass).
+model Grievance {
+  id           String    @id @default(uuid())
+  studentId    String?
+  studentEmail String?
+  category     String
+  description  String
+  isAnonymous  Boolean   @default(false)
+  status       String    @default("pending")
+  resolvedBy   String?
+  resolution   String?
+  resolvedAt   DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}

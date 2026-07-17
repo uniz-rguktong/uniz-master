@@ -17,9 +17,9 @@ This document must match those manifests — do not invent higher replica ceilin
 | uniz-gateway (nginx) | 2 | 2→6 | Edge rate limit |
 | uniz-gateway-api | 1 | 1→2 | Redis short-TTL cache; public CMS ~30s |
 | uniz-auth-service | 1 | 1→2 | Login bursts |
-| uniz-user-service | 1 | 1→4 | Profiles, CMS banners/notices, `/image/upload` |
+| uniz-user-service | 1 | 1→4 | Profiles, CMS banners/notices, `/image/upload`, **grievance** |
 | uniz-academics-service | 1 | 1→3 | Grades, attendance, registration |
-| uniz-outpass-service | 1 | 1→1 | **Grievance only** while outpass/outing disabled |
+| uniz-outpass-service | **0** | — | Parked; outpass/outing gated; maintenance CronJob image only |
 | uniz-notification-service | 1 | none | **Comms**: push + inbox + mail `/send` |
 | uniz-landing | 1 | none | Marketing site |
 | uniz-docs-service | 1 | none | Docs |
@@ -31,9 +31,10 @@ This document must match those manifests — do not invent higher replica ceilin
 | uniz-cron-service Deployment | Not applied; storage cleanup CronJob only |
 | uniz-mail-service Deployment | Folded into notifications; replicas 0 / not in kustomization |
 | uniz-files-service Deployment | Folded into user; replicas 0 / not in kustomization |
+| uniz-outpass-service Deployment | **replicas: 0** — grievance moved to user; revive when outing/outpass enabled |
 | Outpass/outing student+admin UI | Off unless `VITE_ENABLE_OUTPASS_OUTING=true` |
-| `/api/v1/requests/*` | 503 unless `ENABLE_OUTPASS_OUTING=true` |
-| Grievance (`/api/v1/grievance/*`) | Served by outpass-service |
+| `/api/v1/requests/*` (non-grievance) | 503 unless `ENABLE_OUTPASS_OUTING=true` |
+| Grievance (`/api/v1/grievance/*`, `/requests/grievance/*`) | **user-service** |
 
 ## CMS ownership (no FastAPI rewrite)
 

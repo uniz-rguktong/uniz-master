@@ -177,8 +177,8 @@ const serviceMap: Record<string, string> = {
     process.env.OUTPASS_SERVICE_URL ||
     "http://uniz-outpass-service.default.svc.cluster.local:3003",
   grievance:
-    process.env.OUTPASS_SERVICE_URL ||
-    "http://uniz-outpass-service.default.svc.cluster.local:3003",
+    process.env.USER_SERVICE_URL ||
+    "http://uniz-user-service.default.svc.cluster.local:3002",
   docs:
     process.env.DOCS_SERVICE_URL ||
     (process.env.NODE_ENV === "production"
@@ -246,7 +246,7 @@ const HEALTH_REDIS_KEY = "gateway:system_health_aggregate";
 const HEALTH_FRESH_MS = 30_000;
 const HEALTH_STALE_MS = 120_000;
 const HEALTH_REDIS_TTL_SEC = 120;
-const optionalServices = new Set(["docs"]);
+const optionalServices = new Set(["docs", "requests", "cron"]);
 
 interface HealthPayload {
   data: { status: string; services: unknown[]; cached?: boolean };
@@ -430,10 +430,18 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
 
   if (!target) return res.status(404).json({ error: "Service Not Found" });
 
-  // Outpass/outing parked in production; grievance (same upstream) stays available.
-  const outpassOutingEnabled =
-    process.env.ENABLE_OUTPASS_OUTING === "true";
-  if (service === "requests" && !outpassOutingEnabled) {
+  // Outpass/outing parked; grievance lives on user-service.
+  // Admin SWO still calls /api/v1/requests/grievance/* — route those to user.
+  const outpassOutingEnabled = process.env.ENABLE_OUTPASS_OUTING === "true";
+  const subPathEarly = proxyPathFromParams(req.params.path);
+  const isGrievanceViaRequests =
+    service === "requests" &&
+    (subPathEarly === "/grievance" ||
+      subPathEarly.startsWith("/grievance/") ||
+      subPathEarly === "grievance" ||
+      subPathEarly.startsWith("grievance/"));
+
+  if (service === "requests" && !outpassOutingEnabled && !isGrievanceViaRequests) {
     return res.status(503).json({
       success: false,
       error: "Outpass and outing are currently disabled by administration",
@@ -441,7 +449,15 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
     });
   }
 
-  const subPath = proxyPathFromParams(req.params.path);
+  let targetUrl = target;
+  if (isGrievanceViaRequests) {
+    targetUrl =
+      serviceMap.grievance ||
+      process.env.USER_SERVICE_URL ||
+      "http://uniz-user-service.default.svc.cluster.local:3002";
+  }
+
+  const subPath = subPathEarly;
   const queryStart = req.originalUrl.indexOf("?");
   const queryString =
     queryStart >= 0 ? req.originalUrl.slice(queryStart) : "";
@@ -489,9 +505,9 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
       }
 
       const response = await internalClient.get(
-        `${target.replace(/\/$/, "")}${req.url}`,
+        `${targetUrl.replace(/\/$/, "")}${req.url}`,
         {
-          headers: { ...req.headers, host: new URL(target).host },
+          headers: { ...req.headers, host: new URL(targetUrl).host },
           responseType: "arraybuffer", // Use arraybuffer to handle mixed content
           validateStatus: () => true,
         },
@@ -532,7 +548,7 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
     }
   }
 
-  proxy.web(req, res, { target });
+  proxy.web(req, res, { target: targetUrl });
 });
 
 app.get("/", (req: express.Request, res: express.Response) => {

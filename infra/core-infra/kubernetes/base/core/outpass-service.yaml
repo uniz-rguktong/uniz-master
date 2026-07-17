@@ -5,10 +5,10 @@ metadata:
   labels:
     app: uniz-outpass-service
 spec:
-  # Kept at 1 for grievance APIs. Outpass/outing /requests are gated by
-  # ENABLE_OUTPASS_OUTING=false on the gateway. Scale to 0 only if grievances
-  # are also intentionally offline.
-  replicas: 1
+  # Scaled to 0: grievance moved to user-service; outpass/outing API gated off.
+  # Code + CronJob image (maintenance) remain. Scale up when ENABLE_OUTPASS_OUTING=true.
+  # No HPA while parked (HPA minReplicas would fight replicas: 0).
+  replicas: 0
   selector:
     matchLabels:
       app: uniz-outpass-service
@@ -53,22 +53,3 @@ spec:
     - protocol: TCP
       port: 3003
       targetPort: 3003
----
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: uniz-outpass-service-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: uniz-outpass-service
-  minReplicas: 1
-  maxReplicas: 1
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 70
