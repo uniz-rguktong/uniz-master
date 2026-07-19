@@ -3,7 +3,7 @@ title: "Admin Overview"
 description: "How administrative staff log in and navigate the UniZ admin portal — covering roles, the dashboard, and key functions."
 ---
 
-The UniZ admin portal gives non-student staff a dedicated interface for managing approvals, academic data, campus security, announcements, and **semester registration**. Every administrative role — caretaker, warden, SWO, HOD, dean, director, and webmaster — uses the same portal with a role-appropriate view.
+The UniZ admin portal gives non-student staff a dedicated interface for managing approvals, academic data, campus security, announcements, and **semester registration**. Every administrative role — caretaker, warden, SWO, HOD, dean, director, and webadmin — uses the same portal with a role-appropriate view.
 
 ## Logging in
 
@@ -39,7 +39,7 @@ Store the returned token and include it as a `Bearer` token in the `Authorizatio
 <Info>
   Admin usernames follow a fixed pattern: `director`, `dean_cse`, `warden_male`,
   `warden_female`, `caretaker_male`, `caretaker_female`, `security_admin`, and
-  `webmaster`. Contact your system administrator if you do not have your
+  `webadmin`. Contact your system administrator if you do not have your
   credentials.
 </Info>
 
@@ -56,7 +56,7 @@ Each admin role has a tailored view of the portal. The table below maps roles to
 | SWO       | `swo`                                 | Outpass approvals, grievance resolution               |
 | HOD       | `hod_cse`, etc.                       | Department students (read-only), registration tracking |
 | Security  | `security_admin`                      | Gate check-in and check-out                           |
-| Webmaster | `webmaster`                           | Semester builder, banners, bulk uploads, system health |
+| Webadmin | `webadmin`                           | Semester builder, banners, bulk uploads, system health |
 
 ## What the dashboard shows
 
@@ -67,7 +67,7 @@ When you log in, the dashboard surfaces the information most relevant to your ro
 - **Dean and director** see pending final-approval requests, student search, and academic controls.
 - **HOD** sees department-scoped student details and registration tracking.
 - **SWO** manages grievance queue and outpass escalations.
-- **Webmaster** sees semester builder, banner management, and announcement tools.
+- **Webadmin** sees semester builder, banner management, and announcement tools.
 
 The portal automatically hides features your role cannot access. You do not need to configure anything — access is determined by the `role` returned at login.
 

@@ -33,7 +33,7 @@ flowchart LR
 | `CLOUDFLARE_ACCOUNT_ID` | Optional; else resolved via zone |
 | `VITE_API_URL` | Default `https://api-uniz.rguktong.in/api/v1` |
 | `VITE_LANDING_API_URL` | Default `https://landing-api.rguktong.in` |
-| Other `VITE_*` | Turnstile, Cloudinary, analytics, flags |
+| Other `VITE_*` | Turnstile, analytics, flags |
 
 ## Build-time wiring
 

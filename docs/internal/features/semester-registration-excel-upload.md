@@ -65,7 +65,7 @@ for real Google Form data so the latest duplicate submission wins.
 
 ## Subject Excel format
 
-Webmaster subject upload accepts either:
+Webadmin subject upload accepts either:
 
 - The RGUKT subject workbook shape (`26-27 Subjects Sem-1 (CSE&AIML).xlsx`)
   with one sheet per branch and `E2-O23 Batch` / `E3-O22 Batch` / `E4-O21 Batch`
@@ -143,7 +143,7 @@ Bulk upload must call the same rules as `registerSubjects`:
 | `replace` | Delete existing rows for student+semester, then insert |
 | `merge` | Add missing subjects only; reject conflicts |
 
-Recommend **`skip` default** + optional `replace` for webmaster only.
+Recommend **`skip` default** + optional `replace` for webadmin only.
 
 ---
 

@@ -26,7 +26,7 @@ npm run dev:all
 | Portal | http://localhost:5173 |
 | API | http://localhost:3000/api/v1 |
 | Docs | `npm run docs:dev` → http://localhost:3333/docs/ |
-| Seeded admin | `webmaster` / `password123` |
+| Seeded admin | `webadmin` / `password123` |
 
 ## Docker Compose alternative
 
