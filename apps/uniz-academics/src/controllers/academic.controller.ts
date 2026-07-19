@@ -996,7 +996,9 @@ export const addAttendance = async (
   }
 
   try {
-    const subject = await prisma.subject.findUnique({ where: { id: subjectId } });
+    const subject = await prisma.subject.findUnique({
+      where: { id: subjectId },
+    });
     if (!subject) {
       return res
         .status(400)
@@ -1572,9 +1574,7 @@ export const getSubjects = async (req: AuthenticatedRequest, res: Response) => {
     MECH: ["MECH", "ME"],
     ME: ["ME", "MECH"],
   };
-  const deptValues = deptRaw
-    ? deptAliases[deptRaw] || [deptRaw]
-    : [];
+  const deptValues = deptRaw ? deptAliases[deptRaw] || [deptRaw] : [];
 
   try {
     const where: any = {};
@@ -2444,7 +2444,13 @@ export const uploadAttendance = async (req: any, res: Response) => {
       headers.includes("Academic Code") ||
       headers.includes("Internal Code");
 
-    if (!hasStudentId || !hasSemesterId || !hasTotal || !hasAttended || !hasSubjectCode) {
+    if (
+      !hasStudentId ||
+      !hasSemesterId ||
+      !hasTotal ||
+      !hasAttended ||
+      !hasSubjectCode
+    ) {
       const missing: string[] = [];
       if (!hasStudentId) missing.push("Student ID");
       if (!hasSubjectCode) missing.push("Subject Code or Academic Code");
@@ -2832,7 +2838,9 @@ export const purgeStudentRecords = async (req: Request, res: Response) => {
 
   const studentId = String(req.params.studentId || "").toUpperCase();
   if (!studentId) {
-    return res.status(400).json({ success: false, message: "Student ID required" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Student ID required" });
   }
 
   try {
@@ -2858,7 +2866,10 @@ export const purgeStudentRecords = async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    console.error(`[Academics] purgeStudentRecords failed for ${studentId}:`, error.message);
+    console.error(
+      `[Academics] purgeStudentRecords failed for ${studentId}:`,
+      error.message,
+    );
     return res.status(500).json({
       success: false,
       message: "Failed to purge academic records",

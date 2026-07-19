@@ -252,11 +252,7 @@ export const getStudentProfile = async (
       });
     }
 
-    if (
-      user.role === UserRole.HOD &&
-      req.params.username &&
-      !isSelf
-    ) {
+    if (user.role === UserRole.HOD && req.params.username && !isSelf) {
       const hodBranch = resolveHodBranch(user);
       const studentBranch = String(profile.branch || "")
         .trim()
@@ -351,7 +347,10 @@ export const getStudentBootstrap = async (
   const cacheKey = bootstrapCacheKey(username);
   const authHeader = req.headers.authorization;
 
-  res.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate");
+  res.setHeader(
+    "Cache-Control",
+    "private, no-store, no-cache, must-revalidate",
+  );
   res.setHeader("Pragma", "no-cache");
   res.setHeader("Expires", "0");
   res.setHeader("Vary", "Authorization");
@@ -414,7 +413,11 @@ export const getStudentBootstrap = async (
       },
     };
 
-    await redis.setex(cacheKey, BOOTSTRAP_CACHE_TTL_SEC, JSON.stringify(payload));
+    await redis.setex(
+      cacheKey,
+      BOOTSTRAP_CACHE_TTL_SEC,
+      JSON.stringify(payload),
+    );
 
     return res.json({ ...payload, source: "db" });
   } catch (e) {
@@ -650,14 +653,17 @@ export const createIndividualStudent = async (
           username: username,
           password: defaultPassword,
           role: "student",
-          email: studentData.email || `${username.toLowerCase()}@rguktong.ac.in`,
+          email:
+            studentData.email || `${username.toLowerCase()}@rguktong.ac.in`,
         },
         {
           headers: { "x-internal-secret": SECRET },
           timeout: 5000,
         },
       );
-      console.log(`[USER] Successfully synced auth for individual student: ${username}`);
+      console.log(
+        `[USER] Successfully synced auth for individual student: ${username}`,
+      );
     } catch (authErr: any) {
       // If student already exists in auth, that's fine, we continue to profile creation/update
       if (authErr.response?.status !== 409) {
@@ -853,9 +859,9 @@ export const searchStudents = async (
       cgpa: "cgpa",
       total_backlogs: "totalBacklogs",
     };
-    const orderField =
-      sortFieldMap[String(sortBy).toLowerCase()] || "username";
-    const orderDirection = String(sortDir).toLowerCase() === "desc" ? "desc" : "asc";
+    const orderField = sortFieldMap[String(sortBy).toLowerCase()] || "username";
+    const orderDirection =
+      String(sortDir).toLowerCase() === "desc" ? "desc" : "asc";
 
     // Cap page size so a caller can't pull the whole table in one request.
     const safeLimit = Math.min(Math.max(Number(limit) || 10, 1), 100);
@@ -1706,13 +1712,17 @@ export const deleteStudentProfile = async (
 
   const username = String(req.params.username || "").toUpperCase();
   if (!username) {
-    return res.status(400).json({ success: false, message: "Student ID required" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Student ID required" });
   }
 
   try {
     const result = await purgeStudentAccount(username);
     if (result.status === "not_found") {
-      return res.status(404).json({ success: false, message: "Student not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Student not found" });
     }
     if (result.status === "error") {
       return res.status(500).json({
@@ -1728,7 +1738,10 @@ export const deleteStudentProfile = async (
       username: result.username,
     });
   } catch (e: any) {
-    console.error(`[ERROR] deleteStudentProfile failed for ${username}:`, e.message || e);
+    console.error(
+      `[ERROR] deleteStudentProfile failed for ${username}:`,
+      e.message || e,
+    );
     return res.status(500).json({
       success: false,
       message: "Failed to delete student",
@@ -1743,14 +1756,19 @@ type PurgeStudentResult = {
   reason?: string;
 };
 
-async function purgeStudentAccount(rawUsername: string): Promise<PurgeStudentResult> {
+async function purgeStudentAccount(
+  rawUsername: string,
+): Promise<PurgeStudentResult> {
   const lookup = String(rawUsername || "").trim();
   if (!lookup) {
     return { username: lookup, status: "error", reason: "empty username" };
   }
 
   const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
-  const internalHeaders = { headers: { "x-internal-secret": SECRET }, timeout: 20000 };
+  const internalHeaders = {
+    headers: { "x-internal-secret": SECRET },
+    timeout: 20000,
+  };
 
   try {
     const existing = await prisma.studentProfile.findFirst({
@@ -1764,7 +1782,10 @@ async function purgeStudentAccount(rawUsername: string): Promise<PurgeStudentRes
     const canonicalUsername = existing.username;
 
     const purgeResults = await Promise.allSettled([
-      axios.delete(`${AUTH_SERVICE_URL}/internal/user/${canonicalUsername}`, internalHeaders),
+      axios.delete(
+        `${AUTH_SERVICE_URL}/internal/user/${canonicalUsername}`,
+        internalHeaders,
+      ),
       axios.delete(
         `${ACADEMICS_SERVICE_URL}/internal/student/${canonicalUsername}`,
         internalHeaders,
@@ -1828,7 +1849,11 @@ export const bulkDeleteStudents = async (
   const unique = [
     ...new Set(
       usernames
-        .map((u) => String(u || "").trim().toUpperCase())
+        .map((u) =>
+          String(u || "")
+            .trim()
+            .toUpperCase(),
+        )
         .filter(Boolean),
     ),
   ];
@@ -1844,7 +1869,9 @@ export const bulkDeleteStudents = async (
   const concurrency = 3;
   for (let i = 0; i < unique.length; i += concurrency) {
     const chunk = unique.slice(i, i + concurrency);
-    const chunkResults = await Promise.all(chunk.map((u) => purgeStudentAccount(u)));
+    const chunkResults = await Promise.all(
+      chunk.map((u) => purgeStudentAccount(u)),
+    );
     results.push(...chunkResults);
   }
 
@@ -2339,11 +2366,18 @@ export const promoteCohort = async (
   const { fromYear, toYear, branch } = req.body;
 
   if (!fromYear || !toYear) {
-    return res.status(400).json({ success: false, message: "Missing fromYear or toYear" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing fromYear or toYear" });
   }
 
   const user = req.user;
-  const allowedRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR, UserRole.COE];
+  const allowedRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.COE,
+  ];
   if (!user || !allowedRoles.includes(user.role as UserRole)) {
     return res.status(403).json({
       success: false,
@@ -2364,7 +2398,7 @@ export const promoteCohort = async (
       data: {
         year: toYear,
         updatedAt: new Date(),
-      }
+      },
     });
 
     // Cohort profiles are invalidated by their per-key TTL. We intentionally
@@ -2374,7 +2408,7 @@ export const promoteCohort = async (
     return res.json({
       success: true,
       message: `Successfully promoted ${result.count} students from ${fromYear} to ${toYear}`,
-      count: result.count
+      count: result.count,
     });
   } catch (err: any) {
     return res.status(500).json({ success: false, message: err.message });

@@ -111,8 +111,12 @@ export async function processNextStudentBatch() {
           id.length >= 3 && /^[A-Z]\d{2}$/.test(id.substring(0, 3))
             ? id.substring(0, 3)
             : "";
-        const finalBatch = (batchCol || inferredBatch || majorityBatch || "")
-          .toUpperCase();
+        const finalBatch = (
+          batchCol ||
+          inferredBatch ||
+          majorityBatch ||
+          ""
+        ).toUpperCase();
 
         const roomno = getVal(["room no", "roomno", "room_no", "hostel_room"]);
         const isInCampusRaw = getVal([

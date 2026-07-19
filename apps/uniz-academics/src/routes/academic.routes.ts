@@ -159,7 +159,10 @@ router.get(
   "/registrations/pdf/jobs/:jobId/download",
   downloadRegistrationPdfJob,
 );
-router.get("/registration/subjects/template", downloadRegistrationSubjectsTemplate);
+router.get(
+  "/registration/subjects/template",
+  downloadRegistrationSubjectsTemplate,
+);
 router.post(
   "/registration/subjects/upload",
   upload.single("file"),

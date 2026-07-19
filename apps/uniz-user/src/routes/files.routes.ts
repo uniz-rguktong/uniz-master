@@ -33,8 +33,8 @@ router.post(
     }
 
     try {
-      const result: { secure_url: string; public_id: string } = await new Promise(
-        (resolve, reject) => {
+      const result: { secure_url: string; public_id: string } =
+        await new Promise((resolve, reject) => {
           const uploadStream = cloudinary.uploader.upload_stream(
             {
               folder: "uniz/profiles",
@@ -44,12 +44,13 @@ router.post(
             (error, uploadResult) => {
               if (error) reject(error);
               else
-                resolve(uploadResult as { secure_url: string; public_id: string });
+                resolve(
+                  uploadResult as { secure_url: string; public_id: string },
+                );
             },
           );
           uploadStream.end(req.file!.buffer);
-        },
-      );
+        });
 
       return res.json({
         success: true,

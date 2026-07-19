@@ -13,9 +13,7 @@ export async function createInboxEntry(
   input: InboxCreateInput,
 ) {
   const normalized = username.toLowerCase();
-  const path =
-    input.path ||
-    `/notifications?portal=auto`;
+  const path = input.path || `/notifications?portal=auto`;
 
   return prisma.notificationInbox.create({
     data: {

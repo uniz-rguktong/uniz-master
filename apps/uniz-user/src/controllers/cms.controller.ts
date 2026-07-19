@@ -83,7 +83,11 @@ export const getPublicNotifications = async (req: Request, res: Response) => {
  * ADMIN ENDPOINTS (Restricted via RBAC)
  */
 
-const CMS_ALLOWED_ROLES = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
+const CMS_ALLOWED_ROLES = [
+  UserRole.WEBMASTER,
+  UserRole.DEAN,
+  UserRole.DIRECTOR,
+];
 
 function hasCmsAccess(role?: string): boolean {
   return !!role && CMS_ALLOWED_ROLES.includes(role as UserRole);

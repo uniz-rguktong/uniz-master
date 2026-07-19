@@ -250,7 +250,10 @@ router.post("/internal/upload-history", recordExternalUpload);
 router.post("/internal/bulk-profiles", getBulkProfiles);
 router.post("/internal/targeting", getTargetingData);
 router.post("/internal/sync-student-stats", internalSyncStudentStats);
-router.post("/internal/invalidate-student-cache", internalInvalidateStudentCache);
+router.post(
+  "/internal/invalidate-student-cache",
+  internalInvalidateStudentCache,
+);
 router.get("/internal/resolve-login", resolveLoginByEmail);
 
 router.get("/admin/student/:username", authMiddleware, getStudentProfile);

@@ -35,7 +35,9 @@ function isDataRow(row: Record<string, unknown>): boolean {
   return Object.values(row).some((v) => String(v ?? "").trim() !== "");
 }
 
-export function validateStudentUploadHeaders(headers: string[]): StudentUploadValidationError[] {
+export function validateStudentUploadHeaders(
+  headers: string[],
+): StudentUploadValidationError[] {
   const normalized = headers.map((h) => h.toLowerCase().trim());
   const missing = REQUIRED_HEADERS.filter((h) => !normalized.includes(h));
   if (!missing.length) return [];
@@ -63,7 +65,13 @@ export function validateStudentUploadRows(
   for (let i = 0; i < dataRows.length; i++) {
     const row = dataRows[i];
     const rowNo = i + 2;
-    let id = pick(row, ["student id", "studentid", "student_id", "id", "username"]).toUpperCase();
+    let id = pick(row, [
+      "student id",
+      "studentid",
+      "student_id",
+      "id",
+      "username",
+    ]).toUpperCase();
     if (id.startsWith("RO")) id = "O" + id.slice(2);
 
     const name = pick(row, ["name", "student name", "student_name"]);

@@ -3,7 +3,9 @@ import { Request, Response, NextFunction } from "express";
 import { JwtPayload, JwtPayloadSchema } from "../shared/jwt.schema";
 import { ErrorCode } from "../shared/error-codes";
 
-const JWT_SECRET = (process.env.JWT_SECURITY_KEY || "default_secret_unsafe").trim();
+const JWT_SECRET = (
+  process.env.JWT_SECURITY_KEY || "default_secret_unsafe"
+).trim();
 const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
 
 export interface AuthenticatedRequest extends Request {

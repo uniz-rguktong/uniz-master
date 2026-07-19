@@ -7,7 +7,11 @@ import axios from "axios";
 import * as ExcelJS from "exceljs";
 import { redis } from "../utils/redis.util";
 import { enforcePublishOtpRateLimit } from "../middlewares/publish-otp-ratelimit.middleware";
-import { generateRegistrationPdf, generateBulkRegistrationPdf, RegistrationPdfData } from "../utils/pdf.util";
+import {
+  generateRegistrationPdf,
+  generateBulkRegistrationPdf,
+  RegistrationPdfData,
+} from "../utils/pdf.util";
 import {
   enqueueRegistrationPdfJob,
   getPdfProgress,
@@ -41,7 +45,9 @@ const USER_SERVICE_URL = (
 ).replace(/\/$/, "");
 
 function normalizeStudentId(id?: string | null): string {
-  return String(id || "").trim().toUpperCase();
+  return String(id || "")
+    .trim()
+    .toUpperCase();
 }
 
 /** RGUKT Ongole campus — datetime-local values from the portal are IST wall times. */
@@ -346,7 +352,9 @@ function directPublishRedisKey(webmasterUsername: string, semesterId: string) {
 }
 
 function isSemesterAdmin(role?: string): boolean {
-  return SEMESTER_ADMIN_ROLES.includes(role as (typeof SEMESTER_ADMIN_ROLES)[number]);
+  return SEMESTER_ADMIN_ROLES.includes(
+    role as (typeof SEMESTER_ADMIN_ROLES)[number],
+  );
 }
 
 function resolveHodBranch(user: AuthenticatedRequest["user"]): string {
@@ -441,7 +449,11 @@ async function issueDirectPublishCode(
   res: Response,
   isResend: boolean,
 ) {
-  const allowed = await enforcePublishOtpRateLimit(user.username, semesterId, res);
+  const allowed = await enforcePublishOtpRateLimit(
+    user.username,
+    semesterId,
+    res,
+  );
   if (!allowed) return;
 
   const semester = await prisma.academicSemester.findUnique({
@@ -561,7 +573,9 @@ export const confirmDirectPublish = async (
         .json({ error: "Invalid or expired verification code" });
     }
 
-    const semester = await prisma.academicSemester.findUnique({ where: { id } });
+    const semester = await prisma.academicSemester.findUnique({
+      where: { id },
+    });
     if (!semester) return res.status(404).json({ error: "Semester not found" });
 
     if (semester.status === "REGISTRATION_OPEN") {
@@ -701,7 +715,9 @@ async function persistSemesterSubjects(
   let count = 0;
 
   for (const s of subjects) {
-    const code = String(s.code || "").trim().toUpperCase();
+    const code = String(s.code || "")
+      .trim()
+      .toUpperCase();
     const name = String(s.name || "").trim();
     if (!code || !name) continue;
 
@@ -718,11 +734,10 @@ async function persistSemesterSubjects(
     const electiveGroupId = s.electiveGroupCode || s.electiveGroupId || "";
     const electiveGroupName = s.electiveGroupName || "";
     const electiveLimit = Number(s.electiveLimit) || 1;
-    const academicCode = String(
-      s.academicCode || s.customCode || "",
-    )
-      .trim()
-      .toUpperCase() || null;
+    const academicCode =
+      String(s.academicCode || s.customCode || "")
+        .trim()
+        .toUpperCase() || null;
 
     // Option B: upsert catalog entry; per-semester name/credits live on BranchAllocation.
     // Existing catalog rows keep their global name/credits (historical stability).
@@ -795,7 +810,9 @@ export const addSemesterSubjects = async (
   const user = req.user;
 
   try {
-    const semester = await prisma.academicSemester.findUnique({ where: { id } });
+    const semester = await prisma.academicSemester.findUnique({
+      where: { id },
+    });
     if (!semester) return res.status(404).json({ error: "Semester not found" });
 
     let list = subjects;
@@ -901,11 +918,7 @@ export const uploadRegistrationSubjects = async (
       );
     }
 
-    if (
-      !isDryRun &&
-      !forceApprove &&
-      semester.status === "DRAFT"
-    ) {
+    if (!isDryRun && !forceApprove && semester.status === "DRAFT") {
       await prisma.academicSemester.update({
         where: { id: semesterId },
         data: { status: "DEAN_REVIEW" },
@@ -999,7 +1012,10 @@ export const getElectiveGroups = async (
   try {
     const where: any = { semesterId: id };
     if (branch && branch !== "all") {
-      where.branch = { equals: String(branch).toUpperCase(), mode: "insensitive" };
+      where.branch = {
+        equals: String(branch).toUpperCase(),
+        mode: "insensitive",
+      };
     }
     const groups = await prisma.electiveGroup.findMany({
       where,
@@ -1024,7 +1040,9 @@ export const upsertElectiveGroup = async (
     req.body;
   try {
     if (!groupCode || !groupName) {
-      return res.status(400).json({ error: "groupCode and groupName required" });
+      return res
+        .status(400)
+        .json({ error: "groupCode and groupName required" });
     }
     const group = await prisma.electiveGroup.upsert({
       where: {
@@ -1088,7 +1106,9 @@ export const advanceSemester = async (
   if (!user) return res.status(401).json({ error: "Unauthorized" });
 
   try {
-    const semester = await prisma.academicSemester.findUnique({ where: { id } });
+    const semester = await prisma.academicSemester.findUnique({
+      where: { id },
+    });
     if (!semester) return res.status(404).json({ error: "Semester not found" });
 
     const role = user.role as string;
@@ -1430,9 +1450,7 @@ export const getSemesters = async (
       WHERE "status" = 'REGISTERED'
       GROUP BY "semesterId"
     `;
-    const countMap = new Map(
-      counts.map((c) => [c.semesterId, Number(c.cnt)]),
-    );
+    const countMap = new Map(counts.map((c) => [c.semesterId, Number(c.cnt)]));
 
     const payload = semesters.map((sem) => ({
       ...sem,
@@ -2008,9 +2026,7 @@ export const registerSubjects = async (
           : {}),
       },
     });
-    const allocBySubject = new Map(
-      regAllocations.map((a) => [a.subjectId, a]),
-    );
+    const allocBySubject = new Map(regAllocations.map((a) => [a.subjectId, a]));
 
     const confirmation = {
       registrationId: registered[0]?.id || sem.id,
@@ -2065,7 +2081,9 @@ export const getCurrentSubjects = async (
   res: Response,
 ) => {
   const user = req.user;
-  const requestedId = normalizeStudentId(req.params.studentId || user?.username);
+  const requestedId = normalizeStudentId(
+    req.params.studentId || user?.username,
+  );
 
   if (!user) return res.status(401).json({ error: "Unauthorized" });
   if (
@@ -2114,9 +2132,7 @@ export const getCurrentSubjects = async (
         subjectId: { in: registrations.map((r) => r.subjectId) },
       },
     });
-    const allocBySubject = new Map(
-      regAllocations.map((a) => [a.subjectId, a]),
-    );
+    const allocBySubject = new Map(regAllocations.map((a) => [a.subjectId, a]));
 
     res.json({
       semester: activeSem,
@@ -2195,8 +2211,7 @@ export const exportAcademicData = async (
         const alloc =
           allocBySubjectBranch.get(
             `${r.subjectId}:${String(r.subject.department || branch || "").toUpperCase()}`,
-          ) ||
-          allocations.find((a) => a.subjectId === r.subjectId);
+          ) || allocations.find((a) => a.subjectId === r.subjectId);
         worksheet.addRow({
           studentId: r.studentId,
           batch: (r as any).batch || "",
@@ -2305,7 +2320,9 @@ export const getRegistrationTracking = async (
     if (role === "hod") {
       branchFilter = resolveHodBranch(user);
       if (!branchFilter) {
-        return res.status(400).json({ error: "Could not determine HOD branch" });
+        return res
+          .status(400)
+          .json({ error: "Could not determine HOD branch" });
       }
     }
 
@@ -2486,9 +2503,7 @@ export const getRegistrations = async (
     // so exact match hits the index instead of the seq scan that
     // mode:"insensitive" forced.
     const branchKey =
-      branch && branch !== "all"
-        ? (branch as string).toUpperCase()
-        : undefined;
+      branch && branch !== "all" ? (branch as string).toUpperCase() : undefined;
     if (branchKey) {
       where.subject = { department: branchKey };
     }
@@ -2688,7 +2703,8 @@ export const downloadRegistrationPdf = async (
   res: Response,
 ) => {
   const user = req.user;
-  if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
+  if (!user)
+    return res.status(401).json({ success: false, message: "Unauthorized" });
 
   const targetStudentId = normalizeStudentId(
     (req.query.studentId as string) || user.username,
@@ -2715,11 +2731,15 @@ export const downloadRegistrationPdf = async (
     let sem = null;
     const semesterId = req.query.semesterId as string | undefined;
     if (semesterId) {
-      sem = await prisma.academicSemester.findUnique({ where: { id: semesterId } });
+      sem = await prisma.academicSemester.findUnique({
+        where: { id: semesterId },
+      });
     } else {
       sem = await prisma.academicSemester.findFirst({
         where: {
-          status: { in: ["REGISTRATION_OPEN", "REGISTRATION_CLOSED", "APPROVED"] },
+          status: {
+            in: ["REGISTRATION_OPEN", "REGISTRATION_CLOSED", "APPROVED"],
+          },
           registrations: {
             some: {
               studentId: { equals: targetStudentId, mode: "insensitive" },
@@ -2985,7 +3005,8 @@ export const downloadBulkRegistrationPdfs = async (
   res: Response,
 ) => {
   const user = req.user;
-  if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
+  if (!user)
+    return res.status(401).json({ success: false, message: "Unauthorized" });
 
   const role = resolveEffectiveRole(user);
   const allowed = new Set(["webmaster", "coe", "dean", "director", "hod"]);
@@ -2993,13 +3014,7 @@ export const downloadBulkRegistrationPdfs = async (
     return res.status(403).json({ success: false, message: "Not authorized" });
   }
 
-  const {
-    semesterId,
-    branch,
-    year,
-    batch,
-    query: searchQuery,
-  } = req.query;
+  const { semesterId, branch, year, batch, query: searchQuery } = req.query;
 
   try {
     let sem = null;
@@ -3010,7 +3025,9 @@ export const downloadBulkRegistrationPdfs = async (
     } else {
       sem = await prisma.academicSemester.findFirst({
         where: {
-          status: { in: ["REGISTRATION_OPEN", "REGISTRATION_CLOSED", "APPROVED"] },
+          status: {
+            in: ["REGISTRATION_OPEN", "REGISTRATION_CLOSED", "APPROVED"],
+          },
         },
         orderBy: { createdAt: "desc" },
       });
@@ -3164,12 +3181,10 @@ async function buildSinglePdfFromJob(data: RegistrationPdfJobData) {
   });
   if (!registered.length) throw new Error("No registered subjects");
 
-  const pdfData = await buildRegistrationPdfData(
-    studentId,
-    sem,
-    registered,
-    { username: data.requestedBy, role: data.role } as any,
-  );
+  const pdfData = await buildRegistrationPdfData(studentId, sem, registered, {
+    username: data.requestedBy,
+    role: data.role,
+  } as any);
   const buffer = await generateRegistrationPdf(pdfData);
   return { buffer, filename: data.filename };
 }

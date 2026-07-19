@@ -12,7 +12,11 @@ import {
   queueOtpDelivery,
   resolveProfileEmail,
 } from "../utils/email.util";
-import { comparePassword, comparePasswordForUser, hashPassword } from "../utils/password.util";
+import {
+  comparePassword,
+  comparePasswordForUser,
+  hashPassword,
+} from "../utils/password.util";
 import { ErrorCode } from "../shared/error-codes";
 import { UserRole, ADMIN_ROLES } from "../shared/roles.enum";
 import { isValidInternalSecret } from "@uniz/shared";
@@ -315,8 +319,12 @@ export const requestOtp = async (req: Request, res: Response) => {
         return res.json({
           success: true,
           deliveryMethod: "email",
-          email: email.replace(/(.{2})(.*)(?=@)/, (_m, a, b) => a + "*".repeat(b.length)),
-          message: "Security code successfully dispatched to your registered email.",
+          email: email.replace(
+            /(.{2})(.*)(?=@)/,
+            (_m, a, b) => a + "*".repeat(b.length),
+          ),
+          message:
+            "Security code successfully dispatched to your registered email.",
         });
       }
       return res.json({
@@ -955,7 +963,9 @@ export const deleteUserByUsername = async (req: Request, res: Response) => {
 
   const username = String(req.params.username || "").trim();
   if (!username) {
-    return res.status(400).json({ success: false, message: "Username required" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Username required" });
   }
 
   try {
@@ -964,7 +974,11 @@ export const deleteUserByUsername = async (req: Request, res: Response) => {
     });
 
     if (!existing) {
-      return res.json({ success: true, message: "No auth record found", deleted: false });
+      return res.json({
+        success: true,
+        message: "No auth record found",
+        deleted: false,
+      });
     }
 
     await prisma.otpLog.deleteMany({
@@ -979,7 +993,10 @@ export const deleteUserByUsername = async (req: Request, res: Response) => {
       username: existing.username,
     });
   } catch (error: any) {
-    console.error(`[AUTH-INTERNAL] Delete user failed for ${username}:`, error.message);
+    console.error(
+      `[AUTH-INTERNAL] Delete user failed for ${username}:`,
+      error.message,
+    );
     return res.status(500).json({
       success: false,
       message: "Failed to delete auth credential",

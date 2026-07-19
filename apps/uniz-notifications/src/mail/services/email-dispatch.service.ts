@@ -95,11 +95,20 @@ export async function dispatchEmailByType(
         data.type,
       );
     case "checkpoint":
-      return sendCheckpointNotification(to, data.username, data.type, data.time);
+      return sendCheckpointNotification(
+        to,
+        data.username,
+        data.type,
+        data.time,
+      );
     case "password_change":
       return sendPasswordChangeNotification(to, data.username);
     case "profile_update":
-      return sendProfileUpdateNotification(to, data.username, data.updatedFields);
+      return sendProfileUpdateNotification(
+        to,
+        data.username,
+        data.updatedFields,
+      );
     case "grievance_submission":
       return sendGrievanceSubmissionNotification(
         to,
