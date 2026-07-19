@@ -1,0 +1,72 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: uniz-postgres-analyze
+  labels:
+    app: uniz-postgres-analyze
+spec:
+  # Nightly 02:00 (after the 01:30 backup). Autovacuum's ANALYZE thresholds can
+  # lag on large, append-heavy tables (Registration, grades, attendance), which
+  # leaves the planner on stale statistics and picks bad plans. A cheap nightly
+  # ANALYZE across every service database keeps stats fresh. ANALYZE takes only
+  # a light lock and never blocks reads/writes, so this is safe to run live.
+  schedule: "0 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      # Give up rather than pile up if Postgres is unreachable.
+      activeDeadlineSeconds: 1800
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: analyze
+              image: postgres:17-alpine
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -u
+                  for url in \
+                    "$ACADEMICS_DATABASE_URL" \
+                    "$AUTH_DATABASE_URL" \
+                    "$USER_DATABASE_URL" \
+                    "$NOTIFICATION_DATABASE_URL"; do
+                    [ -n "$url" ] || continue
+                    echo "ANALYZE on $(echo "$url" | sed -E 's#://[^@]*@#://***@#')"
+                    # Per-db failures must not fail the whole job (parked/empty dbs).
+                    psql "$url" -v ON_ERROR_STOP=0 -c "ANALYZE;" || \
+                      echo "  ANALYZE failed for this db, continuing"
+                  done
+                  echo "Nightly ANALYZE complete"
+              env:
+                - name: ACADEMICS_DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uniz-secrets
+                      key: ACADEMICS_DATABASE_URL
+                - name: AUTH_DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uniz-secrets
+                      key: AUTH_DATABASE_URL
+                - name: USER_DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uniz-secrets
+                      key: USER_DATABASE_URL
+                - name: NOTIFICATION_DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uniz-secrets
+                      key: NOTIFICATION_DATABASE_URL
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 250m
+                  memory: 256Mi
