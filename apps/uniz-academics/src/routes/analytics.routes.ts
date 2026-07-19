@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import prisma from "../utils/prisma.util";
+import { redis } from "../utils/redis.util";
 
 const router = Router();
+
+const ADMIN_SUMMARY_TTL_SEC = 30;
 
 /**
  * GET /analytics/admin-summary?role=dean&department=CSE
@@ -14,6 +17,13 @@ router.get("/admin-summary", async (req: AuthenticatedRequest, res) => {
   try {
     const role = ((req.query.role as string) || "webmaster").toLowerCase();
     const department = (req.query.department as string) || undefined;
+
+    // Dashboards poll this repeatedly; there are only a handful of distinct
+    // (role, department) combinations, so a 30s cache collapses the heavy
+    // aggregation to at most one run per combo per window.
+    const cacheKey = `analytics:admin-summary:${role}:${department || "all"}`;
+    const cached = await redis.get(cacheKey).catch(() => null);
+    if (cached) return res.json(JSON.parse(cached));
 
     const latestSemester = await prisma.academicSemester.findFirst({
       where: { status: { not: "DRAFT" } },
@@ -174,13 +184,21 @@ router.get("/admin-summary", async (req: AuthenticatedRequest, res) => {
         console.warn("[Analytics] branchPerformance query failed:", e);
       }
 
-      return res.json({
+      const out = {
         success: true,
         data: { ...base, branchPerformance: branchPerf },
-      });
+      };
+      await redis
+        .setex(cacheKey, ADMIN_SUMMARY_TTL_SEC, JSON.stringify(out))
+        .catch(() => {});
+      return res.json(out);
     }
 
-    return res.json({ success: true, data: base });
+    const out = { success: true, data: base };
+    await redis
+      .setex(cacheKey, ADMIN_SUMMARY_TTL_SEC, JSON.stringify(out))
+      .catch(() => {});
+    return res.json(out);
   } catch (err: any) {
     console.error("[Analytics] admin-summary error:", err);
     return res.status(500).json({
