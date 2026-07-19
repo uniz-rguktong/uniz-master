@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: uniz-uploads-backup
+  labels:
+    app: uniz-uploads-backup
+spec:
+  # Daily 01:15 — snapshots the self-hosted image volume to the same on-VPS
+  # backup location used by the database backup.
+  schedule: "15 1 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: alpine:3.20
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -eu
+                  STAMP=$(date +%Y%m%d-%H%M%S)
+                  OUT="/backups/uniz-uploads_${STAMP}.tar.gz"
+                  if [ -d /data/uploads ] && [ -n "$(ls -A /data/uploads 2>/dev/null)" ]; then
+                    echo "Backing up /data/uploads -> $OUT"
+                    tar -czf "$OUT" -C /data/uploads .
+                    ls -lh "$OUT"
+                  else
+                    echo "No uploads yet — nothing to back up."
+                  fi
+                  # Retain ~14 days of upload snapshots.
+                  find /backups -name 'uniz-uploads_*.tar.gz' -mtime +14 -delete || true
+              volumeMounts:
+                - name: uploads
+                  mountPath: /data/uploads
+                  readOnly: true
+                - name: backups
+                  mountPath: /backups
+          volumes:
+            - name: uploads
+              hostPath:
+                path: /var/lib/uniz/uploads
+                type: DirectoryOrCreate
+            - name: backups
+              hostPath:
+                path: /var/backups/uniz
+                type: DirectoryOrCreate

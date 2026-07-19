@@ -5,9 +5,8 @@ metadata:
   labels:
     app: uniz-postgres-backup
 spec:
-  # Daily 01:30 — adjust timezone via cluster TZ. Suspend until hostPath/secret wired on VPS.
+  # Daily 01:30 — adjust timezone via cluster TZ.
   schedule: "30 1 * * *"
-  suspend: true
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
@@ -24,19 +23,32 @@ spec:
                 - /bin/sh
                 - -c
                 - |
-                  set -euo pipefail
+                  set -u
                   STAMP=$(date +%Y%m%d-%H%M%S)
-                  OUT="/backups/uniz_${STAMP}.sql.gz"
-                  echo "Backing up to $OUT"
-                  pg_dump "$DATABASE_URL" | gzip -c >"$OUT"
-                  find /backups -name 'uniz_*.sql.gz' -mtime +14 -delete || true
-                  ls -lh "$OUT"
-              env:
-                - name: DATABASE_URL
-                  valueFrom:
-                    secretKeyRef:
-                      name: uniz-secrets
-                      key: ACADEMICS_DATABASE_URL
+                  # Dump every distinct service database (many share one instance,
+                  # so dedupe by URL). A single failing DB never fails the whole job.
+                  seen=""
+                  for VAR in AUTH_DATABASE_URL USER_DATABASE_URL OUTPASS_DATABASE_URL \
+                             ACADEMICS_DATABASE_URL FILES_DATABASE_URL MAIL_DATABASE_URL \
+                             NOTIFICATION_DATABASE_URL CRON_DATABASE_URL; do
+                    URL=$(printenv "$VAR" 2>/dev/null || true)
+                    [ -z "$URL" ] && continue
+                    case " $seen " in *" $URL "*) continue ;; esac
+                    seen="$seen $URL"
+                    NAME=$(echo "$VAR" | sed 's/_DATABASE_URL//' | tr 'A-Z' 'a-z')
+                    OUT="/backups/uniz-${NAME}_${STAMP}.sql.gz"
+                    echo "Dumping $NAME -> $OUT"
+                    if pg_dump "$URL" | gzip -c >"$OUT"; then
+                      ls -lh "$OUT"
+                    else
+                      echo "WARN: dump failed for $NAME"; rm -f "$OUT"
+                    fi
+                  done
+                  # Retain ~14 days of DB snapshots.
+                  find /backups -name 'uniz-*_*.sql.gz' -mtime +14 -delete || true
+              envFrom:
+                - secretRef:
+                    name: uniz-secrets
               volumeMounts:
                 - name: backups
                   mountPath: /backups

@@ -15,6 +15,19 @@ spec:
         app: uniz-user-service
     spec:
       priorityClassName: uniz-medium-priority
+      # The uploads hostPath is created as root:root by k3s (DirectoryOrCreate);
+      # the app runs as uid 100 (uniz), so make the volume writable on start.
+      initContainers:
+        - name: fix-uploads-perms
+          image: busybox:1.36
+          imagePullPolicy: IfNotPresent
+          command:
+            ["sh", "-c", "mkdir -p /data/uploads && chown -R 100:101 /data/uploads && chmod 0775 /data/uploads"]
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: uploads
+              mountPath: /data/uploads
       containers:
         - name: user-service
           image: uniz-user-service:local
