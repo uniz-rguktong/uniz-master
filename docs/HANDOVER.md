@@ -53,6 +53,19 @@ changed services and deploys to the VPS (K3s). No manual VPS steps. Details in
 [CONTRIBUTING.md](../CONTRIBUTING.md#production-deploy-automatic) and
 [`apps/uniz-docs/ops/deploy.md`](../apps/uniz-docs/ops/deploy.md).
 
+### Backups
+
+Two daily K8s CronJobs write to `/var/backups/uniz` on the VPS (14-day retention):
+
+- `uniz-postgres-backup` (01:30) — dumps every service database (`pg_dump`).
+- `uniz-uploads-backup` (01:15) — tars the self-hosted image volume
+  (`/var/lib/uniz/uploads`).
+
+Both are on the VPS disk (no off-site copy yet — a reasonable future enhancement).
+Manifests: `infra/kubernetes/base/core/postgres-backup-job.yaml`,
+`uploads-backup-job.yaml`. Trigger a one-off with
+`kubectl create job <name>-manual --from=cronjob/<name>`.
+
 ## 6. Secrets & environment
 
 - Local: `secrets.env` (from `secrets.env.example`) — dev placeholders only.
