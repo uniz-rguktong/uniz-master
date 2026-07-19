@@ -82,24 +82,34 @@ export const createNotificationWorker = (connection: IORedis) => {
         }
 
         let sent = 0;
-        for (const user of users) {
-          const personalizedBody =
-            `Dear ${user.name || user.username},\n\n` +
-            body
-              .replace(/{{name}}/g, user.name || user.username)
-              .replace(/{{username}}/g, user.username);
-          const personalizedTitle = title
-            .replace(/{{name}}/g, user.name || user.username)
-            .replace(/{{username}}/g, user.username);
+        // Fan out in bounded-concurrency chunks instead of strictly sequential
+        // awaits, so a large broadcast isn't O(users) in wall-clock time.
+        const BROADCAST_CHUNK = 20;
+        for (let i = 0; i < users.length; i += BROADCAST_CHUNK) {
+          const chunk = users.slice(i, i + BROADCAST_CHUNK);
+          const results = await Promise.allSettled(
+            chunk.map((user) => {
+              const personalizedBody =
+                `Dear ${user.name || user.username},\n\n` +
+                body
+                  .replace(/{{name}}/g, user.name || user.username)
+                  .replace(/{{username}}/g, user.username);
+              const personalizedTitle = title
+                .replace(/{{name}}/g, user.name || user.username)
+                .replace(/{{username}}/g, user.username);
 
-          const n = await sendWebPush(user.username, {
-            title: personalizedTitle,
-            body: personalizedBody,
-            rawBody: true,
-            image: data.image,
-            data: { type: "BROADCAST" },
-          });
-          sent += n;
+              return sendWebPush(user.username, {
+                title: personalizedTitle,
+                body: personalizedBody,
+                rawBody: true,
+                image: data.image,
+                data: { type: "BROADCAST" },
+              });
+            }),
+          );
+          for (const r of results) {
+            if (r.status === "fulfilled") sent += r.value;
+          }
         }
         return { sent, total: users.length };
       }
