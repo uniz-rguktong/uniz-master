@@ -8,7 +8,7 @@ description: "Student subject registration, semester lifecycle, elective groups,
   Base URL: `https://api-uniz.rguktong.in/api/v1/academics`
 </Info>
 
-UniZ manages **in-portal semester registration**. Webmasters configure a semester and subject catalog; deans and HODs review allocations; students register subjects during an IST registration window; administrators track completion per student.
+UniZ manages **in-portal semester registration**. Webadmins configure a semester and subject catalog; deans and HODs review allocations; students register subjects during an IST registration window; administrators track completion per student.
 
 ---
 
@@ -157,7 +157,7 @@ Returns subjects registered for the active semester. Students typically use the 
 
 Returns all academic semesters. `_count.registrations` is the number of **distinct students** registered (not raw subject rows).
 
-**Auth required:** Webmaster, Dean, HOD, Director, COE
+**Auth required:** Webadmin, Dean, HOD, Director, COE
 
 ```bash
 curl --request GET \
@@ -171,7 +171,7 @@ curl --request GET \
 
 `POST /academics/semester/create`
 
-Creates a semester with subjects and elective groups. Webmaster only.
+Creates a semester with subjects and elective groups. Webadmin only.
 
 ```json
 {
@@ -209,7 +209,7 @@ Moves the semester to the next workflow stage (e.g. `DRAFT` → `DEAN_REVIEW` �
 
 ## Admin: direct publish (verified)
 
-When publishing results or opening registration, webmasters may need email OTP verification:
+When publishing results or opening registration, webadmins may need email OTP verification:
 
 1. `POST /academics/semester/:id/publish/request-code`
 2. `POST /academics/semester/:id/publish/resend-code` (optional)
@@ -223,7 +223,7 @@ When publishing results or opening registration, webmasters may need email OTP v
 
 Per-student registration completion for a semester — registered vs pending, with search and pagination.
 
-**Auth required:** Webmaster, Dean, Director, COE, HOD (HOD scoped to own department)
+**Auth required:** Webadmin, Dean, Director, COE, HOD (HOD scoped to own department)
 
 | Query | Example | Description |
 | ----- | ------- | ----------- |
