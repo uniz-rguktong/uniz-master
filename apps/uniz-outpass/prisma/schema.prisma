@@ -68,32 +68,5 @@ model Outing {
   @@index([studentId])
   @@index([isApproved, isRejected, isExpired])
 }
-
-model Grievance {
-  id            String   @id @default(uuid())
-  studentId     String?  // Optional: Null if truly anonymous
-  studentEmail  String?
-  category      String   // e.g., "Hostel", "Mess", "Academic", "Other"
-  description   String
-  isAnonymous   Boolean  @default(false)
-  
-  status        String   @default("pending") // pending, resolved
-  resolvedBy    String?
-  resolution    String?
-  resolvedAt    DateTime?
-  
-  createdAt     DateTime @default(now())
-
-  @@index([status])
-  @@index([createdAt])
-}
-
-model AuthCredential {
-  id           String   @id @default(uuid())
-  username     String   @unique
-  passwordHash String
-  role         String   @default("student")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  isDisabled   Boolean  @default(false)
-}
+// Grievance moved to uniz-user-service; legacy table dropped 2026-07-19.
+// AuthCredential is owned solely by uniz-auth; legacy duplicate dropped 2026-07-19.

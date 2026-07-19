@@ -57,3 +57,6 @@ sem-reg/
 
 # Scratch / local tooling artifacts
 .tmp-diagrams/
+
+# Local DB backups
+.backups/
