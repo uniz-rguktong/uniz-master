@@ -6,6 +6,9 @@ export enum UserRole {
   HOD = "hod",
 
   WEBMASTER = "webmaster",
+  // Transitional alias for WEBMASTER during the webmaster -> webadmin rename.
+  // Treated as equivalent privilege everywhere until 'webmaster' is retired.
+  WEBADMIN = "webadmin",
   DEAN = "dean",
   DIRECTOR = "director",
   COE = "coe",
@@ -27,6 +30,7 @@ export enum UserRole {
 
 export const ADMIN_ROLES: string[] = [
   UserRole.WEBMASTER,
+  UserRole.WEBADMIN,
   UserRole.DEAN,
   UserRole.DIRECTOR,
   UserRole.COE,
