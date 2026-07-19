@@ -194,45 +194,55 @@ export const uploadSeating = async (
       subjects.map((s: any) => [s.code, s.id]),
     );
 
+    // upsert needs update-on-conflict semantics (re-uploads must update existing
+    // rows), so createMany (insert-only) isn't safe here. Instead run the upserts
+    // in bounded-concurrency chunks rather than strictly sequential awaits.
+    const resolved = rows
+      .map((row) => ({ row, subjectId: subMap.get(row.subjectCode) }))
+      .filter((x): x is { row: any; subjectId: string } => Boolean(x.subjectId));
+
     let count = 0;
-    for (const row of rows) {
-      const subjectId = subMap.get(row.subjectCode);
-      if (!subjectId) continue;
+    const CHUNK = 25;
+    for (let i = 0; i < resolved.length; i += CHUNK) {
+      const chunk = resolved.slice(i, i + CHUNK);
+      const results = await Promise.allSettled(
+        chunk.map(({ row, subjectId }) => {
+          let parsedDate: Date | null = null;
+          if (row.date) {
+            const d = new Date(row.date);
+            if (!isNaN(d.getTime())) parsedDate = d;
+          }
 
-      let parsedDate = null;
-      if (row.date) {
-        const d = new Date(row.date);
-        if (!isNaN(d.getTime())) parsedDate = d;
-      }
-
-      await prisma.seatingArrangement.upsert({
-        where: {
-          studentId_subjectId_semesterId_examName: {
-            studentId: row.studentId,
-            subjectId,
-            semesterId,
-            examName: row.examName,
-          },
-        },
-        update: {
-          room: row.room,
-          seatNumber: row.seatNumber,
-          date: parsedDate,
-          time: row.time,
-          updatedAt: new Date(),
-        },
-        create: {
-          studentId: row.studentId,
-          subjectId,
-          semesterId,
-          examName: row.examName,
-          room: row.room,
-          seatNumber: row.seatNumber,
-          date: parsedDate,
-          time: row.time,
-        },
-      });
-      count++;
+          return prisma.seatingArrangement.upsert({
+            where: {
+              studentId_subjectId_semesterId_examName: {
+                studentId: row.studentId,
+                subjectId,
+                semesterId,
+                examName: row.examName,
+              },
+            },
+            update: {
+              room: row.room,
+              seatNumber: row.seatNumber,
+              date: parsedDate,
+              time: row.time,
+              updatedAt: new Date(),
+            },
+            create: {
+              studentId: row.studentId,
+              subjectId,
+              semesterId,
+              examName: row.examName,
+              room: row.room,
+              seatNumber: row.seatNumber,
+              date: parsedDate,
+              time: row.time,
+            },
+          });
+        }),
+      );
+      count += results.filter((r) => r.status === "fulfilled").length;
     }
 
     res.json({

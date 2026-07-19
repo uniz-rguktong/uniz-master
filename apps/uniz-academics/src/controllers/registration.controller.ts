@@ -143,6 +143,12 @@ export const initSemester = async (
     if (semSuffix) {
       const years = ["E1", "E2", "E3", "E4"];
 
+      // Fetch the small subject catalog for this base semester once, then bucket
+      // in JS — avoids a subject.findMany per (year × branch) combination.
+      const allSemSubjects = await prisma.subject.findMany({
+        where: { semester: { equals: semSuffix, mode: "insensitive" } },
+      });
+
       for (const yearSuffix of years) {
         const semesterKey = `${yearSuffix}-${semSuffix}`;
         const romanKey = semesterKey
@@ -156,14 +162,16 @@ export const initSemester = async (
               : b.branchName?.toUpperCase();
           if (!branchName) continue;
 
-          // Match subjects by base semester (SEM-1/2) and filter by year from code
-          const subjects = await prisma.subject.findMany({
-            where: {
-              semester: { equals: semSuffix, mode: "insensitive" },
-              department: { equals: branchName, mode: "insensitive" },
-              code: { contains: `-${yearSuffix}-`, mode: "insensitive" },
-            },
-          });
+          // Match subjects by department + year code from the pre-fetched
+          // catalog (equivalent to the previous insensitive equals/contains).
+          const yearToken = `-${yearSuffix.toUpperCase()}-`;
+          const subjects = allSemSubjects.filter(
+            (s: any) =>
+              String(s.department || "").toUpperCase() === branchName &&
+              String(s.code || "")
+                .toUpperCase()
+                .includes(yearToken),
+          );
 
           // Infer batch from AY (e.g. AY 2024-25 -> 24)
           let inferredBatch = "";
