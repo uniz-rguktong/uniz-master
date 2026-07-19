@@ -24,6 +24,7 @@
     "docker:up": "make up",
     "docker:seed": "make seed",
     "docker:down": "make down",
+    "perf:bench": "node scripts/ops/perf-benchmark.mjs",
     "prisma:generate": "bash ./scripts/deploy/prisma-generate-all.sh",
     "setup:quick": "bash ./scripts/local/setup.sh",
     "sync": "bash ./scripts/local/sync-local.sh",

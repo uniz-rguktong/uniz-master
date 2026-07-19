@@ -31,17 +31,40 @@ function pooledUrl(raw?: string): string | undefined {
   }
 }
 
+/**
+ * Optional slow-query logging. Set SLOW_QUERY_MS=<n> to emit a warning for any
+ * query slower than n ms — a temporary, prod-safe probe (off by default, no
+ * overhead when unset) for locating hot queries during the perf audit.
+ */
+const SLOW_MS = Number(process.env.SLOW_QUERY_MS || 0);
+const baseLevels: ("error" | "warn")[] =
+  process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"];
+
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
     log:
-      process.env.NODE_ENV === "development"
-        ? ["query", "error", "warn"]
-        : ["error"],
+      SLOW_MS > 0
+        ? [
+            ...baseLevels.map((level) => ({ emit: "stdout" as const, level })),
+            { emit: "event" as const, level: "query" as const },
+          ]
+        : baseLevels,
     datasources: { db: { url: pooledUrl(process.env.DATABASE_URL) } },
   });
+
+if (SLOW_MS > 0) {
+  (prisma as unknown as { $on: (e: string, cb: (ev: any) => void) => void }).$on(
+    "query",
+    (e: { duration: number; query: string }) => {
+      if (e.duration >= SLOW_MS) {
+        console.warn(`[slow-query] ${e.duration}ms :: ${e.query}`);
+      }
+    },
+  );
+}
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
