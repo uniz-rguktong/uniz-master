@@ -23,7 +23,6 @@ import {
   UserPlus,
 } from "lucide-react";
 import Papa from "papaparse";
-import axios from "axios";
 import {
   SEARCH_FACULTY,
   CREATE_FACULTY,
@@ -49,6 +48,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { SectionHeader } from "../../../components/admin/SectionHeader";
+import { uploadImage } from "../../../api/uploadImage";
 import {
   adminPageWrapClass,
   adminCardClass,
@@ -318,23 +318,16 @@ export default function FacultyManagement({
 
     setIsUploading(true);
     try {
-      const formDataUpload = new FormData();
-      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-      const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-
-      formDataUpload.append("file", file);
-      formDataUpload.append("upload_preset", uploadPreset);
-
-      const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        formDataUpload,
+      const uploadedUrl = await uploadImage(
+        file,
+        "faculty-profile",
+        formData.username || undefined,
       );
-      const data = response.data;
-      if (data.secure_url) {
-        setFormData((prev) => ({ ...prev, profileUrl: data.secure_url }));
+      if (uploadedUrl) {
+        setFormData((prev) => ({ ...prev, profileUrl: uploadedUrl }));
         toast.success("Profile photo uploaded!");
       } else {
-        toast.error(data.message || "Upload failed");
+        toast.error("Upload failed");
       }
     } catch {
       toast.error("Upload failed due to network error");

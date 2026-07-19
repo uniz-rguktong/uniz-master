@@ -39,7 +39,7 @@ flowchart TB
   Academics --> Redis
   Notif --> Redis
 
-  User --> R2["Cloudflare R2<br/>image storage (S3 + CDN)"]
+  User --> Uploads["VPS disk<br/>self-hosted images (via CDN)"]
   Notif --> SES["AWS SES<br/>transactional email"]
 
   Portal -.->|browser calls API| API
@@ -48,7 +48,7 @@ flowchart TB
 
 ### What you are looking at
 
-UniZ is split into two layers. Cloudflare owns the public edge and the static frontends. The VPS owns APIs, **docs**, CMS, and the databases. Off-box services handle media and email: **Cloudflare R2** for image storage, **AWS SES** for mail.
+UniZ is split into two layers. Cloudflare owns the public edge and the static frontends. The VPS owns APIs, **docs**, CMS, the databases, and **self-hosted image uploads**. The one off-box service is **AWS SES** for mail.
 
 ### What is a SPA?
 
@@ -87,9 +87,9 @@ flowchart LR
 
 Auth issues JWT. User holds profiles, campus CMS notices, grievances, and file uploads. Academics is results and registration. Notifications owns inbox, web push, and email (mail folded in). Landing-backend is FastAPI for the public website CMS. Docs is VitePress under `/docs`.
 
-### Cloudflare R2 and AWS SES
+### Self-hosted images and AWS SES
 
-**Cloudflare R2** (S3-compatible object storage, served over the Cloudflare CDN) stores profile photos, banners, and website images. Uploads go to the user-service `/files/image/upload` endpoint, which compresses to WebP with `sharp` and writes to R2; User stores the resulting public URL in Postgres. **AWS SES** sends OTP / reset / campus mail via Notifications (local can fall back to Gmail). (Excel/CSV bulk backups still use Cloudinary.)
+Profile photos, banners, and website images are **self-hosted on the VPS**. Uploads go to the user-service `/files/image/upload` endpoint, which compresses to WebP with `sharp` and writes to a persistent volume; the file is served back through the gateway at `/api/v1/files/img/*` and cached by Cloudflare's CDN. User stores the resulting URL in Postgres. **AWS SES** sends OTP / reset / campus mail via Notifications (local can fall back to Gmail). (Excel/CSV bulk backups still use Cloudinary.)
 
 ### Postgres and Redis
 
@@ -97,7 +97,7 @@ Postgres is source of truth. Redis is short-lived: gateway cache, upload progres
 
 ### Request path in one sentence
 
-User loads Portal from Cloudflare Pages → SPA calls `api-uniz.rguktong.in` → Cloudflare → Traefik → gateway-api → owning service → Postgres (optionally Redis / Cloudflare R2 / SES).
+User loads Portal from Cloudflare Pages → SPA calls `api-uniz.rguktong.in` → Cloudflare → Traefik → gateway-api → owning service → Postgres (optionally Redis / self-hosted image volume / SES).
 
 ### What we deliberately do not run always-on
 

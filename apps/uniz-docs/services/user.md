@@ -1,6 +1,6 @@
 ---
 title: "User service"
-description: "Profiles, CMS notices/banners, image uploads (Cloudflare R2), grievances, bulk jobs. apps/uniz-user — port 3002"
+description: "Profiles, CMS notices/banners, self-hosted image uploads, grievances, bulk jobs. apps/uniz-user — port 3002"
 ---
 
 ## Role
@@ -27,7 +27,7 @@ flowchart TB
   Profile --> PG[(Postgres)]
   CMS --> PG
   Grievance --> PG
-  Files --> R2["Cloudflare R2"]
+  Files --> Disk["VPS disk (persistent volume)"]
   Queue --> Redis
 ```
 
@@ -43,7 +43,7 @@ flowchart TB
 
 ## Env
 
-`DATABASE_URL`, `REDIS_URL`, `JWT_SECURITY_KEY`, `INTERNAL_SECRET`, `AUTH_SERVICE_URL`, `ACADEMICS_SERVICE_URL`, `NOTIFICATION_SERVICE_URL`, `CMS_PUBLIC_API_KEY`, `R2_*` (image uploads), `CLOUDINARY_*` (legacy Excel/CSV backups).
+`DATABASE_URL`, `REDIS_URL`, `JWT_SECURITY_KEY`, `INTERNAL_SECRET`, `AUTH_SERVICE_URL`, `ACADEMICS_SERVICE_URL`, `NOTIFICATION_SERVICE_URL`, `CMS_PUBLIC_API_KEY`, `UPLOADS_DIR` (self-hosted image path), `CLOUDINARY_*` (legacy Excel/CSV backups).
 
 ## Migration note
 

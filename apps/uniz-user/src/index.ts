@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
+import { uploadsDir } from "./utils/storage.util";
 
 dotenv.config({ override: true });
 
@@ -27,6 +28,23 @@ app.use(attributionMiddleware);
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", service: "uniz-user-service" });
 });
+
+// Public, immutable serving of self-hosted uploaded images. Exposed through the
+// gateway at /api/v1/files/img/*. Mounted before the auth-protected routers so
+// image reads stay public (URLs are unguessable per-user keys / cache-busted).
+app.use(
+  "/img",
+  express.static(uploadsDir(), {
+    index: false,
+    fallthrough: false,
+    immutable: true,
+    maxAge: "365d",
+    setHeaders: (res) => {
+      res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    },
+  }),
+);
 
 import profileRoutes from "./routes/profile.routes";
 import cmsRoutes from "./routes/cms.routes";

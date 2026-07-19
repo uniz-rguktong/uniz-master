@@ -18,9 +18,7 @@ import { Spinner } from "../../../components/ui/ios-spinner";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "@/utils/toast-ref";
 import { BASE_URL } from "../../../api/endpoints";
-
-const CLOUDINARY_CLOUD = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-const CLOUDINARY_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+import { uploadImage } from "../../../api/uploadImage";
 
 interface Profile {
   name?: string;
@@ -134,22 +132,15 @@ export default function ProfilePopup({
     if (!file) return;
     try {
       setIsUploading(true);
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("upload_preset", CLOUDINARY_PRESET);
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
-        { method: "POST", body: fd },
-      );
-      const data = await res.json();
-      if (!data.secure_url) throw new Error();
+      const uploadedUrl = await uploadImage(file, "admin-profile");
+      if (!uploadedUrl) throw new Error();
       const upd = await fetch(`${BASE_URL}/profile/admin/me/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token()}`,
         },
-        body: JSON.stringify({ profileUrl: data.secure_url }),
+        body: JSON.stringify({ profileUrl: uploadedUrl }),
       });
       const updData = await upd.json();
       if (updData.success) {

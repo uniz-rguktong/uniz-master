@@ -27,6 +27,10 @@ spec:
                 secretKeyRef:
                   name: uniz-secrets
                   key: USER_DATABASE_URL
+            # Self-hosted image uploads live on a persistent VPS volume and are
+            # served back through the gateway at /api/v1/files/img/*.
+            - name: UPLOADS_DIR
+              value: "/data/uploads"
           envFrom:
             - configMapRef:
                 name: uniz-config
@@ -56,6 +60,16 @@ spec:
             preStop:
               exec:
                 command: ["/bin/sh", "-c", "sleep 10"]
+          volumeMounts:
+            - name: uploads
+              mountPath: /data/uploads
+      # hostPath persists uploaded images across pod restarts/redeploys on the
+      # single-node VPS; shared by all user-service replicas on the node.
+      volumes:
+        - name: uploads
+          hostPath:
+            path: /var/lib/uniz/uploads
+            type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service

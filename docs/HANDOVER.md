@@ -42,7 +42,7 @@ with push access merges it. Do not merge your own PR.
 | Area | What changed | Where to read more |
 |------|--------------|--------------------|
 | **Admin role rename** | The top admin role `webmaster` was renamed to **`webadmin`** everywhere (canonical). `webmaster` remains a temporary backward-compatible alias and will be removed. | `packages/uniz-shared/src/roles.enum.ts`, `admin-role.ts` |
-| **Image storage → Cloudflare R2** | Profile photos, banners, and website images now upload to the user-service `/files/image/upload` endpoint, which compresses to WebP (`sharp`) and stores in **Cloudflare R2** (S3 + CDN). Old Cloudinary URLs still work; Excel/CSV bulk backups still use Cloudinary. | [`api/comms/files`](https://api-uniz.rguktong.in/docs/api/comms/files), `apps/uniz-user/src/utils/r2.util.ts` |
+| **Self-hosted image uploads** | Profile photos, banners, and website images upload to the user-service `/files/image/upload` endpoint, which compresses to WebP (`sharp`) and stores them on a **persistent VPS volume**, served back via `/api/v1/files/img/*` behind the Cloudflare CDN. Free, no third-party dependency. Old Cloudinary URLs still work; Excel/CSV bulk backups still use Cloudinary. | [`api/comms/files`](https://api-uniz.rguktong.in/docs/api/comms/files), `apps/uniz-user/src/utils/storage.util.ts` |
 | **API performance overhaul** | Indexing, Redis caching, gateway cache, bounded concurrency, and inter-service hardening across all services. | [`docs/architecture/PERFORMANCE_OVERHAUL.md`](architecture/PERFORMANCE_OVERHAUL.md) |
 | **Database redesign / hygiene** | Dropped dead databases/tables, added composite + functional/case-insensitive unique indexes, CHECK constraints, and a scheduled `ANALYZE` CronJob. | `apps/*/prisma/`, `infra/kubernetes/base/core/postgres-analyze-job.yaml` |
 
@@ -57,8 +57,9 @@ changed services and deploys to the VPS (K3s). No manual VPS steps. Details in
 
 - Local: `secrets.env` (from `secrets.env.example`) — dev placeholders only.
 - Production: GitHub Actions repo secrets + `/root/uniz-secrets.env` on the VPS.
-- R2 image uploads need `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`,
-  `R2_BUCKET`, `R2_PUBLIC_BASE_URL` set as repo secrets (see `secrets.env.example`).
+- Image uploads are self-hosted on the VPS — no object-storage keys needed.
+  Optional `UPLOADS_DIR` overrides the server storage path (default `/data/uploads`,
+  a persistent hostPath volume).
 
 ## 7. Where things live
 
