@@ -3,6 +3,7 @@ export { JwtPayloadSchema, type JwtPayload } from "./jwt.schema";
 export { ErrorCode } from "./error-codes";
 export {
   resolveEffectiveRole,
+  aliasWebadminRole,
   isHodUser,
   resolveHodBranch,
 } from "./admin-role";
