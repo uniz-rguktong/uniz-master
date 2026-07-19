@@ -26,7 +26,9 @@ async def verify_admin_role(credentials: Annotated[HTTPAuthorizationCredentials,
                 detail="Invalid token structure: missing username or role"
             )
             
-        if user_role not in ["webmaster", "admin", "dean", "director", "coe"]:
+        # 'webadmin' is the canonical highest-privilege role; 'webmaster' is kept
+        # only while pre-rename JWTs may still be in flight (remove after expiry).
+        if user_role not in ["webadmin", "webmaster", "admin", "dean", "director", "coe"]:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN, 
                 detail="Forbidden: You do not have the required role to update data."

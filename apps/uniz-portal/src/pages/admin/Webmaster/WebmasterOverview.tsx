@@ -150,7 +150,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
     }
   };
 
-  const displayName = profile?.name || username || "Webmaster";
+  const displayName = profile?.name || username || "Webadmin";
   const initials = displayName[0].toUpperCase();
   const email = (profile?.email || `${username}@rguktong.ac.in`).toLowerCase();
 

@@ -34,7 +34,7 @@ import { uploadRejected } from "../utils/excel-strict-validation.util";
 
 /**
  * @desc Initialize a new semester with branch allocations
- * @access Webmaster
+ * @access Webadmin
  */
 const GATEWAY_URL =
   process.env.GATEWAY_URL || "http://uniz-gateway-api:3000/api/v1";
@@ -119,7 +119,7 @@ export const initSemester = async (
   const { academicSemester, branches } = req.body; // academicSemester is the label like "AY 2024-25 E1-SEM-1"
   const user = req.user;
   if (!user || !isSemesterAdmin(user.role as string)) {
-    return res.status(403).json({ error: "Webmaster access required" });
+    return res.status(403).json({ error: "Webadmin access required" });
   }
 
   try {
@@ -228,7 +228,7 @@ export const initSemester = async (
           {
             target: "dean", // Targeted to Dean
             title: "Action Required: Subject Review 🎓",
-            body: `Hello {{name}}, Webmaster has initialized ${academicSemester}. Please review and approve subject allocations for all branches and years.`,
+            body: `Hello {{name}}, Webadmin has initialized ${academicSemester}. Please review and approve subject allocations for all branches and years.`,
           },
           { headers, timeout: 5000 },
         )
@@ -249,7 +249,7 @@ export const initSemester = async (
 
 /* ------------------------------------------------------------------ *
  *  SEMESTER REGISTRATION WORKFLOW (volatile per-semester subjects)
- *  Webmaster -> Dean -> HOD -> Registration Open -> Student Register
+ *  Webadmin -> Dean -> HOD -> Registration Open -> Student Register
  * ------------------------------------------------------------------ */
 
 const NOTIFY = async (payload: Record<string, any>) => {
@@ -281,10 +281,10 @@ const canonicalSubjectSemester = (
   return `${yr}-${deriveSemSuffix(label)}`;
 };
 
-const SEMESTER_ADMIN_ROLES = ["webmaster", "coe", "director"] as const;
+const SEMESTER_ADMIN_ROLES = ["webadmin", "coe", "director"] as const;
 
-function isWebmaster(role?: string): boolean {
-  return role === "webmaster";
+function isWebadmin(role?: string): boolean {
+  return role === "webadmin";
 }
 
 function maskEmail(email: string): string {
@@ -348,8 +348,8 @@ async function sendPublishVerificationEmail(
   );
 }
 
-function directPublishRedisKey(webmasterUsername: string, semesterId: string) {
-  return `semester:direct-publish:${webmasterUsername.toLowerCase()}:${semesterId}`;
+function directPublishRedisKey(webadminUsername: string, semesterId: string) {
+  return `semester:direct-publish:${webadminUsername.toLowerCase()}:${semesterId}`;
 }
 
 function isSemesterAdmin(role?: string): boolean {
@@ -442,7 +442,7 @@ async function openSemesterRegistration(
 
 /**
  * @desc Request or resend email verification code before publishing registration directly to students.
- * @access Webmaster only — rate limited (2/min per semester, 10/hour per user)
+ * @access Webadmin only — rate limited (2/min per semester, 10/hour per user)
  */
 async function issueDirectPublishCode(
   user: NonNullable<AuthenticatedRequest["user"]>,
@@ -500,10 +500,10 @@ export const requestDirectPublishCode = async (
   res: Response,
 ) => {
   const user = req.user;
-  if (!user || !isWebmaster(user.role as string)) {
+  if (!user || !isWebadmin(user.role as string)) {
     return res
       .status(403)
-      .json({ error: "Only webmaster can publish registrations directly" });
+      .json({ error: "Only webadmin can publish registrations directly" });
   }
 
   const { id } = req.params;
@@ -523,10 +523,10 @@ export const resendDirectPublishCode = async (
   res: Response,
 ) => {
   const user = req.user;
-  if (!user || !isWebmaster(user.role as string)) {
+  if (!user || !isWebadmin(user.role as string)) {
     return res
       .status(403)
-      .json({ error: "Only webmaster can publish registrations directly" });
+      .json({ error: "Only webadmin can publish registrations directly" });
   }
 
   const { id } = req.params;
@@ -543,17 +543,17 @@ export const resendDirectPublishCode = async (
 
 /**
  * @desc Verify email code and open semester registration to all students immediately.
- * @access Webmaster only
+ * @access Webadmin only
  */
 export const confirmDirectPublish = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
   const user = req.user;
-  if (!user || !isWebmaster(user.role as string)) {
+  if (!user || !isWebadmin(user.role as string)) {
     return res
       .status(403)
-      .json({ error: "Only webmaster can publish registrations directly" });
+      .json({ error: "Only webadmin can publish registrations directly" });
   }
 
   const { id } = req.params;
@@ -616,7 +616,7 @@ export const confirmDirectPublish = async (
  * @desc Create a semester with a manual, per-semester subject list and
  *       elective groups. Subjects are upserted into the catalog (Option B)
  *       so volatile/changing subjects are always accepted.
- * @access Webmaster
+ * @access Webadmin
  */
 export const createSemester = async (
   req: AuthenticatedRequest,
@@ -624,7 +624,7 @@ export const createSemester = async (
 ) => {
   const user = req.user;
   if (!user || !isSemesterAdmin(user.role as string)) {
-    return res.status(403).json({ error: "Webmaster access required" });
+    return res.status(403).json({ error: "Webadmin access required" });
   }
 
   const {
@@ -695,7 +695,7 @@ export const createSemester = async (
       await NOTIFY({
         target: "dean",
         title: "Action Required: Semester Review 🎓",
-        body: `Hello {{name}}, Webmaster submitted "${name}" for review. Please verify subjects, electives and registration dates.`,
+        body: `Hello {{name}}, Webadmin submitted "${name}" for review. Please verify subjects, electives and registration dates.`,
       });
     }
 
@@ -799,8 +799,8 @@ async function persistSemesterSubjects(
 }
 
 /**
- * @desc Add subjects to an existing semester (typed in by webmaster/HOD).
- * @access Webmaster, Dean, HOD
+ * @desc Add subjects to an existing semester (typed in by webadmin/HOD).
+ * @access Webadmin, Dean, HOD
  */
 export const addSemesterSubjects = async (
   req: AuthenticatedRequest,
@@ -835,8 +835,8 @@ export const addSemesterSubjects = async (
 };
 
 /**
- * @desc Download the webmaster subject upload template
- * @access Webmaster, Dean, Director
+ * @desc Download the webadmin subject upload template
+ * @access Webadmin, Dean, Director
  */
 export const downloadRegistrationSubjectsTemplate = async (
   req: AuthenticatedRequest,
@@ -865,8 +865,8 @@ export const downloadRegistrationSubjectsTemplate = async (
 };
 
 /**
- * @desc Upload semester subjects / allocations from webmaster Excel
- * @access Webmaster, Dean, Director
+ * @desc Upload semester subjects / allocations from webadmin Excel
+ * @access Webadmin, Dean, Director
  */
 export const uploadRegistrationSubjects = async (
   req: AuthenticatedRequest,
@@ -897,7 +897,7 @@ export const uploadRegistrationSubjects = async (
     const role = req.user?.role as string;
     const forceApprove =
       approve === true || approve === "true"
-        ? isWebmaster(role) || role === "coe"
+        ? isWebadmin(role) || role === "coe"
         : false;
     const isDryRun = dryRun === true || dryRun === "true";
     const result = await upsertSemesterSubjectCatalog({
@@ -927,7 +927,7 @@ export const uploadRegistrationSubjects = async (
       await NOTIFY({
         target: "dean",
         title: "Action Required: Subject Catalog Review 🎓",
-        body: `Hello {{name}}, Webmaster uploaded subjects for "${semester.name}". Please review allocations and electives.`,
+        body: `Hello {{name}}, Webadmin uploaded subjects for "${semester.name}". Please review allocations and electives.`,
       });
     }
 
@@ -940,7 +940,7 @@ export const uploadRegistrationSubjects = async (
 
 /**
  * @desc Import Google Form registration responses for a semester
- * @access Webmaster, Dean, Director
+ * @access Webadmin, Dean, Director
  */
 export const uploadRegistrationResponses = async (
   req: AuthenticatedRequest,
@@ -1030,7 +1030,7 @@ export const getElectiveGroups = async (
 
 /**
  * @desc Create / update an elective group
- * @access Webmaster, Dean, HOD
+ * @access Webadmin, Dean, HOD
  */
 export const upsertElectiveGroup = async (
   req: AuthenticatedRequest,
@@ -1091,11 +1091,11 @@ export const deleteElectiveGroup = async (
 
 /**
  * @desc Advance the semester through the approval state machine.
- *       Webmaster: DRAFT -> DEAN_REVIEW (submit)
+ *       Webadmin: DRAFT -> DEAN_REVIEW (submit)
  *       Dean:      DEAN_REVIEW -> HOD_REVIEW (approve) | DRAFT (send back)
  *       HOD:       HOD_REVIEW -> REGISTRATION_OPEN (approve)
  *       Any:       -> DRAFT (reject / send back for modifications)
- * @access Webmaster, Dean, HOD
+ * @access Webadmin, Dean, HOD
  */
 export const advanceSemester = async (
   req: AuthenticatedRequest,
@@ -1119,13 +1119,13 @@ export const advanceSemester = async (
     if (action === "reject") {
       nextStatus = "DRAFT";
       notify = {
-        target: "webmaster",
+        target: "webadmin",
         title: "Semester Sent Back ↩️",
         body: `"${semester.name}" was sent back for modifications by ${role.toUpperCase()}.`,
       };
     } else if (action === "submit") {
       if (!isSemesterAdmin(role)) {
-        return res.status(403).json({ error: "Only Webmaster can submit" });
+        return res.status(403).json({ error: "Only Webadmin can submit" });
       }
       nextStatus = "DEAN_REVIEW";
       notify = {
@@ -1134,7 +1134,7 @@ export const advanceSemester = async (
         body: `Hello {{name}}, "${semester.name}" is awaiting your approval.`,
       };
     } else if (action === "approve") {
-      if (role === "dean" || role === "webmaster" || role === "coe") {
+      if (role === "dean" || role === "webadmin" || role === "coe") {
         if (semester.status === "DEAN_REVIEW") {
           nextStatus = "HOD_REVIEW";
           await prisma.branchAllocation.updateMany({
@@ -1233,7 +1233,7 @@ export const advanceSemester = async (
 
 /**
  * @desc Update semester configuration (dates, batch, academic year)
- * @access Webmaster
+ * @access Webadmin
  */
 export const updateSemesterConfig = async (
   req: AuthenticatedRequest,
@@ -1284,7 +1284,7 @@ export const updateSemesterConfig = async (
 
 /**
  * @desc Update semester status
- * @access Webmaster
+ * @access Webadmin
  */
 export const updateSemesterStatus = async (
   req: AuthenticatedRequest,
@@ -1292,7 +1292,7 @@ export const updateSemesterStatus = async (
 ) => {
   const user = req.user;
   if (!user || !isSemesterAdmin(user.role as string)) {
-    return res.status(403).json({ error: "Webmaster access required" });
+    return res.status(403).json({ error: "Webadmin access required" });
   }
 
   const { id } = req.params;
@@ -1318,7 +1318,7 @@ export const updateSemesterStatus = async (
 
 /**
  * @desc Delete a semester
- * @access Webmaster
+ * @access Webadmin
  */
 export const deleteSemester = async (
   req: AuthenticatedRequest,
@@ -1343,7 +1343,7 @@ export const deleteSemester = async (
 
 /**
  * @desc Create a manual allocation
- * @access Webmaster, Dean, HOD
+ * @access Webadmin, Dean, HOD
  */
 export const createAllocation = async (
   req: AuthenticatedRequest,
@@ -1383,7 +1383,7 @@ export const createAllocation = async (
 
 /**
  * @desc Delete a specific allocation
- * @access Webmaster, Dean
+ * @access Webadmin, Dean
  */
 export const deleteAllocation = async (
   req: AuthenticatedRequest,
@@ -1536,7 +1536,7 @@ export const updateAllocation = async (
   if (!user) return res.status(401).json({ error: "Unauthorized" });
 
   const role = resolveEffectiveRole(user);
-  const allowed = new Set(["webmaster", "coe", "dean", "director", "hod"]);
+  const allowed = new Set(["webadmin", "coe", "dean", "director", "hod"]);
   if (!allowed.has(role)) {
     return res.status(403).json({ error: "Not authorized" });
   }
@@ -1613,7 +1613,7 @@ export const approveBranchAllocation = async (
     let targetBranch = "";
     let targetYear = "";
 
-    if (user?.role === "dean" || user?.role === "webmaster") {
+    if (user?.role === "dean" || user?.role === "webadmin") {
       nextStatus = "HOD_REVIEW";
       title = "Course List Approved by Dean 🏛️";
       message = `Hello {{name}}, the subject structure for ${branch || "all branches"} has been approved by Dean. Please review and finalize.`;
@@ -2254,7 +2254,7 @@ export const exportAcademicData = async (
 };
 /**
  * @desc Per-student registration completion for a semester (registered vs pending).
- * @access Dean, Webmaster, HOD, Director, COE
+ * @access Dean, Webadmin, HOD, Director, COE
  */
 export const getRegistrationTracking = async (
   req: AuthenticatedRequest,
@@ -2264,7 +2264,7 @@ export const getRegistrationTracking = async (
   if (!user) return res.status(401).json({ error: "Unauthorized" });
 
   const role = resolveEffectiveRole(user);
-  const allowed = new Set(["webmaster", "coe", "dean", "director", "hod"]);
+  const allowed = new Set(["webadmin", "coe", "dean", "director", "hod"]);
   if (!allowed.has(role)) {
     return res.status(403).json({ error: "Not authorized" });
   }
@@ -2463,7 +2463,7 @@ export const getRegistrationTracking = async (
 
 /**
  * @desc Get all registered students and their subjects
- * @access Dean, Webmaster
+ * @access Dean, Webadmin
  */
 export const getRegistrations = async (
   req: AuthenticatedRequest,
@@ -2689,7 +2689,7 @@ export const downloadRegistrationPdf = async (
   );
   const role = resolveEffectiveRole(user);
   const adminRoles = new Set([
-    "webmaster",
+    "webadmin",
     "dean",
     "director",
     "coe",
@@ -2987,7 +2987,7 @@ export const downloadBulkRegistrationPdfs = async (
     return res.status(401).json({ success: false, message: "Unauthorized" });
 
   const role = resolveEffectiveRole(user);
-  const allowed = new Set(["webmaster", "coe", "dean", "director", "hod"]);
+  const allowed = new Set(["webadmin", "coe", "dean", "director", "hod"]);
   if (!allowed.has(role)) {
     return res.status(403).json({ success: false, message: "Not authorized" });
   }

@@ -30,7 +30,7 @@ async function main() {
 
   // 2. Seed Admin Profiles
   const admins = [
-    { username: "webmaster", role: "webmaster" },
+    { username: "webadmin", role: "webadmin" },
     { username: "coe", role: "coe" },
     { username: "ao", role: "ao" },
     { username: "dean", role: "dean" },

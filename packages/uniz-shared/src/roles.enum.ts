@@ -5,10 +5,11 @@ export enum UserRole {
   FACULTY = "faculty",
   HOD = "hod",
 
-  WEBMASTER = "webmaster",
-  // Transitional alias for WEBMASTER during the webmaster -> webadmin rename.
-  // Treated as equivalent privilege everywhere until 'webmaster' is retired.
+  // Canonical highest-privilege role.
   WEBADMIN = "webadmin",
+  // Legacy alias for WEBADMIN, retained only while pre-flip 'webmaster' JWTs
+  // may still be in flight. Remove once those tokens have expired.
+  WEBMASTER = "webmaster",
   DEAN = "dean",
   DIRECTOR = "director",
   COE = "coe",

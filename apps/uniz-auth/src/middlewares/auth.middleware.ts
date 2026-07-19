@@ -37,7 +37,7 @@ export const authMiddleware = async (
     (req as AuthenticatedRequest).user = {
       id: "internal",
       username: "internal-service",
-      role: "webmaster" as any,
+      role: "webadmin" as any,
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 3600,
     };

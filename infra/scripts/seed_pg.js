@@ -14,7 +14,7 @@ async function seed() {
 
   // Hashes
   const password123Hash = await bcrypt.hash("password123", 10);
-  const webmasterHash = await bcrypt.hash("webmaster@uniz", 10);
+  const webadminHash = await bcrypt.hash("webadmin@uniz", 10);
   const caretakerHash = await bcrypt.hash("caretaker_male@uniz", 10);
   const caretakerFemaleHash = await bcrypt.hash("caretaker_female@uniz", 10);
   const wardenHash = await bcrypt.hash("warden_male@uniz", 10);
@@ -83,7 +83,7 @@ async function seed() {
       };
 
       // Admins
-      await createAuthUser("webmaster", webmasterHash, "webmaster");
+      await createAuthUser("webadmin", webadminHash, "webadmin");
       await createAuthUser("caretaker_male", caretakerHash, "caretaker_male");
       await createAuthUser(
         "caretaker_female",

@@ -577,7 +577,7 @@ export const adminUpdateStudentProfile = async (
   const username = req.params.username.toUpperCase();
   const updates = pickStudentProfileUpdates(req.body);
 
-  const allowedRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
+  const allowedRoles = [UserRole.WEBADMIN, UserRole.DEAN, UserRole.DIRECTOR];
   if (!user || !allowedRoles.includes(user.role as UserRole)) {
     return res
       .status(403)
@@ -627,7 +627,7 @@ export const createIndividualStudent = async (
   const studentData = req.body;
   const username = String(studentData.username || "").toUpperCase();
 
-  const allowedRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
+  const allowedRoles = [UserRole.WEBADMIN, UserRole.DEAN, UserRole.DIRECTOR];
   if (!user || !allowedRoles.includes(user.role as UserRole)) {
     return res
       .status(403)
@@ -912,7 +912,7 @@ export const getFacultyProfile = async (
   // Allow self lookup or Staff/Admin roles to lookup any faculty
   const isSelf = user.username?.toLowerCase() === targetUsername;
   const adminRoles = [
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.DEAN,
     UserRole.DIRECTOR,
     UserRole.HOD,
@@ -959,7 +959,7 @@ export const getAdminProfile = async (
 
   // Check if role is any admin role
   const adminRoles = [
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.DEAN,
     UserRole.DIRECTOR,
     UserRole.SWO,
@@ -1086,7 +1086,7 @@ export const createFacultyProfile = async (
 
   // Admin role check
   const adminRoles = [
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.DEAN,
     UserRole.DIRECTOR,
     UserRole.HOD,
@@ -1160,7 +1160,7 @@ export const updateStudentPresence = async (
   const { isPresent, isPending } = req.body;
 
   const allowedRoles = [
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.DEAN,
     UserRole.DIRECTOR,
     UserRole.SWO,
@@ -1296,9 +1296,9 @@ export const getTargetingData = async (req: Request, res: Response) => {
         where: { role: { equals: "dean", mode: "insensitive" } },
         select: { username: true },
       });
-    } else if (target === "webmaster") {
+    } else if (target === "webadmin") {
       users = await prisma.adminProfile.findMany({
-        where: { role: { equals: "webmaster", mode: "insensitive" } },
+        where: { role: { equals: "webadmin", mode: "insensitive" } },
         select: { username: true },
       });
     } else if (target === "hod") {
@@ -1356,7 +1356,7 @@ export const toggleUserSuspension = async (
   const targetUsername = req.params.username.toUpperCase();
   const { suspended } = req.body;
 
-  const allowedRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
+  const allowedRoles = [UserRole.WEBADMIN, UserRole.DEAN, UserRole.DIRECTOR];
   if (!user || !allowedRoles.includes(user.role as UserRole)) {
     return res
       .status(403)
@@ -1453,7 +1453,7 @@ export const searchFaculty = async (
 ) => {
   const user = req.user;
   const adminRoles = [
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.DEAN,
     UserRole.DIRECTOR,
     UserRole.HOD,
@@ -1524,7 +1524,7 @@ export const updateFacultyProfile = async (
   const { email, ...updates } = req.body;
 
   const adminRoles = [
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.DEAN,
     UserRole.DIRECTOR,
     UserRole.HOD,
@@ -1535,11 +1535,11 @@ export const updateFacultyProfile = async (
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
   }
 
-  const isWebmaster = user.role === UserRole.WEBMASTER;
-  if (email !== undefined && email !== null && email !== "" && !isWebmaster) {
+  const isWebadmin = user.role === UserRole.WEBADMIN;
+  if (email !== undefined && email !== null && email !== "" && !isWebadmin) {
     return res.status(403).json({
       code: ErrorCode.AUTH_FORBIDDEN,
-      message: "Only webmaster can change faculty email",
+      message: "Only webadmin can change faculty email",
     });
   }
 
@@ -1573,7 +1573,7 @@ export const updateFacultyProfile = async (
         where: { id: existingProfile.id },
         data: {
           ...updates,
-          ...(isWebmaster && email && { email }),
+          ...(isWebadmin && email && { email }),
           username: targetUsername,
         },
       });
@@ -1582,7 +1582,7 @@ export const updateFacultyProfile = async (
         where: { id: existingProfile.id },
         data: {
           ...updates,
-          ...(isWebmaster && email && { email }),
+          ...(isWebadmin && email && { email }),
           username: targetUsername.toUpperCase(), // Admin usually uppercase
         },
       })) as any;
@@ -1651,7 +1651,7 @@ export const deleteFacultyProfile = async (
   const username = req.params.username.toLowerCase();
 
   const adminRoles = [
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.DEAN,
     UserRole.DIRECTOR,
     UserRole.HOD,
@@ -1704,7 +1704,7 @@ export const deleteStudentProfile = async (
   res: Response,
 ) => {
   const user = req.user;
-  if (!user || user.role !== UserRole.WEBMASTER) {
+  if (!user || user.role !== UserRole.WEBADMIN) {
     return res
       .status(403)
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
@@ -1832,7 +1832,7 @@ export const bulkDeleteStudents = async (
   res: Response,
 ) => {
   const user = req.user;
-  if (!user || user.role !== UserRole.WEBMASTER) {
+  if (!user || user.role !== UserRole.WEBADMIN) {
     return res
       .status(403)
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
@@ -1946,7 +1946,7 @@ export const updateAdminProfile = async (
   const updates = req.body;
 
   const adminRoles = [
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.DEAN,
     UserRole.DIRECTOR,
     UserRole.SWO,
@@ -2072,7 +2072,7 @@ export const updateAdminProfile = async (
 };
 
 // ─────────────────────────────────────────────
-// BULK FACULTY OPERATIONS (Webmaster only)
+// BULK FACULTY OPERATIONS (Webadmin only)
 // ─────────────────────────────────────────────
 
 export const bulkCreateFaculty = async (
@@ -2080,7 +2080,7 @@ export const bulkCreateFaculty = async (
   res: Response,
 ) => {
   const user = req.user;
-  const allowed = [UserRole.WEBMASTER, UserRole.DIRECTOR];
+  const allowed = [UserRole.WEBADMIN, UserRole.DIRECTOR];
   if (!user || !allowed.includes(user.role as UserRole)) {
     return res
       .status(403)
@@ -2178,7 +2178,7 @@ export const bulkUpdateFaculty = async (
   res: Response,
 ) => {
   const user = req.user;
-  const allowed = [UserRole.WEBMASTER, UserRole.DIRECTOR];
+  const allowed = [UserRole.WEBADMIN, UserRole.DIRECTOR];
   if (!user || !allowed.includes(user.role as UserRole)) {
     return res
       .status(403)
@@ -2220,11 +2220,11 @@ export const bulkUpdateFaculty = async (
       const data: any = {};
       if (upd.name !== undefined) data.name = upd.name;
       if (upd.email !== undefined) {
-        if (user.role !== UserRole.WEBMASTER) {
+        if (user.role !== UserRole.WEBADMIN) {
           results.push({
             username: rawUsername,
             status: "error",
-            reason: "Only webmaster can change faculty email",
+            reason: "Only webadmin can change faculty email",
           });
           continue;
         }
@@ -2303,7 +2303,7 @@ export const bulkDeleteFaculty = async (
   res: Response,
 ) => {
   const user = req.user;
-  const allowed = [UserRole.WEBMASTER, UserRole.DIRECTOR];
+  const allowed = [UserRole.WEBADMIN, UserRole.DIRECTOR];
   if (!user || !allowed.includes(user.role as UserRole)) {
     return res
       .status(403)
@@ -2373,7 +2373,7 @@ export const promoteCohort = async (
 
   const user = req.user;
   const allowedRoles = [
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.DEAN,
     UserRole.DIRECTOR,
     UserRole.COE,
@@ -2427,7 +2427,7 @@ export const resetCampusPresence = async (
 
   const user = req.user;
   const allowedRoles = [
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.DEAN,
     UserRole.DIRECTOR,
     UserRole.SWO,
@@ -2483,7 +2483,7 @@ export const getCampusPresenceStats = async (
 ) => {
   const user = req.user;
   const allowedRoles = [
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.DEAN,
     UserRole.DIRECTOR,
     UserRole.HOD,
@@ -2515,7 +2515,7 @@ export const getCampusPresenceStats = async (
 };
 
 const COHORT_ADMIN_ROLES = [
-  UserRole.WEBMASTER,
+  UserRole.WEBADMIN,
   UserRole.DEAN,
   UserRole.DIRECTOR,
   UserRole.COE,

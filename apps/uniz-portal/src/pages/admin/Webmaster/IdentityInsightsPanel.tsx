@@ -6,7 +6,7 @@ import { cn } from "../../../utils/cn";
 import { formatDisplayText } from "@/utils/displayText";
 
 const STAFF_ROLES = new Set([
-  "webmaster",
+  "webadmin",
   "dean",
   "hod",
   "admin",
@@ -29,7 +29,9 @@ type IdentityInsightsPanelProps = {
   data: RoleRow[];
 };
 
-export default function IdentityInsightsPanel({ data }: IdentityInsightsPanelProps) {
+export default function IdentityInsightsPanel({
+  data,
+}: IdentityInsightsPanelProps) {
   const {
     staffRoles,
     totalActive,
@@ -153,7 +155,9 @@ export default function IdentityInsightsPanel({ data }: IdentityInsightsPanelPro
                     transition={{ delay: i * 0.05 }}
                   >
                     <div className="flex items-center justify-between text-[12px] mb-1.5">
-                      <span className="font-medium text-zinc-700">{row.label}</span>
+                      <span className="font-medium text-zinc-700">
+                        {row.label}
+                      </span>
                       <span className="tabular-nums font-semibold text-zinc-900">
                         {row.value.toLocaleString()}
                       </span>

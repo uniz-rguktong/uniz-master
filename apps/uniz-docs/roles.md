@@ -18,7 +18,7 @@ Every user in UniZ is assigned a role when their account is created. Your role d
 | `security`                            | Security staff at gates     | Gate check-in/check-out, approved outpass verification |
 | `faculty`                             | Teaching staff              | Grade and attendance uploads, student record access    |
 | `hod`                                 | Head of Department          | Department-scoped student view, elective review, registration tracking |
-| `webmaster`                           | Platform administrator      | Semester builder, banners, bulk data, system health    |
+| `webadmin`                            | Platform administrator      | Semester builder, banners, bulk data, system health    |
 
 ---
 
@@ -42,7 +42,7 @@ Every user in UniZ is assigned a role when their account is created. Your role d
 
   - **[Faculty](/faculty/grades)**
 
-- **[Webmaster](/admin/overview)**
+- **[Webadmin](/admin/overview)**
 
 ---
 

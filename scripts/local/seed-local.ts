@@ -152,12 +152,12 @@ async function seed() {
     // --- SEEDING CORE ROLES ---
     console.log("- Seeding Core Roles...");
     await upsertUser(
-      "webmaster-id",
-      "webmaster",
-      "webmaster",
+      "webadmin-id",
+      "webadmin",
+      "webadmin",
       "Main System Administrator",
       "Admin",
-      { email: "webadmin@rguktong.ac.in", name: "UniZ Webmaster" },
+      { email: "webadmin@rguktong.ac.in", name: "UniZ Webadmin" },
     );
     await upsertUser(
       "dean-id",

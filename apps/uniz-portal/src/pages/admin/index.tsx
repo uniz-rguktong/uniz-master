@@ -85,7 +85,7 @@ export default function Admin() {
   const decoded = adminToken ? parseJwt(adminToken) : null;
   const role = resolveAdminPortalRole(decoded, username);
 
-  if (role === "webmaster" || role === "coe") {
+  if (role === "webadmin" || role === "coe") {
     return <WebmasterDashboard />;
   }
 
@@ -120,7 +120,7 @@ export default function Admin() {
   };
 
   const isDirector =
-    role === "director" || role === "webmaster" || role === "coe";
+    role === "director" || role === "webadmin" || role === "coe";
   const isDean = role === "dean" || isDirector;
   const isHOD = role === "hod" || isDean;
   const isDSW = role === "dsw" || role === "swo" || isDean;
