@@ -1,0 +1,18 @@
+# Code owners for UniZ.
+#
+# Every pull request to a protected branch (main) requires an approving review
+# from a code owner listed here before it can be merged. Combined with branch
+# protection, this means: contributors open PRs and request review; only after a
+# code owner approves can the PR be merged, and only the maintainers with push
+# access to `main` can perform the merge.
+#
+# To grant someone review/merge authority in the future:
+#   1. Add their GitHub username on the line below (space-separated), e.g.
+#        *       @sreecharan-desu @new-maintainer
+#   2. Add the same username to the branch protection "restrict who can push"
+#      list for `main` (Settings → Branches, or see docs/ops/github-governance.md).
+#
+# Path-specific owners can be added below the catch-all if needed, e.g.
+#   /apps/uniz-academics/   @some-academics-owner
+
+*       @sreecharan-desu

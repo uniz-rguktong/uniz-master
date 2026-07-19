@@ -8,7 +8,7 @@ description: Complete UniZ docs — architecture, services, deploy, APIs, and ro
 Use search (**Ctrl/Cmd + K**) or the [Search index](/search-index) to find **how something is implemented** and **what to change**.
 
 - **[System architecture](/system/overview)** — Mermaid maps of Pages, Traefik, gateway-api, and data stores
-- **[Action flows](/system/action-flows)** — Student, webmaster, HOD, dean, SWO grievance, auth — every major action
+- **[Action flows](/system/action-flows)** — Student, webadmin, HOD, dean, SWO grievance, auth — every major action
 - **[Search index](/search-index)** — Keyword table for every major topic
 - **[Deploy & ops](/ops/deploy)** — VPS GHCR deploy, Cloudflare Pages, runbooks
 - **[API gateway map](/api/platform/gateway)** — Every `/api/v1` prefix → upstream service

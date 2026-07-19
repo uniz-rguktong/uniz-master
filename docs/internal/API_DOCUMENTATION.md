@@ -146,7 +146,7 @@
 ### 4d. Publish Results (Email)
 
 **Endpoint:** `POST /academics/grades/publish-email`
-**Auth Required:** Yes (Webmaster/Dean/Director)
+**Auth Required:** Yes (Webadmin/Dean/Director)
 **Body:** `{ "semesterId": "SEM-1" }`
 **Description:** Triggers bulk email notifications to all students for the given semester results.
 
@@ -323,7 +323,7 @@
 ### 12. Create Banner (Admin Only)
 
 **Endpoint:** `POST /profile/admin/banners`
-**Auth Required:** Yes (Webmaster)
+**Auth Required:** Yes (Webadmin)
 
 **Request Body:**
 
@@ -492,7 +492,7 @@ _(Other usernames: `dean_cse`, `warden_male`, `caretaker_female`, `security_admi
 ### 25. Get Batch Grades (Bulk View)
 
 **Endpoint:** `GET /academics/grades/batch`
-**Auth Required:** Yes (Webmaster/Dean/Director)
+**Auth Required:** Yes (Webadmin/Dean/Director)
 **Query Params:** `branch` (e.g., CSE), `year` (e.g., E2), `semesterId` (e.g., SEM-1), `failedOnly` (true/false)
 
 **Success Response (200 OK):**
@@ -529,7 +529,7 @@ _(Other usernames: `dean_cse`, `warden_male`, `caretaker_female`, `security_admi
 ### 26. Bulk Update Grades (JSON)
 
 **Endpoint:** `POST /academics/grades/bulk-update`
-**Auth Required:** Yes (Webmaster/Dean)
+**Auth Required:** Yes (Webadmin/Dean)
 **Description:** Efficiently update multiple grades without Excel. Great for re-evaluations.
 
 **Request Body:**
@@ -577,12 +577,12 @@ _(Other usernames: `dean_cse`, `warden_male`, `caretaker_female`, `security_admi
 
 ---
 
-## Webmaster Features
+## Webadmin Features
 
 ### 21. Create Banners
 
 **Endpoint:** `POST /profile/admin/banners`
-**Auth Required:** Yes (Webmaster)
+**Auth Required:** Yes (Webadmin)
 
 ### 22. Publish/Unpublish Banner
 
@@ -680,7 +680,7 @@ _(Other usernames: `dean_cse`, `warden_male`, `caretaker_female`, `security_admi
   - **Final Approval**: Their approval instantly grants the Outpass.
   - **Override**: Change student status manually if needed.
 
-### 6. Webmaster (`webmaster`)
+### 6. Webadmin (`webadmin`)
 
 - **Primary Duty**: Application Maintenance.
 - **Capabilities**:

@@ -146,14 +146,14 @@ Resolved via `utils/adminRole.ts` + JWT:
 
 | Role | Dashboard |
 |------|-----------|
-| `webmaster`, `coe` | `Webmaster/WebmasterDashboard.tsx` |
+| `webadmin`, `coe` | `Webmaster/WebmasterDashboard.tsx` |
 | `director` | `Director/DirectorDashboard.tsx` |
 | `dean`, `hod` | `Dean/DeanDashboard.tsx` |
 | `swo`, `dsw` | `SWO/SWODashboard.tsx` |
 | `warden` | `Warden/WardenDashboard.tsx` |
 | `caretaker` | `Caretaker/CaretakerDashboard.tsx` |
 
-Webmaster student details: `pages/admin/Webmaster/StudentDetails.tsx`  
+Webadmin student details: `pages/admin/Webmaster/StudentDetails.tsx`  
 Bulk upload UI: `StudentBulkSection.tsx` · API: `apps/uniz-user/src/controllers/bulk.controller.ts`
 
 ### Key frontend files
@@ -257,7 +257,7 @@ VPS work dir: `/root/uniz-master-main`. Secrets: `/root/uniz-secrets.env` via `s
 | API URL constants | `apps/uniz-portal/src/api/endpoints.ts` |
 | Login / signin | `apps/uniz-portal/src/pages/auth/CommonSignin.tsx` |
 | Admin role routing | `apps/uniz-portal/src/pages/admin/index.tsx` |
-| Webmaster tools | `apps/uniz-portal/src/pages/admin/Webmaster/` |
+| Webadmin tools | `apps/uniz-portal/src/pages/admin/Webmaster/` |
 | Bulk student upload | `bulk.controller.ts` (user), `StudentBulkSection.tsx` (portal) |
 | Grades / attendance backend | `apps/uniz-academics/src/routes/` |
 | Outpass / outing | `apps/uniz-outpass/` |
