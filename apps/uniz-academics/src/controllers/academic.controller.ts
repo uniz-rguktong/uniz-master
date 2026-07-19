@@ -433,8 +433,10 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
       }
     }
 
+    // studentId is canonically uppercase; exact match uses the btree index
+    // (mode:"insensitive" would force a sequential scan).
     const where: any = {
-      studentId: { equals: targetStudentId, mode: "insensitive" },
+      studentId: targetStudentId,
     };
 
     let semesterIdFilter: any = undefined;
@@ -908,8 +910,10 @@ export const getAttendance = async (
     const sem = semester as string;
     const y = year as string;
 
+    // studentId is canonically uppercase; exact match uses the btree index
+    // (mode:"insensitive" would force a sequential scan).
     const where: any = {
-      studentId: { equals: targetStudentId, mode: "insensitive" },
+      studentId: targetStudentId,
     };
 
     let semesterIdFilter: any = undefined;
@@ -2595,8 +2599,10 @@ export const downloadGrades = async (
   try {
     const allGrades = await prisma.grade.findMany({
       where: {
-        studentId: { equals: targetStudentId, mode: "insensitive" },
-        semesterId: { equals: semesterId, mode: "insensitive" },
+        // studentId & semesterId are canonically uppercase — exact match hits
+        // the composite index instead of scanning.
+        studentId: targetStudentId,
+        semesterId: (semesterId as string)?.toUpperCase(),
       },
       include: { subject: true },
       orderBy: { subject: { code: "asc" } },
@@ -2724,8 +2730,10 @@ export const downloadAttendance = async (
   try {
     const records = await prisma.attendance.findMany({
       where: {
-        studentId: { equals: targetStudentId, mode: "insensitive" },
-        semesterId: { equals: semesterId, mode: "insensitive" },
+        // studentId & semesterId are canonically uppercase — exact match hits
+        // the composite index instead of scanning.
+        studentId: targetStudentId,
+        semesterId: (semesterId as string)?.toUpperCase(),
       },
       include: { subject: true },
       orderBy: { subject: { code: "asc" } },

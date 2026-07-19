@@ -348,7 +348,8 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
     // Get the most recent unconsumed OTP
     const lastOtp = await prisma.otpLog.findFirst({
       where: {
-        username: { equals: username, mode: "insensitive" },
+        // username stored already-normalized → exact match uses the index.
+        username,
         consumedAt: null,
         expiresAt: { gt: new Date() },
       },
@@ -394,7 +395,9 @@ export const verifyOtp = async (req: Request, res: Response) => {
   try {
     const validOtp = await prisma.otpLog.findFirst({
       where: {
-        username: { equals: username, mode: "insensitive" },
+        // username is stored already-normalized (uppercase id / resolved email),
+        // so exact match uses @@index([username, createdAt]).
+        username,
         otp,
         expiresAt: { gt: new Date() },
         consumedAt: null,
