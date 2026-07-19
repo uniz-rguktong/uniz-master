@@ -47,7 +47,7 @@ uniz-portal          → React UI
 uniz-gateway         → API router (keep)
 uniz-api (monolith)  → auth + user + academics + outpass modules  [future merge]
 uniz-worker          → mail + notifications queue + PDF           [future merge]
-uniz-files           → image uploads → Cloudflare R2 (stateless; folded into user-service)
+uniz-files           → image uploads → self-hosted on VPS disk (folded into user-service)
 uniz-landing (+ API) → public site
 ```
 
