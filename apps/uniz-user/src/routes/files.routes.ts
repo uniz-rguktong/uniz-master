@@ -6,10 +6,10 @@ import {
 } from "../middlewares/auth.middleware";
 import {
   compressToWebp,
-  putImage,
-  isR2Configured,
+  saveImage,
+  isStorageConfigured,
   type CompressOptions,
-} from "../utils/r2.util";
+} from "../utils/storage.util";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -61,7 +61,7 @@ function randomKeyPart(): string {
   return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
 }
 
-// Image upload → Cloudflare R2. Server-side compression to WebP guarantees a
+// Image upload → VPS-local storage. Server-side compression to WebP guarantees a
 // bounded output size regardless of the source quality/dimensions. Profile
 // assets use a deterministic key (one object per user) so a re-upload replaces
 // the old image; append-style assets (banners/website) get a unique key.
@@ -69,7 +69,7 @@ router.post(
   "/image/upload",
   upload.single("image"),
   async (req: AuthenticatedRequest, res: Response) => {
-    if (!isR2Configured()) {
+    if (!isStorageConfigured()) {
       return res
         .status(503)
         .json({ success: false, message: "Image storage is not configured" });
@@ -154,10 +154,10 @@ router.post(
 
     try {
       const webp = await compressToWebp(req.file.buffer, compress);
-      const url = await putImage(key, webp);
+      const url = await saveImage(key, webp);
       return res.json({ success: true, url });
     } catch (e: any) {
-      console.error("[R2 Image Upload] error:", e?.message || e);
+      console.error("[Image Upload] error:", e?.message || e);
       return res
         .status(500)
         .json({ success: false, message: "Image upload failed" });
