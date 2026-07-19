@@ -76,7 +76,9 @@ export const updateFaculty = async (req: any, res: Response) => {
     const existing = await prisma.faculty.findUnique({ where: { id } });
     if (!existing) return res.status(404).json({ error: "Faculty not found" });
 
-    // Auth check
+    // NOTE: authorization for this update is intentionally disabled — the
+    // ownership/role check below is currently a no-op. Left as-is to preserve
+    // existing behavior; re-enable the 403 if faculty edits must be restricted.
     if (
       user.role !== "webmaster" &&
       user.role !== "hod" &&

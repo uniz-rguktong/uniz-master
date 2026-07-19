@@ -64,24 +64,30 @@ router.post("/internal/push", requireAuth, async (req, res) => {
   }
 });
 
-router.delete("/internal/subscriptions/:username", requireAuth, async (req, res) => {
-  try {
-    const username = String(req.params.username || "").toLowerCase();
-    if (!username) {
-      return res.status(400).json({ success: false, error: "Username required" });
+router.delete(
+  "/internal/subscriptions/:username",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const username = String(req.params.username || "").toLowerCase();
+      if (!username) {
+        return res
+          .status(400)
+          .json({ success: false, error: "Username required" });
+      }
+      const result = await prisma.pushSubscription.deleteMany({
+        where: { username: { equals: username, mode: "insensitive" } },
+      });
+      return res.json({
+        success: true,
+        deleted: result.count,
+        message: `Removed ${result.count} push subscription(s)`,
+      });
+    } catch (err: any) {
+      return res.status(500).json({ success: false, error: err.message });
     }
-    const result = await prisma.pushSubscription.deleteMany({
-      where: { username: { equals: username, mode: "insensitive" } },
-    });
-    return res.json({
-      success: true,
-      deleted: result.count,
-      message: `Removed ${result.count} push subscription(s)`,
-    });
-  } catch (err: any) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
+  },
+);
 
 router.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
   try {
@@ -96,7 +102,9 @@ router.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
     // Single-user system pushes (login alerts, OTP, etc.) — no broadcast plumbing
     if (t === "user") {
       if (!username) {
-        return res.status(400).json({ error: "username required for target=user" });
+        return res
+          .status(400)
+          .json({ error: "username required for target=user" });
       }
       const sent = await sendWebPush(String(username), {
         title: String(title),
@@ -128,7 +136,11 @@ router.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       if (!batch) {
         return res.status(400).json({ error: "batch required (e.g. o21)" });
       }
-      const users = await fetchTargeting({ target: "students", branch: "all", year: "all" });
+      const users = await fetchTargeting({
+        target: "students",
+        branch: "all",
+        year: "all",
+      });
       targetUsers = users.filter((u: { username: string }) =>
         u.username.toLowerCase().startsWith(String(batch).toLowerCase()),
       );
@@ -136,7 +148,11 @@ router.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       if (!year) {
         return res.status(400).json({ error: "year required (e.g. E3)" });
       }
-      targetUsers = await fetchTargeting({ target: "students", branch: "all", year });
+      targetUsers = await fetchTargeting({
+        target: "students",
+        branch: "all",
+        year,
+      });
     } else if (["dean", "hod", "students"].includes(t)) {
       targetUsers = await fetchTargeting({ target: t, branch, year });
     } else if (t === "all") {
@@ -148,12 +164,15 @@ router.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       targetUsers = [...students, ...faculty, ...deans];
     } else {
       return res.status(400).json({
-        error: "target must be one of: user, batch, year, all, dean, hod, students",
+        error:
+          "target must be one of: user, batch, year, all, dean, hod, students",
       });
     }
 
     if (targetUsers.length === 0) {
-      return res.status(200).json({ success: true, status: "no_targets", sent: 0 });
+      return res
+        .status(200)
+        .json({ success: true, status: "no_targets", sent: 0 });
     }
 
     // Fan out in chunks so the HTTP request returns immediately.
@@ -210,8 +229,8 @@ router.get("/push/subscribers", requireAuth, requireAdmin, async (req, res) => {
             { headers: { "x-internal-secret": SECRET } },
           );
           if (searchRes.data?.students?.length) {
-            nameMatchedUsernames = searchRes.data.students.map((s: { username: string }) =>
-              String(s.username).toLowerCase(),
+            nameMatchedUsernames = searchRes.data.students.map(
+              (s: { username: string }) => String(s.username).toLowerCase(),
             );
           }
         } catch {
@@ -223,7 +242,12 @@ router.get("/push/subscribers", requireAuth, requireAdmin, async (req, res) => {
         where = {
           OR: [
             directWhere,
-            { username: { in: nameMatchedUsernames, mode: "insensitive" as const } },
+            {
+              username: {
+                in: nameMatchedUsernames,
+                mode: "insensitive" as const,
+              },
+            },
           ],
         };
       } else {

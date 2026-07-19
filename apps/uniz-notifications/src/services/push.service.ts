@@ -10,7 +10,9 @@ if (!publicVapidKey || !privateVapidKey) {
   if (process.env.NODE_ENV === "production") {
     throw new Error("VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY are required");
   }
-  console.warn("[Push] VAPID keys missing — push notifications disabled in dev");
+  console.warn(
+    "[Push] VAPID keys missing — push notifications disabled in dev",
+  );
 } else {
   webpush.setVapidDetails(
     "mailto:admin@uniz.rguktong.in",
@@ -101,22 +103,29 @@ export const sendWebPush = async (
     });
 
     const results = await Promise.allSettled(
-      subscriptions.map(async (sub: { endpoint: string; p256dh: string; auth: string }) => {
-        try {
-          await webpush.sendNotification(
-            { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
-            pushPayload,
-            { TTL: 86400, urgency: "high" },
-          );
-        } catch (pushErr: any) {
-          const statusCode = pushErr.statusCode || pushErr.status;
-          if (statusCode === 410 || statusCode === 404) {
-            await prisma.pushSubscription.delete({ where: { endpoint: sub.endpoint } });
-          } else {
-            throw pushErr;
+      subscriptions.map(
+        async (sub: { endpoint: string; p256dh: string; auth: string }) => {
+          try {
+            await webpush.sendNotification(
+              {
+                endpoint: sub.endpoint,
+                keys: { p256dh: sub.p256dh, auth: sub.auth },
+              },
+              pushPayload,
+              { TTL: 86400, urgency: "high" },
+            );
+          } catch (pushErr: any) {
+            const statusCode = pushErr.statusCode || pushErr.status;
+            if (statusCode === 410 || statusCode === 404) {
+              await prisma.pushSubscription.delete({
+                where: { endpoint: sub.endpoint },
+              });
+            } else {
+              throw pushErr;
+            }
           }
-        }
-      }),
+        },
+      ),
     );
 
     return results.filter((r) => r.status === "fulfilled").length;

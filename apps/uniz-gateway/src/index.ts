@@ -72,10 +72,7 @@ const allowedOrigins = process.env.CLIENT_URL
   ? process.env.CLIENT_URL.split(",").map((origin) => origin.trim())
   : ["http://localhost:5173", "http://localhost:3000"];
 
-function applyCorsHeaders(
-  req: express.Request,
-  res: express.Response,
-): void {
+function applyCorsHeaders(req: express.Request, res: express.Response): void {
   const origin = req.headers.origin;
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
@@ -161,20 +158,29 @@ app.use((req, res, next) => {
     (process.env.NODE_ENV === "production"
       ? "http://uniz-docs-service.default.svc.cluster.local:3333"
       : "http://127.0.0.1:3333");
-  
+
   // List of high-level documentation paths that should be prefixed with /docs
   const docRoutes = [
-    "/introduction", "/quickstart", "/roles", "/students", "/admin", "/faculty", "/api-reference",
-    "/api/auth", "/api/academics", "/api/requests", "/api/profile" // API Doc Routes
+    "/introduction",
+    "/quickstart",
+    "/roles",
+    "/students",
+    "/admin",
+    "/faculty",
+    "/api-reference",
+    "/api/auth",
+    "/api/academics",
+    "/api/requests",
+    "/api/profile", // API Doc Routes
   ];
-  const isDocNavigation = docRoutes.some(route => req.url.startsWith(route));
+  const isDocNavigation = docRoutes.some((route) => req.url.startsWith(route));
 
   // If it's a direct navigation to a doc page without /docs prefix, REDIRECT them to the correct home
   if (isDocNavigation && !isDocsRequest && !isApiRequest) {
     return res.redirect(308, `/docs${req.url}`);
   }
 
-  // If it's a non-API asset request originating from the docs page, 
+  // If it's a non-API asset request originating from the docs page,
   // try to fetch it from the docs service before letting it fall through
   if (isDocsReferer && !isApiRequest && !isDocsRequest) {
     return proxy.web(req, res, { target: docsTarget });
@@ -214,30 +220,28 @@ interface HealthPayload {
 let inflightHealthRefresh: Promise<HealthPayload> | null = null;
 
 async function probeAllServices(): Promise<HealthPayload> {
-  const resultPromises = Object.entries(serviceMap).map(
-    async ([name, url]) => {
-      try {
-        const start = performance.now();
-        const probePath = "/health";
-        const probeTimeout = name === "docs" ? 250 : 800;
-        await internalClient.get(`${url.replace(/\/$/, "")}${probePath}`, {
-          timeout: probeTimeout,
-        });
-        const latency = (performance.now() - start).toFixed(2);
-        return { name, status: "healthy", latency: `${latency}ms` };
-      } catch (e: any) {
-        if (optionalServices.has(name)) {
-          return {
-            name,
-            status: "healthy",
-            statusDetail: "optional probe skipped",
-            latency: "0ms",
-          };
-        }
-        return { name, status: "unhealthy", error: e.message };
+  const resultPromises = Object.entries(serviceMap).map(async ([name, url]) => {
+    try {
+      const start = performance.now();
+      const probePath = "/health";
+      const probeTimeout = name === "docs" ? 250 : 800;
+      await internalClient.get(`${url.replace(/\/$/, "")}${probePath}`, {
+        timeout: probeTimeout,
+      });
+      const latency = (performance.now() - start).toFixed(2);
+      return { name, status: "healthy", latency: `${latency}ms` };
+    } catch (e: any) {
+      if (optionalServices.has(name)) {
+        return {
+          name,
+          status: "healthy",
+          statusDetail: "optional probe skipped",
+          latency: "0ms",
+        };
       }
-    },
-  );
+      return { name, status: "unhealthy", error: e.message };
+    }
+  });
 
   const results = await Promise.all(resultPromises);
   const criticalOk = results
@@ -365,12 +369,14 @@ app.all("/api/v1/cms/*path", (req: any, res: any) => {
   const subPath = proxyPathFromParams(req.params.path);
   const normalized = subPath.startsWith("/") ? subPath : `/${subPath}`;
   const queryStart = req.originalUrl.indexOf("?");
-  const queryString =
-    queryStart >= 0 ? req.originalUrl.slice(queryStart) : "";
+  const queryString = queryStart >= 0 ? req.originalUrl.slice(queryStart) : "";
   req.url = normalized + queryString;
 
   if (normalized.startsWith("/api/")) {
-    return proxy.web(req, res, { target: landingApiTarget, changeOrigin: true });
+    return proxy.web(req, res, {
+      target: landingApiTarget,
+      changeOrigin: true,
+    });
   }
 
   const cmsTarget = serviceMap.cms;
@@ -398,7 +404,11 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
       subPathEarly === "grievance" ||
       subPathEarly.startsWith("grievance/"));
 
-  if (service === "requests" && !outpassOutingEnabled && !isGrievanceViaRequests) {
+  if (
+    service === "requests" &&
+    !outpassOutingEnabled &&
+    !isGrievanceViaRequests
+  ) {
     return res.status(503).json({
       success: false,
       error: "Outpass and outing are currently disabled by administration",
@@ -416,8 +426,7 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
 
   const subPath = subPathEarly;
   const queryStart = req.originalUrl.indexOf("?");
-  const queryString =
-    queryStart >= 0 ? req.originalUrl.slice(queryStart) : "";
+  const queryString = queryStart >= 0 ? req.originalUrl.slice(queryStart) : "";
   req.url = subPath + queryString;
 
   // Bypass Warp Engine for binary files or download routes to prevent corruption
@@ -451,7 +460,7 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
   // still partitions any future authenticated cache entries.
   const hasAuth = Boolean(
     String(req.headers["authorization"] || "").trim() ||
-      String(req.headers["uid"] || "").trim(),
+    String(req.headers["uid"] || "").trim(),
   );
   const mayCache = !hasAuth || isPublicCms;
 

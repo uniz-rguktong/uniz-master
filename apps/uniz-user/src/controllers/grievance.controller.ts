@@ -108,10 +108,7 @@ const sendPush = async (username: string, title: string, body: string) => {
       },
     );
   } catch (e: any) {
-    console.error(
-      `[Grievance] Failed to send push to ${username}:`,
-      e.message,
-    );
+    console.error(`[Grievance] Failed to send push to ${username}:`, e.message);
   }
 };
 
@@ -243,7 +240,10 @@ async function sendGrievanceResolvedEmail(
   );
 }
 
-function grievanceResolvedPushBody(category: string, description: string): string {
+function grievanceResolvedPushBody(
+  category: string,
+  description: string,
+): string {
   const label = formatGrievanceCategoryLabel(category);
   if (isActionableGrievanceDescription(description)) {
     return `Your grievance regarding ${label} has been reviewed and marked resolved by SWO.`;

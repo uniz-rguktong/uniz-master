@@ -1,6 +1,10 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { JwtPayload, JwtPayloadSchema, resolveEffectiveRole } from "@uniz/shared";
+import {
+  JwtPayload,
+  JwtPayloadSchema,
+  resolveEffectiveRole,
+} from "@uniz/shared";
 import { ErrorCode } from "../shared/error-codes";
 import axios from "axios";
 import { redis } from "../utils/redis.util";

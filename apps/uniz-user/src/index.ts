@@ -17,7 +17,7 @@ app.use(
   }),
 );
 app.use(compression());
-// app.use(cors());
+// CORS is handled centrally at the gateway; services sit behind it.
 app.use(express.json());
 
 // Attribution & Malformed Activity Handling (Mandatory)

@@ -45,6 +45,11 @@ model Grade {
   @@index([batch])
   @@index([semesterId])
   @@index([studentId, semesterId])
+  // subjectId is a FK (Postgres does not auto-index FKs). Delete-subject checks,
+  // result publishing, failed-student lookups and batch-grade joins all filter
+  // by subjectId / subjectId+semesterId — this composite serves those once Grade
+  // grows to ~20k rows per upload cycle.
+  @@index([subjectId, semesterId])
 }
 
 model Attendance {
@@ -67,6 +72,10 @@ model Attendance {
   @@index([batch])
   @@index([semesterId])
   @@index([studentId, semesterId])
+  // subjectId is a FK (Postgres does not auto-index FKs). Publishing and
+  // delete-subject checks filter by subjectId / subjectId+semesterId — this
+  // composite serves those once Attendance grows to ~20k rows per upload cycle.
+  @@index([subjectId, semesterId])
 }
 
 enum SemesterStatus {

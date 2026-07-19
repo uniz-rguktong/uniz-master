@@ -56,14 +56,13 @@ export const prisma =
   });
 
 if (SLOW_MS > 0) {
-  (prisma as unknown as { $on: (e: string, cb: (ev: any) => void) => void }).$on(
-    "query",
-    (e: { duration: number; query: string }) => {
-      if (e.duration >= SLOW_MS) {
-        console.warn(`[slow-query] ${e.duration}ms :: ${e.query}`);
-      }
-    },
-  );
+  (
+    prisma as unknown as { $on: (e: string, cb: (ev: any) => void) => void }
+  ).$on("query", (e: { duration: number; query: string }) => {
+    if (e.duration >= SLOW_MS) {
+      console.warn(`[slow-query] ${e.duration}ms :: ${e.query}`);
+    }
+  });
 }
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;

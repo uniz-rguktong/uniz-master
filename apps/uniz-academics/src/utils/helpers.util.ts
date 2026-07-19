@@ -20,7 +20,9 @@ export function mapGradeToPoint(val: string | number): number {
   return 0; // Default fail
 }
 
-export function isValidGradeValue(val: string | number | null | undefined): boolean {
+export function isValidGradeValue(
+  val: string | number | null | undefined,
+): boolean {
   if (val === null || val === undefined) return false;
   if (typeof val === "number") return Number.isFinite(val);
   const v = String(val).trim();

@@ -474,15 +474,7 @@ function drawRegistrationForm(
   data: RegistrationPdfData,
   layout: RegistrationFormLayout,
 ) {
-  const {
-    username,
-    name,
-    branch,
-    year,
-    campus,
-    semesterName,
-    subjects,
-  } = data;
+  const { username, name, branch, year, campus, semesterName, subjects } = data;
   const { offsetY, formHeight, pageWidth } = layout;
 
   const campusLabel =
@@ -502,208 +494,230 @@ function drawRegistrationForm(
   const contentW = right - left;
   let y = offsetY + REG_MARGIN;
 
-    const strokeBox = (x: number, yy: number, w: number, h: number) => {
-      doc.rect(x, yy, w, h).lineWidth(0.6).strokeColor("#000000").stroke();
-    };
+  const strokeBox = (x: number, yy: number, w: number, h: number) => {
+    doc.rect(x, yy, w, h).lineWidth(0.6).strokeColor("#000000").stroke();
+  };
 
-    // ── Header ──────────────────────────────────────────────────────
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(9)
-      .fillColor("#000000")
-      .text(
-        `Rajiv Gandhi University of Knowledge Technologies-${campusLabel}`,
-        left,
-        y,
-        { width: contentW, align: "center" },
-      );
-    y += 12;
-    doc
-      .font("Helvetica")
-      .fontSize(8)
-      .text(
-        `Academic Year: ${academicYear}, ${semesterLabel}`,
-        left,
-        y,
-        { width: contentW, align: "center" },
-      );
-    y += 11;
-    doc.font("Helvetica-Bold").fontSize(9).text("Registration form", left, y, {
+  // ── Header ──────────────────────────────────────────────────────
+  doc
+    .font("Helvetica-Bold")
+    .fontSize(9)
+    .fillColor("#000000")
+    .text(
+      `Rajiv Gandhi University of Knowledge Technologies-${campusLabel}`,
+      left,
+      y,
+      { width: contentW, align: "center" },
+    );
+  y += 12;
+  doc
+    .font("Helvetica")
+    .fontSize(8)
+    .text(`Academic Year: ${academicYear}, ${semesterLabel}`, left, y, {
       width: contentW,
       align: "center",
-      underline: true,
     });
-    y += 16;
+  y += 11;
+  doc.font("Helvetica-Bold").fontSize(9).text("Registration form", left, y, {
+    width: contentW,
+    align: "center",
+    underline: true,
+  });
+  y += 16;
 
-    // ── Student info grid ───────────────────────────────────────────
-    // 2×2: ID | Name  /  Dept | Year  + Office Copy strip on the right.
-    // Draw outer boxes + one vertical/horizontal divider only — do NOT
-    // stroke a col1-wide box inside the name column (that left empty cells).
-    const officeW = 52;
-    const mainW = contentW - officeW;
-    const rowH = 20;
-    const gridH = rowH * 2;
-    // Narrower left column so long names fit cleanly in the name cell.
-    const col1 = mainW * 0.32;
-    const col2 = mainW - col1;
+  // ── Student info grid ───────────────────────────────────────────
+  // 2×2: ID | Name  /  Dept | Year  + Office Copy strip on the right.
+  // Draw outer boxes + one vertical/horizontal divider only — do NOT
+  // stroke a col1-wide box inside the name column (that left empty cells).
+  const officeW = 52;
+  const mainW = contentW - officeW;
+  const rowH = 20;
+  const gridH = rowH * 2;
+  // Narrower left column so long names fit cleanly in the name cell.
+  const col1 = mainW * 0.32;
+  const col2 = mainW - col1;
 
-    strokeBox(left, y, mainW, gridH);
-    strokeBox(left + mainW, y, officeW, gridH);
-    doc
-      .moveTo(left, y + rowH)
-      .lineTo(left + mainW, y + rowH)
-      .lineWidth(0.6)
-      .strokeColor("#000000")
-      .stroke();
-    doc
-      .moveTo(left + col1, y)
-      .lineTo(left + col1, y + gridH)
-      .lineWidth(0.6)
-      .strokeColor("#000000")
-      .stroke();
+  strokeBox(left, y, mainW, gridH);
+  strokeBox(left + mainW, y, officeW, gridH);
+  doc
+    .moveTo(left, y + rowH)
+    .lineTo(left + mainW, y + rowH)
+    .lineWidth(0.6)
+    .strokeColor("#000000")
+    .stroke();
+  doc
+    .moveTo(left + col1, y)
+    .lineTo(left + col1, y + gridH)
+    .lineWidth(0.6)
+    .strokeColor("#000000")
+    .stroke();
 
-    const cellPad = 4;
-    doc.font("Helvetica").fontSize(7).fillColor("#000000");
-    doc.text(`ID No.: ${username}`, left + cellPad, y + 6, { width: col1 - 8 });
-    doc.text(`Name of the Student: ${studentName}`, left + col1 + cellPad, y + 6, {
+  const cellPad = 4;
+  doc.font("Helvetica").fontSize(7).fillColor("#000000");
+  doc.text(`ID No.: ${username}`, left + cellPad, y + 6, { width: col1 - 8 });
+  doc.text(
+    `Name of the Student: ${studentName}`,
+    left + col1 + cellPad,
+    y + 6,
+    {
       width: col2 - 8,
       ellipsis: false,
-    });
-    doc.text(`Department: ${dept}`, left + cellPad, y + rowH + 6, {
-      width: col1 - 8,
-    });
-    doc.text(`Year: ${yearLabel}`, left + col1 + cellPad, y + rowH + 6, {
-      width: col2 - 8,
-    });
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(7)
-      .text("Office", left + mainW + 6, y + gridH / 2 - 10, {
-        width: officeW - 12,
-        align: "center",
-      });
-    doc.text("Copy", left + mainW + 6, y + gridH / 2 + 0, {
+    },
+  );
+  doc.text(`Department: ${dept}`, left + cellPad, y + rowH + 6, {
+    width: col1 - 8,
+  });
+  doc.text(`Year: ${yearLabel}`, left + col1 + cellPad, y + rowH + 6, {
+    width: col2 - 8,
+  });
+  doc
+    .font("Helvetica-Bold")
+    .fontSize(7)
+    .text("Office", left + mainW + 6, y + gridH / 2 - 10, {
       width: officeW - 12,
       align: "center",
     });
-    y += gridH + 8;
+  doc.text("Copy", left + mainW + 6, y + gridH / 2 + 0, {
+    width: officeW - 12,
+    align: "center",
+  });
+  y += gridH + 8;
 
-    // ── Registration Details ────────────────────────────────────────
-    doc.font("Helvetica-Bold").fontSize(8).text("Registration Details:", left, y, {
+  // ── Registration Details ────────────────────────────────────────
+  doc
+    .font("Helvetica-Bold")
+    .fontSize(8)
+    .text("Registration Details:", left, y, {
       underline: true,
     });
-    y += 12;
+  y += 12;
 
-    const cols = {
-      sn: contentW * 0.06,
-      name: contentW * 0.42,
-      code: contentW * 0.22,
-      type: contentW * 0.16,
-      credits: contentW * 0.14,
-    };
-    const headerH = 16;
-    const rowHeight = 13;
-    const tableX = left;
+  const cols = {
+    sn: contentW * 0.06,
+    name: contentW * 0.42,
+    code: contentW * 0.22,
+    type: contentW * 0.16,
+    credits: contentW * 0.14,
+  };
+  const headerH = 16;
+  const rowHeight = 13;
+  const tableX = left;
 
-    const colWidths = [cols.sn, cols.name, cols.code, cols.type, cols.credits];
-    const drawColLines = (rowY: number, h: number) => {
-      let lx = tableX;
-      for (let i = 0; i < colWidths.length - 1; i++) {
-        lx += colWidths[i];
-        doc
-          .moveTo(lx, rowY)
-          .lineTo(lx, rowY + h)
-          .lineWidth(0.6)
-          .strokeColor("#000000")
-          .stroke();
-      }
-    };
-
-    strokeBox(tableX, y, contentW, headerH);
-    drawColLines(y, headerH);
-    let cx = tableX;
-    doc.font("Helvetica-Bold").fontSize(6.5).fillColor("#000000");
-    const headers = [
-      { label: "S.No", w: cols.sn },
-      { label: "Name of the Subject", w: cols.name },
-      { label: "Subject Code", w: cols.code },
-      { label: "Type", w: cols.type },
-      { label: "Credits", w: cols.credits },
-    ];
-    for (const h of headers) {
-      doc.text(h.label, cx + 2, y + 4, { width: h.w - 4, align: "center" });
-      cx += h.w;
-    }
-    y += headerH;
-
-    doc.font("Helvetica").fontSize(6.5);
-    const maxRows = Math.min(subjects.length, 10);
-    for (let i = 0; i < maxRows; i++) {
-      const subject = subjects[i];
-      const isCore =
-        !subject.type ||
-        subject.type.toUpperCase().includes("CORE") ||
-        subject.type.toUpperCase() === "PE";
-      let typeLabel: string;
-      if (isCore) {
-        coreIdx += 1;
-        typeLabel = formatSubjectType("CORE", coreIdx);
-      } else {
-        electiveIdx += 1;
-        typeLabel = formatSubjectType(subject.type, electiveIdx);
-      }
-
-      strokeBox(tableX, y, contentW, rowHeight);
-      drawColLines(y, rowHeight);
-      cx = tableX;
-      const vals = [
-        String(i + 1),
-        cleanSubjectName(subject.name),
-        subject.code,
-        typeLabel,
-        String(subject.credits % 1 === 0 ? subject.credits : subject.credits.toFixed(1)),
-      ];
-      const widths = [cols.sn, cols.name, cols.code, cols.type, cols.credits];
-      for (let c = 0; c < vals.length; c++) {
-        doc.text(vals[c], cx + 2, y + 3, {
-          width: widths[c] - 4,
-          align: c === 0 || c >= 3 ? "center" : "left",
-        });
-        cx += widths[c];
-      }
-      y += rowHeight;
-    }
-
-    if (subjects.length > maxRows) {
+  const colWidths = [cols.sn, cols.name, cols.code, cols.type, cols.credits];
+  const drawColLines = (rowY: number, h: number) => {
+    let lx = tableX;
+    for (let i = 0; i < colWidths.length - 1; i++) {
+      lx += colWidths[i];
       doc
-        .fontSize(5.5)
-        .fillColor("#444444")
-        .text(`+ ${subjects.length - maxRows} more subject(s) on portal record`, left, y + 2);
-      y += 10;
+        .moveTo(lx, rowY)
+        .lineTo(lx, rowY + h)
+        .lineWidth(0.6)
+        .strokeColor("#000000")
+        .stroke();
+    }
+  };
+
+  strokeBox(tableX, y, contentW, headerH);
+  drawColLines(y, headerH);
+  let cx = tableX;
+  doc.font("Helvetica-Bold").fontSize(6.5).fillColor("#000000");
+  const headers = [
+    { label: "S.No", w: cols.sn },
+    { label: "Name of the Subject", w: cols.name },
+    { label: "Subject Code", w: cols.code },
+    { label: "Type", w: cols.type },
+    { label: "Credits", w: cols.credits },
+  ];
+  for (const h of headers) {
+    doc.text(h.label, cx + 2, y + 4, { width: h.w - 4, align: "center" });
+    cx += h.w;
+  }
+  y += headerH;
+
+  doc.font("Helvetica").fontSize(6.5);
+  const maxRows = Math.min(subjects.length, 10);
+  for (let i = 0; i < maxRows; i++) {
+    const subject = subjects[i];
+    const isCore =
+      !subject.type ||
+      subject.type.toUpperCase().includes("CORE") ||
+      subject.type.toUpperCase() === "PE";
+    let typeLabel: string;
+    if (isCore) {
+      coreIdx += 1;
+      typeLabel = formatSubjectType("CORE", coreIdx);
+    } else {
+      electiveIdx += 1;
+      typeLabel = formatSubjectType(subject.type, electiveIdx);
     }
 
-    y += 6;
+    strokeBox(tableX, y, contentW, rowHeight);
+    drawColLines(y, rowHeight);
+    cx = tableX;
+    const vals = [
+      String(i + 1),
+      cleanSubjectName(subject.name),
+      subject.code,
+      typeLabel,
+      String(
+        subject.credits % 1 === 0
+          ? subject.credits
+          : subject.credits.toFixed(1),
+      ),
+    ];
+    const widths = [cols.sn, cols.name, cols.code, cols.type, cols.credits];
+    for (let c = 0; c < vals.length; c++) {
+      doc.text(vals[c], cx + 2, y + 3, {
+        width: widths[c] - 4,
+        align: c === 0 || c >= 3 ? "center" : "left",
+      });
+      cx += widths[c];
+    }
+    y += rowHeight;
+  }
 
-    // ── Instructions ────────────────────────────────────────────────
-    doc.font("Helvetica-Bold").fontSize(7).fillColor("#000000").text("Instructions:", left, y, {
+  if (subjects.length > maxRows) {
+    doc
+      .fontSize(5.5)
+      .fillColor("#444444")
+      .text(
+        `+ ${subjects.length - maxRows} more subject(s) on portal record`,
+        left,
+        y + 2,
+      );
+    y += 10;
+  }
+
+  y += 6;
+
+  // ── Instructions ────────────────────────────────────────────────
+  doc
+    .font("Helvetica-Bold")
+    .fontSize(7)
+    .fillColor("#000000")
+    .text("Instructions:", left, y, {
       underline: true,
     });
-    y += 10;
-    doc.font("Helvetica").fontSize(6.5);
-    const instructions = [
-      "I am aware that minimum of 75% attendance is necessary during the semester to appear in EST Examinations.",
-      "I am aware of all the academic regulations circulated to me earlier.",
-      "I am aware that my application for scholarship will be stalled if my attendance falls below 75%.",
-    ];
-    for (const line of instructions) {
-      doc.text(`• ${line}`, left + 4, y, { width: contentW - 8 });
-      y += doc.heightOfString(`• ${line}`, { width: contentW - 8 }) + 2;
-    }
+  y += 10;
+  doc.font("Helvetica").fontSize(6.5);
+  const instructions = [
+    "I am aware that minimum of 75% attendance is necessary during the semester to appear in EST Examinations.",
+    "I am aware of all the academic regulations circulated to me earlier.",
+    "I am aware that my application for scholarship will be stalled if my attendance falls below 75%.",
+  ];
+  for (const line of instructions) {
+    doc.text(`• ${line}`, left + 4, y, { width: contentW - 8 });
+    y += doc.heightOfString(`• ${line}`, { width: contentW - 8 }) + 2;
+  }
 
   // ── Signatures ──────────────────────────────────────────────────
   const sigY = offsetY + formHeight - REG_MARGIN - 28;
   const sigW = contentW / 3;
-  const sigLabels = ["Student Signature", "Faculty Advisor", "Head of the Department"];
+  const sigLabels = [
+    "Student Signature",
+    "Faculty Advisor",
+    "Head of the Department",
+  ];
   doc.font("Helvetica").fontSize(6.5).fillColor("#000000");
   for (let i = 0; i < 3; i++) {
     const sx = left + i * sigW;
