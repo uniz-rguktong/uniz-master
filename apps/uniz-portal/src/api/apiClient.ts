@@ -365,6 +365,10 @@ async function pollPdfJob(
   timeoutMs = 180_000,
 ): Promise<boolean> {
   const started = Date.now();
+  // Exponential backoff: poll fast at first (job often finishes in a few s),
+  // then back off to a 5s ceiling so long jobs don't hammer the status endpoint.
+  let delay = 700;
+  const MAX_DELAY = 5000;
   while (Date.now() - started < timeoutMs) {
     const res = await fetch(statusUrl, {
       headers,
@@ -382,7 +386,8 @@ async function pollPdfJob(
       const pct = Number(data.percent || 0);
       toast.loading(`Preparing PDF… ${pct}%`, { id: `pdf-job-${jobId}` });
     }
-    await new Promise((r) => setTimeout(r, 1200));
+    await new Promise((r) => setTimeout(r, delay));
+    delay = Math.min(Math.round(delay * 1.5), MAX_DELAY);
   }
   return false;
 }
