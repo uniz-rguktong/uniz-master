@@ -35,10 +35,13 @@ spec:
                     [ -z "$URL" ] && continue
                     case " $seen " in *" $URL "*) continue ;; esac
                     seen="$seen $URL"
+                    # Prisma-style URLs carry query params pg_dump (libpq) rejects
+                    # (schema, connection_limit, ...). Strip them; keep sslmode etc.
+                    CLEAN=$(printf '%s' "$URL" | sed -E 's/&(schema|connection_limit|pgbouncer|connect_timeout|pool_timeout)=[^&]*//g')
                     NAME=$(echo "$VAR" | sed 's/_DATABASE_URL//' | tr 'A-Z' 'a-z')
                     OUT="/backups/uniz-${NAME}_${STAMP}.sql.gz"
                     echo "Dumping $NAME -> $OUT"
-                    if pg_dump "$URL" | gzip -c >"$OUT"; then
+                    if pg_dump "$CLEAN" | gzip -c >"$OUT"; then
                       ls -lh "$OUT"
                     else
                       echo "WARN: dump failed for $NAME"; rm -f "$OUT"
