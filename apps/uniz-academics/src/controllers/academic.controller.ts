@@ -2205,7 +2205,7 @@ export const uploadGrades = async (req: any, res: Response) => {
         const resUpload = await axios.post(
           `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
           form,
-          { headers: form.getHeaders() },
+          { headers: form.getHeaders(), timeout: 15000 },
         );
         return resUpload.data.secure_url;
       } catch (err) {
@@ -2496,7 +2496,7 @@ export const uploadAttendance = async (req: any, res: Response) => {
         const resUpload = await axios.post(
           `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
           form,
-          { headers: form.getHeaders() },
+          { headers: form.getHeaders(), timeout: 15000 },
         );
         return resUpload.data.secure_url;
       } catch (err) {
