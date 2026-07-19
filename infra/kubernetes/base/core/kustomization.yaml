@@ -18,6 +18,7 @@ resources:
   - portal.yaml
   - storage-cleanup-job.yaml
   - postgres-backup-job.yaml
+  - postgres-analyze-job.yaml
   - redis.yaml
   - user-service.yaml
   - docs-service.yaml
