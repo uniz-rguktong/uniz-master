@@ -179,6 +179,11 @@ model Registration {
   @@index([studentId])
   @@index([semesterId])
   @@index([batch])
+  // getSemesters counts registered students per semester:
+  //   WHERE status = 'REGISTERED' GROUP BY semesterId
+  // The (status, semesterId) composite lets that aggregate scan only the
+  // registered rows in semester order instead of the whole table.
+  @@index([status, semesterId])
 }
 
 model SeatingArrangement {

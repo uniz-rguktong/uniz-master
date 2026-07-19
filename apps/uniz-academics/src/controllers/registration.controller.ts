@@ -2463,8 +2463,9 @@ export const getRegistrations = async (
 
   try {
     const where: any = {};
-    if (semesterId) {
-      where.semesterId = semesterId as string;
+    let resolvedSemesterId = (semesterId as string) || undefined;
+    if (resolvedSemesterId) {
+      where.semesterId = resolvedSemesterId;
     } else {
       // Default to latest active semester
       const activeSem = await prisma.academicSemester.findFirst({
@@ -2475,28 +2476,55 @@ export const getRegistrations = async (
         },
         orderBy: { createdAt: "desc" },
       });
-      if (activeSem) where.semesterId = activeSem.id;
+      if (activeSem) {
+        where.semesterId = activeSem.id;
+        resolvedSemesterId = activeSem.id;
+      }
     }
 
-    if (branch && branch !== "all") {
-      where.subject = {
-        department: { equals: branch as string, mode: "insensitive" },
-      };
+    // department/batch are stored canonically uppercase (AIML/CE/CSE…, O21…),
+    // so exact match hits the index instead of the seq scan that
+    // mode:"insensitive" forced.
+    const branchKey =
+      branch && branch !== "all"
+        ? (branch as string).toUpperCase()
+        : undefined;
+    if (branchKey) {
+      where.subject = { department: branchKey };
     }
 
-    if (batch && batch !== "all") {
-      where.batch = { equals: batch as string, mode: "insensitive" };
+    const batchKey =
+      batch && batch !== "all" ? (batch as string).toUpperCase() : undefined;
+    if (batchKey) {
+      where.batch = batchKey;
     }
 
+    // This admin list scans up to ~20k rows and is re-fetched on every filter
+    // change / poll. A short Redis cache collapses the repeats; registrations
+    // are eventually-consistent within 20s (fine for an admin overview).
+    const cacheKey = `academics:getRegistrations:v2:${resolvedSemesterId || "none"}:${branchKey || "all"}:${batchKey || "all"}`;
+    const cached = await redis.get(cacheKey).catch(() => null);
+    if (cached) return res.json(JSON.parse(cached));
+
+    // Narrow select: the admin tables only render studentId, batch, status,
+    // createdAt and subject {code,name}. Dropping the full subject payload and
+    // the entirely-unused semester join is the bulk of the win on 20k rows.
     const registrations = await prisma.registration.findMany({
       where,
-      include: {
-        subject: true,
-        semester: true,
+      select: {
+        id: true,
+        studentId: true,
+        batch: true,
+        status: true,
+        createdAt: true,
+        subject: { select: { code: true, name: true } },
       },
       orderBy: { createdAt: "desc" },
     });
 
+    await redis
+      .setex(cacheKey, 20, JSON.stringify(registrations))
+      .catch(() => {});
     res.json(registrations);
   } catch (error) {
     console.error("Get Registrations Error:", error);
