@@ -182,8 +182,8 @@ export async function processNextStudentBatch() {
                 timeout: 5000,
               },
             );
-          } catch (e: any) {
-            // console.warn(`Auth sync fail for ${id}: ${e.message}`);
+          } catch {
+            // Auth sync is best-effort — a failure here must not fail the row.
           }
         } catch (dbErr: any) {
           failCount++;

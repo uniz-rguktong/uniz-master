@@ -6,6 +6,7 @@ import { resolveEffectiveRole } from "@uniz/shared";
 import axios from "axios";
 import * as ExcelJS from "exceljs";
 import { redis } from "../utils/redis.util";
+import { setNoStore } from "../utils/http.util";
 import { enforcePublishOtpRateLimit } from "../middlewares/publish-otp-ratelimit.middleware";
 import {
   generateRegistrationPdf,
@@ -1420,17 +1421,9 @@ export const getSemesters = async (
   res: Response,
 ) => {
   const CACHE_KEY = "academics:getSemesters:v1";
-  const setNoStore = () => {
-    res.setHeader(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate",
-    );
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-  };
 
   try {
-    setNoStore();
+    setNoStore(res);
 
     const cached = await redis.get(CACHE_KEY).catch(() => null);
     if (cached) return res.json(JSON.parse(cached));
@@ -2573,12 +2566,7 @@ export const getSemesterOverview = async (
     });
 
     if (!activeSem) {
-      res.setHeader(
-        "Cache-Control",
-        "no-store, no-cache, must-revalidate, proxy-revalidate",
-      );
-      res.setHeader("Pragma", "no-cache");
-      res.setHeader("Expires", "0");
+      setNoStore(res);
       return res.json({ semester: null, data: null });
     }
 
@@ -2599,12 +2587,7 @@ export const getSemesterOverview = async (
         0,
       );
 
-      res.setHeader(
-        "Cache-Control",
-        "no-store, no-cache, must-revalidate, proxy-revalidate",
-      );
-      res.setHeader("Pragma", "no-cache");
-      res.setHeader("Expires", "0");
+      setNoStore(res);
       return res.json({
         semester: activeSem,
         role: "student",
@@ -2670,12 +2653,7 @@ export const getSemesterOverview = async (
         }),
       );
 
-      res.setHeader(
-        "Cache-Control",
-        "no-store, no-cache, must-revalidate, proxy-revalidate",
-      );
-      res.setHeader("Pragma", "no-cache");
-      res.setHeader("Expires", "0");
+      setNoStore(res);
       return res.json({
         semester: activeSem,
         role: user.role,
