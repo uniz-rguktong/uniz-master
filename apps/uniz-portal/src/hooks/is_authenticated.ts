@@ -103,6 +103,7 @@ export function useIsAuth() {
       const validAdminRoles = [
         "admin",
         "webmaster",
+        "webadmin",
         "dean",
         "director",
         "caretaker",

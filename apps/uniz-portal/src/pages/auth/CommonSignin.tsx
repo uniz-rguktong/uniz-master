@@ -584,7 +584,9 @@ export default function Signin({ type }: SigninProps) {
       }
       if (
         type === "student" &&
-        (data.role === "admin" || data.role === "webmaster")
+        (data.role === "admin" ||
+          data.role === "webmaster" ||
+          data.role === "webadmin")
       ) {
         toast.error("This is an Admin account. Please use the Admin Login.");
         return;
@@ -627,9 +629,14 @@ export default function Signin({ type }: SigninProps) {
         localStorage.setItem("username", resolvedUsername);
         const jwtRole = token ? parseJwt(token)?.role : null;
         const jwtDept = token ? parseJwt(token)?.department : null;
+        const rawAdminRole = (jwtRole || (data as any).role || "admin")
+          .toString()
+          .toLowerCase();
+        // Transition shim: converge the new "webadmin" role onto the portal's
+        // internal "webmaster" canonical (see resolveAdminPortalRole).
         localStorage.setItem(
           "admin_role",
-          (jwtRole || (data as any).role || "admin").toLowerCase(),
+          rawAdminRole === "webadmin" ? "webmaster" : rawAdminRole,
         );
         if (jwtDept) {
           localStorage.setItem("department", jwtDept);
