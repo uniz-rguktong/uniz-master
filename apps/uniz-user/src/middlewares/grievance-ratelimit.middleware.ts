@@ -1,30 +1,42 @@
 import { Request, Response, NextFunction } from "express";
+import { redis } from "../utils/redis.util";
 
-/** Lightweight in-memory limiter (avoids new express-rate-limit dep). */
-const buckets = new Map<string, { count: number; resetAt: number }>();
-const WINDOW_MS = 15 * 60 * 1000;
+/**
+ * Redis-backed grievance submission limiter — bounded memory and correct
+ * across horizontally-scaled replicas (the previous in-memory Map leaked and
+ * only limited per-process).
+ */
+const WINDOW_SEC = 15 * 60; // 15 minutes
 const MAX = 40;
 
-export function submissionLimiter(
+export async function submissionLimiter(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
-  const key = `${req.ip || "unknown"}:${(req as any).user?.username || "anon"}`;
-  const now = Date.now();
-  const bucket = buckets.get(key);
-  if (!bucket || bucket.resetAt <= now) {
-    buckets.set(key, { count: 1, resetAt: now + WINDOW_MS });
+  const who = `${req.ip || "unknown"}:${(req as any).user?.username || "anon"}`;
+  const key = `ratelimit:grievance:${who}`;
+
+  try {
+    const results = await redis
+      .multi()
+      .incr(key)
+      .expire(key, WINDOW_SEC)
+      .exec();
+
+    const current = Number(results?.[0]?.[1] ?? 0);
+    if (current > MAX) {
+      return res.status(429).json({
+        success: false,
+        message:
+          "Too many grievance submissions. Please try again after 15 minutes.",
+        code: "RATE_LIMIT_EXCEEDED",
+      });
+    }
+    return next();
+  } catch (err) {
+    // Fail open — a Redis blip should not block grievance submission.
+    console.error("Grievance rate limiter error:", err);
     return next();
   }
-  if (bucket.count >= MAX) {
-    return res.status(429).json({
-      success: false,
-      message:
-        "Too many grievance submissions. Please try again after 15 minutes.",
-      code: "RATE_LIMIT_EXCEEDED",
-    });
-  }
-  bucket.count += 1;
-  return next();
 }

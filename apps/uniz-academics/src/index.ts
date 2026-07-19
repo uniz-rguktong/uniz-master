@@ -17,11 +17,13 @@ app.use(
     crossOriginResourcePolicy: { policy: "cross-origin" },
   }),
 );
-// app.use(compression());
+app.use(compression());
 // app.use(cors());
 
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
+// File uploads go through multer (multipart), so JSON bodies only carry row
+// arrays / config — 20mb is far above any realistic payload.
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ limit: "20mb", extended: true }));
 
 // Attribution & Malformed Activity Handling (Mandatory)
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
