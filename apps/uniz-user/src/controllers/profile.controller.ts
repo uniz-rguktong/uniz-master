@@ -315,8 +315,11 @@ export const getStudentProfile = async (
       }
     }
 
-    // 4. Populate Cache (1s TTL to prevent burst load but allow real-time updates)
-    await redis.setex(cacheKey, 1, JSON.stringify(mapped));
+    // 4. Populate Cache. Profile mutations call invalidateStudentProfileCaches(),
+    // so this key is busted on write — a 15s TTL is safe and collapses the
+    // grades/attendance/outpass enrichment fan-out (~15x fewer cross-service
+    // calls under polling) while keeping profile edits effectively real-time.
+    await redis.setex(cacheKey, 15, JSON.stringify(mapped));
 
     return res.json({ success: true, student: mapped, source: "db" });
   } catch (e) {
@@ -854,13 +857,17 @@ export const searchStudents = async (
       sortFieldMap[String(sortBy).toLowerCase()] || "username";
     const orderDirection = String(sortDir).toLowerCase() === "desc" ? "desc" : "asc";
 
+    // Cap page size so a caller can't pull the whole table in one request.
+    const safeLimit = Math.min(Math.max(Number(limit) || 10, 1), 100);
+    const safeSkip = (Number(page) - 1) * safeLimit;
+
     // Disable aggressive caching for searches
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     const [students, total] = await Promise.all([
       prisma.studentProfile.findMany({
         where,
-        skip,
-        take: Number(limit),
+        skip: safeSkip,
+        take: safeLimit,
         orderBy: { [orderField]: orderDirection },
       }),
       prisma.studentProfile.count({ where }),
@@ -871,7 +878,7 @@ export const searchStudents = async (
       students: students.map(mapStudentProfile),
       pagination: {
         page: Number(page),
-        totalPages: Math.ceil(total / Number(limit)),
+        totalPages: Math.ceil(total / safeLimit),
         total,
       },
     });

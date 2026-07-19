@@ -1391,39 +1391,51 @@ export const getSemesters = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  try {
-    const semesters = await prisma.academicSemester.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-
-    const registrationRows = await prisma.registration.findMany({
-      where: { status: "REGISTERED" },
-      select: { semesterId: true, studentId: true },
-    });
-
-    const studentsBySemester = new Map<string, Set<string>>();
-    for (const row of registrationRows) {
-      if (!studentsBySemester.has(row.semesterId)) {
-        studentsBySemester.set(row.semesterId, new Set());
-      }
-      studentsBySemester
-        .get(row.semesterId)!
-        .add(normalizeStudentId(row.studentId));
-    }
-
-    const payload = semesters.map((sem) => ({
-      ...sem,
-      _count: {
-        registrations: studentsBySemester.get(sem.id)?.size ?? 0,
-      },
-    }));
-
+  const CACHE_KEY = "academics:getSemesters:v1";
+  const setNoStore = () => {
     res.setHeader(
       "Cache-Control",
       "no-store, no-cache, must-revalidate, proxy-revalidate",
     );
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
+  };
+
+  try {
+    setNoStore();
+
+    const cached = await redis.get(CACHE_KEY).catch(() => null);
+    if (cached) return res.json(JSON.parse(cached));
+
+    const semesters = await prisma.academicSemester.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+
+    // Count distinct registered students per semester in the DB instead of
+    // streaming ~20k rows into Node and de-duping in a JS Set. studentId is
+    // canonically uppercase/clean, so UPPER(TRIM()) matches normalizeStudentId.
+    const counts = await prisma.$queryRaw<
+      { semesterId: string; cnt: bigint }[]
+    >`
+      SELECT "semesterId", COUNT(DISTINCT UPPER(TRIM("studentId"))) AS cnt
+      FROM "Registration"
+      WHERE "status" = 'REGISTERED'
+      GROUP BY "semesterId"
+    `;
+    const countMap = new Map(
+      counts.map((c) => [c.semesterId, Number(c.cnt)]),
+    );
+
+    const payload = semesters.map((sem) => ({
+      ...sem,
+      _count: {
+        registrations: countMap.get(sem.id) ?? 0,
+      },
+    }));
+
+    // Short server-side cache absorbs dashboard polling bursts; counts are
+    // eventually-consistent within 30s (fine for an admin overview list).
+    await redis.setex(CACHE_KEY, 30, JSON.stringify(payload)).catch(() => {});
     res.json(payload);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch semesters" });
