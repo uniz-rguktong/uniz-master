@@ -39,7 +39,7 @@ import {
 export default function WebmasterDashboard() {
   useIsAuth();
 
-  const username = (localStorage.getItem("username") || "Webmaster").replace(
+  const username = (localStorage.getItem("username") || "Webadmin").replace(
     /"/g,
     "",
   );
