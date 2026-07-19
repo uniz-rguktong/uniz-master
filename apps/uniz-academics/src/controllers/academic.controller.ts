@@ -1287,7 +1287,12 @@ export const publishResults = async (
     }
   };
 
-  await processPublishing();
+  // Fire-and-forget: progress is tracked in Redis (publish:progress:<user>) and
+  // polled by the client. K8s pods are long-lived, so we no longer hold the HTTP
+  // connection open for the entire enqueue (previously blocked for seconds+).
+  processPublishing().catch((err) =>
+    console.error("[Publish] background task error:", err),
+  );
 
   return res.json({
     success: true,
@@ -1534,12 +1539,16 @@ export const publishAttendance = async (
     }
   };
 
-  // Run in background (awaiting here to ensure reliability in dev/lambdas)
-  await processPublishing();
+  // Fire-and-forget: progress is tracked in Redis (publish:progress:<user>) and
+  // polled by the client. K8s pods are long-lived, so we no longer block the
+  // request for the whole enqueue.
+  processPublishing().catch((err) =>
+    console.error("[Publish-Att] background task error:", err),
+  );
 
   return res.json({
     success: true,
-    message: "Attendance result publishing completed.",
+    message: "Attendance result publishing started in background.",
     target: {
       semesterId,
       year: year ? String(year).replace(/^0/, "O") : "All",

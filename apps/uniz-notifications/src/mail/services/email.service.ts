@@ -15,6 +15,11 @@ import {
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 
+// Bulk result/attendance emails are suppressed per policy (only OTP-on-demand
+// uses email). When disabled we must NOT generate the per-student PDF — that was
+// pure wasted CPU (one discarded PDF per student on every publish).
+const RESULT_EMAILS_ENABLED = process.env.ENABLE_RESULT_EMAILS === "true";
+
 // --- PROVIDER SELECTION ---
 const isProduction = process.env.DOCKER_ENV === "true";
 const forceGmail = process.env.FORCE_GMAIL === "true";
@@ -389,6 +394,12 @@ export const sendResultEmail = async (
   grades: any[],
 ): Promise<boolean> => {
   try {
+    // Skip the expensive PDF generation entirely while emails are suppressed.
+    if (!RESULT_EMAILS_ENABLED) {
+      console.log(`[MAIL] Result email suppressed for ${username}`);
+      return true;
+    }
+
     const content = `
       <p>Dear <strong>${name}</strong>,</p>
       <p>The results for <strong>${semesterId}</strong> have been officially published.</p>
@@ -406,11 +417,10 @@ export const sendResultEmail = async (
       semesterId,
       grades,
     });
+    void content;
+    void pdfBuffer;
 
-    // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Result email suppressed for ${username}`);
-    return true;
-
     return true;
   } catch (error: any) {
     console.error(`Failed to send result email:`, error.message);
@@ -428,6 +438,12 @@ export const sendAttendanceReportEmail = async (
   records: any[],
 ): Promise<boolean> => {
   try {
+    // Skip the expensive PDF generation entirely while emails are suppressed.
+    if (!RESULT_EMAILS_ENABLED) {
+      console.log(`[MAIL] Attendance email suppressed for ${username}`);
+      return true;
+    }
+
     const content = `
       <p>Dear <strong>${name}</strong>,</p>
       <p>The attendance report for <strong>${semesterId}</strong> is now available.</p>
@@ -442,11 +458,10 @@ export const sendAttendanceReportEmail = async (
       semesterId,
       records,
     });
+    void content;
+    void pdfBuffer;
 
-    // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Attendance email suppressed for ${username}`);
-    return true;
-
     return true;
   } catch (error: any) {
     console.error(`Failed to send attendance email:`, error.message);
