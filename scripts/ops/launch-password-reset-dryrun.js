@@ -3,7 +3,7 @@
  * Password-reset dry run WITHOUT sending email/push.
  * Run on VPS (has kubectl + DB access):
  *
- *   TEST_USERNAME=o210008 TEST_PASSWORD='o210008@rguktong' \
+ *   TEST_USERNAME='<student-username>' TEST_PASSWORD='<student-password>' \
  *     node scripts/launch-password-reset-dryrun.js
  *
  * Flow: seed OTP in DB → verify → reset to SAME password → login confirm.
