@@ -1,6 +1,6 @@
 ---
 title: "Semester Registration"
-description: "How webmasters, deans, and HODs configure semesters, open registration, and track student enrollment."
+description: "How webadmins, deans, and HODs configure semesters, open registration, and track student enrollment."
 ---
 
 Semester registration in UniZ replaces external spreadsheets for subject enrollment. The full workflow runs inside the admin portal and academics API.
@@ -11,7 +11,7 @@ Semester registration in UniZ replaces external spreadsheets for subject enrollm
 
 | Role | Responsibilities |
 | ---- | ---------------- |
-| **Webmaster** | Create semesters, build subject catalog, set registration window (IST), open/close registration, publish with OTP |
+| **Webadmin** | Create semesters, build subject catalog, set registration window (IST), open/close registration, publish with OTP |
 | **Dean** | Review and approve branch allocations across departments |
 | **HOD** | Review department electives; read-only student list scoped to own branch; registration tracking for department |
 | **Director / COE** | Oversight, registration tracking across branches |
@@ -19,7 +19,7 @@ Semester registration in UniZ replaces external spreadsheets for subject enrollm
 
 ---
 
-## Portal workflow (webmaster)
+## Portal workflow (webadmin)
 
 <Steps>
   <Step title="Create semester">
@@ -66,7 +66,7 @@ Group electives so students pick exactly N subjects from a set (e.g. one open el
 
 Sensitive actions (opening registration or publishing results) may require email OTP:
 
-1. Request code — sent to the webmaster's registered email
+1. Request code — sent to the webadmin's registered email
 2. Confirm with `POST /academics/semester/:id/publish` and the six-digit code
 
 This prevents accidental mass publication.
@@ -87,7 +87,7 @@ See [Semester Registration API](/api/academics/registration) for full endpoint d
 
 ## Seating arrangements
 
-After registration, webmasters can upload exam seating via:
+After registration, webadmins can upload exam seating via:
 
 ```bash
 GET  /academics/seating/template

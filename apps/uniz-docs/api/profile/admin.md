@@ -30,7 +30,7 @@ Returns the profile of the authenticated admin user.
     - `email` — Admin email address.
 
     - `role` — System role (e.g. `"director"`, `"dean"`, `"warden_male"`, `"security"`,
-      `"webmaster"`).
+      `"webadmin"`).
 
   
 
@@ -343,7 +343,7 @@ curl --request GET \
 
 Creates a new banner. Newly created banners are unpublished by default. Use the [publish endpoint](#publish-or-unpublish-a-banner) to make a banner visible to all users.
 
-**Auth required:** Yes (webmaster)
+**Auth required:** Yes (webadmin)
 
 ### Request body
 
@@ -399,7 +399,7 @@ curl --request POST \
 
 Toggles the published state of a banner. Set `publish: true` to make it visible to all users, or `publish: false` to hide it.
 
-**Auth required:** Yes (webmaster)
+**Auth required:** Yes (webadmin)
 
 ### Path parameters
 
@@ -483,7 +483,7 @@ curl --request GET \
 
 Permanently removes a student and purges related records across auth, academics, outpass, and notifications.
 
-**Auth required:** Webmaster
+**Auth required:** Webadmin
 
 ```bash
 curl --request DELETE \
@@ -507,7 +507,7 @@ curl --request DELETE \
 
 `DELETE /profile/admin/student/bulk-delete`
 
-**Auth required:** Webmaster
+**Auth required:** Webadmin
 
 ```json
 {

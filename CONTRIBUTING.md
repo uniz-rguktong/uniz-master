@@ -36,7 +36,7 @@ npm run seed:local                   # recommended first time
 npm run dev:all                      # full stack
 ```
 
-- **Portal:** http://localhost:5173 (`webmaster` / `password123` after seeding)
+- **Portal:** http://localhost:5173 (`webadmin` / `password123` after seeding)
 - **API gateway:** http://localhost:3000/api/v1
 - **Health check:** `curl -s http://127.0.0.1:3000/api/v1/system/health`
 
@@ -57,12 +57,22 @@ npm run dev:all                      # full stack
 
 ## Development workflow
 
-1. **Fork** the repository.
-2. **Branch** — `git checkout -b feature/your-feature-name`
-3. **Develop** — run `npm run dev:all` and verify your change.
-4. **Test** — ensure affected services build and health checks pass locally.
-5. **Commit** — clear, descriptive messages.
-6. **Pull request** — open against `main` using the PR template.
+Team members are added as **collaborators** and work on **branches in this repo**
+(no fork needed). `main` is protected: it accepts changes only through reviewed
+pull requests.
+
+1. **Branch** — `git checkout -b feature/your-feature-name` (branch off `main`).
+2. **Develop** — run `npm run dev:all` and verify your change.
+3. **Test** — ensure affected services build and health checks pass locally.
+4. **Commit** — clear, descriptive messages.
+5. **Push & open a PR** — push your branch and open a pull request against `main`
+   using the PR template.
+6. **Request review** — request a review from a **code owner**
+   (`@sreecharan-desu`). Do **not** merge your own PR.
+7. **Merge** — after the code owner approves and CI is green, a maintainer with
+   push access to `main` merges the PR. See
+   [docs/ops/github-governance.md](docs/ops/github-governance.md) for the full
+   review/merge policy and how merge authority is granted.
 
 ### Build & test before opening a PR
 

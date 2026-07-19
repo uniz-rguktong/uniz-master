@@ -2,7 +2,7 @@
 
 [![Manual VPS Deployment](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml)
 
-**Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Action flows:** [docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) · **Handover:** [Notion](https://app.notion.com/p/3a01ace6b28c819dbd07cf907944c082)
+**New here?** [Handover guide](docs/HANDOVER.md) · **Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Action flows:** [docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) · **Handover:** [Notion](https://app.notion.com/p/3a01ace6b28c819dbd07cf907944c082)
 
 ## Architecture
 
@@ -39,7 +39,7 @@ flowchart TB
   Academics --> Redis
   Notif --> Redis
 
-  User --> Cloudinary["Cloudinary<br/>images and file uploads"]
+  User --> R2["Cloudflare R2<br/>image storage (S3 + CDN)"]
   Notif --> SES["AWS SES<br/>transactional email"]
 
   Portal -.->|browser calls API| API
@@ -48,7 +48,7 @@ flowchart TB
 
 ### What you are looking at
 
-UniZ is split into two layers. Cloudflare owns the public edge and the static frontends. The VPS owns APIs, **docs**, CMS, and the databases. Off-box services handle media and email: **Cloudinary** for uploads, **AWS SES** for mail.
+UniZ is split into two layers. Cloudflare owns the public edge and the static frontends. The VPS owns APIs, **docs**, CMS, and the databases. Off-box services handle media and email: **Cloudflare R2** for image storage, **AWS SES** for mail.
 
 ### What is a SPA?
 
@@ -87,9 +87,9 @@ flowchart LR
 
 Auth issues JWT. User holds profiles, campus CMS notices, grievances, and file uploads. Academics is results and registration. Notifications owns inbox, web push, and email (mail folded in). Landing-backend is FastAPI for the public website CMS. Docs is VitePress under `/docs`.
 
-### Cloudinary and AWS SES
+### Cloudflare R2 and AWS SES
 
-**Cloudinary** stores profile photos and uploads; User stores the URL in Postgres. **AWS SES** sends OTP / reset / campus mail via Notifications (local can fall back to Gmail).
+**Cloudflare R2** (S3-compatible object storage, served over the Cloudflare CDN) stores profile photos, banners, and website images. Uploads go to the user-service `/files/image/upload` endpoint, which compresses to WebP with `sharp` and writes to R2; User stores the resulting public URL in Postgres. **AWS SES** sends OTP / reset / campus mail via Notifications (local can fall back to Gmail). (Excel/CSV bulk backups still use Cloudinary.)
 
 ### Postgres and Redis
 
@@ -97,7 +97,7 @@ Postgres is source of truth. Redis is short-lived: gateway cache, upload progres
 
 ### Request path in one sentence
 
-User loads Portal from Cloudflare Pages → SPA calls `api-uniz.rguktong.in` → Cloudflare → Traefik → gateway-api → owning service → Postgres (optionally Redis / Cloudinary / SES).
+User loads Portal from Cloudflare Pages → SPA calls `api-uniz.rguktong.in` → Cloudflare → Traefik → gateway-api → owning service → Postgres (optionally Redis / Cloudflare R2 / SES).
 
 ### What we deliberately do not run always-on
 
@@ -108,13 +108,17 @@ Portal/Landing pods, nginx gateway hop, outpass (gated), standalone mail/files/c
 | Role | Shell | Main actions |
 |------|-------|----------------|
 | Student | `/student` | Login, profile, grades, attendance, registration, PDF, notices, grievance, inbox |
-| Webmaster / COE / Director | Admin dashboards | Students, uploads, semester, CMS, push, resets |
+| Webadmin / COE / Director | Admin dashboards | Students, uploads, semester, CMS, push, resets |
 | Dean | DeanDashboard | Allocations, advance, academics, CMS |
 | HOD | DeanDashboard slim | Branch approval, registration tracking |
 | SWO | SWODashboard | Grievance list / resolve / delete |
 | Faculty | `/faculty` | Profile, student search, password |
 
 Canonical layout: **[STRUCTURE.md](STRUCTURE.md)**.
+
+### Contributing & review flow
+
+Collaborators work on branches and open PRs to `main`. Every PR needs an approving review from a **code owner** and only a maintainer with push access can merge — see **[CONTRIBUTING.md](CONTRIBUTING.md)** and the full policy in **[docs/ops/github-governance.md](docs/ops/github-governance.md)**.
 
 ---
 
@@ -138,7 +142,7 @@ make up && make seed
 |------|--------|
 | Portal | http://localhost:8080 (or `WEB_PORT`) |
 | API (via portal) | http://localhost:8080/api/v1 |
-| Sign-in | `webmaster` / `password123` |
+| Sign-in | `webadmin` / `password123` |
 
 Details: [docker/README.md](docker/README.md).
 
@@ -156,7 +160,7 @@ npm run dev:all
 | Portal | http://localhost:5173 |
 | API gateway | http://localhost:3000/api/v1 |
 | Docs (optional) | `npm run docs:dev` → http://localhost:3333/docs/ |
-| Sign-in (after seed) | `webmaster` / `password123` |
+| Sign-in (after seed) | `webadmin` / `password123` |
 
 Full guide: [docs/local/LOCAL_SETUP.md](docs/local/LOCAL_SETUP.md) · [CONTRIBUTING.md](CONTRIBUTING.md).
 

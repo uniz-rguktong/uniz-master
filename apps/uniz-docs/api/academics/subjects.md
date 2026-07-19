@@ -70,7 +70,7 @@ curl --request GET \
 
 Creates a new subject.
 
-**Auth required:** Yes (dean, director, webmaster)
+**Auth required:** Yes (dean, director, webadmin)
 
 ### Request body
 
@@ -129,7 +129,7 @@ curl --request POST \
 
 Updates an existing subject by its UUID.
 
-**Auth required:** Yes (dean, director, webmaster)
+**Auth required:** Yes (dean, director, webadmin)
 
 ### Path parameters
 
@@ -343,7 +343,7 @@ curl --request PATCH \
 
 Returns a high-level overview of the current semester, including registration counts and grade publication status.
 
-**Auth required:** Yes (dean, director, webmaster)
+**Auth required:** Yes (dean, director, webadmin)
 
 ### Example
 

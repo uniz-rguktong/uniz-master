@@ -35,7 +35,7 @@ Authenticates any user — student or admin — and returns a JWT with the calle
 
 - `role` — The role assigned to this account. Possible values: `student`, `director`,
   `dean`, `warden_male`, `warden_female`, `caretaker_male`, `caretaker_female`,
-  `security`, `webmaster`.
+  `security`, `webadmin`.
 
 - `username` — The username that was authenticated.
 

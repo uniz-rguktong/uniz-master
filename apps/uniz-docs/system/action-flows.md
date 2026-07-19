@@ -1,13 +1,13 @@
 ---
 title: "Action flows"
-description: "Mermaid maps for every major student, webmaster, HOD, dean, SWO, and auth action — UI → gateway → service → store."
+description: "Mermaid maps for every major student, webadmin, HOD, dean, SWO, and auth action — UI → gateway → service → store."
 ---
 
 # Action flows
 
 Every diagram below follows the same shape:
 
-**Browser (Portal)** → **Cloudflare** → **Traefik** → **gateway-api** → **owning service** → **Postgres / Redis / Cloudinary / SES**
+**Browser (Portal)** → **Cloudflare** → **Traefik** → **gateway-api** → **owning service** → **Postgres / Redis / Cloudflare R2 / SES**
 
 Gateway path map: [Request flow](/system/request-flow) · [API gateway](/api/platform/gateway).
 
@@ -92,7 +92,7 @@ flowchart LR
 |--------|----------|---------|
 | Bootstrap / home | `GET /profile/student/bootstrap` | User |
 | Update profile | `PUT /profile/student/update` | User |
-| Upload photo | `POST /files/image/upload` | User → Cloudinary |
+| Upload photo | `POST /files/image/upload` | User → compress (WebP) → Cloudflare R2 |
 | Grades | `GET /academics/grades` | Academics |
 | Attendance | `GET /academics/attendance` | Academics |
 | Register subjects | `POST /academics/student/register` | Academics |
@@ -183,9 +183,9 @@ flowchart LR
 
 ---
 
-## Webmaster / COE / Director
+## Webadmin / COE / Director
 
-Shared admin shell. COE uses Webmaster dashboard; Director is nearly identical (no semester-approvals tab).
+Shared admin shell. COE uses Webadmin dashboard; Director is nearly identical (no semester-approvals tab).
 
 | Action | Endpoint | Service |
 |--------|----------|---------|
@@ -236,7 +236,7 @@ flowchart TB
 
 ```mermaid
 sequenceDiagram
-  participant B as Webmaster
+  participant B as Webadmin
   participant GW as gateway-api
   participant A as Academics
   participant N as Notifications
@@ -442,7 +442,7 @@ flowchart LR
 | Role | Portal shell |
 |------|----------------|
 | student | `/student` |
-| webmaster / coe | WebmasterDashboard |
+| webadmin / coe | WebmasterDashboard |
 | dean | DeanDashboard (full) |
 | hod | DeanDashboard (slim) |
 | director | DirectorDashboard |

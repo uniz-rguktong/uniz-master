@@ -12,7 +12,7 @@ Use Mintlify search (**Ctrl/Cmd + K**) with the keywords below. Every row links 
 | Full system picture | architecture, topology, mermaid, VPS, Cloudflare | [System overview](/system/overview) |
 | Where each host lives | Pages, api-uniz, landing-api, DNS | [Production topology](/system/topology) |
 | One HTTP request path | Traefik, gateway-api, proxy | [Request flow](/system/request-flow) |
-| Role action Mermaid maps | student, webmaster, HOD, dean, grievance, OTP | [Action flows](/system/action-flows) |
+| Role action Mermaid maps | student, webadmin, HOD, dean, grievance, OTP | [Action flows](/system/action-flows) |
 | Postgres / Redis | database, redis, endpoints, backup | [Data stores](/system/data-stores) |
 | JWT, CORS, secrets | auth, INTERNAL_SECRET, CLIENT_URL | [Security](/system/security) |
 

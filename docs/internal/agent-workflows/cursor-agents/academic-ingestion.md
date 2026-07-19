@@ -4,7 +4,7 @@ description: Perform professional bulk ingestion for Faculty and Grades
 
 ### 1. Faculty Enrichment (Scraping)
 
-When the Webmaster needs to sync faculty data with the latest institutional bio updates:
+When the Webadmin needs to sync faculty data with the latest institutional bio updates:
 
 1.  Navigate to **Staff Management**.
 2.  The Portal logic automatically fetches the list of departments.

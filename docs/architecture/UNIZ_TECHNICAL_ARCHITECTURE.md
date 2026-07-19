@@ -82,7 +82,7 @@ The system is organized into functional suites. Every request (except Public) re
 | Endpoint               | Method | Flow Description                                               |
 | :--------------------- | :----- | :------------------------------------------------------------- |
 | `/auth/login/student`  | POST   | **Primary Entry**: Validates Student ID/Password. Returns JWT. |
-| `/auth/login/admin`    | POST   | **Administrative Entry**: For Staff/Security/Webmaster.        |
+| `/auth/login/admin`    | POST   | **Administrative Entry**: For Staff/Security/Webadmin.        |
 | `/auth/otp/request`    | POST   | **Reset Step 1**: Sends 6-digit OTP to student email.          |
 | `/auth/otp/verify`     | POST   | **Reset Step 2**: Validates OTP; returns `resetToken`.         |
 | `/auth/password/reset` | POST   | **Reset Step 3**: Replaces password using `resetToken`.        |

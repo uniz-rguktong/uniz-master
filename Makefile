@@ -11,7 +11,7 @@ help:
 	@echo "make up        - start full stack"
 	@echo "make down      - stop"
 	@echo "make logs      - follow logs"
-	@echo "make seed      - sample users (webmaster / password123)"
+	@echo "make seed      - sample users (webadmin / password123)"
 	@echo "make ps        - status"
 
 deps:

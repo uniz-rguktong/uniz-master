@@ -81,7 +81,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"username\": \"webmaster\",\n    \"password\": \"webmaster@uniz\"\n}",
+              "raw": "{\n    \"username\": \"webadmin\",\n    \"password\": \"webadmin@uniz\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -603,7 +603,7 @@
           ]
         },
         {
-          "name": "Admin (Webmaster)",
+          "name": "Admin (Webadmin)",
           "item": [
             {
               "name": "List All Banners",
@@ -1662,7 +1662,7 @@
                   "host": ["{{baseUrl}}"],
                   "path": ["api", "v1", "profile", "admin", "upload-history"]
                 },
-                "description": "Retrieves the historical report of all bulk upload operations (Students, Grades, Attendance) performed by the webmaster."
+                "description": "Retrieves the historical report of all bulk upload operations (Students, Grades, Attendance) performed by the webadmin."
               },
               "response": []
             },
@@ -2126,7 +2126,7 @@
           "id": "461de528-7218-4606-b3b6-7d3819d27c89"
         },
         {
-          "name": "Webmaster & System",
+          "name": "Webadmin & System",
           "item": [
             {
               "name": "Admin Login",
