@@ -129,7 +129,9 @@ export async function processNextBatch() {
     rawCode: string,
     academicSemesterId?: string,
   ) => {
-    const code = String(rawCode || "").trim().toUpperCase();
+    const code = String(rawCode || "")
+      .trim()
+      .toUpperCase();
     if (!code) return null;
 
     const direct = subjectMap.get(code);
@@ -139,10 +141,9 @@ export async function processNextBatch() {
     const resolvedSemesterId = academicSemesterId
       ? await resolveSemesterIdMemo(academicSemesterId)
       : null;
-    const semesterCandidates = [
-      academicSemesterId,
-      resolvedSemesterId,
-    ].filter(Boolean) as string[];
+    const semesterCandidates = [academicSemesterId, resolvedSemesterId].filter(
+      Boolean,
+    ) as string[];
 
     if (semesterCandidates.length) {
       const scoped = matches.find((m) =>

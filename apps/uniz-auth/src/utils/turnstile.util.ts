@@ -3,8 +3,7 @@ import http from "http";
 import https from "https";
 
 /** Cloudflare Turnstile dummy secret — always passes (local/dev only). */
-const TURNSTILE_TEST_SECRET_ALWAYS_PASS =
-  "1x0000000000000000000000000000000AA";
+const TURNSTILE_TEST_SECRET_ALWAYS_PASS = "1x0000000000000000000000000000000AA";
 
 /** Real Turnstile tokens are long alphanumeric strings (with . _ -). */
 const TURNSTILE_TOKEN_PATTERN = /^[A-Za-z0-9._-]+$/;

@@ -192,7 +192,10 @@ export const queueOtpDelivery = async (
     });
     return true;
   } catch (error: any) {
-    console.error(`[AUTH] Failed to queue OTP_DELIVER for ${username}:`, error.message);
+    console.error(
+      `[AUTH] Failed to queue OTP_DELIVER for ${username}:`,
+      error.message,
+    );
     return false;
   }
 };

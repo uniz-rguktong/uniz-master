@@ -114,7 +114,9 @@ export async function loadTemplateSubjectsFromSemester(opts: {
     opts.batch && String(opts.batch).toUpperCase() !== "ALL"
       ? String(opts.batch).toUpperCase()
       : undefined;
-  const subjectCode = String(opts.subjectCode || "").trim().toUpperCase();
+  const subjectCode = String(opts.subjectCode || "")
+    .trim()
+    .toUpperCase();
 
   const allocations = await prisma.branchAllocation.findMany({
     where: {

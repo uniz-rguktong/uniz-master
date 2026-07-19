@@ -15,7 +15,10 @@ const USER_SERVICE_URL = (
 ).replace(/\/$/, "");
 
 type SubjectResolver = {
-  resolve(code: string, academicSemesterId?: string): Promise<{
+  resolve(
+    code: string,
+    academicSemesterId?: string,
+  ): Promise<{
     subject: { id: string; code: string } | null;
     ambiguous: boolean;
   }>;
@@ -47,7 +50,9 @@ async function buildSubjectResolver(): Promise<SubjectResolver> {
 
   return {
     async resolve(rawCode, academicSemesterId) {
-      const code = String(rawCode || "").trim().toUpperCase();
+      const code = String(rawCode || "")
+        .trim()
+        .toUpperCase();
       if (!code) return { subject: null, ambiguous: false };
 
       const direct = subjectMap.get(code);
@@ -66,10 +71,12 @@ async function buildSubjectResolver(): Promise<SubjectResolver> {
         const scoped = matches.filter((m) =>
           semesterCandidates.includes(m.semesterId),
         );
-        if (scoped.length === 1) return { subject: scoped[0].subject, ambiguous: false };
+        if (scoped.length === 1)
+          return { subject: scoped[0].subject, ambiguous: false };
         if (scoped.length > 1) return { subject: null, ambiguous: true };
       }
-      if (matches.length === 1) return { subject: matches[0].subject, ambiguous: false };
+      if (matches.length === 1)
+        return { subject: matches[0].subject, ambiguous: false };
       if (matches.length > 1) return { subject: null, ambiguous: true };
       return { subject: null, ambiguous: false };
     },
@@ -77,7 +84,9 @@ async function buildSubjectResolver(): Promise<SubjectResolver> {
 }
 
 async function loadKnownStudentIds(ids: string[]): Promise<Set<string>> {
-  const unique = [...new Set(ids.map((id) => id.trim().toUpperCase()).filter(Boolean))];
+  const unique = [
+    ...new Set(ids.map((id) => id.trim().toUpperCase()).filter(Boolean)),
+  ];
   if (!unique.length) return new Set();
 
   const found = new Set<string>();
@@ -96,7 +105,8 @@ async function loadKnownStudentIds(ids: string[]): Promise<Set<string>> {
         },
       );
       for (const student of res.data?.students || []) {
-        if (student?.username) found.add(String(student.username).toUpperCase());
+        if (student?.username)
+          found.add(String(student.username).toUpperCase());
       }
     } catch {
       // If profile service is unreachable, skip student-exists checks rather than blocking uploads.
@@ -127,7 +137,10 @@ export async function validateGradesUploadRows(
   for (let i = 0; i < dataRows.length; i++) {
     const row = dataRows[i];
     const rowNo = rowNumberFromIndex(i);
-    const studentId = pickRowValue(row, ["Student ID", "student id"]).toUpperCase();
+    const studentId = pickRowValue(row, [
+      "Student ID",
+      "student id",
+    ]).toUpperCase();
     const code = pickRowValue(row, [
       "Subject Code",
       "Academic Code",
@@ -227,7 +240,10 @@ export async function validateGradesUploadRows(
 
   if (!profileCheckSkipped) {
     for (let i = 0; i < dataRows.length; i++) {
-      const studentId = pickRowValue(dataRows[i], ["Student ID", "student id"]).toUpperCase();
+      const studentId = pickRowValue(dataRows[i], [
+        "Student ID",
+        "student id",
+      ]).toUpperCase();
       if (!studentId || knownStudents.has(studentId)) continue;
       errors.push({
         row: rowNumberFromIndex(i),
@@ -258,7 +274,10 @@ export async function validateAttendanceUploadRows(
   for (let i = 0; i < dataRows.length; i++) {
     const row = dataRows[i];
     const rowNo = rowNumberFromIndex(i);
-    const studentId = pickRowValue(row, ["Student ID", "student id"]).toUpperCase();
+    const studentId = pickRowValue(row, [
+      "Student ID",
+      "student id",
+    ]).toUpperCase();
     const code = pickRowValue(row, [
       "Subject Code",
       "Academic Code",
@@ -382,7 +401,10 @@ export async function validateAttendanceUploadRows(
 
   if (!profileCheckSkipped) {
     for (let i = 0; i < dataRows.length; i++) {
-      const studentId = pickRowValue(dataRows[i], ["Student ID", "student id"]).toUpperCase();
+      const studentId = pickRowValue(dataRows[i], [
+        "Student ID",
+        "student id",
+      ]).toUpperCase();
       if (!studentId || knownStudents.has(studentId)) continue;
       errors.push({
         row: rowNumberFromIndex(i),

@@ -60,7 +60,7 @@ export type RegistrationImportResult = {
 
 const BRANCH_ALIASES: Record<string, string> = {
   "AI/ML": "AIML",
-  "AI_ML": "AIML",
+  AI_ML: "AIML",
   "ARTIFICIAL INTELLIGENCE AND MACHINE LEARNING": "AIML",
   "COMPUTER SCIENCE AND ENGINEERING": "CSE",
   "CIVIL ENGINEERING": "CE",
@@ -115,7 +115,8 @@ function looksLikeSubjectSelection(raw: string): boolean {
   if (!/^[A-Za-z0-9]/.test(value)) return false;
   if (!/-/.test(value)) return false;
   const upper = value.toUpperCase().replace(/\s+/g, "");
-  if (upper.includes("IHEREBYSUBMIT") || upper.includes("IAFFIRMTHAT")) return false;
+  if (upper.includes("IHEREBYSUBMIT") || upper.includes("IAFFIRMTHAT"))
+    return false;
   if (/^SEMESTER\s*-?\s*I\b/i.test(value)) return false;
   return true;
 }
@@ -135,7 +136,8 @@ function yearBand(value: unknown): "E2" | "E3" | "E4" | "" {
 
 function batchFromYear(value: unknown): string {
   const raw = norm(value).toUpperCase();
-  const match = raw.match(/\((O\d{2})\s+BATCH\)/i) || raw.match(/\b(O\d{2})\b/i);
+  const match =
+    raw.match(/\((O\d{2})\s+BATCH\)/i) || raw.match(/\b(O\d{2})\b/i);
   return match ? match[1].toUpperCase() : "";
 }
 
@@ -272,7 +274,9 @@ function integerCreditOverride(credits: number): number | null {
   return Number.isInteger(credits) ? credits : null;
 }
 
-function parseBatchHeader(value: unknown): { academicYear: string; batch: string } | null {
+function parseBatchHeader(
+  value: unknown,
+): { academicYear: string; batch: string } | null {
   const raw = norm(value).toUpperCase();
   const match = raw.match(/\b(E[1-4])\s*-\s*(O\d{2})\s+BATCH\b/);
   if (match) return { academicYear: match[1], batch: match[2] };
@@ -287,7 +291,10 @@ function cellText(row: ExcelJS.Row, index: number): string {
   if (value && typeof value === "object") {
     if ("text" in value) return norm(value.text);
     if ("richText" in value) {
-      return (value.richText || []).map((r: any) => r.text || "").join("").trim();
+      return (value.richText || [])
+        .map((r: any) => r.text || "")
+        .join("")
+        .trim();
     }
     if ("result" in value) return norm(value.result);
   }
@@ -380,8 +387,7 @@ function parseFlatSubjectCatalogWorkbook(
       electiveGroupName:
         colByHeader(row, headers, ["elective group name"]) ||
         inferred.electiveGroupName,
-      electiveLimit:
-        electiveLimit > 0 ? electiveLimit : inferred.electiveLimit,
+      electiveLimit: electiveLimit > 0 ? electiveLimit : inferred.electiveLimit,
     });
   });
 
@@ -448,7 +454,9 @@ export async function parseSubjectCatalogWorkbook(
   return rows.filter((r) => r.branch && r.academicYear && r.officialCode);
 }
 
-export function validateSubjectCatalogRows(rows: SubjectImportRow[]): ImportError[] {
+export function validateSubjectCatalogRows(
+  rows: SubjectImportRow[],
+): ImportError[] {
   const errors: ImportError[] = [];
   if (!rows.length) {
     errors.push({
@@ -544,7 +552,10 @@ export async function parseRegistrationFormWorkbook(
   workbook.eachSheet((sheet) => {
     let headerRowNumber = 1;
     sheet.eachRow((row, rowNumber) => {
-      if (/timestamp/i.test(cellText(row, 1)) && /email/i.test(cellText(row, 2))) {
+      if (
+        /timestamp/i.test(cellText(row, 1)) &&
+        /email/i.test(cellText(row, 2))
+      ) {
         headerRowNumber = rowNumber;
       }
     });
@@ -567,17 +578,22 @@ export async function parseRegistrationFormWorkbook(
       const subjects = layout.subjects.flatMap((subjectCol) =>
         splitSubjectSelections(cellText(row, subjectCol))
           .map(parseSubjectSelection)
-          .filter((s): s is NonNullable<ReturnType<typeof parseSubjectSelection>> =>
-            Boolean(s),
+          .filter(
+            (s): s is NonNullable<ReturnType<typeof parseSubjectSelection>> =>
+              Boolean(s),
           ),
       );
       const dedupedSubjects = Array.from(
-        new Map(subjects.map((s) => [`${s.code}|${normalizeLoose(s.name)}`, s])).values(),
+        new Map(
+          subjects.map((s) => [`${s.code}|${normalizeLoose(s.name)}`, s]),
+        ).values(),
       );
 
       parsed.push({
         studentId,
-        email: norm(cellText(row, layout.email) || submitterEmail).toLowerCase(),
+        email: norm(
+          cellText(row, layout.email) || submitterEmail,
+        ).toLowerCase(),
         name: cellText(row, layout.name),
         phone: cellText(row, layout.phone),
         branch: canonicalBranch(fallbackBranch || cellText(row, 3)),
@@ -593,7 +609,10 @@ export async function parseRegistrationFormWorkbook(
   return Array.from(
     parsed
       .sort((a, b) => a.submittedAt.getTime() - b.submittedAt.getTime())
-      .reduce((map, row) => map.set(row.studentId, row), new Map<string, RegistrationImportRow>())
+      .reduce(
+        (map, row) => map.set(row.studentId, row),
+        new Map<string, RegistrationImportRow>(),
+      )
       .values(),
   );
 }
@@ -605,13 +624,15 @@ export async function upsertSemesterSubjectCatalog(opts: {
   dryRun?: boolean;
   approve?: boolean;
 }) {
-  const errors: ImportError[] = [
-    ...validateSubjectCatalogRows(opts.rows),
-  ];
+  const errors: ImportError[] = [...validateSubjectCatalogRows(opts.rows)];
   const validRows = opts.rows.filter((row, idx) => {
-    const missing = ["branch", "academicYear", "batch", "officialCode", "subjectName"].filter(
-      (key) => !norm((row as any)[key]),
-    );
+    const missing = [
+      "branch",
+      "academicYear",
+      "batch",
+      "officialCode",
+      "subjectName",
+    ].filter((key) => !norm((row as any)[key]));
     if (missing.length > 0) {
       errors.push({
         row: idx + 2,
@@ -777,16 +798,20 @@ function subjectMatchKey(code: string, name: string): string {
   return `${normUpper(code)}|${normalizeSubjectName(name)}`;
 }
 
-function resolveAllocationMatch<T extends {
-  customCode: string | null;
-  customName: string | null;
-  subject: { code: string; name: string };
-}>(
+function resolveAllocationMatch<
+  T extends {
+    customCode: string | null;
+    customName: string | null;
+    subject: { code: string; name: string };
+  },
+>(
   selected: { code: string; name: string },
   allocationByKey: Map<string, T>,
   allocationsByCode: Map<string, T[]>,
 ): T | undefined {
-  const exact = allocationByKey.get(subjectMatchKey(selected.code, selected.name));
+  const exact = allocationByKey.get(
+    subjectMatchKey(selected.code, selected.name),
+  );
   if (exact) return exact;
 
   const code = normUpper(selected.code);
@@ -909,7 +934,10 @@ export async function importRegistrationRows(opts: {
 
     const uniqueSubjectIds = [...new Set(subjectIds)];
     if (uniqueSubjectIds.length === 0) {
-      errors.push({ studentId: row.studentId, message: "No subjects resolved" });
+      errors.push({
+        studentId: row.studentId,
+        message: "No subjects resolved",
+      });
       continue;
     }
 
@@ -1046,9 +1074,8 @@ export async function buildSubjectTemplateWorkbook(opts?: {
   sheet.columns = columns;
 
   if (opts?.semesterId) {
-    const { loadTemplateSubjectsFromSemester } = await import(
-      "../utils/semester-subject.util"
-    );
+    const { loadTemplateSubjectsFromSemester } =
+      await import("../utils/semester-subject.util");
     const { subjects } = await loadTemplateSubjectsFromSemester({
       academicSemesterId: opts.semesterId,
       branch: opts.branch,

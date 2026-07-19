@@ -18,14 +18,17 @@ export const createNotificationWorker = (connection: IORedis) => {
       const data = job.data as Record<string, any>;
 
       if (jobType === "OTP_EMAIL" || jobType === "EMAIL") {
-        const type = String(data.type || (jobType === "OTP_EMAIL" ? "otp" : ""));
+        const type = String(
+          data.type || (jobType === "OTP_EMAIL" ? "otp" : ""),
+        );
         const to = String(data.to || data.email || "");
         if (!type || !to) {
           throw new Error("EMAIL job requires type and to");
         }
         const payload = { ...data, ...(data.data || {}) };
         const ok = await dispatchEmailByType(type, to, payload);
-        if (!ok) throw new Error(`Email delivery failed for type=${type} to=${to}`);
+        if (!ok)
+          throw new Error(`Email delivery failed for type=${type} to=${to}`);
         return { sent: true, type, to };
       }
 
@@ -164,7 +167,9 @@ export const createNotificationWorker = (connection: IORedis) => {
   );
 
   worker.on("failed", (job, err) => {
-    console.error(`[NotificationWorker] Job ${job?.id} (${job?.name}) failed: ${err.message}`);
+    console.error(
+      `[NotificationWorker] Job ${job?.id} (${job?.name}) failed: ${err.message}`,
+    );
   });
 
   worker.on("ready", () => {

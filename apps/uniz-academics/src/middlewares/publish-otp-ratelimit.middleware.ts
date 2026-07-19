@@ -37,8 +37,7 @@ export async function enforcePublishOtpRateLimit(
     if (hourCount === 1) await redis.expire(hourK, 3600);
     if (hourCount > 10) {
       res.status(429).json({
-        error:
-          "Maximum verification codes per hour reached. Try again later.",
+        error: "Maximum verification codes per hour reached. Try again later.",
         code: "PUBLISH_OTP_HOUR_LIMIT",
         retryAfterSeconds: 3600,
       });

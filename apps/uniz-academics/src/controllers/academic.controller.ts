@@ -24,6 +24,7 @@ const getInternalHeaders = () => ({
 });
 
 import { mapGradeToPoint, getGpaDialogue } from "../utils/helpers.util";
+import { setNoStore } from "../utils/http.util";
 import {
   buildSubjectSnapshot,
   displaySubjectCode,
@@ -88,24 +89,8 @@ async function loadAcademicCodesBySubject(
   );
 }
 
-// GPA calculation and templates now use database-provided subject credits.
-// GRADE_MAP and mapGradeToPoint are now imported from helpers.util
-// const GRADE_MAP: Record<string, number> = {
-//   EX: 10,
-//   A: 9,
-//   B: 8,
-//   C: 7,
-//   D: 6,
-//   E: 5,
-//   R: 0,
-// };
-
-// const mapGradeToPoint = (val: string | number): number => {
-//   if (typeof val === "number") return val;
-//   if (!val) return 0;
-//   const upper = String(val).toUpperCase().trim();
-//   return GRADE_MAP[upper] ?? (parseFloat(upper) || 0);
-// };
+// GPA calculation and templates use database-provided subject credits.
+// GRADE_MAP / mapGradeToPoint live in helpers.util.ts.
 
 export const getUploadProgress = async (
   req: AuthenticatedRequest,
@@ -116,12 +101,7 @@ export const getUploadProgress = async (
     return res.status(401).json({ success: false, message: "Unauthorized" });
 
   try {
-    res.setHeader(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate",
-    );
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
+    setNoStore(res);
 
     const uploadId = req.query.uploadId as string;
 
@@ -202,12 +182,7 @@ export const getPublishProgress = async (
   }
 
   try {
-    res.setHeader(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate",
-    );
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
+    setNoStore(res);
 
     const key = `publish:progress:${user.username}`;
     const progress = await redis.get(key);
@@ -996,7 +971,9 @@ export const addAttendance = async (
   }
 
   try {
-    const subject = await prisma.subject.findUnique({ where: { id: subjectId } });
+    const subject = await prisma.subject.findUnique({
+      where: { id: subjectId },
+    });
     if (!subject) {
       return res
         .status(400)
@@ -1572,9 +1549,7 @@ export const getSubjects = async (req: AuthenticatedRequest, res: Response) => {
     MECH: ["MECH", "ME"],
     ME: ["ME", "MECH"],
   };
-  const deptValues = deptRaw
-    ? deptAliases[deptRaw] || [deptRaw]
-    : [];
+  const deptValues = deptRaw ? deptAliases[deptRaw] || [deptRaw] : [];
 
   try {
     const where: any = {};
@@ -2444,7 +2419,13 @@ export const uploadAttendance = async (req: any, res: Response) => {
       headers.includes("Academic Code") ||
       headers.includes("Internal Code");
 
-    if (!hasStudentId || !hasSemesterId || !hasTotal || !hasAttended || !hasSubjectCode) {
+    if (
+      !hasStudentId ||
+      !hasSemesterId ||
+      !hasTotal ||
+      !hasAttended ||
+      !hasSubjectCode
+    ) {
       const missing: string[] = [];
       if (!hasStudentId) missing.push("Student ID");
       if (!hasSubjectCode) missing.push("Subject Code or Academic Code");
@@ -2700,12 +2681,7 @@ export const downloadGrades = async (
       `attachment; filename="${reportType}_RESULTS_${targetStudentId}_${semesterId}.pdf"`,
     );
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate",
-    );
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
+    setNoStore(res);
     res.send(pdfBuffer);
   } catch (error: any) {
     console.error("PDF Download Error:", error);
@@ -2747,13 +2723,6 @@ export const downloadAttendance = async (
       include: { subject: true },
       orderBy: { subject: { code: "asc" } },
     });
-
-    // if (!records.length) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "No attendance records found for this semester.",
-    //   });
-    // }
 
     let profileName = targetStudentId;
     let branch = "N/A";
@@ -2808,12 +2777,7 @@ export const downloadAttendance = async (
       `attachment; filename="ATTENDANCE_${targetStudentId}_${semesterId}.pdf"`,
     );
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate",
-    );
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
+    setNoStore(res);
     res.send(pdfBuffer);
   } catch (error: any) {
     console.error("PDF Download Error:", error);
@@ -2832,7 +2796,9 @@ export const purgeStudentRecords = async (req: Request, res: Response) => {
 
   const studentId = String(req.params.studentId || "").toUpperCase();
   if (!studentId) {
-    return res.status(400).json({ success: false, message: "Student ID required" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Student ID required" });
   }
 
   try {
@@ -2858,7 +2824,10 @@ export const purgeStudentRecords = async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    console.error(`[Academics] purgeStudentRecords failed for ${studentId}:`, error.message);
+    console.error(
+      `[Academics] purgeStudentRecords failed for ${studentId}:`,
+      error.message,
+    );
     return res.status(500).json({
       success: false,
       message: "Failed to purge academic records",

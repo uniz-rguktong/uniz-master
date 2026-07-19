@@ -199,7 +199,9 @@ export const uploadSeating = async (
     // in bounded-concurrency chunks rather than strictly sequential awaits.
     const resolved = rows
       .map((row) => ({ row, subjectId: subMap.get(row.subjectCode) }))
-      .filter((x): x is { row: any; subjectId: string } => Boolean(x.subjectId));
+      .filter((x): x is { row: any; subjectId: string } =>
+        Boolean(x.subjectId),
+      );
 
     let count = 0;
     const CHUNK = 25;

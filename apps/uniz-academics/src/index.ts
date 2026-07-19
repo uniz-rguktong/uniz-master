@@ -18,7 +18,7 @@ app.use(
   }),
 );
 app.use(compression());
-// app.use(cors());
+// CORS is handled centrally at the gateway; services sit behind it.
 
 // File uploads go through multer (multipart), so JSON bodies only carry row
 // arrays / config — 20mb is far above any realistic payload.

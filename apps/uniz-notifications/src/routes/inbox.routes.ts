@@ -79,7 +79,8 @@ router.delete("/inbox/clear", requireAuth, async (req, res) => {
     const deleted = await clearInbox(username, mode);
     return res.json({ success: true, deleted, mode });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Failed to clear inbox";
+    const message =
+      err instanceof Error ? err.message : "Failed to clear inbox";
     return res.status(500).json({ success: false, error: message });
   }
 });

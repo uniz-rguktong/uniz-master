@@ -31,11 +31,7 @@ router.get("/admin-summary", async (req: AuthenticatedRequest, res) => {
     });
     const semesterId = latestSemester?.id;
 
-    const [
-      totalSubjects,
-      activeSemesters,
-      totalFaculty,
-    ] = await Promise.all([
+    const [totalSubjects, activeSemesters, totalFaculty] = await Promise.all([
       prisma.subject.count(),
       prisma.academicSemester.count({ where: { status: { not: "DRAFT" } } }),
       prisma.faculty.count(),
@@ -57,33 +53,38 @@ router.get("/admin-summary", async (req: AuthenticatedRequest, res) => {
       attendanceWhere.subjectId = { in: deptSubjectIds };
     }
 
-    const [gradeAgg, failCount, allAttendance, registeredStudentIds, droppedStudentIds] =
-      await Promise.all([
-        prisma.grade.aggregate({
-          where: gradeWhere,
-          _avg: { grade: true },
-          _count: { id: true },
-        }),
-        prisma.grade.count({
-          where: { ...gradeWhere, grade: { lt: 5.0 } },
-        }),
-        prisma.attendance.findMany({
-          where: attendanceWhere,
-          select: { studentId: true, totalClasses: true, attendedClasses: true },
-        }),
-        semesterId
-          ? prisma.registration.groupBy({
-              by: ["studentId"],
-              where: { semesterId, status: "REGISTERED" },
-            })
-          : Promise.resolve([] as { studentId: string }[]),
-        semesterId
-          ? prisma.registration.groupBy({
-              by: ["studentId"],
-              where: { semesterId, status: "DROPPED" },
-            })
-          : Promise.resolve([] as { studentId: string }[]),
-      ]);
+    const [
+      gradeAgg,
+      failCount,
+      allAttendance,
+      registeredStudentIds,
+      droppedStudentIds,
+    ] = await Promise.all([
+      prisma.grade.aggregate({
+        where: gradeWhere,
+        _avg: { grade: true },
+        _count: { id: true },
+      }),
+      prisma.grade.count({
+        where: { ...gradeWhere, grade: { lt: 5.0 } },
+      }),
+      prisma.attendance.findMany({
+        where: attendanceWhere,
+        select: { studentId: true, totalClasses: true, attendedClasses: true },
+      }),
+      semesterId
+        ? prisma.registration.groupBy({
+            by: ["studentId"],
+            where: { semesterId, status: "REGISTERED" },
+          })
+        : Promise.resolve([] as { studentId: string }[]),
+      semesterId
+        ? prisma.registration.groupBy({
+            by: ["studentId"],
+            where: { semesterId, status: "DROPPED" },
+          })
+        : Promise.resolve([] as { studentId: string }[]),
+    ]);
 
     const distinctAttendanceStudents = new Set(
       allAttendance.map((a) => a.studentId),
@@ -151,7 +152,11 @@ router.get("/admin-summary", async (req: AuthenticatedRequest, res) => {
     };
 
     if (role === "dean" || role === "hod" || role === "director") {
-      let branchPerf: { department: string; avg_grade: number; student_count: number }[] = [];
+      let branchPerf: {
+        department: string;
+        avg_grade: number;
+        student_count: number;
+      }[] = [];
       try {
         if (semesterId) {
           branchPerf = await prisma.$queryRawUnsafe<

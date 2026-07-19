@@ -26,7 +26,10 @@ export const uploadImage = async (req: AuthenticatedRequest, res: Response) => {
           },
           (error, uploadResult) => {
             if (error) reject(error);
-            else resolve(uploadResult as { secure_url: string; public_id: string });
+            else
+              resolve(
+                uploadResult as { secure_url: string; public_id: string },
+              );
           },
         );
         uploadStream.end(req.file!.buffer);
