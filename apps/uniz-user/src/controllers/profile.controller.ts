@@ -2360,16 +2360,9 @@ export const promoteCohort = async (
       }
     });
 
-    // Bulk delete or pattern clear for Redis?
-    // For now, simple clear for specific usernames if it's small, 
-    // but updateMany doesn't return IDs easily.
-    // Better strategy: just let TTL handle it or clear a global version flag.
-    // Given the scale, we'll just clear the search cache.
-    const keys = await redis.keys("profile:v2:*");
-    if (keys.length > 0) {
-      // Logic would be too heavy to delete all individual profiles.
-      // We rely on TTL (TTL is 1hr as seen in other controllers)
-    }
+    // Cohort profiles are invalidated by their per-key TTL. We intentionally
+    // avoid `redis.keys("profile:v2:*")` here — KEYS is O(N) and blocks the
+    // single-threaded Redis server.
 
     return res.json({
       success: true,

@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
+import compression from "compression";
 import IORedis from "ioredis";
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
 import { createNotificationWorker } from "./worker/notification.worker";
@@ -22,7 +23,10 @@ const app = express();
 app.set("trust proxy", 1);
 app.use(helmet());
 app.use(cors());
-app.use(express.json({ limit: "2mb" }));
+// Cast: this service pins @types/express v5 whose app.use overloads reject the
+// v4-typed RequestHandler from @types/compression. Runtime express is v4.
+app.use(compression() as unknown as express.RequestHandler);
+app.use(express.json({ limit: "1mb" }));
 app.use(attributionMiddleware);
 
 app.get("/", (_req, res) => {
