@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
+import compression from "compression";
 import fileRoutes from "./routes/file.routes";
 
 dotenv.config({ override: true });
@@ -11,6 +12,7 @@ const PORT = process.env.PORT || 3005;
 
 app.use(helmet());
 app.use(cors());
+app.use(compression());
 app.use(express.json());
 
 // Attribution & Malformed Activity Handling (Mandatory)

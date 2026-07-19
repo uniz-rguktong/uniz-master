@@ -2,7 +2,7 @@ import rateLimit from "express-rate-limit";
 
 export const submissionLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10000, // Unlimited for testing
+  max: 20, // realistic per-IP cap for outpass/outing submissions
   message: {
     success: false,
     message:
