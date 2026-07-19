@@ -26,4 +26,6 @@ model OtpLog {
   expiresAt  DateTime
   createdAt  DateTime  @default(now())
   consumedAt DateTime?
+
+  @@index([username, createdAt])
 }
