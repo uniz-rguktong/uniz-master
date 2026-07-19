@@ -34,7 +34,7 @@ export const getFacultyProfile = async (req: Request, res: Response) => {
   }
 };
 
-// Create faculty (Webmaster or HOD for their dept)
+// Create faculty (Webadmin or HOD for their dept)
 export const createFaculty = async (req: any, res: Response) => {
   try {
     const { name, email, department, photo, bio, role, designation } = req.body;
@@ -45,7 +45,7 @@ export const createFaculty = async (req: any, res: Response) => {
     // HODs can only create for their own department
     if (user.role === "hod") {
       // For now, let's just allow HODs to create faculty.
-    } else if (user.role !== "webmaster" && user.role !== "dean") {
+    } else if (user.role !== "webadmin" && user.role !== "dean") {
       return res.status(403).json({ error: "Permission denied" });
     }
 
@@ -66,7 +66,7 @@ export const createFaculty = async (req: any, res: Response) => {
   }
 };
 
-// Update faculty (Webmaster, HOD, or Self)
+// Update faculty (Webadmin, HOD, or Self)
 export const updateFaculty = async (req: any, res: Response) => {
   try {
     const { id } = req.params;
@@ -80,7 +80,7 @@ export const updateFaculty = async (req: any, res: Response) => {
     // ownership/role check below is currently a no-op. Left as-is to preserve
     // existing behavior; re-enable the 403 if faculty edits must be restricted.
     if (
-      user.role !== "webmaster" &&
+      user.role !== "webadmin" &&
       user.role !== "hod" &&
       user.username.toLowerCase() !== existing.email.split("@")[0].toLowerCase()
     ) {
@@ -104,7 +104,7 @@ export const updateFaculty = async (req: any, res: Response) => {
   }
 };
 
-// Delete faculty (Webmaster only)
+// Delete faculty (Webadmin only)
 export const deleteFaculty = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -117,11 +117,11 @@ export const deleteFaculty = async (req: Request, res: Response) => {
   }
 };
 
-// Update Role (Webmaster only)
+// Update Role (Webadmin only)
 export const updateFacultyRole = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { role } = req.body; // "FACULTY", "DEAN", "WEBMASTER"
+    const { role } = req.body; // "FACULTY", "DEAN", "WEBADMIN"
 
     const faculty = await prisma.faculty.update({
       where: { id },

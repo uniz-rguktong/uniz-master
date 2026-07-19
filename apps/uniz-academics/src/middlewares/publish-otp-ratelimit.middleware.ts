@@ -10,7 +10,7 @@ function hourKey(username: string) {
 }
 
 /**
- * Rate limits publish verification emails: 2/min per semester, 10/hour per webmaster.
+ * Rate limits publish verification emails: 2/min per semester, 10/hour per webadmin.
  * Returns false when the response has already been sent (429).
  */
 export async function enforcePublishOtpRateLimit(

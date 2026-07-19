@@ -16,7 +16,7 @@ import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { cn } from "../../utils/cn";
 
-type Role = "webmaster" | "dean" | "director";
+type Role = "webadmin" | "dean" | "director";
 type Permission =
   | "manage_banners"
   | "send_notifications"

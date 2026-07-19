@@ -52,7 +52,7 @@ export const authMiddleware = async (
       id: "internal",
       username: (overrideUsername as string) || "internal-service",
       role: resolveEffectiveRole({
-        role: (overrideRole as string) || "webmaster",
+        role: (overrideRole as string) || "webadmin",
         username: (overrideUsername as string) || "internal-service",
       }) as JwtPayload["role"],
       iat: Math.floor(Date.now() / 1000),

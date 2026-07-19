@@ -21,7 +21,7 @@ export const authMiddleware = (
   if (!req.headers.authorization && internalSecret === INTERNAL_SECRET) {
     (req as AuthenticatedRequest).user = {
       username: "internal-service",
-      role: "webmaster",
+      role: "webadmin",
     };
     return next();
   }

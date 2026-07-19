@@ -119,8 +119,10 @@ export default function SemesterRegistrationSection({
   const [subjectSearchQuery, setSubjectSearchQuery] = useState("");
   const [publishSem, setPublishSem] = useState<Semester | null>(null);
   const [subjectUploadFile, setSubjectUploadFile] = useState<File | null>(null);
-  const [registrationUploadFile, setRegistrationUploadFile] = useState<File | null>(null);
-  const [registrationUploadBranch, setRegistrationUploadBranch] = useState("CSE");
+  const [registrationUploadFile, setRegistrationUploadFile] =
+    useState<File | null>(null);
+  const [registrationUploadBranch, setRegistrationUploadBranch] =
+    useState("CSE");
   const [registrationDryRun, setRegistrationDryRun] = useState(true);
   const [importSummary, setImportSummary] = useState<any>(null);
 
@@ -350,8 +352,7 @@ export default function SemesterRegistrationSection({
 
   const downloadSubjectTemplate = async () => {
     if (!selectedSem) return;
-    const branch =
-      branchFilter === "all" ? undefined : branchFilter;
+    const branch = branchFilter === "all" ? undefined : branchFilter;
     const year = yearFilter === "all" ? undefined : yearFilter;
     await downloadFile(
       GET_REGISTRATION_SUBJECTS_TEMPLATE(selectedSem.id, branch, year),
@@ -417,7 +418,11 @@ export default function SemesterRegistrationSection({
       }
       if (res.data) {
         setImportSummary(res.data);
-        toast.success(registrationDryRun ? "Registration dry-run complete" : "Registrations imported");
+        toast.success(
+          registrationDryRun
+            ? "Registration dry-run complete"
+            : "Registrations imported",
+        );
         fetchRegistrations();
       }
     } finally {
@@ -514,7 +519,7 @@ export default function SemesterRegistrationSection({
 
                   {isAdmin && (
                     <div className="flex items-center gap-3 mt-2">
-                      {role === "webmaster" &&
+                      {role === "webadmin" &&
                         sem.status !== "REGISTRATION_OPEN" &&
                         sem.status !== "REGISTRATION_CLOSED" && (
                           <button
@@ -573,7 +578,10 @@ export default function SemesterRegistrationSection({
                 </button>
                 <div>
                   <p className="text-[10px] font-bold text-zinc-900 tracking-[0.14em] mb-1 opacity-70">
-                    Rollout Review • {branchFilter === "all" ? "All" : formatDisplayText(branchFilter)}
+                    Rollout Review •{" "}
+                    {branchFilter === "all"
+                      ? "All"
+                      : formatDisplayText(branchFilter)}
                   </p>
                   <h1 className="text-3xl font-semibold text-zinc-900 tracking-tight">
                     {selectedSem.name}
@@ -593,7 +601,7 @@ export default function SemesterRegistrationSection({
                     Export
                   </button>
                 )}
-                {(role === "dean" || role === "hod" || role === "webmaster") &&
+                {(role === "dean" || role === "hod" || role === "webadmin") &&
                   activeViewTab === "allocations" && (
                     <button
                       onClick={() => setShowAddSubjectModal(true)}
@@ -603,9 +611,7 @@ export default function SemesterRegistrationSection({
                       Add Subject
                     </button>
                   )}
-                {(role === "webmaster" ||
-                  role === "dean" ||
-                  role === "hod") && (
+                {(role === "webadmin" || role === "dean" || role === "hod") && (
                   <button
                     onClick={approveAllocation}
                     disabled={loading}
@@ -667,7 +673,7 @@ export default function SemesterRegistrationSection({
               </div>
             </div>
 
-            {role === "webmaster" && (
+            {role === "webadmin" && (
               <div className="bg-white rounded-xl border border-zinc-100 p-6 space-y-5">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                   <div>
@@ -675,9 +681,9 @@ export default function SemesterRegistrationSection({
                       Bulk semester data import
                     </h3>
                     <p className="text-sm text-zinc-500">
-                      Upload subject allocations and Google Form responses. Duplicate
-                      student submissions use the latest timestamp and replace older
-                      rows for this semester.
+                      Upload subject allocations and Google Form responses.
+                      Duplicate student submissions use the latest timestamp and
+                      replace older rows for this semester.
                     </p>
                   </div>
                   <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
@@ -694,11 +700,13 @@ export default function SemesterRegistrationSection({
                   <div className="rounded-xl border border-zinc-100 p-5 space-y-4">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <p className="font-bold text-zinc-900 text-sm">Subject Excel</p>
+                        <p className="font-bold text-zinc-900 text-sm">
+                          Subject Excel
+                        </p>
                         <p className="text-xs text-zinc-500">
-                          Download the semester template (all cores + elective options),
-                          fill or edit, then upload for Dean → HOD approval before
-                          students register.
+                          Download the semester template (all cores + elective
+                          options), fill or edit, then upload for Dean → HOD
+                          approval before students register.
                         </p>
                       </div>
                       <button
@@ -712,48 +720,71 @@ export default function SemesterRegistrationSection({
                     <input
                       type="file"
                       accept=".xlsx,.xls"
-                      onChange={(e) => setSubjectUploadFile(e.target.files?.[0] || null)}
+                      onChange={(e) =>
+                        setSubjectUploadFile(e.target.files?.[0] || null)
+                      }
                       className="block w-full text-xs text-zinc-500"
                     />
                     <button
                       type="button"
                       onClick={uploadSubjectSheet}
                       disabled={loading || !subjectUploadFile}
-                      className={cn(adminPrimaryButtonClass, "w-full justify-center")}
+                      className={cn(
+                        adminPrimaryButtonClass,
+                        "w-full justify-center",
+                      )}
                     >
-                      <Upload size={16} /> {registrationDryRun ? "Dry-run subjects" : "Import subjects"}
+                      <Upload size={16} />{" "}
+                      {registrationDryRun
+                        ? "Dry-run subjects"
+                        : "Import subjects"}
                     </button>
                   </div>
 
                   <div className="rounded-xl border border-zinc-100 p-5 space-y-4">
                     <div>
-                      <p className="font-bold text-zinc-900 text-sm">Registration Form export</p>
+                      <p className="font-bold text-zinc-900 text-sm">
+                        Registration Form export
+                      </p>
                       <p className="text-xs text-zinc-500">
-                        Imports Google Form responses with latest-submission wins.
+                        Imports Google Form responses with latest-submission
+                        wins.
                       </p>
                     </div>
                     <select
                       value={registrationUploadBranch}
-                      onChange={(e) => setRegistrationUploadBranch(e.target.value)}
+                      onChange={(e) =>
+                        setRegistrationUploadBranch(e.target.value)
+                      }
                       className={adminSelectClass}
                     >
                       {["CSE", "ECE", "CE", "EEE", "ME", "AIML"].map((b) => (
-                        <option key={b} value={b}>{b}</option>
+                        <option key={b} value={b}>
+                          {b}
+                        </option>
                       ))}
                     </select>
                     <input
                       type="file"
                       accept=".xlsx,.xls"
-                      onChange={(e) => setRegistrationUploadFile(e.target.files?.[0] || null)}
+                      onChange={(e) =>
+                        setRegistrationUploadFile(e.target.files?.[0] || null)
+                      }
                       className="block w-full text-xs text-zinc-500"
                     />
                     <button
                       type="button"
                       onClick={uploadRegistrationResponses}
                       disabled={loading || !registrationUploadFile}
-                      className={cn(adminPrimaryButtonClass, "w-full justify-center")}
+                      className={cn(
+                        adminPrimaryButtonClass,
+                        "w-full justify-center",
+                      )}
                     >
-                      <Upload size={16} /> {registrationDryRun ? "Dry-run registrations" : "Import registrations"}
+                      <Upload size={16} />{" "}
+                      {registrationDryRun
+                        ? "Dry-run registrations"
+                        : "Import registrations"}
                     </button>
                   </div>
                 </div>
@@ -861,7 +892,9 @@ export default function SemesterRegistrationSection({
       {showNewModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4">
           <div className={cn("w-full max-w-xl p-8", adminModalShellClass)}>
-            <h2 className={cn(adminModalTitleClass, "mb-1")}>New enrollment rollout</h2>
+            <h2 className={cn(adminModalTitleClass, "mb-1")}>
+              New enrollment rollout
+            </h2>
             <p className={cn(adminModalDescClass, "mb-6")}>
               Initialize a semester registration event for selected branches.
             </p>
@@ -926,11 +959,18 @@ export default function SemesterRegistrationSection({
       {/* Manual Subject Add Modal */}
       {showAddSubjectModal && (
         <div className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className={cn("w-full max-w-lg p-8 space-y-6", adminModalShellClass)}>
+          <div
+            className={cn(
+              "w-full max-w-lg p-8 space-y-6",
+              adminModalShellClass,
+            )}
+          >
             <div className="flex justify-between items-start gap-4">
               <div>
                 <h3 className={adminModalTitleClass}>Add subject manually</h3>
-                <p className={adminModalDescClass}>Search the catalog and assign to this rollout.</p>
+                <p className={adminModalDescClass}>
+                  Search the catalog and assign to this rollout.
+                </p>
               </div>
               <button
                 type="button"
@@ -1026,9 +1066,16 @@ export default function SemesterRegistrationSection({
       {/* Edit Allocation Modal */}
       {editingAllocation && (
         <div className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className={cn("w-full max-w-lg p-8 space-y-6", adminModalShellClass)}>
+          <div
+            className={cn(
+              "w-full max-w-lg p-8 space-y-6",
+              adminModalShellClass,
+            )}
+          >
             <h3 className={adminModalTitleClass}>Adjust subject</h3>
-            <p className={adminModalDescClass}>Update allocation details for this rollout.</p>
+            <p className={adminModalDescClass}>
+              Update allocation details for this rollout.
+            </p>
             <div className="space-y-5">
               <div className="space-y-2">
                 <label className={adminLabelClass}>Academic code</label>
@@ -1089,7 +1136,10 @@ export default function SemesterRegistrationSection({
                   }
                   className="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
                 />
-                <label htmlFor="isMandatory" className="text-[13px] font-medium text-zinc-700">
+                <label
+                  htmlFor="isMandatory"
+                  className="text-[13px] font-medium text-zinc-700"
+                >
                   Mandatory course
                 </label>
               </div>
@@ -1097,7 +1147,9 @@ export default function SemesterRegistrationSection({
               {!editFormData.isMandatory && (
                 <div className="space-y-4 p-5 bg-zinc-50/50 rounded-xl border border-zinc-200/70">
                   <div className="space-y-2">
-                    <label className={adminLabelClass}>Elective group name</label>
+                    <label className={adminLabelClass}>
+                      Elective group name
+                    </label>
                     <input
                       type="text"
                       value={editFormData.electiveGroupId}

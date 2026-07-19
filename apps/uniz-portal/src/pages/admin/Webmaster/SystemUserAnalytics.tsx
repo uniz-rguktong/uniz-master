@@ -1,6 +1,18 @@
 import { useState, useEffect, useMemo } from "react";
-import { Users, Shield, UserCheck, UserX, GraduationCap, BookOpen, AlertTriangle, CalendarClock } from "lucide-react";
-import { ANALYTICS_SYSTEM_USERS, getAnalyticsHeaders } from "../../../api/endpoints";
+import {
+  Users,
+  Shield,
+  UserCheck,
+  UserX,
+  GraduationCap,
+  BookOpen,
+  AlertTriangle,
+  CalendarClock,
+} from "lucide-react";
+import {
+  ANALYTICS_SYSTEM_USERS,
+  getAnalyticsHeaders,
+} from "../../../api/endpoints";
 import { KPICard } from "../AnalyticsUI";
 import { DonutChart } from "../../../components/ui/donut-chart";
 import { Card } from "../../../components/ui/card";
@@ -19,8 +31,11 @@ export default function SystemUserAnalytics() {
   const [cachedData, setCachedData] = useRecoilState(systemUserAnalyticsAtom);
   const [loading, setLoading] = useState(!cachedData.fetched);
   const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
-  const role = (localStorage.getItem("role") || "webmaster").toLowerCase().replace(/"/g, "");
-  const { data: academicStats, loading: statsLoading } = useAdminDashboardStats(role);
+  const role = (localStorage.getItem("role") || "webadmin")
+    .toLowerCase()
+    .replace(/"/g, "");
+  const { data: academicStats, loading: statsLoading } =
+    useAdminDashboardStats(role);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -135,9 +150,16 @@ export default function SystemUserAnalytics() {
 
   const staffTotal = data
     .filter((item) =>
-      ["webmaster", "dean", "hod", "admin", "staff", "swo", "director", "coe"].includes(
-        item.role?.toLowerCase(),
-      ),
+      [
+        "webadmin",
+        "dean",
+        "hod",
+        "admin",
+        "staff",
+        "swo",
+        "director",
+        "coe",
+      ].includes(item.role?.toLowerCase()),
     )
     .reduce(
       (acc, curr) =>
@@ -182,7 +204,11 @@ export default function SystemUserAnalytics() {
               value={academicStats.backlogCount}
               icon={AlertTriangle}
               badge={academicStats.backlogCount ? "At Risk" : "Clear"}
-              iconColor={academicStats.backlogCount ? "text-amber-500" : "text-emerald-500"}
+              iconColor={
+                academicStats.backlogCount
+                  ? "text-amber-500"
+                  : "text-emerald-500"
+              }
             />
             <KPICard
               title="Active Semesters"

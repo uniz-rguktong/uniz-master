@@ -65,7 +65,7 @@ import {
   adminModalDescClass,
 } from "../../../components/admin/admin-ui";
 
-const ROLES = ["webmaster", "coe", "swo", "dean", "ao", "OTHER"];
+const ROLES = ["webadmin", "coe", "swo", "dean", "ao", "OTHER"];
 const DEPARTMENTS = [
   "CSE",
   "ECE",
@@ -89,7 +89,7 @@ const getToken = () =>
   (localStorage.getItem("admin_token") || "").replace(/"/g, "");
 
 const isWebmasterRole = () =>
-  (localStorage.getItem("admin_role") || "").toLowerCase() === "webmaster";
+  (localStorage.getItem("admin_role") || "").toLowerCase() === "webadmin";
 
 export default function FacultyManagement({
   deptRestrict,
@@ -618,7 +618,12 @@ export default function FacultyManagement({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <div className={cn(adminCardClass, "overflow-hidden border-dashed border-zinc-300 bg-zinc-50/40 p-6")}>
+                  <div
+                    className={cn(
+                      adminCardClass,
+                      "overflow-hidden border-dashed border-zinc-300 bg-zinc-50/40 p-6",
+                    )}
+                  >
                     <FileUploader
                       onFileSelect={(file: File | null) => {
                         if (file) {
@@ -762,7 +767,9 @@ export default function FacultyManagement({
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className={adminLabelClass}>New Name (Generic)</label>
+                    <label className={adminLabelClass}>
+                      New Name (Generic)
+                    </label>
                     <input
                       value={bulkUpdateFields.name}
                       onChange={(e) =>
@@ -874,7 +881,9 @@ export default function FacultyManagement({
               {/* Confirm Dialog */}
               {showDeleteConfirm && (
                 <div className="fixed inset-0 z-[80] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4">
-                  <div className={cn("max-w-sm w-full p-8", adminModalShellClass)}>
+                  <div
+                    className={cn("max-w-sm w-full p-8", adminModalShellClass)}
+                  >
                     <div className="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center mb-5">
                       <AlertTriangle size={24} className="text-rose-500" />
                     </div>
@@ -921,7 +930,9 @@ export default function FacultyManagement({
             <div className={cn(adminCardClass, "p-6")}>
               <div className="flex items-center gap-2 mb-4">
                 <CheckCircle2 size={18} className="text-emerald-500" />
-                <h4 className="font-semibold tracking-tight text-zinc-900">Operation Result</h4>
+                <h4 className="font-semibold tracking-tight text-zinc-900">
+                  Operation Result
+                </h4>
                 <span className="text-[11px] font-medium tracking-[0.12em] text-zinc-400">
                   Total {bulkResult.summary?.total}
                 </span>
@@ -1148,7 +1159,9 @@ export default function FacultyManagement({
                       </td>
                       <td className="px-6 py-5">
                         <span className="px-2.5 py-1 bg-zinc-50 rounded-full text-zinc-500 font-medium text-[11px] border border-zinc-200">
-                          {member.Role ? formatRoleLabel(member.Role) : "Faculty"}
+                          {member.Role
+                            ? formatRoleLabel(member.Role)
+                            : "Faculty"}
                         </span>
                       </td>
                       <td className="px-6 py-5">
@@ -1212,7 +1225,11 @@ export default function FacultyManagement({
                   >
                     <div className="flex flex-col items-center gap-4">
                       <div className="w-16 h-16 flex items-center justify-center bg-zinc-50 rounded-2xl border border-zinc-200/70">
-                        <Users size={32} strokeWidth={1.5} className="text-zinc-300" />
+                        <Users
+                          size={32}
+                          strokeWidth={1.5}
+                          className="text-zinc-300"
+                        />
                       </div>
                       <p className="text-[14px] font-medium text-zinc-500 tracking-tight">
                         No staff members matching your criteria.
@@ -1269,7 +1286,9 @@ export default function FacultyManagement({
           }
         }}
       >
-        <AlertDialogContent className={cn("max-w-xl p-0 overflow-hidden", adminModalShellClass)}>
+        <AlertDialogContent
+          className={cn("max-w-xl p-0 overflow-hidden", adminModalShellClass)}
+        >
           <div className="relative">
             {/* Close Button */}
             <button
@@ -1344,7 +1363,7 @@ export default function FacultyManagement({
                           username: e.target.value.toLowerCase(),
                         })
                       }
-                    className={adminInputClass}
+                      className={adminInputClass}
                       placeholder="e.g. jdoe"
                     />
                   </div>
@@ -1419,7 +1438,9 @@ export default function FacultyManagement({
                       >
                         {ROLES.map((r) => (
                           <option key={r} value={r}>
-                            {r === "OTHER" ? "Other (custom)" : formatRoleLabel(r)}
+                            {r === "OTHER"
+                              ? "Other (custom)"
+                              : formatRoleLabel(r)}
                           </option>
                         ))}
                       </select>
@@ -1497,7 +1518,10 @@ export default function FacultyManagement({
           onClick={() => setShowViewModal(false)}
         >
           <div
-            className={cn("w-full max-w-xl overflow-hidden relative cursor-default", adminModalShellClass)}
+            className={cn(
+              "w-full max-w-xl overflow-hidden relative cursor-default",
+              adminModalShellClass,
+            )}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
@@ -1542,7 +1566,9 @@ export default function FacultyManagement({
                     {selectedFaculty.Department} Department
                   </span>
                   <span className="px-2.5 py-1 bg-zinc-900 rounded-full text-[11px] font-medium text-white">
-                    {selectedFaculty.Role ? formatRoleLabel(selectedFaculty.Role) : "Faculty"}
+                    {selectedFaculty.Role
+                      ? formatRoleLabel(selectedFaculty.Role)
+                      : "Faculty"}
                   </span>
                 </div>
               </div>

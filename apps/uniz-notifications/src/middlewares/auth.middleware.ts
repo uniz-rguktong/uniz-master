@@ -35,7 +35,7 @@ export const requireAuth = (
     (req as AuthenticatedRequest).user = {
       id: "internal",
       username: "internal-service",
-      role: "webmaster",
+      role: "webadmin",
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 3600,
     };
@@ -66,7 +66,7 @@ export const requireAuth = (
 
 /**
  * requireAdmin — must be used after requireAuth.
- * Only allows admin/webmaster/director/dean/etc. roles.
+ * Only allows admin/webadmin/director/dean/etc. roles.
  */
 export const requireAdmin = (
   req: Request,

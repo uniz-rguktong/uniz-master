@@ -227,7 +227,7 @@ export const login = async (req: Request, res: Response) => {
     if (user.role === UserRole.STUDENT) {
       response.student_token = token;
     } else {
-      // All non-student roles (faculty, hod, dean, webmaster, etc.) get admin_token
+      // All non-student roles (faculty, hod, dean, webadmin, etc.) get admin_token
       // since they all log in via the admin portal
       response.admin_token = token;
     }
@@ -843,8 +843,8 @@ export const globalAdminResetPassword = async (
   const { targetUsername, newPassword } = req.body;
   const requester = req.user;
 
-  // Security Check: Strictly WEBMASTER (and maybe DEAN/DIRECTOR) for this level of access
-  const allowedRoles = [UserRole.WEBMASTER, UserRole.DEAN];
+  // Security Check: Strictly WEBADMIN (and maybe DEAN/DIRECTOR) for this level of access
+  const allowedRoles = [UserRole.WEBADMIN, UserRole.DEAN];
   if (!requester || !allowedRoles.includes(requester.role as UserRole)) {
     return res.status(403).json({
       code: ErrorCode.AUTH_FORBIDDEN,
@@ -891,7 +891,7 @@ export const globalAdminResetPassword = async (
     });
 
     console.log(
-      `[AUTH] [ADMIN-RESET] Webmaster (${requester.username}) reset password for: ${targetUser.username}`,
+      `[AUTH] [ADMIN-RESET] Webadmin (${requester.username}) reset password for: ${targetUser.username}`,
     );
 
     return res.json({

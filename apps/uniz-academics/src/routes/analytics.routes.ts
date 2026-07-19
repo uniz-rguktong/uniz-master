@@ -11,11 +11,11 @@ const ADMIN_SUMMARY_TTL_SEC = 30;
  * GET /analytics/admin-summary?role=dean&department=CSE
  *
  * Returns role-tailored academic KPIs aggregated from the Prisma DB.
- * Roles: dean, hod, webmaster, coe, director, swo, caretaker, warden
+ * Roles: dean, hod, webadmin, coe, director, swo, caretaker, warden
  */
 router.get("/admin-summary", async (req: AuthenticatedRequest, res) => {
   try {
-    const role = ((req.query.role as string) || "webmaster").toLowerCase();
+    const role = ((req.query.role as string) || "webadmin").toLowerCase();
     const department = (req.query.department as string) || undefined;
 
     // Dashboards poll this repeatedly; there are only a handful of distinct

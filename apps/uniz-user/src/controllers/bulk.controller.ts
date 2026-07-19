@@ -140,10 +140,10 @@ export const getUploadProgress = async (
 
 export const uploadStudents = async (req: any, res: Response) => {
   const user = req.user;
-  if (!user || user.role !== UserRole.WEBMASTER) {
+  if (!user || user.role !== UserRole.WEBADMIN) {
     return res.status(403).json({
       success: false,
-      message: "Unauthorized: Access restricted to Webmaster only",
+      message: "Unauthorized: Access restricted to Webadmin only",
     });
   }
 
