@@ -102,67 +102,6 @@ app.use(
   },
 );
 
-// 3. Smart Cache Middleware
-const cacheMiddleware = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
-) => {
-  // Only cache GET requests
-  if (req.method !== "GET") return next();
-
-  // Skip cache if explicitly requested
-  if (req.headers["cache-control"] === "no-cache") return next();
-
-  // Generate unique key based on URL and User Context (Role/UID)
-  // This prevents caching cross-user data leaking
-  const userKey = req.headers["uid"] || req.headers["authorization"] || "guest";
-  const cacheKey = `proxy_cache:${req.url}:${userKey}`;
-  const isPublicCms =
-    typeof req.url === "string" &&
-    (req.url.includes("/cms/notifications") ||
-      req.url.includes("/cms/banners") ||
-      req.url.includes("/cms/updates"));
-  const cacheTtlSeconds = isPublicCms ? 30 : 1;
-
-  try {
-    const cachedResponse = await redis.get(cacheKey);
-    if (cachedResponse && req.headers["cache-control"] !== "no-cache") {
-      const { data, headers, status } = JSON.parse(cachedResponse);
-      console.log(`[Cache-Hit] ${req.url}`);
-
-      // Set headers from cache
-      Object.entries(headers).forEach(([k, v]) =>
-        res.setHeader(k, v as string),
-      );
-      res.setHeader("X-Cache", "HIT");
-      return res.status(status).send(data);
-    }
-  } catch (e) {
-    console.error("[Cache-Read-Error]", e);
-  }
-
-  // If No Cache, intercept the send to store it
-  const originalSend = res.send;
-  (res as any).send = function (body: any) {
-    if (res.statusCode === 200 && req.headers["cache-control"] !== "no-cache") {
-      const respToCache = {
-        data: body,
-        headers: res.getHeaders(),
-        status: res.statusCode,
-      };
-      // Cache brief TTL; public CMS notices get longer burst protection
-      redis
-        .setex(cacheKey, cacheTtlSeconds, JSON.stringify(respToCache))
-        .catch((err: Error) => console.error("[Cache-Write-Error]", err));
-    }
-    return originalSend.apply(res, [body]);
-  };
-
-  res.setHeader("X-Cache", "MISS");
-  next();
-};
-
 const serviceMap: Record<string, string> = {
   auth:
     process.env.AUTH_SERVICE_URL ||
@@ -524,12 +463,13 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
     mayCache
   ) {
     const identity = cacheIdentityKey(req);
-    const cacheKey = `p4:${service}:${Buffer.from(req.url).toString("base64")}:${identity}`;
+    // p5: bumped from p4 — cache now stores raw UTF-8 JSON (not base64).
+    const cacheKey = `p5:${service}:${Buffer.from(req.url).toString("base64")}:${identity}`;
 
     try {
       const cached = await redis.get(cacheKey);
       if (cached) {
-        const { data, headers, status } = JSON.parse(cached);
+        const { body, headers, status } = JSON.parse(cached);
         res.setHeader("X-Cache", "HIT");
         res.setHeader("X-Response-Time", "sub-1ms");
 
@@ -537,7 +477,7 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
         Object.entries(headers).forEach(([k, v]) =>
           res.setHeader(k, v as string),
         );
-        return res.status(status).send(Buffer.from(data, "base64"));
+        return res.status(status).send(body);
       }
 
       const response = await internalClient.get(
@@ -553,14 +493,16 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
       const isJson = contentType.includes("application/json");
 
       if (response.status === 200 && isJson) {
-        const cacheTtlSeconds = isPublicCms ? 30 : 2;
-        // Only cache JSON responses to prevent binary blowup in Redis
+        // Public CMS is genuinely shared/cacheable (30s). For unauth non-CMS
+        // GETs use 10s — the old 2s barely earned a hit while still buffering.
+        const cacheTtlSeconds = isPublicCms ? 30 : 10;
+        // Store raw UTF-8 JSON (isJson guaranteed) — no base64 inflation/CPU.
         redis
           .setex(
             cacheKey,
             cacheTtlSeconds,
             JSON.stringify({
-              data: Buffer.from(response.data).toString("base64"),
+              body: Buffer.from(response.data).toString("utf8"),
               headers: response.headers,
               status: response.status,
             }),
