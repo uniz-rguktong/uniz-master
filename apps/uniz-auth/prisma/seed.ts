@@ -30,7 +30,7 @@ async function main() {
 
   // 2. Seed Admin Credentials
   const adminUsers = [
-    { username: "webmaster", role: "webmaster", pass: "webmaster@uniz" },
+    { username: "webadmin", role: "webadmin", pass: "webadmin@uniz" },
     { username: "coe", role: "coe", pass: "coe@uniz" },
     { username: "dean", role: "dean", pass: "dean@uniz" },
     { username: "swo", role: "swo", pass: "swo@uniz" },

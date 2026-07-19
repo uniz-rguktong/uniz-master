@@ -22,7 +22,7 @@ const VITE_CLOUDINARY_UPLOAD_PRESET = import.meta.env
   .VITE_CLOUDINARY_UPLOAD_PRESET;
 
 export default function AdminProfile() {
-  const username = (localStorage.getItem("username") || "Webmaster").replace(
+  const username = (localStorage.getItem("username") || "Webadmin").replace(
     /"/g,
     "",
   );
@@ -285,7 +285,7 @@ export default function AdminProfile() {
               <ProfileItem
                 icon={<Briefcase className="text-zinc-900" />}
                 label="Designation"
-                value={formData.designation || "Webmaster"}
+                value={formData.designation || "Webadmin"}
                 editable={isEditing}
                 onChange={(val) =>
                   setFormData({ ...formData, designation: val })

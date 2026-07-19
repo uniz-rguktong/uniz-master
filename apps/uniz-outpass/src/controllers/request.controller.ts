@@ -662,7 +662,7 @@ export const approveOutpass = async (
 
   const superRoles = [
     UserRole.DIRECTOR,
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.SWO,
     UserRole.DEAN,
   ];
@@ -875,7 +875,7 @@ export const rejectOutpass = async (
     // --- STRICT HIERARCHY ENFORCEMENT ---
     const superRoles = [
       UserRole.DIRECTOR,
-      UserRole.WEBMASTER,
+      UserRole.WEBADMIN,
       UserRole.SWO,
       UserRole.DEAN,
     ];
@@ -978,7 +978,7 @@ export const getAllOutings = async (
 
   const superRoles = [
     UserRole.DIRECTOR,
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.SWO,
     UserRole.DEAN,
   ];
@@ -1067,7 +1067,7 @@ export const getAllOutpasses = async (
 
   const superRoles = [
     UserRole.DIRECTOR,
-    UserRole.WEBMASTER,
+    UserRole.WEBADMIN,
     UserRole.SWO,
     UserRole.DEAN,
   ];
@@ -1586,7 +1586,10 @@ export const getOutsideStudents = async (
   }
 };
 
-export const purgeStudentRequests = async (req: AuthenticatedRequest, res: Response) => {
+export const purgeStudentRequests = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
   const internalSecret = req.headers["x-internal-secret"];
   const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
   if (internalSecret !== SECRET) {
@@ -1595,7 +1598,9 @@ export const purgeStudentRequests = async (req: AuthenticatedRequest, res: Respo
 
   const studentId = String(req.params.studentId || "").toUpperCase();
   if (!studentId) {
-    return res.status(400).json({ success: false, message: "Student ID required" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Student ID required" });
   }
 
   try {
@@ -1613,7 +1618,10 @@ export const purgeStudentRequests = async (req: AuthenticatedRequest, res: Respo
       },
     });
   } catch (e: any) {
-    console.error(`[OUTPASS] purgeStudentRequests failed for ${studentId}:`, e.message);
+    console.error(
+      `[OUTPASS] purgeStudentRequests failed for ${studentId}:`,
+      e.message,
+    );
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to purge request records",

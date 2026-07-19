@@ -15,13 +15,7 @@ import {
 } from "../../api/endpoints";
 import { apiClient } from "../../api/apiClient";
 import { parseJwt } from "../../utils/security";
-import {
-  User,
-  Lock,
-  ArrowLeft,
-  CheckCircle2,
-  Mail,
-} from "lucide-react";
+import { User, Lock, ArrowLeft, CheckCircle2, Mail } from "lucide-react";
 import LoginScreen from "../../components/ui/login-1";
 import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -58,10 +52,7 @@ function normalizeLoginIdentifier(
 }
 
 /** Only normalize the issued default password; leave custom passwords unchanged. */
-function normalizeStudentPassword(
-  password: string,
-  username: string,
-): string {
+function normalizeStudentPassword(password: string, username: string): string {
   const trimmed = password.trim();
   if (!/^[a-z]\d+@rguktong$/i.test(trimmed)) return trimmed;
   const id = username.includes("@")
@@ -149,7 +140,12 @@ function OtpInput({
 
   return (
     <div className="space-y-2">
-      <label className={cn(portalLabelClass, "normal-case tracking-normal text-[12px]")}>
+      <label
+        className={cn(
+          portalLabelClass,
+          "normal-case tracking-normal text-[12px]",
+        )}
+      >
         Verification Code
       </label>
       <div className="flex gap-2.5 justify-center">
@@ -431,7 +427,8 @@ function CaptchaStatus({
         role="alert"
       >
         <p className="text-[11px] font-medium text-amber-800">
-          Security check could not load. Refresh the page or check your connection.
+          Security check could not load. Refresh the page or check your
+          connection.
         </p>
       </div>
     );
@@ -460,9 +457,7 @@ export default function Signin({ type }: SigninProps) {
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [step, setStep] = useState<"signin" | "forgot" | "verifyOtp">(
-    "signin",
-  );
+  const [step, setStep] = useState<"signin" | "forgot" | "verifyOtp">("signin");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaStatus, setCaptchaStatus] = useState<
     "loading" | "ready" | "error"
@@ -563,7 +558,10 @@ export default function Signin({ type }: SigninProps) {
           username: normalizeLoginIdentifier(username, type),
           password:
             type === "student"
-              ? normalizeStudentPassword(password, normalizeLoginIdentifier(username, type))
+              ? normalizeStudentPassword(
+                  password,
+                  normalizeLoginIdentifier(username, type),
+                )
               : password.trim(),
           captchaToken: captchaTokenRef.current,
         }),
@@ -632,11 +630,11 @@ export default function Signin({ type }: SigninProps) {
         const rawAdminRole = (jwtRole || (data as any).role || "admin")
           .toString()
           .toLowerCase();
-        // Transition shim: converge the new "webadmin" role onto the portal's
-        // internal "webmaster" canonical (see resolveAdminPortalRole).
+        // Backward-compat shim: converge legacy "webmaster" tokens onto the
+        // canonical "webadmin" (see resolveAdminPortalRole).
         localStorage.setItem(
           "admin_role",
-          rawAdminRole === "webadmin" ? "webmaster" : rawAdminRole,
+          rawAdminRole === "webmaster" ? "webadmin" : rawAdminRole,
         );
         if (jwtDept) {
           localStorage.setItem("department", jwtDept);
@@ -647,7 +645,10 @@ export default function Signin({ type }: SigninProps) {
         toast.success("Your admin session is ready.", {
           title: "Signed in",
         });
-        setTimeout(() => navigate(postLoginPath("admin"), { replace: true }), 100);
+        setTimeout(
+          () => navigate(postLoginPath("admin"), { replace: true }),
+          100,
+        );
       } else if (type === "faculty" && token) {
         localStorage.removeItem("student_token");
         localStorage.removeItem("admin_token");
@@ -724,13 +725,10 @@ export default function Signin({ type }: SigninProps) {
           data.deliveryMethod === "push"
             ? "your registered device"
             : "your registered email";
-        toast.success(
-          `Check ${channel} for your security code.`,
-          {
-            title: "Code sent",
-            autoClose: 6000,
-          },
-        );
+        toast.success(`Check ${channel} for your security code.`, {
+          title: "Code sent",
+          autoClose: 6000,
+        });
         turnstileRef.current?.reset?.();
         syncCaptchaToken(null);
         setCaptchaStatus("loading");
@@ -1032,7 +1030,9 @@ export default function Signin({ type }: SigninProps) {
                 size="lg"
                 isLoading={isLoading}
                 onClick={requestOtp}
-                disabled={!username.trim() || (requiresCaptcha() && !captchaReady)}
+                disabled={
+                  !username.trim() || (requiresCaptcha() && !captchaReady)
+                }
               >
                 <span className="relative z-10">
                   {isLoading
@@ -1058,11 +1058,7 @@ export default function Signin({ type }: SigninProps) {
           {/* ─── Verify OTP / Reset Password Step ─────── */}
           {step === "verifyOtp" && (
             <div className="space-y-4">
-              <OtpInput
-                value={otp}
-                onChange={setOtp}
-                disabled={!!resetToken}
-              />
+              <OtpInput value={otp} onChange={setOtp} disabled={!!resetToken} />
 
               {!resetToken && (
                 <div className="space-y-4">

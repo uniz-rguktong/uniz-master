@@ -39,12 +39,12 @@ import {
 export default function WebmasterDashboard() {
   useIsAuth();
 
-  const username = (localStorage.getItem("username") || "Webmaster").replace(
+  const username = (localStorage.getItem("username") || "Webadmin").replace(
     /"/g,
     "",
   );
 
-  const role = (localStorage.getItem("role") || "webmaster")
+  const role = (localStorage.getItem("role") || "webadmin")
     .toLowerCase()
     .replace(/"/g, "");
 
@@ -53,11 +53,9 @@ export default function WebmasterDashboard() {
       filterOutpassOutingTabs([
         "dashboard",
         "student",
-        ...(role === "webmaster" || role === "coe" ? ["student_bulk"] : []),
-        ...(role === "swo"
-          ? ["grievances", "outpass", "outings"]
-          : []),
-        ...(role === "webmaster" || role === "coe"
+        ...(role === "webadmin" || role === "coe" ? ["student_bulk"] : []),
+        ...(role === "swo" ? ["grievances", "outpass", "outings"] : []),
+        ...(role === "webadmin" || role === "coe"
           ? [
               "attendance",
               "grades",
@@ -87,7 +85,7 @@ export default function WebmasterDashboard() {
       group: "Students",
       items: [
         { id: "student", label: "Student Details", icon: Users },
-        ...(role === "webmaster" || role === "coe"
+        ...(role === "webadmin" || role === "coe"
           ? [{ id: "student_bulk", label: "Student Bulk Ops", icon: Users }]
           : []),
       ],
@@ -100,7 +98,11 @@ export default function WebmasterDashboard() {
               { id: "grievances", label: "Grievances", icon: BookOpen },
               ...(enableOutingsAndOutpasses
                 ? [
-                    { id: "outpass", label: "Outpass Logs", icon: GraduationCap },
+                    {
+                      id: "outpass",
+                      label: "Outpass Logs",
+                      icon: GraduationCap,
+                    },
                     { id: "outings", label: "Outing Protocol", icon: Activity },
                   ]
                 : []),
@@ -111,16 +113,16 @@ export default function WebmasterDashboard() {
     {
       group: "Academic",
       items: [
-        ...(role === "webmaster" || role === "coe"
+        ...(role === "webadmin" || role === "coe"
           ? [{ id: "attendance", label: "Attendance Upload", icon: Layout }]
           : []),
-        ...(role === "webmaster" || role === "coe"
+        ...(role === "webadmin" || role === "coe"
           ? [{ id: "grades", label: "Grades Upload", icon: GraduationCap }]
           : []),
-        ...(role === "webmaster" || role === "coe"
+        ...(role === "webadmin" || role === "coe"
           ? [{ id: "subjects", label: "Manage Subjects", icon: BookOpen }]
           : []),
-        ...(role === "webmaster" || role === "coe"
+        ...(role === "webadmin" || role === "coe"
           ? [
               {
                 id: "semester_registration",
@@ -143,10 +145,10 @@ export default function WebmasterDashboard() {
     {
       group: "Management",
       items: [
-        ...(role === "webmaster" || role === "coe"
+        ...(role === "webadmin" || role === "coe"
           ? [{ id: "faculty_mgmt", label: "Faculty Management", icon: Users }]
           : []),
-        ...(role === "webmaster" || role === "coe"
+        ...(role === "webadmin" || role === "coe"
           ? [{ id: "system_logs", label: "System & Logs", icon: Activity }]
           : []),
         { id: "security", label: "Security", icon: Lock },

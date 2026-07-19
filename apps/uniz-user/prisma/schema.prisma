@@ -77,7 +77,7 @@ model AdminProfile {
   email       String   @unique @default("")
   contact     String   @default("")
   profileUrl  String   @default("")
-  role        String   @default("webmaster")
+  role        String   @default("webadmin")
   designation String   @default("")
   department  String   @default("")
   bio         Json?
@@ -126,7 +126,7 @@ model UploadHistory {
   failCount    Int      @default(0)
   errors       Json? // Summary of errors or specific row failures
   status       String   @default("COMPLETED") // "COMPLETED" | "FAILED" | "PARTIAL"
-  uploadedBy   String // Username of the webmaster
+  uploadedBy   String // Username of the webadmin
   createdAt    DateTime @default(now())
 
   @@index([type])

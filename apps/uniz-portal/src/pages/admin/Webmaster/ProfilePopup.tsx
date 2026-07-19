@@ -370,7 +370,7 @@ export default function ProfilePopup({
                   <DetailRow
                     icon={<Briefcase size={14} className="text-zinc-500" />}
                     label="Designation"
-                    value={formData.designation || "Webmaster"}
+                    value={formData.designation || "Webadmin"}
                     editable={isEditing}
                     onChange={(v) =>
                       setFormData({ ...formData, designation: v })

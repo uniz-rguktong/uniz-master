@@ -604,7 +604,7 @@ export const addGrades = async (req: AuthenticatedRequest, res: Response) => {
   const user = req.user;
   if (
     !user ||
-    !["webmaster", "dean", "director"].includes(user.role as string)
+    !["webadmin", "dean", "director"].includes(user.role as string)
   ) {
     return res.status(403).json({ success: false, message: "Unauthorized" });
   }
@@ -697,7 +697,7 @@ export const bulkUpdateGrades = async (
 
   if (
     !user ||
-    !["webmaster", "dean", "director"].includes(user.role as string)
+    !["webadmin", "dean", "director"].includes(user.role as string)
   ) {
     return res.status(403).json({ success: false, message: "Unauthorized" });
   }
@@ -958,7 +958,7 @@ export const addAttendance = async (
   const user = req.user;
   if (
     !user ||
-    !["webmaster", "dean", "director"].includes(user.role as string)
+    !["webadmin", "dean", "director"].includes(user.role as string)
   ) {
     return res.status(403).json({ success: false, message: "Unauthorized" });
   }
@@ -1042,7 +1042,7 @@ export const publishResults = async (
   const user = req.user;
   if (
     !user ||
-    !["webmaster", "director", "dean"].includes(user.role as string)
+    !["webadmin", "director", "dean"].includes(user.role as string)
   ) {
     return res.status(403).json({ success: false, message: "Unauthorized" });
   }
@@ -1690,8 +1690,8 @@ export const addSubject = async (req: AuthenticatedRequest, res: Response) => {
   const { code, name, credits, department, semester } = req.body;
   const user = req.user;
 
-  // Only Webmaster, Dean/Director or HOD can add/update subjects
-  const allowed = ["webmaster", "dean", "director", "hod"];
+  // Only Webadmin, Dean/Director or HOD can add/update subjects
+  const allowed = ["webadmin", "dean", "director", "hod"];
   if (!user || !allowed.includes(user.role as string)) {
     return res.status(403).json({
       success: false,
@@ -1770,7 +1770,7 @@ export const updateSubject = async (
   const { code, name, credits, department, semester } = req.body;
   const user = req.user;
 
-  const allowed = ["webmaster", "dean", "director", "hod"];
+  const allowed = ["webadmin", "dean", "director", "hod"];
   if (!user || !allowed.includes(user.role as string)) {
     return res.status(403).json({
       success: false,
@@ -1824,7 +1824,7 @@ export const deleteSubject = async (
   const { id } = req.params;
   const user = req.user;
 
-  const allowed = ["webmaster", "dean", "director", "hod"];
+  const allowed = ["webadmin", "dean", "director", "hod"];
   if (!user || !allowed.includes(user.role as string)) {
     return res.status(403).json({
       success: false,

@@ -130,7 +130,7 @@ model Faculty {
   photo       String?
   department  String
   designation String?  @default("Assistant Professor")
-  role        String   @default("FACULTY") // "FACULTY", "HOD", "DEAN", "WEBMASTER"
+  role        String   @default("FACULTY") // "FACULTY", "HOD", "DEAN", "WEBADMIN"
   bio         Json?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

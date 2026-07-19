@@ -105,7 +105,7 @@ export default function DirectPublishModal({
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 uppercase">
-              Webmaster only
+              Webadmin only
             </p>
             <h2 className={adminModalTitleClass}>Publish to students</h2>
             <p className={cn(adminModalDescClass, "mt-1")}>{semester.name}</p>

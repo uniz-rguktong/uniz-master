@@ -20,17 +20,19 @@ export function resolveAdminPortalRole(
     .replace(/"/g, "")
     .toLowerCase();
 
-  // Transition shim for the webmaster -> webadmin role rename: the portal's
-  // internal checks still gate on "webmaster", so converge "webadmin" onto it.
-  // Keeps existing sessions working whether the token carries the old or new
-  // role string. Remove once the portal switches its checks to "webadmin".
-  if (role === "webadmin") role = "webmaster";
+  // Backward-compat shim for the webmaster -> webadmin role rename: 'webadmin'
+  // is now the canonical role the portal gates on, so converge any lingering
+  // legacy 'webmaster' (old JWTs / previously-persisted admin_role) onto it.
+  // Remove once all pre-flip 'webmaster' tokens have expired.
+  if (role === "webmaster") role = "webadmin";
 
   if ((role === "faculty" || role === "teacher") && /^hod[_-]/.test(uname)) {
     role = "hod";
   }
 
-  const stored = (localStorage.getItem("admin_role") || "").replace(/"/g, "").toLowerCase();
+  const stored = (localStorage.getItem("admin_role") || "")
+    .replace(/"/g, "")
+    .toLowerCase();
   if (role !== stored) {
     localStorage.setItem("admin_role", role);
   }
