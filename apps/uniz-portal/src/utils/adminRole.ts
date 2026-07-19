@@ -20,6 +20,12 @@ export function resolveAdminPortalRole(
     .replace(/"/g, "")
     .toLowerCase();
 
+  // Transition shim for the webmaster -> webadmin role rename: the portal's
+  // internal checks still gate on "webmaster", so converge "webadmin" onto it.
+  // Keeps existing sessions working whether the token carries the old or new
+  // role string. Remove once the portal switches its checks to "webadmin".
+  if (role === "webadmin") role = "webmaster";
+
   if ((role === "faculty" || role === "teacher") && /^hod[_-]/.test(uname)) {
     role = "hod";
   }
