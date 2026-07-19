@@ -35,9 +35,7 @@ import {
   adminGhostButtonClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
-
-const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+import { uploadImage } from "../../../api/uploadImage";
 
 export default function BannersSection() {
   const [bannersState, setBannersState] = useRecoilState(bannersAtom);
@@ -101,27 +99,11 @@ export default function BannersSection() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
-      toast.error("Cloudinary configuration missing");
-      return;
-    }
-
     setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-
     try {
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-      const data = await res.json();
-      if (data.secure_url) {
-        setNewBanner((prev) => ({ ...prev, imageUrl: data.secure_url }));
+      const imageUrl = await uploadImage(file, "banner");
+      if (imageUrl) {
+        setNewBanner((prev) => ({ ...prev, imageUrl }));
         toast.success("Image uploaded successfully");
       } else {
         toast.error("Upload failed");
@@ -256,7 +238,12 @@ export default function BannersSection() {
   };
 
   return (
-    <div className={cn(adminPageWrapClass, "animate-in fade-in duration-700 pb-20")}>
+    <div
+      className={cn(
+        adminPageWrapClass,
+        "animate-in fade-in duration-700 pb-20",
+      )}
+    >
       <SectionHeader
         icon={<ImageIcon size={18} />}
         eyebrow="Campus"
@@ -278,7 +265,10 @@ export default function BannersSection() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className={cn(adminCardClass, "overflow-hidden flex flex-col animate-pulse")}
+              className={cn(
+                adminCardClass,
+                "overflow-hidden flex flex-col animate-pulse",
+              )}
             >
               <div className="h-44 w-full bg-zinc-100 border-b border-zinc-200/70" />
               <div className="p-6 space-y-5">
@@ -303,7 +293,11 @@ export default function BannersSection() {
             return (
               <div
                 key={bannerId}
-                className={cn(adminCardClass, adminCardHoverClass, "overflow-hidden flex flex-col group relative")}
+                className={cn(
+                  adminCardClass,
+                  adminCardHoverClass,
+                  "overflow-hidden flex flex-col group relative",
+                )}
               >
                 {/* Preview Image */}
                 <div className="h-44 w-full bg-zinc-100 relative overflow-hidden shrink-0 border-b border-zinc-200/70">
@@ -374,7 +368,12 @@ export default function BannersSection() {
           })}
         </div>
       ) : (
-        <div className={cn(adminCardClass, "py-24 flex flex-col items-center justify-center text-center space-y-6")}>
+        <div
+          className={cn(
+            adminCardClass,
+            "py-24 flex flex-col items-center justify-center text-center space-y-6",
+          )}
+        >
           <div className="w-16 h-16 bg-zinc-50 border border-zinc-200/70 rounded-2xl flex items-center justify-center text-zinc-300">
             <ImageIcon size={32} strokeWidth={1.5} />
           </div>

@@ -28,9 +28,7 @@ import {
 import { cn } from "../../../utils/cn";
 import { DeptStaffEditor } from "./DeptStaffEditor";
 import { WebsiteLiveEditor } from "./WebsiteLiveEditor";
-
-const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+import { uploadImage } from "../../../api/uploadImage";
 
 const PAGE_LABELS: Record<string, string> = {
   aboutrgukt: "About RGUKT",
@@ -67,7 +65,14 @@ const SECTIONS = [
     description: "Campus life, governance, and university history.",
     icon: Info,
     endpoint: "/api/institute/",
-    pages: ["aboutrgukt", "campuslife", "edusys", "govcouncil", "rtiinfo", "scst"],
+    pages: [
+      "aboutrgukt",
+      "campuslife",
+      "edusys",
+      "govcouncil",
+      "rtiinfo",
+      "scst",
+    ],
   },
   {
     id: "academics",
@@ -75,7 +80,12 @@ const SECTIONS = [
     description: "Regulations, calendars, curricula, and programs.",
     icon: BookOpen,
     endpoint: "/api/academics/",
-    pages: ["AcademicPrograms", "AcademicCalender", "AcademicRegulations", "curicula"],
+    pages: [
+      "AcademicPrograms",
+      "AcademicCalender",
+      "AcademicRegulations",
+      "curicula",
+    ],
   },
   {
     id: "departments",
@@ -84,8 +94,22 @@ const SECTIONS = [
     icon: Users,
     endpoint: "/api/departments/",
     pages: [
-      "BIOLOGY", "CHEMISTRY", "CIVIL", "CSE", "ECE", "EEE", "ENGLISH", "IT",
-      "LIB", "MANAGEMENT", "MATHEMATICS", "ME", "PED", "PHYSICS", "TELUGU", "YOGA",
+      "BIOLOGY",
+      "CHEMISTRY",
+      "CIVIL",
+      "CSE",
+      "ECE",
+      "EEE",
+      "ENGLISH",
+      "IT",
+      "LIB",
+      "MANAGEMENT",
+      "MATHEMATICS",
+      "ME",
+      "PED",
+      "PHYSICS",
+      "TELUGU",
+      "YOGA",
     ],
   },
   {
@@ -100,7 +124,11 @@ const SECTIONS = [
 
 const contentVariants = {
   initial: { opacity: 0, y: 12 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+  },
   exit: { opacity: 0, y: -8, transition: { duration: 0.18 } },
 };
 
@@ -125,7 +153,9 @@ export default function WebsiteUpdatesSection() {
   const [contentVersion, setContentVersion] = useState(0);
   const savedSnapshotRef = useRef<string>("");
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const handleSaveRef = useRef<(silent?: boolean) => Promise<void>>(async () => {});
+  const handleSaveRef = useRef<(silent?: boolean) => Promise<void>>(
+    async () => {},
+  );
 
   const activeSection = SECTIONS.find((s) => s.id === activeSectionId)!;
   const isDeptStaff = activeSectionId === "departments";
@@ -193,24 +223,11 @@ export default function WebsiteUpdatesSection() {
     fetchData();
   }, [fetchData]);
 
-  const isDirty =
-    !!data && JSON.stringify(data) !== savedSnapshotRef.current;
+  const isDirty = !!data && JSON.stringify(data) !== savedSnapshotRef.current;
 
   const handleCloudinaryUpload = async (file: File): Promise<string | null> => {
-    if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
-      toast.error("Cloudinary configuration missing");
-      return null;
-    }
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
     try {
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-        { method: "POST", body: formData },
-      );
-      const json = await res.json();
-      return json.secure_url || null;
+      return await uploadImage(file, "website");
     } catch {
       toast.error("Image upload failed");
       return null;
@@ -277,7 +294,9 @@ export default function WebsiteUpdatesSection() {
       let current = root;
       for (let i = 0; i < path.length - 1; i++) {
         const key = path[i];
-        current[key] = Array.isArray(current[key]) ? [...current[key]] : { ...current[key] };
+        current[key] = Array.isArray(current[key])
+          ? [...current[key]]
+          : { ...current[key] };
         current = current[key];
       }
       current[path[path.length - 1]] = value;
@@ -319,7 +338,9 @@ export default function WebsiteUpdatesSection() {
     ? `${activeSection.label} / ${formatPageLabel(activePage)}`
     : activeSection.label;
 
-  const pageLabel = activePage ? formatPageLabel(activePage) : activeSection.label;
+  const pageLabel = activePage
+    ? formatPageLabel(activePage)
+    : activeSection.label;
 
   const publishSubtitle = saving
     ? "Saving to the live site…"
@@ -377,10 +398,15 @@ export default function WebsiteUpdatesSection() {
                 >
                   <Icon
                     size={16}
-                    className={cn("mt-0.5 shrink-0", isActive ? "text-white" : "text-zinc-400")}
+                    className={cn(
+                      "mt-0.5 shrink-0",
+                      isActive ? "text-white" : "text-zinc-400",
+                    )}
                   />
                   <div className="min-w-0">
-                    <p className="text-[13px] font-semibold tracking-tight">{section.label}</p>
+                    <p className="text-[13px] font-semibold tracking-tight">
+                      {section.label}
+                    </p>
                     <p
                       className={cn(
                         "text-[11px] mt-0.5 leading-snug",
@@ -432,7 +458,9 @@ export default function WebsiteUpdatesSection() {
                   </button>
                 ))}
                 {filteredPages.length === 0 && (
-                  <p className="text-[11px] text-zinc-400 px-2 py-4 text-center">No matches</p>
+                  <p className="text-[11px] text-zinc-400 px-2 py-4 text-center">
+                    No matches
+                  </p>
                 )}
               </div>
             </div>
@@ -445,14 +473,21 @@ export default function WebsiteUpdatesSection() {
               <button
                 type="button"
                 onClick={() => setSidebarOpen((o) => !o)}
-                className={cn(adminGhostButtonClass, "w-9 px-0 shrink-0 lg:hidden")}
+                className={cn(
+                  adminGhostButtonClass,
+                  "w-9 px-0 shrink-0 lg:hidden",
+                )}
                 title="Toggle sidebar"
               >
                 <LayoutGrid size={16} />
               </button>
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold text-zinc-400 tracking-wide">Workspace</p>
-                <p className="text-sm font-semibold text-zinc-900 truncate">{breadcrumb}</p>
+                <p className="text-[10px] font-semibold text-zinc-400 tracking-wide">
+                  Workspace
+                </p>
+                <p className="text-sm font-semibold text-zinc-900 truncate">
+                  {breadcrumb}
+                </p>
               </div>
               <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0B2A47]/5 text-[#0B2A47] border border-[#0B2A47]/10 text-[10px] font-semibold tracking-wide">
                 <Sparkles size={10} /> Live editor

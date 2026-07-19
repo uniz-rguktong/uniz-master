@@ -7,7 +7,7 @@ description: "Mermaid maps for every major student, webadmin, HOD, dean, SWO, an
 
 Every diagram below follows the same shape:
 
-**Browser (Portal)** → **Cloudflare** → **Traefik** → **gateway-api** → **owning service** → **Postgres / Redis / Cloudflare R2 / SES**
+**Browser (Portal)** → **Cloudflare** → **Traefik** → **gateway-api** → **owning service** → **Postgres / Redis / self-hosted images / SES**
 
 Gateway path map: [Request flow](/system/request-flow) · [API gateway](/api/platform/gateway).
 
@@ -92,7 +92,7 @@ flowchart LR
 |--------|----------|---------|
 | Bootstrap / home | `GET /profile/student/bootstrap` | User |
 | Update profile | `PUT /profile/student/update` | User |
-| Upload photo | `POST /files/image/upload` | User → compress (WebP) → Cloudflare R2 |
+| Upload photo | `POST /files/image/upload` | User → compress (WebP) → VPS disk (served via `/files/img/*`) |
 | Grades | `GET /academics/grades` | Academics |
 | Attendance | `GET /academics/attendance` | Academics |
 | Register subjects | `POST /academics/student/register` | Academics |

@@ -435,9 +435,8 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
     req.url.includes("/download?") ||
     /\/download$/i.test(req.url) ||
     /\/pdf\/jobs\/[^/]+\/download/i.test(req.url) ||
-    req.url.endsWith(".pdf") ||
-    req.url.endsWith(".xlsx") ||
-    req.url.endsWith(".zip");
+    req.url.startsWith("/img/") ||
+    /\.(pdf|xlsx|zip|webp|png|jpe?g|gif|svg|ico|avif)(\?|$)/i.test(req.url);
 
   // Bypass Warp Engine for sensitive personal data to prevent accidental leaks
   const isSensitive =

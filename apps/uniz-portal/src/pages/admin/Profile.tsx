@@ -15,11 +15,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/utils/toast-ref";
 import { BASE_URL } from "../../api/endpoints";
+import { uploadImage } from "../../api/uploadImage";
 import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
-
-const VITE_CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-const VITE_CLOUDINARY_UPLOAD_PRESET = import.meta.env
-  .VITE_CLOUDINARY_UPLOAD_PRESET;
 
 export default function AdminProfile() {
   const username = (localStorage.getItem("username") || "Webadmin").replace(
@@ -78,17 +75,9 @@ export default function AdminProfile() {
 
     try {
       setIsUploading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", VITE_CLOUDINARY_UPLOAD_PRESET);
+      const uploadedUrl = await uploadImage(file, "admin-profile");
 
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        { method: "POST", body: formData },
-      );
-      const data = await res.json();
-
-      if (data.secure_url) {
+      if (uploadedUrl) {
         const token = localStorage.getItem("admin_token");
         const updateRes = await fetch(`${BASE_URL}/profile/admin/me/update`, {
           method: "PUT",
@@ -96,7 +85,7 @@ export default function AdminProfile() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
           },
-          body: JSON.stringify({ profileUrl: data.secure_url }),
+          body: JSON.stringify({ profileUrl: uploadedUrl }),
         });
         const updateData = await updateRes.json();
         if (updateData.success) {
@@ -104,7 +93,7 @@ export default function AdminProfile() {
           fetchProfile();
         }
       } else {
-        toast.error(data.message || "Failed to upload image");
+        toast.error("Failed to upload image");
       }
     } catch (err) {
       toast.error("Failed to upload image");

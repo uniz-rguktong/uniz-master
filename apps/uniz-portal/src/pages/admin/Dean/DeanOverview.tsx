@@ -29,9 +29,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { toast } from "@/utils/toast-ref";
 import { BackgroundIconCloud } from "../../../components/illustrations/FloatingIllustrations";
-
-const CLOUDINARY_CLOUD = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-const CLOUDINARY_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+import { uploadImage } from "../../../api/uploadImage";
 
 interface Profile {
   name?: string;
@@ -102,22 +100,15 @@ export default function DeanOverview({ username }: { username: string }) {
     if (!file) return;
     try {
       setIsUploading(true);
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("upload_preset", CLOUDINARY_PRESET);
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
-        { method: "POST", body: fd },
-      );
-      const data = await res.json();
-      if (!data.secure_url) throw new Error();
+      const uploadedUrl = await uploadImage(file, "admin-profile");
+      if (!uploadedUrl) throw new Error();
       const upd = await fetch(`${BASE_URL}/profile/admin/me/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token()}`,
         },
-        body: JSON.stringify({ profileUrl: data.secure_url }),
+        body: JSON.stringify({ profileUrl: uploadedUrl }),
       });
       const updData = await upd.json();
       if (updData.success) {
@@ -212,7 +203,6 @@ export default function DeanOverview({ username }: { username: string }) {
       );
   }, [heatmap, selectedBranch]);
 
-
   const occupancyStats = useMemo(() => {
     const inside = Number(occupancy?.["Inside Campus"]) || 0;
     const outside = Number(occupancy?.["Outside Campus"]) || 0;
@@ -226,7 +216,6 @@ export default function DeanOverview({ username }: { username: string }) {
       },
       { value: outside, color: "hsl(214.7 95% 40%)", label: "Outside Campus" },
     ];
-
 
     return {
       total,
@@ -338,9 +327,7 @@ export default function DeanOverview({ username }: { username: string }) {
               {username}
             </span>
             <span className="w-1 h-1 rounded-full bg-zinc-200" />
-            <span className="tracking-wide text-zinc-400">
-              Dean Portal
-            </span>
+            <span className="tracking-wide text-zinc-400">Dean Portal</span>
           </div>
         )}
 
@@ -442,7 +429,9 @@ export default function DeanOverview({ username }: { username: string }) {
           value={academicStats?.backlogCount ?? "—"}
           icon={AlertTriangle}
           badge={academicStats?.backlogCount ? "Needs Attention" : "Clear"}
-          iconColor={academicStats?.backlogCount ? "text-amber-500" : "text-emerald-500"}
+          iconColor={
+            academicStats?.backlogCount ? "text-amber-500" : "text-emerald-500"
+          }
         />
       </div>
 
@@ -563,7 +552,9 @@ export default function DeanOverview({ username }: { username: string }) {
       {academicStats && (
         <div className="px-10 space-y-6">
           <div>
-            <h2 className="text-xl font-semibold text-zinc-900 tracking-tight">Academic Insights</h2>
+            <h2 className="text-xl font-semibold text-zinc-900 tracking-tight">
+              Academic Insights
+            </h2>
             <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.4em] mt-1">
               {academicStats.currentSemester || "CURRENT SEMESTER"}
             </p>
@@ -580,11 +571,19 @@ export default function DeanOverview({ username }: { username: string }) {
               value={academicStats.lowAttendanceCount}
               icon={UserX}
               badge={`< 75%`}
-              iconColor={academicStats.lowAttendanceCount > 0 ? "text-red-500" : "text-emerald-500"}
+              iconColor={
+                academicStats.lowAttendanceCount > 0
+                  ? "text-red-500"
+                  : "text-emerald-500"
+              }
             />
             <KPICard
               title="Avg Attendance"
-              value={academicStats.avgAttendancePct != null ? `${academicStats.avgAttendancePct}%` : "—"}
+              value={
+                academicStats.avgAttendancePct != null
+                  ? `${academicStats.avgAttendancePct}%`
+                  : "—"
+              }
               icon={BookOpen}
               badge="Institution"
             />
@@ -592,7 +591,11 @@ export default function DeanOverview({ username }: { username: string }) {
               title="Registrations"
               value={academicStats.registration.registered.toLocaleString()}
               icon={GraduationCap}
-              badge={academicStats.registration.dropped > 0 ? `${academicStats.registration.dropped} dropped` : "Active"}
+              badge={
+                academicStats.registration.dropped > 0
+                  ? `${academicStats.registration.dropped} dropped`
+                  : "Active"
+              }
             />
           </div>
         </div>
