@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import * as webpush from "web-push";
 import prisma from "../utils/prisma.util";
 import { createInboxEntry } from "./inbox.service";
@@ -31,17 +32,18 @@ async function persistInboxAndPath(
 ): Promise<{ notificationId?: string; path: string }> {
   try {
     const type = String(payload.data?.type || "GENERIC");
+    // Pre-generate the id so we can set the final path in the initial insert —
+    // one write instead of insert + update.
+    const id = randomUUID();
+    const path = `/notifications?n=${id}`;
     const entry = await createInboxEntry(username, {
+      id,
       title: payload.title,
       body: payload.rawBody
         ? payload.body
         : `Dear ${payload.data?.name || username},\n\n${payload.body}`,
       type,
-    });
-    const path = `/notifications?n=${entry.id}`;
-    await prisma.notificationInbox.update({
-      where: { id: entry.id },
-      data: { path },
+      path,
     });
     return { notificationId: entry.id, path };
   } catch (err: unknown) {

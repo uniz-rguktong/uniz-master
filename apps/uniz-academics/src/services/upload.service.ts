@@ -108,6 +108,23 @@ export async function processNextBatch() {
     academicCodeLookup.set(key, list);
   }
 
+  // Distinct students touched this run — invalidated once at the end instead of
+  // per row (grades previously fired a cross-service HTTP POST on every row).
+  const touchedStudents = new Set<string>();
+
+  // Memoize semester-id resolution for the run: the same raw value resolves to
+  // the same id and was previously re-queried from the DB on every row.
+  const semesterIdMemo = new Map<string, string | null>();
+  const resolveSemesterIdMemo = async (
+    raw?: string | null,
+  ): Promise<string | null> => {
+    const key = String(raw || "");
+    if (semesterIdMemo.has(key)) return semesterIdMemo.get(key)!;
+    const val = await resolveAcademicSemesterId(raw);
+    semesterIdMemo.set(key, val);
+    return val;
+  };
+
   const resolveSubjectFromRowCode = async (
     rawCode: string,
     academicSemesterId?: string,
@@ -120,7 +137,7 @@ export async function processNextBatch() {
 
     const matches = academicCodeLookup.get(code) || [];
     const resolvedSemesterId = academicSemesterId
-      ? await resolveAcademicSemesterId(academicSemesterId)
+      ? await resolveSemesterIdMemo(academicSemesterId)
       : null;
     const semesterCandidates = [
       academicSemesterId,
@@ -148,7 +165,7 @@ export async function processNextBatch() {
     academicSemesterId?: string,
   ): Promise<{ customName: string | null; customCode: string | null }> => {
     const resolvedSemesterId = academicSemesterId
-      ? await resolveAcademicSemesterId(academicSemesterId)
+      ? await resolveSemesterIdMemo(academicSemesterId)
       : null;
     const semesterId = resolvedSemesterId || academicSemesterId;
     if (!semesterId) {
@@ -410,7 +427,7 @@ export async function processNextBatch() {
             });
             successCount++;
 
-            await invalidateStudentAcademicCaches(studentId);
+            touchedStudents.add(studentId);
           } catch (err: any) {
             if (failCount === 0) {
               console.error(`[Worker] [GRADES] First failure on row:`, row);
@@ -558,9 +575,7 @@ export async function processNextBatch() {
             });
             successCount++;
 
-            // Cache Invalidation
-            await redis.del(`attendance:${studentId}`);
-            await redis.del(`profile:v2:${studentId}`);
+            touchedStudents.add(studentId);
           } catch (err: any) {
             failCount++;
             errors.push({
@@ -607,6 +622,32 @@ export async function processNextBatch() {
       );
     }
   } // End of while loop
+
+  // Batched, deduplicated cache invalidation (moved off the per-row path).
+  // A job is a single type, so we preserve the exact per-type behavior.
+  if (touchedStudents.size > 0) {
+    const ids = [...touchedStudents];
+    if (type === "GRADES") {
+      const CONCURRENCY = 10;
+      for (let i = 0; i < ids.length; i += CONCURRENCY) {
+        await Promise.allSettled(
+          ids
+            .slice(i, i + CONCURRENCY)
+            .map((id) => invalidateStudentAcademicCaches(id)),
+        );
+      }
+    } else if (type === "ATTENDANCE") {
+      try {
+        const pipe = redis.pipeline();
+        for (const id of ids) {
+          pipe.del(`attendance:${id}`, `profile:v2:${id}`);
+        }
+        await pipe.exec();
+      } catch {
+        /* Redis optional */
+      }
+    }
+  }
 
   const newProcessed = initialProcessed + processedInThisRun;
   const elapsed = Math.max(Date.now() - startTime, 1);

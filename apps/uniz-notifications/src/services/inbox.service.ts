@@ -1,6 +1,7 @@
 import prisma from "../utils/prisma.util";
 
 export type InboxCreateInput = {
+  id?: string;
   title: string;
   body: string;
   type?: string;
@@ -18,6 +19,9 @@ export async function createInboxEntry(
 
   return prisma.notificationInbox.create({
     data: {
+      // Callers may pre-generate the id so they can embed it in `path` and avoid
+      // a follow-up UPDATE (single write instead of insert+update).
+      ...(input.id ? { id: input.id } : {}),
       username: normalized,
       title: input.title,
       body: input.body,
