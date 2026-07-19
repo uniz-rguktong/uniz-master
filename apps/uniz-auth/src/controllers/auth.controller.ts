@@ -77,6 +77,16 @@ async function resolveDepartmentForLogin(
   const USER_SERVICE = getUserServiceBase();
   const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
 
+  // Department rarely changes per user — cache it so we don't hit user-service
+  // on every login. Cache non-empty results for 1h, unknowns briefly.
+  const cacheKey = `login:dept:${normalizedUsername}`;
+  try {
+    const cached = await redis.get(cacheKey);
+    if (cached) return cached;
+  } catch {
+    /* Redis optional */
+  }
+
   const endpoints =
     role === UserRole.STUDENT
       ? [`student/${normalizedUsername}`]
@@ -110,7 +120,15 @@ async function resolveDepartmentForLogin(
     ),
   ]);
 
-  return fromService || inferred;
+  const resolved = fromService || inferred;
+  try {
+    // Only cache a resolved department from the service; don't pin a fallback
+    // guess for long in case the profile lookup was just slow.
+    if (fromService) await redis.setex(cacheKey, 3600, resolved);
+  } catch {
+    /* Redis optional */
+  }
+  return resolved;
 }
 
 async function resolveLoginIdentifier(
@@ -768,7 +786,7 @@ export const signup = async (req: Request, res: Response) => {
                 department: "GENERAL",
                 designation: "Faculty",
               },
-              { headers: { "x-internal-secret": SECRET } },
+              { headers: { "x-internal-secret": SECRET }, timeout: 5000 },
             )
           : role === "student"
             ? axios.put(
@@ -776,7 +794,7 @@ export const signup = async (req: Request, res: Response) => {
                 {
                   email: email || `${user.username}@rguktong.ac.in`,
                 },
-                { headers: { "x-internal-secret": SECRET } },
+                { headers: { "x-internal-secret": SECRET }, timeout: 5000 },
               )
             : Promise.resolve();
 

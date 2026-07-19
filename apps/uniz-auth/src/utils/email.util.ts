@@ -1,5 +1,6 @@
 import axios from "axios";
 import { enqueueNotificationJob } from "./queue.util";
+import { redis } from "./redis.util";
 
 const GATEWAY_URL =
   process.env.GATEWAY_URL ||
@@ -80,6 +81,16 @@ export const sendOtpPush = async (
 };
 
 export async function resolveProfileEmail(username: string): Promise<string> {
+  // A user's email rarely changes; cache it so repeated OTP requests don't fan
+  // out up to 3 sequential user-service HTTP calls each time.
+  const cacheKey = `otp:email:${username.toUpperCase()}`;
+  try {
+    const cached = await redis.get(cacheKey);
+    if (cached) return cached;
+  } catch {
+    /* Redis optional — fall through to live resolution */
+  }
+
   let email = `${username.toLowerCase()}@rguktong.ac.in`;
   try {
     const rawUserUrl = (
@@ -116,6 +127,12 @@ export async function resolveProfileEmail(username: string): Promise<string> {
     }
   } catch {
     // keep default campus email
+  }
+
+  try {
+    await redis.setex(cacheKey, 3600, email);
+  } catch {
+    /* Redis optional */
   }
   return email;
 }
