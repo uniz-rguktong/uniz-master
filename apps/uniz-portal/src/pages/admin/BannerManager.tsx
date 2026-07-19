@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "@/utils/toast-ref";
 import { apiClient } from "../../api/apiClient";
 import { BASE_URL } from "../../api/endpoints";
+import { uploadImage } from "../../api/uploadImage";
 import {
   Trash2,
   PlusCircle,
@@ -15,9 +16,6 @@ import {
   EyeOff,
   X,
 } from "lucide-react";
-
-const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 import { useDropzone } from "react-dropzone";
 import {
   DndContext,
@@ -166,18 +164,6 @@ export default function BannerManager() {
     fetchBanners();
   }, []);
 
-  const uploadToCloudinary = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-      { method: "POST", body: formData },
-    );
-    const data = await res.json();
-    return data.secure_url;
-  };
-
   const addBanner = async () => {
     if (!title || !text || !image) {
       toast.error("Title, Text and Image are required");
@@ -185,7 +171,11 @@ export default function BannerManager() {
     }
     setLoading(true);
     try {
-      const imageUrl = await uploadToCloudinary(image);
+      const imageUrl = await uploadImage(image, "banner");
+      if (!imageUrl) {
+        toast.error("Image upload failed");
+        return;
+      }
       const data = await apiClient<any>(`${BASE_URL}/admin/banners`, {
         method: "POST",
         body: JSON.stringify({ title, text, imageUrl }),
@@ -301,9 +291,12 @@ export default function BannerManager() {
               <X size={20} />
             </button>
             <div className="p-8">
-              <h3 className={cn(adminModalTitleClass, "mb-1")}>Create new banner</h3>
+              <h3 className={cn(adminModalTitleClass, "mb-1")}>
+                Create new banner
+              </h3>
               <p className={cn(adminModalDescClass, "mb-6")}>
-                Upload an image and add descriptive content for the homepage carousel.
+                Upload an image and add descriptive content for the homepage
+                carousel.
               </p>
 
               <div className="flex flex-col gap-6">
@@ -358,7 +351,9 @@ export default function BannerManager() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className={adminLabelClass}>Content / description</label>
+                    <label className={adminLabelClass}>
+                      Content / description
+                    </label>
                     <textarea
                       value={text}
                       onChange={(e) => setText(e.target.value)}

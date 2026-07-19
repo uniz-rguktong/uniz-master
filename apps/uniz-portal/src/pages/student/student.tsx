@@ -24,6 +24,7 @@ import { student, studentAuthLoading, studentProfileError } from "../../store";
 import { useIsAuth } from "../../hooks/is_authenticated";
 import { useStudentData } from "../../hooks/student_info";
 import { apiClient } from "../../api/apiClient";
+import { uploadImage } from "../../api/uploadImage";
 import {
   UPDATE_DETAILS,
   STUDENT_HISTORY,
@@ -222,7 +223,13 @@ export default function StudentProfilePage() {
 
   // Helper to derive initial fields from user user object
   const getInitialFields = (userData: any) => {
-    const genderMap: any = { "Male": "M", "Female": "F", "M": "M", "F": "F", "Other": "Other" };
+    const genderMap: any = {
+      Male: "M",
+      Female: "F",
+      M: "M",
+      F: "F",
+      Other: "Other",
+    };
     return {
       name: userData?.name || "",
       gender: genderMap[userData?.gender] || userData?.gender || "",
@@ -288,25 +295,13 @@ export default function StudentProfilePage() {
 
     try {
       setIsUploadingImage(true);
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append(
-        "upload_preset",
-        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
-      );
+      const uploadedUrl = await uploadImage(file, "student-profile");
 
-      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        { method: "POST", body: formData },
-      );
-      const data = await res.json();
-
-      if (data.secure_url) {
+      if (uploadedUrl) {
         // Only send profile_url - don't mix in personal fields
         const updateRes = await apiClient<any>(UPDATE_DETAILS, {
           method: "PUT",
-          body: JSON.stringify({ profile_url: data.secure_url }),
+          body: JSON.stringify({ profile_url: uploadedUrl }),
         });
         if (updateRes && updateRes.success) {
           toast.success("Profile photo updated!");
@@ -546,7 +541,11 @@ export default function StudentProfilePage() {
       name: "gender",
       editable: false,
       type: "select",
-      options: [{v:"M", l:"Male"}, {v:"F", l:"Female"}, {v:"Other", l:"Other"}]
+      options: [
+        { v: "M", l: "Male" },
+        { v: "F", l: "Female" },
+        { v: "Other", l: "Other" },
+      ],
     },
 
     {
@@ -555,7 +554,9 @@ export default function StudentProfilePage() {
       name: "bloodGroup",
       editable: true,
       type: "select",
-      options: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "N/A"].map(v => ({v, l:v}))
+      options: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "N/A"].map(
+        (v) => ({ v, l: v }),
+      ),
     },
     {
       icon: <Phone className="w-4 h-4" />,
@@ -651,71 +652,71 @@ export default function StudentProfilePage() {
                   boxShadow: "0 0 0 1px rgba(46, 189, 89, 0.1)",
                 }}
               >
-              <div className="relative bg-zinc-50 p-[3px] rounded-full">
-                <div className="relative w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-[#004e43] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
-                  {/* Profile image or initial */}
-                  {user?.profile_url ? (
-                    <img
-                      src={user.profile_url}
-                      alt="Profile"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : user?.name ? (
-                    <span className="text-4xl md:text-5xl font-semibold tracking-tight leading-none">
-                      {user?.name?.[0]?.toUpperCase() || "S"}
-                    </span>
-                  ) : (
-                    <span className="text-4xl md:text-5xl font-semibold tracking-tight leading-none">
-                      S
-                    </span>
-                  )}
-
-                  {/* Dark blurry overlay - contained fully inside the circle */}
-                  <AnimatePresence>
-                    {isUploadingImage && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute inset-0 rounded-full flex items-center justify-center"
-                        style={{
-                          background: "rgba(0, 0, 0, 0.55)",
-                          backdropFilter: "blur(6px)",
-                          WebkitBackdropFilter: "blur(6px)",
-                        }}
-                      >
-                        <Loader2
-                          className="w-9 h-9 text-white animate-spin"
-                          strokeWidth={2}
-                        />
-                      </motion.div>
+                <div className="relative bg-zinc-50 p-[3px] rounded-full">
+                  <div className="relative w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-[#004e43] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
+                    {/* Profile image or initial */}
+                    {user?.profile_url ? (
+                      <img
+                        src={user.profile_url}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : user?.name ? (
+                      <span className="text-4xl md:text-5xl font-semibold tracking-tight leading-none">
+                        {user?.name?.[0]?.toUpperCase() || "S"}
+                      </span>
+                    ) : (
+                      <span className="text-4xl md:text-5xl font-semibold tracking-tight leading-none">
+                        S
+                      </span>
                     )}
-                  </AnimatePresence>
+
+                    {/* Dark blurry overlay - contained fully inside the circle */}
+                    <AnimatePresence>
+                      {isUploadingImage && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="absolute inset-0 rounded-full flex items-center justify-center"
+                          style={{
+                            background: "rgba(0, 0, 0, 0.55)",
+                            backdropFilter: "blur(6px)",
+                            WebkitBackdropFilter: "blur(6px)",
+                          }}
+                        >
+                          <Loader2
+                            className="w-9 h-9 text-white animate-spin"
+                            strokeWidth={2}
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
-              </div>
 
-              {/* Camera Icon Button */}
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploadingImage}
-                className="absolute bottom-[-1px] right-2 w-8 h-8 bg-zinc-100 border-[1.5px] border-zinc-900 rounded-full flex items-center justify-center text-zinc-800 hover:bg-zinc-200 transition-all z-20 cursor-pointer shadow-sm hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Update Profile Photo"
-              >
-                <Camera
-                  className="w-[18px] h-[18px] overflow-hidden"
-                  strokeWidth={2.5}
+                {/* Camera Icon Button */}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingImage}
+                  className="absolute bottom-[-1px] right-2 w-8 h-8 bg-zinc-100 border-[1.5px] border-zinc-900 rounded-full flex items-center justify-center text-zinc-800 hover:bg-zinc-200 transition-all z-20 cursor-pointer shadow-sm hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Update Profile Photo"
+                >
+                  <Camera
+                    className="w-[18px] h-[18px] overflow-hidden"
+                    strokeWidth={2.5}
+                  />
+                </button>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageUpload}
                 />
-              </button>
-
-              <input
-                type="file"
-                ref={fileInputRef}
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-            </div>
+              </div>
             </div>
 
             <div className="flex flex-col items-center gap-2.5 w-full max-w-xl px-3 mb-1.5 mt-1">
@@ -771,14 +772,20 @@ export default function StudentProfilePage() {
                       setIsEditing(false);
                       refetch();
                     }}
-                    className={cn(studentCancelButtonClass, "flex-1 max-w-[140px]")}
+                    className={cn(
+                      studentCancelButtonClass,
+                      "flex-1 max-w-[140px]",
+                    )}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className={cn(studentSaveButtonClass, "flex-1 max-w-[160px]")}
+                    className={cn(
+                      studentSaveButtonClass,
+                      "flex-1 max-w-[160px]",
+                    )}
                   >
                     {isSubmitting && (
                       <Loader2 className="w-3 h-3 animate-spin" />
