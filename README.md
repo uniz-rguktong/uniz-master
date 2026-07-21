@@ -6,45 +6,8 @@
 
 ## Architecture
 
-```mermaid
-flowchart TB
-  Users["Students, Faculty<br/>Admins, Visitors"] --> CF["Cloudflare Edge"]
+<img width="4207" height="3630" alt="4" src="https://github.com/user-attachments/assets/285dbcc1-f7e1-4100-a213-a418153f013f" />
 
-  CF --> Portal["Portal SPA<br/>uniz.rguktong.in<br/>Cloudflare Pages"]
-  CF --> Landing["Landing SPA<br/>rguktong.in<br/>Cloudflare Pages"]
-  CF --> API["API<br/>api-uniz.rguktong.in"]
-  CF --> Docs["Docs<br/>api-uniz.rguktong.in/docs"]
-  CF --> LandingAPI["Landing CMS<br/>landing-api.rguktong.in"]
-
-  API --> Traefik["Traefik<br/>VPS ingress"]
-  Docs --> Traefik
-  LandingAPI --> Traefik
-
-  Traefik --> GW["gateway-api<br/>Express router + Redis cache"]
-  Traefik --> DocsSvc["docs service<br/>static VitePress"]
-  Traefik --> LandingBE["landing-backend<br/>FastAPI CMS"]
-
-  GW --> Auth["Auth"]
-  GW --> User["User<br/>profiles, CMS, files"]
-  GW --> Academics["Academics"]
-  GW --> Notif["Notifications<br/>inbox, push, email"]
-
-  Auth --> PG[("Postgres")]
-  User --> PG
-  Academics --> PG
-  Notif --> PG
-  LandingBE --> PG
-
-  GW --> Redis[("Redis")]
-  Academics --> Redis
-  Notif --> Redis
-
-  User --> Uploads["VPS disk<br/>self-hosted images (via CDN)"]
-  Notif --> SES["AWS SES<br/>transactional email"]
-
-  Portal -.->|browser calls API| API
-  Landing -.->|browser calls CMS| LandingAPI
-```
 
 ### What you are looking at
 
