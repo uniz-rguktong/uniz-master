@@ -51,6 +51,36 @@ function normalizeStudentId(id?: string | null): string {
     .toUpperCase();
 }
 
+/** User-service caps POST /student/search at 100 rows per page. */
+const USER_SEARCH_PAGE_SIZE = 100;
+
+async function fetchAllStudentsForSearch(
+  searchBody: Record<string, unknown>,
+  authHeader: string,
+): Promise<any[]> {
+  const all: any[] = [];
+  let page = 1;
+  let totalPages = 1;
+
+  while (page <= totalPages) {
+    const res = await axios.post(
+      `${USER_SERVICE_URL}/student/search`,
+      { ...searchBody, page, limit: USER_SEARCH_PAGE_SIZE },
+      {
+        headers: { Authorization: authHeader },
+        timeout: 60000,
+      },
+    );
+    const students = res.data?.students || [];
+    all.push(...students);
+    totalPages = Math.max(1, Number(res.data?.pagination?.totalPages) || 1);
+    page += 1;
+    if (students.length === 0) break;
+  }
+
+  return all;
+}
+
 /** RGUKT Ongole campus — datetime-local values from the portal are IST wall times. */
 const CAMPUS_TZ = "+05:30";
 
@@ -2331,7 +2361,6 @@ export const getRegistrationTracking = async (
           : undefined;
 
     const searchBody: Record<string, unknown> = {
-      limit: 10000,
       isSuspended: false,
     };
     if (branchFilter) searchBody.branch = branchFilter;
@@ -2341,16 +2370,10 @@ export const getRegistrationTracking = async (
       searchBody.username = String(searchQuery).trim().toUpperCase();
     }
 
-    const profilesRes = await axios.post(
-      `${USER_SERVICE_URL}/student/search`,
+    const allStudents = await fetchAllStudentsForSearch(
       searchBody,
-      {
-        headers: { Authorization: req.headers.authorization || "" },
-        timeout: 60000,
-      },
+      req.headers.authorization || "",
     );
-
-    const allStudents: any[] = profilesRes.data?.students || [];
 
     const regs = await prisma.registration.findMany({
       where: {
@@ -3174,7 +3197,6 @@ async function buildBulkPdfFromJob(data: RegistrationPdfJobData) {
   if (!sem) throw new Error("Semester not found");
 
   const searchBody: Record<string, unknown> = {
-    limit: 10000,
     isSuspended: false,
   };
   if (data.branch) searchBody.branch = data.branch;
@@ -3182,15 +3204,10 @@ async function buildBulkPdfFromJob(data: RegistrationPdfJobData) {
   if (data.batch) searchBody.batch = data.batch;
   if (data.query) searchBody.username = String(data.query).trim().toUpperCase();
 
-  const profilesRes = await axios.post(
-    `${USER_SERVICE_URL}/student/search`,
+  const allStudents = await fetchAllStudentsForSearch(
     searchBody,
-    {
-      headers: { Authorization: data.authHeader || "" },
-      timeout: 60000,
-    },
+    data.authHeader || "",
   );
-  const allStudents: any[] = profilesRes.data?.students || [];
 
   const regs = await prisma.registration.findMany({
     where: { semesterId: sem.id, status: "REGISTERED" },
