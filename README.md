@@ -6,8 +6,7 @@
 
 ## Architecture
 
-<img width="4207" height="3630" alt="4" src="https://github.com/user-attachments/assets/285dbcc1-f7e1-4100-a213-a418153f013f" />
-
+<img width="1379" height="1141" alt="image" src="https://github.com/user-attachments/assets/e1a7c496-4754-4ef8-b045-f26dd9684317" />
 
 ### What you are looking at
 
@@ -33,14 +32,7 @@ Application router (not a load balancer). Path → Auth / User / Academics / Not
 
 In-house docs are a **static VitePress site** on the VPS — not Cloudflare Pages.
 
-```mermaid
-flowchart LR
-  Browser --> CF["Cloudflare"]
-  CF --> DocsURL["api-uniz.rguktong.in/docs"]
-  DocsURL --> Traefik
-  Traefik --> DocsSvc["uniz-docs-service:3333"]
-  DocsSvc --> VP["Static VitePress HTML"]
-```
+<img width="1985" height="792" alt="image" src="https://github.com/user-attachments/assets/245c2962-e6f9-40a5-aa49-8538b277e02f" />
 
 - App: `apps/uniz-docs`
 - Public: [https://api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs)
@@ -86,7 +78,9 @@ Collaborators work on branches and open PRs to `main`. Every PR needs an approvi
 ---
 
 <details>
-<summary><h2>okay, but how to setup this locally ? </h2></summary>
+<summary> 
+    <b>okay, but how to setup this locally ?</b>
+</summary>
 
 <br/>
 
