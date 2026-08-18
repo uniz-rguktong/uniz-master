@@ -55,7 +55,7 @@ export const adminNavIconActiveClass = "text-white";
 export const adminNavIconInactiveClass =
   "text-navy-400 group-hover:text-navy-700";
 
-export const adminHeaderClass = cn(portalHeaderClass, "px-6 md:px-10");
+export const adminHeaderClass = cn(portalHeaderClass, "px-4 sm:px-6 md:px-10");
 
 export const adminAvatarButtonClass =
   "w-9 h-9 rounded-full overflow-hidden bg-navy-50 ring-1 ring-navy-200 hover:ring-navy-300 transition-all active:scale-95 shrink-0";

@@ -53,7 +53,7 @@ const QuickActionButton = ({
 }) => (
   <button
     onClick={onClick}
-    className={`group relative flex flex-col items-start p-6 ${adminHubCardClass} text-left w-full overflow-hidden`}
+    className={`group relative flex flex-col items-start p-5 sm:p-6 ${adminHubCardClass} text-left w-full overflow-hidden`}
   >
     <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity transform group-hover:scale-110 duration-500">
       <Icon className="w-24 h-24 text-zinc-950" />
@@ -62,7 +62,7 @@ const QuickActionButton = ({
       <Icon className="w-6 h-6" />
     </div>
     <div className="relative z-10">
-      <h3 className="font-bold text-zinc-950 text-lg leading-tight mb-1 group-hover:translate-x-0.5 transition-transform">
+      <h3 className="font-bold text-zinc-950 text-base sm:text-lg leading-tight mb-1 group-hover:translate-x-0.5 transition-transform">
         {title}
       </h3>
       <p className="text-xs font-medium text-zinc-400 tracking-wide group-hover:text-zinc-500 transition-colors">
@@ -261,43 +261,43 @@ export default function Admin() {
   return (
     <AdminLayout className="pb-20">
       <header className={adminHeaderClass}>
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-7xl mx-auto w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             <div
-              className={`w-10 h-10 ${adminAvatarFallbackClass} rounded-xl text-lg shadow-sm`}
+              className={`w-9 h-9 sm:w-10 sm:h-10 ${adminAvatarFallbackClass} rounded-xl text-base sm:text-lg shadow-sm`}
             >
               {username[0].toUpperCase()}
             </div>
-            <div>
-              <h1 className="text-xl font-bold leading-none text-zinc-950">
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-xl font-bold leading-none text-zinc-950 truncate">
                 {username}
               </h1>
-              <div className="flex items-center gap-1.5 mt-1">
+              <div className="flex items-center gap-1.5 mt-1 min-w-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <p className="text-xs font-bold text-zinc-400 tracking-[0.14em]">
+                <p className="text-[10px] sm:text-xs font-bold text-zinc-400 tracking-[0.14em] truncate">
                   {role.replace("_", " ")} Dashboard
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-end gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={() => navigate("/admin/profile")}
-              className="p-2.5 rounded-xl hover:bg-zinc-50 text-zinc-400 hover:text-zinc-950 transition-colors"
+              className="p-2 rounded-xl hover:bg-zinc-50 text-zinc-400 hover:text-zinc-950 transition-colors"
               title="My Profile"
             >
               <UserCircle className="w-5 h-5" />
             </button>
             <button
               onClick={() => navigate("/admin/settings")}
-              className="p-2.5 rounded-xl hover:bg-zinc-50 text-zinc-400 hover:text-zinc-950 transition-colors"
+              className="p-2 rounded-xl hover:bg-zinc-50 text-zinc-400 hover:text-zinc-950 transition-colors"
             >
               <Settings className="w-5 h-5" />
             </button>
             <button
               onClick={handleLogout}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wider transition-all ${adminLogoutButtonClass} !w-auto !h-auto hover:!bg-red-50`}
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-[10px] sm:text-xs tracking-wider transition-all ${adminLogoutButtonClass} !w-auto !h-auto hover:!bg-red-50`}
             >
               <LogOut className="w-4 h-4" /> LOGOUT
             </button>
@@ -305,7 +305,7 @@ export default function Admin() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-10 space-y-12 w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8 sm:space-y-12 w-full">
         {/* Priority Section */}
         {priorityActions.length > 0 && (
           <motion.div
@@ -313,7 +313,7 @@ export default function Admin() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <div className="flex items-center gap-2 mb-6 ml-1">
+            <div className="flex items-center gap-2 mb-5 sm:mb-6 ml-1">
               <Zap className="w-5 h-5 text-zinc-950 fill-zinc-950" />
               <h2 className="text-lg font-semibold tracking-tight text-zinc-950">
                 Priority Actions
@@ -338,7 +338,7 @@ export default function Admin() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * (idx + 2) }}
               >
-                <div className="flex items-center gap-2 mb-6 ml-1 border-b border-zinc-100/80 pb-2">
+                <div className="flex flex-wrap items-center gap-2 mb-5 sm:mb-6 ml-1 border-b border-zinc-100/80 pb-2">
                   <LayoutGrid className="w-4 h-4 text-zinc-400" />
                   <h2 className="text-sm font-bold text-zinc-400 tracking-[0.14em]">
                     {section.title}

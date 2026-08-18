@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef, useEffect, type ReactNode } from "react";
-import { LogOut, Search, ChevronLeft, Menu, type LucideIcon } from "lucide-react";
+import {
+  LogOut,
+  Search,
+  ChevronLeft,
+  Menu,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { LandingMeshBackdrop } from "@/components/ui/landing-section";
@@ -83,6 +90,8 @@ export default function AdminShell({
   showHeaderMenuToggle = false,
 }: AdminShellProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
@@ -173,6 +182,35 @@ export default function AdminShell({
     : adminSidebarClosedWidth;
 
   const isOverlayMobile = sidebarVariant === "overlay-mobile";
+  const shouldShowHeaderToggle = showHeaderMenuToggle || isMobileViewport;
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const syncViewport = (matches: boolean) => {
+      setIsMobileViewport(matches);
+      if (!matches) {
+        setIsMobileSidebarOpen(false);
+      }
+    };
+
+    syncViewport(mediaQuery.matches);
+    const handleChange = (event: MediaQueryListEvent) => syncViewport(event.matches);
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }
+
+    mediaQuery.addListener(handleChange);
+    return () => mediaQuery.removeListener(handleChange);
+  }, []);
+
+  const toggleSidebar = () => {
+    if (isMobileViewport) {
+      setIsMobileSidebarOpen((prev) => !prev);
+      return;
+    }
+    setIsSidebarOpen((prev) => !prev);
+  };
 
   return (
     <div className={adminPageClass}>
@@ -181,7 +219,12 @@ export default function AdminShell({
       <aside
         className={cn(
           adminSidebarClass,
-          isOverlayMobile
+          isMobileViewport
+            ? cn(
+                "fixed top-0 left-0 z-[70] w-72 transition-transform duration-300",
+                isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full",
+              )
+            : isOverlayMobile
             ? cn(
                 "flex fixed md:sticky top-0 z-[70]",
                 isSidebarOpen
@@ -192,7 +235,7 @@ export default function AdminShell({
         )}
       >
         <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          onClick={toggleSidebar}
           className={adminSidebarToggleClass}
           aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
         >
@@ -258,7 +301,10 @@ export default function AdminShell({
                   return (
                     <button
                       key={item.id}
-                      onClick={() => onTabChange(item.id)}
+                      onClick={() => {
+                        onTabChange(item.id);
+                        if (isMobileViewport) setIsMobileSidebarOpen(false);
+                      }}
                       title={!isSidebarOpen ? item.label : ""}
                       className={cn(
                         "w-full flex items-center py-2.5 rounded-lg text-left transition-colors duration-150 group relative",
@@ -307,7 +353,10 @@ export default function AdminShell({
 
           <div className="pt-3 mt-1 border-t border-zinc-200/60">
             <button
-              onClick={onLogout}
+              onClick={() => {
+                onLogout();
+                if (isMobileViewport) setIsMobileSidebarOpen(false);
+              }}
               title={!isSidebarOpen ? "Logout" : ""}
               className={cn(
                 "w-full flex items-center py-2.5 rounded-lg text-left transition-colors duration-150 group hover:bg-rose-50 hover:text-rose-600 text-zinc-500",
@@ -396,6 +445,15 @@ export default function AdminShell({
         </div>
       </aside>
 
+      {isMobileViewport && isMobileSidebarOpen && (
+        <button
+          type="button"
+          className="fixed inset-0 bg-zinc-950/45 backdrop-blur-[1px] z-[60] md:hidden"
+          onClick={() => setIsMobileSidebarOpen(false)}
+          aria-label="Close sidebar overlay"
+        />
+      )}
+
       <main
         className={cn(
           "flex-1 overflow-y-auto max-h-screen flex flex-col",
@@ -405,24 +463,36 @@ export default function AdminShell({
         <header
           className={cn(
             adminHeaderClass,
-            headerAlign === "between" || showHeaderMenuToggle || headerLeft
+            headerAlign === "between" || shouldShowHeaderToggle || headerLeft
               ? "justify-between"
               : "justify-end",
           )}
         >
           <div className="flex items-center gap-4">
-            {showHeaderMenuToggle && (
+            {shouldShowHeaderToggle && (
               <button
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                onClick={toggleSidebar}
                 className="w-10 h-10 flex items-center justify-center bg-zinc-50 border border-zinc-100 rounded-xl hover:bg-white hover:shadow-lg transition-all text-zinc-400 hover:text-zinc-950 active:scale-95"
                 aria-label="Toggle sidebar"
               >
-                {isSidebarOpen ? <ChevronLeft size={18} /> : <Menu size={18} />}
+                {isMobileViewport ? (
+                  isMobileSidebarOpen ? (
+                    <X size={18} />
+                  ) : (
+                    <Menu size={18} />
+                  )
+                ) : isSidebarOpen ? (
+                  <ChevronLeft size={18} />
+                ) : (
+                  <Menu size={18} />
+                )}
               </button>
             )}
             {headerLeft}
-            {showHeaderMenuToggle && !isSidebarOpen && activeLabel && (
-              <h1 className="font-bold text-zinc-900 text-[15px] hidden md:block">
+            {shouldShowHeaderToggle &&
+              (isMobileViewport || !isSidebarOpen) &&
+              activeLabel && (
+              <h1 className="font-bold text-zinc-900 text-[15px] truncate max-w-[48vw]">
                 {activeLabel}
               </h1>
             )}
@@ -480,7 +550,7 @@ export default function AdminShell({
           initialPhoto={profilePhoto}
         />
 
-        <div className={cn("w-full px-6 md:px-10 flex-1", contentClassName)}>
+        <div className={cn("w-full px-4 sm:px-6 md:px-10 flex-1", contentClassName)}>
           {children}
         </div>
 
