@@ -405,7 +405,7 @@ export default function DeanOverview({ username }: { username: string }) {
       </div>
 
       {/* KPI Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 px-4 sm:px-6 md:px-10">
         <KPICard
           title="Total Residents"
           value={occupancyStats.total.toLocaleString()}
@@ -436,22 +436,22 @@ export default function DeanOverview({ username }: { username: string }) {
       </div>
 
       {/* Campus Occupancy Analytics */}
-      <Card className="p-10 mx-10 flex flex-col items-center justify-center space-y-10 bg-transparent border-zinc-100 shadow-sm rounded-2xl hover:shadow-lg transition-all duration-500">
+      <Card className="p-4 sm:p-8 md:p-10 mx-0 sm:mx-4 md:mx-10 flex flex-col items-center justify-center space-y-6 sm:space-y-10 bg-transparent border-zinc-100 shadow-sm rounded-2xl hover:shadow-lg transition-all duration-500">
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-semibold text-zinc-900 tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-semibold text-zinc-900 tracking-tight">
             Campus Occupancy Intelligence
           </h2>
-          <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.4em]">
+          <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.2em] sm:tracking-[0.4em]">
             Real-time resident distribution
           </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-16 w-full">
-          <div className="relative flex items-center justify-center">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 sm:gap-12 lg:gap-16 w-full">
+          <div className="relative flex items-center justify-center max-w-full overflow-hidden">
             <DonutUI
               data={occupancyStats.data}
-              size={320}
-              strokeWidth={40}
+              size={280}
+              strokeWidth={36}
               animationDuration={1.5}
               highlightOnHover={true}
               centerContent={
@@ -466,7 +466,7 @@ export default function DeanOverview({ username }: { username: string }) {
                     <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] mb-1">
                       {hoveredOccupancy || "Total Population"}
                     </p>
-                    <p className="text-5xl font-semibold text-zinc-900 tracking-tighter">
+                    <p className="text-4xl sm:text-5xl font-semibold text-zinc-900 tracking-tighter">
                       {hoveredOccupancy
                         ? occupancyStats.data.find(
                             (d) => d.label === hoveredOccupancy,
@@ -492,7 +492,7 @@ export default function DeanOverview({ username }: { username: string }) {
             />
           </div>
 
-          <div className="flex flex-col gap-4 min-w-[240px]">
+          <div className="flex flex-col gap-4 w-full sm:w-auto min-w-[240px]">
             {occupancyStats.data.map((segment) => (
               <motion.div
                 key={segment.label}
@@ -550,7 +550,7 @@ export default function DeanOverview({ username }: { username: string }) {
       </Card>
       {/* Academic Insights */}
       {academicStats && (
-        <div className="px-10 space-y-6">
+        <div className="px-4 sm:px-6 md:px-10 space-y-6">
           <div>
             <h2 className="text-xl font-semibold text-zinc-900 tracking-tight">
               Academic Insights
@@ -602,7 +602,7 @@ export default function DeanOverview({ username }: { username: string }) {
       )}
 
       {/* Dynamic Branch Analytics Section */}
-      <div className="w-full px-10">
+      <div className="w-full px-4 sm:px-6 md:px-10">
         <SubjectHeatmap
           title="Branch Performance Intelligence"
           data={branchFilteredData}

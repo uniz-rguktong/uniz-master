@@ -166,7 +166,7 @@ export default function GrievanceList() {
   ];
 
   return (
-    <div className="p-6 md:p-10 space-y-8 animate-in fade-in duration-500 pb-24">
+    <div className="p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8 animate-in fade-in duration-500 pb-24">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -174,19 +174,19 @@ export default function GrievanceList() {
             <ShieldCheck size={12} />
             Resolution Control
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 leading-none">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 leading-none">
             Student Grievances
           </h1>
-          <p className="text-zinc-500 font-medium text-[15px] mt-4">
+          <p className="text-zinc-500 font-medium text-xs sm:text-[15px] mt-2 sm:mt-4">
             Official dashboard for monitoring and addressing institutional
             feedback.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto">
           <button
             onClick={fetchGrievances}
-            className="px-5 py-2.5 bg-white border border-zinc-200 text-zinc-600 rounded-xl font-bold text-xs tracking-[0.14em] hover:bg-zinc-50 transition-all shadow-sm flex items-center gap-2"
+            className="flex-1 md:flex-none justify-center px-4 sm:px-5 py-2.5 bg-white border border-zinc-200 text-zinc-600 rounded-xl font-bold text-xs tracking-[0.14em] hover:bg-zinc-50 transition-all shadow-sm flex items-center gap-2"
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
             Sync Records
@@ -195,7 +195,7 @@ export default function GrievanceList() {
           <button
             onClick={handleDeleteAll}
             disabled={grievances.length === 0}
-            className="px-5 py-2.5 bg-red-50 border border-red-100 text-red-600 rounded-xl font-bold text-xs tracking-[0.14em] hover:bg-red-200 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 md:flex-none justify-center px-4 sm:px-5 py-2.5 bg-red-50 border border-red-100 text-red-600 rounded-xl font-bold text-xs tracking-[0.14em] hover:bg-red-200 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Trash2 size={14} />
             Clear all

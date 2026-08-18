@@ -197,18 +197,18 @@ export default function DeanReview() {
   };
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 sm:gap-6">
         <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-semibold tracking-tight text-zinc-900">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-900">
             {department} Branch Review
           </h2>
-          <p className="text-zinc-500 font-medium">
+          <p className="text-zinc-500 font-medium text-xs sm:text-sm">
             Review and finalize subjects for the current semester registration
             rollout.
           </p>
-          <div className="flex gap-4 mt-6">
-            <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-2xl border border-zinc-100 shadow-sm">
+          <div className="flex flex-wrap gap-3 sm:gap-4 mt-3 sm:mt-6">
+            <div className="flex items-center gap-2 bg-white px-4 sm:px-5 py-2.5 rounded-2xl border border-zinc-100 shadow-sm">
               <Users size={14} className="text-zinc-400" />
               <select
                 value={filterYear}
@@ -223,7 +223,7 @@ export default function DeanReview() {
                 ))}
               </select>
             </div>
-            <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-2xl border border-zinc-100 shadow-sm">
+            <div className="flex items-center gap-2 bg-white px-4 sm:px-5 py-2.5 rounded-2xl border border-zinc-100 shadow-sm">
               <BookText size={14} className="text-zinc-400" />
               <select
                 value={filterBatch}
@@ -240,11 +240,11 @@ export default function DeanReview() {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 w-full md:w-auto">
           {allocations.length > 0 && (
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-6 py-3 bg-white border border-zinc-200 rounded-2xl text-zinc-600 font-bold text-xs hover:bg-zinc-50 transition-all shadow-sm"
+              className="flex-1 md:flex-none justify-center flex items-center gap-2 px-5 sm:px-6 py-3 bg-white border border-zinc-200 rounded-2xl text-zinc-600 font-bold text-xs hover:bg-zinc-50 transition-all shadow-sm"
             >
               <FileSpreadsheet size={16} />
               Export XLS
@@ -252,13 +252,13 @@ export default function DeanReview() {
           )}
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-zinc-900 text-white rounded-2xl font-bold text-xs hover:bg-zinc-800 transition-all shadow-xl"
+            className="flex-1 md:flex-none justify-center flex items-center gap-2 px-5 sm:px-6 py-3 bg-zinc-900 text-white rounded-2xl font-bold text-xs hover:bg-zinc-800 transition-all shadow-xl"
           >
             <Plus size={16} />
             Add Subject
           </button>
-          <div className="flex items-center gap-3 px-6 py-3 bg-amber-50 rounded-2xl border border-amber-100">
-            <AlertCircle className="text-amber-500" size={18} />
+          <div className="w-full sm:w-auto flex items-center gap-3 px-4 sm:px-6 py-3 bg-amber-50 rounded-2xl border border-amber-100">
+            <AlertCircle className="text-amber-500 shrink-0" size={18} />
             <p className="text-amber-700 text-xs font-semibold tracking-[0.14em]">
               {allocations.filter((a: any) => !a.isApproved).length} Pending
               Approvals
@@ -276,13 +276,13 @@ export default function DeanReview() {
           {allocations.map((alloc) => (
             <div
               key={alloc.id}
-              className={`bg-white border-2 rounded-3xl p-8 transition-all ${
+              className={`bg-white border-2 rounded-3xl p-4 sm:p-6 md:p-8 transition-all ${
                 alloc.isApproved
                   ? "border-emerald-50 opacity-80"
                   : "border-zinc-100 shadow-xl hover:border-zinc-100"
               } group`}
             >
-              <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-8">
+              <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4 sm:gap-8">
                 <div className="flex items-center gap-6">
                   <div
                     className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${

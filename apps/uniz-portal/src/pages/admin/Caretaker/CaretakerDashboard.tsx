@@ -112,8 +112,8 @@ export default function CaretakerDashboard() {
         return <UpdateStatus />;
       default:
         return (
-          <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
-            <div className="bg-gradient-to-br from-zinc-950 to-zinc-800 rounded-3xl py-6 px-10 text-white shadow-2xl shadow-zinc-200/50 relative overflow-hidden group">
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 animate-in fade-in duration-700 pb-20">
+            <div className="bg-gradient-to-br from-zinc-950 to-zinc-800 rounded-3xl py-6 px-5 sm:px-8 md:px-10 text-white shadow-2xl shadow-zinc-200/50 relative overflow-hidden group">
               <div className="relative z-10 space-y-2.5">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 backdrop-blur-md">
                   <span
@@ -126,10 +126,10 @@ export default function CaretakerDashboard() {
                   </span>
                 </div>
                 <div>
-                  <h1 className="text-3xl font-semibold tracking-[-0.03em] mb-1.5 leading-none">
+                  <h1 className="text-2xl sm:text-3xl font-semibold tracking-[-0.03em] mb-1.5 leading-none">
                     Welcome, {username}
                   </h1>
-                  <p className="text-zinc-400 font-medium text-[15px] opacity-90 max-w-lg leading-relaxed">
+                  <p className="text-zinc-400 font-medium text-xs sm:text-sm md:text-[15px] opacity-90 max-w-lg leading-relaxed">
                     Hostel Management Terminal. Oversee student movement and
                     maintain residential security with precision.
                   </p>
@@ -141,7 +141,7 @@ export default function CaretakerDashboard() {
             </div>
 
             {academicStats && (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 <KPICard title="Total Students" value={academicStats.totalStudents.toLocaleString()} icon={Users} badge="Enrolled" />
                 <KPICard title="Avg Attendance" value={academicStats.avgAttendancePct != null ? `${academicStats.avgAttendancePct}%` : "—"} icon={BookOpen} badge="Institution" />
                 <KPICard title="Active Semesters" value={academicStats.activeSemesters} icon={CalendarClock} badge="Running" />

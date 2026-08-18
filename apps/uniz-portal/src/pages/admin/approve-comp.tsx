@@ -124,11 +124,11 @@ export default function ApproveComp({ type }: ApproveProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Header / Filter */}
-      <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="bg-white border border-zinc-200 rounded-xl p-4 sm:p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6">
         <div>
-          <h2 className="text-2xl font-bold text-zinc-900 capitalize">
+          <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 capitalize">
             {type} Approvals
           </h2>
           <div className="flex items-center gap-2 mt-1">
@@ -140,7 +140,7 @@ export default function ApproveComp({ type }: ApproveProps) {
             >
               ← Back
             </Button>
-            <p className="text-zinc-500 text-sm">
+            <p className="text-zinc-500 text-xs sm:text-sm">
               Manage pending student requests
             </p>
           </div>
@@ -155,7 +155,7 @@ export default function ApproveComp({ type }: ApproveProps) {
               icon={<Search className="w-4 h-4" />}
             />
           </div>
-          <div className="hidden sm:flex items-center justify-center px-4 bg-zinc-100 rounded-lg text-zinc-600 font-medium text-sm whitespace-nowrap border border-zinc-200">
+          <div className="flex items-center justify-center px-4 py-2 sm:py-0 bg-zinc-100 rounded-lg text-zinc-600 font-medium text-sm whitespace-nowrap border border-zinc-200">
             {filteredRequests.length} Pending
           </div>
         </div>
@@ -291,38 +291,38 @@ export default function ApproveComp({ type }: ApproveProps) {
               {!request.is_approved &&
                 !request.is_rejected &&
                 !request.is_expired && (
-                  <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-zinc-100">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-6 pt-6 border-t border-zinc-100">
                     <Button
                       variant="primary"
                       size="sm"
-                      className="w-full bg-emerald-600 hover:bg-emerald-700 border-emerald-700"
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 border-emerald-700 text-xs px-2"
                       onClick={() => handleAction("approve", request._id)}
                       isLoading={loadingId === request._id}
                     >
-                      <CheckCircle className="w-4 h-4 lg:mr-2" />{" "}
-                      <span className="hidden lg:inline">Approve</span>
+                      <CheckCircle className="w-4 h-4 sm:mr-1.5 shrink-0" />{" "}
+                      <span className="truncate">Approve</span>
                     </Button>
                     <Button
                       variant="danger"
                       size="sm"
-                      className="w-full"
+                      className="w-full text-xs px-2"
                       onClick={() => handleAction("reject", request._id)}
                       isLoading={loadingId === request._id}
                     >
-                      <Ban className="w-4 h-4 lg:mr-2" />{" "}
-                      <span className="hidden lg:inline">Reject</span>
+                      <Ban className="w-4 h-4 sm:mr-1.5 shrink-0" />{" "}
+                      <span className="truncate">Reject</span>
                     </Button>
                     {request.current_level !== "dsw" &&
                       request.current_level !== "swo" && (
                         <Button
                           variant="secondary"
                           size="sm"
-                          className="w-full"
+                          className="w-full text-xs px-2"
                           onClick={() => handleAction("forward", request._id)}
                           isLoading={loadingId === request._id}
                         >
-                          <Forward className="w-4 h-4 lg:mr-2" />{" "}
-                          <span className="hidden lg:inline">Forward</span>
+                          <Forward className="w-4 h-4 sm:mr-1.5 shrink-0" />{" "}
+                          <span className="truncate">Forward</span>
                         </Button>
                       )}
                   </div>

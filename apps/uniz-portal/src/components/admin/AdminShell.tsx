@@ -236,7 +236,7 @@ export default function AdminShell({
       >
         <button
           onClick={toggleSidebar}
-          className={adminSidebarToggleClass}
+          className={cn(adminSidebarToggleClass, isMobileViewport && "!hidden")}
           aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
         >
           <svg
