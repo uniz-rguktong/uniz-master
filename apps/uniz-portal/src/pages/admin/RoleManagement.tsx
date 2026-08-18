@@ -190,7 +190,7 @@ export default function RoleManagement() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="flex flex-col gap-6">
         <button
@@ -213,7 +213,7 @@ export default function RoleManagement() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex border-b border-zinc-200">
+      <div className="flex border-b border-zinc-200 overflow-x-auto no-scrollbar">
         {[
           {
             key: "overview",
@@ -235,7 +235,7 @@ export default function RoleManagement() {
             key={t.key}
             onClick={() => setTab(t.key as any)}
             className={cn(
-              "flex items-center gap-2 px-6 py-3 text-sm font-medium border-b-2 transition-all hover:bg-zinc-50",
+              "flex items-center gap-2 px-4 sm:px-6 py-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap transition-all hover:bg-zinc-50",
               tab === t.key
                 ? "border-zinc-100 text-zinc-900"
                 : "border-transparent text-zinc-500 hover:text-zinc-700",
@@ -252,7 +252,7 @@ export default function RoleManagement() {
         {/* Overview Tab */}
         {tab === "overview" && (
           <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
               <div className="w-full md:w-96">
                 <Input
                   value={search}
@@ -261,13 +261,13 @@ export default function RoleManagement() {
                   icon={<Search className="w-4 h-4" />}
                 />
               </div>
-              <span className="text-sm text-zinc-500 font-medium bg-zinc-100 px-3 py-1 rounded-full">
+              <span className="text-sm text-zinc-500 font-medium bg-zinc-100 px-3 py-1 rounded-full text-center sm:text-left w-fit">
                 {filtered.length} Admins
               </span>
             </div>
 
-            <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
-              <table className="w-full text-left text-sm">
+            <div className="bg-white border border-zinc-200 rounded-xl overflow-x-auto shadow-sm">
+              <table className="w-full text-left text-sm min-w-[500px]">
                 <thead className="bg-zinc-50 text-zinc-500 text-xs font-semibold">
                   <tr>
                     <th className="px-6 py-4">Admin User</th>

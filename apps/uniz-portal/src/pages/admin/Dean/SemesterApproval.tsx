@@ -377,7 +377,7 @@ function DetailView({
 
       {/* Filter (dean only) */}
       {!isHod && (
-        <div className={adminSegmentWrapClass}>
+        <div className={cn(adminSegmentWrapClass, "overflow-x-auto max-w-full no-scrollbar py-1")}>
           {["all", ...BRANCHES].map((b) => (
             <button
               key={b}
@@ -446,18 +446,18 @@ function DetailView({
       )}
 
       {/* Credits + actions */}
-      <div className="sticky bottom-0 -mx-6 md:-mx-8 px-6 md:px-8 py-4 bg-white/80 backdrop-blur-xl border-t border-zinc-200/70 flex items-center gap-3">
-        <div className="mr-auto">
+      <div className="sticky bottom-0 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 py-3.5 bg-white/90 backdrop-blur-xl border-t border-zinc-200/70 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 z-40">
+        <div className="mr-auto flex justify-between sm:block items-center">
           <p className={adminLabelClass}>Total Credits</p>
-          <p className="text-xl font-semibold text-zinc-900 tabular-nums">{totalCredits}</p>
+          <p className="text-lg sm:text-xl font-semibold text-zinc-900 tabular-nums">{totalCredits}</p>
         </div>
         {canAct ? (
-          <>
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               type="button"
               disabled={acting}
               onClick={() => onAct("reject")}
-              className={cn(adminDangerButtonClass, "disabled:opacity-50")}
+              className={cn(adminDangerButtonClass, "flex-1 sm:flex-none justify-center disabled:opacity-50 text-xs py-2.5")}
             >
               <RotateCcw size={15} /> Send Back
             </button>
@@ -465,12 +465,12 @@ function DetailView({
               type="button"
               disabled={acting}
               onClick={() => onAct("approve")}
-              className={cn(adminPrimaryButtonClass, "disabled:opacity-50")}
+              className={cn(adminPrimaryButtonClass, "flex-1 sm:flex-none justify-center disabled:opacity-50 text-xs py-2.5")}
             >
               <CheckCircle2 size={16} />
               {isHod ? `Approve ${myBranch}` : "Approve → HODs"}
             </button>
-          </>
+          </div>
         ) : (
           <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-400">
             <CheckCircle2 size={15} className="text-emerald-500" /> Read only
