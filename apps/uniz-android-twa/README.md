@@ -2,6 +2,8 @@
 
 Thin Android wrapper for [https://uniz.rguktong.in](https://uniz.rguktong.in). The Play Store app loads the **live website** — portal deploys update the app automatically. Web Push (VAPID) continues to work because TWA uses Chrome.
 
+**Straight-line publish checklist (no Dev account yet):** [docs/ops/PLAY_STORE_DEPLOY.md](../../docs/ops/PLAY_STORE_DEPLOY.md)
+
 ## Package
 
 | Field | Value |
