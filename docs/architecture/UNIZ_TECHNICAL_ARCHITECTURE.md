@@ -1,9 +1,9 @@
 # UniZ Technical Architecture Blueprint
 
-**Version:** 2.3 (Enterprise Production-Ready)
+**Version:** 2.3
 **Infrastructure:** Cloud VPS (4 vCPU / 16GB RAM)
 **Orchestration:** K3s Kubernetes
-**Target Capacity:** 1,500+ Concurrent Students
+**Measured capacity:** about 500 concurrent students on the 4 vCPU / 16 GB vps (2026-07-17 load test, see [UniZ_Scaling_Report.md](./UniZ_Scaling_Report.md))
 
 ---
 
@@ -165,13 +165,12 @@ UniZ uses a unique **Monorepo-to-MultiRepo** synchronization model managed by `n
 
 ---
 
-## 5. Official Scaling Benchmarks (Verified)
+## 5. Load test (single run, raw output not committed)
 
 | Parameter               | Performance                  | Verdict |
 | :---------------------- | :--------------------------- | :------ |
-| **Peak Throughput**     | **778 Requests / Second**    | STABLE  |
-| **Login Latency (p99)** | **532ms** (Under heavy load) | STABLE  |
-| **Error Rate**          | **0.00%**                    | PERFECT |
+| **Throughput**          | **778 requests / second**    | 150 connections |
+| **Login latency (p99)** | **532 ms**                   | |
+| **Error rate**          | **0.00%**                    | |
 
-**Certified by Antigravity (Advanced Agentic Assistant)**
-**UniZ Production Migration Complete.**
+single run on the 4 vCPU / 16 GB vps. the raw output was not committed, so treat these as unverified. the reproducible capacity figure is the 2026-07-17 run in [UniZ_Scaling_Report.md](./UniZ_Scaling_Report.md): 500 concurrent students, 149 req/s, p95 275 ms.

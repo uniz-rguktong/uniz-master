@@ -12,22 +12,18 @@
 - **Ingress Controller**: **OPTIMIZED** (Nginx with Rate Limiting)
 - **SSL Certificates**: **ACTIVE** (Let's Encrypt)
 
-## 2. Final Performance Benchmarks (Post-Optimization)
+## 2. Load test (post-optimization, single run)
 
-_Tested with 150 Simultaneous Active Connections_
+_150 simultaneous connections on the 4 vCPU vps. raw output was not committed._
 
 | Metric          | Measured Value       | Threshold | Status    |
 | :-------------- | :------------------- | :-------- | :-------- |
-| **Throughput**  | **778 Requests/Sec** | > 300     | EXCELLENT |
-| **Avg Latency** | **198ms**            | < 500ms   | EXCELLENT |
-| **p99 Latency** | **532ms**            | < 1000ms  | EXCELLENT |
-| **Error Rate**  | **0.00%**            | < 1%      | PERFECT   |
+| **Throughput**  | **778 Requests/Sec** | > 300     | pass |
+| **Avg Latency** | **198ms**            | < 500ms   | pass |
+| **p99 Latency** | **532ms**            | < 1000ms  | pass |
+| **Error Rate**  | **0.00%**            | < 1%      | pass |
 
-### ** Capacity Projection**
-
-- **Concurrent Active Students**: **~3,000 - 5,000**
-- **Sustained API Peak**: **~750 Requests/Sec**
-- **Daily Capacity**: **~100,000+ Transactions**
+the earlier capacity projection (3,000 to 5,000 students) was an extrapolation, not a measurement, and has been removed. see the measured run below.
 
 ## 3. Optimization Strategy Implemented
 
@@ -43,7 +39,7 @@ _Tested with 150 Simultaneous Active Connections_
 
 ## 5. Final Verdict
 
-The UniZ system is now **fully capable of handling 1,500+ concurrent students** on the existing 4-vCPU hardware. Brute-force hardware scaling is deferred; the system is now "Efficiency-First."
+the measured capacity is about 500 concurrent students doing the full flow on the existing 4 vCPU hardware (2026-07-17, [UniZ_Scaling_Report.md](../../architecture/UniZ_Scaling_Report.md)). true 1k concurrent with inline pdf generation was not reached. Brute-force hardware scaling is deferred; the system is now "Efficiency-First."
 
 ---
 
