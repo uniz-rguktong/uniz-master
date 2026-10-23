@@ -42,9 +42,13 @@ npm run android:twa:assetlinks    # writes SHA-256 into portal assetlinks
 npm run android:twa:verify
 ```
 
-### 3. Build the release file
+### 3. Build the release files
 
 ```bash
+# Student sideload APK (served at /download/uniz.apk after Pages deploy)
+npm run android:apk
+
+# Play Console AAB (also produced by bubblewrap build inside android/)
 cd apps/uniz-android-twa && bubblewrap build
 # → android/app/build/outputs/bundle/release/app-release.aab
 ```

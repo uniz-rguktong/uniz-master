@@ -162,6 +162,7 @@ const AuthRedirect = () => {
 };
 
 import { InstallPWA } from "./components/InstallPWA";
+import { DownloadAppBanner } from "./components/DownloadAppBanner";
 import { usePushNavigation } from "./hooks/usePushNavigation";
 
 function PushNavigationBridge() {
@@ -173,6 +174,7 @@ export default function App() {
   return (
     <>
       <PushNavigationBridge />
+      <DownloadAppBanner />
       <InstallPWA />
       <Toaster defaultPosition="bottom-right" />
       <Suspense fallback={<LoadingFallback />}>

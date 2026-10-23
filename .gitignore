@@ -60,3 +60,13 @@ sem-reg/
 
 # Local DB backups
 .backups/
+
+# Android TWA: keep keystore + intermediate build out of git.
+# The student-facing APK is apps/uniz-portal/public/download/uniz.apk (committed after release build).
+apps/uniz-android-twa/android/
+apps/uniz-android-twa/*.keystore
+apps/uniz-android-twa/*.jks
+apps/uniz-android-twa/keystore.properties
+apps/uniz-android-twa/app-release*.apk
+apps/uniz-android-twa/app-release*.aab
+apps/uniz-android-twa/*.idsig

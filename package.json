@@ -46,6 +46,7 @@
     "android:twa:init": "bash apps/uniz-android-twa/init.sh",
     "android:twa:assetlinks": "bash apps/uniz-android-twa/sync-assetlinks.sh",
     "android:twa:verify": "bash apps/uniz-android-twa/verify-assetlinks.sh",
+    "android:apk": "bash apps/uniz-android-twa/build-apk.sh",
     "postinstall": "node scripts/ci/prune-vitepress-vite.cjs && node scripts/ci/fix-vitepress-lock.cjs"
   },
   "dependencies": {

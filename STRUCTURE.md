@@ -4,7 +4,12 @@ Industry-style layout. **`apps/` and `packages/` are stable** (CI, workspaces, K
 
 ```text
 uniz-master/
-├── apps/                    # npm workspaces (microservices + portal + landing)
+├── apps/                    # npm workspaces (APIs, portal, landing, docs, android TWA)
+│   ├── uniz-api/            # unified auth + user + academics process
+│   ├── uniz-portal/         # student/admin SPA (Cloudflare Pages)
+│   │   └── public/download/ # uniz.apk (built via npm run android:apk)
+│   ├── uniz-android-twa/    # Bubblewrap TWA — no separate mobile repo
+│   └── …
 ├── packages/                # shared libraries (@uniz/shared)
 ├── docker/
 │   ├── prod/                # CI / VPS image build (Dockerfile.service)
@@ -22,6 +27,8 @@ uniz-master/
 │   ├── local/               # LOCAL_SETUP
 │   ├── architecture/        # topology, monitoring, scaling, URLs
 │   ├── api/postman/         # Postman collections + globals
+│   ├── org/                 # org map, module ownership (Mozilla-style)
+│   ├── ops/                 # secrets, Play Store, governance
 │   └── internal/            # brain/, features/, perf/, reports/, archive/
 ├── infra/                   # K3s manifests, nginx, compose
 ├── .github/workflows/       # CI + VPS deploy + Cloudflare Pages
@@ -30,6 +37,10 @@ uniz-master/
 ├── .env.example             # local Compose env template
 └── secrets.env.example      # hot-reload / vault template
 ```
+
+## Android app (in-tree)
+
+There is **no separate UniZ mobile repository**. The Google Play / sideload client is a TWA under `apps/uniz-android-twa/`. Build with `npm run android:apk`; students download from `/download/uniz.apk` on the portal. See [apps/uniz-android-twa/README.md](apps/uniz-android-twa/README.md) and [docs/ops/PLAY_STORE_DEPLOY.md](docs/ops/PLAY_STORE_DEPLOY.md).
 
 ## Two runtimes (same code)
 
