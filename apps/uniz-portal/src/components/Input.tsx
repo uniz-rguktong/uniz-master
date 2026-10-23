@@ -67,7 +67,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <button
               type="button"
               onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 focus:outline-none transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-400 hover:text-navy-700 focus:outline-none transition-colors"
             >
               {isPasswordVisible ? (
                 <EyeOff className="h-4 w-4" />

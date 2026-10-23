@@ -155,13 +155,13 @@ export default function SemesterSubjectsManager({
                 </select>
                 <ChevronDown
                   size={12}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 />
               </div>
             </div>
           ))}
         </div>
-        <p className="text-[11px] text-zinc-500">
+        <p className="text-[11px] text-navy-500">
           <strong>Internal code</strong> — stable system ID (do not change).{" "}
           <strong>Academic code</strong> — official code on registration slips, grade sheets, and exports.
         </p>
@@ -171,7 +171,7 @@ export default function SemesterSubjectsManager({
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-[12px] min-w-[720px]">
             <thead>
-              <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-semibold tracking-wide text-zinc-500">
+              <tr className="bg-navy-50 border-b border-navy-200 text-[10px] font-semibold tracking-wide text-navy-500">
                 <th className="px-4 py-3 text-left">Subject</th>
                 <th className="px-4 py-3 text-left">Internal code</th>
                 <th className="px-4 py-3 text-left">Academic code</th>
@@ -184,27 +184,27 @@ export default function SemesterSubjectsManager({
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-16 text-center text-zinc-400">
+                  <td colSpan={7} className="px-4 py-16 text-center text-navy-400">
                     <Loader2 className="animate-spin mx-auto mb-2" size={24} />
                     Loading…
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-16 text-center text-zinc-500">
+                  <td colSpan={7} className="px-4 py-16 text-center text-navy-500">
                     No subjects for these filters
                   </td>
                 </tr>
               ) : (
                 rows.map((row) => (
-                  <tr key={row.id} className="border-b border-zinc-100">
-                    <td className="px-4 py-3 font-medium text-zinc-900">
+                  <tr key={row.id} className="border-b border-navy-100">
+                    <td className="px-4 py-3 font-medium text-navy-900">
                       {row.customName || row.subject.name}
                     </td>
-                    <td className="px-4 py-3 font-mono text-[11px] text-zinc-500">
+                    <td className="px-4 py-3 font-mono text-[11px] text-navy-500">
                       {row.subject.code}
                     </td>
-                    <td className="px-4 py-3 font-mono text-[11px] text-zinc-900">
+                    <td className="px-4 py-3 font-mono text-[11px] text-navy-900">
                       {row.customCode?.trim() || (
                         <span className="text-amber-600 italic">Not set</span>
                       )}
@@ -218,7 +218,7 @@ export default function SemesterSubjectsManager({
                       <button
                         type="button"
                         onClick={() => openEdit(row)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-navy-500 hover:bg-navy-100 hover:text-navy-900 transition-colors"
                       >
                         <Pencil size={13} />
                         Edit
@@ -233,11 +233,11 @@ export default function SemesterSubjectsManager({
       </div>
 
       {editing && (
-        <div className="fixed inset-0 z-[130] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-[130] flex items-center justify-center bg-navy-900/40 p-4">
           <div className={cn(adminCardClass, "w-full max-w-md p-6 space-y-5")}>
             <div>
-              <h3 className="text-lg font-semibold text-zinc-900">Edit subject</h3>
-              <p className="text-sm text-zinc-500 mt-1">
+              <h3 className="text-lg font-semibold text-navy-900">Edit subject</h3>
+              <p className="text-sm text-navy-500 mt-1">
                 Internal: <span className="font-mono">{editing.subject.code}</span>
               </p>
             </div>

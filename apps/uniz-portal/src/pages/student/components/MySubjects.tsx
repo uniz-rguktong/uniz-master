@@ -77,7 +77,7 @@ export default function MySubjects({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 text-zinc-900 animate-spin" />
+        <Loader2 className="w-8 h-8 text-navy-900 animate-spin" />
       </div>
     );
   }
@@ -86,23 +86,23 @@ export default function MySubjects({
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 uppercase">
+          <p className="text-[10px] font-semibold tracking-[0.14em] text-navy-400 uppercase">
             Semester registration
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+          <h1 className="text-2xl font-semibold tracking-tight text-navy-900">
             {hasRegistered ? "Your current semester" : "Course registration"}
           </h1>
         </div>
 
-        <div className="flex gap-1 p-1 bg-zinc-100 rounded-xl w-fit">
+        <div className="flex gap-1 p-1 bg-navy-100 rounded-xl w-fit">
           <button
             type="button"
             onClick={() => setActiveTab("subjects")}
             className={cn(
               "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all",
               activeTab === "subjects"
-                ? "bg-white text-zinc-900 shadow-sm"
-                : "text-zinc-500 hover:text-zinc-800",
+                ? "bg-white text-navy-900 shadow-sm"
+                : "text-navy-500 hover:text-navy-800",
             )}
           >
             <BookOpenCheck size={14} />
@@ -115,8 +115,8 @@ export default function MySubjects({
               className={cn(
                 "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all",
                 activeTab === "register"
-                  ? "bg-white text-zinc-900 shadow-sm"
-                  : "text-zinc-500 hover:text-zinc-800",
+                  ? "bg-white text-navy-900 shadow-sm"
+                  : "text-navy-500 hover:text-navy-800",
               )}
             >
               <ClipboardList size={14} />

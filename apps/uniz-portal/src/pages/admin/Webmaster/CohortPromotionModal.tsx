@@ -111,7 +111,7 @@ export default function CohortPromotionModal({
               ))}
             </select>
           </div>
-          <div className="h-11 flex items-center justify-center text-zinc-300">
+          <div className="h-11 flex items-center justify-center text-navy-300">
             <ArrowRight size={16} />
           </div>
           <div className="space-y-2">

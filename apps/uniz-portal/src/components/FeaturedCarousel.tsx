@@ -41,15 +41,15 @@ const ArrowBtn = ({
     onClick={onClick}
     className={cn(
       "absolute top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full flex items-center justify-center",
-      "bg-white/90 backdrop-blur-md border border-zinc-100",
+      "bg-white/90 border border-navy-100",
       "shadow-[0_12px_32px_-10px_rgba(0,0,0,0.15)] hover:bg-white hover:scale-105 transition-all duration-300",
       dir === "left" ? "-left-3 md:-left-5" : "-right-3 md:-right-5",
     )}
   >
     {dir === "left" ? (
-      <ChevronLeft size={20} className="text-zinc-700" />
+      <ChevronLeft size={20} className="text-navy-700" />
     ) : (
-      <ChevronRight size={20} className="text-zinc-700" />
+      <ChevronRight size={20} className="text-navy-700" />
     )}
   </button>
 );
@@ -146,13 +146,13 @@ export default function FeaturedCarousel({
                   "group flex flex-col cursor-pointer shadow-[0_20px_50px_-22px_rgba(0,0,0,0.12)]",
                 )}
               >
-                <div className="relative aspect-[4/5] overflow-hidden bg-zinc-50/40 border-b border-zinc-100/40">
+                <div className="relative aspect-[4/5] overflow-hidden bg-navy-50/40 border-b border-navy-100/40">
                   <img
                     src={item.imageUrl}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-out"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/25 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy-950/25 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
 
                 <div className="flex flex-col gap-2.5 p-5 pt-4">
@@ -160,10 +160,10 @@ export default function FeaturedCarousel({
                     label={item.tag || "Campus"}
                     accent={TAG_ACCENTS[idx % TAG_ACCENTS.length]}
                   />
-                  <h3 className="text-[15px] font-semibold text-zinc-950 tracking-tight leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-zinc-800 transition-colors">
+                  <h3 className="text-[15px] font-semibold text-navy-950 tracking-tight leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-navy-800 transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-[12.5px] font-medium text-zinc-500/80 leading-relaxed">
+                  <p className="text-[12.5px] font-medium text-navy-500/80 leading-relaxed">
                     Institute announcements and campus highlights.
                   </p>
                 </div>

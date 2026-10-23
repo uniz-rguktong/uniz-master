@@ -218,7 +218,7 @@ export default function RegistrationTracking({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className={cn(adminCardClass, "p-5")}>
           <p className={adminLabelClass}>Eligible</p>
-          <p className="text-2xl font-semibold text-zinc-900 mt-1">
+          <p className="text-2xl font-semibold text-navy-900 mt-1">
             {summary.eligible.toLocaleString()}
           </p>
         </div>
@@ -239,11 +239,11 @@ export default function RegistrationTracking({
       </div>
 
       <div className={cn(adminCardClass, "p-4")}>
-        <div className="flex items-center justify-between text-sm font-medium text-zinc-600 mb-2">
+        <div className="flex items-center justify-between text-sm font-medium text-navy-600 mb-2">
           <span>Completion</span>
           <span>{progressPct}%</span>
         </div>
-        <div className="h-2 rounded-full bg-zinc-100 overflow-hidden">
+        <div className="h-2 rounded-full bg-navy-100 overflow-hidden">
           <div
             className="h-full bg-emerald-500 transition-all duration-500"
             style={{ width: `${progressPct}%` }}
@@ -255,7 +255,7 @@ export default function RegistrationTracking({
       <div className={cn(adminCardClass, "p-5 space-y-4")}>
         <div className="relative">
           <Search
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400"
             size={16}
           />
           <input
@@ -268,7 +268,7 @@ export default function RegistrationTracking({
           {loading && (
             <Loader2
               size={14}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-zinc-400"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-navy-400"
             />
           )}
         </div>
@@ -316,7 +316,7 @@ export default function RegistrationTracking({
                   className={cn(
                     adminSelectClass,
                     "h-9 text-[11px]",
-                    "locked" in f && f.locked && "opacity-70 cursor-not-allowed bg-zinc-50",
+                    "locked" in f && f.locked && "opacity-70 cursor-not-allowed bg-navy-50",
                   )}
                 >
                   {Array.isArray(f.options) &&
@@ -334,7 +334,7 @@ export default function RegistrationTracking({
                 </select>
                 <ChevronDown
                   size={12}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 />
               </div>
             </div>
@@ -347,7 +347,7 @@ export default function RegistrationTracking({
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-[12px] min-w-[720px]">
             <thead>
-              <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-semibold tracking-wide text-zinc-500">
+              <tr className="bg-navy-50 border-b border-navy-200 text-[10px] font-semibold tracking-wide text-navy-500">
                 <th className="px-4 py-3 text-left">#</th>
                 <th className="px-4 py-3 text-left">Student ID</th>
                 <th className="px-4 py-3 text-left">Name</th>
@@ -362,14 +362,14 @@ export default function RegistrationTracking({
             <tbody>
               {loading && rows.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-16 text-center text-zinc-400">
+                  <td colSpan={9} className="px-4 py-16 text-center text-navy-400">
                     <Loader2 className="animate-spin mx-auto mb-2" size={24} />
                     Loading…
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-16 text-center text-zinc-500">
+                  <td colSpan={9} className="px-4 py-16 text-center text-navy-500">
                     No students match these filters
                   </td>
                 </tr>
@@ -378,20 +378,20 @@ export default function RegistrationTracking({
                   <tr
                     key={row.username}
                     className={cn(
-                      "border-b border-zinc-100",
+                      "border-b border-navy-100",
                       !row.registered && "bg-amber-50/40",
                     )}
                   >
-                    <td className="px-4 py-3 text-zinc-400 tabular-nums">
+                    <td className="px-4 py-3 text-navy-400 tabular-nums">
                       {(pagination.page - 1) * 25 + idx + 1}
                     </td>
-                    <td className="px-4 py-3 font-semibold text-zinc-900">
+                    <td className="px-4 py-3 font-semibold text-navy-900">
                       {row.username}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-medium text-zinc-800">{row.name || "—"}</div>
+                      <div className="font-medium text-navy-800">{row.name || "—"}</div>
                       {row.email && (
-                        <div className="text-[11px] text-zinc-400 truncate max-w-[200px]">
+                        <div className="text-[11px] text-navy-400 truncate max-w-[200px]">
                           {row.email}
                         </div>
                       )}
@@ -425,7 +425,7 @@ export default function RegistrationTracking({
                     <td className="px-4 py-3 tabular-nums">
                       {row.registered ? row.subjectCount : "—"}
                     </td>
-                    <td className="px-4 py-3 text-zinc-500 whitespace-nowrap">
+                    <td className="px-4 py-3 text-navy-500 whitespace-nowrap">
                       {fmtDate(row.submittedAt)}
                     </td>
                   </tr>

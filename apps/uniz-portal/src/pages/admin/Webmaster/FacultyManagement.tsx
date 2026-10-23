@@ -536,7 +536,7 @@ export default function FacultyManagement({
 
             <div className="relative">
               <Search
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 size={15}
               />
               <input
@@ -594,10 +594,10 @@ export default function FacultyManagement({
             <div className="w-full space-y-8">
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
-                  <h3 className="text-[16px] font-semibold tracking-tight text-zinc-900">
+                  <h3 className="text-[16px] font-semibold tracking-tight text-navy-900">
                     Bulk Import
                   </h3>
-                  <p className="text-[13px] text-zinc-500">
+                  <p className="text-[13px] text-navy-500">
                     Automated registry ingestion via protocol-aligned CSV.
                   </p>
                 </div>
@@ -614,7 +614,7 @@ export default function FacultyManagement({
                   <div
                     className={cn(
                       adminCardClass,
-                      "overflow-hidden border-dashed border-zinc-300 bg-zinc-50/40 p-6",
+                      "overflow-hidden border-dashed border-navy-300 bg-navy-50/40 p-6",
                     )}
                   >
                     <FileUploader
@@ -654,7 +654,7 @@ export default function FacultyManagement({
                     value={csvText}
                     onChange={(e) => setCsvText(e.target.value)}
                     rows={8}
-                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-xl font-mono text-[11px] text-zinc-900 outline-none focus:ring-2 focus:ring-zinc-900/5 focus:border-zinc-400 transition-all resize-none"
+                    className="w-full px-4 py-3 bg-white border border-navy-200 rounded-xl font-mono text-[11px] text-navy-900 outline-none focus:ring-2 focus:ring-navy-900/5 focus:border-navy-400 transition-all resize-none"
                     placeholder={`username,name,email,department,designation,role\nktejokiran,K Tejo Kiran,ktejokiran@rguktong.ac.in,CSE,Lecturer,teacher`}
                   />
                 </div>
@@ -678,18 +678,18 @@ export default function FacultyManagement({
           {/* ── Bulk Update ── */}
           {bulkTab === "update" && (
             <div className="space-y-4">
-              <div className="bg-zinc-50 border border-zinc-200/70 rounded-xl p-4 flex items-center gap-3">
-                <CheckSquare size={18} className="text-zinc-700 shrink-0" />
-                <p className="text-[13px] text-zinc-600">
+              <div className="bg-navy-50 border border-navy-200/70 rounded-xl p-4 flex items-center gap-3">
+                <CheckSquare size={18} className="text-navy-700 shrink-0" />
+                <p className="text-[13px] text-navy-600">
                   Select faculty from the table below, then pick fields to
                   update.
-                  <span className="font-semibold text-zinc-900 ml-1">
+                  <span className="font-semibold text-navy-900 ml-1">
                     {selectedUsernames.size} selected.
                   </span>
                 </p>
               </div>
               <div className={cn(adminCardClass, "p-8 space-y-6")}>
-                <h3 className="text-[16px] font-semibold tracking-tight text-zinc-900">
+                <h3 className="text-[16px] font-semibold tracking-tight text-navy-900">
                   Fields to Apply to Selected
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -715,7 +715,7 @@ export default function FacultyManagement({
                       </select>
                       <ChevronDown
                         size={14}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                       />
                     </div>
                   </div>
@@ -741,7 +741,7 @@ export default function FacultyManagement({
                       </select>
                       <ChevronDown
                         size={14}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                       />
                     </div>
                   </div>
@@ -873,7 +873,7 @@ export default function FacultyManagement({
 
               {/* Confirm Dialog */}
               {showDeleteConfirm && (
-                <div className="fixed inset-0 z-[80] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4">
+                <div className="fixed inset-0 z-[80] flex items-center justify-center bg-navy-900/40 p-4">
                   <div
                     className={cn("max-w-sm w-full p-8", adminModalShellClass)}
                   >
@@ -891,9 +891,9 @@ export default function FacultyManagement({
                       </strong>
                       .
                     </p>
-                    <div className="max-h-28 overflow-y-auto bg-zinc-50 rounded-xl p-3 mb-6 border border-zinc-200/70">
+                    <div className="max-h-28 overflow-y-auto bg-navy-50 rounded-xl p-3 mb-6 border border-navy-200/70">
                       {Array.from(selectedUsernames).map((u) => (
-                        <p key={u} className="text-xs font-mono text-zinc-600">
+                        <p key={u} className="text-xs font-mono text-navy-600">
                           {u}
                         </p>
                       ))}
@@ -923,15 +923,15 @@ export default function FacultyManagement({
             <div className={cn(adminCardClass, "p-6")}>
               <div className="flex items-center gap-2 mb-4">
                 <CheckCircle2 size={18} className="text-emerald-500" />
-                <h4 className="font-semibold tracking-tight text-zinc-900">
+                <h4 className="font-semibold tracking-tight text-navy-900">
                   Operation Result
                 </h4>
-                <span className="text-[11px] font-medium tracking-[0.12em] text-zinc-400">
+                <span className="text-[11px] font-medium tracking-[0.12em] text-navy-400">
                   Total {bulkResult.summary?.total}
                 </span>
                 <button
                   onClick={() => setBulkResult(null)}
-                  className="ml-auto p-1.5 hover:bg-zinc-100 rounded-lg text-zinc-400 hover:text-rose-500 transition-all"
+                  className="ml-auto p-1.5 hover:bg-navy-100 rounded-lg text-navy-400 hover:text-rose-500 transition-all"
                 >
                   <X size={14} />
                 </button>
@@ -949,7 +949,7 @@ export default function FacultyManagement({
                       >
                         {v}
                       </p>
-                      <p className="text-[9px] font-bold tracking-[0.14em] text-zinc-400 mt-0.5">
+                      <p className="text-[9px] font-bold tracking-[0.14em] text-navy-400 mt-0.5">
                         {k}
                       </p>
                     </div>
@@ -958,14 +958,14 @@ export default function FacultyManagement({
               {bulkResult.results?.filter(
                 (r: any) => r.status === "error" || r.reason,
               ).length > 0 && (
-                <div className="max-h-36 overflow-y-auto bg-zinc-50 rounded-xl p-3 space-y-1">
+                <div className="max-h-36 overflow-y-auto bg-navy-50 rounded-xl p-3 space-y-1">
                   {bulkResult.results
                     .filter(
                       (r: any) =>
                         r.status !== "created" && r.status !== "updated",
                     )
                     .map((r: any, i: number) => (
-                      <p key={i} className="text-xs font-mono text-zinc-600">
+                      <p key={i} className="text-xs font-mono text-navy-600">
                         <span
                           className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
                         >
@@ -984,22 +984,22 @@ export default function FacultyManagement({
       {/* ─── TABLE (shown in both modes) ─── */}
       <div className={cn(adminCardClass, "overflow-hidden")}>
         {meta.totalPages > 1 && (
-          <div className="flex items-center justify-between px-8 py-4 bg-zinc-50/50 border-b border-zinc-200/70">
-            <p className="text-[11px] font-medium text-zinc-400 tracking-[0.12em]">
+          <div className="flex items-center justify-between px-8 py-4 bg-navy-50/50 border-b border-navy-200/70">
+            <p className="text-[11px] font-medium text-navy-400 tracking-[0.12em]">
               Page {page} of {meta.totalPages}
             </p>
             <div className="flex gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 text-[12px] font-semibold transition-all"
+                className="h-8 px-3.5 bg-white border border-navy-200 rounded-lg text-navy-600 disabled:opacity-30 hover:text-navy-900 hover:border-navy-300 text-[12px] font-semibold transition-all"
               >
                 Prev
               </button>
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 text-[12px] font-semibold transition-all"
+                className="h-8 px-3.5 bg-white border border-navy-200 rounded-lg text-navy-600 disabled:opacity-30 hover:text-navy-900 hover:border-navy-300 text-[12px] font-semibold transition-all"
               >
                 Next
               </button>
@@ -1010,47 +1010,47 @@ export default function FacultyManagement({
         <div className="relative">
           <table className="w-full text-left border-collapse table-auto">
             <thead>
-              <tr className="border-b border-zinc-200/70">
+              <tr className="border-b border-navy-200/70">
                 {mode === "bulk" && (
                   <th className="px-6 py-4">
                     <button
                       onClick={toggleAll}
-                      className="text-zinc-400 hover:text-zinc-700 transition-colors"
+                      className="text-navy-400 hover:text-navy-700 transition-colors"
                     >
                       {selectedUsernames.size === faculty.length &&
                       faculty.length > 0 ? (
-                        <CheckSquare size={18} className="text-zinc-900" />
+                        <CheckSquare size={18} className="text-navy-900" />
                       ) : (
                         <Square size={18} />
                       )}
                     </button>
                   </th>
                 )}
-                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400">
                   User Details
                 </th>
-                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400">
                   Designation
                 </th>
-                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400">
                   Role
                 </th>
-                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400">
                   Status
                 </th>
                 {mode === "single" && (
-                  <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400 text-right">
+                  <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400 text-right">
                     Actions
                   </th>
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-navy-100">
               {loading ? (
                 Array(limit)
                   .fill(0)
                   .map((_, i) => (
-                    <tr key={i} className="border-b border-zinc-50/60">
+                    <tr key={i} className="border-b border-navy-50/60">
                       {mode === "bulk" && (
                         <td className="px-6 py-6">
                           <Skeleton className="w-5 h-5 rounded-lg" />
@@ -1099,23 +1099,23 @@ export default function FacultyManagement({
                           ? toggleSelect(member.Username)
                           : undefined
                       }
-                      className={`transition-colors group ${mode === "bulk" ? "cursor-pointer select-none" : ""} ${isSelected ? "bg-zinc-100/70 hover:bg-zinc-100" : "hover:bg-zinc-50/60"}`}
+                      className={`transition-colors group ${mode === "bulk" ? "cursor-pointer select-none" : ""} ${isSelected ? "bg-navy-100/70 hover:bg-navy-100" : "hover:bg-navy-50/60"}`}
                     >
                       {mode === "bulk" && (
                         <td className="px-6 py-5">
                           {isSelected ? (
-                            <CheckSquare size={18} className="text-zinc-900" />
+                            <CheckSquare size={18} className="text-navy-900" />
                           ) : (
                             <Square
                               size={18}
-                              className="text-zinc-300 group-hover:text-zinc-400"
+                              className="text-navy-300 group-hover:text-navy-400"
                             />
                           )}
                         </td>
                       )}
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-3.5">
-                          <div className="w-10 h-10 rounded-full bg-zinc-900 text-white flex items-center justify-center font-semibold text-[13px] overflow-hidden shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-navy-900 text-white flex items-center justify-center font-semibold text-[13px] overflow-hidden shrink-0">
                             {member.ProfileUrl ? (
                               <img
                                 src={member.ProfileUrl}
@@ -1127,31 +1127,31 @@ export default function FacultyManagement({
                             )}
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <p className="font-semibold text-zinc-900 tracking-tight leading-tight mb-0.5">
+                            <p className="font-semibold text-navy-900 tracking-tight leading-tight mb-0.5">
                               {member.Name}
                             </p>
                             <div className="flex items-center gap-1.5">
-                              <Mail size={10} className="text-zinc-300" />
-                              <p className="text-[12px] text-zinc-400 leading-none truncate">
+                              <Mail size={10} className="text-navy-300" />
+                              <p className="text-[12px] text-navy-400 leading-none truncate">
                                 {member.Email}
                               </p>
                             </div>
-                            <p className="text-[10px] font-mono text-zinc-300 mt-1">
+                            <p className="text-[10px] font-mono text-navy-300 mt-1">
                               {member.Username}
                             </p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-5">
-                        <p className="text-[13px] font-medium text-zinc-700">
+                        <p className="text-[13px] font-medium text-navy-700">
                           {member.Designation || "Lecturer"}
                         </p>
-                        <p className="text-[10px] font-medium text-zinc-400 tracking-[0.12em] mt-0.5">
+                        <p className="text-[10px] font-medium text-navy-400 tracking-[0.12em] mt-0.5">
                           {member.Department}
                         </p>
                       </td>
                       <td className="px-6 py-5">
-                        <span className="px-2.5 py-1 bg-zinc-50 rounded-full text-zinc-500 font-medium text-[11px] border border-zinc-200">
+                        <span className="px-2.5 py-1 bg-navy-50 rounded-full text-navy-500 font-medium text-[11px] border border-navy-200">
                           {member.Role
                             ? formatRoleLabel(member.Role)
                             : "Faculty"}
@@ -1159,7 +1159,7 @@ export default function FacultyManagement({
                       </td>
                       <td className="px-6 py-5">
                         <div
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-medium w-fit ${!member.is_suspended ? "border-zinc-200 bg-zinc-50 text-zinc-700" : "border-rose-100 bg-rose-50 text-rose-600"}`}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-medium w-fit ${!member.is_suspended ? "border-navy-200 bg-navy-50 text-navy-700" : "border-rose-100 bg-rose-50 text-rose-600"}`}
                         >
                           <span
                             className={`w-1.5 h-1.5 rounded-full ${!member.is_suspended ? "bg-emerald-500" : "bg-rose-500"}`}
@@ -1175,14 +1175,14 @@ export default function FacultyManagement({
                                 setSelectedFaculty(member);
                                 setShowViewModal(true);
                               }}
-                              className="h-9 w-9 flex items-center justify-center bg-white border border-zinc-200 text-zinc-500 rounded-xl hover:bg-zinc-900 hover:text-white hover:border-zinc-900 transition-all active:scale-95"
+                              className="h-9 w-9 flex items-center justify-center bg-white border border-navy-200 text-navy-500 rounded-xl hover:bg-navy-900 hover:text-white hover:border-navy-900 transition-all active:scale-95"
                               title="View Details"
                             >
                               <Eye size={15} />
                             </button>
                             <button
                               onClick={() => openEdit(member)}
-                              className="h-9 px-4 bg-white border border-zinc-200 text-zinc-600 rounded-xl text-[12px] font-semibold hover:text-zinc-900 hover:border-zinc-300 active:scale-95 transition-all"
+                              className="h-9 px-4 bg-white border border-navy-200 text-navy-600 rounded-xl text-[12px] font-semibold hover:text-navy-900 hover:border-navy-300 active:scale-95 transition-all"
                             >
                               Modify
                             </button>
@@ -1193,13 +1193,13 @@ export default function FacultyManagement({
                                   member.is_suspended,
                                 )
                               }
-                              className="h-9 px-4 rounded-xl text-[12px] font-semibold transition-all active:scale-95 bg-zinc-900 hover:bg-zinc-800 text-white"
+                              className="h-9 px-4 rounded-xl text-[12px] font-semibold transition-all active:scale-95 bg-navy-900 hover:bg-navy-800 text-white"
                             >
                               {member.is_suspended ? "Reinstate" : "Suspend"}
                             </button>
                             <button
                               onClick={() => handleDelete(member.Username)}
-                              className="h-9 w-9 flex items-center justify-center bg-white border border-zinc-200 text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all active:scale-90"
+                              className="h-9 w-9 flex items-center justify-center bg-white border border-navy-200 text-navy-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all active:scale-90"
                               title="Delete"
                             >
                               <Trash2 size={15} />
@@ -1217,14 +1217,14 @@ export default function FacultyManagement({
                     className="py-20 text-center"
                   >
                     <div className="flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 flex items-center justify-center bg-zinc-50 rounded-2xl border border-zinc-200/70">
+                      <div className="w-16 h-16 flex items-center justify-center bg-navy-50 rounded-[2px] border border-navy-200/70">
                         <Users
                           size={32}
                           strokeWidth={1.5}
-                          className="text-zinc-300"
+                          className="text-navy-300"
                         />
                       </div>
-                      <p className="text-[14px] font-medium text-zinc-500 tracking-tight">
+                      <p className="text-[14px] font-medium text-navy-500 tracking-tight">
                         No staff members matching your criteria.
                       </p>
                     </div>
@@ -1236,15 +1236,15 @@ export default function FacultyManagement({
         </div>
 
         {meta.totalPages > 1 && (
-          <div className="flex items-center justify-between px-8 py-4 bg-zinc-50/50 border-t border-zinc-200/70">
-            <p className="text-[11px] font-medium text-zinc-400 tracking-[0.12em]">
+          <div className="flex items-center justify-between px-8 py-4 bg-navy-50/50 border-t border-navy-200/70">
+            <p className="text-[11px] font-medium text-navy-400 tracking-[0.12em]">
               Page {page} of {meta.totalPages} • Total {meta.total} staff
             </p>
             <div className="flex items-center gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 transition-all"
+                className="h-8 px-3.5 bg-white border border-navy-200 rounded-lg text-[12px] font-semibold text-navy-600 disabled:opacity-30 hover:text-navy-900 hover:border-navy-300 transition-all"
               >
                 Previous
               </button>
@@ -1253,7 +1253,7 @@ export default function FacultyManagement({
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-[12px] font-semibold tabular-nums transition-all ${page === i + 1 ? "bg-zinc-900 text-white" : "bg-white border border-zinc-200 text-zinc-400 hover:border-zinc-300 hover:text-zinc-900"}`}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-[12px] font-semibold tabular-nums transition-all ${page === i + 1 ? "bg-navy-900 text-white" : "bg-white border border-navy-200 text-navy-400 hover:border-navy-300 hover:text-navy-900"}`}
                   >
                     {i + 1}
                   </button>
@@ -1262,7 +1262,7 @@ export default function FacultyManagement({
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 transition-all"
+                className="h-8 px-3.5 bg-white border border-navy-200 rounded-lg text-[12px] font-semibold text-navy-600 disabled:opacity-30 hover:text-navy-900 hover:border-navy-300 transition-all"
               >
                 Next
               </button>
@@ -1286,14 +1286,14 @@ export default function FacultyManagement({
             {/* Close Button */}
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
 
             <AlertDialogHeader className="p-8 pb-4 flex flex-col items-center text-center gap-2">
               <div className="relative mb-3 group">
-                <div className="w-24 h-24 rounded-full bg-zinc-50 border border-dashed border-zinc-300 flex items-center justify-center overflow-hidden relative">
+                <div className="w-24 h-24 rounded-full bg-navy-50 border border-dashed border-navy-300 flex items-center justify-center overflow-hidden relative">
                   {formData.profileUrl ? (
                     <img
                       src={formData.profileUrl}
@@ -1301,7 +1301,7 @@ export default function FacultyManagement({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="flex flex-col items-center text-zinc-300">
+                    <div className="flex flex-col items-center text-navy-300">
                       <Users size={28} />
                       <span className="text-[9px] font-medium tracking-tight mt-1">
                         No Photo
@@ -1309,15 +1309,15 @@ export default function FacultyManagement({
                     </div>
                   )}
                   {isUploading && (
-                    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
-                      <Loader2 className="animate-spin text-zinc-900 w-5 h-5" />
+                    <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
+                      <Loader2 className="animate-spin text-navy-900 w-5 h-5" />
                     </div>
                   )}
                 </div>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0 right-0 w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center shadow-sm hover:bg-zinc-800 transition-all active:scale-90 border-2 border-white z-10"
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-navy-900 text-white rounded-full flex items-center justify-center shadow-sm hover:bg-navy-800 transition-all active:scale-90 border-2 border-white z-10"
                 >
                   <Camera size={14} />
                 </button>
@@ -1507,7 +1507,7 @@ export default function FacultyManagement({
       {/* ─── Bio View Modal ─── */}
       {showViewModal && selectedFaculty && (
         <div
-          className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm cursor-pointer"
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-navy-900/40 cursor-pointer"
           onClick={() => setShowViewModal(false)}
         >
           <div
@@ -1520,7 +1520,7 @@ export default function FacultyManagement({
             {/* Close Button */}
             <button
               onClick={() => setShowViewModal(false)}
-              className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
+              className="absolute top-6 right-6 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
@@ -1528,7 +1528,7 @@ export default function FacultyManagement({
             {/* Centralized Header */}
             <div className="p-10 pb-4 flex flex-col items-center text-center">
               <div className="relative mb-5 group">
-                <div className="w-24 h-24 rounded-full bg-zinc-50 border border-dashed border-zinc-300 flex items-center justify-center overflow-hidden">
+                <div className="w-24 h-24 rounded-full bg-navy-50 border border-dashed border-navy-300 flex items-center justify-center overflow-hidden">
                   {selectedFaculty.ProfileUrl ? (
                     <img
                       src={selectedFaculty.ProfileUrl}
@@ -1536,7 +1536,7 @@ export default function FacultyManagement({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="flex flex-col items-center text-zinc-300">
+                    <div className="flex flex-col items-center text-navy-300">
                       <Users size={28} />
                       <span className="text-[9px] font-medium tracking-tight mt-1">
                         No Photo
@@ -1546,19 +1546,19 @@ export default function FacultyManagement({
                 </div>
               </div>
 
-              <h3 className="text-[24px] font-semibold text-zinc-900 tracking-[-0.01em] leading-none mb-3">
+              <h3 className="text-[24px] font-semibold text-navy-900 tracking-[-0.01em] leading-none mb-3">
                 {selectedFaculty.Name}
               </h3>
 
               <div className="flex flex-col items-center gap-2.5">
-                <p className="text-zinc-400 font-medium tracking-[0.14em] text-[10px]">
+                <p className="text-navy-400 font-medium tracking-[0.14em] text-[10px]">
                   {selectedFaculty.Designation || "Faculty Member"}
                 </p>
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 bg-zinc-50 rounded-full text-[11px] font-medium text-zinc-500 border border-zinc-200">
+                  <span className="px-2.5 py-1 bg-navy-50 rounded-full text-[11px] font-medium text-navy-500 border border-navy-200">
                     {selectedFaculty.Department} Department
                   </span>
-                  <span className="px-2.5 py-1 bg-zinc-900 rounded-full text-[11px] font-medium text-white">
+                  <span className="px-2.5 py-1 bg-navy-900 rounded-full text-[11px] font-medium text-white">
                     {selectedFaculty.Role
                       ? formatRoleLabel(selectedFaculty.Role)
                       : "Faculty"}
@@ -1566,14 +1566,14 @@ export default function FacultyManagement({
                 </div>
               </div>
 
-              <div className="flex items-center justify-center gap-6 mt-6 text-zinc-400">
+              <div className="flex items-center justify-center gap-6 mt-6 text-navy-400">
                 <div className="flex items-center gap-2 text-[11px] font-medium">
-                  <Mail size={12} className="text-zinc-400" />
+                  <Mail size={12} className="text-navy-400" />
                   {selectedFaculty.Email}
                 </div>
                 {selectedFaculty.CreatedAt && (
                   <div className="flex items-center gap-2 text-[11px] font-medium">
-                    <Calendar size={12} className="text-zinc-400" />
+                    <Calendar size={12} className="text-navy-400" />
                     Joined{" "}
                     {new Date(selectedFaculty.CreatedAt).toLocaleDateString()}
                   </div>
@@ -1582,11 +1582,11 @@ export default function FacultyManagement({
             </div>
 
             {/* Bio Content Area */}
-            <div className="px-10 py-6 max-h-[50vh] overflow-y-auto bg-zinc-50/40 border-t border-zinc-200/70">
+            <div className="px-10 py-6 max-h-[50vh] overflow-y-auto bg-navy-50/40 border-t border-navy-200/70">
               <div className="space-y-6">
                 <div className="flex items-center gap-2.5 mb-2">
-                  <BookOpen size={16} className="text-zinc-400" />
-                  <h4 className="text-[10px] font-semibold tracking-[0.18em] text-zinc-400">
+                  <BookOpen size={16} className="text-navy-400" />
+                  <h4 className="text-[10px] font-semibold tracking-[0.18em] text-navy-400">
                     Professional Biography
                   </h4>
                 </div>
@@ -1601,9 +1601,9 @@ export default function FacultyManagement({
                         return (
                           <div
                             key={key}
-                            className="bg-white p-5 rounded-xl border border-zinc-200/70 hover:border-zinc-300 transition-colors"
+                            className="bg-white p-5 rounded-xl border border-navy-200/70 hover:border-navy-300 transition-colors"
                           >
-                            <label className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 block mb-3">
+                            <label className="text-[10px] font-semibold tracking-[0.14em] text-navy-400 block mb-3">
                               {key.replace(/_/g, " ")}
                             </label>
                             {Array.isArray(val) ? (
@@ -1611,15 +1611,15 @@ export default function FacultyManagement({
                                 {val.map((item: string, i: number) => (
                                   <li
                                     key={i}
-                                    className="text-[13px] text-zinc-600 flex items-start gap-3 leading-relaxed"
+                                    className="text-[13px] text-navy-600 flex items-start gap-3 leading-relaxed"
                                   >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-zinc-300 mt-2 shrink-0" />
+                                    <span className="w-1.5 h-1.5 rounded-full bg-navy-300 mt-2 shrink-0" />
                                     {item}
                                   </li>
                                 ))}
                               </ul>
                             ) : (
-                              <p className="text-[13px] text-zinc-600 leading-relaxed">
+                              <p className="text-[13px] text-navy-600 leading-relaxed">
                                 {val}
                               </p>
                             )}
@@ -1629,12 +1629,12 @@ export default function FacultyManagement({
                     )}
                   </div>
                 ) : (
-                  <div className="text-center py-12 bg-white rounded-xl border border-zinc-200 border-dashed">
+                  <div className="text-center py-12 bg-white rounded-xl border border-navy-200 border-dashed">
                     <BookOpen
                       size={28}
-                      className="mx-auto text-zinc-200 mb-3"
+                      className="mx-auto text-navy-200 mb-3"
                     />
-                    <p className="text-zinc-400 text-[13px]">
+                    <p className="text-navy-400 text-[13px]">
                       No biographical data available for this member.
                     </p>
                   </div>
@@ -1643,7 +1643,7 @@ export default function FacultyManagement({
             </div>
 
             {/* Modal Footer */}
-            <div className="p-6 bg-white border-t border-zinc-200/70 flex justify-end gap-3">
+            <div className="p-6 bg-white border-t border-navy-200/70 flex justify-end gap-3">
               <button
                 onClick={() => setShowViewModal(false)}
                 className={adminPrimaryButtonClass}

@@ -436,10 +436,10 @@ export default function SemesterRegistrationSection({
         <>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-semibold text-zinc-900 tracking-tight mb-2">
+              <h1 className="text-4xl font-semibold text-navy-900 tracking-tight mb-2">
                 Semester Events
               </h1>
-              <p className="text-zinc-500 font-medium">
+              <p className="text-navy-500 font-medium">
                 Coordinate registration rollouts and monitor subject
                 allocations.
               </p>
@@ -447,7 +447,7 @@ export default function SemesterRegistrationSection({
             {isAdmin && (
               <button
                 onClick={() => setShowNewModal(true)}
-                className="flex items-center gap-3 px-8 py-4 bg-gradient-to-br from-blue-600 to-zinc-700 text-white rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-none border-2 border-white/20"
+                className="flex items-center gap-3 px-8 py-4 bg-gradient-to-br from-blue-600 to-navy-700 text-white rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-none border-2 border-white/20"
               >
                 <Zap size={18} />
                 Start New Event
@@ -459,17 +459,17 @@ export default function SemesterRegistrationSection({
             {semesters.map((sem) => (
               <div
                 key={sem.id}
-                className="bg-white rounded-xl border border-zinc-100 p-8 shadow-none transition-all group relative overflow-hidden"
+                className="bg-white rounded-xl border border-navy-100 p-8 shadow-none transition-all group relative overflow-hidden"
               >
                 <div
-                  className={`absolute top-0 right-0 w-32 h-32 opacity-[0.03] transition-transform duration-1000 group-hover:rotate-12 ${sem.status === "REGISTRATION_OPEN" ? "text-emerald-500" : "text-zinc-900"}`}
+                  className={`absolute top-0 right-0 w-32 h-32 opacity-[0.03] transition-transform duration-1000 group-hover:rotate-12 ${sem.status === "REGISTRATION_OPEN" ? "text-emerald-500" : "text-navy-900"}`}
                 >
                   <Zap size={120} />
                 </div>
 
                 <div className="flex items-start justify-between mb-8">
                   <div
-                    className={`p-4 rounded-xl shadow-none ${sem.status === "REGISTRATION_OPEN" ? "bg-emerald-50 text-emerald-600" : "bg-zinc-50 text-zinc-400"}`}
+                    className={`p-4 rounded-xl shadow-none ${sem.status === "REGISTRATION_OPEN" ? "bg-emerald-50 text-emerald-600" : "bg-navy-50 text-navy-400"}`}
                   >
                     <Clock size={28} />
                   </div>
@@ -479,31 +479,31 @@ export default function SemesterRegistrationSection({
                         ? "bg-emerald-50 text-emerald-600 border-emerald-100"
                         : sem.status === "DEAN_REVIEW"
                           ? "bg-amber-50 text-amber-600 border-amber-100"
-                          : "bg-zinc-50 text-zinc-400 border-zinc-100"
+                          : "bg-navy-50 text-navy-400 border-navy-100"
                     }`}
                   >
                     {formatStatus(sem.status)}
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-4 group-hover:text-zinc-900 transition-colors ">
+                <h3 className="text-2xl font-semibold text-navy-900 tracking-tight mb-4 group-hover:text-navy-900 transition-colors ">
                   {sem.name}
                 </h3>
 
                 <div className="flex items-center gap-6 mb-10">
                   <div>
-                    <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
+                    <p className="text-[10px] font-bold text-navy-400 tracking-[0.14em] mb-1">
                       Students registered
                     </p>
-                    <p className="text-xl font-semibold text-zinc-900">
+                    <p className="text-xl font-semibold text-navy-900">
                       {sem._count?.registrations || 0}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
+                    <p className="text-[10px] font-bold text-navy-400 tracking-[0.14em] mb-1">
                       Created
                     </p>
-                    <p className="text-sm font-bold text-zinc-600">
+                    <p className="text-sm font-bold text-navy-600">
                       {new Date(sem.createdAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -512,7 +512,7 @@ export default function SemesterRegistrationSection({
                 <div className="flex flex-col gap-3">
                   <button
                     onClick={() => viewDetails(sem)}
-                    className="w-full flex items-center justify-center gap-2 py-4 bg-zinc-50 text-zinc-600 rounded-xl font-bold text-sm hover:bg-zinc-50 hover:text-zinc-900 transition-all"
+                    className="w-full flex items-center justify-center gap-2 py-4 bg-navy-50 text-navy-600 rounded-xl font-bold text-sm hover:bg-navy-50 hover:text-navy-900 transition-all"
                   >
                     Review Allocations <ChevronRight size={16} />
                   </button>
@@ -524,7 +524,7 @@ export default function SemesterRegistrationSection({
                         sem.status !== "REGISTRATION_CLOSED" && (
                           <button
                             onClick={() => setPublishSem(sem)}
-                            className="flex-1 py-4 bg-zinc-900 text-white rounded-xl font-bold text-xs hover:bg-zinc-800 transition-all shadow-none"
+                            className="flex-1 py-4 bg-navy-900 text-white rounded-xl font-bold text-xs hover:bg-navy-800 transition-all shadow-none"
                           >
                             Publish to Students
                           </button>
@@ -534,7 +534,7 @@ export default function SemesterRegistrationSection({
                           onClick={() =>
                             updateStatus(sem.id, "REGISTRATION_CLOSED")
                           }
-                          className="flex-1 py-4 bg-zinc-900 text-white rounded-xl font-bold text-xs hover:bg-zinc-800 transition-all"
+                          className="flex-1 py-4 bg-navy-900 text-white rounded-xl font-bold text-xs hover:bg-navy-800 transition-all"
                         >
                           Close Enrollment
                         </button>
@@ -551,14 +551,14 @@ export default function SemesterRegistrationSection({
               </div>
             ))}
             {semesters.length === 0 && (
-              <div className="col-span-full py-20 bg-white rounded-xl border border-dashed border-zinc-200 text-center">
-                <div className="w-20 h-20 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Zap className="text-zinc-300" size={32} />
+              <div className="col-span-full py-20 bg-white rounded-xl border border-dashed border-navy-200 text-center">
+                <div className="w-20 h-20 bg-navy-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Zap className="text-navy-300" size={32} />
                 </div>
-                <h3 className="text-xl font-bold text-zinc-900 mb-2">
+                <h3 className="text-xl font-bold text-navy-900 mb-2">
                   Ready to start the semester?
                 </h3>
-                <p className="text-zinc-400 text-sm max-w-xs mx-auto mb-8">
+                <p className="text-navy-400 text-sm max-w-xs mx-auto mb-8">
                   Click the button above to rollout the registration event.
                 </p>
               </div>
@@ -568,22 +568,22 @@ export default function SemesterRegistrationSection({
       ) : (
         selectedSem && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex items-center justify-between bg-white p-8 rounded-xl border border-zinc-100 shadow-none">
+            <div className="flex items-center justify-between bg-white p-8 rounded-xl border border-navy-100 shadow-none">
               <div className="flex items-center gap-6">
                 <button
                   onClick={() => setActiveTab("list")}
-                  className="p-3 bg-zinc-50 rounded-xl text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900 transition-all border border-transparent hover:border-zinc-100"
+                  className="p-3 bg-navy-50 rounded-xl text-navy-400 hover:bg-navy-50 hover:text-navy-900 transition-all border border-transparent hover:border-navy-100"
                 >
                   <ChevronRight className="rotate-180" size={24} />
                 </button>
                 <div>
-                  <p className="text-[10px] font-bold text-zinc-900 tracking-[0.14em] mb-1 opacity-70">
+                  <p className="text-[10px] font-bold text-navy-900 tracking-[0.14em] mb-1 opacity-70">
                     Rollout Review •{" "}
                     {branchFilter === "all"
                       ? "All"
                       : formatDisplayText(branchFilter)}
                   </p>
-                  <h1 className="text-3xl font-semibold text-zinc-900 tracking-tight">
+                  <h1 className="text-3xl font-semibold text-navy-900 tracking-tight">
                     {selectedSem.name}
                   </h1>
                 </div>
@@ -595,7 +595,7 @@ export default function SemesterRegistrationSection({
                     registeredStudents.length > 0)) && (
                   <button
                     onClick={() => downloadExport(activeViewTab)}
-                    className="flex items-center gap-3 px-6 py-4 bg-zinc-100 text-zinc-600 rounded-xl font-bold text-sm hover:bg-zinc-200 transition-all"
+                    className="flex items-center gap-3 px-6 py-4 bg-navy-100 text-navy-600 rounded-xl font-bold text-sm hover:bg-navy-200 transition-all"
                   >
                     <Download size={18} />
                     Export
@@ -605,7 +605,7 @@ export default function SemesterRegistrationSection({
                   activeViewTab === "allocations" && (
                     <button
                       onClick={() => setShowAddSubjectModal(true)}
-                      className="flex items-center gap-3 px-6 py-4 bg-zinc-50 text-zinc-900 rounded-xl font-bold text-sm hover:bg-zinc-100 transition-all"
+                      className="flex items-center gap-3 px-6 py-4 bg-navy-50 text-navy-900 rounded-xl font-bold text-sm hover:bg-navy-100 transition-all"
                     >
                       <Plus size={18} />
                       Add Subject
@@ -615,7 +615,7 @@ export default function SemesterRegistrationSection({
                   <button
                     onClick={approveAllocation}
                     disabled={loading}
-                    className={`flex items-center gap-3 px-8 py-4 ${role === "dean" ? "bg-zinc-900" : "bg-zinc-900 shadow-none"} text-white rounded-xl font-extrabold text-sm hover:opacity-90 transition-all shadow-none`}
+                    className={`flex items-center gap-3 px-8 py-4 ${role === "dean" ? "bg-navy-900" : "bg-navy-900 shadow-none"} text-white rounded-xl font-extrabold text-sm hover:opacity-90 transition-all shadow-none`}
                   >
                     <ShieldCheck size={18} />
                     {role === "dean"
@@ -632,13 +632,13 @@ export default function SemesterRegistrationSection({
               <div className="flex gap-4">
                 <button
                   onClick={() => setActiveViewTab("allocations")}
-                  className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${activeViewTab === "allocations" ? "bg-zinc-900 text-white shadow-none" : "bg-white text-zinc-400 border border-zinc-100"}`}
+                  className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${activeViewTab === "allocations" ? "bg-navy-900 text-white shadow-none" : "bg-white text-navy-400 border border-navy-100"}`}
                 >
                   Allocations
                 </button>
                 <button
                   onClick={() => setActiveViewTab("registrations")}
-                  className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${activeViewTab === "registrations" ? "bg-zinc-900 text-white shadow-none" : "bg-white text-zinc-400 border border-zinc-100"}`}
+                  className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${activeViewTab === "registrations" ? "bg-navy-900 text-white shadow-none" : "bg-white text-navy-400 border border-navy-100"}`}
                 >
                   Registrations
                 </button>
@@ -647,7 +647,7 @@ export default function SemesterRegistrationSection({
                 <select
                   value={yearFilter}
                   onChange={(e) => setYearFilter(e.target.value)}
-                  className="bg-white border border-zinc-100 rounded-full px-4 py-2 text-[10px] font-semibold tracking-[0.14em] text-zinc-500"
+                  className="bg-white border border-navy-100 rounded-full px-4 py-2 text-[10px] font-semibold tracking-[0.14em] text-navy-500"
                 >
                   <option value="all">Every Year</option>
                   {["E1", "E2", "E3", "E4"].map((y) => (
@@ -660,7 +660,7 @@ export default function SemesterRegistrationSection({
                   <select
                     value={branchFilter}
                     onChange={(e) => setBranchFilter(e.target.value)}
-                    className="bg-white border border-zinc-100 rounded-full px-4 py-2 text-[10px] font-semibold tracking-[0.14em] text-zinc-500"
+                    className="bg-white border border-navy-100 rounded-full px-4 py-2 text-[10px] font-semibold tracking-[0.14em] text-navy-500"
                   >
                     <option value="all">Every Branch</option>
                     {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
@@ -674,19 +674,19 @@ export default function SemesterRegistrationSection({
             </div>
 
             {role === "webadmin" && (
-              <div className="bg-white rounded-xl border border-zinc-100 p-6 space-y-5">
+              <div className="bg-white rounded-xl border border-navy-100 p-6 space-y-5">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                   <div>
-                    <h3 className="text-lg font-semibold text-zinc-900">
+                    <h3 className="text-lg font-semibold text-navy-900">
                       Bulk semester data import
                     </h3>
-                    <p className="text-sm text-zinc-500">
+                    <p className="text-sm text-navy-500">
                       Upload subject allocations and Google Form responses.
                       Duplicate student submissions use the latest timestamp and
                       replace older rows for this semester.
                     </p>
                   </div>
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-navy-500">
                     <input
                       type="checkbox"
                       checked={registrationDryRun}
@@ -697,13 +697,13 @@ export default function SemesterRegistrationSection({
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                  <div className="rounded-xl border border-zinc-100 p-5 space-y-4">
+                  <div className="rounded-xl border border-navy-100 p-5 space-y-4">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <p className="font-bold text-zinc-900 text-sm">
+                        <p className="font-bold text-navy-900 text-sm">
                           Subject Excel
                         </p>
-                        <p className="text-xs text-zinc-500">
+                        <p className="text-xs text-navy-500">
                           Download the semester template (all cores + elective
                           options), fill or edit, then upload for Dean → HOD
                           approval before students register.
@@ -712,7 +712,7 @@ export default function SemesterRegistrationSection({
                       <button
                         type="button"
                         onClick={downloadSubjectTemplate}
-                        className="px-4 py-2 rounded-lg bg-zinc-50 text-zinc-600 text-xs font-bold"
+                        className="px-4 py-2 rounded-lg bg-navy-50 text-navy-600 text-xs font-bold"
                       >
                         Template
                       </button>
@@ -723,7 +723,7 @@ export default function SemesterRegistrationSection({
                       onChange={(e) =>
                         setSubjectUploadFile(e.target.files?.[0] || null)
                       }
-                      className="block w-full text-xs text-zinc-500"
+                      className="block w-full text-xs text-navy-500"
                     />
                     <button
                       type="button"
@@ -741,12 +741,12 @@ export default function SemesterRegistrationSection({
                     </button>
                   </div>
 
-                  <div className="rounded-xl border border-zinc-100 p-5 space-y-4">
+                  <div className="rounded-xl border border-navy-100 p-5 space-y-4">
                     <div>
-                      <p className="font-bold text-zinc-900 text-sm">
+                      <p className="font-bold text-navy-900 text-sm">
                         Registration Form export
                       </p>
-                      <p className="text-xs text-zinc-500">
+                      <p className="text-xs text-navy-500">
                         Imports Google Form responses with latest-submission
                         wins.
                       </p>
@@ -770,7 +770,7 @@ export default function SemesterRegistrationSection({
                       onChange={(e) =>
                         setRegistrationUploadFile(e.target.files?.[0] || null)
                       }
-                      className="block w-full text-xs text-zinc-500"
+                      className="block w-full text-xs text-navy-500"
                     />
                     <button
                       type="button"
@@ -790,7 +790,7 @@ export default function SemesterRegistrationSection({
                 </div>
 
                 {importSummary && (
-                  <pre className="max-h-52 overflow-auto rounded-xl bg-zinc-950 p-4 text-xs text-zinc-100 whitespace-pre-wrap">
+                  <pre className="max-h-52 overflow-auto rounded-xl bg-navy-950 p-4 text-xs text-navy-100 whitespace-pre-wrap">
                     {importSummary.errors?.length
                       ? importSummary.errors
                           .map((e: any) => e.message)
@@ -802,30 +802,30 @@ export default function SemesterRegistrationSection({
             )}
 
             {activeViewTab === "allocations" ? (
-              <div className="bg-white rounded-xl border border-zinc-100 overflow-hidden shadow-none">
+              <div className="bg-white rounded-xl border border-navy-100 overflow-hidden shadow-none">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="border-b border-zinc-50 bg-zinc-50/30 font-semibold tracking-[0.14em] text-[10px] text-zinc-400">
+                    <tr className="border-b border-navy-50 bg-navy-50/30 font-semibold tracking-[0.14em] text-[10px] text-navy-400">
                       <th className="px-8 py-6">Subject</th>
                       <th className="px-8 py-6 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-50">
+                  <tbody className="divide-y divide-navy-50">
                     {allocations.map((item) => (
                       <tr
                         key={item.id}
-                        className="hover:bg-zinc-50/50 transition-all font-bold"
+                        className="hover:bg-navy-50/50 transition-all font-bold"
                       >
                         <td className="px-8 py-6">
                           <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 bg-zinc-100 rounded-xl flex items-center justify-center text-zinc-400">
+                            <div className="w-12 h-12 bg-navy-100 rounded-xl flex items-center justify-center text-navy-400">
                               <BookOpen size={20} />
                             </div>
                             <div>
-                              <p className="text-zinc-900 text-[13px]">
+                              <p className="text-navy-900 text-[13px]">
                                 {item.customName || item.subject.name}
                               </p>
-                              <p className="text-[9px] text-zinc-400 tracking-[0.14em]">
+                              <p className="text-[9px] text-navy-400 tracking-[0.14em]">
                                 {item.customCode || item.subject.code} •{" "}
                                 {item.customCredits || item.subject.credits}{" "}
                                 CREDITS
@@ -837,13 +837,13 @@ export default function SemesterRegistrationSection({
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => openEditModal(item)}
-                              className="p-2 text-zinc-400 hover:text-zinc-900 bg-zinc-50 rounded-xl border border-transparent hover:border-zinc-100"
+                              className="p-2 text-navy-400 hover:text-navy-900 bg-navy-50 rounded-xl border border-transparent hover:border-navy-100"
                             >
                               <Edit3 size={18} />
                             </button>
                             <button
                               onClick={() => removeAllocation(item.id)}
-                              className="p-2 text-zinc-400 hover:text-red-600 bg-zinc-50 rounded-xl border border-transparent hover:border-red-100"
+                              className="p-2 text-navy-400 hover:text-red-600 bg-navy-50 rounded-xl border border-transparent hover:border-red-100"
                             >
                               <Trash2 size={18} />
                             </button>
@@ -855,10 +855,10 @@ export default function SemesterRegistrationSection({
                 </table>
               </div>
             ) : (
-              <div className="bg-white rounded-xl border border-zinc-100 overflow-hidden">
+              <div className="bg-white rounded-xl border border-navy-100 overflow-hidden">
                 <table className="w-full text-left font-bold">
                   <thead>
-                    <tr className="border-b border-zinc-50 bg-zinc-50/30 text-[10px] text-zinc-400 tracking-[0.14em]">
+                    <tr className="border-b border-navy-50 bg-navy-50/30 text-[10px] text-navy-400 tracking-[0.14em]">
                       <th className="px-8 py-6">Student</th>
                       <th className="px-8 py-6">Subject</th>
                       <th className="px-8 py-6">Status</th>
@@ -866,7 +866,7 @@ export default function SemesterRegistrationSection({
                   </thead>
                   <tbody>
                     {registeredStudents.map((reg) => (
-                      <tr key={reg.id} className="border-b border-zinc-50">
+                      <tr key={reg.id} className="border-b border-navy-50">
                         <td className="px-8 py-6">{reg.studentId}</td>
                         <td className="px-8 py-6 text-[13px]">
                           {reg.subject?.name}
@@ -890,7 +890,7 @@ export default function SemesterRegistrationSection({
 
       {/* New Event Modal */}
       {showNewModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-900/40 p-4">
           <div className={cn("w-full max-w-xl p-8", adminModalShellClass)}>
             <h2 className={cn(adminModalTitleClass, "mb-1")}>
               New enrollment rollout
@@ -925,8 +925,8 @@ export default function SemesterRegistrationSection({
                       className={cn(
                         "py-2.5 rounded-xl text-[12px] font-semibold border transition-all",
                         selectedBranches.includes(b)
-                          ? "bg-zinc-900 text-white border-zinc-900"
-                          : "bg-white text-zinc-500 border-zinc-200 hover:border-zinc-300",
+                          ? "bg-navy-900 text-white border-navy-900"
+                          : "bg-white text-navy-500 border-navy-200 hover:border-navy-300",
                       )}
                     >
                       {b}
@@ -958,7 +958,7 @@ export default function SemesterRegistrationSection({
 
       {/* Manual Subject Add Modal */}
       {showAddSubjectModal && (
-        <div className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-navy-900/40 z-50 flex items-center justify-center p-4">
           <div
             className={cn(
               "w-full max-w-lg p-8 space-y-6",
@@ -975,7 +975,7 @@ export default function SemesterRegistrationSection({
               <button
                 type="button"
                 onClick={() => setShowAddSubjectModal(false)}
-                className="text-zinc-400 hover:text-zinc-900 p-1"
+                className="text-navy-400 hover:text-navy-900 p-1"
               >
                 <X size={20} />
               </button>
@@ -1015,7 +1015,7 @@ export default function SemesterRegistrationSection({
                       <option
                         key={s.id}
                         value={s.id}
-                        className="py-2 px-2 hover:bg-zinc-50 rounded-lg"
+                        className="py-2 px-2 hover:bg-navy-50 rounded-lg"
                       >
                         [{s.code}] {s.name}
                       </option>
@@ -1065,7 +1065,7 @@ export default function SemesterRegistrationSection({
 
       {/* Edit Allocation Modal */}
       {editingAllocation && (
-        <div className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-navy-900/40 z-50 flex items-center justify-center p-4">
           <div
             className={cn(
               "w-full max-w-lg p-8 space-y-6",
@@ -1123,7 +1123,7 @@ export default function SemesterRegistrationSection({
                 />
               </div>
 
-              <div className="flex items-center gap-3 px-4 py-3 bg-zinc-50 rounded-xl border border-zinc-200/70">
+              <div className="flex items-center gap-3 px-4 py-3 bg-navy-50 rounded-xl border border-navy-200/70">
                 <input
                   type="checkbox"
                   id="isMandatory"
@@ -1134,18 +1134,18 @@ export default function SemesterRegistrationSection({
                       isMandatory: e.target.checked,
                     })
                   }
-                  className="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
+                  className="w-4 h-4 rounded border-navy-300 text-navy-900 focus:ring-navy-900"
                 />
                 <label
                   htmlFor="isMandatory"
-                  className="text-[13px] font-medium text-zinc-700"
+                  className="text-[13px] font-medium text-navy-700"
                 >
                   Mandatory course
                 </label>
               </div>
 
               {!editFormData.isMandatory && (
-                <div className="space-y-4 p-5 bg-zinc-50/50 rounded-xl border border-zinc-200/70">
+                <div className="space-y-4 p-5 bg-navy-50/50 rounded-xl border border-navy-200/70">
                   <div className="space-y-2">
                     <label className={adminLabelClass}>
                       Elective group name

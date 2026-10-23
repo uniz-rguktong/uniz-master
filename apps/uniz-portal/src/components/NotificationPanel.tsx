@@ -136,9 +136,9 @@ export function NotificationPanel() {
 
               const colors = [
                 "border-l-red-500",
-                "border-l-zinc-600",
+                "border-l-navy-600",
                 "border-l-yellow-500",
-                "border-l-zinc-400",
+                "border-l-navy-400",
                 "border-l-green-500",
               ];
 
@@ -165,7 +165,7 @@ export function NotificationPanel() {
       {/* Announcements Panel */}
       <div className={cn(adminCardClass, "lg:col-span-2 overflow-hidden flex flex-col h-[500px] p-0")}>
         {/* Header */}
-        <div className="p-6 border-b border-zinc-200/70 flex justify-between items-center bg-zinc-50/50">
+        <div className="p-6 border-b border-navy-200/70 flex justify-between items-center bg-navy-50/50">
           <div className="flex items-center gap-3">
             <h3 className={adminSectionTitleClass}>Announcements</h3>
             <Megaphone className="w-5 h-5 text-pink-500 animate-pulse" />
@@ -173,7 +173,7 @@ export function NotificationPanel() {
           <div className="flex items-center gap-2">
             <button
               onClick={toggleAnnouncePause}
-              className="p-1.5 rounded hover:bg-zinc-200 text-zinc-500 transition-colors"
+              className="p-1.5 rounded hover:bg-navy-200 text-navy-500 transition-colors"
             >
               {isAnnouncePaused ? <Play size={16} /> : <Pause size={16} />}
             </button>
@@ -191,9 +191,9 @@ export function NotificationPanel() {
               <div
                 key={item.id}
                 onClick={() => window.open(item.link, "_blank")}
-                className="flex gap-6 group cursor-pointer p-4 rounded-lg hover:bg-zinc-50 border-b border-zinc-50 last:border-0 transition-colors"
+                className="flex gap-6 group cursor-pointer p-4 rounded-lg hover:bg-navy-50 border-b border-navy-50 last:border-0 transition-colors"
               >
-                <div className="flex flex-col items-center justify-center min-w-[80px] h-[80px] bg-zinc-900/5 text-zinc-900 rounded-lg border border-zinc-900/10">
+                <div className="flex flex-col items-center justify-center min-w-[80px] h-[80px] bg-navy-900/5 text-navy-900 rounded-lg border border-navy-900/10">
                   <span className="text-lg font-semibold leading-none">
                     {item.date.split("-")[0]}
                   </span>
@@ -202,15 +202,15 @@ export function NotificationPanel() {
                       item.date.split("-").reverse().join("-"),
                     ).toLocaleString("default", { month: "short" })}
                   </span>
-                  <span className="text-[10px] text-zinc-400">
+                  <span className="text-[10px] text-navy-400">
                     {item.date.split("-")[2]}
                   </span>
                 </div>
                 <div className="flex-1 flex flex-col justify-center">
-                  <h4 className="font-bold text-zinc-800 group-hover:text-zinc-900 transition-colors line-clamp-2 leading-tight mb-2">
+                  <h4 className="font-bold text-navy-800 group-hover:text-navy-900 transition-colors line-clamp-2 leading-tight mb-2">
                     {item.title}
                   </h4>
-                  <div className="flex items-center gap-2 text-xs text-zinc-400 font-bold tracking-wider">
+                  <div className="flex items-center gap-2 text-xs text-navy-400 font-bold tracking-wider">
                     <span>Read More</span>
                     <ChevronRight
                       size={12}
@@ -230,12 +230,12 @@ export function NotificationPanel() {
       {/* Notifications Panel */}
       <div className={cn(adminCardClass, "col-span-1 overflow-hidden flex flex-col h-[500px] p-0")}>
         {/* Header */}
-        <div className="p-6 border-b border-zinc-200/70 flex justify-between items-center bg-zinc-50/50">
+        <div className="p-6 border-b border-navy-200/70 flex justify-between items-center bg-navy-50/50">
           <h3 className={adminSectionTitleClass}>Notifications</h3>
           <div className="flex items-center gap-2">
             <button
               onClick={toggleNotifyPause}
-              className="p-1.5 rounded hover:bg-zinc-200 text-zinc-500 transition-colors"
+              className="p-1.5 rounded hover:bg-navy-200 text-navy-500 transition-colors"
             >
               {isNotifyPaused ? <Play size={16} /> : <Pause size={16} />}
             </button>
@@ -243,7 +243,7 @@ export function NotificationPanel() {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-zinc-100">
+        <div className="flex border-b border-navy-100">
           {/* Tenders hidden as per request */}
           {/* 
           <button
@@ -251,8 +251,8 @@ export function NotificationPanel() {
             className={cn(
               "flex-1 py-3 text-sm font-bold tracking-wider transition-colors border-b-2",
               activeTab === "tenders"
-                ? "border-zinc-900 text-zinc-900 bg-zinc-900/5"
-                : "border-transparent text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50",
+                ? "border-navy-900 text-navy-900 bg-navy-900/5"
+                : "border-transparent text-navy-400 hover:text-navy-600 hover:bg-navy-50",
             )}
           >
             Tenders
@@ -263,8 +263,8 @@ export function NotificationPanel() {
             className={cn(
               "flex-1 py-3 text-sm font-bold tracking-wider transition-colors border-b-2",
               activeTab === "careers"
-                ? "border-zinc-900 text-zinc-900 bg-zinc-50"
-                : "border-transparent text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50",
+                ? "border-navy-900 text-navy-900 bg-navy-50"
+                : "border-transparent text-navy-400 hover:text-navy-600 hover:bg-navy-50",
             )}
           >
             Careers
@@ -283,19 +283,19 @@ export function NotificationPanel() {
                 key={item.id}
                 onClick={() => window.open(item.link, "_blank")}
                 className={cn(
-                  "group cursor-pointer flex justify-between items-center p-3 mb-2 rounded border border-zinc-100 hover:shadow-md transition-all bg-white border-l-4",
+                  "group cursor-pointer flex justify-between items-center p-3 mb-2 rounded border border-navy-100 hover:shadow-md transition-all bg-white border-l-4",
                   item.color,
                 )}
               >
                 <div className="flex-1 pr-3">
-                  <p className="text-xs font-bold text-zinc-700 leading-tight mb-1 group-hover:text-zinc-900 transition-colors line-clamp-2">
+                  <p className="text-xs font-bold text-navy-700 leading-tight mb-1 group-hover:text-navy-900 transition-colors line-clamp-2">
                     {item.title}
                   </p>
-                  <p className="text-[10px] text-zinc-400 font-medium">
+                  <p className="text-[10px] text-navy-400 font-medium">
                     {item.dateRange}
                   </p>
                 </div>
-                <div className="text-zinc-300 group-hover:text-zinc-900 transition-colors">
+                <div className="text-navy-300 group-hover:text-navy-900 transition-colors">
                   <ChevronRight size={16} />
                 </div>
               </div>

@@ -149,7 +149,7 @@ export default function PushNotificationSection() {
           <>
             <div className="relative">
               <Search
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400"
                 size={15}
               />
               <input
@@ -162,7 +162,7 @@ export default function PushNotificationSection() {
               {refreshing && (
                 <Loader2
                   size={14}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-zinc-400"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-navy-400"
                 />
               )}
             </div>
@@ -195,35 +195,35 @@ export default function PushNotificationSection() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[900px]">
             <thead>
-              <tr className="border-b border-zinc-200/70 bg-zinc-50/50">
-                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
+              <tr className="border-b border-navy-200/70 bg-navy-50/50">
+                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-navy-500">
                   Person
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-navy-500">
                   Student ID
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-navy-500">
                   Academic
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-navy-500">
                   Device
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-navy-500">
                   Status
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-navy-500">
                   Registered
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-navy-100">
               {loading ? (
                 Array(6)
                   .fill(0)
                   .map((_, i) => (
                     <tr key={i} className="animate-pulse">
                       <td className="px-6 py-4" colSpan={6}>
-                        <div className="h-10 bg-zinc-100 rounded-lg" />
+                        <div className="h-10 bg-navy-100 rounded-lg" />
                       </td>
                     </tr>
                   ))
@@ -234,19 +234,19 @@ export default function PushNotificationSection() {
                   return (
                     <tr
                       key={sub.id}
-                      className="hover:bg-zinc-50/60 transition-colors"
+                      className="hover:bg-navy-50/60 transition-colors"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3 min-w-[200px]">
-                          <div className="w-9 h-9 rounded-lg bg-zinc-900 text-white flex items-center justify-center font-semibold text-[12px] shrink-0">
+                          <div className="w-9 h-9 rounded-lg bg-navy-900 text-white flex items-center justify-center font-semibold text-[12px] shrink-0">
                             {initials}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-semibold text-zinc-900 text-[13px] truncate">
+                            <p className="font-semibold text-navy-900 text-[13px] truncate">
                               {displayName}
                             </p>
                             {sub.email && (
-                              <p className="text-[11px] text-zinc-500 truncate max-w-[220px]">
+                              <p className="text-[11px] text-navy-500 truncate max-w-[220px]">
                                 {sub.email}
                               </p>
                             )}
@@ -254,7 +254,7 @@ export default function PushNotificationSection() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-[12px] font-semibold text-zinc-800 tabular-nums ">
+                        <p className="text-[12px] font-semibold text-navy-800 tabular-nums ">
                           {sub.username}
                         </p>
                       </td>
@@ -262,27 +262,27 @@ export default function PushNotificationSection() {
                         {sub.branch || sub.year || sub.batch ? (
                           <div className="flex flex-wrap gap-1">
                             {sub.branch && (
-                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700">
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-navy-100 text-navy-700">
                                 {sub.branch}
                               </span>
                             )}
                             {sub.year && (
-                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700">
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-navy-100 text-navy-700">
                                 {sub.year}
                               </span>
                             )}
                             {sub.batch && (
-                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700">
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-navy-100 text-navy-700">
                                 {sub.batch}
                               </span>
                             )}
                           </div>
                         ) : (
-                          <span className="text-[12px] text-zinc-400">—</span>
+                          <span className="text-[12px] text-navy-400">—</span>
                         )}
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-1.5 text-zinc-500 max-w-[160px]">
+                        <div className="flex items-center gap-1.5 text-navy-500 max-w-[160px]">
                           <Smartphone size={13} className="shrink-0" />
                           <span
                             className="text-[11px] font-mono truncate"
@@ -293,13 +293,13 @@ export default function PushNotificationSection() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 w-fit">
+                        <div className="inline-flex items-center gap-1.5 text-navy-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 w-fit">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           <span className="text-[11px] font-medium">Active</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-[12px] font-medium text-zinc-700 tabular-nums">
+                        <p className="text-[12px] font-medium text-navy-700 tabular-nums">
                           {new Date(sub.createdAt).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "short",
@@ -314,10 +314,10 @@ export default function PushNotificationSection() {
                 <tr>
                   <td colSpan={6} className="py-20 text-center">
                     <div className="flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 flex items-center justify-center bg-zinc-50 rounded-2xl border border-zinc-200/70 text-zinc-300">
+                      <div className="w-16 h-16 flex items-center justify-center bg-navy-50 rounded-[2px] border border-navy-200/70 text-navy-300">
                         <Bell size={32} strokeWidth={1.5} />
                       </div>
-                      <p className="text-[14px] font-medium text-zinc-500">
+                      <p className="text-[14px] font-medium text-navy-500">
                         {debouncedSearch.trim()
                           ? "No subscribers match your search."
                           : "No active push subscribers found."}
@@ -331,8 +331,8 @@ export default function PushNotificationSection() {
         </div>
 
         {subscribers.length > 0 && (
-          <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-200/70 flex items-center justify-between gap-4">
-            <p className="text-[11px] font-medium text-zinc-500">
+          <div className="px-6 py-4 bg-navy-50/50 border-t border-navy-200/70 flex items-center justify-between gap-4">
+            <p className="text-[11px] font-medium text-navy-500">
               Showing {(page - 1) * 50 + 1}–{Math.min(page * 50, total)} of {total}
             </p>
             <div className="flex items-center gap-2">
@@ -340,18 +340,18 @@ export default function PushNotificationSection() {
                 type="button"
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="h-8 px-3.5 border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 bg-white hover:border-zinc-300 disabled:opacity-30 disabled:pointer-events-none"
+                className="h-8 px-3.5 border border-navy-200 rounded-lg text-[12px] font-semibold text-navy-600 bg-white hover:border-navy-300 disabled:opacity-30 disabled:pointer-events-none"
               >
                 Prev
               </button>
-              <span className="text-[12px] font-semibold text-zinc-900 tabular-nums px-2">
+              <span className="text-[12px] font-semibold text-navy-900 tabular-nums px-2">
                 {page} / {totalPages}
               </span>
               <button
                 type="button"
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="h-8 px-3.5 border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 bg-white hover:border-zinc-300 disabled:opacity-30 disabled:pointer-events-none"
+                className="h-8 px-3.5 border border-navy-200 rounded-lg text-[12px] font-semibold text-navy-600 bg-white hover:border-navy-300 disabled:opacity-30 disabled:pointer-events-none"
               >
                 Next
               </button>
@@ -369,7 +369,7 @@ export default function PushNotificationSection() {
           }
         }}
       >
-        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl shadow-xl">
+        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-navy-200 rounded-[2px] shadow-xl">
           <div className="relative">
             <button
               type="button"
@@ -377,16 +377,16 @@ export default function PushNotificationSection() {
                 setShowSendModal(false);
                 setBroadcast({ target: "all", title: "", body: "", image: "" });
               }}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
 
             <AlertDialogHeader className="p-8 pb-3 flex flex-col items-start text-left gap-1.5">
-              <AlertDialogTitle className="text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]">
+              <AlertDialogTitle className="text-[20px] font-semibold text-navy-900 tracking-[-0.01em]">
                 Push Broadcast
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-[13px] text-zinc-500 leading-relaxed">
+              <AlertDialogDescription className="text-[13px] text-navy-500 leading-relaxed">
                 Send an instant pulse alert to campus devices.
               </AlertDialogDescription>
             </AlertDialogHeader>

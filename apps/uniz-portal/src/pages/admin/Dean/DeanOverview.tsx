@@ -28,7 +28,6 @@ import { Card } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { toast } from "@/utils/toast-ref";
-import { BackgroundIconCloud } from "../../../components/illustrations/FloatingIllustrations";
 import { uploadImage } from "../../../api/uploadImage";
 
 interface Profile {
@@ -233,13 +232,13 @@ export default function DeanOverview({ username }: { username: string }) {
           <Skeleton className="w-64 h-4 rounded-md" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Skeleton className="h-44 rounded-2xl" />
-          <Skeleton className="h-44 rounded-2xl" />
-          <Skeleton className="h-44 rounded-2xl" />
-          <Skeleton className="h-44 rounded-2xl" />
+          <Skeleton className="h-44 rounded-[2px]" />
+          <Skeleton className="h-44 rounded-[2px]" />
+          <Skeleton className="h-44 rounded-[2px]" />
+          <Skeleton className="h-44 rounded-[2px]" />
         </div>
-        <Skeleton className="h-[450px] w-full rounded-2xl" />
-        <Skeleton className="h-[400px] w-full rounded-2xl" />
+        <Skeleton className="h-[450px] w-full rounded-[2px]" />
+        <Skeleton className="h-[400px] w-full rounded-[2px]" />
       </div>
     );
   }
@@ -248,16 +247,14 @@ export default function DeanOverview({ username }: { username: string }) {
     <div className="space-y-12 pb-20 animate-in fade-in slide-in-from-bottom-6 duration-1000">
       {/* Profile Header (Added for consistency with other portals) */}
       <div className="flex flex-col items-center justify-center pt-10 pb-6 relative overflow-hidden">
-        <BackgroundIconCloud />
-
         {/* Avatar */}
         <div className="relative mb-6">
           <div
             className="relative p-[4px] md:p-[5px] rounded-full"
             style={{ background: "#2ebd59" }}
           >
-            <div className="relative bg-zinc-50 p-[3px] rounded-full">
-              <div className="relative w-[110px] h-[110px] md:w-[130px] md:h-[130px] bg-zinc-900 rounded-full flex justify-center items-center text-white text-[54px] font-medium overflow-hidden shadow-none">
+            <div className="relative bg-navy-50 p-[3px] rounded-full">
+              <div className="relative w-[110px] h-[110px] md:w-[130px] md:h-[130px] bg-navy-900 rounded-full flex justify-center items-center text-white text-[54px] font-medium overflow-hidden shadow-none">
                 {profileLoading ? (
                   <Loader2 className="w-9 h-9 animate-spin text-white/60" />
                 ) : profile?.profile_url ? (
@@ -276,7 +273,7 @@ export default function DeanOverview({ username }: { username: string }) {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="absolute inset-0 rounded-full flex items-center justify-center bg-[#0A2540]/55 backdrop-blur-sm"
+                      className="absolute inset-0 rounded-full flex items-center justify-center bg-[#0A2540]/55"
                     >
                       <Loader2 className="w-9 h-9 text-white animate-spin" />
                     </motion.div>
@@ -288,7 +285,7 @@ export default function DeanOverview({ username }: { username: string }) {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="absolute bottom-[-1px] right-2 w-8 h-8 bg-[#e8f0fe] border-[1.5px] border-[#4285f4] rounded-full flex items-center justify-center text-[#174ea6] hover:bg-zinc-100 transition-all z-20 cursor-pointer hover:scale-110 active:scale-95 shadow-none"
+              className="absolute bottom-[-1px] right-2 w-8 h-8 bg-[#e8f0fe] border-[1.5px] border-[#4285f4] rounded-full flex items-center justify-center text-[#174ea6] hover:bg-navy-100 transition-all z-20 cursor-pointer hover:scale-110 active:scale-95 shadow-none"
             >
               <Camera size={17} strokeWidth={2.5} />
             </button>
@@ -304,12 +301,12 @@ export default function DeanOverview({ username }: { username: string }) {
 
         {/* Name & Role Section */}
         <div className="flex items-center justify-center gap-2 mb-2">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-zinc-900 ">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-navy-900 ">
             {profileLoading ? "---" : displayName}
           </h1>
         </div>
 
-        <p className="text-zinc-500 font-medium text-[13px] flex items-center justify-center gap-1.5 mb-4">
+        <p className="text-navy-500 font-medium text-[13px] flex items-center justify-center gap-1.5 mb-4">
           {email}
           {!profileLoading && (
             <BadgeCheck
@@ -323,11 +320,11 @@ export default function DeanOverview({ username }: { username: string }) {
         {/* Info Tags */}
         {!profileLoading && (
           <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-bold mb-6">
-            <span className="text-zinc-900 tracking-[0.14em] px-2.5 py-1 bg-zinc-50 border border-zinc-100 rounded-xl">
+            <span className="text-navy-900 tracking-[0.14em] px-2.5 py-1 bg-navy-50 border border-navy-100 rounded-xl">
               {username}
             </span>
-            <span className="w-1 h-1 rounded-full bg-zinc-200" />
-            <span className="tracking-wide text-zinc-400">Dean Portal</span>
+            <span className="w-1 h-1 rounded-full bg-navy-200" />
+            <span className="tracking-wide text-navy-400">Dean Portal</span>
           </div>
         )}
 
@@ -335,7 +332,7 @@ export default function DeanOverview({ username }: { username: string }) {
         {!isEditing && !profileLoading && (
           <button
             onClick={() => setIsEditing(true)}
-            className="px-6 py-2 rounded-xl border border-zinc-200 text-zinc-500 font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-50 transition-all active:scale-95"
+            className="px-6 py-2 rounded-xl border border-navy-200 text-navy-500 font-bold tracking-[0.14em] text-[10px] hover:bg-navy-50 transition-all active:scale-95"
           >
             Edit Profile
           </button>
@@ -348,7 +345,7 @@ export default function DeanOverview({ username }: { username: string }) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-white rounded-2xl border border-zinc-100 p-8 space-y-4 shadow-2xl relative z-30"
+              className="w-full max-w-md bg-white rounded-[2px] border border-navy-100 p-8 space-y-4 shadow-2xl relative z-30"
             >
               {[
                 { key: "email", label: "Email", icon: Mail },
@@ -358,13 +355,13 @@ export default function DeanOverview({ username }: { username: string }) {
               ].map(({ key, label, icon: Icon }) => (
                 <div
                   key={key}
-                  className="flex items-center gap-4 px-4 py-3.5 bg-zinc-50 rounded-2xl border border-zinc-100 focus-within:border-zinc-100 transition-all"
+                  className="flex items-center gap-4 px-4 py-3.5 bg-navy-50 rounded-[2px] border border-navy-100 focus-within:border-navy-100 transition-all"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-white border border-zinc-100 flex items-center justify-center shrink-0">
-                    <Icon size={16} className="text-zinc-400" />
+                  <div className="w-10 h-10 rounded-xl bg-white border border-navy-100 flex items-center justify-center shrink-0">
+                    <Icon size={16} className="text-navy-400" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[9px] font-semibold text-zinc-400 tracking-[0.14em] mb-0.5">
+                    <p className="text-[9px] font-semibold text-navy-400 tracking-[0.14em] mb-0.5">
                       {label}
                     </p>
                     <input
@@ -373,7 +370,7 @@ export default function DeanOverview({ username }: { username: string }) {
                       onChange={(e) =>
                         setFormData({ ...formData, [key]: e.target.value })
                       }
-                      className="text-[13px] font-bold text-zinc-900 bg-transparent outline-none w-full"
+                      className="text-[13px] font-bold text-navy-900 bg-transparent outline-none w-full"
                     />
                   </div>
                 </div>
@@ -383,7 +380,7 @@ export default function DeanOverview({ username }: { username: string }) {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex-1 py-3.5 rounded-2xl bg-zinc-900 text-white text-[11px] font-semibold tracking-[0.14em] flex items-center justify-center gap-2 hover:bg-[#0A2540] transition-all disabled:opacity-50"
+                  className="flex-1 py-3.5 rounded-[2px] bg-navy-900 text-white text-[11px] font-semibold tracking-[0.14em] flex items-center justify-center gap-2 hover:bg-[#0A2540] transition-all disabled:opacity-50"
                 >
                   {isSaving ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -394,7 +391,7 @@ export default function DeanOverview({ username }: { username: string }) {
                 </button>
                 <button
                   onClick={() => setIsEditing(false)}
-                  className="px-8 py-3.5 rounded-2xl border border-zinc-200 text-zinc-400 text-[11px] font-semibold tracking-[0.14em] hover:bg-zinc-50 transition-all"
+                  className="px-8 py-3.5 rounded-[2px] border border-navy-200 text-navy-400 text-[11px] font-semibold tracking-[0.14em] hover:bg-navy-50 transition-all"
                 >
                   Cancel
                 </button>
@@ -436,12 +433,12 @@ export default function DeanOverview({ username }: { username: string }) {
       </div>
 
       {/* Campus Occupancy Analytics */}
-      <Card className="p-10 mx-10 flex flex-col items-center justify-center space-y-10 bg-transparent border-zinc-100 shadow-sm rounded-2xl hover:shadow-lg transition-all duration-500">
+      <Card className="p-10 mx-10 flex flex-col items-center justify-center space-y-10 bg-transparent border-navy-100 shadow-sm rounded-[2px] hover:shadow-lg transition-all duration-500">
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-semibold text-zinc-900 tracking-tight">
+          <h2 className="text-2xl font-semibold text-navy-900 tracking-tight">
             Campus Occupancy Intelligence
           </h2>
-          <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.4em]">
+          <p className="text-[10px] font-semibold text-navy-400 tracking-[0.4em]">
             Real-time resident distribution
           </p>
         </div>
@@ -463,10 +460,10 @@ export default function DeanOverview({ username }: { username: string }) {
                     exit={{ opacity: 0, scale: 0.9 }}
                     className="flex flex-col items-center justify-center text-center"
                   >
-                    <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] mb-1">
+                    <p className="text-[10px] font-semibold text-navy-400 tracking-[0.14em] mb-1">
                       {hoveredOccupancy || "Total Population"}
                     </p>
-                    <p className="text-5xl font-semibold text-zinc-900 tracking-tighter">
+                    <p className="text-5xl font-semibold text-navy-900 tracking-tighter">
                       {hoveredOccupancy
                         ? occupancyStats.data.find(
                             (d) => d.label === hoveredOccupancy,
@@ -499,10 +496,10 @@ export default function DeanOverview({ username }: { username: string }) {
                 onMouseEnter={() => setHoveredOccupancy(segment.label)}
                 onMouseLeave={() => setHoveredOccupancy(null)}
                 className={cn(
-                  "flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 cursor-pointer",
+                  "flex items-center justify-between p-4 rounded-[2px] border transition-all duration-300 cursor-pointer",
                   hoveredOccupancy === segment.label
-                    ? "bg-zinc-900 border-zinc-900 shadow-xl -translate-x-2"
-                    : "bg-white border-zinc-100 hover:border-zinc-200",
+                    ? "bg-navy-900 border-navy-900 shadow-xl -translate-x-2"
+                    : "bg-white border-navy-100 hover:border-navy-200",
                 )}
               >
                 <div className="flex items-center gap-4">
@@ -515,7 +512,7 @@ export default function DeanOverview({ username }: { username: string }) {
                       "text-xs font-semibold tracking-[0.14em]",
                       hoveredOccupancy === segment.label
                         ? "text-white"
-                        : "text-zinc-600",
+                        : "text-navy-600",
                     )}
                   >
                     {segment.label}
@@ -527,7 +524,7 @@ export default function DeanOverview({ username }: { username: string }) {
                       "text-sm font-semibold",
                       hoveredOccupancy === segment.label
                         ? "text-white"
-                        : "text-zinc-900",
+                        : "text-navy-900",
                     )}
                   >
                     {segment.value.toLocaleString()}
@@ -537,7 +534,7 @@ export default function DeanOverview({ username }: { username: string }) {
                       "text-[9px] font-bold opacity-60",
                       hoveredOccupancy === segment.label
                         ? "text-blue-400"
-                        : "text-zinc-400",
+                        : "text-navy-400",
                     )}
                   >
                     {((segment.value / occupancyStats.total) * 100).toFixed(1)}%
@@ -552,10 +549,10 @@ export default function DeanOverview({ username }: { username: string }) {
       {academicStats && (
         <div className="px-10 space-y-6">
           <div>
-            <h2 className="text-xl font-semibold text-zinc-900 tracking-tight">
+            <h2 className="text-xl font-semibold text-navy-900 tracking-tight">
               Academic Insights
             </h2>
-            <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.4em] mt-1">
+            <p className="text-[10px] font-semibold text-navy-400 tracking-[0.4em] mt-1">
               {academicStats.currentSemester || "CURRENT SEMESTER"}
             </p>
           </div>

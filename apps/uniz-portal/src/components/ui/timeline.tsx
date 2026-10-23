@@ -60,10 +60,10 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
             className="flex justify-start pt-8 md:pt-24 md:gap-10"
           >
             <div className="sticky flex flex-col md:flex-row z-40 items-center top-40 self-start max-w-[40px] md:max-w-xs lg:max-w-sm md:w-full">
-              <div className="h-11 w-11 absolute left-3 md:left-3 rounded-full bg-zinc-950 flex items-center justify-center shadow-[0_12px_32px_-10px_rgba(0,0,0,0.35)] z-50 text-white ring-4 ring-white/80">
+              <div className="h-11 w-11 absolute left-3 md:left-3 rounded-full bg-navy-950 flex items-center justify-center shadow-[0_12px_32px_-10px_rgba(0,0,0,0.35)] z-50 text-white ring-4 ring-white/80">
                 <item.icon size={18} strokeWidth={2.2} />
               </div>
-              <h3 className="hidden md:block text-3xl md:text-[2.75rem] md:pl-20 font-semibold text-zinc-300/70 leading-[1.05] tracking-[-0.04em]">
+              <h3 className="hidden md:block text-3xl md:text-[2.75rem] md:pl-20 font-semibold text-navy-300/70 leading-[1.05] tracking-[-0.04em]">
                 {item.title}
               </h3>
             </div>
@@ -76,15 +76,15 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
                   className="mb-5"
                 />
 
-                <h3 className="md:hidden block text-2xl mb-3 font-semibold text-zinc-950 tracking-tight">
+                <h3 className="md:hidden block text-2xl mb-3 font-semibold text-navy-950 tracking-tight">
                   {item.title}
                 </h3>
 
-                <p className="text-[10px] font-semibold tracking-[0.18em] text-zinc-400 mb-3">
+                <p className="text-[10px] font-semibold tracking-[0.18em] text-navy-400 mb-3">
                   {item.subtitle}
                 </p>
 
-                <div className="text-zinc-600 text-[15px] md:text-[16px] font-medium leading-relaxed">
+                <div className="text-navy-600 text-[15px] md:text-[16px] font-medium leading-relaxed">
                   {item.content}
                 </div>
               </LandingCard>
@@ -94,11 +94,11 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
 
         <div
           style={{ height: Math.max(0, height - 100) + "px" }}
-          className="absolute md:left-8 left-8 top-0 overflow-hidden w-[2px] bg-zinc-100/80 rounded-full"
+          className="absolute md:left-8 left-8 top-0 overflow-hidden w-[2px] bg-navy-100/80 rounded-full"
         >
           <motion.div
             style={{ height: heightTransform, opacity: opacityTransform }}
-            className="absolute inset-x-0 top-0 w-[2px] bg-gradient-to-b from-zinc-950 via-zinc-500 to-zinc-200 rounded-full"
+            className="absolute inset-x-0 top-0 w-[2px] bg-gradient-to-b from-navy-950 via-navy-500 to-navy-200 rounded-full"
           />
         </div>
       </div>

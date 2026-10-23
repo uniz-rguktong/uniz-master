@@ -200,20 +200,20 @@ export default function DeanReview() {
     <div className="p-8 space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-semibold tracking-tight text-zinc-900">
+          <h2 className="text-3xl font-semibold tracking-tight text-navy-900">
             {department} Branch Review
           </h2>
-          <p className="text-zinc-500 font-medium">
+          <p className="text-navy-500 font-medium">
             Review and finalize subjects for the current semester registration
             rollout.
           </p>
           <div className="flex gap-4 mt-6">
-            <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-2xl border border-zinc-100 shadow-sm">
-              <Users size={14} className="text-zinc-400" />
+            <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-[2px] border border-navy-100 shadow-sm">
+              <Users size={14} className="text-navy-400" />
               <select
                 value={filterYear}
                 onChange={(e) => setFilterYear(e.target.value)}
-                className="font-semibold text-[10px] tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
+                className="font-semibold text-[10px] tracking-[0.14em] text-navy-700 outline-none border-none bg-transparent"
               >
                 <option value="all">All Years</option>
                 {["E1", "E2", "E3", "E4"].map((y) => (
@@ -223,12 +223,12 @@ export default function DeanReview() {
                 ))}
               </select>
             </div>
-            <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-2xl border border-zinc-100 shadow-sm">
-              <BookText size={14} className="text-zinc-400" />
+            <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-[2px] border border-navy-100 shadow-sm">
+              <BookText size={14} className="text-navy-400" />
               <select
                 value={filterBatch}
                 onChange={(e) => setFilterBatch(e.target.value)}
-                className="font-semibold text-[10px] tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
+                className="font-semibold text-[10px] tracking-[0.14em] text-navy-700 outline-none border-none bg-transparent"
               >
                 <option value="all">All Batches</option>
                 {availableBatches.map((b) => (
@@ -244,7 +244,7 @@ export default function DeanReview() {
           {allocations.length > 0 && (
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-6 py-3 bg-white border border-zinc-200 rounded-2xl text-zinc-600 font-bold text-xs hover:bg-zinc-50 transition-all shadow-sm"
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-navy-200 rounded-[2px] text-navy-600 font-bold text-xs hover:bg-navy-50 transition-all shadow-sm"
             >
               <FileSpreadsheet size={16} />
               Export XLS
@@ -252,12 +252,12 @@ export default function DeanReview() {
           )}
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-zinc-900 text-white rounded-2xl font-bold text-xs hover:bg-zinc-800 transition-all shadow-xl"
+            className="flex items-center gap-2 px-6 py-3 bg-navy-900 text-white rounded-[2px] font-bold text-xs hover:bg-navy-800 transition-all shadow-xl"
           >
             <Plus size={16} />
             Add Subject
           </button>
-          <div className="flex items-center gap-3 px-6 py-3 bg-amber-50 rounded-2xl border border-amber-100">
+          <div className="flex items-center gap-3 px-6 py-3 bg-amber-50 rounded-[2px] border border-amber-100">
             <AlertCircle className="text-amber-500" size={18} />
             <p className="text-amber-700 text-xs font-semibold tracking-[0.14em]">
               {allocations.filter((a: any) => !a.isApproved).length} Pending
@@ -276,26 +276,26 @@ export default function DeanReview() {
           {allocations.map((alloc) => (
             <div
               key={alloc.id}
-              className={`bg-white border-2 rounded-3xl p-8 transition-all ${
+              className={`bg-white border-2 rounded-[2px] p-8 transition-all ${
                 alloc.isApproved
                   ? "border-emerald-50 opacity-80"
-                  : "border-zinc-100 shadow-xl hover:border-zinc-100"
+                  : "border-navy-100 shadow-xl hover:border-navy-100"
               } group`}
             >
               <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-8">
                 <div className="flex items-center gap-6">
                   <div
-                    className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${
+                    className={`w-16 h-16 rounded-[2px] flex items-center justify-center transition-all ${
                       alloc.isApproved
                         ? "bg-emerald-50 text-emerald-600"
-                        : "bg-zinc-50 text-zinc-900 group-hover:bg-zinc-900 group-hover:text-white"
+                        : "bg-navy-50 text-navy-900 group-hover:bg-navy-900 group-hover:text-white"
                     }`}
                   >
                     <BookOpen size={28} />
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                      <span className="text-[10px] font-semibold tracking-[0.14em] text-navy-400">
                         {alloc.subject.code}
                       </span>
                       {alloc.isApproved && (
@@ -304,7 +304,7 @@ export default function DeanReview() {
                         </span>
                       )}
                     </div>
-                    <h3 className="text-xl font-semibold text-zinc-900 tracking-tight leading-tight italic">
+                    <h3 className="text-xl font-semibold text-navy-900 tracking-tight leading-tight italic">
                       {alloc.subject.name}
                     </h3>
                   </div>
@@ -315,14 +315,14 @@ export default function DeanReview() {
                     <>
                       <button
                         onClick={() => setEditing(alloc)}
-                        className="p-3.5 bg-zinc-50 text-zinc-400 rounded-2xl hover:bg-zinc-900 hover:text-white transition-all shadow-sm"
+                        className="p-3.5 bg-navy-50 text-navy-400 rounded-[2px] hover:bg-navy-900 hover:text-white transition-all shadow-sm"
                         title="Edit Subject"
                       >
                         <Edit size={18} />
                       </button>
                       <button
                         onClick={() => handleDelete(alloc.id)}
-                        className="p-3.5 bg-red-50 text-red-400 rounded-2xl hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                        className="p-3.5 bg-red-50 text-red-400 rounded-[2px] hover:bg-red-500 hover:text-white transition-all shadow-sm"
                         title="Delete"
                       >
                         <Trash2 size={18} />
@@ -330,7 +330,7 @@ export default function DeanReview() {
                       <button
                         disabled={approving === alloc.id}
                         onClick={() => handleApprove(alloc.id)}
-                        className="bg-zinc-900 text-white px-8 py-3.5 rounded-2xl font-semibold tracking-[0.14em] text-[10px] flex items-center gap-2 hover:bg-[#0A2540] transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                        className="bg-navy-900 text-white px-8 py-3.5 rounded-[2px] font-semibold tracking-[0.14em] text-[10px] flex items-center gap-2 hover:bg-[#0A2540] transition-all shadow-xl active:scale-95 disabled:opacity-50"
                       >
                         {approving === alloc.id ? (
                           <Spinner size="sm" className="brightness-200" />
@@ -349,43 +349,43 @@ export default function DeanReview() {
               </div>
 
               {/* Subject Meta (Secondary info) */}
-              <div className="mt-6 pt-6 border-t border-zinc-50 flex flex-wrap gap-8">
+              <div className="mt-6 pt-6 border-t border-navy-50 flex flex-wrap gap-8">
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
+                  <span className="text-[9px] font-semibold text-navy-300 tracking-[0.14em]">
                     Credits
                   </span>
-                  <span className="font-bold text-zinc-600 text-xs">
+                  <span className="font-bold text-navy-600 text-xs">
                     {alloc.subject.credits} Units
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
+                  <span className="text-[9px] font-semibold text-navy-300 tracking-[0.14em]">
                     Semester
                   </span>
-                  <span className="font-bold text-zinc-600 text-xs">
+                  <span className="font-bold text-navy-600 text-xs">
                     {alloc.subject.semester}
                   </span>
                 </div>
                 {alloc.batch && (
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
+                    <span className="text-[9px] font-semibold text-navy-300 tracking-[0.14em]">
                       Batch
                     </span>
-                    <span className="font-bold text-zinc-600 text-xs">
+                    <span className="font-bold text-navy-600 text-xs">
                       {alloc.batch}
                     </span>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
+                  <span className="text-[9px] font-semibold text-navy-300 tracking-[0.14em]">
                     Year
                   </span>
-                  <span className="font-bold text-zinc-600 text-xs text-zinc-900">
+                  <span className="font-bold text-navy-600 text-xs text-navy-900">
                     {alloc.academicYear}
                   </span>
                 </div>
                 {!alloc.isApproved && (
-                  <div className="ml-auto flex items-center gap-2 text-[10px] font-bold text-zinc-900 tracking-[0.14em]">
+                  <div className="ml-auto flex items-center gap-2 text-[10px] font-bold text-navy-900 tracking-[0.14em]">
                     Ready for Review <ArrowRight size={12} />
                   </div>
                 )}
@@ -394,23 +394,23 @@ export default function DeanReview() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center h-80 bg-white rounded-3xl border-2 border-dashed border-zinc-100 p-12 text-center">
-          <div className="w-20 h-20 bg-zinc-50 rounded-3xl flex items-center justify-center text-zinc-200 mb-6">
+        <div className="flex flex-col items-center justify-center h-80 bg-white rounded-[2px] border-2 border-dashed border-navy-100 p-12 text-center">
+          <div className="w-20 h-20 bg-navy-50 rounded-[2px] flex items-center justify-center text-navy-200 mb-6">
             <Eye size={40} />
           </div>
-          <h3 className="text-xl font-semibold text-zinc-900">All caught up!</h3>
-          <p className="text-zinc-400 font-medium max-w-sm font-outfit mt-2">
+          <h3 className="text-xl font-semibold text-navy-900">All caught up!</h3>
+          <p className="text-navy-400 font-medium max-w-sm font-outfit mt-2">
             No subjects are pending for your branch review at this time.
           </p>
         </div>
       )}
 
       {editing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-900/40">
           <div className={cn("w-full max-w-xl p-8 space-y-6", adminModalShellClass)}>
             <div className="flex justify-between items-start gap-4">
               <div>
-                <span className="text-[11px] font-medium text-zinc-500">{editing.subject.code}</span>
+                <span className="text-[11px] font-medium text-navy-500">{editing.subject.code}</span>
                 <h3 className={adminModalTitleClass}>Adjust allocation</h3>
                 <p className={adminModalDescClass}>
                   Update elective details or credit values.
@@ -419,7 +419,7 @@ export default function DeanReview() {
               <button
                 type="button"
                 onClick={() => setEditing(null)}
-                className="text-zinc-400 hover:text-zinc-900 p-1"
+                className="text-navy-400 hover:text-navy-900 p-1"
               >
                 <X size={20} />
               </button>
@@ -482,7 +482,7 @@ export default function DeanReview() {
       )}
 
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-900/40">
           <div className={cn("w-full max-w-xl p-8 space-y-6", adminModalShellClass)}>
             <div className="flex justify-between items-start gap-4">
               <div>
@@ -494,7 +494,7 @@ export default function DeanReview() {
               <button
                 type="button"
                 onClick={() => setShowAddModal(false)}
-                className="text-zinc-400 hover:text-zinc-900 p-1"
+                className="text-navy-400 hover:text-navy-900 p-1"
               >
                 <X size={20} />
               </button>

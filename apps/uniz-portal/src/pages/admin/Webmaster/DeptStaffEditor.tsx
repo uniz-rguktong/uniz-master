@@ -164,7 +164,7 @@ export function DeptStaffEditor({
   return (
     <div className="relative pb-24">
       {/* Live page chrome — mirrors public department page */}
-      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)] mb-8">
+      <div className="rounded-[2px] border border-slate-200 bg-white overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)] mb-8">
         <div className="px-6 py-8 md:px-10 md:py-10 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
@@ -303,7 +303,7 @@ export function DeptStaffEditor({
                             }
                             className={cn(
                               adminInputClass,
-                              "mt-1 font-bold text-slate-900 border-transparent bg-transparent hover:bg-slate-50 focus:bg-white focus:border-zinc-300 px-2 -mx-2",
+                              "mt-1 font-bold text-slate-900 border-transparent bg-transparent hover:bg-slate-50 focus:bg-white focus:border-navy-300 px-2 -mx-2",
                             )}
                             placeholder="Faculty name"
                           />
@@ -327,7 +327,7 @@ export function DeptStaffEditor({
                             }
                             className={cn(
                               adminInputClass,
-                              "mt-1 text-sm text-slate-600 border-transparent bg-transparent hover:bg-slate-50 focus:bg-white focus:border-zinc-300 px-2 -mx-2",
+                              "mt-1 text-sm text-slate-600 border-transparent bg-transparent hover:bg-slate-50 focus:bg-white focus:border-navy-300 px-2 -mx-2",
                             )}
                             placeholder="e.g. Assistant Professor, HOD"
                           />

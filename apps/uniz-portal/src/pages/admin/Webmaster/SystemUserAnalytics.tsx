@@ -131,7 +131,7 @@ export default function SystemUserAnalytics() {
             <DonutChartSkeleton />
           </div>
           <div className="lg:col-span-8 flex">
-            <div className="w-full bg-zinc-50/50 rounded-xl animate-pulse min-h-[400px]" />
+            <div className="w-full bg-navy-50/50 rounded-xl animate-pulse min-h-[400px]" />
           </div>
         </div>
       </div>
@@ -179,10 +179,10 @@ export default function SystemUserAnalytics() {
       {academicStats && (
         <div className="space-y-4">
           <div>
-            <p className="text-[11px] font-semibold text-zinc-400 tracking-[0.14em] uppercase">
+            <p className="text-[11px] font-semibold text-navy-400 tracking-[0.14em] uppercase">
               Academic overview
             </p>
-            <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
+            <h2 className="text-lg font-semibold text-navy-900 tracking-tight mt-1">
               {academicStats.currentSemester || "Current Semester"}
             </h2>
           </div>
@@ -231,10 +231,10 @@ export default function SystemUserAnalytics() {
       <InstitutionAnalytics />
 
       <div>
-        <p className="text-[11px] font-semibold text-zinc-400 tracking-[0.14em] uppercase">
+        <p className="text-[11px] font-semibold text-navy-400 tracking-[0.14em] uppercase">
           Access & identity
         </p>
-        <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
+        <h2 className="text-lg font-semibold text-navy-900 tracking-tight mt-1">
           Platform accounts
         </h2>
       </div>
@@ -270,16 +270,16 @@ export default function SystemUserAnalytics() {
           value={staffTotal.toLocaleString()}
           icon={Shield}
           badge="Admin roles"
-          iconColor="text-zinc-600"
-          iconBg="bg-zinc-50"
+          iconColor="text-navy-600"
+          iconBg="bg-navy-50"
         />
       </div>
 
       <div>
-        <p className="text-[11px] font-semibold text-zinc-400 tracking-[0.14em] uppercase">
+        <p className="text-[11px] font-semibold text-navy-400 tracking-[0.14em] uppercase">
           Operations
         </p>
-        <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
+        <h2 className="text-lg font-semibold text-navy-900 tracking-tight mt-1">
           Identity mix & access health
         </h2>
       </div>
@@ -288,12 +288,12 @@ export default function SystemUserAnalytics() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
         {/* New Interactive Donut Chart */}
         <div className="lg:col-span-4 flex">
-          <Card className="p-7 w-full flex flex-col items-center justify-center space-y-7 bg-white border border-zinc-200/70 shadow-[0_1px_2px_rgba(10,10,10,0.03)] rounded-2xl transition-colors duration-300 hover:border-zinc-300">
+          <Card className="p-7 w-full flex flex-col items-center justify-center space-y-7 bg-white border border-navy-200/70 shadow-[0_1px_2px_rgba(10,10,10,0.03)] rounded-[2px] transition-colors duration-300 hover:border-navy-300">
             <div className="text-center space-y-1">
-              <h2 className="text-[15px] font-semibold text-zinc-900 tracking-[-0.01em]">
+              <h2 className="text-[15px] font-semibold text-navy-900 tracking-[-0.01em]">
                 Accounts by role
               </h2>
-              <p className="text-[11px] font-medium text-zinc-400 tracking-[0.14em]">
+              <p className="text-[11px] font-medium text-navy-400 tracking-[0.14em]">
                 Students, faculty & admin
               </p>
             </div>
@@ -317,14 +317,14 @@ export default function SystemUserAnalytics() {
                       transition={{ duration: 0.2, ease: "circOut" }}
                       className="flex flex-col items-center justify-center text-center"
                     >
-                      <p className="text-zinc-400 text-[10px] font-medium tracking-[0.12em] mb-1 max-w-[120px] truncate">
+                      <p className="text-navy-400 text-[10px] font-medium tracking-[0.12em] mb-1 max-w-[120px] truncate">
                         {displayLabel}
                       </p>
-                      <p className="text-[32px] font-semibold text-zinc-900 leading-none tracking-[-0.03em] tabular-nums">
+                      <p className="text-[32px] font-semibold text-navy-900 leading-none tracking-[-0.03em] tabular-nums">
                         {displayValue.toLocaleString()}
                       </p>
                       {activeSegment && (
-                        <p className="text-xs font-semibold text-zinc-500 mt-1.5 tabular-nums">
+                        <p className="text-xs font-semibold text-navy-500 mt-1.5 tabular-nums">
                           {displayPercentage.toFixed(1)}%
                         </p>
                       )}
@@ -334,7 +334,7 @@ export default function SystemUserAnalytics() {
               />
             </div>
 
-            <div className="flex flex-col space-y-1 w-full pt-5 border-t border-zinc-100">
+            <div className="flex flex-col space-y-1 w-full pt-5 border-t border-navy-100">
               {roleData.map((segment, index) => (
                 <motion.div
                   key={segment.label}
@@ -344,8 +344,8 @@ export default function SystemUserAnalytics() {
                   className={cn(
                     "flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors duration-200 group cursor-pointer",
                     hoveredSegment === segment.label
-                      ? "bg-zinc-50"
-                      : "hover:bg-zinc-50/60",
+                      ? "bg-navy-50"
+                      : "hover:bg-navy-50/60",
                   )}
                   onMouseEnter={() => setHoveredSegment(segment.label)}
                   onMouseLeave={() => setHoveredSegment(null)}
@@ -355,11 +355,11 @@ export default function SystemUserAnalytics() {
                       className="h-2 w-2 rounded-full group-hover:scale-125 transition-transform"
                       style={{ backgroundColor: segment.color }}
                     />
-                    <span className="text-[12.5px] font-medium text-zinc-600 capitalize tracking-tight">
+                    <span className="text-[12.5px] font-medium text-navy-600 capitalize tracking-tight">
                       {segment.label.toLowerCase()}
                     </span>
                   </div>
-                  <span className="text-[12.5px] font-semibold text-zinc-900 tabular-nums">
+                  <span className="text-[12.5px] font-semibold text-navy-900 tabular-nums">
                     {segment.value.toLocaleString()}
                   </span>
                 </motion.div>

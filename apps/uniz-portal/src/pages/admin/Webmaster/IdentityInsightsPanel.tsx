@@ -90,13 +90,13 @@ export default function IdentityInsightsPanel({
   const staffMax = Math.max(...staffRoles.map((r) => r.value), 1);
 
   return (
-    <Card className="p-7 w-full h-full flex flex-col bg-white border border-zinc-200/70 shadow-[0_1px_2px_rgba(10,10,10,0.03)] rounded-2xl transition-colors duration-300 hover:border-zinc-300">
+    <Card className="p-7 w-full h-full flex flex-col bg-white border border-navy-200/70 shadow-[0_1px_2px_rgba(10,10,10,0.03)] rounded-[2px] transition-colors duration-300 hover:border-navy-300">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-[15px] font-semibold text-zinc-900 tracking-[-0.01em]">
+          <h2 className="text-[15px] font-semibold text-navy-900 tracking-[-0.01em]">
             Access landscape
           </h2>
-          <p className="text-[11px] font-medium text-zinc-400 tracking-[0.12em] mt-0.5">
+          <p className="text-[11px] font-medium text-navy-400 tracking-[0.12em] mt-0.5">
             Staff roles, enablement & student share
           </p>
         </div>
@@ -138,12 +138,12 @@ export default function IdentityInsightsPanel({
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <div>
-          <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] uppercase mb-3">
+          <p className="text-[10px] font-semibold text-navy-400 tracking-[0.14em] uppercase mb-3">
             Staff & admin by role
           </p>
           <div className="space-y-3">
             {staffRoles.length === 0 ? (
-              <p className="text-sm text-zinc-400">No staff role data.</p>
+              <p className="text-sm text-navy-400">No staff role data.</p>
             ) : (
               staffRoles.map((row, i) => {
                 const pct = Math.round((row.value / staffMax) * 100);
@@ -155,14 +155,14 @@ export default function IdentityInsightsPanel({
                     transition={{ delay: i * 0.05 }}
                   >
                     <div className="flex items-center justify-between text-[12px] mb-1.5">
-                      <span className="font-medium text-zinc-700">
+                      <span className="font-medium text-navy-700">
                         {row.label}
                       </span>
-                      <span className="tabular-nums font-semibold text-zinc-900">
+                      <span className="tabular-nums font-semibold text-navy-900">
                         {row.value.toLocaleString()}
                       </span>
                     </div>
-                    <div className="h-2 rounded-full bg-zinc-100 overflow-hidden">
+                    <div className="h-2 rounded-full bg-navy-100 overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-700"
                         style={{
@@ -179,16 +179,16 @@ export default function IdentityInsightsPanel({
         </div>
 
         <div className="flex flex-col justify-center">
-          <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] uppercase mb-3">
+          <p className="text-[10px] font-semibold text-navy-400 tracking-[0.14em] uppercase mb-3">
             Account enablement
           </p>
-          <div className="rounded-2xl border border-zinc-100 bg-zinc-50/50 p-5 space-y-4">
+          <div className="rounded-[2px] border border-navy-100 bg-navy-50/50 p-5 space-y-4">
             <div className="flex items-end justify-between gap-4">
               <div>
-                <p className="text-4xl font-semibold text-zinc-900 tracking-tighter tabular-nums leading-none">
+                <p className="text-4xl font-semibold text-navy-900 tracking-tighter tabular-nums leading-none">
                   {totalActive.toLocaleString()}
                 </p>
-                <p className="text-[12px] font-medium text-zinc-500 mt-1.5">
+                <p className="text-[12px] font-medium text-navy-500 mt-1.5">
                   active of {totalUsers.toLocaleString()} total
                 </p>
               </div>
@@ -202,7 +202,7 @@ export default function IdentityInsightsPanel({
               </p>
             </div>
 
-            <div className="h-3 rounded-full bg-zinc-200/80 overflow-hidden flex">
+            <div className="h-3 rounded-full bg-navy-200/80 overflow-hidden flex">
               <div
                 className="h-full rounded-l-full transition-all duration-700"
                 style={{
@@ -218,7 +218,7 @@ export default function IdentityInsightsPanel({
               )}
             </div>
 
-            <div className="flex flex-wrap gap-4 text-[11px] font-medium text-zinc-500">
+            <div className="flex flex-wrap gap-4 text-[11px] font-medium text-navy-500">
               <span className="inline-flex items-center gap-1.5">
                 <span
                   className="w-2 h-2 rounded-full"
@@ -234,14 +234,14 @@ export default function IdentityInsightsPanel({
               )}
             </div>
 
-            <div className="pt-3 border-t border-zinc-200/70">
+            <div className="pt-3 border-t border-navy-200/70">
               <div className="flex items-center justify-between text-[12px] mb-2">
-                <span className="text-zinc-600">Student share</span>
-                <span className="font-semibold text-zinc-900 tabular-nums">
+                <span className="text-navy-600">Student share</span>
+                <span className="font-semibold text-navy-900 tabular-nums">
                   {studentShare.toFixed(1)}%
                 </span>
               </div>
-              <div className="h-1.5 rounded-full bg-zinc-200 overflow-hidden">
+              <div className="h-1.5 rounded-full bg-navy-200 overflow-hidden">
                 <div
                   className="h-full rounded-full bg-blue-500 transition-all duration-700"
                   style={{ width: `${studentShare}%` }}
@@ -269,15 +269,15 @@ function InsightStat({
   accent: string;
 }) {
   return (
-    <div className="rounded-xl border border-zinc-100 bg-zinc-50/40 px-4 py-3">
+    <div className="rounded-xl border border-navy-100 bg-navy-50/40 px-4 py-3">
       <div className="flex items-center gap-2 mb-2">
         <Icon size={14} className={accent} />
-        <span className="text-[11px] font-semibold text-zinc-500">{label}</span>
+        <span className="text-[11px] font-semibold text-navy-500">{label}</span>
       </div>
-      <p className="text-xl font-semibold text-zinc-900 tabular-nums leading-none">
+      <p className="text-xl font-semibold text-navy-900 tabular-nums leading-none">
         {value}
       </p>
-      <p className="text-[10px] font-medium text-zinc-400 mt-1.5">{hint}</p>
+      <p className="text-[10px] font-medium text-navy-400 mt-1.5">{hint}</p>
     </div>
   );
 }

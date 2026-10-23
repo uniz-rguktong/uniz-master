@@ -48,7 +48,7 @@ export function AdminDialog({
       <AlertDialogContent
         overlayClassName={cn(
           elevated && ADMIN_DIALOG_ELEVATED_Z,
-          elevated && "bg-zinc-900/40 backdrop-blur-sm",
+          elevated && "bg-navy-900/40",
         )}
         className={cn(
           maxWidth,
@@ -80,7 +80,7 @@ export function AdminDialog({
 
           {children && <div className="px-8 pb-8">{children}</div>}
           {footer && (
-            <div className="px-8 py-5 border-t border-zinc-200/70 bg-zinc-50/50 flex flex-wrap items-center justify-end gap-3">
+            <div className="px-8 py-5 border-t border-navy-200/70 bg-navy-50/50 flex flex-wrap items-center justify-end gap-3">
               {footer}
             </div>
           )}

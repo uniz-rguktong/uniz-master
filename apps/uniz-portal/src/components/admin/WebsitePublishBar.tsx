@@ -27,19 +27,19 @@ export function WebsitePublishBar({
           exit={{ y: 80, opacity: 0 }}
           className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[min(560px,calc(100vw-2rem))]"
         >
-          <div className="flex items-center justify-between gap-4 px-5 py-3.5 rounded-2xl bg-zinc-900 text-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.45)] border border-zinc-700/50">
+          <div className="flex items-center justify-between gap-4 px-5 py-3.5 rounded-[2px] bg-navy-900 text-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.45)] border border-navy-700/50">
             <div className="min-w-0">
               <p className="text-[13px] font-semibold truncate">
                 {saving ? "Publishing…" : autoSave ? "Auto-publishing" : "Unpublished changes"}
               </p>
-              <p className="text-[11px] text-zinc-400 truncate">{subtitle}</p>
+              <p className="text-[11px] text-navy-400 truncate">{subtitle}</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={onDiscard}
                 disabled={saving}
-                className="h-9 px-3 rounded-lg text-[12px] font-semibold text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors disabled:opacity-50"
+                className="h-9 px-3 rounded-lg text-[12px] font-semibold text-navy-300 hover:text-white hover:bg-navy-800 transition-colors disabled:opacity-50"
               >
                 Discard
               </button>
@@ -48,7 +48,7 @@ export function WebsitePublishBar({
                   type="button"
                   onClick={onPublish}
                   disabled={saving}
-                  className="h-9 px-4 rounded-lg bg-white text-zinc-900 text-[12px] font-bold flex items-center gap-1.5 hover:bg-zinc-100 transition-colors disabled:opacity-60"
+                  className="h-9 px-4 rounded-lg bg-white text-navy-900 text-[12px] font-bold flex items-center gap-1.5 hover:bg-navy-100 transition-colors disabled:opacity-60"
                 >
                   {saving ? (
                     <Loader2 size={14} className="animate-spin" />
@@ -60,7 +60,7 @@ export function WebsitePublishBar({
               )}
               {autoSave && saving && (
                 <div className="h-9 px-3 flex items-center">
-                  <Loader2 size={16} className="animate-spin text-zinc-300" />
+                  <Loader2 size={16} className="animate-spin text-navy-300" />
                 </div>
               )}
             </div>

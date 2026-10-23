@@ -31,14 +31,14 @@ export interface ToastInput {
 }
 
 const variantBorder: Record<Variant, string> = {
-  default: "border-zinc-200",
+  default: "border-navy-200",
   success: "border-emerald-200",
   error: "border-red-200",
   warning: "border-amber-200",
 };
 
 const variantIconBg: Record<Variant, string> = {
-  default: "bg-zinc-100 text-zinc-600",
+  default: "bg-navy-100 text-navy-600",
   success: "bg-emerald-50 text-emerald-600",
   error: "bg-red-50 text-red-600",
   warning: "bg-amber-50 text-amber-600",
@@ -99,7 +99,7 @@ export function showToast({
               "p",
               {
                 className:
-                  "text-[13px] font-semibold text-zinc-950 leading-snug",
+                  "text-[13px] font-semibold text-navy-950 leading-snug",
               },
               title,
             ),
@@ -107,7 +107,7 @@ export function showToast({
             "p",
             {
               className: cn(
-                "text-[13px] font-medium text-zinc-500 leading-relaxed",
+                "text-[13px] font-medium text-navy-500 leading-relaxed",
                 title && "mt-0.5",
               ),
             },
@@ -119,7 +119,7 @@ export function showToast({
               {
                 type: "button",
                 className:
-                  "mt-2 text-[12px] font-semibold text-zinc-900 hover:text-zinc-600",
+                  "mt-2 text-[12px] font-semibold text-navy-900 hover:text-navy-600",
                 onClick: () => {
                   actions.onClick();
                   hotToast.dismiss(t.id);
@@ -134,7 +134,7 @@ export function showToast({
             type: "button",
             "aria-label": "Dismiss",
             className:
-              "shrink-0 rounded-md p-0.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700",
+              "shrink-0 rounded-md p-0.5 text-navy-400 hover:bg-navy-100 hover:text-navy-700",
             onClick: () => {
               hotToast.dismiss(t.id);
               onDismiss?.();

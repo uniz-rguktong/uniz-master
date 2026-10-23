@@ -51,7 +51,7 @@ export default function PrivacyPolicy() {
       <header className="max-w-3xl mx-auto px-6 py-8">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-medium text-navy-500 hover:text-navy-900 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to home
@@ -59,20 +59,20 @@ export default function PrivacyPolicy() {
       </header>
 
       <main className="max-w-3xl mx-auto px-6 pb-16">
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-950 mb-2">
+        <h1 className="text-3xl font-semibold tracking-tight text-navy-950 mb-2">
           Privacy Policy
         </h1>
-        <p className="text-sm text-zinc-500 mb-10">
+        <p className="text-sm text-navy-500 mb-10">
           Last updated: June 2026 · {UNIZ_CAMPUS_LABEL}
         </p>
 
         <div className="space-y-8">
           {sections.map((section) => (
             <section key={section.title}>
-              <h2 className="text-lg font-semibold text-zinc-900 mb-2">
+              <h2 className="text-lg font-semibold text-navy-900 mb-2">
                 {section.title}
               </h2>
-              <p className="text-[15px] leading-relaxed text-zinc-600">
+              <p className="text-[15px] leading-relaxed text-navy-600">
                 {section.body}
               </p>
             </section>

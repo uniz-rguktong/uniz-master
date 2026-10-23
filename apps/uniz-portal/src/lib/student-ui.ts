@@ -14,7 +14,26 @@ import {
   portalSectionGapClass,
   portalTabActiveClass,
   portalTabInactiveClass,
+  portalPageHeaderClass,
+  portalToolbarClass,
+  portalTableWrapClass,
+  portalThClass,
+  portalTdClass,
+  portalEmptyClass,
+  portalStatStripClass,
+  portalCanvasClass,
 } from "@/lib/portal-ui";
+
+export {
+  portalPageHeaderClass as studentPageHeaderClass,
+  portalToolbarClass as studentToolbarClass,
+  portalTableWrapClass as studentTableWrapClass,
+  portalThClass as studentThClass,
+  portalTdClass as studentTdClass,
+  portalEmptyClass as studentEmptyClass,
+  portalStatStripClass as studentStatStripClass,
+  portalCanvasClass as studentCanvasClass,
+};
 
 /** Student portal shell — ExamCell institutional tokens. */
 

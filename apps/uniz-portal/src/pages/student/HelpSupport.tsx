@@ -44,23 +44,23 @@ const HelpSupport = () => {
   return (
     <div className="max-w-4xl mx-auto pb-20 px-2 lg:px-0">
       <div className="flex flex-col items-start mb-8 text-left">
-        <h1 className="text-3xl font-bold text-zinc-900 mb-2 font-display">
+        <h1 className="text-3xl font-bold text-navy-900 mb-2 font-display">
           Help & Support
         </h1>
-        <p className="text-zinc-500 font-medium tracking-tight max-w-sm">
+        <p className="text-navy-500 font-medium tracking-tight max-w-sm">
           Everything you need to know about the UniZ student portal.
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex justify-start mb-8 p-1.5 bg-zinc-100/50 backdrop-blur-sm rounded-2xl w-fit border border-zinc-200/50">
+      <div className="flex justify-start mb-8 p-1.5 bg-navy-100/50 rounded-[2px] w-fit border border-navy-200/50">
         <button
           onClick={() => setActiveTab("faq")}
           className={cn(
             "px-6 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300",
             activeTab === "faq"
-              ? "bg-white text-zinc-900 shadow-sm"
-              : "text-zinc-400 hover:text-zinc-600",
+              ? "bg-white text-navy-900 shadow-sm"
+              : "text-navy-400 hover:text-navy-600",
           )}
         >
           FAQs
@@ -70,8 +70,8 @@ const HelpSupport = () => {
           className={cn(
             "px-6 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300",
             activeTab === "contact"
-              ? "bg-white text-zinc-900 shadow-sm"
-              : "text-zinc-400 hover:text-zinc-600",
+              ? "bg-white text-navy-900 shadow-sm"
+              : "text-navy-400 hover:text-navy-600",
           )}
         >
           Contact us
@@ -96,7 +96,7 @@ const HelpSupport = () => {
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
                   className="w-full px-5 py-4 flex items-center justify-between text-left"
                 >
-                  <span className="font-bold text-zinc-900 tracking-tight text-[13px]">
+                  <span className="font-bold text-navy-900 tracking-tight text-[13px]">
                     {faq.question}
                   </span>
                   <ChevronDown
@@ -111,7 +111,7 @@ const HelpSupport = () => {
                   animate={{ height: openFaq === index ? "auto" : 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="px-5 pb-5 text-[13px] text-zinc-600 font-medium leading-relaxed border-t border-zinc-100 pt-4">
+                  <div className="px-5 pb-5 text-[13px] text-navy-600 font-medium leading-relaxed border-t border-navy-100 pt-4">
                     {faq.answer}
                   </div>
                 </motion.div>
@@ -128,16 +128,16 @@ const HelpSupport = () => {
           >
             <a
               href="mailto:webadmin@rguktong.ac.in"
-              className="flex items-center gap-4 bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:border-zinc-300 hover:shadow-md transition-all group"
+              className="flex items-center gap-4 bg-white border border-navy-200 rounded-[2px] p-6 shadow-sm hover:border-navy-300 hover:shadow-md transition-all group"
             >
-              <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 rounded-[2px] bg-navy-900 flex items-center justify-center shrink-0">
                 <Mail className="w-5 h-5 text-white" />
               </div>
               <div className="text-left min-w-0">
-                <p className="text-sm font-medium text-zinc-500 mb-0.5">
+                <p className="text-sm font-medium text-navy-500 mb-0.5">
                   Contact for support
                 </p>
-                <p className="text-[15px] font-semibold text-zinc-900 group-hover:text-zinc-700 truncate">
+                <p className="text-[15px] font-semibold text-navy-900 group-hover:text-navy-700 truncate">
                   webadmin@rguktong.ac.in
                 </p>
               </div>
@@ -145,16 +145,16 @@ const HelpSupport = () => {
 
             <Link
               to="/developers"
-              className="flex items-center gap-4 bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:border-zinc-300 hover:shadow-md transition-all group"
+              className="flex items-center gap-4 bg-white border border-navy-200 rounded-[2px] p-6 shadow-sm hover:border-navy-300 hover:shadow-md transition-all group"
             >
-              <div className="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center shrink-0 group-hover:bg-zinc-200 transition-colors">
-                <Users className="w-5 h-5 text-zinc-900" />
+              <div className="w-12 h-12 rounded-[2px] bg-navy-100 flex items-center justify-center shrink-0 group-hover:bg-navy-200 transition-colors">
+                <Users className="w-5 h-5 text-navy-900" />
               </div>
               <div className="text-left">
-                <p className="text-sm font-medium text-zinc-500 mb-0.5">
+                <p className="text-sm font-medium text-navy-500 mb-0.5">
                   Meet the developers
                 </p>
-                <p className="text-[15px] font-semibold text-zinc-900 group-hover:text-zinc-700">
+                <p className="text-[15px] font-semibold text-navy-900 group-hover:text-navy-700">
                   View developers page →
                 </p>
               </div>

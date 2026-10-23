@@ -75,8 +75,8 @@ export default function CurrentSemester() {
     return (
       <div className="flex h-[60vh] items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-zinc-900 border-t-transparent rounded-full animate-spin" />
-          <p className="text-zinc-400 font-bold text-xs tracking-[0.14em]">
+          <div className="w-10 h-10 border-4 border-navy-900 border-t-transparent rounded-full animate-spin" />
+          <p className="text-navy-400 font-bold text-xs tracking-[0.14em]">
             Loading Semester Data...
           </p>
         </div>
@@ -87,10 +87,10 @@ export default function CurrentSemester() {
   return (
     <div className="max-w-5xl mx-auto pb-20 space-y-6">
       <div>
-        <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 uppercase">
+        <p className="text-[10px] font-semibold tracking-[0.14em] text-navy-400 uppercase">
           Current semester
         </p>
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-navy-900">
           Your registered subjects
         </h1>
       </div>

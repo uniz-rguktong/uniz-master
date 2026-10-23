@@ -159,7 +159,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
           </span>
           <h1 className={cn(adminTitleClass, "mt-2")}>
             {loading ? (
-              <span className="inline-block w-48 h-7 rounded-md bg-zinc-100 animate-pulse align-middle" />
+              <span className="inline-block w-48 h-7 rounded-md bg-navy-100 animate-pulse align-middle" />
             ) : (
               displayName
             )}
@@ -178,7 +178,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
           )}
         >
           <div className="relative shrink-0">
-            <div className="w-16 h-16 rounded-full overflow-hidden bg-zinc-900 ring-1 ring-zinc-200 flex items-center justify-center text-white text-xl font-semibold">
+            <div className="w-16 h-16 rounded-full overflow-hidden bg-navy-900 ring-1 ring-navy-200 flex items-center justify-center text-white text-xl font-semibold">
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin text-white/60" />
               ) : profile?.profile_url ? (
@@ -196,7 +196,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 flex items-center justify-center bg-[#0A2540]/55 backdrop-blur-[2px]"
+                    className="absolute inset-0 flex items-center justify-center bg-[#0A2540]/55"
                   >
                     <Loader2 className="w-5 h-5 text-white animate-spin" />
                   </motion.div>
@@ -207,7 +207,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
               title="Update photo"
-              className="absolute -bottom-0.5 -right-0.5 w-6 h-6 bg-white border border-zinc-200 rounded-full flex items-center justify-center text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 shadow-[0_1px_2px_rgba(10,10,10,0.08)] transition-all active:scale-95 disabled:opacity-50"
+              className="absolute -bottom-0.5 -right-0.5 w-6 h-6 bg-white border border-navy-200 rounded-full flex items-center justify-center text-navy-500 hover:text-navy-900 hover:border-navy-300 shadow-[0_1px_2px_rgba(10,10,10,0.08)] transition-all active:scale-95 disabled:opacity-50"
             >
               <Camera className="w-3 h-3" strokeWidth={2.2} />
             </button>
@@ -222,7 +222,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <p className="text-[15px] font-semibold text-zinc-900 tracking-[-0.01em] truncate">
+              <p className="text-[15px] font-semibold text-navy-900 tracking-[-0.01em] truncate">
                 {displayName}
               </p>
               <BadgeCheck
@@ -230,7 +230,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                 strokeWidth={2.2}
               />
             </div>
-            <p className="text-[12.5px] text-zinc-500 truncate mt-0.5">
+            <p className="text-[12.5px] text-navy-500 truncate mt-0.5">
               {email}
             </p>
             {metaTags.length > 0 && (
@@ -238,7 +238,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                 {metaTags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[10px] font-medium text-zinc-500 capitalize"
+                    className="rounded-full border border-navy-200 bg-navy-50 px-2 py-0.5 text-[10px] font-medium text-navy-500 capitalize"
                   >
                     {tag}
                   </span>
@@ -253,8 +253,8 @@ export default function WebmasterOverview({ username }: { username: string }) {
             className={cn(
               "shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center transition-all active:scale-95",
               isEditing
-                ? "bg-zinc-900 border-zinc-900 text-white"
-                : "bg-white border-zinc-200 text-zinc-500 hover:text-zinc-900 hover:border-zinc-300",
+                ? "bg-navy-900 border-navy-900 text-white"
+                : "bg-white border-navy-200 text-navy-500 hover:text-navy-900 hover:border-navy-300",
             )}
           >
             <Pencil size={15} strokeWidth={2} />
@@ -282,13 +282,13 @@ export default function WebmasterOverview({ username }: { username: string }) {
                 ].map(({ key, label, icon: Icon }) => (
                   <label
                     key={key}
-                    className="flex items-center gap-3 px-3 py-2.5 bg-zinc-50/70 rounded-xl border border-zinc-200/70 focus-within:border-zinc-300 focus-within:bg-white transition-colors"
+                    className="flex items-center gap-3 px-3 py-2.5 bg-navy-50/70 rounded-xl border border-navy-200/70 focus-within:border-navy-300 focus-within:bg-white transition-colors"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-white border border-zinc-200 flex items-center justify-center shrink-0">
-                      <Icon size={13} className="text-zinc-400" />
+                    <div className="w-7 h-7 rounded-lg bg-white border border-navy-200 flex items-center justify-center shrink-0">
+                      <Icon size={13} className="text-navy-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.12em]">
+                      <p className="text-[10px] font-semibold text-navy-400 tracking-[0.12em]">
                         {label}
                       </p>
                       <input
@@ -297,7 +297,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                         onChange={(e) =>
                           setFormData({ ...formData, [key]: e.target.value })
                         }
-                        className="text-[13px] font-medium text-zinc-900 bg-transparent focus:outline-none w-full mt-0.5"
+                        className="text-[13px] font-medium text-navy-900 bg-transparent focus:outline-none w-full mt-0.5"
                         placeholder={`Enter ${label.toLowerCase()}`}
                       />
                     </div>
@@ -305,11 +305,11 @@ export default function WebmasterOverview({ username }: { username: string }) {
                 ))}
               </div>
 
-              <div className="flex gap-2 pt-4 mt-4 border-t border-zinc-200/60">
+              <div className="flex gap-2 pt-4 mt-4 border-t border-navy-200/60">
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-zinc-900 text-white text-[13px] font-medium hover:bg-zinc-800 transition-all disabled:opacity-60 active:scale-[0.98]"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-navy-900 text-white text-[13px] font-medium hover:bg-navy-800 transition-all disabled:opacity-60 active:scale-[0.98]"
                 >
                   {isSaving ? (
                     <Loader2 size={14} className="animate-spin" />
@@ -329,7 +329,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                       department: profile?.department || "",
                     });
                   }}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-zinc-200 text-zinc-600 text-[13px] font-medium hover:bg-zinc-50 hover:border-zinc-300 transition-all"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-navy-200 text-navy-600 text-[13px] font-medium hover:bg-navy-50 hover:border-navy-300 transition-all"
                 >
                   <X size={14} /> Cancel
                 </button>

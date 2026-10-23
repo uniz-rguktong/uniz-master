@@ -52,7 +52,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeMore}
-            className="fixed inset-0 z-40 bg-zinc-900/10 md:hidden"
+            className="fixed inset-0 z-40 bg-navy-900/10 md:hidden"
           />
         )}
       </AnimatePresence>
@@ -65,10 +65,10 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ type: "spring", stiffness: 480, damping: 38 }}
-              className="overflow-hidden border-t border-zinc-200/80 bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.06)]"
+              className="overflow-hidden border-t border-navy-200/80 bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.06)]"
             >
               <div className="px-4 pt-3 pb-2">
-                <p className="text-[11px] font-bold tracking-[0.12em] text-zinc-400 uppercase">
+                <p className="text-[11px] font-bold tracking-[0.12em] text-navy-400 uppercase">
                   {moreTitle}
                 </p>
               </div>
@@ -84,7 +84,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                         closeMore();
                       }}
                       className={cn(
-                        "w-full flex items-center gap-3 rounded-2xl px-3 py-3 text-left transition-all active:scale-[0.99]",
+                        "w-full flex items-center gap-3 rounded-[2px] px-3 py-3 text-left transition-all active:scale-[0.99]",
                         item.isActive
                           ? "bg-[#0B2A47] text-white"
                           : "hover:bg-[#F7FAFD] text-[#0B2A47]",
@@ -108,7 +108,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                           <span
                             className={cn(
                               "block text-[11px] mt-0.5 truncate",
-                              item.isActive ? "text-white/70" : "text-zinc-400",
+                              item.isActive ? "text-white/70" : "text-navy-400",
                             )}
                           >
                             {item.description}
@@ -119,7 +119,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                         size={18}
                         className={cn(
                           "shrink-0",
-                          item.isActive ? "text-white/70" : "text-zinc-300",
+                          item.isActive ? "text-white/70" : "text-navy-300",
                         )}
                       />
                     </button>
@@ -131,7 +131,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
         </AnimatePresence>
 
         <nav
-          className="bg-white/98 backdrop-blur-xl border-t border-[#D4E8F5] px-1 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+          className="bg-white/98 border-t border-[#D4E8F5] px-1 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
           style={{ boxShadow: "0 -4px 24px rgba(11,42,71,0.06)" }}
         >
           <div className="flex items-end justify-between">
@@ -156,7 +156,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                 onClick={() => setIsMoreOpen((open) => !open)}
                 className={cn(
                   "flex flex-col items-center gap-1 min-w-[64px] transition-all active:scale-95",
-                  isMoreOpen || moreActive ? "text-[#0B2A47]" : "text-zinc-500",
+                  isMoreOpen || moreActive ? "text-[#0B2A47]" : "text-navy-500",
                 )}
                 aria-label={isMoreOpen ? "Close academics menu" : "Open academics menu"}
                 aria-expanded={isMoreOpen}
@@ -231,7 +231,7 @@ const NavItem = ({
       <span
         className={cn(
           "flex h-11 w-11 items-center justify-center rounded-full transition-all",
-          isActive ? "bg-[#0B2A47] text-white" : "text-zinc-400",
+          isActive ? "bg-[#0B2A47] text-white" : "text-navy-400",
         )}
       >
         <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
@@ -239,7 +239,7 @@ const NavItem = ({
       <span
         className={cn(
           "text-[10px] font-bold tracking-tight max-w-[64px] truncate",
-          isActive ? "text-[#0B2A47]" : "text-zinc-400",
+          isActive ? "text-[#0B2A47]" : "text-navy-400",
         )}
       >
         {item.label}

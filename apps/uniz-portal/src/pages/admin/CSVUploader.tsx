@@ -98,7 +98,7 @@ export default function SpreadsheetUploader({
   };
 
   return (
-    <div className="bg-white shadow-xl rounded-2xl p-6">
+    <div className="bg-white shadow-xl rounded-[2px] p-6">
       <h2 className="text-xl font-bold mb-4">{title}</h2>
 
       <input

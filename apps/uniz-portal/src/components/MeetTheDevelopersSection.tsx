@@ -62,7 +62,7 @@ export default function MeetTheDevelopersSection({
             <span
               className={cn(
                 landingEyebrowClass,
-                "rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1.5 normal-case",
+                "rounded-full border border-navy-200 bg-navy-50 px-3 py-1.5 normal-case",
               )}
             >
               <Code2 className="h-3 w-3" />
@@ -71,7 +71,7 @@ export default function MeetTheDevelopersSection({
             <span
               className={cn(
                 landingEyebrowClass,
-                "rounded-full border border-zinc-200 bg-white px-3 py-1.5 normal-case",
+                "rounded-full border border-navy-200 bg-white px-3 py-1.5 normal-case",
               )}
             >
               <Users className="h-3 w-3" />
@@ -81,7 +81,7 @@ export default function MeetTheDevelopersSection({
 
           <h2
             className={cn(
-              "font-semibold tracking-[-0.04em] text-zinc-950",
+              "font-semibold tracking-[-0.04em] text-navy-950",
               compact
                 ? "mb-2 text-[clamp(1.5rem,4vw,2.25rem)] leading-tight md:mb-3"
                 : "mb-4 text-[clamp(2rem,5vw,3.25rem)] leading-[1.05]",
@@ -105,7 +105,7 @@ export default function MeetTheDevelopersSection({
           className={cn(
             "mx-auto w-full max-w-5xl",
             fitScreen && "min-h-0",
-            "md:overflow-hidden md:rounded-portal-2xl md:border md:border-zinc-100/90 md:bg-white/80 md:p-2 md:shadow-[0_24px_60px_-24px_rgba(11,42,71,0.12)] md:backdrop-blur-sm",
+            "md:overflow-hidden md:rounded-portal-2xl md:border md:border-navy-100/90 md:bg-white/80 md:p-2 md:shadow-[0_24px_60px_-24px_rgba(11,42,71,0.12)]",
           )}
         >
           <div className={cn("flex justify-center", fitScreen && "min-h-0")}>

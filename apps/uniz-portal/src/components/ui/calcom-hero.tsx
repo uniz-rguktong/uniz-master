@@ -567,8 +567,8 @@ const FEATURES = [
     title: "One-click PDF",
     desc: "Download polished academic reports for any semester, instantly.",
     illustration: <ReportsIllustration />,
-    accent: "bg-zinc-100 text-zinc-600 border-zinc-200",
-    dot: "bg-zinc-400",
+    accent: "bg-navy-100 text-navy-600 border-navy-200",
+    dot: "bg-navy-400",
   },
 ];
 
@@ -596,7 +596,7 @@ export const CalcomHero = () => {
   };
 
   return (
-    <div className="relative w-full bg-white font-sans overflow-hidden selection:bg-zinc-100">
+    <div className="relative w-full bg-white font-sans overflow-hidden selection:bg-navy-100">
       {/* ── High-End Mesh Gradient Backdrop ── */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <motion.div
@@ -607,7 +607,7 @@ export const CalcomHero = () => {
         <motion.div
           animate={{ x: [0, -40, 0], y: [0, 60, 0], scale: [1, 1.2, 1] }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-gradient-to-tr from-zinc-100/50 via-zinc-100/20 to-transparent blur-[140px] opacity-60"
+          className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-gradient-to-tr from-navy-100/50 via-navy-100/20 to-transparent blur-[140px] opacity-60"
         />
         <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       </div>
@@ -638,7 +638,7 @@ export const CalcomHero = () => {
               width: p.s,
               height: p.s,
             }}
-            className="text-zinc-600"
+            className="text-navy-600"
           >
             <svg
               fill="none"
@@ -696,7 +696,7 @@ export const CalcomHero = () => {
       <div className="max-w-[1280px] mx-auto px-6 pt-24 pb-20 md:pt-32 md:pb-28">
         {/* ── Hero copy ── */}
         <div className="flex flex-col items-center text-center mb-20 md:mb-24">
-          <motion.h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-semibold text-zinc-950 leading-[1.0] tracking-[-0.05em] mb-6 max-w-6xl">
+          <motion.h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-semibold text-navy-950 leading-[1.0] tracking-[-0.05em] mb-6 max-w-6xl">
             {UNIZ_TAGLINE.line1.split(" ").map((word, i) => (
               <motion.span
                 key={i}
@@ -715,7 +715,7 @@ export const CalcomHero = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 + i * 0.05, duration: 0.5 }}
-                className="inline-block mr-[0.2em] text-zinc-400 font-light"
+                className="inline-block mr-[0.2em] text-navy-400 font-light"
               >
                 {word}
               </motion.span>
@@ -726,7 +726,7 @@ export const CalcomHero = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="text-[15px] md:text-[17px] text-zinc-500 leading-relaxed mb-10 max-w-xl"
+            className="text-[15px] md:text-[17px] text-navy-500 leading-relaxed mb-10 max-w-xl"
           >
             An integrated governance system for students, faculty, and admin —
             bringing campus data to life in real-time.
@@ -746,7 +746,7 @@ export const CalcomHero = () => {
             ) : (
               <Button
                 onClick={handleDownload}
-                className="group relative h-12 px-8 bg-zinc-950 hover:bg-[#0A2540] text-white text-[14px] font-bold rounded-xl flex items-center gap-3 transition-all duration-300 overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]"
+                className="group relative h-12 px-8 bg-navy-950 hover:bg-[#0A2540] text-white text-[14px] font-bold rounded-xl flex items-center gap-3 transition-all duration-300 overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
                 <platform.PlatformIcon size={16} />
@@ -781,9 +781,9 @@ export const CalcomHero = () => {
                   delay: i * 0.4,
                 },
               }}
-              className="group flex flex-col rounded-2xl border border-zinc-100/60 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-500 cursor-pointer"
+              className="group flex flex-col rounded-[2px] border border-navy-100/60 bg-white/60 overflow-hidden transition-all duration-500 cursor-pointer"
             >
-              <div className="w-full bg-zinc-50/40 border-b border-zinc-100/40 p-4 group-hover:bg-transparent transition-colors duration-500 overflow-hidden">
+              <div className="w-full bg-navy-50/40 border-b border-navy-100/40 p-4 group-hover:bg-transparent transition-colors duration-500 overflow-hidden">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -801,10 +801,10 @@ export const CalcomHero = () => {
                   />
                   {f.tag}
                 </div>
-                <h3 className="text-[15px] font-semibold text-zinc-950 tracking-tight leading-snug">
+                <h3 className="text-[15px] font-semibold text-navy-950 tracking-tight leading-snug">
                   {f.title}
                 </h3>
-                <p className="text-[12.5px] font-medium text-zinc-500/80 leading-relaxed group-hover:text-zinc-600 transition-colors">
+                <p className="text-[12.5px] font-medium text-navy-500/80 leading-relaxed group-hover:text-navy-600 transition-colors">
                   {f.desc}
                 </p>
               </div>

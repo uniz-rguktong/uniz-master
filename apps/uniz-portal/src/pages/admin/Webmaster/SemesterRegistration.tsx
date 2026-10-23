@@ -128,18 +128,18 @@ export default function SemesterRegistration() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "UPCOMING":
-        return "bg-zinc-100 text-zinc-600 border-zinc-200";
+        return "bg-navy-100 text-navy-600 border-navy-200";
       case "DEAN_REVIEW":
         return "bg-amber-50 text-amber-600 border-amber-100";
       case "REGISTRATION":
       case "REGISTRATION_OPEN":
-        return "bg-zinc-50 text-zinc-900 border-zinc-100";
+        return "bg-navy-50 text-navy-900 border-navy-100";
       case "ONGOING":
         return "bg-emerald-50 text-emerald-600 border-emerald-100";
       case "COMPLETED":
-        return "bg-zinc-50 text-zinc-900 border-zinc-100";
+        return "bg-navy-50 text-navy-900 border-navy-100";
       default:
-        return "bg-zinc-100 text-zinc-600";
+        return "bg-navy-100 text-navy-600";
     }
   };
 
@@ -147,16 +147,16 @@ export default function SemesterRegistration() {
     <div className="p-8 space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-semibold tracking-tight text-zinc-900">
+          <h2 className="text-3xl font-semibold tracking-tight text-navy-900">
             Registration Workflow
           </h2>
-          <p className="text-zinc-500 font-medium font-outfit">
+          <p className="text-navy-500 font-medium font-outfit">
             Orchestrate semester lifecycle and student subject allocations
           </p>
         </div>
         <button
           onClick={() => setShowInitModal(true)}
-          className="bg-zinc-900 text-white px-8 py-4 rounded-xl font-semibold tracking-[0.14em] text-xs flex items-center gap-2.5 hover:bg-zinc-800 hover:-translate-y-1 transition-all shadow-none active:scale-95 active:translate-y-0"
+          className="bg-navy-900 text-white px-8 py-4 rounded-xl font-semibold tracking-[0.14em] text-xs flex items-center gap-2.5 hover:bg-navy-800 hover:-translate-y-1 transition-all shadow-none active:scale-95 active:translate-y-0"
         >
           <Plus size={18} /> Initialize New Semester
         </button>
@@ -165,7 +165,7 @@ export default function SemesterRegistration() {
       {loading ? (
         <div className="flex flex-col items-center justify-center h-64 gap-4">
           <Spinner size="lg" />
-          <p className="text-zinc-400 font-semibold tracking-[0.14em] text-xs">
+          <p className="text-navy-400 font-semibold tracking-[0.14em] text-xs">
             Loading Workflows...
           </p>
         </div>
@@ -174,7 +174,7 @@ export default function SemesterRegistration() {
           {semesters.map((sem: any) => (
             <div
               key={sem.id}
-              className="bg-white border border-zinc-100 rounded-xl p-8 shadow-none hover:shadow-none transition-all group relative overflow-hidden"
+              className="bg-white border border-navy-100 rounded-xl p-8 shadow-none hover:shadow-none transition-all group relative overflow-hidden"
             >
               <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-8 relative z-10">
                 <div className="flex items-center gap-6">
@@ -184,7 +184,7 @@ export default function SemesterRegistration() {
                     <Calendar size={32} strokeWidth={2.5} />
                   </div>
                   <div className="space-y-1.5">
-                    <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight leading-none italic">
+                    <h3 className="text-2xl font-semibold text-navy-900 tracking-tight leading-none italic">
                       {sem.name}
                     </h3>
                     <div className="flex items-center gap-2">
@@ -193,8 +193,8 @@ export default function SemesterRegistration() {
                       >
                         {formatStatus(sem.status)}
                       </span>
-                      <span className="text-zinc-300 font-bold">•</span>
-                      <p className="text-xs font-bold text-zinc-400 font-outfit tracking-wide">
+                      <span className="text-navy-300 font-bold">•</span>
+                      <p className="text-xs font-bold text-navy-400 font-outfit tracking-wide">
                         Created{" "}
                         {new Date(sem.createdAt).toLocaleDateString("en-IN", {
                           day: "numeric",
@@ -213,7 +213,7 @@ export default function SemesterRegistration() {
                       onClick={() =>
                         handleStatusUpdate(sem.id, "REGISTRATION_OPEN")
                       }
-                      className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-[10px] font-semibold tracking-[0.14em] flex items-center gap-2 hover:bg-zinc-800 transition-all shadow-none"
+                      className="px-6 py-3 bg-navy-900 text-white rounded-xl text-[10px] font-semibold tracking-[0.14em] flex items-center gap-2 hover:bg-navy-800 transition-all shadow-none"
                     >
                       <Play size={14} fill="currentColor" /> Open Registration
                     </button>
@@ -230,7 +230,7 @@ export default function SemesterRegistration() {
                   {sem.status === "ONGOING" && (
                     <button
                       onClick={() => handleStatusUpdate(sem.id, "COMPLETED")}
-                      className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-[10px] font-semibold tracking-[0.14em] flex items-center gap-2 hover:bg-zinc-800 transition-all shadow-none"
+                      className="px-6 py-3 bg-navy-900 text-white rounded-xl text-[10px] font-semibold tracking-[0.14em] flex items-center gap-2 hover:bg-navy-800 transition-all shadow-none"
                     >
                       <CheckCircle2 size={14} /> Close Semester
                     </button>
@@ -244,18 +244,18 @@ export default function SemesterRegistration() {
                     <Trash2 size={16} />
                   </button>
 
-                  <div className="h-10 w-[1px] bg-zinc-100 hidden lg:block mx-2" />
+                  <div className="h-10 w-[1px] bg-navy-100 hidden lg:block mx-2" />
 
                   <div className="flex items-center gap-3">
                     <div className="flex flex-col items-end">
-                      <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
+                      <p className="text-[10px] font-semibold text-navy-400 tracking-[0.14em]">
                         Active Branches
                       </p>
                       <div className="flex -space-x-2 mt-1">
                         {sem.branches?.map((b: any, i: number) => (
                           <div
                             key={i}
-                            className="w-7 h-7 rounded-xl bg-zinc-50 border-2 border-white flex items-center justify-center text-[8px] font-semibold text-zinc-600 shadow-none"
+                            className="w-7 h-7 rounded-xl bg-navy-50 border-2 border-white flex items-center justify-center text-[8px] font-semibold text-navy-600 shadow-none"
                           >
                             {b.branchName.charAt(0)}
                           </div>
@@ -263,7 +263,7 @@ export default function SemesterRegistration() {
                       </div>
                     </div>
                     <ChevronRight
-                      className="text-zinc-300 group-hover:text-zinc-900 transition-colors"
+                      className="text-navy-300 group-hover:text-navy-900 transition-colors"
                       size={24}
                     />
                   </div>
@@ -271,25 +271,25 @@ export default function SemesterRegistration() {
               </div>
 
               {/* Background Decoration */}
-              <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-zinc-50 rounded-full opacity-20 group-hover:opacity-40 transition-opacity" />
+              <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-navy-50 rounded-full opacity-20 group-hover:opacity-40 transition-opacity" />
             </div>
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center h-80 bg-white rounded-xl border-2 border-dashed border-zinc-100 p-12 text-center">
-          <div className="w-20 h-20 bg-zinc-50 rounded-xl flex items-center justify-center text-zinc-200 mb-6">
+        <div className="flex flex-col items-center justify-center h-80 bg-white rounded-xl border-2 border-dashed border-navy-100 p-12 text-center">
+          <div className="w-20 h-20 bg-navy-50 rounded-xl flex items-center justify-center text-navy-200 mb-6">
             <Clock size={40} />
           </div>
-          <h3 className="text-xl font-semibold text-zinc-900 mb-2 mt-2">
+          <h3 className="text-xl font-semibold text-navy-900 mb-2 mt-2">
             No Active Workflow
           </h3>
-          <p className="text-zinc-400 font-medium max-w-sm mb-8 font-outfit">
+          <p className="text-navy-400 font-medium max-w-sm mb-8 font-outfit">
             Start the academic session by initializing a new semester with
             branch-level subject allocations.
           </p>
           <button
             onClick={() => setShowInitModal(true)}
-            className="bg-zinc-900 text-white px-8 py-3.5 rounded-xl font-semibold tracking-[0.14em] text-[10px] hover:bg-zinc-800 transition-all shadow-none"
+            className="bg-navy-900 text-white px-8 py-3.5 rounded-xl font-semibold tracking-[0.14em] text-[10px] hover:bg-navy-800 transition-all shadow-none"
           >
             Start Initialization
           </button>
@@ -298,7 +298,7 @@ export default function SemesterRegistration() {
 
       {/* Initialize Modal */}
       {showInitModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-zinc-900/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-navy-900/40">
           <div className={cn("w-full max-w-2xl", adminModalShellClass)}>
             <div className="p-8">
               <h3 className={cn(adminModalTitleClass, "mb-1")}>Semester initialization</h3>
@@ -311,7 +311,7 @@ export default function SemesterRegistration() {
                   <label className={adminLabelClass}>Academic semester label</label>
                   <div className="relative group">
                     <Calendar
-                      className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-zinc-700 transition-colors"
+                      className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400 group-focus-within:text-navy-700 transition-colors"
                       size={16}
                     />
                     <input
@@ -322,7 +322,7 @@ export default function SemesterRegistration() {
                       placeholder="e.g. AY 2024-25 E4 S2"
                     />
                   </div>
-                  <p className="text-[11px] text-zinc-500 flex items-start gap-1.5">
+                  <p className="text-[11px] text-navy-500 flex items-start gap-1.5">
                     <AlertCircle size={12} className="mt-0.5 shrink-0" />
                     <span>
                       This label must match the semester format in your Subjects
@@ -349,8 +349,8 @@ export default function SemesterRegistration() {
                           className={cn(
                             "px-4 py-2 rounded-xl text-[12px] font-semibold border transition-all",
                             selectedBranches.includes(branch)
-                              ? "bg-zinc-900 text-white border-zinc-900"
-                              : "bg-white text-zinc-500 border-zinc-200 hover:border-zinc-300",
+                              ? "bg-navy-900 text-white border-navy-900"
+                              : "bg-white text-navy-500 border-navy-200 hover:border-navy-300",
                           )}
                         >
                           {branch}

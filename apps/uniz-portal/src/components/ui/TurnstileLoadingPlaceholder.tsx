@@ -8,8 +8,8 @@ export function TurnstileLoadingPlaceholder({
     <div
       className={
         compact
-          ? "relative flex w-full max-w-[168px] items-center justify-center overflow-hidden rounded-md border border-zinc-200/90 bg-[#fafafa] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
-          : "relative flex w-full max-w-[302px] items-center justify-center overflow-hidden rounded-md border border-zinc-200/90 bg-[#fafafa] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+          ? "relative flex w-full max-w-[168px] items-center justify-center overflow-hidden rounded-md border border-navy-200/90 bg-[#fafafa] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+          : "relative flex w-full max-w-[302px] items-center justify-center overflow-hidden rounded-md border border-navy-200/90 bg-[#fafafa] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
       }
       role="status"
       aria-label="Loading security check"
@@ -40,10 +40,10 @@ export function TurnstileLoadingPlaceholder({
         </div>
 
         <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="truncate text-[10px] font-semibold tracking-tight text-zinc-700 sm:text-[11px]">
+          <span className="truncate text-[10px] font-semibold tracking-tight text-navy-700 sm:text-[11px]">
             Verifying you&apos;re human
           </span>
-          <span className="truncate text-[9px] font-medium text-zinc-400 sm:text-[10px]">
+          <span className="truncate text-[9px] font-medium text-navy-400 sm:text-[10px]">
             Protected by{" "}
             <span className="text-[#F6821F]">Cloudflare</span>
           </span>

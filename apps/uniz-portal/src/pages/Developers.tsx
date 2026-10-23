@@ -23,7 +23,7 @@ export default function Developers() {
         <header className="flex items-center py-4 md:py-6">
           <Link
             to="/"
-            className="inline-flex min-h-11 items-center gap-2 rounded-portal-lg px-2 text-sm font-medium text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-900"
+            className="inline-flex min-h-11 items-center gap-2 rounded-portal-lg px-2 text-sm font-medium text-navy-500 transition-colors hover:bg-navy-50 hover:text-navy-900"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to home
@@ -40,12 +40,12 @@ export default function Developers() {
 
         <section className="pb-2 md:pb-6">
           <div className="mx-auto max-w-3xl px-2 pb-6 pt-4 text-center md:pb-8 md:pt-8">
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-navy-400">
               Open source
             </p>
-            <h2 className="mt-2 text-[clamp(1.35rem,3vw,1.875rem)] font-semibold leading-snug tracking-tight text-zinc-950">
+            <h2 className="mt-2 text-[clamp(1.35rem,3vw,1.875rem)] font-semibold leading-snug tracking-tight text-navy-950">
               Wanna make it here?{" "}
-              <span className="font-normal text-zinc-400">
+              <span className="font-normal text-navy-400">
                 Contribute to the uniZ ecosystem.
               </span>
             </h2>

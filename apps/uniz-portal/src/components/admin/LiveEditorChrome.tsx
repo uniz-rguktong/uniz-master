@@ -32,7 +32,7 @@ export function LiveEditorChrome({
   const liveUrl = SECTION_LIVE_URL[sectionId]?.(pageKey);
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)] mb-8">
+    <div className="rounded-[2px] border border-slate-200 bg-white overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)] mb-8">
       <div className="px-6 py-7 md:px-9 md:py-8 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
