@@ -40,10 +40,10 @@ const SLOW_MS = Number(process.env.SLOW_QUERY_MS || 0);
 const baseLevels: ("error" | "warn")[] =
   process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"];
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const globalForPrisma = global as unknown as { unizUserPrisma?: PrismaClient };
 
 export const prisma =
-  globalForPrisma.prisma ||
+  globalForPrisma.unizUserPrisma ||
   new PrismaClient({
     log:
       SLOW_MS > 0
@@ -52,7 +52,13 @@ export const prisma =
             { emit: "event" as const, level: "query" as const },
           ]
         : baseLevels,
-    datasources: { db: { url: pooledUrl(process.env.DATABASE_URL) } },
+    datasources: {
+      db: {
+        url: pooledUrl(
+          process.env.USER_DATABASE_URL || process.env.DATABASE_URL,
+        ),
+      },
+    },
   });
 
 if (SLOW_MS > 0) {
@@ -65,6 +71,7 @@ if (SLOW_MS > 0) {
   });
 }
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production")
+  globalForPrisma.unizUserPrisma = prisma;
 
 export default prisma;

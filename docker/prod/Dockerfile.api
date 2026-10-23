@@ -1,0 +1,45 @@
+# Unified API image: auth + user + academics in one Node process.
+#   docker build -f docker/prod/Dockerfile.api -t uniz-api:prod .
+FROM node:20-alpine AS build
+
+RUN apk add --no-cache openssl build-base g++ make python3
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+COPY packages ./packages
+COPY apps ./apps
+
+RUN npm ci --ignore-scripts \
+  && npm rebuild bcrypt 2>/dev/null || true \
+  && npm rebuild sharp 2>/dev/null || true \
+  && npm run build -w @uniz/shared
+
+RUN for dir in uniz-auth uniz-user uniz-academics; do \
+      cd "/app/apps/$dir" \
+      && if [ -f prisma/schema.prisma ]; then npx prisma generate; fi \
+      && npm run build \
+      && if [ -d src/generated ] && [ ! -d dist/generated ]; then \
+           mkdir -p dist && cp -r src/generated dist/generated; \
+         fi; \
+    done \
+  && cd /app/apps/uniz-api && npm run build
+
+FROM node:20-alpine AS runtime
+RUN apk add --no-cache openssl \
+  && addgroup -S uniz && adduser -S uniz -G uniz
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY --from=build /app/package.json /app/package-lock.json ./
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/packages ./packages
+COPY --from=build /app/apps ./apps
+COPY docker/prod/entrypoint-api.sh /entrypoint-api.sh
+RUN chmod +x /entrypoint-api.sh && chown -R uniz:uniz /app
+
+USER uniz
+WORKDIR /app/apps/uniz-api
+ENTRYPOINT ["/entrypoint-api.sh"]
+CMD ["npm", "start"]

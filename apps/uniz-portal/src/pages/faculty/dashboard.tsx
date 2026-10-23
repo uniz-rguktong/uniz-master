@@ -172,23 +172,23 @@ export default function FacultyDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
+    <div className="flex min-h-screen bg-[#FAFAFA] font-sans">
       {/* ── Sidebar ── */}
       <aside
-        className={`bg-white border-r border-zinc-100 transition-all duration-300 z-50 ${
+        className={`bg-white border-r border-navy-200 transition-all duration-300 z-50 ${
           isSidebarOpen ? "w-72" : "w-20"
-        } hidden md:flex flex-col h-screen sticky top-0 shadow-sm`}
+        } hidden md:flex flex-col h-screen sticky top-0`}
       >
-        <div className="p-6 flex items-center gap-4 border-b border-zinc-50 shrink-0">
-          <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center shrink-0 shadow-lg">
+        <div className="p-6 flex items-center gap-4 border-b border-navy-200 shrink-0">
+          <div className="w-12 h-12 bg-navy-900 rounded-portal-sm flex items-center justify-center shrink-0">
             <BookOpen className="w-6 h-6 text-white" />
           </div>
           {isSidebarOpen && (
-            <div className="flex flex-col animate-in fade-in slide-in-from-left-2 duration-300">
-              <span className="font-bold text-zinc-900 text-lg tracking-tight leading-none">
-                Faculty Portal
+            <div className="flex flex-col">
+              <span className="font-bold text-navy-900 text-lg tracking-tight leading-none uppercase uniz-logo-wordmark !text-base !tracking-[0.08em]">
+                Faculty
               </span>
-              <span className="text-[9px] tracking-[0.25em] text-zinc-400 font-bold mt-1.5 leading-none">
+              <span className="text-[9px] tracking-[0.2em] text-navy-400 font-bold mt-1.5 leading-none uppercase">
                 {isHOD ? "HOD Dashboard" : "Staff Dashboard"}
               </span>
             </div>
@@ -200,15 +200,15 @@ export default function FacultyDashboard() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as ActiveTab)}
-              className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-200 group ${
+              className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-portal-sm transition-colors duration-150 group ${
                 activeTab === item.id
-                  ? "bg-black text-white shadow-lg"
-                  : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900"
+                  ? "bg-navy-900 text-white"
+                  : "text-navy-500 hover:bg-[#FAFAFA] hover:text-navy-900"
               }`}
             >
               <item.icon
                 size={20}
-                className={`shrink-0 ${activeTab === item.id ? "text-white" : "text-zinc-400"}`}
+                className={`shrink-0 ${activeTab === item.id ? "text-white" : "text-navy-400"}`}
               />
               {isSidebarOpen && (
                 <span
@@ -218,16 +218,16 @@ export default function FacultyDashboard() {
                 </span>
               )}
               {isSidebarOpen && activeTab === item.id && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-zinc-400 animate-pulse" />
+                <div className="ml-auto w-1.5 h-1.5 rounded-portal-sm bg-white/50" />
               )}
             </button>
           ))}
         </nav>
 
-        <div className="p-4 border-t border-zinc-50 shrink-0">
+        <div className="p-4 border-t border-navy-200 shrink-0">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3.5 px-4 py-3 rounded-full text-red-500 hover:bg-red-50 transition-all group"
+            className="w-full flex items-center gap-3.5 px-4 py-3 rounded-portal-sm text-[#EA2027] hover:bg-red-50 transition-colors group font-button"
           >
             <LogOut size={20} className="shrink-0" />
             {isSidebarOpen && (
@@ -239,25 +239,25 @@ export default function FacultyDashboard() {
 
       {/* ── Main ── */}
       <main className="flex-1 overflow-y-auto max-h-screen">
-        {/* Header */}
-        <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-zinc-100 h-[72px] px-8 flex justify-between items-center">
+        {/* Header — flat institutional, no glass */}
+        <header className="bg-white sticky top-0 z-40 border-b border-navy-200 h-[60px] px-8 flex justify-between items-center">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2.5 hover:bg-zinc-100 rounded-xl transition-all hidden md:flex text-zinc-400"
+            className="p-2.5 hover:bg-[#FAFAFA] rounded-portal-sm transition-colors hidden md:flex text-navy-400"
           >
             {isSidebarOpen ? <Menu size={20} /> : <ChevronRight size={20} />}
           </button>
           <div className="flex items-center gap-4 ml-auto">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold text-zinc-900 leading-none tracking-tight">
+              <p className="text-sm font-semibold text-navy-900 leading-none tracking-tight">
                 {profile?.Name || username}
               </p>
-              <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mt-1.5">
+              <p className="text-[10px] font-bold text-navy-400 tracking-[0.14em] mt-1.5 font-form">
                 {isHOD ? "Head of Department" : "Faculty"} ·{" "}
                 {profile?.Department}
               </p>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-black flex items-center justify-center font-bold text-white shadow-sm overflow-hidden">
+            <div className="w-10 h-10 rounded-portal-sm bg-navy-900 flex items-center justify-center font-bold text-white overflow-hidden">
               {profile?.ProfileUrl ? (
                 <img
                   src={profile.ProfileUrl}
@@ -294,18 +294,18 @@ function OverviewSection({
   return (
     <div className="p-8 space-y-8 pb-20 animate-in fade-in duration-500">
       {/* Hero Card */}
-      <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-3xl py-8 px-10 text-white shadow-xl relative overflow-hidden">
+      <div className="portal-banner-gradient rounded-portal-lg py-8 px-10 text-white relative overflow-hidden">
         <div className="relative z-10 space-y-3">
           {isHOD && (
-            <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 text-[9px] font-bold tracking-[0.14em] text-zinc-300">
+            <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-portal-sm border border-white/15 text-[9px] font-bold tracking-[0.14em] text-white/80">
               <ShieldCheck className="w-3.5 h-3.5" /> Head of Department
             </span>
           )}
           <div>
-            <h1 className="text-3xl font-bold tracking-[-0.03em] leading-none">
+            <h1 className="text-3xl font-bold tracking-[-0.01em] leading-none font-sans">
               Welcome, {profile?.Name?.split(" ")[0] || "Professor"}
             </h1>
-            <p className="text-zinc-400 text-sm mt-3 max-w-lg">
+            <p className="text-white/70 text-sm mt-3 max-w-lg font-form">
               {profile?.Designation || "Faculty"} · {profile?.Department}{" "}
               Department
             </p>

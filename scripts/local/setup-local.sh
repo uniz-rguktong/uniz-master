@@ -202,24 +202,22 @@ info "✅ Postgres is ready"
 
 SERVICES=(
   "apps/uniz-gateway"
+  "apps/uniz-api"
   "apps/uniz-auth"
   "apps/uniz-user"
   "apps/uniz-academics"
   "apps/uniz-outpass"
-  "apps/uniz-files"
-  "apps/uniz-mail"
   "apps/uniz-notifications"
   "apps/uniz-cron"
   "apps/uniz-portal"
 )
 PREFIXES=(
   "GATEWAY"
+  "API"
   "AUTH"
   "USER"
   "ACADEMICS"
   "OUTPASS"
-  "FILES"
-  "MAIL"
   "NOTIFICATION"
   "CRON"
   "VITE"
@@ -281,16 +279,27 @@ for i in "${!SERVICES[@]}"; do
     echo "DOCKER_ENV=false"
     echo "GATEWAY_URL=http://127.0.0.1:3000/api/v1"
     echo "FORCE_GMAIL=true"
+    echo "UNIZ_API_URL=http://127.0.0.1:3001"
     echo "AUTH_SERVICE_URL=http://127.0.0.1:3001"
-    echo "USER_SERVICE_URL=http://127.0.0.1:3002"
-    echo "ACADEMICS_SERVICE_URL=http://127.0.0.1:3004"
+    echo "USER_SERVICE_URL=http://127.0.0.1:3001"
+    echo "ACADEMICS_SERVICE_URL=http://127.0.0.1:3001"
     echo "OUTPASS_SERVICE_URL=http://127.0.0.1:3003"
-    echo "FILES_SERVICE_URL=http://127.0.0.1:3005"
-    echo "MAIL_SERVICE_URL=http://127.0.0.1:3006"
+    echo "FILES_SERVICE_URL=http://127.0.0.1:3001"
+    echo "MAIL_SERVICE_URL=http://127.0.0.1:3007"
     echo "NOTIFICATION_SERVICE_URL=http://127.0.0.1:3007"
-    echo "CRON_SERVICE_URL=http://127.0.0.1:3008"
+    echo "CRON_SERVICE_URL=http://127.0.0.1:3003"
     echo "LANDING_API_URL=http://127.0.0.1:8000"
   } >> "$path/.env"
+
+  # Unified API needs all three schema URLs (modules prefer AUTH_/USER_/ACADEMICS_).
+  if [ "$path" = "apps/uniz-api" ]; then
+    {
+      echo "AUTH_DATABASE_URL=\"$(local_database_url uniz_auth)\""
+      echo "USER_DATABASE_URL=\"$(local_database_url uniz_user)\""
+      echo "ACADEMICS_DATABASE_URL=\"$(local_database_url uniz_academics)\""
+      echo "PORT=3001"
+    } >> "$path/.env"
+  fi
 
   if [ -f "$path/prisma/schema.prisma" ]; then
     unquoted_val="$(grep '^DATABASE_URL=' "$path/.env" | tail -1 | cut -d'=' -f2- | sed -e 's/^"//' -e 's/"$//')"

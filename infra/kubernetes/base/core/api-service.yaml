@@ -1,0 +1,142 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-api
+  labels:
+    app: uniz-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uniz-api
+  template:
+    metadata:
+      labels:
+        app: uniz-api
+    spec:
+      priorityClassName: uniz-high-priority
+      initContainers:
+        - name: fix-uploads-perms
+          image: busybox:1.36
+          imagePullPolicy: IfNotPresent
+          command:
+            ["sh", "-c", "mkdir -p /data/uploads && chown -R 100:101 /data/uploads && chmod 0775 /data/uploads"]
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: uploads
+              mountPath: /data/uploads
+      containers:
+        - name: uniz-api
+          image: uniz-api:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3001
+          env:
+            - name: PORT
+              value: "3001"
+            - name: AUTH_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: uniz-secrets
+                  key: AUTH_DATABASE_URL
+            - name: USER_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: uniz-secrets
+                  key: USER_DATABASE_URL
+            - name: ACADEMICS_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: uniz-secrets
+                  key: ACADEMICS_DATABASE_URL
+            # Prefer explicit schema URLs; DATABASE_URL unused by modules when set.
+            - name: UPLOADS_DIR
+              value: "/data/uploads"
+          envFrom:
+            - configMapRef:
+                name: uniz-config
+            - secretRef:
+                name: uniz-secrets
+          resources:
+            limits:
+              cpu: "2000m"
+              memory: "2048Mi"
+            requests:
+              cpu: "400m"
+              memory: "512Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 10"]
+          volumeMounts:
+            - name: uploads
+              mountPath: /data/uploads
+      volumes:
+        - name: uploads
+          hostPath:
+            path: /var/lib/uniz/uploads
+            type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-api-service
+spec:
+  selector:
+    app: uniz-api
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: uniz-api-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: uniz-api
+  minReplicas: 1
+  maxReplicas: 4
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 10
+          periodSeconds: 60

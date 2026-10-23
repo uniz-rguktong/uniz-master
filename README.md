@@ -40,7 +40,9 @@ In-house docs are a **static VitePress site** on the VPS — not Cloudflare Page
 
 ### Backend services
 
-Auth issues JWT. User holds profiles, campus CMS notices, grievances, and file uploads. Academics is results and registration. Notifications owns inbox, web push, and email (mail folded in). Landing-backend is FastAPI for the public website CMS. Docs is VitePress under `/docs`.
+**uniz-api** (unified process) issues JWT, holds profiles / campus CMS / grievances / image uploads, and runs academics (grades, attendance, registration). Notifications owns inbox, web push, and email. Landing-backend is FastAPI for the public website CMS. Docs is VitePress under `/docs`.
+
+**Secrets:** this is a public student repo — see [docs/ops/SECRETS.md](docs/ops/SECRETS.md). Production vault is only on the VPS (`/root/uniz-secrets.env`); contributors use `secrets.env.example` placeholders.
 
 ### Self-hosted images and AWS SES
 

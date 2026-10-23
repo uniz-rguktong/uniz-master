@@ -1,25 +1,35 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Emergency: rebuild core images on VPS. Prefer GitHub Actions + GHCR.
+set -euo pipefail
 
 SERVICES=(
-  "uniz-gateway:uniz-gateway:uniz-gateway"
+  "uniz-api:uniz-api:uniz-api"
   "uniz-gateway-api:uniz-gateway:uniz-gateway-api"
-  "uniz-auth-service:uniz-auth:uniz-auth-service"
-  "uniz-user-service:uniz-user:uniz-user-service"
-  "uniz-academics-service:uniz-academics:uniz-academics-service"
-  "uniz-outpass-service:uniz-outpass:uniz-outpass-service"
-  "uniz-files-service:uniz-files:uniz-files-service"
-  "uniz-mail-service:uniz-mail:uniz-mail-service"
   "uniz-notification-service:uniz-notifications:uniz-notification-service"
-  "uniz-cron-service:uniz-cron:uniz-cron-service"
-  "uniz-portal:uniz-portal:uniz-portal"
+  "uniz-docs-service:uniz-docs:uniz-docs-service"
 )
 
-echo "[Push] Starting Full System Redeploy on VPS..."
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+cd "$ROOT"
 
-for item in "${SERVICES[@]}"; do
-  IFS=':' read -r IMAGE DIR DEPLOY <<< "$item"
-  echo "[Build] Building and Deploying $DEPLOY..."
-  ssh -o StrictHostKeyChecking=no root@76.13.241.174 "cd /root/uniz-master && docker build -t $IMAGE:local apps/$DIR && docker save $IMAGE:local | /usr/local/bin/k3s ctr images import - && kubectl rollout restart deployment $DEPLOY"
+if [ ! -f /root/uniz-secrets.env ]; then
+  echo "Run on VPS with /root/uniz-secrets.env present." >&2
+  exit 1
+fi
+
+for s in "${SERVICES[@]}"; do
+  IFS=':' read -r IMG DIR DEP <<< "$s"
+  echo "[redeploy] $IMG"
+  if [ "$DIR" = "uniz-api" ]; then
+    docker build -f docker/prod/Dockerfile.api -t "${IMG}:local" .
+  else
+    docker build -f docker/prod/Dockerfile.service \
+      --build-arg "SERVICE_DIR=apps/${DIR}" \
+      --build-arg "WORKSPACE_NAME=$(node -p "require('./apps/${DIR}/package.json').name")" \
+      -t "${IMG}:local" .
+  fi
+  docker save "${IMG}:local" | sudo k3s ctr images import -
+  kubectl set image "deployment/${DEP}" "*=${IMG}:local" 2>/dev/null || \
+    kubectl set image "deployment/${DEP}" "${DEP#uniz-}=${IMG}:local" 2>/dev/null || true
+  kubectl rollout status "deployment/${DEP}" --timeout=180s || true
 done
-
-echo "[OK] All services successfully rolled out!"

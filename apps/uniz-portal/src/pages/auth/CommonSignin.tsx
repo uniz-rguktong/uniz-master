@@ -163,7 +163,7 @@ function OtpInput({
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
-            className="w-11 h-14 sm:w-12 text-center text-xl font-semibold rounded-portal-xl border border-navy-200 bg-white text-navy-900 focus:outline-none focus:border-navy-900 focus:ring-2 focus:ring-navy-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-11 h-14 sm:w-12 text-center text-xl font-semibold rounded-portal-sm border border-navy-200 bg-white text-navy-900 font-form focus:outline-none focus:border-navy-900 focus:ring-1 focus:ring-navy-900/15 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.25 }}
@@ -258,12 +258,12 @@ const loginInputPasswordClass = cn(loginInputClass, "!pl-10 !pr-10");
 
 const loginBtnClass = cn(
   portalPrimaryButtonClass,
-  "w-full !min-h-12 !rounded-portal-xl text-[15px] !hover:translate-y-0",
+  "w-full !min-h-12 text-[15px] uniz-primary-btn",
 );
 
 const loginSecondaryBtnClass = cn(
   portalSecondaryButtonClass,
-  "w-full !min-h-12 !rounded-portal-xl text-[14px]",
+  "w-full !min-h-12 text-[14px]",
 );
 
 const loginLinkBtnClass =
@@ -873,14 +873,13 @@ export default function Signin({ type }: SigninProps) {
         : "New password";
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FAFAFA]">
       <LoginScreen
         isLogin={step === "signin"}
         onBack={() => navigate("/")}
         title={stepTitle}
         subtitle={stepSubtitle}
-        heroTitle={undefined}
-        bottomText={UNIZ_CAMPUS_LABEL}
+        bottomText={undefined}
         role={type}
         stepKey={step}
       >
@@ -1071,8 +1070,8 @@ export default function Signin({ type }: SigninProps) {
                     <span className="relative z-10">Verify code</span>
                   </Button>
 
-                  <div className="rounded-portal-xl border border-navy-200 bg-navy-50/80 p-4 space-y-3">
-                    <p className="text-[12px] font-medium text-navy-700 text-center leading-relaxed">
+                  <div className="rounded-portal-sm border border-navy-200 bg-[#FAFAFA] p-4 space-y-3">
+                    <p className="text-[12px] font-medium text-navy-700 text-center leading-relaxed font-form">
                       Didn&apos;t get a push notification? Send the code to your
                       registered college email instead.
                     </p>

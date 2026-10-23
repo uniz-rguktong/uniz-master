@@ -1,6 +1,5 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
-import { Badge } from "./Badge";
 
 interface SectionHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   pillText?: string;
@@ -13,29 +12,29 @@ export function SectionHeader({
   pillText,
   heading,
   subtitle,
-  align = "center",
+  align = "left",
   className,
   ...props
 }: SectionHeaderProps) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 max-w-3xl",
+        "flex flex-col max-w-2xl",
         align === "center" ? "mx-auto text-center items-center" : "text-left items-start",
         className
       )}
       {...props}
     >
       {pillText && (
-        <Badge variant="pill" size="lg">
+        <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#800000] mb-4">
           {pillText}
-        </Badge>
+        </p>
       )}
-      <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
+      <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#000035] leading-tight">
         {heading}
       </h2>
       {subtitle && (
-        <p className="text-lg text-slate-600 font-medium">
+        <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed">
           {subtitle}
         </p>
       )}

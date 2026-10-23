@@ -19,11 +19,12 @@ x-common-env: &common-env
   INTERNAL_BOT_SECRET: ${INTERNAL_BOT_SECRET:-bot-secret-123}
   REDIS_URL: redis://redis:6379
   GATEWAY_URL: http://gateway:3000/api/v1
-  AUTH_SERVICE_URL: http://auth:3001
-  USER_SERVICE_URL: http://user:3002
+  UNIZ_API_URL: http://api:3001
+  AUTH_SERVICE_URL: http://api:3001
+  USER_SERVICE_URL: http://api:3001
   OUTPASS_SERVICE_URL: http://outpass:3003
-  ACADEMICS_SERVICE_URL: http://academics:3004
-  FILES_SERVICE_URL: http://user:3002
+  ACADEMICS_SERVICE_URL: http://api:3001
+  FILES_SERVICE_URL: http://api:3001
   MAIL_SERVICE_URL: http://notifications:3007
   NOTIFICATION_SERVICE_URL: http://notifications:3007
   CRON_SERVICE_URL: http://outpass:3003
@@ -75,18 +76,22 @@ services:
       timeout: 3s
       retries: 10
 
-  auth:
+
+  api:
     build:
-      <<: *service-build
-      args:
-        SERVICE_DIR: apps/uniz-auth
-        WORKSPACE_NAME: uniz-auth-service
-    container_name: uniz_auth
+      context: .
+      dockerfile: docker/prod/Dockerfile.api
+    container_name: uniz_api
     restart: unless-stopped
     environment:
       <<: *common-env
       PORT: 3001
-      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_auth
+      AUTH_DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_auth
+      USER_DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_user
+      ACADEMICS_DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_academics
+      UPLOADS_DIR: /data/uploads
+    volumes:
+      - uniz_uploads:/data/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -103,37 +108,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 12
-      start_period: 40s
-
-  user:
-    build:
-      <<: *service-build
-      args:
-        SERVICE_DIR: apps/uniz-user
-        WORKSPACE_NAME: uniz-user-service
-    container_name: uniz_user
-    restart: unless-stopped
-    environment:
-      <<: *common-env
-      PORT: 3002
-      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_user
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "fetch('http://127.0.0.1:3002/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-      start_period: 40s
+      start_period: 60s
 
   outpass:
     build:
@@ -165,90 +140,6 @@ services:
       retries: 12
       start_period: 40s
 
-  academics:
-    build:
-      <<: *service-build
-      args:
-        SERVICE_DIR: apps/uniz-academics
-        WORKSPACE_NAME: uniz-academics-service
-    container_name: uniz_academics
-    restart: unless-stopped
-    environment:
-      <<: *common-env
-      PORT: 3004
-      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_academics
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "fetch('http://127.0.0.1:3004/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-      start_period: 40s
-
-  files:
-    build:
-      <<: *service-build
-      args:
-        SERVICE_DIR: apps/uniz-files
-        WORKSPACE_NAME: uniz-files-service
-    container_name: uniz_files
-    restart: unless-stopped
-    environment:
-      <<: *common-env
-      PORT: 3005
-    depends_on:
-      redis:
-        condition: service_healthy
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "fetch('http://127.0.0.1:3005/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 20s
-
-  mail:
-    build:
-      <<: *service-build
-      args:
-        SERVICE_DIR: apps/uniz-mail
-        WORKSPACE_NAME: uniz-mail-service
-    container_name: uniz_mail
-    restart: unless-stopped
-    environment:
-      <<: *common-env
-      PORT: 3006
-    depends_on:
-      redis:
-        condition: service_healthy
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "fetch('http://127.0.0.1:3006/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 20s
-
   notifications:
     build:
       <<: *service-build
@@ -279,33 +170,6 @@ services:
       retries: 12
       start_period: 40s
 
-  cron:
-    build:
-      <<: *service-build
-      args:
-        SERVICE_DIR: apps/uniz-cron
-        WORKSPACE_NAME: uniz-cron-service
-    container_name: uniz_cron
-    restart: unless-stopped
-    environment:
-      <<: *common-env
-      PORT: 3008
-      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable&schema=uniz_cron
-    depends_on:
-      postgres:
-        condition: service_healthy
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "fetch('http://127.0.0.1:3008/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 20s
 
   gateway:
     build:
@@ -321,17 +185,9 @@ services:
     ports:
       - "${GATEWAY_PORT:-3000}:3000"
     depends_on:
-      auth:
-        condition: service_healthy
-      user:
+      api:
         condition: service_healthy
       outpass:
-        condition: service_healthy
-      academics:
-        condition: service_healthy
-      files:
-        condition: service_healthy
-      mail:
         condition: service_healthy
       notifications:
         condition: service_healthy
@@ -376,11 +232,7 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-uniz_db}?sslmode=disable
     depends_on:
-      auth:
-        condition: service_healthy
-      user:
-        condition: service_healthy
-      academics:
+      api:
         condition: service_healthy
     restart: "no"
 

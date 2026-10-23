@@ -19,34 +19,44 @@ function Wordmark({
   large = false,
   compact = false,
   short = false,
+  inverted = false,
 }: {
   large?: boolean;
   compact?: boolean;
   short?: boolean;
+  inverted?: boolean;
 }) {
   return (
     <p
       className={cn(
-        "uniz-logo-wordmark shrink-0 leading-none text-navy-900",
+        "uniz-logo-wordmark shrink-0 leading-none",
+        inverted ? "text-white" : "text-navy-900",
         compact
           ? large
-            ? "text-[1.4rem]"
-            : "text-[1.2rem]"
+            ? "text-[1.1rem]"
+            : "text-[0.95rem]"
           : large
-            ? "text-[2.25rem]"
-            : "text-[1.55rem]",
+            ? "text-[1.35rem]"
+            : "text-[1.05rem]",
       )}
     >
-      uniZ.
+      {short ? "Z" : "UNIZ"}
     </p>
   );
 }
 
-function CampusLabel({ large = false }: { large?: boolean }) {
+function CampusLabel({
+  large = false,
+  inverted = false,
+}: {
+  large?: boolean;
+  inverted?: boolean;
+}) {
   return (
     <p
       className={cn(
-        "font-semibold uppercase tracking-[0.12em] text-zinc-500",
+        "font-semibold uppercase tracking-[0.12em] font-sans",
+        inverted ? "text-white/70" : "text-navy-500",
         large ? "mt-1 text-[9px]" : "mt-0.5 text-[8px]",
       )}
     >
@@ -69,26 +79,24 @@ export function UnizLogo({
     return (
       <div
         className={cn(
-          "flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3",
+          "flex w-full min-w-0 flex-col gap-0.5",
           className,
         )}
       >
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <Wordmark large={large} />
-          <span
-            className={cn(
-              "shrink-0 font-semibold uppercase text-zinc-500 tracking-[0.12em]",
-              large ? "text-[9px]" : "text-[8px]",
-            )}
-          >
-            {UNIZ_CAMPUS_LABEL}
-          </span>
-        </div>
+        <Wordmark large={large} inverted />
+        <span
+          className={cn(
+            "shrink-0 font-semibold uppercase tracking-[0.12em] text-white/70 font-sans",
+            large ? "text-[9px]" : "text-[8px]",
+          )}
+        >
+          {UNIZ_CAMPUS_LABEL}
+        </span>
         {portalLabel && (
           <span
             className={cn(
               adminChipClass,
-              "hidden w-fit max-w-full truncate text-zinc-600 sm:inline-flex",
+              "mt-1 hidden w-fit max-w-full truncate border-white/25 bg-white/10 text-white/90 sm:inline-flex",
             )}
           >
             {portalLabel}

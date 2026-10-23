@@ -52,7 +52,7 @@ export function GridSection({
               </div>
               <div className="p-6 flex-1 flex flex-col">
                 {item.date && (
-                  <p className="text-sm font-medium text-indigo-600">{item.date}</p>
+                  <p className="text-sm font-medium text-[#800000]">{item.date}</p>
                 )}
                 <h3 className="mt-2 text-xl font-semibold text-slate-800 line-clamp-3">
                   {item.title}
@@ -66,7 +66,7 @@ export function GridSection({
                       href={item.links?.[0]?.url || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-700 font-semibold"
+                      className="inline-flex items-center gap-1 text-[#800000] hover:text-[#000035] font-semibold underline-offset-[0.22em] hover:underline"
                     >
                       Read More
                       <ArrowRight className="w-4 h-4" />

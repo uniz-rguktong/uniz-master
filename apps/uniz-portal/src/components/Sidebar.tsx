@@ -30,6 +30,13 @@ import {
   studentContentSkeletonVariant,
 } from "./StudentPageSkeleton";
 import { NotificationBellButton } from "./NotificationBellButton";
+import {
+  studentDesktopHeaderClass,
+  studentLogoClass,
+  studentMobileHeaderClass,
+  studentShellClass,
+} from "@/lib/student-ui";
+import { cn } from "@/lib/utils";
 
 const Attendance = lazy(() => import("../pages/attendance/Attendance"));
 const OutpassOuting = lazy(() => import("../pages/student/outpass&outing"));
@@ -80,22 +87,8 @@ export default function Sidebar({ content }: MainContent) {
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [showNotice, setShowNotice] = useState(true);
-  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (mainRef.current) {
-        setIsScrolled(mainRef.current.scrollTop > 10 || window.scrollY > 10);
-      } else {
-        setIsScrolled(window.scrollY > 10);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    const mainEl = mainRef.current;
-    if (mainEl) {
-      mainEl.addEventListener("scroll", handleScroll);
-    }
-
     // Pull to Refresh Implementation
     let touchStartPos = 0;
     const handleTouchStart = (e: TouchEvent) => {
@@ -106,7 +99,6 @@ export default function Sidebar({ content }: MainContent) {
 
     const handleTouchMove = (e: TouchEvent) => {
       const touchCurrentPos = e.touches[0].clientY;
-      // If pulled down more than 150px while at the top
       if (window.scrollY <= 0 && touchCurrentPos > touchStartPos + 150) {
         window.location.reload();
       }
@@ -116,10 +108,6 @@ export default function Sidebar({ content }: MainContent) {
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (mainEl) {
-        mainEl.removeEventListener("scroll", handleScroll);
-      }
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
     };
@@ -314,14 +302,14 @@ export default function Sidebar({ content }: MainContent) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white text-[#0B2A47] selection:bg-[#D4E8F5] selection:text-[#0B2A47]">
+    <div className={cn(studentShellClass)}>
       <AnimatePresence>
         {!enableOutingsAndOutpasses && showNotice && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="portal-banner-gradient text-white py-2.5 px-6 flex items-center justify-between shadow-lg relative z-[100]"
+            className="portal-banner-gradient text-white py-2.5 px-6 flex items-center justify-between relative z-[100]"
           >
             <div className="flex-1 text-center text-[11px] md:text-[13px] font-sans font-bold tracking-tight">
               Outpass and outing feature has been currently disabled by the
@@ -329,7 +317,7 @@ export default function Sidebar({ content }: MainContent) {
             </div>
             <button
               onClick={() => setShowNotice(false)}
-              className="p-1 hover:bg-white/20 rounded-full transition-all shrink-0"
+              className="p-1 hover:bg-white/20 rounded-portal-sm transition-colors shrink-0"
             >
               <X className="w-4 h-4" />
             </button>
@@ -341,7 +329,7 @@ export default function Sidebar({ content }: MainContent) {
         <div className="hidden md:flex fixed left-6 top-1/2 -translate-y-1/2 z-50">
           <Dock
             items={dockItems}
-            className="shadow-[0_8px_30px_rgb(0,0,0,0.06)] border-zinc-100"
+            className="shadow-whisper border-navy-200"
           />
         </div>
 
@@ -350,52 +338,45 @@ export default function Sidebar({ content }: MainContent) {
           ref={mainRef}
           className="flex-1 md:overflow-y-auto md:max-h-screen"
         >
-          {/* Mobile Header */}
-          <header
-            className={`md:hidden sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16 transition-all duration-300 border-b ${isScrolled ? "bg-white/95 backdrop-blur-xl border-[#D4E8F5] shadow-sm" : "bg-white border-transparent"}`}
-          >
-            <h1
-              className="uniz-logo-wordmark text-3xl text-navy-900 transition-colors duration-300"
-            >
-              uniZ
-            </h1>
+          {/* Mobile Header — ExamCell navy chrome */}
+          <header className={cn(studentMobileHeaderClass, "px-6")}>
+            <h1 className={studentLogoClass}>UNIZ</h1>
             <div className="flex items-center gap-2">
               <NotificationBellButton
                 size="sm"
                 active={content === "notifications"}
+                className="!border-white/25 !bg-white/10 !text-white hover:!bg-white/20 hover:!text-white"
               />
               <button
                 onClick={() => setShowConfirm(true)}
-                className={`p-2 transition-all font-sans ${isScrolled ? "text-zinc-400 active:text-red-500" : "text-zinc-500 active:text-red-600"}`}
+                className="p-2 transition-colors font-sans text-white/80 active:text-white"
+                aria-label="Log out"
               >
                 <LogOut size={22} />
               </button>
             </div>
           </header>
 
-          {/* Re-designed Desktop Header (Pharmacy App Style) */}
-          <header
-            className={`sticky top-0 z-40 p-4 px-8 md:pl-36 justify-between items-center hidden md:flex transition-all duration-300 border-b ${isScrolled ? "bg-white/95 backdrop-blur-md border-[#D4E8F5] shadow-sm" : "bg-white border-transparent shadow-none"}`}
-          >
-            {/* Left: App Branding */}
+          {/* Desktop Header — ExamCell navy chrome */}
+          <header className={cn(studentDesktopHeaderClass, "px-8 md:pl-36")}>
             <div className="flex items-center gap-4">
-              <h1 className="uniz-logo-wordmark text-3xl text-navy-900">
-                uniZ
-              </h1>
+              <h1 className={studentLogoClass}>UNIZ</h1>
             </div>
 
-            {/* Right: Profile */}
             <div className="flex items-center gap-3">
-              <NotificationBellButton active={content === "notifications"} />
+              <NotificationBellButton
+                active={content === "notifications"}
+                className="!border-white/25 !bg-white/10 !text-white hover:!bg-white/20 hover:!text-white"
+              />
               <div className="text-right hidden sm:block">
-                <p className="text-[14px] font-bold text-navy-900 leading-none">
+                <p className="text-[14px] font-bold text-white leading-none font-sans">
                   {userData?.name || "Student User"}
                 </p>
-                <p className="text-[11px] font-semibold text-navy-400 mt-1 lowercase tracking-tight">
+                <p className="text-[11px] font-semibold text-white/70 mt-1 lowercase tracking-tight font-form">
                   {userData?.email || "N/A"}
                 </p>
               </div>
-              <div className="w-11 h-11 rounded-full ring-2 ring-zinc-50 border-2 border-white overflow-hidden shadow-sm">
+              <div className="w-10 h-10 rounded-portal-sm ring-1 ring-white/25 border border-white/20 overflow-hidden">
                 {userData?.profile_url ? (
                   <img
                     src={userData.profile_url}
@@ -403,27 +384,27 @@ export default function Sidebar({ content }: MainContent) {
                     alt=""
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-navy-900 text-white font-bold text-xs">
+                  <div className="w-full h-full flex items-center justify-center bg-white/15 text-white font-bold text-xs font-sans">
                     {userData?.name?.charAt(0) || "S"}
                   </div>
                 )}
               </div>
               <button
                 onClick={() => setShowConfirm(true)}
-                className="w-10 h-10 flex items-center justify-center bg-zinc-50 text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded-full border border-zinc-100 transition-all ml-2"
+                className="w-10 h-10 flex items-center justify-center bg-white/10 text-white/80 hover:text-white hover:bg-white/15 rounded-portal-sm border border-white/15 transition-colors ml-2"
+                aria-label="Log out"
               >
                 <LogOut size={18} />
               </button>
             </div>
           </header>
 
-          <div className="pt-4 px-4 pb-32 md:p-10 md:ml-28 min-h-full">
-            {/* Mobile Back Button (Below Header) */}
+          <div className="pt-4 px-4 pb-32 md:p-10 md:ml-28 min-h-full bg-[#FAFAFA]">
             {content !== "dashboard" && (
               <div className="md:hidden mb-6">
                 <button
                   onClick={() => navigate("/student")}
-                  className="flex items-center gap-1 text-zinc-500 font-bold text-[10px] tracking-[0.14em] py-2"
+                  className="flex items-center gap-1 text-navy-500 font-bold text-[10px] tracking-[0.14em] py-2 font-sans"
                 >
                   <ChevronLeft size={20} strokeWidth={3} />
                 </button>

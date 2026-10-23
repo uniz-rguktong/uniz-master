@@ -470,35 +470,35 @@ export default function StudentProfilePage() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-zinc-900 rounded-2xl p-6 text-white shadow-xl shadow-zinc-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-white/10"
+        className="portal-banner-gradient rounded-portal-lg p-6 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-[#021227]"
       >
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md text-zinc-300">
+          <div className="p-3 bg-white/10 rounded-portal-sm text-white/80">
             <Calendar size={24} />
           </div>
           <div>
-            <p className="text-[10px] font-bold tracking-[0.14em] text-zinc-400">
+            <p className="text-[10px] font-bold tracking-[0.14em] text-white/60 font-sans">
               Upcoming Examination
             </p>
-            <h3 className="text-lg font-bold leading-tight pt-1">
+            <h3 className="text-lg font-bold leading-tight pt-1 font-sans">
               {upcoming.subjectName}
             </h3>
-            <p className="text-xs text-zinc-300 font-medium">
+            <p className="text-xs text-white/70 font-medium font-form">
               {upcoming.examName} •{" "}
               {new Date(upcoming.date).toLocaleDateString("en-GB")}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="flex-1 md:flex-none px-5 py-3 bg-white/10 rounded-2xl text-center border border-white/5">
-            <p className="text-[9px] font-bold tracking-[0.14em] text-zinc-400 mb-0.5">
+          <div className="flex-1 md:flex-none px-5 py-3 bg-white/10 rounded-portal-sm text-center border border-white/10">
+            <p className="text-[9px] font-bold tracking-[0.14em] text-white/60 mb-0.5">
               Hall
             </p>
             <p className="text-xl font-semibold">{upcoming.room}</p>
           </div>
           <button
             onClick={() => setActiveTab("seating")}
-            className="flex-1 md:flex-none px-6 py-4 bg-zinc-900 hover:bg-zinc-800 rounded-2xl font-bold text-xs tracking-[0.14em] transition-all"
+            className="flex-1 md:flex-none px-6 py-4 bg-white/15 hover:bg-white/25 rounded-portal-sm font-bold text-xs tracking-[0.14em] transition-colors font-button"
           >
             View Full Plan
           </button>
@@ -1003,7 +1003,7 @@ export default function StudentProfilePage() {
                   <button
                     onClick={() => setRequestType("outing")}
                     disabled={user.has_pending_requests}
-                    className="group relative overflow-hidden bg-white hover:bg-zinc-900 rounded-xl p-6 transition-all duration-300 border border-zinc-100 hover:border-zinc-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md h-[120px] md:h-auto"
+                    className="group relative overflow-hidden bg-white hover:bg-navy-900 rounded-portal-lg p-6 transition-colors duration-150 border border-navy-200 hover:border-navy-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-whisper h-[120px] md:h-auto"
                   >
                     <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
                       <div className="text-zinc-900 group-hover:text-white transition-colors duration-300">
@@ -1022,7 +1022,7 @@ export default function StudentProfilePage() {
                   <button
                     onClick={() => setRequestType("outpass")}
                     disabled={user.has_pending_requests}
-                    className="group relative overflow-hidden bg-white hover:bg-zinc-900 rounded-xl p-6 transition-all duration-300 border border-zinc-100 hover:border-zinc-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md h-[120px] md:h-auto"
+                    className="group relative overflow-hidden bg-white hover:bg-navy-900 rounded-portal-lg p-6 transition-colors duration-150 border border-navy-200 hover:border-navy-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-whisper h-[120px] md:h-auto"
                   >
                     <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
                       <div className="text-zinc-900 group-hover:text-white transition-colors duration-300">
@@ -1123,7 +1123,7 @@ export default function StudentProfilePage() {
                       Reason
                     </label>
                     <textarea
-                      className="w-full bg-zinc-50 p-4 rounded-xl border border-zinc-200 focus:border-zinc-100 focus:ring-1 focus:ring-zinc-900 focus:outline-none min-h-[120px] font-bold text-[15px] text-zinc-900 placeholder:text-zinc-300 placeholder:font-normal resize-none transition-all"
+                      className="w-full bg-[#FAFAFA] p-4 rounded-portal-sm border border-navy-200 focus:border-navy-700 focus:ring-1 focus:ring-navy-900/15 focus:outline-none min-h-[120px] font-bold text-[15px] text-navy-900 font-form placeholder:text-navy-300 placeholder:font-normal resize-none transition-colors"
                       placeholder="Please explain why you need to leave..."
                       value={requestForm.reason}
                       onChange={(e) =>
@@ -1180,7 +1180,7 @@ export default function StudentProfilePage() {
                     <button
                       type="submit"
                       disabled={requestLoading}
-                      className="flex-[2] h-[52px] bg-zinc-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all shadow-lg active:scale-[0.98]"
+                      className="flex-[2] h-[52px] bg-navy-900 hover:bg-navy-800 text-white rounded-portal-sm font-bold text-sm transition-colors font-button active:opacity-95"
                     >
                       {requestLoading ? (
                         <Loader2 className="w-5 h-5 animate-spin mx-auto" />

@@ -1,103 +1,97 @@
 import { Link } from "react-router-dom";
-import { useEffect, useRef, useState, useCallback } from "react";
 import { Facebook, Twitter, Linkedin, Instagram, Youtube, ArrowUp, MapPin } from "lucide-react";
 
-// ── Flickering Grid ──────────────────────────────────────────────────
-function FlickeringGrid({ text = "", fontSize = 90, color = "#4B5563", maxOpacity = 0.3, flickerChance = 0.08, squareSize = 2, gridGap = 3 }: {
-  text?: string; fontSize?: number; color?: string; maxOpacity?: number; flickerChance?: number; squareSize?: number; gridGap?: number;
-}) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const rafRef = useRef<number>(0);
-  const squares = useRef<Float32Array | null>(null);
-  const [r, g, b] = color.replace("#", "").match(/.{2}/g)!.map(h => parseInt(h, 16));
-
-  const draw = useCallback(() => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container) return;
-    const dpr = window.devicePixelRatio || 1;
-    const w = container.clientWidth, h = container.clientHeight;
-    if (canvas.width !== w * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; canvas.style.width = `${w}px`; canvas.style.height = `${h}px`; squares.current = null; }
-    const ctx = canvas.getContext("2d"); if (!ctx) return;
-    const cols = Math.ceil(w / (squareSize + gridGap)), rows = Math.ceil(h / (squareSize + gridGap));
-    if (!squares.current || squares.current.length !== cols * rows) squares.current = new Float32Array(cols * rows).map(() => Math.random() * maxOpacity);
-    const sq = squares.current;
-    const mk = document.createElement("canvas"); mk.width = w * dpr; mk.height = h * dpr;
-    const mc = mk.getContext("2d", { willReadFrequently: true })!;
-    if (text) { mc.save(); mc.scale(dpr, dpr); mc.fillStyle = "white"; mc.font = `700 ${fontSize}px "Google Sans",sans-serif`; mc.textAlign = "center"; mc.textBaseline = "middle"; mc.fillText(text, w / 2, h / 2); mc.restore(); }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
-      if (Math.random() < flickerChance) sq[i * rows + j] = Math.random() * maxOpacity;
-      const x = i * (squareSize + gridGap) * dpr, y = j * (squareSize + gridGap) * dpr, s = squareSize * dpr;
-      const inText = mc.getImageData(x, y, s, s).data.some((v, k) => k % 4 === 0 && v > 0);
-      const op = inText ? Math.min(1, sq[i * rows + j] * 3.5 + 0.55) : sq[i * rows + j];
-      ctx.fillStyle = `rgba(${r},${g},${b},${op})`; ctx.fillRect(x, y, s, s);
-    }
-  }, [text, fontSize, r, g, b, maxOpacity, flickerChance, squareSize, gridGap]);
-
-  useEffect(() => {
-    const loop = () => { draw(); rafRef.current = requestAnimationFrame(loop); };
-    rafRef.current = requestAnimationFrame(loop);
-    const ro = new ResizeObserver(draw);
-    if (containerRef.current) ro.observe(containerRef.current);
-    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); };
-  }, [draw]);
-
-  return <div ref={containerRef} className="h-full w-full"><canvas ref={canvasRef} className="pointer-events-none" /></div>;
-}
-
-// ── Data ─────────────────────────────────────────────────────────────
 const columns = [
-  { title: "Academics", links: [{ n: "Programs", p: "/academics/AcademicPrograms" }, { n: "Calendar", p: "/academics/AcademicCalender" }, { n: "Regulations", p: "/academics/AcademicRegulations" }, { n: "Curricula", p: "/academics/curicula" }] },
-  { title: "Departments", links: [{ n: "Computer Science", p: "/departments/CSE" }, { n: "Electronics", p: "/departments/ECE" }, { n: "Civil Engg", p: "/departments/CIVIL" }, { n: "Mechanical", p: "/departments/ME" }, { n: "Mathematics", p: "/departments/MATHEMATICS" }] },
-  { title: "Institute", links: [{ n: "About RGUKT", p: "/institute/aboutrgukt" }, { n: "Campus Life", p: "/institute/campuslife" }, { n: "Governing Council", p: "/institute/govcouncil" }, { n: "RTI Info", p: "/institute/rtiinfo" }, { n: "SC/ST Cell", p: "/institute/scst" }] },
-  { title: "Notifications", links: [{ n: "News & Notifications", p: "/notifications/news" }, { n: "Careers", p: "/notifications/careers" }, { n: "Tenders", p: "/notifications/tenders" }] },
+  {
+    title: "Academics",
+    links: [
+      { n: "Programs", p: "/academics/AcademicPrograms" },
+      { n: "Calendar", p: "/academics/AcademicCalender" },
+      { n: "Regulations", p: "/academics/AcademicRegulations" },
+      { n: "Curricula", p: "/academics/curicula" },
+    ],
+  },
+  {
+    title: "Departments",
+    links: [
+      { n: "Computer Science", p: "/departments/CSE" },
+      { n: "Electronics", p: "/departments/ECE" },
+      { n: "Civil Engg", p: "/departments/CIVIL" },
+      { n: "Mechanical", p: "/departments/ME" },
+      { n: "Mathematics", p: "/departments/MATHEMATICS" },
+    ],
+  },
+  {
+    title: "Institute",
+    links: [
+      { n: "About RGUKT", p: "/institute/aboutrgukt" },
+      { n: "Campus Life", p: "/institute/campuslife" },
+      { n: "Governing Council", p: "/institute/govcouncil" },
+      { n: "RTI Info", p: "/institute/rtiinfo" },
+      { n: "SC/ST Cell", p: "/institute/scst" },
+    ],
+  },
+  {
+    title: "Notifications",
+    links: [
+      { n: "News & Notifications", p: "/notifications/news" },
+      { n: "Careers", p: "/notifications/careers" },
+      { n: "Tenders", p: "/notifications/tenders" },
+    ],
+  },
 ];
 
 export function Footer() {
-  const [narrow, setNarrow] = useState(window.innerWidth < 1024);
-  useEffect(() => { const mq = window.matchMedia("(max-width:1024px)"); const fn = (e: MediaQueryListEvent) => setNarrow(e.matches); mq.addEventListener("change", fn); return () => mq.removeEventListener("change", fn); }, []);
-
   return (
-    <footer className="relative w-full overflow-hidden bg-[#07091280]"
-      style={{ background: "linear-gradient(180deg,#0a0f1e 0%,#06091a 100%)" }}>
+    <footer className="relative w-full bg-[#000035] text-white">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16 lg:py-20 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-12 border-b border-white/10">
 
-      {/* ── Single combined row: brand + links ── */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 border-b border-white/5">
-
-        {/* Brand col */}
-        <div className="col-span-2 flex flex-col gap-4">
-          <Link to="/" className="flex items-center gap-2">
-            <img src="/rgukt-logo.png" alt="RGUKT" className="w-9 h-9 object-contain mix-blend-lighten" />
+        <div className="col-span-2 flex flex-col gap-5">
+          <Link to="/" className="flex items-center gap-3">
+            <img
+              src="/rgukt-logo.png"
+              alt="RGUKT"
+              className="w-10 h-10 object-contain mix-blend-lighten"
+            />
             <div className="flex flex-col leading-none">
-              <span className="font-extrabold text-white text-base tracking-tight">RGUKT</span>
-              <span className="text-[10px] font-bold tracking-widest text-[#800000]">Ongole Campus</span>
+              <span className="font-serif text-lg font-semibold text-white tracking-tight">
+                RGUKT
+              </span>
+              <span className="mt-1 text-[10px] font-medium tracking-[0.16em] uppercase text-white/50">
+                Ongole Campus
+              </span>
             </div>
           </Link>
-          <p className="text-slate-500 text-sm leading-relaxed">
+          <p className="text-white/55 text-[15px] leading-relaxed max-w-sm">
             Empowering gifted rural youth through world-class technical education in Andhra Pradesh.
           </p>
-          <div className="flex gap-3 text-xs text-slate-500 mt-2">
+          <div className="flex gap-3 text-sm text-white/50 mt-1">
             <MapPin className="w-4 h-4 mt-0.5 text-[#800000] flex-shrink-0" />
-            <div className="flex flex-col gap-1 leading-relaxed">
-              <span className="font-bold text-slate-400 tracking-widest text-[10px] mb-1">Contact Us</span>
+            <div className="flex flex-col gap-0.5 leading-relaxed">
+              <span className="font-medium text-white/70 tracking-widest text-[10px] uppercase mb-1">
+                Contact
+              </span>
               <span>RGUKT Ongole Campus,</span>
-              <span>Kurnool Road,</span>
-              <span>Santhanuthalapadu(V&M),</span>
-              <span>Prakasam District, Andhra Pradesh -523225.</span>
+              <span>Kurnool Road, Santhanuthalapadu (V&amp;M),</span>
+              <span>Prakasam District, Andhra Pradesh — 523225.</span>
             </div>
           </div>
         </div>
 
-        {/* Link columns */}
-        {columns.map((col, idx) => (
-          <div key={idx}>
-            <p className="text-[10px] font-bold tracking-[0.2em] text-slate-600 mb-4">{col.title}</p>
-            <ul className="flex flex-col gap-2.5">
-              {col.links.map((lk, li) => (
-                <li key={li}>
-                  <Link to={lk.p} className="text-sm text-slate-500 hover:text-white transition-colors duration-150">{lk.n}</Link>
+        {columns.map((col) => (
+          <div key={col.title}>
+            <p className="text-[10px] font-medium tracking-[0.2em] uppercase text-white/35 mb-5">
+              {col.title}
+            </p>
+            <ul className="flex flex-col gap-3">
+              {col.links.map((lk) => (
+                <li key={lk.p}>
+                  <Link
+                    to={lk.p}
+                    className="text-sm text-white/60 hover:text-white underline-offset-[0.22em] hover:underline transition-colors"
+                  >
+                    {lk.n}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -105,37 +99,44 @@ export function Footer() {
         ))}
       </div>
 
-      {/* ── Bottom bar ── */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-3 flex flex-col sm:flex-row justify-between items-center gap-5">
-        <p className="text-[10px] font-medium tracking-widest text-slate-600 text-center sm:text-left">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-6 flex flex-col sm:flex-row justify-between items-center gap-5">
+        <p className="text-[11px] tracking-wide text-white/35 text-center sm:text-left">
           © {new Date().getFullYear()} RGUKT Ongole. All rights reserved.
         </p>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           {[
             { Icon: Facebook, url: "https://www.facebook.com/RGUKTOfficial/" },
             { Icon: Twitter, url: "https://x.com/RGUKT_ONGOLE" },
             { Icon: Linkedin, url: "https://in.linkedin.com/company/rguktongole" },
             { Icon: Instagram, url: "https://www.instagram.com/rgukt__ongole" },
-            { Icon: Youtube, url: "https://www.youtube.com/@Rgukt-Ongole" }
+            { Icon: Youtube, url: "https://www.youtube.com/@Rgukt-Ongole" },
           ].map(({ Icon, url }, i) => (
-            <a key={i} href={url} target="_blank" rel="noopener noreferrer" aria-label="Social Link" className="w-8 h-8 rounded-lg flex items-center justify-center border border-white/8 bg-white/4 text-slate-500 hover:text-white hover:bg-[#800000] hover:border-[#800000] transition-all duration-200">
-              <Icon className="w-3.5 h-3.5" />
+            <a
+              key={i}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Social Link"
+              className="w-9 h-9 flex items-center justify-center text-white/45 hover:text-white transition-colors"
+            >
+              <Icon className="w-4 h-4" />
             </a>
           ))}
         </div>
       </div>
 
-      {/* ── Flickering wordmark ── */}
-      <div className="relative w-full h-20 sm:h-28">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#06091a] via-transparent to-[#06091a] z-10 pointer-events-none" />
-        <div className="absolute inset-x-4 inset-y-0">
-          <FlickeringGrid text={narrow ? "RGUKT" : "RGUKT Ongole"} fontSize={narrow ? 50 : 76} color="#6B7280" maxOpacity={0.3} flickerChance={0.07} squareSize={2} gridGap={3} />
-        </div>
+      {/* Quiet wordmark — no canvas flicker */}
+      <div className="border-t border-white/5 py-10 sm:py-14 text-center select-none">
+        <p className="font-serif text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white/[0.06]">
+          RGUKT Ongole
+        </p>
       </div>
 
-      {/* Scroll to top */}
-      <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Scroll to top"
-        className="fixed bottom-8 right-8 z-50 w-10 h-10 rounded-xl bg-[#800000] hover:bg-[#a00000] text-white flex items-center justify-center shadow-lg shadow-[#800000]/30 transition-all duration-300 hover:-translate-y-1">
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        aria-label="Scroll to top"
+        className="fixed bottom-8 right-8 z-50 w-11 h-11 rounded-full bg-[#800000] hover:bg-[#660000] text-white flex items-center justify-center transition-colors"
+      >
         <ArrowUp className="w-5 h-5" />
       </button>
     </footer>

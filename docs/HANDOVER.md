@@ -68,11 +68,13 @@ Manifests: `infra/kubernetes/base/core/postgres-backup-job.yaml`,
 
 ## 6. Secrets & environment
 
-- Local: `secrets.env` (from `secrets.env.example`) — dev placeholders only.
-- Production: GitHub Actions repo secrets + `/root/uniz-secrets.env` on the VPS.
+**This is a public student-facing repo.** Never commit production keys.
+
+- Local: `cp secrets.env.example secrets.env` — **dev placeholders only**.
+- Production: GitHub Actions encrypted secrets + VPS vault `/root/uniz-secrets.env` (chmod 600) → K8s `Secret/uniz-secrets`.
+- Maintainer vault CLI: `npm run vault:vps -- list|show|reveal|audit` (see **[docs/ops/SECRETS.md](ops/SECRETS.md)**).
 - Image uploads are self-hosted on the VPS — no object-storage keys needed.
-  Optional `UPLOADS_DIR` overrides the server storage path (default `/data/uploads`,
-  a persistent hostPath volume).
+  Optional `UPLOADS_DIR` overrides the server storage path (default `/data/uploads`).
 
 ## 7. Where things live
 

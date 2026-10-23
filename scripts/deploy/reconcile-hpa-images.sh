@@ -14,7 +14,7 @@ fi
 CRITICAL=(
   "uniz-gateway:gateway-nginx"
   "uniz-gateway-api:gateway-api"
-  "uniz-auth-service:auth-service"
+  "uniz-api:uniz-api"
   "uniz-portal:portal"
   "uniz-landing:landing"
 )

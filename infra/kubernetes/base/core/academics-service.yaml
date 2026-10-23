@@ -5,7 +5,8 @@ metadata:
   labels:
     app: uniz-academics-service
 spec:
-  replicas: 1
+  # Parked after uniz-api cutover — flip ConfigMap back + scale up to roll back.
+  replicas: 0
   selector:
     matchLabels:
       app: uniz-academics-service
@@ -61,7 +62,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-academics-service
-  minReplicas: 1
+  minReplicas: 0
   maxReplicas: 4
   metrics:
     - type: Resource
