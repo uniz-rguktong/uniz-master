@@ -137,11 +137,11 @@ export default function AdminShell({
     if (!enableNavSearch) return null;
 
     return (
-      <div className="px-5 py-4 space-y-3">
-        <div className="relative group">
+      <div className="space-y-3 px-5 py-4">
+        <div className="group relative">
           <Search
             className={cn(
-              "absolute top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-zinc-600 transition-colors",
+              "absolute top-1/2 -translate-y-1/2 text-white/50 transition-colors group-focus-within:text-white",
               isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2",
             )}
             size={16}
@@ -152,12 +152,12 @@ export default function AdminShell({
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={isSidebarOpen ? "Search operations..." : ""}
             className={cn(
-              adminSearchInputClass,
+              "w-full min-h-10 rounded-[1px] border border-white/20 bg-white/10 text-[13px] font-medium text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-white/30",
               isSidebarOpen ? "pl-10 pr-8" : "px-0 text-center",
             )}
           />
           {isSidebarOpen && (
-            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-zinc-200/60 rounded text-[9px] font-bold text-zinc-400 ">
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-[1px] border border-white/20 bg-white/10 px-1.5 py-0.5 text-[9px] font-bold text-white/50">
               /
             </div>
           )}
@@ -216,6 +216,7 @@ export default function AdminShell({
           )}
         >
           <UnizLogo
+            variant="sidebar"
             collapsed={!isSidebarOpen}
             abbreviate={collapseBranding === "abbreviate"}
           />
@@ -232,10 +233,10 @@ export default function AdminShell({
         >
           {filteredGroups.length === 0 && searchQuery ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="w-12 h-12 bg-zinc-50 rounded-full flex items-center justify-center mb-3">
-                <Search size={20} className="text-zinc-300" />
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/10">
+                <Search size={20} className="text-white/50" />
               </div>
-              <p className="text-[11px] font-bold text-zinc-400 tracking-[0.14em] px-4">
+              <p className="px-4 text-[11px] font-bold uppercase tracking-[0.14em] text-white/50">
                 No operations found
               </p>
             </div>
@@ -258,7 +259,7 @@ export default function AdminShell({
                       onClick={() => onTabChange(item.id)}
                       title={!isSidebarOpen ? item.label : ""}
                       className={cn(
-                        "w-full flex items-center py-2.5 rounded-lg text-left transition-colors duration-150 group relative",
+                        "group relative flex w-full items-center rounded-[2px] py-2.5 text-left uppercase tracking-[0.5px] transition-colors duration-150",
                         isSidebarOpen
                           ? "space-x-3 px-3"
                           : "justify-center px-0",
@@ -268,12 +269,12 @@ export default function AdminShell({
                       {isActive && (
                         <motion.div
                           layoutId="adminActiveTabGlow"
-                          className="absolute inset-0 bg-navy-900 rounded-portal-sm"
+                          className="absolute inset-0 rounded-[2px] bg-white/15"
                           initial={false}
                           transition={{ type: "spring", stiffness: 420, damping: 38 }}
                         />
                       )}
-                      <div className="flex items-center justify-center min-w-[20px] relative z-10">
+                      <div className="relative z-10 flex min-w-[20px] items-center justify-center">
                         <Icon
                           size={18}
                           strokeWidth={2}
@@ -288,8 +289,8 @@ export default function AdminShell({
                       {isSidebarOpen && (
                         <span
                           className={cn(
-                            "relative z-10 text-[13px] whitespace-nowrap tracking-[-0.01em] leading-none",
-                            isActive ? "font-semibold" : "font-medium",
+                            "relative z-10 whitespace-nowrap text-[12px] font-bold leading-none",
+                            isActive ? "font-bold" : "font-semibold",
                           )}
                         >
                           {item.label}
@@ -302,24 +303,20 @@ export default function AdminShell({
             ))
           )}
 
-          <div className="pt-3 mt-1 border-t border-zinc-200/60">
+          <div className="mt-1 border-t border-white/15 pt-3">
             <button
               onClick={onLogout}
               title={!isSidebarOpen ? "Logout" : ""}
               className={cn(
-                "w-full flex items-center py-2.5 rounded-lg text-left transition-colors duration-150 group hover:bg-rose-50 hover:text-rose-600 text-zinc-500",
+                "group flex w-full items-center rounded-[2px] py-2.5 text-left text-white/70 transition-colors duration-150 hover:bg-[#EA2027] hover:text-white",
                 isSidebarOpen ? "space-x-3 px-3" : "justify-center px-0",
               )}
             >
-              <div className="flex items-center justify-center min-w-[20px]">
-                <LogOut
-                  size={18}
-                  strokeWidth={2}
-                  className="text-zinc-400 group-hover:text-rose-600 transition-colors"
-                />
+              <div className="flex min-w-[20px] items-center justify-center">
+                <LogOut size={18} strokeWidth={2} className="transition-colors" />
               </div>
               {isSidebarOpen && (
-                <span className="text-[13px] font-medium whitespace-nowrap tracking-[-0.01em] leading-none">
+                <span className="whitespace-nowrap text-[12px] font-bold uppercase tracking-[0.5px] leading-none">
                   Logout
                 </span>
               )}
@@ -327,40 +324,40 @@ export default function AdminShell({
           </div>
         </nav>
 
-        <div className="mt-auto border-t border-zinc-100/80 p-3 pb-5 space-y-3">
+        <div className="mt-auto space-y-3 border-t border-white/15 p-3 pb-5">
           {sidebarFooter}
           {showSidebarProfile && (
             <div
               onClick={() => openProfile(avatarBtnRef)}
               className={cn(
-                "flex items-center py-1.5 hover:bg-zinc-50 rounded-xl transition-colors cursor-pointer group",
+                "group flex cursor-pointer items-center rounded-[2px] py-1.5 transition-colors hover:bg-white/10",
                 isSidebarOpen ? "justify-start px-2" : "justify-center",
               )}
             >
-              <div className="flex items-center gap-3 min-w-0">
+              <div className="flex min-w-0 items-center gap-3">
                 <button
                   ref={avatarBtnRef}
-                  className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-zinc-100 flex items-center justify-center shadow-sm ring-1 ring-zinc-200/60 transition-transform group-hover:scale-105"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-[1px] border border-white/30 bg-white/10 transition-transform group-hover:scale-105"
                 >
                   {profilePhoto ? (
                     <img
                       src={profilePhoto}
-                      className="w-full h-full object-cover"
+                      className="h-full w-full object-cover"
                       alt=""
                     />
                   ) : (
-                    <span className="text-zinc-600 font-bold text-[11px]">
+                    <span className="text-[11px] font-bold text-white">
                       {initial}
                     </span>
                   )}
                 </button>
                 {isSidebarOpen && (
                   <div className="min-w-0">
-                    <p className="text-[13px] font-bold text-zinc-900 truncate leading-tight">
+                    <p className="truncate text-[13px] font-bold leading-tight text-white">
                       {profileName || username}
                     </p>
                     {roleLabel && (
-                      <p className="text-[9px] font-bold text-zinc-400 tracking-wider truncate mt-0.5">
+                      <p className="mt-0.5 truncate text-[9px] font-bold uppercase tracking-wider text-white/50">
                         {roleLabel}
                       </p>
                     )}
@@ -371,23 +368,23 @@ export default function AdminShell({
           )}
 
           {isSidebarOpen && (
-            <div className="px-2 pt-2 space-y-2">
-              <div className="rounded-portal-sm bg-navy-900 p-3.5 text-white">
-                <p className="text-[10px] font-bold tracking-[0.12em] text-white/50 uppercase font-sans">
+            <div className="space-y-2 px-2 pt-2">
+              <div className="rounded-[2px] border border-white/15 bg-white/10 p-3.5 text-white">
+                <p className="font-sans text-[10px] font-bold uppercase tracking-[0.12em] text-white/50">
                   Platform
                 </p>
-                <p className="text-[13px] font-semibold mt-1 leading-tight font-sans">
-                  UNIZ Admin Console
+                <p className="mt-1 font-sans text-[13px] font-bold uppercase tracking-[1px] leading-tight">
+                  Exam Cell Console
                 </p>
-                <p className="text-[10px] text-white/40 font-medium mt-1.5 leading-relaxed font-form">
-                  RGUKT Ongole &middot; Examination Cell
+                <p className="mt-1.5 font-form text-[10px] font-medium leading-relaxed text-white/40">
+                  RGUKT Ongole · Examination Cell
                 </p>
               </div>
             </div>
           )}
           {!isSidebarOpen && (
             <div className="flex justify-center">
-              <UnizLogo collapsed abbreviate={false} />
+              <UnizLogo variant="sidebar" collapsed abbreviate={false} />
             </div>
           )}
         </div>
@@ -411,7 +408,7 @@ export default function AdminShell({
             {showHeaderMenuToggle && (
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="w-10 h-10 flex items-center justify-center bg-zinc-50 border border-zinc-100 rounded-xl hover:bg-white hover:shadow-lg transition-all text-zinc-400 hover:text-zinc-950 active:scale-95"
+                className="flex h-10 w-10 items-center justify-center rounded-[1px] border border-white/20 bg-white/10 text-white/80 transition-all hover:bg-white/20 hover:text-white active:scale-95"
                 aria-label="Toggle sidebar"
               >
                 {isSidebarOpen ? <ChevronLeft size={18} /> : <Menu size={18} />}
@@ -419,17 +416,17 @@ export default function AdminShell({
             )}
             {headerLeft}
             {showHeaderMenuToggle && !isSidebarOpen && activeLabel && (
-              <h1 className="font-bold text-zinc-900 text-[15px] hidden md:block">
+              <h1 className="hidden font-sans text-[15px] font-bold uppercase tracking-[1px] text-white md:block">
                 {activeLabel}
               </h1>
             )}
           </div>
-          <div className="flex items-center gap-3.5 ml-auto pt-1.5">
-            <div className="text-right hidden sm:block">
-              <p className="text-[13.5px] font-semibold text-zinc-900 tracking-[-0.01em] leading-snug">
+          <div className="ml-auto flex items-center gap-3.5 pt-1.5">
+            <div className="hidden text-right sm:block">
+              <p className="text-[13.5px] font-bold uppercase tracking-[0.5px] leading-snug text-white">
                 {profileName || username}
               </p>
-              <p className="text-[11px] text-zinc-400 font-medium mt-1 lowercase leading-normal">
+              <p className="mt-1 text-[11px] font-medium lowercase leading-normal text-white/60">
                 {headerSubtitle ||
                   profileEmail ||
                   `${username}@rguktong.ac.in`}
@@ -482,7 +479,7 @@ export default function AdminShell({
         </div>
 
         {mobileNavItems && mobileNavItems.length > 0 && (
-          <div className="md:hidden h-16 bg-white/90 backdrop-blur-xl border-t border-zinc-100 flex items-center justify-around px-2 sticky bottom-0 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+          <div className="sticky bottom-0 z-50 flex h-16 items-center justify-around border-t border-[#EEEEEE] bg-white px-2 shadow-examcell md:hidden">
             {mobileNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -491,21 +488,21 @@ export default function AdminShell({
                   key={item.id}
                   onClick={() => onTabChange(item.id)}
                   className={cn(
-                    "flex flex-col items-center justify-center h-full flex-1 gap-1 transition-all",
-                    isActive ? "text-zinc-950" : "text-zinc-400",
+                    "flex h-full flex-1 flex-col items-center justify-center gap-1 transition-all",
+                    isActive ? "text-[#0A2540]" : "text-[#5A7A94]",
                   )}
                 >
                   <div
                     className={cn(
-                      "p-1.5 rounded-xl transition-all",
-                      isActive && "bg-zinc-100",
+                      "rounded-[2px] p-1.5 transition-all",
+                      isActive && "bg-[#FAFAFA]",
                     )}
                   >
                     <Icon size={isActive ? 20 : 18} />
                   </div>
                   <span
                     className={cn(
-                      "text-[9px] font-bold tracking-wider",
+                      "text-[9px] font-bold uppercase tracking-wider",
                       isActive ? "opacity-100" : "opacity-60",
                     )}
                   >

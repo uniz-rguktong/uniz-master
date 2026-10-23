@@ -9,7 +9,7 @@ module.exports = {
         body: ['"Open Sans"', "system-ui", "sans-serif"],
         button: ['"Nunito"', '"Open Sans"', "system-ui", "sans-serif"],
         form: ['"Cabin"', '"Open Sans"', "system-ui", "sans-serif"],
-        condensed: ['"Cabin Condensed"', '"Cabin"', "sans-serif"],
+        condensed: ['"Cabin"', '"Open Sans"', "sans-serif"],
       },
 
       fontSize: {
@@ -61,6 +61,37 @@ module.exports = {
           border: "var(--portal-navy-border, #EEEEEE)",
           accent: "#EA2027",
           footer: "#EEEEEE",
+          cta: "#34495e",
+          link: "#061B33",
+        },
+
+        /* Remap zinc → ExamCell neutrals so leftover classes stay on-brand */
+        zinc: {
+          50: "#ffffff",
+          100: "#fafafa",
+          200: "#eeeeee",
+          300: "#9bb0c4",
+          400: "#5a7a94",
+          500: "#3d6a8c",
+          600: "#1e4a73",
+          700: "#163a5c",
+          800: "#0d3154",
+          900: "#0a2540",
+          950: "#021227",
+        },
+
+        neutral: {
+          50: "#ffffff",
+          100: "#fafafa",
+          200: "#eeeeee",
+          300: "#9bb0c4",
+          400: "#5a7a94",
+          500: "#3d6a8c",
+          600: "#1e4a73",
+          700: "#163a5c",
+          800: "#0d3154",
+          900: "#0a2540",
+          950: "#021227",
         },
 
         /* Map blue utilities to ExamCell navy (remove indigo remap) */
@@ -108,25 +139,34 @@ module.exports = {
       },
 
       boxShadow: {
-        sm: "0 1px 2px rgba(2, 18, 39, 0.04)",
-        DEFAULT: "0 1px 3px rgba(2, 18, 39, 0.06)",
-        md: "0 2px 6px rgba(2, 18, 39, 0.08)",
-        lg: "0 4px 12px rgba(2, 18, 39, 0.1)",
-        xl: "0 8px 20px rgba(2, 18, 39, 0.12)",
-        "2xl": "0 12px 28px rgba(2, 18, 39, 0.14)",
+        sm: "0 5px 15px 0 rgba(0,0,0,0.08)",
+        DEFAULT: "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",
+        md: "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",
+        lg: "0 25px 40px 0 rgba(0,0,0,0.11), 0 10px 25px 0 rgba(0,0,0,0.08)",
+        xl: "0 25px 40px 0 rgba(0,0,0,0.11), 0 10px 25px 0 rgba(0,0,0,0.08)",
+        "2xl": "0 25px 40px 0 rgba(0,0,0,0.14), 0 10px 25px 0 rgba(0,0,0,0.1)",
         inner: "inset 0 1px 2px 0 rgba(2, 18, 39, 0.04)",
-        whisper: "0 1px 2px rgba(2, 18, 39, 0.04)",
-        "whisper-md": "0 2px 6px rgba(2, 18, 39, 0.06)",
-        "whisper-lg": "0 4px 12px rgba(2, 18, 39, 0.08)",
-        "whisper-navy": "0 1px 2px rgba(10, 37, 64, 0.12)",
-        "whisper-landing": "0 4px 12px rgba(0, 0, 0, 0.08)",
+        examcell:
+          "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",
+        "examcell-lg":
+          "0 25px 40px 0 rgba(0,0,0,0.11), 0 10px 25px 0 rgba(0,0,0,0.08)",
+        whisper:
+          "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",
+        "whisper-md":
+          "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",
+        "whisper-lg":
+          "0 25px 40px 0 rgba(0,0,0,0.11), 0 10px 25px 0 rgba(0,0,0,0.08)",
+        "whisper-navy":
+          "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",
+        "whisper-landing":
+          "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",
       },
 
       borderRadius: {
-        "portal-sm": "2px",
-        "portal-lg": "4px",
-        "portal-xl": "6px",
-        "portal-2xl": "8px",
+        "portal-sm": "1px",
+        "portal-lg": "2px",
+        "portal-xl": "2px",
+        "portal-2xl": "4px",
       },
 
       spacing: {

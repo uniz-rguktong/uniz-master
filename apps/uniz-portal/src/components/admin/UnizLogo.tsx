@@ -9,8 +9,8 @@ type UnizLogoProps = {
   abbreviate?: boolean;
   /** Larger wordmark for auth/marketing surfaces */
   size?: "md" | "lg";
-  /** Auth screens: wordmark-only lockup with optional portal chip */
-  variant?: "default" | "auth";
+  /** Auth / sidebar: white wordmark on navy gradient */
+  variant?: "default" | "auth" | "sidebar";
   portalLabel?: string;
   className?: string;
 };
@@ -74,6 +74,7 @@ export function UnizLogo({
   className,
 }: UnizLogoProps) {
   const large = size === "lg";
+  const onNavy = variant === "auth" || variant === "sidebar";
 
   if (variant === "auth") {
     return (
@@ -109,15 +110,20 @@ export function UnizLogo({
   if (collapsed) {
     return (
       <div className={cn("flex items-center justify-center", className)}>
-        <Wordmark large={large} compact short={abbreviate} />
+        <Wordmark
+          large={large}
+          compact
+          short={abbreviate}
+          inverted={onNavy}
+        />
       </div>
     );
   }
 
   return (
     <div className={cn("min-w-0 leading-none", className)}>
-      <Wordmark large={large} />
-      <CampusLabel large={large} />
+      <Wordmark large={large} inverted={onNavy} />
+      <CampusLabel large={large} inverted={onNavy} />
     </div>
   );
 }

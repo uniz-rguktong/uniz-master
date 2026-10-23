@@ -104,7 +104,7 @@ export function Error() {
             Go Back
           </button>
           <Link to="/" className="w-full sm:w-auto">
-            <button className="w-full sm:w-auto group relative h-12 px-8 bg-zinc-950 hover:bg-black text-white text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]">
+            <button className="w-full sm:w-auto group relative h-12 px-8 bg-zinc-950 hover:bg-[#0A2540] text-white text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
               Return Home
               <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:translate-x-1 transition-transform" />
@@ -120,7 +120,7 @@ export function Maintenance() {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50 text-center px-4">
-      <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mb-6 text-white animate-pulse">
+      <div className="w-20 h-20 bg-[#0A2540] rounded-full flex items-center justify-center mb-6 text-white animate-pulse">
         <Construction size={40} />
       </div>
       <h1 className="text-3xl font-bold text-zinc-900 mb-2">

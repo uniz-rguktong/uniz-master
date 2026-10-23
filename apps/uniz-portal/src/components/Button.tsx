@@ -31,20 +31,21 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const variants = {
       primary:
-        "bg-navy-900 text-white hover:bg-navy-800 shadow-whisper-navy ring-navy-900",
+        "bg-[#34495e] text-white hover:bg-[#2c3e50] shadow-examcell uppercase tracking-[2px] font-form",
       secondary:
-        "bg-navy-50 text-navy-900 hover:bg-navy-100 shadow-none ring-navy-200",
+        "bg-[#FAFAFA] text-[#0A2540] hover:bg-[#EEEEEE] shadow-none border border-[#EEEEEE] font-form uppercase tracking-[1px]",
       outline:
-        "border border-navy-200 bg-transparent hover:bg-navy-50 text-navy-700 ring-navy-200",
-      danger: "bg-rose-600 text-white hover:bg-rose-700 shadow-none ring-rose-600",
+        "border border-[#0A2540] bg-transparent hover:bg-[#0A2540] hover:text-white text-[#0A2540] font-form uppercase tracking-[1px]",
+      danger:
+        "bg-[#EA2027] text-white hover:bg-[#c41b21] shadow-none uppercase tracking-[1px] font-form",
       ghost:
-        "bg-transparent hover:bg-navy-50 text-navy-600 ring-navy-100",
+        "bg-transparent hover:bg-[#FAFAFA] text-[#5A7A94] hover:text-[#0A2540] font-button",
     };
 
     const sizes = {
-      sm: "h-9 min-h-9 px-4 text-[13px] rounded-portal-lg",
-      md: "min-h-11 px-5 text-[14px] rounded-portal-xl",
-      lg: "min-h-12 px-6 text-[16px] rounded-portal-xl",
+      sm: "h-9 min-h-9 px-4 text-[12px] rounded-[1px]",
+      md: "min-h-9 px-5 text-[13px] rounded-[1px]",
+      lg: "min-h-[35px] px-8 text-[13px] rounded-[1px]",
     };
 
     const finalIsLoading = isLoading || loading;
@@ -56,7 +57,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         onClick={finalOnClick}
         disabled={disabled || finalIsLoading}
         className={cn(
-          "inline-flex items-center justify-center font-semibold transition-all duration-200 ease-smooth focus:outline-none focus:ring-2 focus:ring-navy-900/20 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]",
+          "inline-flex items-center justify-center font-bold transition-colors duration-150 ease-smooth focus:outline-none focus:ring-2 focus:ring-[#34495e]/30 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:opacity-95",
           variants[variant],
           sizes[size],
           className,
@@ -64,7 +65,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {finalIsLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {/* Legacy 'value' prop or children */}
         {children || value}
       </button>
     );

@@ -256,7 +256,7 @@ export default function SecurityPortal() {
             <button
               type="submit"
               disabled={searching}
-              className="absolute inset-y-4 right-4 px-10 bg-emerald-950 text-white rounded-2xl font-semibold tracking-[0.14em] text-[11px] hover:bg-black transition-all flex items-center gap-3 shadow-none active:scale-95 disabled:opacity-50"
+              className="absolute inset-y-4 right-4 px-10 bg-emerald-950 text-white rounded-2xl font-semibold tracking-[0.14em] text-[11px] hover:bg-[#0A2540] transition-all flex items-center gap-3 shadow-none active:scale-95 disabled:opacity-50"
             >
               {searching ? (
                 <Loader2 size={18} className="animate-spin" />

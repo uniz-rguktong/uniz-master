@@ -227,7 +227,7 @@ export default function SearchStudents() {
           : Number(avg) >= 7
             ? "Pass"
             : "Good",
-      color: hasFail ? "text-white bg-black" : "text-zinc-900 bg-zinc-100",
+      color: hasFail ? "text-white bg-[#0A2540]" : "text-zinc-900 bg-zinc-100",
     };
   };
 
@@ -310,7 +310,7 @@ export default function SearchStudents() {
                             )}
                           </div>
                           <div className="text-left">
-                            <p className="text-sm font-bold text-zinc-900 group-hover:text-black transition-colors">
+                            <p className="text-sm font-bold text-zinc-900 group-hover:text-[#061B33] transition-colors">
                               {s.name}
                             </p>
                             <p className="text-xs font-semibold text-zinc-400 tracking-[0.14em]">
@@ -318,7 +318,7 @@ export default function SearchStudents() {
                             </p>
                           </div>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-black group-hover:translate-x-1 transition-all" />
+                        <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-[#061B33] group-hover:translate-x-1 transition-all" />
                       </button>
                     ))}
                   </motion.div>
@@ -395,7 +395,7 @@ export default function SearchStudents() {
                         className={cn(
                           "flex-1 h-11 rounded-xl text-[10px] font-semibold border shadow-sm transition-all",
                           isOutside
-                            ? "bg-black border-black text-white"
+                            ? "bg-[#0A2540] border-[#0A2540] text-white"
                             : "bg-white border-zinc-200 text-zinc-600",
                         )}
                       >
@@ -482,7 +482,7 @@ export default function SearchStudents() {
                       )}
                     </div>
                     <div>
-                      <h4 className="font-bold text-zinc-900 text-lg leading-tight group-hover:text-black transition-colors">
+                      <h4 className="font-bold text-zinc-900 text-lg leading-tight group-hover:text-[#061B33] transition-colors">
                         {student.name}
                       </h4>
                       <p className="text-xs font-bold text-zinc-400 tracking-[0.14em]">
@@ -529,7 +529,7 @@ export default function SearchStudents() {
             className="space-y-8"
           >
             {/* Student Header Card */}
-            <div className="bg-white rounded-2xl p-8 md:p-12 relative overflow-hidden border-4 border-black shadow-2xl transition-all">
+            <div className="bg-white rounded-2xl p-8 md:p-12 relative overflow-hidden border-4 border-[#0A2540] shadow-2xl transition-all">
               <div className="relative flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
                 <div className="flex flex-col md:flex-row items-center gap-8">
                   <div className="relative">
@@ -547,7 +547,7 @@ export default function SearchStudents() {
                     </div>
                     <div
                       className={cn(
-                        "absolute -bottom-2 -right-2 px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-[0.14em] shadow-lg border-2 border-black bg-white text-black",
+                        "absolute -bottom-2 -right-2 px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-[0.14em] shadow-lg border-2 border-[#0A2540] bg-white text-[#061B33]",
                         selectedStudent.is_suspended &&
                           "bg-red-600 border-red-900 text-white",
                       )}
@@ -562,7 +562,7 @@ export default function SearchStudents() {
 
                   <div className="text-center md:text-left space-y-4">
                     <div>
-                      <h2 className="text-4xl font-semibold text-black tracking-tighter ">
+                      <h2 className="text-4xl font-semibold text-[#061B33] tracking-tighter ">
                         {selectedStudent.name}
                       </h2>
                       <p className="text-zinc-400 font-bold tracking-[0.14em] text-xs mt-2">
@@ -571,14 +571,14 @@ export default function SearchStudents() {
                       </p>
                     </div>
                     <div className="flex flex-wrap justify-center md:justify-start gap-2">
-                      <span className="px-4 py-2 bg-zinc-50 rounded-xl text-black text-xs font-semibold border border-zinc-200 flex items-center gap-2">
+                      <span className="px-4 py-2 bg-zinc-50 rounded-xl text-[#061B33] text-xs font-semibold border border-zinc-200 flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5" /> ROOM{" "}
                         {selectedStudent.roomno || "N/A"}
                       </span>
                       {getAcademicStatus() && (
                         <span
                           className={cn(
-                            "px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 border-2 border-black",
+                            "px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 border-2 border-[#0A2540]",
                             getAcademicStatus()?.color,
                           )}
                         >
@@ -675,8 +675,8 @@ export default function SearchStudents() {
                           className={cn(
                             "w-10 h-10 rounded-xl flex items-center justify-center font-semibold",
                             g.grade < 5
-                              ? "bg-black text-white"
-                              : "bg-white text-black border border-zinc-200 shadow-sm",
+                              ? "bg-[#0A2540] text-white"
+                              : "bg-white text-[#061B33] border border-zinc-200 shadow-sm",
                           )}
                         >
                           {g.grade}
@@ -700,7 +700,7 @@ export default function SearchStudents() {
                           <p className="text-sm font-bold text-zinc-900">
                             {a.subject}
                           </p>
-                          <span className="text-black font-semibold text-xs">
+                          <span className="text-[#061B33] font-semibold text-xs">
                             {(
                               (a.attendedClasses / a.totalClasses) *
                               100
@@ -710,7 +710,7 @@ export default function SearchStudents() {
                         </div>
                         <div className="w-full h-1.5 bg-zinc-200 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-black rounded-full"
+                            className="h-full bg-[#0A2540] rounded-full"
                             style={{
                               width: `${(a.attendedClasses / a.totalClasses) * 100}%`,
                             }}
@@ -772,7 +772,7 @@ export default function SearchStudents() {
                                 { studentId: selectedStudent.username },
                               )
                             }
-                            className="flex-1 bg-white text-black py-2 rounded-xl font-bold text-[10px] flex items-center justify-center gap-1.5 hover:bg-zinc-100 transition-all"
+                            className="flex-1 bg-white text-[#061B33] py-2 rounded-xl font-bold text-[10px] flex items-center justify-center gap-1.5 hover:bg-zinc-100 transition-all"
                           >
                             <GraduationCap size={12} /> Grade
                           </button>
@@ -797,8 +797,8 @@ export default function SearchStudents() {
               {/* History Section */}
               <div className="space-y-6">
                 <div className="flex items-center gap-3 px-4">
-                  <History className="w-5 h-5 text-black" />
-                  <h3 className="font-semibold text-black tracking-[0.14em] text-lg">
+                  <History className="w-5 h-5 text-[#061B33]" />
+                  <h3 className="font-semibold text-[#061B33] tracking-[0.14em] text-lg">
                     Request History
                   </h3>
                 </div>
@@ -816,17 +816,17 @@ export default function SearchStudents() {
                       {history.map((req, i) => (
                         <div
                           key={i}
-                          className="bg-white p-6 rounded-2xl border-2 border-zinc-100 shadow-sm hover:border-black transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group"
+                          className="bg-white p-6 rounded-2xl border-2 border-zinc-100 shadow-sm hover:border-[#0A2540] transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group"
                         >
                           <div className="flex items-center gap-6">
                             <div
                               className={cn(
                                 "w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform",
                                 req.is_approved
-                                  ? "bg-black text-white"
+                                  ? "bg-[#0A2540] text-white"
                                   : req.is_rejected
                                     ? "bg-zinc-400 text-white"
-                                    : "bg-white border-4 border-black text-black",
+                                    : "bg-white border-4 border-[#0A2540] text-[#061B33]",
                               )}
                             >
                               <History className="w-6 h-6" />
@@ -840,10 +840,10 @@ export default function SearchStudents() {
                                   className={cn(
                                     "w-1.5 h-1.5 rounded-full",
                                     req.is_approved
-                                      ? "bg-black"
+                                      ? "bg-[#0A2540]"
                                       : req.is_rejected
                                         ? "bg-zinc-400"
-                                        : "bg-black animate-pulse",
+                                        : "bg-[#0A2540] animate-pulse",
                                   )}
                                 />
                                 <span className="text-xs font-semibold tracking-[0.14em]">
@@ -854,7 +854,7 @@ export default function SearchStudents() {
                                       : "Pending"}
                                 </span>
                               </div>
-                              <p className="font-bold text-black text-lg">
+                              <p className="font-bold text-[#061B33] text-lg">
                                 "{req.reason}"
                               </p>
                               <p className="text-xs font-semibold text-zinc-400 mt-1 tracking-[0.14em]">
@@ -866,7 +866,7 @@ export default function SearchStudents() {
                             <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
                               Gateway Status
                             </p>
-                            <p className="text-sm font-semibold text-black tracking-tighter">
+                            <p className="text-sm font-semibold text-[#061B33] tracking-tighter">
                               {req.current_level?.replace("_", " ") ||
                                 "Finalized"}
                             </p>
@@ -892,7 +892,7 @@ export default function SearchStudents() {
                       <History className="w-8 h-8" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-black font-semibold text-lg tracking-[0.14em]">
+                      <p className="text-[#061B33] font-semibold text-lg tracking-[0.14em]">
                         No Request History
                       </p>
                       <p className="text-zinc-400 text-sm font-medium italic">

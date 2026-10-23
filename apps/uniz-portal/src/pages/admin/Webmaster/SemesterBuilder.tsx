@@ -580,7 +580,7 @@ function ActionBtn({
 }) {
   const tones: Record<string, string> = {
     primary: "bg-zinc-900 text-white hover:bg-zinc-800",
-    dark: "bg-zinc-900 text-white hover:bg-black",
+    dark: "bg-zinc-900 text-white hover:bg-[#0A2540]",
     ghost: "bg-zinc-100 text-zinc-700 hover:bg-zinc-200",
   };
   return (

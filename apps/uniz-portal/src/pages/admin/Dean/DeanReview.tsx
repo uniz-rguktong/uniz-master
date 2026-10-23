@@ -330,7 +330,7 @@ export default function DeanReview() {
                       <button
                         disabled={approving === alloc.id}
                         onClick={() => handleApprove(alloc.id)}
-                        className="bg-zinc-900 text-white px-8 py-3.5 rounded-2xl font-semibold tracking-[0.14em] text-[10px] flex items-center gap-2 hover:bg-black transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                        className="bg-zinc-900 text-white px-8 py-3.5 rounded-2xl font-semibold tracking-[0.14em] text-[10px] flex items-center gap-2 hover:bg-[#0A2540] transition-all shadow-xl active:scale-95 disabled:opacity-50"
                       >
                         {approving === alloc.id ? (
                           <Spinner size="sm" className="brightness-200" />

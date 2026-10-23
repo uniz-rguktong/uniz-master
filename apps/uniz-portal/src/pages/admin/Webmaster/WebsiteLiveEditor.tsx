@@ -137,7 +137,7 @@ function ImageUploadField({
         {value ? (
           <div className="relative h-32">
             <img src={value} alt="" className="w-full h-full object-contain p-2" />
-            <div className="absolute inset-0 bg-black/0 hover:bg-black/5 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+            <div className="absolute inset-0 bg-[#0A2540]/0 hover:bg-[#0A2540]/5 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
               <span className="text-[10px] font-bold bg-white/90 px-2 py-1 rounded-lg shadow">
                 Change image
               </span>

@@ -90,7 +90,7 @@ const HelpSupport = () => {
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-white border border-black rounded-xl overflow-hidden transition-all"
+                className="bg-white border border-[#0A2540] rounded-xl overflow-hidden transition-all"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
@@ -101,7 +101,7 @@ const HelpSupport = () => {
                   </span>
                   <ChevronDown
                     className={cn(
-                      "w-4 h-4 text-black transition-transform duration-300",
+                      "w-4 h-4 text-[#061B33] transition-transform duration-300",
                       openFaq === index && "rotate-180",
                     )}
                   />

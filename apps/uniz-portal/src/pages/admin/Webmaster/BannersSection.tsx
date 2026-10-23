@@ -524,7 +524,7 @@ export default function BannersSection() {
                           "https://placehold.co/600x400?text=Invalid+URL")
                       }
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="absolute inset-0 bg-[#0A2540]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <p className="text-[10px] font-semibold text-white tracking-[0.14em]">
                         Current Selection
                       </p>

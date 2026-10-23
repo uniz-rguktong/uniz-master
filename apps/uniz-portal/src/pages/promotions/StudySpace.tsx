@@ -48,25 +48,25 @@ export default function StudySpace() {
       title: "Create Study Spaces",
       description:
         "Organize study sessions by specifying subject, location, date, and time.",
-      icon: <Calendar size={24} className="text-black" />,
+      icon: <Calendar size={24} className="text-[#061B33]" />,
     },
     {
       title: "Join Study Spaces",
       description:
         "Find and join local study spaces that match your interests and schedule.",
-      icon: <Users size={24} className="text-black" />,
+      icon: <Users size={24} className="text-[#061B33]" />,
     },
     {
       title: "Location-Based",
       description:
         "Discover study sessions happening near you with our interactive map.",
-      icon: <Map size={24} className="text-black" />,
+      icon: <Map size={24} className="text-[#061B33]" />,
     },
     {
       title: "Subject Focus",
       description:
         "Filter study spaces by academic subjects or specific topics.",
-      icon: <Book size={24} className="text-black" />,
+      icon: <Book size={24} className="text-[#061B33]" />,
     },
   ];
 
@@ -94,7 +94,7 @@ export default function StudySpace() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black font-sans">
+    <div className="min-h-screen bg-white text-[#061B33] font-sans">
       {/* Hero Section */}
       <header className="relative overflow-hidden bg-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
@@ -110,7 +110,7 @@ export default function StudySpace() {
               transition={{ duration: 0.7, ease: "easeOut" }}
               className="mb-8"
             >
-              <div className="flex items-center justify-center w-20 h-20 bg-black rounded-full mb-4">
+              <div className="flex items-center justify-center w-20 h-20 bg-[#0A2540] rounded-full mb-4">
                 <Book size={36} className="text-white" />
               </div>
             </motion.div>
@@ -141,13 +141,13 @@ export default function StudySpace() {
             >
               <a
                 href="https://studyspace-exp.vercel.app/"
-                className="px-8 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition-colors flex items-center justify-center"
+                className="px-8 py-3 bg-[#0A2540] text-white font-medium rounded-md hover:bg-gray-800 transition-colors flex items-center justify-center"
               >
                 Get Started <ArrowRight size={16} className="ml-2" />
               </a>
               <a
                 href="https://studyspace-exp.vercel.app/"
-                className="px-8 py-3 border-2 border-black text-black font-medium rounded-md hover:bg-gray-50 transition-colors flex items-center justify-center"
+                className="px-8 py-3 border-2 border-[#0A2540] text-[#061B33] font-medium rounded-md hover:bg-gray-50 transition-colors flex items-center justify-center"
               >
                 Learn More
               </a>
@@ -223,7 +223,7 @@ export default function StudySpace() {
               className="flex flex-col items-center text-center"
             >
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                <Search size={28} className="text-black" />
+                <Search size={28} className="text-[#061B33]" />
               </div>
               <h3 className="text-xl font-semibold mb-3">Find</h3>
               <p className="text-gray-600">
@@ -237,7 +237,7 @@ export default function StudySpace() {
               className="flex flex-col items-center text-center"
             >
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                <Bookmark size={28} className="text-black" />
+                <Bookmark size={28} className="text-[#061B33]" />
               </div>
               <h3 className="text-xl font-semibold mb-3">Join</h3>
               <p className="text-gray-600">
@@ -250,7 +250,7 @@ export default function StudySpace() {
               className="flex flex-col items-center text-center"
             >
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                <Coffee size={28} className="text-black" />
+                <Coffee size={28} className="text-[#061B33]" />
               </div>
               <h3 className="text-xl font-semibold mb-3">Connect</h3>
               <p className="text-gray-600">
@@ -337,7 +337,7 @@ export default function StudySpace() {
                   whileInView="visible"
                   viewport={{ once: true }}
                 >
-                  <div className="mr-3 text-black">
+                  <div className="mr-3 text-[#061B33]">
                     <Star size={20} />
                   </div>
                   <span>
@@ -352,7 +352,7 @@ export default function StudySpace() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 }}
                 >
-                  <div className="mr-3 text-black">
+                  <div className="mr-3 text-[#061B33]">
                     <Star size={20} />
                   </div>
                   <span>Improve knowledge retention through discussion</span>
@@ -365,7 +365,7 @@ export default function StudySpace() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 }}
                 >
-                  <div className="mr-3 text-black">
+                  <div className="mr-3 text-[#061B33]">
                     <Star size={20} />
                   </div>
                   <span>
@@ -383,7 +383,7 @@ export default function StudySpace() {
               >
                 <a
                   href="https://studyspace-exp.vercel.app/"
-                  className="inline-flex items-center px-6 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition-colors"
+                  className="inline-flex items-center px-6 py-3 bg-[#0A2540] text-white font-medium rounded-md hover:bg-gray-800 transition-colors"
                 >
                   Try Study Space <ArrowRight size={16} className="ml-2" />
                 </a>
@@ -522,7 +522,7 @@ export default function StudySpace() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-black text-white">
+      <section className="py-20 bg-[#0A2540] text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

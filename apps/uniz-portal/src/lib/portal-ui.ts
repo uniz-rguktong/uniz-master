@@ -1,18 +1,26 @@
 import { cn } from "@/lib/utils";
 
 /**
- * UniZ portal design system — ExamCell institutional (navy + flat surfaces).
- * Used by student, admin, faculty, and auth surfaces (.portal-theme).
+ * UniZ portal design system — ExamCell-faithful
+ * (https://examcell.rguktrkv.ac.in/)
  *
- * Spacing rhythm: 4 / 8 / 12 / 16 / 24 / 32 (Tailwind 1–8)
- * Radii: portal-sm (2) forms · portal-lg (4) · portal-xl (6) · portal-2xl (8)
- * Chrome: 60px navy header · #eee footer · full-width navy CTAs
+ * Fonts: Open Sans (UI) · Nunito (buttons) · Cabin (forms/footer)
+ * Chrome: 60px HOME-GRADIENT header · #eee footer · #34495e CTAs
+ * No zinc, no pure-black buttons, no glass.
  */
+
+export const EXAMCELL_HOME_GRADIENT =
+  "radial-gradient(circle farthest-corner at 16.5% 37.3%, rgba(10,37,64,1) 0.1%, rgba(2,18,39,1) 90%)";
+
+export const EXAMCELL_CTA = "#34495e";
+export const EXAMCELL_ERROR = "#EA2027";
+export const EXAMCELL_FOOTER = "#EEEEEE";
+export const EXAMCELL_DEEP = "#061B33";
 
 /* ── Page & layout ───────────────────────────────────────────── */
 
 export const portalPageClass =
-  "min-h-screen bg-[#FAFAFA] text-navy-900 selection:bg-navy-200 selection:text-navy-900 font-sans";
+  "min-h-screen bg-white text-[#061B33] selection:bg-[#EEEEEE] selection:text-[#0A2540] font-sans";
 
 export const portalPageWrapClass = "px-4 py-6 md:px-8 md:py-8 space-y-6 md:space-y-8";
 
@@ -23,110 +31,115 @@ export const portalSafeBottomClass = "pb-[max(1rem,env(safe-area-inset-bottom))]
 /* ── Surfaces ────────────────────────────────────────────────── */
 
 export const portalCardClass =
-  "rounded-portal-lg border border-navy-200 bg-white shadow-whisper";
+  "rounded-[2px] border border-[#EEEEEE] bg-white shadow-examcell";
 
 export const portalCardHoverClass =
-  "transition-colors duration-150 hover:border-navy-300";
+  "transition-colors duration-150 hover:border-[#9bb0c4]";
 
 export const portalCardInteractiveClass = cn(portalCardClass, portalCardHoverClass);
 
 export const portalInsetPanelClass =
-  "rounded-portal-lg border border-navy-200 bg-[#FAFAFA] p-4 md:p-5";
+  "rounded-[2px] border border-[#EEEEEE] bg-[#FAFAFA] p-4 md:p-5";
 
 export const portalBannerGradientClass = "portal-banner-gradient text-white";
 
 export const portalFooterClass =
-  "bg-[#EEEEEE] border-t border-navy-200 text-navy-600 font-form";
+  "bg-[#EEEEEE] border-t border-[#EEEEEE] text-[#061B33] font-form";
+
+export const portalNoticeClass =
+  "rounded-[10px] bg-[#EEEEEE] px-5 py-2.5 text-[13px] italic tracking-[1px] text-[#061B33] font-sans";
 
 /* ── Typography ──────────────────────────────────────────────── */
 
 export const portalEyebrowClass =
-  "text-[10px] font-semibold tracking-[0.14em] uppercase text-navy-400 font-sans";
+  "text-[10px] font-bold tracking-[0.14em] uppercase text-[#5A7A94] font-sans";
 
 export const portalTitleClass =
-  "text-[clamp(1.25rem,3vw,1.75rem)] font-semibold tracking-[-0.01em] text-navy-900 leading-tight font-sans";
+  "text-[clamp(1.25rem,3vw,1.75rem)] font-bold tracking-[0.04em] uppercase text-[#0A2540] leading-tight font-sans";
 
-export const portalSubtitleClass = "text-sm text-navy-500 leading-relaxed font-sans";
+export const portalSubtitleClass =
+  "text-sm text-[#5A7A94] leading-relaxed font-sans tracking-[0.5px]";
 
 export const portalSectionTitleClass =
-  "text-[15px] font-semibold tracking-[-0.01em] text-navy-900 font-sans";
+  "text-[15px] font-bold tracking-[0.08em] uppercase text-[#0A2540] font-sans";
 
-export const portalBodyClass = "text-[14px] font-medium text-navy-700 leading-relaxed font-sans";
+export const portalBodyClass =
+  "text-[14px] font-medium text-[#222222] leading-relaxed font-sans";
 
-export const portalMutedClass = "text-[12px] text-navy-400 font-sans";
+export const portalMutedClass = "text-[12px] text-[#5A7A94] font-sans tracking-[0.5px]";
 
-/* ── Buttons (min 44px touch targets; Nunito; full-width navy CTAs) ─ */
+/* ── Buttons (ExamCell #34495e CTA; Nunito/Cabin) ─────────────── */
 
 export const portalPrimaryButtonClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 w-full px-5 rounded-portal-sm bg-navy-900 text-white text-[14px] font-semibold tracking-tight font-button hover:bg-navy-800 active:opacity-95 transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center gap-2 min-h-9 px-8 rounded-[1px] bg-[#34495e] text-white text-[13px] font-bold tracking-[2px] uppercase font-form shadow-examcell hover:bg-[#2c3e50] active:opacity-95 transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
 
 export const portalSecondaryButtonClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 w-full px-5 rounded-portal-sm border border-navy-900 bg-white text-navy-900 text-[14px] font-bold font-button hover:bg-navy-900 hover:text-white active:opacity-95 transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center gap-2 min-h-9 px-5 rounded-[1px] border border-[#0A2540] bg-white text-[#0A2540] text-[13px] font-bold tracking-[1px] uppercase font-form hover:bg-[#0A2540] hover:text-white active:opacity-95 transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
 
 export const portalGhostButtonClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded-portal-sm bg-white border border-navy-200 text-navy-600 text-[13px] font-semibold font-button hover:text-navy-900 hover:border-navy-300 hover:bg-[#FAFAFA] active:opacity-95 transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center gap-2 min-h-9 px-4 rounded-[1px] bg-white border border-[#EEEEEE] text-[#5A7A94] text-[12px] font-semibold tracking-[0.5px] font-button hover:text-[#0A2540] hover:border-[#9bb0c4] hover:bg-[#FAFAFA] active:opacity-95 transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
 
 export const portalDangerButtonClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded-portal-sm bg-white border border-navy-200 text-[#EA2027] text-[13px] font-semibold font-button hover:bg-red-50 hover:border-[#EA2027]/40 active:opacity-95 transition-colors";
+  "inline-flex items-center justify-center gap-2 min-h-9 px-4 rounded-[1px] bg-white border border-[#EEEEEE] text-[#EA2027] text-[12px] font-semibold font-button hover:bg-red-50 hover:border-[#EA2027]/40 active:opacity-95 transition-colors";
 
-/* ── Forms (Cabin; 2px radius) ───────────────────────────────── */
+/* ── Forms (Cabin; 1–2px radius) ─────────────────────────────── */
 
 export const portalLabelClass =
-  "block text-[11px] font-semibold tracking-[0.04em] text-navy-500 mb-1.5 font-form";
+  "block text-[12px] font-bold tracking-[1px] uppercase text-[#0A2540] mb-1.5 font-form";
 
 export const portalInputClass =
-  "w-full min-h-11 px-3.5 bg-white border border-navy-200 rounded-portal-sm text-[15px] font-medium text-navy-900 font-form placeholder:text-navy-300 focus:outline-none focus:border-navy-700 focus:ring-1 focus:ring-navy-900/15 transition-colors";
+  "w-full min-h-11 px-3.5 bg-white border-0 rounded-[1px] text-[15px] font-bold tracking-[1px] text-[#0A2540] font-form placeholder:text-[#9bb0c4] placeholder:font-medium focus:outline-none focus:ring-2 focus:ring-[#0A2540]/20 transition-shadow";
 
 export const portalTextareaClass =
-  "w-full min-h-[88px] px-3.5 py-3 bg-white border border-navy-200 rounded-portal-sm text-[14px] font-medium text-navy-900 font-form placeholder:text-navy-300 focus:outline-none focus:border-navy-700 focus:ring-1 focus:ring-navy-900/15 transition-colors resize-none";
+  "w-full min-h-[88px] px-3.5 py-3 bg-[#FAFAFA] border-2 border-[#EEEEEE] rounded-[2px] text-[14px] font-medium text-[#0A2540] font-form placeholder:text-[#9bb0c4] focus:outline-none focus:border-[#0A2540] focus:bg-white transition-colors resize-none";
 
 export const portalSelectClass =
-  "w-full min-h-11 pl-3.5 pr-10 bg-white border border-navy-200 rounded-portal-sm text-[13px] font-semibold text-navy-900 font-form appearance-none cursor-pointer focus:outline-none focus:border-navy-700 focus:ring-1 focus:ring-navy-900/15 transition-colors disabled:opacity-50";
+  "w-full min-h-11 pl-3.5 pr-10 bg-[#FAFAFA] border-2 border-[#EEEEEE] rounded-[2px] text-[13px] font-bold uppercase tracking-[1px] text-[#0A2540] font-form appearance-none cursor-pointer focus:outline-none focus:border-[#0A2540] focus:bg-white transition-colors disabled:opacity-50";
 
-/* ── Navigation & chrome (fixed 60px navy header) ────────────── */
+/* ── Navigation & chrome (fixed 60px gradient header) ────────── */
 
 export const portalHeaderClass =
-  "sticky top-0 z-40 h-[60px] flex items-center portal-header-chrome text-white border-b border-[#021227]";
+  "sticky top-0 z-40 h-[60px] flex items-center portal-header-chrome text-white";
 
 export const portalHeaderLightClass =
-  "sticky top-0 z-40 h-[60px] flex items-center bg-white border-b border-navy-200";
+  "sticky top-0 z-40 h-[60px] flex items-center bg-white border-b border-[#EEEEEE]";
 
-export const portalNavActiveClass =
-  "bg-navy-900 text-white";
+export const portalNavActiveClass = "bg-[#0A2540] text-white";
 
 export const portalNavInactiveClass =
-  "text-navy-400 hover:text-navy-700 hover:bg-[#FAFAFA]";
+  "text-[#5A7A94] hover:text-[#0A2540] hover:bg-[#FAFAFA]";
 
 export const portalTabActiveClass =
-  "text-navy-900 border-b-[2px] border-navy-900";
+  "text-[#0A2540] border-b-[2px] border-[#0A2540]";
 
 export const portalTabInactiveClass =
-  "text-navy-400 hover:text-navy-600 border-b-[2px] border-transparent";
+  "text-[#5A7A94] hover:text-[#0A2540] border-b-[2px] border-transparent";
 
 /* ── Pills & badges ──────────────────────────────────────────── */
 
 export const portalPillClass =
-  "inline-flex items-center gap-1.5 rounded-portal-sm border border-navy-200 bg-[#FAFAFA] px-2.5 py-1 text-[10px] font-bold tracking-[0.08em] text-navy-700";
+  "inline-flex items-center gap-1.5 rounded-[2px] border border-[#EEEEEE] bg-[#FAFAFA] px-2.5 py-1 text-[10px] font-bold tracking-[0.08em] uppercase text-[#0A2540]";
 
 export const portalLivePillClass =
-  "inline-flex items-center gap-2 rounded-portal-sm border border-navy-200 bg-[#FAFAFA] px-3 py-1.5 text-[10px] font-bold tracking-[0.12em] uppercase text-navy-800";
+  "inline-flex items-center gap-2 rounded-[2px] border border-[#EEEEEE] bg-[#FAFAFA] px-3 py-1.5 text-[10px] font-bold tracking-[0.12em] uppercase text-[#0A2540]";
 
 export const portalChipClass =
-  "inline-flex items-center gap-1.5 rounded-portal-sm border border-navy-200 bg-white px-2.5 py-0.5 text-[11px] font-medium text-navy-500";
+  "inline-flex items-center gap-1.5 rounded-[2px] border border-[#EEEEEE] bg-white px-2.5 py-0.5 text-[11px] font-medium text-[#5A7A94]";
 
 /* ── Modals ──────────────────────────────────────────────────── */
 
 export const portalModalShellClass =
-  "overflow-hidden bg-white border border-navy-200 rounded-portal-lg shadow-whisper-lg";
+  "overflow-hidden bg-white border border-[#EEEEEE] rounded-[2px] shadow-examcell-lg";
 
 export const portalModalTitleClass =
-  "text-[20px] font-semibold text-navy-900 tracking-[-0.01em] font-sans";
+  "text-[18px] font-bold uppercase tracking-[2px] text-[#0A2540] font-sans";
 
-export const portalModalDescClass = "text-[13px] text-navy-500 leading-relaxed font-sans";
+export const portalModalDescClass =
+  "text-[13px] text-[#5A7A94] leading-relaxed font-sans tracking-[0.5px]";
 
 /* ── Utilities ─────────────────────────────────────────────── */
 
 export const portalNumsClass = "tabular-nums [font-feature-settings:'tnum']";
 
 export const portalIconTileClass =
-  "w-10 h-10 rounded-portal-lg bg-[#FAFAFA] text-navy-700 flex items-center justify-center border border-navy-200";
+  "w-10 h-10 rounded-[2px] bg-[#FAFAFA] text-[#0A2540] flex items-center justify-center border border-[#EEEEEE]";

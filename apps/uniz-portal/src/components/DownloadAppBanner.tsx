@@ -37,28 +37,28 @@ export function DownloadAppBanner() {
 
   return (
     <section
-      className="border-b border-[color:var(--uniz-border,#e2e8f0)] bg-[color:var(--uniz-surface,#f8fafc)] lg:hidden"
+      className="border-b border-[#EEEEEE] bg-[#FAFAFA] lg:hidden"
       aria-label="Download uniZ for Android"
     >
       <div className="flex items-center gap-2 px-3 py-2">
         <span
-          className="h-7 w-7 shrink-0 rounded-md bg-cover bg-center"
+          className="h-7 w-7 shrink-0 rounded-full bg-cover bg-center"
           style={{ backgroundImage: "url(/logo.png)" }}
           aria-hidden
         />
-        <p className="min-w-0 flex-1 truncate text-sm font-semibold text-[color:var(--uniz-ink,#0a2540)]">
+        <p className="min-w-0 flex-1 truncate font-sans text-sm font-bold uppercase tracking-[0.5px] text-[#0A2540]">
           uniZ for Android
         </p>
         <a
           href={ANDROID_APK_URL}
           download={ANDROID_APK_FILENAME}
-          className="inline-flex h-8 shrink-0 items-center rounded-lg bg-[color:var(--uniz-maroon,#0a2540)] px-2.5 text-xs font-bold text-white"
+          className="inline-flex h-8 shrink-0 items-center rounded-[1px] bg-[#34495e] px-2.5 font-form text-xs font-bold uppercase tracking-[1px] text-white"
         >
           Download
         </a>
         <button
           type="button"
-          className="h-8 shrink-0 px-1 text-xs font-semibold text-[color:var(--uniz-ink,#0a2540)] underline"
+          className="h-8 shrink-0 px-1 font-sans text-xs font-semibold uppercase tracking-[0.5px] text-[#0A2540] underline"
           onClick={() => setSteps((open) => !open)}
           aria-expanded={steps}
         >
@@ -67,14 +67,14 @@ export function DownloadAppBanner() {
         <button
           type="button"
           onClick={dismiss}
-          className="flex h-8 w-8 shrink-0 items-center justify-center text-slate-500"
+          className="flex h-8 w-8 shrink-0 items-center justify-center text-[#5A7A94]"
           aria-label="Dismiss"
         >
           <X className="h-4 w-4" aria-hidden />
         </button>
       </div>
       {steps ? (
-        <ol className="list-decimal space-y-1 px-4 pb-2 pl-8 text-xs leading-snug text-slate-700">
+        <ol className="list-decimal space-y-1 px-4 pb-2 pl-8 font-sans text-xs leading-snug text-[#061B33]">
           <li>Tap Download and save the APK.</li>
           <li>Open the file from notifications or Downloads.</li>
           <li>Allow install from this source if Android asks.</li>
