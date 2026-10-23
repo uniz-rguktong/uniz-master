@@ -102,7 +102,7 @@ export default function ToasterDemo() {
                 key={positionKey}
                 variant="outline"
                 onClick={() => showToastVariant("default")}
-                className="border-zinc-200 text-zinc-900 hover:bg-zinc-50"
+                className="border-navy-200 text-navy-900 hover:bg-navy-50"
               >
                 {positionKey
                   .replace("-", " ")
@@ -117,7 +117,7 @@ export default function ToasterDemo() {
           <Button
             variant="default"
             onClick={simulateApiCall}
-            className="bg-zinc-900 text-white hover:bg-zinc-800 h-12 px-8 rounded-xl shadow-lg"
+            className="bg-navy-900 text-white hover:bg-navy-800 h-12 px-8 rounded-xl shadow-lg"
           >
             Schedule Meeting
           </Button>

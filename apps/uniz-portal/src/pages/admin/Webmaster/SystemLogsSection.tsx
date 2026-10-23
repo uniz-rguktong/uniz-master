@@ -139,7 +139,7 @@ export default function SystemLogsSection() {
 
             <div className="relative">
               <Filter
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none z-10"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none z-10"
                 size={13}
               />
               <select
@@ -156,14 +156,14 @@ export default function SystemLogsSection() {
                 <option value="GRADES">Grades</option>
               </select>
               <ChevronDown
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 size={14}
               />
             </div>
 
             <div className="relative">
               <Search
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400"
                 size={15}
               />
               <input
@@ -185,22 +185,22 @@ export default function SystemLogsSection() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-zinc-200/70">
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+              <tr className="border-b border-navy-200/70">
+                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400">
                   Activity & Resource
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400">
                   Data Metrics
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400">
                   Status
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400">
                   Timestamp
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-navy-100">
               {loading ? (
                 Array(itemsPerPage)
                   .fill(0)
@@ -248,13 +248,13 @@ export default function SystemLogsSection() {
                   return (
                     <tr
                       key={log.id || idx}
-                      className="hover:bg-zinc-50/60 transition-colors group"
+                      className="hover:bg-navy-50/60 transition-colors group"
                     >
                       <td className="px-8 py-5">
                         <div className="flex flex-col gap-1.5">
                           <div className="flex items-center gap-2">
                             <p
-                              className="text-[13px] font-semibold text-zinc-800 tracking-tight truncate max-w-[200px]"
+                              className="text-[13px] font-semibold text-navy-800 tracking-tight truncate max-w-[200px]"
                               title={displayFilename}
                             >
                               {displayFilename || "Automated sync"}
@@ -265,13 +265,13 @@ export default function SystemLogsSection() {
                                 target="_blank"
                                 rel="noreferrer"
                                 title="Download Source File"
-                                className="text-zinc-400 hover:text-zinc-900 transition-colors bg-white hover:border-zinc-300 p-1.5 rounded-lg border border-zinc-200"
+                                className="text-navy-400 hover:text-navy-900 transition-colors bg-white hover:border-navy-300 p-1.5 rounded-lg border border-navy-200"
                               >
                                 <Download size={14} />
                               </a>
                             )}
                           </div>
-                          <span className="px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded-full text-[10px] font-medium tracking-wide w-fit">
+                          <span className="px-2 py-0.5 bg-navy-100 text-navy-600 rounded-full text-[10px] font-medium tracking-wide w-fit">
                             {formatDisplayText(log.type, "None")}
                           </span>
                         </div>
@@ -279,10 +279,10 @@ export default function SystemLogsSection() {
                       <td className="px-8 py-5">
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-2">
-                            <p className="text-[14px] font-semibold text-zinc-900 tabular-nums">
+                            <p className="text-[14px] font-semibold text-navy-900 tabular-nums">
                               {log.totalRows || 0}
                             </p>
-                            <span className="text-[10px] text-zinc-400 font-medium tracking-[0.12em]">
+                            <span className="text-[10px] text-navy-400 font-medium tracking-[0.12em]">
                               Rows
                             </span>
                           </div>
@@ -301,15 +301,15 @@ export default function SystemLogsSection() {
                       <td className="px-8 py-5">
                         <div className="w-fit">
                           {log.status === "COMPLETED" ? (
-                            <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-full border border-zinc-200">
+                            <div className="inline-flex items-center gap-1.5 text-navy-700 bg-navy-50 px-2.5 py-1 rounded-full border border-navy-200">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                               <span className="text-[11px] font-medium">
                                 Completed
                               </span>
                             </div>
                           ) : (
-                            <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-full border border-zinc-200">
-                              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
+                            <div className="inline-flex items-center gap-1.5 text-navy-700 bg-navy-50 px-2.5 py-1 rounded-full border border-navy-200">
+                              <span className="w-1.5 h-1.5 rounded-full bg-navy-400" />
                               <span className="text-[11px] font-medium">
                                 {formatDisplayText(log.status, "Processing")}
                               </span>
@@ -319,7 +319,7 @@ export default function SystemLogsSection() {
                       </td>
                       <td className="px-8 py-5">
                         <div className="flex flex-col">
-                          <p className="text-[13px] font-medium tracking-tight text-zinc-700 tabular-nums">
+                          <p className="text-[13px] font-medium tracking-tight text-navy-700 tabular-nums">
                             {new Date(log.createdAt).toLocaleDateString(
                               "en-GB",
                               {
@@ -329,7 +329,7 @@ export default function SystemLogsSection() {
                               },
                             )}
                           </p>
-                          <p className="text-[10px] font-medium text-zinc-400 tracking-[0.12em] mt-0.5 tabular-nums">
+                          <p className="text-[10px] font-medium text-navy-400 tracking-[0.12em] mt-0.5 tabular-nums">
                             {new Date(log.createdAt).toLocaleTimeString([], {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -344,10 +344,10 @@ export default function SystemLogsSection() {
                 <tr>
                   <td colSpan={5} className="py-20 text-center">
                     <div className="flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 flex items-center justify-center bg-zinc-50 rounded-2xl border border-zinc-200/70 text-zinc-300">
+                      <div className="w-16 h-16 flex items-center justify-center bg-navy-50 rounded-[2px] border border-navy-200/70 text-navy-300">
                         <AlertCircle size={32} strokeWidth={1.5} />
                       </div>
-                      <p className="text-[14px] font-medium text-zinc-500 tracking-tight">
+                      <p className="text-[14px] font-medium text-navy-500 tracking-tight">
                         No logs found matching your criteria.
                       </p>
                     </div>
@@ -360,10 +360,10 @@ export default function SystemLogsSection() {
 
         {/* Pagination bar */}
         {filteredHistory.length > 0 && (
-          <div className="px-8 py-4 bg-zinc-50/50 border-t border-zinc-200/70 flex items-center justify-between">
-            <p className="text-[11px] font-medium text-zinc-400 tracking-[0.12em]">
+          <div className="px-8 py-4 bg-navy-50/50 border-t border-navy-200/70 flex items-center justify-between">
+            <p className="text-[11px] font-medium text-navy-400 tracking-[0.12em]">
               Showing{" "}
-              <span className="text-zinc-900">
+              <span className="text-navy-900">
                 {Math.min(
                   filteredHistory.length,
                   (currentPage - 1) * itemsPerPage + 1,
@@ -376,7 +376,7 @@ export default function SystemLogsSection() {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="h-8 px-3.5 border border-zinc-200 bg-white rounded-lg text-[12px] font-semibold text-zinc-600 hover:text-zinc-900 hover:border-zinc-300 transition-all disabled:opacity-30 disabled:pointer-events-none"
+                className="h-8 px-3.5 border border-navy-200 bg-white rounded-lg text-[12px] font-semibold text-navy-600 hover:text-navy-900 hover:border-navy-300 transition-all disabled:opacity-30 disabled:pointer-events-none"
               >
                 Previous
               </button>
@@ -386,7 +386,7 @@ export default function SystemLogsSection() {
                     <button
                       key={num}
                       onClick={() => setCurrentPage(num)}
-                      className={`w-8 h-8 rounded-lg text-[12px] font-semibold tabular-nums transition-all ${currentPage === num ? "bg-zinc-900 text-white" : "text-zinc-500 hover:bg-zinc-100"}`}
+                      className={`w-8 h-8 rounded-lg text-[12px] font-semibold tabular-nums transition-all ${currentPage === num ? "bg-navy-900 text-white" : "text-navy-500 hover:bg-navy-100"}`}
                     >
                       {num}
                     </button>
@@ -401,7 +401,7 @@ export default function SystemLogsSection() {
                 onClick={() =>
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
-                className="h-8 px-3.5 border border-zinc-200 bg-white rounded-lg text-[12px] font-semibold text-zinc-600 hover:text-zinc-900 hover:border-zinc-300 transition-all disabled:opacity-30 disabled:pointer-events-none"
+                className="h-8 px-3.5 border border-navy-200 bg-white rounded-lg text-[12px] font-semibold text-navy-600 hover:text-navy-900 hover:border-navy-300 transition-all disabled:opacity-30 disabled:pointer-events-none"
               >
                 Next
               </button>

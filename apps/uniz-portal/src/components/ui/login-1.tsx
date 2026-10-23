@@ -124,7 +124,7 @@ export default function LoginScreen({
 
               {/* Overlapping LOGIN PORTAL card (desktop) */}
               <div
-                className="relative z-10 mt-6 w-full overflow-hidden rounded-[1px] px-6 py-8 text-white uppercase tracking-[0.5px] shadow-examcell-lg md:px-8 lg:absolute lg:right-[-8%] lg:top-1/2 lg:mt-0 lg:w-[72%] lg:-translate-y-1/2 lg:min-h-[300px]"
+                className="relative z-10 mt-6 w-full overflow-hidden rounded-[1px] px-6 py-8 text-white uppercase tracking-[0.5px] shadow-examcell-lg md:px-8 lg:absolute lg:right-[5%] lg:top-1/2 lg:mt-0 lg:w-[60%] lg:-translate-y-[48.5%] lg:min-h-[300px]"
                 style={{
                   backgroundImage:
                     "radial-gradient(circle farthest-corner at 16.5% 37.3%, rgba(10,37,64,1) 0.1%, rgba(2,18,39,1) 90%)",
@@ -185,8 +185,16 @@ export default function LoginScreen({
             </div>
           </div>
 
-          {/* Right column spacer / notices area on large screens */}
-          <div className="hidden w-[49%] lg:block" aria-hidden />
+          <aside className="hidden w-[49%] flex-col justify-center gap-3 lg:flex">
+            {(features.length ? features : meta.features).map((line) => (
+              <p key={`notice-${line}`} className="rounded-[10px] bg-[#EEEEEE] px-5 py-2.5 text-[13px] italic tracking-[1px] text-[#061B33]">
+                {line}
+              </p>
+            ))}
+            <p className="rounded-[10px] bg-[#EEEEEE] px-5 py-2.5 text-[13px] italic tracking-[1px] text-[#061B33]">
+              Use your campus ID. For help, write {UNIZ_SUPPORT_EMAIL}.
+            </p>
+          </aside>
         </div>
       </main>
 

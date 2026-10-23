@@ -49,7 +49,7 @@ const GlobeFeature = lazy(
 
 const SectionSkeleton = ({ className = "h-64" }: { className?: string }) => (
   <div className="max-w-[1280px] mx-auto px-6">
-    <div className={cn("w-full animate-pulse rounded-[2.5rem] bg-zinc-50/80", className)} />
+    <div className={cn("w-full animate-pulse rounded-[2.5rem] bg-navy-50/80", className)} />
   </div>
 );
 
@@ -126,7 +126,7 @@ const Home = () => {
       icon: Smartphone,
       content: (
         <div className="space-y-6">
-          <p className="text-zinc-500 font-medium text-[15px] md:text-[17px] leading-relaxed">
+          <p className="text-navy-500 font-medium text-[15px] md:text-[17px] leading-relaxed">
             UniZ is built with cutting-edge PWA technology. Directly install the
             platform on your device for a lightning-fast experience.
           </p>
@@ -154,7 +154,7 @@ const Home = () => {
       icon: Lock,
       content: (
         <div className="space-y-6">
-          <p className="text-zinc-500 font-medium text-[15px] md:text-[17px] leading-relaxed">
+          <p className="text-navy-500 font-medium text-[15px] md:text-[17px] leading-relaxed">
             Gain a God's-eye view of your university credentials. Track exact
             GPA numbers and attendance thresholds automatically.
           </p>
@@ -168,7 +168,7 @@ const Home = () => {
       icon: Activity,
       content: (
         <div className="space-y-6">
-          <p className="text-zinc-500 font-medium text-[15px] md:text-[17px] leading-relaxed">
+          <p className="text-navy-500 font-medium text-[15px] md:text-[17px] leading-relaxed">
             Request outpasses, track results, and receive broadcast alerts
             directly. Understand the pulse of your university life in real-time.
           </p>
@@ -227,7 +227,7 @@ const Home = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans selection:bg-zinc-100 selection:text-zinc-900 pt-16 relative overflow-x-hidden">
+    <div className="min-h-screen bg-white flex flex-col font-sans selection:bg-navy-100 selection:text-navy-900 pt-16 relative overflow-x-hidden">
       <SEO
         title={HOME_SEO.title}
         description={HOME_SEO.description}
@@ -311,18 +311,18 @@ const Home = () => {
               <LandingCard className="p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.08)]">
                 <div>
                   <LandingPill label="UniZ" accent="emerald" className="mb-4" />
-                  <h3 className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-semibold text-zinc-950 tracking-[-0.05em] leading-[1.05] mb-3">
+                  <h3 className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-semibold text-navy-950 tracking-[-0.05em] leading-[1.05] mb-3">
                     Built by RGUKT students,
-                    <span className="text-zinc-400 font-light">
+                    <span className="text-navy-400 font-light">
                       {" "}
                       for RGUKT students.
                     </span>
                   </h3>
-                  <p className="text-[15px] text-zinc-500 font-medium leading-relaxed">
+                  <p className="text-[15px] text-navy-500 font-medium leading-relaxed">
                     From the developers of{" "}
                     <a
                       href="https://synapstore.me/"
-                      className="font-semibold text-zinc-950 hover:text-zinc-700 no-underline underline-offset-4 hover:underline"
+                      className="font-semibold text-navy-950 hover:text-navy-700 no-underline underline-offset-4 hover:underline"
                     >
                       Synapstore
                     </a>

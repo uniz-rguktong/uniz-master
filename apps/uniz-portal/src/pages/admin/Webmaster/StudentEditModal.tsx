@@ -206,7 +206,7 @@ export default function StudentEditModal({
       <AlertDialogContent
         overlayClassName={cn(
           elevated && "z-[110]",
-          elevated && "bg-zinc-900/40 backdrop-blur-sm",
+          elevated && "bg-navy-900/40",
         )}
         className={cn(
           "max-w-3xl max-h-[90vh] flex flex-col",
@@ -324,7 +324,7 @@ export default function StudentEditModal({
             </div>
           )}
 
-          <div className="flex gap-3 pt-4 border-t border-zinc-200/70">
+          <div className="flex gap-3 pt-4 border-t border-navy-200/70">
             <button type="button" onClick={onClose} className={cn(adminGhostButtonClass, "flex-1")}>
               Cancel
             </button>
@@ -393,7 +393,7 @@ function Toggle({
   danger?: boolean;
 }) {
   return (
-    <label className="flex items-center gap-2.5 cursor-pointer text-[13px] font-medium text-zinc-700">
+    <label className="flex items-center gap-2.5 cursor-pointer text-[13px] font-medium text-navy-700">
       <button
         type="button"
         role="switch"
@@ -404,8 +404,8 @@ function Toggle({
           checked
             ? danger
               ? "bg-rose-500"
-              : "bg-zinc-900"
-            : "bg-zinc-200",
+              : "bg-navy-900"
+            : "bg-navy-200",
         )}
       >
         <span

@@ -11,14 +11,14 @@ interface PaginationProps {
 }
 
 const navBtnClass =
-  "inline-flex items-center justify-center gap-1.5 h-9 min-w-[2.25rem] px-2.5 rounded-lg border border-zinc-200 bg-white text-[12px] font-semibold text-zinc-600 transition-all hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900 active:scale-[0.98] disabled:opacity-35 disabled:pointer-events-none disabled:hover:bg-white disabled:hover:border-zinc-200";
+  "inline-flex items-center justify-center gap-1.5 h-9 min-w-[2.25rem] px-2.5 rounded-[2px] border border-[#EEEEEE] bg-white text-[12px] font-semibold text-[#5A7A94] transition-colors hover:border-[#9bb0c4] hover:bg-[#FAFAFA] hover:text-[#0A2540] disabled:opacity-35 disabled:pointer-events-none disabled:hover:bg-white disabled:hover:border-[#EEEEEE]";
 
 const pageBtnClass = (active: boolean) =>
   cn(
-    "inline-flex items-center justify-center h-9 min-w-[2.25rem] px-2 rounded-lg text-[12px] font-semibold tabular-nums transition-all active:scale-[0.98]",
+    "inline-flex items-center justify-center h-9 min-w-[2.25rem] px-2 rounded-[2px] text-[12px] font-semibold tabular-nums transition-colors font-form",
     active
-      ? "bg-zinc-900 text-white border border-zinc-900 shadow-[0_1px_2px_rgba(10,10,10,0.12)]"
-      : "bg-white text-zinc-600 border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900",
+      ? "bg-[#34495e] text-white border border-[#34495e]"
+      : "bg-white text-[#5A7A94] border border-[#EEEEEE] hover:border-[#9bb0c4] hover:bg-[#FAFAFA] hover:text-[#0A2540]",
   );
 
 export function Pagination({
@@ -43,17 +43,17 @@ export function Pagination({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-4 py-3.5 bg-zinc-50/80 border-t border-zinc-200",
+        "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-4 py-3.5 bg-[#FAFAFA] border-t border-[#EEEEEE]",
         className,
       )}
     >
-      <p className="text-[12px] font-medium text-zinc-500 tabular-nums">
+      <p className="text-[12px] font-medium text-navy-500 tabular-nums">
         Page{" "}
-        <span className="text-zinc-900 font-semibold">{currentPage}</span>
+        <span className="text-navy-900 font-semibold">{currentPage}</span>
         {" of "}
-        <span className="text-zinc-900 font-semibold">{totalPages}</span>
+        <span className="text-navy-900 font-semibold">{totalPages}</span>
         {rangeStart != null && rangeEnd != null && totalItems != null && (
-          <span className="text-zinc-400">
+          <span className="text-navy-400">
             {" · "}
             {rangeStart.toLocaleString()}–{rangeEnd.toLocaleString()} of{" "}
             {totalItems.toLocaleString()}
@@ -85,7 +85,7 @@ export function Pagination({
             .map((p, i, arr) => (
               <div key={p} className="flex items-center gap-1">
                 {i > 0 && arr[i - 1] !== p - 1 && (
-                  <span className="w-6 text-center text-[11px] font-semibold text-zinc-300 select-none">
+                  <span className="w-6 text-center text-[11px] font-semibold text-navy-300 select-none">
                     …
                   </span>
                 )}

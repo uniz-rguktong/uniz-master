@@ -110,9 +110,9 @@ export default function StudentPerformanceModal({
             <X size={20} />
           </button>
 
-          <AlertDialogHeader className="p-8 pb-4 flex flex-col items-start text-left gap-3 border-b border-zinc-200/70">
+          <AlertDialogHeader className="p-8 pb-4 flex flex-col items-start text-left gap-3 border-b border-navy-200/70">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-zinc-900 text-white flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-navy-900 text-white flex items-center justify-center">
                 <GraduationCap size={22} />
               </div>
               <div>
@@ -120,7 +120,7 @@ export default function StudentPerformanceModal({
                   {studentName}
                 </AlertDialogTitle>
                 <AlertDialogDescription className={adminModalDescClass}>
-                  Student ID: <span className="font-medium text-zinc-700">{studentId}</span>
+                  Student ID: <span className="font-medium text-navy-700">{studentId}</span>
                 </AlertDialogDescription>
               </div>
             </div>
@@ -135,7 +135,7 @@ export default function StudentPerformanceModal({
           <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-sidebar-scroll">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <StatCard
-                icon={<TrendingUp size={16} className="text-zinc-700" />}
+                icon={<TrendingUp size={16} className="text-navy-700" />}
                 label="CGPA"
                 value={data.cgpa?.toFixed(2) ?? "0.00"}
                 subValue="Cumulative"
@@ -150,7 +150,7 @@ export default function StudentPerformanceModal({
                 icon={
                   <AlertCircle
                     size={16}
-                    className={data.total_backlogs > 0 ? "text-rose-500" : "text-zinc-400"}
+                    className={data.total_backlogs > 0 ? "text-rose-500" : "text-navy-400"}
                   />
                 }
                 label="Backlogs"
@@ -161,8 +161,8 @@ export default function StudentPerformanceModal({
 
             {data.motivation && (
               <div className={cn(adminCardClass, "p-4 flex gap-3 items-start")}>
-                <CheckCircle2 size={16} className="text-zinc-500 shrink-0 mt-0.5" />
-                <p className="text-[13px] text-zinc-600 leading-relaxed italic">
+                <CheckCircle2 size={16} className="text-navy-500 shrink-0 mt-0.5" />
+                <p className="text-[13px] text-navy-600 leading-relaxed italic">
                   {data.motivation}
                 </p>
               </div>
@@ -181,10 +181,10 @@ export default function StudentPerformanceModal({
                       )}
                     >
                       <div className="min-w-0">
-                        <p className="font-semibold text-zinc-900 text-[13px] truncate">
+                        <p className="font-semibold text-navy-900 text-[13px] truncate">
                           {grade.subject.name}
                         </p>
-                        <p className="text-[11px] text-zinc-400 mt-0.5">
+                        <p className="text-[11px] text-navy-400 mt-0.5">
                           {grade.subject.code} · {grade.semesterId}
                         </p>
                       </div>
@@ -194,7 +194,7 @@ export default function StudentPerformanceModal({
                             Remedial
                           </span>
                         )}
-                        <span className={cn("text-sm font-semibold text-zinc-900", adminNumsClass)}>
+                        <span className={cn("text-sm font-semibold text-navy-900", adminNumsClass)}>
                           {grade.grade}
                         </span>
                       </div>
@@ -210,10 +210,10 @@ export default function StudentPerformanceModal({
                     <div key={att.id} className={cn(adminCardClass, "p-4 space-y-3")}>
                       <div className="flex items-center justify-between gap-2">
                         <div className="min-w-0">
-                          <p className="font-semibold text-zinc-900 text-[13px] truncate">
+                          <p className="font-semibold text-navy-900 text-[13px] truncate">
                             {att.subject.name}
                           </p>
-                          <p className="text-[11px] text-zinc-400">
+                          <p className="text-[11px] text-navy-400">
                             {att.attendedClasses}/{att.totalClasses} classes
                           </p>
                         </div>
@@ -227,7 +227,7 @@ export default function StudentPerformanceModal({
                           {att.percentage}%
                         </span>
                       </div>
-                      <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 w-full bg-navy-100 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${att.percentage}%` }}
@@ -250,10 +250,10 @@ export default function StudentPerformanceModal({
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                   {Object.entries(data.gpa_stats).map(([sem, stats]) => (
                     <div key={sem} className={cn(adminCardClass, "p-4")}>
-                      <p className="text-[10px] font-semibold tracking-wide text-zinc-400">
+                      <p className="text-[10px] font-semibold tracking-wide text-navy-400">
                         {sem}
                       </p>
-                      <p className={cn("text-2xl font-semibold text-zinc-900 mt-1", adminNumsClass)}>
+                      <p className={cn("text-2xl font-semibold text-navy-900 mt-1", adminNumsClass)}>
                         {stats.gpa}
                       </p>
                     </div>
@@ -263,7 +263,7 @@ export default function StudentPerformanceModal({
             )}
           </div>
 
-          <div className="px-8 py-4 border-t border-zinc-200/70 text-[11px] text-zinc-400 font-medium bg-zinc-50/50">
+          <div className="px-8 py-4 border-t border-navy-200/70 text-[11px] text-navy-400 font-medium bg-navy-50/50">
             Academic record · internal use only
           </div>
         </div>
@@ -286,18 +286,18 @@ function StatCard({
   return (
     <div className={cn(adminCardClass, "p-5 flex flex-col gap-3")}>
       <div className="flex items-center justify-between">
-        <p className="text-[11px] font-semibold tracking-wide text-zinc-400">
+        <p className="text-[11px] font-semibold tracking-wide text-navy-400">
           {label}
         </p>
-        <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-lg bg-navy-100 flex items-center justify-center">
           {icon}
         </div>
       </div>
       <div>
-        <p className={cn("text-2xl font-semibold text-zinc-900", adminNumsClass)}>
+        <p className={cn("text-2xl font-semibold text-navy-900", adminNumsClass)}>
           {value}
         </p>
-        <p className="text-[11px] text-zinc-400 mt-0.5">{subValue}</p>
+        <p className="text-[11px] text-navy-400 mt-0.5">{subValue}</p>
       </div>
     </div>
   );

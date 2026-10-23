@@ -66,22 +66,22 @@ notifications = notifications.slice(0, 5);
 
 const Notification = ({ name, description, icon: Icon, color, time }: Item) => {
   return (
-    <figure className="relative mx-auto min-h-fit w-full max-w-[400px] cursor-pointer overflow-hidden rounded-2xl border border-zinc-100/80 bg-white/90 p-4 transition-all duration-300 hover:shadow-[0_12px_28px_-12px_rgba(0,0,0,0.12)] hover:-translate-y-0.5">
+    <figure className="relative mx-auto min-h-fit w-full max-w-[400px] cursor-pointer overflow-hidden rounded-[2px] border border-navy-100/80 bg-white/90 p-4 transition-all duration-300 hover:shadow-[0_12px_28px_-12px_rgba(0,0,0,0.12)] hover:-translate-y-0.5">
       <div className="flex flex-row items-center gap-3">
-        <div className="flex size-10 items-center justify-center rounded-xl bg-zinc-950 shadow-sm">
+        <div className="flex size-10 items-center justify-center rounded-xl bg-navy-950 shadow-sm">
           <Icon className="size-4 text-white" />
         </div>
         <div className="flex flex-col overflow-hidden min-w-0">
           <figcaption className="flex flex-row items-center gap-1.5 min-w-0">
-            <span className="text-sm font-bold text-zinc-900 truncate">
+            <span className="text-sm font-bold text-navy-900 truncate">
               {name}
             </span>
-            <span className="text-zinc-300 shrink-0">·</span>
-            <span className="text-[11px] font-semibold text-zinc-400 shrink-0 tabular-nums">
+            <span className="text-navy-300 shrink-0">·</span>
+            <span className="text-[11px] font-semibold text-navy-400 shrink-0 tabular-nums">
               {time}
             </span>
           </figcaption>
-          <p className="text-xs font-medium text-zinc-500 truncate">
+          <p className="text-xs font-medium text-navy-500 truncate">
             {description}
           </p>
         </div>
@@ -106,13 +106,13 @@ export function Features() {
           landingCardClass,
         )}
       >
-        <div className="border-b md:border-b-0 md:border-r border-zinc-100/80">
+        <div className="border-b md:border-b-0 md:border-r border-navy-100/80">
           <div className="p-6 sm:p-10 pb-6">
             <LandingPill label="Live Updates" accent="emerald" className="mb-5" />
 
-            <p className="text-xl md:text-2xl font-semibold text-zinc-950 tracking-[-0.03em] leading-snug">
+            <p className="text-xl md:text-2xl font-semibold text-navy-950 tracking-[-0.03em] leading-snug">
               Real-time system events,{" "}
-              <span className="text-zinc-400 font-light">
+              <span className="text-navy-400 font-light">
                 piped directly to your dashboard.
               </span>
             </p>
@@ -120,62 +120,62 @@ export function Features() {
 
           <div
             aria-hidden
-            className="relative h-[400px] bg-zinc-50/50 overflow-hidden flex flex-col p-2 border-t border-zinc-100/80"
+            className="relative h-[400px] bg-navy-50/50 overflow-hidden flex flex-col p-2 border-t border-navy-100/80"
           >
             <AnimatedList className="w-full" delay={2800}>
               {notifications.map((item, idx) => (
                 <Notification {...item} key={idx} />
               ))}
             </AnimatedList>
-            <div className="from-zinc-50/80 pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t" />
+            <div className="from-navy-50/80 pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t" />
           </div>
         </div>
-        <div className="bg-zinc-50/30 p-6 sm:p-10">
+        <div className="bg-navy-50/30 p-6 sm:p-10">
           <div className="relative z-10">
             <LandingPill label="Chatbot" accent="blue" className="mb-5" />
 
-            <p className="text-xl md:text-2xl font-semibold text-zinc-950 tracking-[-0.03em] leading-snug">
+            <p className="text-xl md:text-2xl font-semibold text-navy-950 tracking-[-0.03em] leading-snug">
               Instant answers{" "}
-              <span className="text-zinc-400 font-light">from our AI assistant.</span>
+              <span className="text-navy-400 font-light">from our AI assistant.</span>
             </p>
           </div>
           <div aria-hidden className="mt-8 flex flex-col gap-8">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="flex justify-center items-center size-5 rounded-full border border-zinc-200 bg-white shadow-sm">
-                  <span className="size-2.5 rounded-full bg-zinc-400" />
+                <span className="flex justify-center items-center size-5 rounded-full border border-navy-200 bg-white shadow-sm">
+                  <span className="size-2.5 rounded-full bg-navy-400" />
                 </span>
-                <span className="text-zinc-400 font-semibold text-[11px] tracking-wider">
+                <span className="text-navy-400 font-semibold text-[11px] tracking-wider">
                   You
                 </span>
               </div>
-              <div className="rounded-2xl border border-zinc-100 bg-white w-[88%] p-4 text-sm font-medium text-zinc-700 shadow-sm">
+              <div className="rounded-[2px] border border-navy-100 bg-white w-[88%] p-4 text-sm font-medium text-navy-700 shadow-sm">
                 Hey, I'm having trouble with my account login.
               </div>
             </div>
 
             <div>
-              <div className="rounded-2xl border border-zinc-800 ml-auto w-[88%] bg-zinc-950 p-4 text-sm font-medium text-white shadow-[0_16px_40px_-16px_rgba(0,0,0,0.4)] mb-2">
+              <div className="rounded-[2px] border border-navy-800 ml-auto w-[88%] bg-navy-950 p-4 text-sm font-medium text-white shadow-[0_16px_40px_-16px_rgba(0,0,0,0.4)] mb-2">
                 We've identified the issue and pushed a patch. You should be
                 able to log in now.
               </div>
-              <span className="text-zinc-400 font-medium block text-right text-[11px]">
+              <span className="text-navy-400 font-medium block text-right text-[11px]">
                 Just now
               </span>
             </div>
           </div>
         </div>
         {/* Temporarily hidden — uptime banner
-        <div className="col-span-full border-y border-zinc-100/80 p-10 md:p-12 bg-white flex flex-col items-center justify-center">
-          <p className="text-center text-4xl md:text-5xl font-semibold tracking-[-0.04em] text-zinc-950 mb-4">
+        <div className="col-span-full border-y border-navy-100/80 p-10 md:p-12 bg-white flex flex-col items-center justify-center">
+          <p className="text-center text-4xl md:text-5xl font-semibold tracking-[-0.04em] text-navy-950 mb-4">
             99.99% Uptime
           </p>
           {health && (
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-50 border border-zinc-100">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-navy-50 border border-navy-100">
               <div
                 className={`w-2 h-2 rounded-full animate-pulse ${getDisplayHealthStatus(health) === "ok" ? "bg-emerald-500" : "bg-red-500"}`}
               ></div>
-              <span className="text-xs font-bold text-zinc-600 tracking-[0.14em]">
+              <span className="text-xs font-bold text-navy-600 tracking-[0.14em]">
                 Systems{" "}
                 {getDisplayHealthStatus(health) === "ok"
                   ? "Operating Normally"
@@ -186,12 +186,12 @@ export function Features() {
         </div>
         */}
         {/* Temporarily hidden — response latency graph
-        <div className="col-span-full border-t border-zinc-100/80 bg-zinc-50/20 p-6 sm:p-10">
+        <div className="col-span-full border-t border-navy-100/80 bg-navy-50/20 p-6 sm:p-10">
           <div className="max-w-4xl mb-8">
             <LandingPill label="Activity feed" accent="amber" className="mb-5" />
-            <p className="text-xl md:text-2xl font-semibold text-zinc-950 tracking-[-0.03em] leading-snug">
+            <p className="text-xl md:text-2xl font-semibold text-navy-950 tracking-[-0.03em] leading-snug">
               Monitor activity in real-time.{" "}
-              <span className="text-zinc-400 font-light">
+              <span className="text-navy-400 font-light">
                 Instantly identify and resolve issues.
               </span>
             </p>
@@ -266,8 +266,8 @@ const statusStyles: Record<
     label: "Unhealthy",
   },
   unknown: {
-    dot: "bg-zinc-400",
-    bar: "bg-zinc-400",
+    dot: "bg-navy-400",
+    bar: "bg-navy-400",
     label: "Unknown",
   },
 };
@@ -278,11 +278,11 @@ function ServiceChip({ service }: { service: ServiceHealth }) {
 
   return (
     <div className="flex flex-col gap-1 min-w-0">
-      <div className="flex items-center justify-between gap-2 text-[11px] font-semibold text-zinc-600">
+      <div className="flex items-center justify-between gap-2 text-[11px] font-semibold text-navy-600">
         <span className="truncate capitalize">{service.name}</span>
-        <span className="tabular-nums text-zinc-400">{service.latencyLabel}</span>
+        <span className="tabular-nums text-navy-400">{service.latencyLabel}</span>
       </div>
-      <div className="h-2 rounded-full bg-zinc-100 overflow-hidden">
+      <div className="h-2 rounded-full bg-navy-100 overflow-hidden">
         <div
           className={cn("h-full rounded-full transition-all duration-700", styles.bar)}
           style={{ width: `${Math.min(100, Math.max(8, (latency / 120) * 100))}%` }}
@@ -323,9 +323,9 @@ const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
 
   if (!healthStatus) {
     return (
-      <div className="rounded-2xl border border-zinc-100/60 bg-white/60 backdrop-blur-sm p-8">
-        <div className="flex items-center justify-center gap-3 text-zinc-400">
-          <div className="size-5 animate-spin rounded-full border-2 border-zinc-200 border-t-zinc-600" />
+      <div className="rounded-[2px] border border-navy-100/60 bg-white/60 p-8">
+        <div className="flex items-center justify-center gap-3 text-navy-400">
+          <div className="size-5 animate-spin rounded-full border-2 border-navy-200 border-t-navy-600" />
           <span className="text-sm font-medium">Loading service health…</span>
         </div>
       </div>
@@ -345,15 +345,15 @@ const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
   const areaPath = `${linePath} L ${points[points.length - 1]?.x ?? pad.l} ${pad.t + innerH} L ${points[0]?.x ?? pad.l} ${pad.t + innerH} Z`;
 
   return (
-    <div className="rounded-2xl border border-zinc-100/60 bg-white/70 backdrop-blur-sm p-5 sm:p-8 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.06)]">
+    <div className="rounded-[2px] border border-navy-100/60 bg-white/70 p-5 sm:p-8 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.06)]">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 mb-1">
+          <p className="text-[10px] font-semibold tracking-[0.14em] text-navy-400 mb-1">
             Response latency
           </p>
-          <p className="text-2xl font-semibold tracking-[-0.04em] text-zinc-950 tabular-nums">
+          <p className="text-2xl font-semibold tracking-[-0.04em] text-navy-950 tabular-nums">
             {avgLatencyMs != null ? `${avgLatencyMs.toFixed(1)}ms` : "—"}
-            <span className="ml-2 text-sm font-medium text-zinc-400">avg</span>
+            <span className="ml-2 text-sm font-medium text-navy-400">avg</span>
           </p>
         </div>
         <div

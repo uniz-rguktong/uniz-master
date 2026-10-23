@@ -191,19 +191,19 @@ export default function SubjectManagement() {
   };
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-zinc-900">
+    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-navy-900">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex flex-col gap-1.5">
-          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-zinc-900 leading-none">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-navy-900 leading-none">
             Academic Subjects
           </h2>
-          <p className="text-zinc-500 font-medium text-[15px]">
+          <p className="text-navy-500 font-medium text-[15px]">
             Manage the core institutional curriculum ({meta.total} records).
           </p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="h-11 px-6 bg-zinc-900 text-white rounded-xl font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2"
+          className="h-11 px-6 bg-navy-900 text-white rounded-xl font-bold tracking-[0.14em] text-[10px] hover:bg-navy-800 active:scale-95 transition-all flex items-center justify-center gap-2"
         >
           <Plus size={16} /> New Subject
         </button>
@@ -212,7 +212,7 @@ export default function SubjectManagement() {
       <div className="flex flex-wrap gap-4 items-center">
         <div className="relative group flex-1 min-w-[300px]">
           <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-zinc-900 transition-colors"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-navy-400 group-focus-within:text-navy-900 transition-colors"
             size={16}
           />
           <input
@@ -220,19 +220,19 @@ export default function SubjectManagement() {
             placeholder="Search by name or code..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-11 pl-12 pr-5 bg-white border border-zinc-200 rounded-xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-all font-semibold text-zinc-900 text-sm placeholder:text-zinc-400 placeholder:font-medium shadow-none"
+            className="w-full h-11 pl-12 pr-5 bg-white border border-navy-200 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-navy-900 text-sm placeholder:text-navy-400 placeholder:font-medium shadow-none"
           />
         </div>
 
         <div className="relative group">
           <Filter
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-zinc-900 pointer-events-none"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-navy-400 group-focus-within:text-navy-900 pointer-events-none"
             size={14}
           />
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            className="bg-white border border-zinc-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
+            className="bg-white border border-navy-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] tracking-[0.14em] text-navy-600 outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Departments</option>
             <option value="AIML">AIML</option>
@@ -245,20 +245,20 @@ export default function SubjectManagement() {
             <option value="MECH">MECH</option>
           </select>
           <ChevronDown
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
             size={14}
           />
         </div>
 
         <div className="relative group">
           <Calendar
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-zinc-900 pointer-events-none"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-navy-400 group-focus-within:text-navy-900 pointer-events-none"
             size={14}
           />
           <select
             value={semester}
             onChange={(e) => setSemester(e.target.value)}
-            className="bg-white border border-zinc-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
+            className="bg-white border border-navy-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] tracking-[0.14em] text-navy-600 outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Semesters</option>
             {["E1", "E2", "E3", "E4"].map((y) => (
@@ -269,7 +269,7 @@ export default function SubjectManagement() {
             ))}
           </select>
           <ChevronDown
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
             size={14}
           />
         </div>
@@ -280,7 +280,7 @@ export default function SubjectManagement() {
           {[...Array(12)].map((_, i) => (
             <div
               key={i}
-              className="bg-white border border-zinc-100 rounded-xl p-5 space-y-4"
+              className="bg-white border border-navy-100 rounded-xl p-5 space-y-4"
             >
               <div className="flex items-center gap-3">
                 <Skeleton className="w-10 h-10 rounded-lg" />
@@ -312,10 +312,10 @@ export default function SubjectManagement() {
             {subjects.map((sub, idx) => (
               <div
                 key={idx}
-                className="bg-white border border-zinc-100 rounded-xl p-5 transition-all group overflow-hidden relative"
+                className="bg-white border border-navy-100 rounded-xl p-5 transition-all group overflow-hidden relative"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2.5 bg-zinc-50 rounded-lg text-zinc-900 border border-zinc-100 transition-colors duration-300">
+                  <div className="p-2.5 bg-navy-50 rounded-lg text-navy-900 border border-navy-100 transition-colors duration-300">
                     <BookText size={18} />
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col gap-1.5">
@@ -323,51 +323,51 @@ export default function SubjectManagement() {
                       code={sub.displayCode || sub.code}
                       academicCode={sub.academicCode}
                     />
-                    <h3 className="text-[14px] font-bold text-zinc-900 tracking-tight leading-tight line-clamp-2">
+                    <h3 className="text-[14px] font-bold text-navy-900 tracking-tight leading-tight line-clamp-2">
                       {sub.name}
                     </h3>
                   </div>
                   <div className="ml-auto flex gap-1 transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                     <button
                       onClick={() => handleEditClick(sub)}
-                      className="p-1.5 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-lg transition-all"
+                      className="p-1.5 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-lg transition-all"
                     >
                       <Edit3 size={12} />
                     </button>
                     <button
                       onClick={() => handleDeleteSubject(sub.id)}
-                      className="p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                      className="p-1.5 text-navy-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                     >
                       <Trash2 size={12} />
                     </button>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-zinc-50">
+                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-navy-50">
                   <div className="flex flex-col">
-                    <p className="text-[8px] font-semibold text-zinc-300 tracking-[0.14em] leading-none mb-1">
+                    <p className="text-[8px] font-semibold text-navy-300 tracking-[0.14em] leading-none mb-1">
                       Department
                     </p>
-                    <p className="font-bold text-zinc-600 text-[10px] flex items-center gap-1.5">
-                      <div className="w-1 h-1 rounded-full bg-zinc-900"></div>
+                    <p className="font-bold text-navy-600 text-[10px] flex items-center gap-1.5">
+                      <div className="w-1 h-1 rounded-full bg-navy-900"></div>
                       {sub.department}
                     </p>
                   </div>
                   <div className="flex flex-col">
-                    <p className="text-[8px] font-semibold text-zinc-300 tracking-[0.14em] leading-none mb-1">
+                    <p className="text-[8px] font-semibold text-navy-300 tracking-[0.14em] leading-none mb-1">
                       Semester
                     </p>
-                    <p className="font-bold text-zinc-600 text-[10px] flex items-center gap-1.5">
-                      <Calendar size={10} className="text-zinc-400" />{" "}
+                    <p className="font-bold text-navy-600 text-[10px] flex items-center gap-1.5">
+                      <Calendar size={10} className="text-navy-400" />{" "}
                       {sub.semester}
                     </p>
                   </div>
                   <div className="col-span-2 pt-1">
                     <div className="flex items-center justify-between mb-1.5">
-                      <p className="text-[8px] font-semibold text-zinc-300 tracking-[0.14em]">
+                      <p className="text-[8px] font-semibold text-navy-300 tracking-[0.14em]">
                         Academic Weight
                       </p>
-                      <span className="text-[9px] font-semibold text-zinc-900 px-1.5 py-0.5 bg-zinc-50 rounded-md">
+                      <span className="text-[9px] font-semibold text-navy-900 px-1.5 py-0.5 bg-navy-50 rounded-md">
                         {sub.credits} CREDITS
                       </span>
                     </div>
@@ -378,8 +378,8 @@ export default function SubjectManagement() {
                           className={cn(
                             "flex-1 h-1 rounded-full transition-all duration-500",
                             i < Number(sub.credits)
-                              ? "bg-zinc-900"
-                              : "bg-zinc-100",
+                              ? "bg-navy-900"
+                              : "bg-navy-100",
                           )}
                         ></div>
                       ))}
@@ -395,7 +395,7 @@ export default function SubjectManagement() {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="w-10 h-10 flex items-center justify-center bg-white text-zinc-500 border border-zinc-200 rounded-xl hover:bg-zinc-50 hover:text-zinc-900 transition-all active:scale-90 disabled:opacity-40"
+                className="w-10 h-10 flex items-center justify-center bg-white text-navy-500 border border-navy-200 rounded-xl hover:bg-navy-50 hover:text-navy-900 transition-all active:scale-90 disabled:opacity-40"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -414,8 +414,8 @@ export default function SubjectManagement() {
                         onClick={() => setPage(p)}
                         className={`w-10 h-10 rounded-xl font-bold text-[11px] border transition-all ${
                           page === p
-                            ? "bg-zinc-900 text-white border-zinc-900"
-                            : "bg-white text-zinc-400 border-zinc-100 hover:border-zinc-300 hover:text-zinc-600"
+                            ? "bg-navy-900 text-white border-navy-900"
+                            : "bg-white text-navy-400 border-navy-100 hover:border-navy-300 hover:text-navy-600"
                         }`}
                       >
                         {p}
@@ -424,7 +424,7 @@ export default function SubjectManagement() {
                   }
                   if (p === 2 || p === meta.totalPages - 1) {
                     return (
-                      <span key={p} className="text-zinc-300 font-semibold px-1">
+                      <span key={p} className="text-navy-300 font-semibold px-1">
                         ...
                       </span>
                     );
@@ -436,7 +436,7 @@ export default function SubjectManagement() {
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                className="w-10 h-10 flex items-center justify-center bg-white text-zinc-500 border border-zinc-200 rounded-xl hover:bg-zinc-50 hover:text-zinc-900 transition-all active:scale-90 disabled:opacity-40"
+                className="w-10 h-10 flex items-center justify-center bg-white text-navy-500 border border-navy-200 rounded-xl hover:bg-navy-50 hover:text-navy-900 transition-all active:scale-90 disabled:opacity-40"
               >
                 <ChevronRight size={18} />
               </button>
@@ -444,15 +444,15 @@ export default function SubjectManagement() {
           )}
         </>
       ) : (
-        <div className="p-32 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-xl border border-zinc-100 shadow-none">
-          <div className="w-24 h-24 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center justify-center text-zinc-300 shadow-none">
+        <div className="p-32 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-xl border border-navy-100 shadow-none">
+          <div className="w-24 h-24 bg-navy-50 border border-navy-100 rounded-xl flex items-center justify-center text-navy-300 shadow-none">
             <BookOpen size={48} strokeWidth={1.5} />
           </div>
           <div>
-            <p className="text-2xl font-semibold text-zinc-900 tracking-tight">
+            <p className="text-2xl font-semibold text-navy-900 tracking-tight">
               No Subjects Found
             </p>
-            <p className="text-zinc-400 font-medium mt-2 max-w-sm text-[15px]">
+            <p className="text-navy-400 font-medium mt-2 max-w-sm text-[15px]">
               No subjects found matching your criteria. Try adjusting your
               filters or search term.
             </p>
@@ -463,7 +463,7 @@ export default function SubjectManagement() {
               setDepartment("");
               setSemester("");
             }}
-            className="text-zinc-900 font-semibold text-sm tracking-[0.14em] hover:underline active:scale-95"
+            className="text-navy-900 font-semibold text-sm tracking-[0.14em] hover:underline active:scale-95"
           >
             Clear all filters
           </button>
@@ -487,7 +487,7 @@ export default function SubjectManagement() {
             <div className="space-y-2">
               <label className={adminLabelClass}>Subject name</label>
               <div className="relative">
-                <BookOpen className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
+                <BookOpen className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400 w-4 h-4" />
                 <input
                   required
                   value={newSubject.name}

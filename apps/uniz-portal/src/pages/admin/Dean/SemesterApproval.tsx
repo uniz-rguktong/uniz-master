@@ -193,13 +193,13 @@ export default function SemesterApproval({ role }: { role: string }) {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
             {[0, 1].map((i) => (
-              <div key={i} className="h-40 rounded-3xl bg-zinc-100/70 animate-pulse" />
+              <div key={i} className="h-40 rounded-[2px] bg-navy-100/70 animate-pulse" />
             ))}
           </div>
         ) : pending.length === 0 ? (
           <div className={cn(adminCardClass, "border-dashed py-14 text-center")}>
-            <Inbox size={32} className="mx-auto text-zinc-300 mb-3" />
-            <p className="text-sm font-bold text-zinc-500">
+            <Inbox size={32} className="mx-auto text-navy-300 mb-3" />
+            <p className="text-sm font-bold text-navy-500">
               Nothing pending right now.
             </p>
           </div>
@@ -271,10 +271,10 @@ function PendingCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       onClick={() => onOpen(sem)}
-      className="group text-left relative rounded-3xl border border-amber-200/70 bg-gradient-to-br from-amber-50/40 to-white p-6 hover:shadow-lg transition-all overflow-hidden"
+      className="group text-left relative rounded-[2px] border border-amber-200/70 bg-gradient-to-br from-amber-50/40 to-white p-6 hover:shadow-lg transition-all overflow-hidden"
     >
       <div className="flex items-start justify-between mb-5">
-        <div className="w-11 h-11 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
+        <div className="w-11 h-11 rounded-[2px] bg-amber-100 text-amber-600 flex items-center justify-center">
           <CalendarClock size={22} />
         </div>
         <span className={cn(adminChipClass, "bg-amber-500 text-white border-amber-500")}>
@@ -284,11 +284,11 @@ function PendingCard({
       <h3 className={cn(adminSectionTitleClass, "text-lg truncate")}>
         {sem.name}
       </h3>
-      <p className="text-xs font-medium text-zinc-400 mt-1">
+      <p className="text-xs font-medium text-navy-400 mt-1">
         {sem.batch ? `Batch ${sem.batch} · ` : ""}
         {sem.program || "B.Tech"}
       </p>
-      <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 group-hover:gap-2.5 transition-all">
+      <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-navy-900 group-hover:gap-2.5 transition-all">
         Review now <ChevronLeft size={16} className="rotate-180" />
       </div>
     </motion.button>
@@ -344,13 +344,13 @@ function DetailView({
       <button
         type="button"
         onClick={onBack}
-        className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-500 hover:text-zinc-900 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy-500 hover:text-navy-900 transition-colors"
       >
         <ChevronLeft size={16} /> Back to approvals
       </button>
 
       {/* Hero */}
-      <div className="rounded-3xl bg-zinc-900 text-white p-7 relative overflow-hidden">
+      <div className="rounded-[2px] bg-navy-900 text-white p-7 relative overflow-hidden">
         <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-white/10 blur-2xl" />
         <div className="relative">
           <p className={cn(adminLabelClass, "text-white/60 mb-1")}>
@@ -398,7 +398,7 @@ function DetailView({
       {loading ? (
         <div className="space-y-3">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-16 rounded-2xl bg-zinc-100/70 animate-pulse" />
+            <div key={i} className="h-16 rounded-[2px] bg-navy-100/70 animate-pulse" />
           ))}
         </div>
       ) : (
@@ -409,16 +409,16 @@ function DetailView({
               {groups.map((g) => (
                 <div
                   key={g.id}
-                  className="rounded-2xl border border-violet-200/60 bg-violet-50/40 px-4 py-3 flex items-center gap-3"
+                  className="rounded-[2px] border border-violet-200/60 bg-violet-50/40 px-4 py-3 flex items-center gap-3"
                 >
                   <div className="w-9 h-9 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center shrink-0">
                     <Layers size={16} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-zinc-800 truncate">
+                    <p className="text-sm font-semibold text-navy-800 truncate">
                       {g.groupName}
                     </p>
-                    <p className="text-[10px] font-bold text-zinc-400 tracking-wide">
+                    <p className="text-[10px] font-bold text-navy-400 tracking-wide">
                       {g.groupCode} · {g.branch} · choose {g.selectionLimit}
                     </p>
                   </div>
@@ -436,8 +436,8 @@ function DetailView({
 
           {filtered.length === 0 && (
             <div className={cn(adminCardClass, "border-dashed py-14 text-center")}>
-              <Building2 size={30} className="mx-auto text-zinc-300 mb-3" />
-              <p className="text-sm font-bold text-zinc-500">
+              <Building2 size={30} className="mx-auto text-navy-300 mb-3" />
+              <p className="text-sm font-bold text-navy-500">
                 No subjects allocated{branchFilter !== "all" ? ` for ${branchFilter}` : ""}.
               </p>
             </div>
@@ -446,10 +446,10 @@ function DetailView({
       )}
 
       {/* Credits + actions */}
-      <div className="sticky bottom-0 -mx-6 md:-mx-8 px-6 md:px-8 py-4 bg-white/80 backdrop-blur-xl border-t border-zinc-200/70 flex items-center gap-3">
+      <div className="sticky bottom-0 -mx-6 md:-mx-8 px-6 md:px-8 py-4 bg-white/80 border-t border-navy-200/70 flex items-center gap-3">
         <div className="mr-auto">
           <p className={adminLabelClass}>Total Credits</p>
-          <p className="text-xl font-semibold text-zinc-900 tabular-nums">{totalCredits}</p>
+          <p className="text-xl font-semibold text-navy-900 tabular-nums">{totalCredits}</p>
         </div>
         {canAct ? (
           <>
@@ -472,7 +472,7 @@ function DetailView({
             </button>
           </>
         ) : (
-          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-400">
+          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy-400">
             <CheckCircle2 size={15} className="text-emerald-500" /> Read only
           </span>
         )}
@@ -493,28 +493,28 @@ function SubjectGroup({
   if (items.length === 0) return null;
   return (
     <div className={cn(adminCardClass, "overflow-hidden p-0")}>
-      <div className="px-5 py-3.5 border-b border-zinc-200/70 flex items-center gap-2">
-        <span className="text-zinc-400">{icon}</span>
+      <div className="px-5 py-3.5 border-b border-navy-200/70 flex items-center gap-2">
+        <span className="text-navy-400">{icon}</span>
         <h3 className={adminEyebrowClass}>{title}</h3>
-        <span className="ml-auto text-[10px] font-semibold text-zinc-300 tabular-nums">
+        <span className="ml-auto text-[10px] font-semibold text-navy-300 tabular-nums">
           {items.length}
         </span>
       </div>
       <AnimatePresence>
-        <div className="divide-y divide-zinc-50">
+        <div className="divide-y divide-navy-50">
           {items.map((a) => (
             <div
               key={a.id}
-              className="flex items-center gap-3 px-5 py-3.5 hover:bg-zinc-50/50 transition-colors"
+              className="flex items-center gap-3 px-5 py-3.5 hover:bg-navy-50/50 transition-colors"
             >
-              <div className="w-9 h-9 rounded-xl bg-zinc-50 text-zinc-400 flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-navy-50 text-navy-400 flex items-center justify-center shrink-0">
                 <BookOpen size={15} />
               </div>
               <div className="min-w-0 flex-1">
                 <p className={cn(adminSectionTitleClass, "truncate")}>
                   {a.customName || a.subject?.name}
                 </p>
-                <p className="text-[10px] font-medium text-zinc-400 tracking-wide">
+                <p className="text-[10px] font-medium text-navy-400 tracking-wide">
                   {a.customCode || a.subject?.code} · {a.branch} · {a.academicYear} ·{" "}
                   {a.customCredits || a.subject?.credits || 0}C
                   {a.electiveGroupId ? ` · ${a.electiveGroupId}` : ""}

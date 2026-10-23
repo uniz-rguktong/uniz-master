@@ -270,17 +270,17 @@ export default function BannersSection() {
                 "overflow-hidden flex flex-col animate-pulse",
               )}
             >
-              <div className="h-44 w-full bg-zinc-100 border-b border-zinc-200/70" />
+              <div className="h-44 w-full bg-navy-100 border-b border-navy-200/70" />
               <div className="p-6 space-y-5">
                 <div className="space-y-3">
-                  <div className="h-5 w-3/4 bg-zinc-100 rounded-lg" />
-                  <div className="h-3 w-full bg-zinc-50 rounded-md" />
-                  <div className="h-3 w-5/6 bg-zinc-50 rounded-md" />
+                  <div className="h-5 w-3/4 bg-navy-100 rounded-lg" />
+                  <div className="h-3 w-full bg-navy-50 rounded-md" />
+                  <div className="h-3 w-5/6 bg-navy-50 rounded-md" />
                 </div>
                 <div className="pt-4 flex items-center gap-2">
-                  <div className="h-10 flex-1 bg-zinc-50 rounded-xl" />
-                  <div className="h-10 w-10 bg-zinc-50 rounded-xl" />
-                  <div className="h-10 w-10 bg-zinc-50 rounded-xl" />
+                  <div className="h-10 flex-1 bg-navy-50 rounded-xl" />
+                  <div className="h-10 w-10 bg-navy-50 rounded-xl" />
+                  <div className="h-10 w-10 bg-navy-50 rounded-xl" />
                 </div>
               </div>
             </div>
@@ -300,7 +300,7 @@ export default function BannersSection() {
                 )}
               >
                 {/* Preview Image */}
-                <div className="h-44 w-full bg-zinc-100 relative overflow-hidden shrink-0 border-b border-zinc-200/70">
+                <div className="h-44 w-full bg-navy-100 relative overflow-hidden shrink-0 border-b border-navy-200/70">
                   {banner.imageUrl ? (
                     <img
                       src={banner.imageUrl}
@@ -308,17 +308,17 @@ export default function BannersSection() {
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-zinc-300">
+                    <div className="w-full h-full flex items-center justify-center text-navy-300">
                       <ImageIcon size={40} strokeWidth={1} />
                     </div>
                   )}
 
                   {/* Status Badge */}
                   <div
-                    className={`absolute top-3.5 right-3.5 px-2.5 py-1 rounded-full text-[10px] font-medium tracking-tight flex items-center gap-1.5 border backdrop-blur-md ${banner.isVisible ? "bg-white/90 text-zinc-700 border-zinc-200" : "bg-white/90 text-zinc-400 border-zinc-200"}`}
+                    className={`absolute top-3.5 right-3.5 px-2.5 py-1 rounded-full text-[10px] font-medium tracking-tight flex items-center gap-1.5 border ${banner.isVisible ? "bg-white/90 text-navy-700 border-navy-200" : "bg-white/90 text-navy-400 border-navy-200"}`}
                   >
                     <span
-                      className={`w-1.5 h-1.5 rounded-full ${banner.isVisible ? "bg-emerald-500" : "bg-zinc-300"}`}
+                      className={`w-1.5 h-1.5 rounded-full ${banner.isVisible ? "bg-emerald-500" : "bg-navy-300"}`}
                     />
                     {banner.isVisible ? "Active" : "Hidden"}
                   </div>
@@ -326,10 +326,10 @@ export default function BannersSection() {
 
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-1">
-                  <h3 className="font-semibold text-zinc-900 text-[15px] leading-tight mb-1.5 line-clamp-1">
+                  <h3 className="font-semibold text-navy-900 text-[15px] leading-tight mb-1.5 line-clamp-1">
                     {banner.title}
                   </h3>
-                  <p className="text-zinc-500 text-[13px] line-clamp-2 leading-relaxed mb-5">
+                  <p className="text-navy-500 text-[13px] line-clamp-2 leading-relaxed mb-5">
                     {banner.text}
                   </p>
 
@@ -337,7 +337,7 @@ export default function BannersSection() {
                     <button
                       onClick={() => toggleVisibilityAction(banner)}
                       disabled={actionLoading === bannerId}
-                      className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl border border-zinc-200 bg-white text-zinc-600 text-[12px] font-semibold hover:text-zinc-900 hover:border-zinc-300 active:scale-[0.98] transition-all disabled:opacity-50"
+                      className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl border border-navy-200 bg-white text-navy-600 text-[12px] font-semibold hover:text-navy-900 hover:border-navy-300 active:scale-[0.98] transition-all disabled:opacity-50"
                     >
                       {actionLoading === bannerId ? (
                         <Loader2 size={13} className="animate-spin" />
@@ -350,14 +350,14 @@ export default function BannersSection() {
                     </button>
                     <button
                       onClick={() => handleEditClick(banner)}
-                      className="h-10 w-10 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:text-zinc-900 hover:border-zinc-300 border border-zinc-200 transition-all active:scale-95"
+                      className="h-10 w-10 flex items-center justify-center bg-white text-navy-400 rounded-xl hover:text-navy-900 hover:border-navy-300 border border-navy-200 transition-all active:scale-95"
                     >
                       <Edit3 size={14} />
                     </button>
                     <button
                       onClick={() => deleteBanner(bannerId)}
                       disabled={actionLoading === bannerId}
-                      className="h-10 w-10 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-zinc-200 transition-all active:scale-95"
+                      className="h-10 w-10 flex items-center justify-center bg-white text-navy-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-navy-200 transition-all active:scale-95"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -374,14 +374,14 @@ export default function BannersSection() {
             "py-24 flex flex-col items-center justify-center text-center space-y-6",
           )}
         >
-          <div className="w-16 h-16 bg-zinc-50 border border-zinc-200/70 rounded-2xl flex items-center justify-center text-zinc-300">
+          <div className="w-16 h-16 bg-navy-50 border border-navy-200/70 rounded-[2px] flex items-center justify-center text-navy-300">
             <ImageIcon size={32} strokeWidth={1.5} />
           </div>
           <div className="space-y-1.5">
-            <p className="text-[17px] font-semibold text-zinc-900 tracking-tight">
+            <p className="text-[17px] font-semibold text-navy-900 tracking-tight">
               No Active Banners
             </p>
-            <p className="text-zinc-500 max-w-sm text-[13px] leading-relaxed">
+            <p className="text-navy-500 max-w-sm text-[13px] leading-relaxed">
               Bring your campus to life by creating featured banners for events,
               announcements, or updates.
             </p>
@@ -410,7 +410,7 @@ export default function BannersSection() {
           }
         }}
       >
-        <AlertDialogContent className="max-w-md p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl shadow-xl">
+        <AlertDialogContent className="max-w-md p-0 overflow-hidden bg-white border-navy-200 rounded-[2px] shadow-xl">
           <div className="relative">
             {/* Close Button */}
             <button
@@ -425,7 +425,7 @@ export default function BannersSection() {
                   isVisible: true,
                 });
               }}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
@@ -433,10 +433,10 @@ export default function BannersSection() {
             <form onSubmit={handleSaveBanner} className="p-8">
               {/* Header */}
               <AlertDialogHeader className="flex flex-col items-start text-left gap-1.5 mb-7">
-                <AlertDialogTitle className="text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]">
+                <AlertDialogTitle className="text-[20px] font-semibold text-navy-900 tracking-[-0.01em]">
                   {editingBanner ? "Edit Banner" : "New Banner"}
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-[13px] text-zinc-500 leading-relaxed">
+                <AlertDialogDescription className="text-[13px] text-navy-500 leading-relaxed">
                   {editingBanner
                     ? "Update your featured spotlight content."
                     : "Configure a new spotlight for the student portal."}
@@ -482,7 +482,7 @@ export default function BannersSection() {
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={uploading}
-                      className="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-600 hover:text-zinc-900 transition-colors"
+                      className="flex items-center gap-1.5 text-[11px] font-semibold text-navy-600 hover:text-navy-900 transition-colors"
                     >
                       {uploading ? (
                         <Loader2 size={12} className="animate-spin" />
@@ -514,7 +514,7 @@ export default function BannersSection() {
 
                 {/* Image Preview */}
                 {newBanner.imageUrl && (
-                  <div className="h-24 w-full rounded-xl overflow-hidden border border-zinc-200 relative group">
+                  <div className="h-24 w-full rounded-xl overflow-hidden border border-navy-200 relative group">
                     <img
                       src={newBanner.imageUrl}
                       alt="preview"

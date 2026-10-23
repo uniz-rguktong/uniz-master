@@ -23,7 +23,7 @@ export function ConfirmModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-900/40 animate-in fade-in duration-200">
       <div
         className={cn(adminCardClass, "w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200")}
         role="dialog"
@@ -38,7 +38,7 @@ export function ConfirmModal({
               <h3 className={cn(adminModalTitleClass, "text-center")}>
                 Confirm action
               </h3>
-              <p className="text-[13px] font-medium text-zinc-500 mt-2 leading-relaxed">
+              <p className="text-[13px] font-medium text-navy-500 mt-2 leading-relaxed">
                 {message}
               </p>
             </div>

@@ -88,7 +88,7 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-6 hidden md:flex md:flex-col bg-zinc-50 border-r border-zinc-200 shrink-0",
+          "h-full px-4 py-6 hidden md:flex md:flex-col bg-navy-50 border-r border-navy-200 shrink-0",
           className,
         )}
         animate={{
@@ -116,7 +116,7 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-16 px-6 flex flex-row md:hidden items-center justify-between bg-white border-b border-zinc-200 w-full sticky top-0 z-50",
+          "h-16 px-6 flex flex-row md:hidden items-center justify-between bg-white border-b border-navy-200 w-full sticky top-0 z-50",
           className,
         )}
         {...props}
@@ -204,8 +204,8 @@ export const SidebarLink = ({
         "flex items-center group/sidebar py-2 px-2 rounded-xl transition-all duration-200 mb-2 mx-1",
         "justify-start gap-2",
         isActive
-          ? "bg-zinc-900 text-white shadow-md hover:bg-zinc-800"
-          : "text-zinc-700 hover:bg-zinc-100 hover:text-[#061B33]",
+          ? "bg-navy-900 text-white shadow-md hover:bg-navy-800"
+          : "text-navy-700 hover:bg-navy-100 hover:text-[#061B33]",
         className,
       )}
       {...props}
@@ -226,7 +226,7 @@ export const SidebarLink = ({
           "text-sm font-bold tracking-tight whitespace-nowrap overflow-hidden",
           isActive
             ? "text-white"
-            : "text-zinc-600 group-hover/sidebar:text-[#061B33]",
+            : "text-navy-600 group-hover/sidebar:text-[#061B33]",
         )}
       >
         {link.label}

@@ -22,7 +22,24 @@ import {
   portalSubtitleClass,
   portalTextareaClass,
   portalTitleClass,
+  portalPageHeaderClass,
+  portalToolbarClass,
+  portalTableWrapClass,
+  portalThClass,
+  portalTdClass,
+  portalEmptyClass,
+  portalStatStripClass,
+  portalCanvasClass,
 } from "@/lib/portal-ui";
+
+export const adminPageHeaderClass = portalPageHeaderClass;
+export const adminToolbarClass = portalToolbarClass;
+export const adminTableWrapClass = portalTableWrapClass;
+export const adminThClass = portalThClass;
+export const adminTdClass = portalTdClass;
+export const adminEmptyClass = portalEmptyClass;
+export const adminStatStripClass = portalStatStripClass;
+export const adminCanvasClass = portalCanvasClass;
 
 /* ============================================================
    UniZ Admin — ExamCell institutional tokens (flat, no glass/mesh)

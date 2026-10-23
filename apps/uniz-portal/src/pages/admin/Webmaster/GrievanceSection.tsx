@@ -72,9 +72,9 @@ export default function GrievanceSection() {
       case "pending":
         return "bg-amber-50 text-amber-600 border-amber-100";
       case "in-progress":
-        return "bg-zinc-50 text-zinc-900 border-zinc-100";
+        return "bg-navy-50 text-navy-900 border-navy-100";
       default:
-        return "bg-zinc-50 text-zinc-600 border-zinc-100";
+        return "bg-navy-50 text-navy-600 border-navy-100";
     }
   };
 
@@ -93,10 +93,10 @@ export default function GrievanceSection() {
     <div className="p-8 space-y-8 animate-in fade-in duration-500 pb-20">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex flex-col gap-1.5">
-          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-zinc-900 leading-none">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-navy-900 leading-none">
             Student Grievances
           </h2>
-          <p className="text-zinc-500 font-medium text-[15px]">
+          <p className="text-navy-500 font-medium text-[15px]">
             Review and manage student submitted concerns
           </p>
         </div>
@@ -105,7 +105,7 @@ export default function GrievanceSection() {
           <button
             onClick={fetchGrievances}
             disabled={loading}
-            className="bg-white border border-zinc-200 p-3 rounded-xl hover:bg-zinc-50 transition-all shadow-none"
+            className="bg-white border border-navy-200 p-3 rounded-xl hover:bg-navy-50 transition-all shadow-none"
           >
             <Clock size={18} className={loading ? "animate-spin" : ""} />
           </button>
@@ -118,7 +118,7 @@ export default function GrievanceSection() {
           label="Total Grievances"
           count={grievances.length}
           icon={MessageSquare}
-          color="bg-zinc-900"
+          color="bg-navy-900"
         />
         <StatCard
           label="Pending Review"
@@ -141,24 +141,24 @@ export default function GrievanceSection() {
       </div>
 
       {/* Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-5 rounded-xl border border-zinc-100 shadow-none transition-all">
+      <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-5 rounded-xl border border-navy-100 shadow-none transition-all">
         <div className="relative flex-1 w-full">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 w-5 h-5" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-navy-400 w-5 h-5" />
           <input
             type="text"
             placeholder="Search grievances by ID, category or content..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-all font-semibold text-zinc-900 text-sm"
+            className="w-full pl-12 pr-4 py-3 bg-navy-50 border border-navy-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-navy-900 text-sm"
           />
         </div>
 
-        <div className="flex gap-2 p-1.5 bg-zinc-100/80 rounded-full border border-zinc-200/60 backdrop-blur-sm shrink-0">
+        <div className="flex gap-2 p-1.5 bg-navy-100/80 rounded-full border border-navy-200/60 shrink-0">
           {["all", "pending", "resolved"].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-5 py-2 rounded-xl text-[10px] font-semibold tracking-[0.14em] transition-all ${filter === f ? "bg-white text-zinc-800 shadow-none border border-zinc-100" : "text-zinc-500 hover:text-zinc-900"}`}
+              className={`px-5 py-2 rounded-xl text-[10px] font-semibold tracking-[0.14em] transition-all ${filter === f ? "bg-white text-navy-800 shadow-none border border-navy-100" : "text-navy-500 hover:text-navy-900"}`}
             >
               {f}
             </button>
@@ -169,8 +169,8 @@ export default function GrievanceSection() {
       {/* Grievance Grid */}
       {loading ? (
         <div className="p-20 flex flex-col items-center justify-center space-y-4">
-          <Loader2 className="animate-spin w-10 h-10 text-zinc-300" />
-          <p className="font-bold text-zinc-400">Loading grievances...</p>
+          <Loader2 className="animate-spin w-10 h-10 text-navy-300" />
+          <p className="font-bold text-navy-400">Loading grievances...</p>
         </div>
       ) : filteredGrievances.length > 0 ? (
         <>
@@ -178,19 +178,19 @@ export default function GrievanceSection() {
             {filteredGrievances.map((grievance) => (
               <div
                 key={grievance.id || grievance._id}
-                className="bg-white rounded-xl border border-zinc-100 p-6 shadow-none transition-all group flex flex-col justify-between"
+                className="bg-white rounded-xl border border-navy-100 p-6 shadow-none transition-all group flex flex-col justify-between"
               >
                 <div>
                   <div className="flex justify-between items-start mb-5">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 rounded-xl bg-zinc-50 text-zinc-400 border border-zinc-100">
+                      <div className="p-2.5 rounded-xl bg-navy-50 text-navy-400 border border-navy-100">
                         <Tag size={16} />
                       </div>
                       <div>
-                        <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] leading-none mb-1.5">
+                        <p className="text-[10px] font-semibold text-navy-400 tracking-[0.14em] leading-none mb-1.5">
                           Category
                         </p>
-                        <p className="font-semibold text-zinc-900 text-sm">
+                        <p className="font-semibold text-navy-900 text-sm">
                           {grievance.category}
                         </p>
                       </div>
@@ -203,21 +203,21 @@ export default function GrievanceSection() {
                     </div>
                   </div>
 
-                  <p className="text-zinc-700 font-medium leading-relaxed mb-6 line-clamp-3 bg-zinc-50/30 p-5 rounded-xl border border-zinc-100/50 italic text-[14px]">
+                  <p className="text-navy-700 font-medium leading-relaxed mb-6 line-clamp-3 bg-navy-50/30 p-5 rounded-xl border border-navy-100/50 italic text-[14px]">
                     "{grievance.description}"
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-zinc-50">
+                <div className="flex items-center justify-between pt-4 border-t border-navy-50">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-400">
+                    <div className="w-9 h-9 rounded-full bg-navy-50 border border-navy-100 flex items-center justify-center text-navy-400">
                       <User size={16} />
                     </div>
                     <div>
-                      <p className="text-[9px] font-semibold text-zinc-400 tracking-[0.14em] leading-none mb-1">
+                      <p className="text-[9px] font-semibold text-navy-400 tracking-[0.14em] leading-none mb-1">
                         Submitted By
                       </p>
-                      <p className="text-xs font-semibold text-zinc-900 leading-none">
+                      <p className="text-xs font-semibold text-navy-900 leading-none">
                         {grievance.isAnonymous
                           ? "Anonymous Student"
                           : grievance.studentName ||
@@ -226,7 +226,7 @@ export default function GrievanceSection() {
                       </p>
                       {!grievance.isAnonymous &&
                         (grievance.studentId || grievance.studentEmail) && (
-                          <p className="text-[10px] font-medium text-zinc-400 mt-1">
+                          <p className="text-[10px] font-medium text-navy-400 mt-1">
                             {[grievance.studentId, grievance.studentEmail]
                               .filter(Boolean)
                               .join(" • ")}
@@ -235,10 +235,10 @@ export default function GrievanceSection() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-[9px] font-semibold text-zinc-400 tracking-[0.14em] leading-none mb-1">
+                    <p className="text-[9px] font-semibold text-navy-400 tracking-[0.14em] leading-none mb-1">
                       Date
                     </p>
-                    <p className="text-xs font-semibold text-zinc-900 leading-none">
+                    <p className="text-xs font-semibold text-navy-900 leading-none">
                       {grievance.createdAt
                         ? new Date(grievance.createdAt).toLocaleDateString()
                         : "Recent"}
@@ -255,12 +255,12 @@ export default function GrievanceSection() {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="w-12 h-12 rounded-xl bg-white border border-zinc-100 shadow-none flex items-center justify-center hover:bg-zinc-50 disabled:opacity-50 transition-all active:scale-95"
+                className="w-12 h-12 rounded-xl bg-white border border-navy-100 shadow-none flex items-center justify-center hover:bg-navy-50 disabled:opacity-50 transition-all active:scale-95"
               >
                 <Clock size={18} className="rotate-180" />
               </button>
 
-              <div className="flex bg-zinc-100 p-1.5 rounded-xl gap-1">
+              <div className="flex bg-navy-100 p-1.5 rounded-xl gap-1">
                 {[...Array(meta.totalPages)].map((_, i) => {
                   const p = i + 1;
                   if (
@@ -274,8 +274,8 @@ export default function GrievanceSection() {
                         onClick={() => setPage(p)}
                         className={`w-10 h-10 rounded-xl font-semibold text-xs transition-all ${
                           page === p
-                            ? "bg-zinc-900 text-white shadow-none"
-                            : "text-zinc-400 hover:bg-white hover:text-zinc-900"
+                            ? "bg-navy-900 text-white shadow-none"
+                            : "text-navy-400 hover:bg-white hover:text-navy-900"
                         }`}
                       >
                         {p}
@@ -289,7 +289,7 @@ export default function GrievanceSection() {
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                className="w-12 h-12 rounded-xl bg-white border border-zinc-100 shadow-none flex items-center justify-center hover:bg-zinc-50 disabled:opacity-50 transition-all active:scale-95"
+                className="w-12 h-12 rounded-xl bg-white border border-navy-100 shadow-none flex items-center justify-center hover:bg-navy-50 disabled:opacity-50 transition-all active:scale-95"
               >
                 <Clock size={18} />
               </button>
@@ -298,14 +298,14 @@ export default function GrievanceSection() {
         </>
       ) : (
         <div className="p-20 flex flex-col items-center justify-center text-center opacity-50 space-y-4">
-          <div className="p-6 bg-zinc-50 rounded-full text-zinc-300">
+          <div className="p-6 bg-navy-50 rounded-full text-navy-300">
             <MessageSquare size={40} />
           </div>
           <div>
-            <p className="font-semibold text-zinc-900 text-xl tracking-tight">
+            <p className="font-semibold text-navy-900 text-xl tracking-tight">
               No grievances found
             </p>
-            <p className="font-bold text-zinc-400 mt-1 italic">
+            <p className="font-bold text-navy-400 mt-1 italic">
               Everything seems to be running smoothly!
             </p>
           </div>
@@ -317,17 +317,17 @@ export default function GrievanceSection() {
 
 function StatCard({ label, count, icon: Icon, color }: any) {
   return (
-    <div className="bg-white p-7 rounded-xl border border-zinc-100 shadow-none flex items-center gap-6 transition-all hover:shadow-none">
+    <div className="bg-white p-7 rounded-xl border border-navy-100 shadow-none flex items-center gap-6 transition-all hover:shadow-none">
       <div
         className={`p-4 rounded-xl text-white ${color} shadow-none bg-opacity-90`}
       >
         <Icon size={26} />
       </div>
       <div>
-        <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 leading-none mb-2.5">
+        <p className="text-[10px] font-semibold tracking-[0.14em] text-navy-400 leading-none mb-2.5">
           {label}
         </p>
-        <p className="text-3xl font-semibold text-zinc-900 leading-none tracking-tight">
+        <p className="text-3xl font-semibold text-navy-900 leading-none tracking-tight">
           {count}
         </p>
       </div>

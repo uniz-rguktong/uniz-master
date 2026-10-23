@@ -175,20 +175,20 @@ export default function FacultyDashboard() {
     <div className="flex min-h-screen bg-[#FAFAFA] font-sans">
       {/* ── Sidebar ── */}
       <aside
-        className={`bg-white border-r border-navy-200 transition-all duration-300 z-50 ${
+        className={`portal-header-chrome text-white border-r border-[#021227] transition-all duration-300 z-50 ${
           isSidebarOpen ? "w-72" : "w-20"
         } hidden md:flex flex-col h-screen sticky top-0`}
       >
-        <div className="p-6 flex items-center gap-4 border-b border-navy-200 shrink-0">
+        <div className="p-6 flex items-center gap-4 border-b border-white/15 shrink-0">
           <div className="w-12 h-12 bg-navy-900 rounded-portal-sm flex items-center justify-center shrink-0">
             <BookOpen className="w-6 h-6 text-white" />
           </div>
           {isSidebarOpen && (
             <div className="flex flex-col">
-              <span className="font-bold text-navy-900 text-lg tracking-tight leading-none uppercase uniz-logo-wordmark !text-base !tracking-[0.08em]">
+              <span className="font-bold text-white text-lg tracking-tight leading-none uppercase uniz-logo-wordmark !text-white !text-base !tracking-[0.08em]">
                 Faculty
               </span>
-              <span className="text-[9px] tracking-[0.2em] text-navy-400 font-bold mt-1.5 leading-none uppercase">
+              <span className="text-[9px] tracking-[0.2em] text-white/60 font-bold mt-1.5 leading-none uppercase">
                 {isHOD ? "HOD Dashboard" : "Staff Dashboard"}
               </span>
             </div>
@@ -202,13 +202,13 @@ export default function FacultyDashboard() {
               onClick={() => setActiveTab(item.id as ActiveTab)}
               className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-portal-sm transition-colors duration-150 group ${
                 activeTab === item.id
-                  ? "bg-navy-900 text-white"
-                  : "text-navy-500 hover:bg-[#FAFAFA] hover:text-navy-900"
+                  ? "bg-white/15 text-white"
+                  : "text-white/70 hover:bg-white/10 hover:text-white"
               }`}
             >
               <item.icon
                 size={20}
-                className={`shrink-0 ${activeTab === item.id ? "text-white" : "text-navy-400"}`}
+                className={`shrink-0 ${activeTab === item.id ? "text-white" : "text-white/60"}`}
               />
               {isSidebarOpen && (
                 <span
@@ -224,10 +224,10 @@ export default function FacultyDashboard() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-navy-200 shrink-0">
+        <div className="p-4 border-t border-white/15 shrink-0">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3.5 px-4 py-3 rounded-portal-sm text-[#EA2027] hover:bg-red-50 transition-colors group font-button"
+            className="w-full flex items-center gap-3.5 px-4 py-3 rounded-[2px] text-white/80 hover:bg-[#EA2027] hover:text-white transition-colors group font-button"
           >
             <LogOut size={20} className="shrink-0" />
             {isSidebarOpen && (
@@ -240,19 +240,19 @@ export default function FacultyDashboard() {
       {/* ── Main ── */}
       <main className="flex-1 overflow-y-auto max-h-screen">
         {/* Header — flat institutional, no glass */}
-        <header className="bg-white sticky top-0 z-40 border-b border-navy-200 h-[60px] px-8 flex justify-between items-center">
+        <header className="portal-header-chrome sticky top-0 z-40 text-white h-[60px] px-8 flex justify-between items-center">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2.5 hover:bg-[#FAFAFA] rounded-portal-sm transition-colors hidden md:flex text-navy-400"
+            className="p-2.5 hover:bg-white/10 rounded-[2px] transition-colors hidden md:flex text-white/80"
           >
             {isSidebarOpen ? <Menu size={20} /> : <ChevronRight size={20} />}
           </button>
           <div className="flex items-center gap-4 ml-auto">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold text-navy-900 leading-none tracking-tight">
+              <p className="text-sm font-semibold text-white leading-none tracking-tight">
                 {profile?.Name || username}
               </p>
-              <p className="text-[10px] font-bold text-navy-400 tracking-[0.14em] mt-1.5 font-form">
+              <p className="text-[10px] font-bold text-white/70 tracking-[0.14em] mt-1.5 font-form">
                 {isHOD ? "Head of Department" : "Faculty"} ·{" "}
                 {profile?.Department}
               </p>
@@ -318,7 +318,7 @@ function OverviewSection({
 
       {/* Quick Actions */}
       <div>
-        <h2 className="text-xs font-bold tracking-[0.14em] text-zinc-400 mb-5">
+        <h2 className="text-xs font-bold tracking-[0.14em] text-navy-400 mb-5">
           Quick Access
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -346,15 +346,15 @@ function OverviewSection({
               key={item.id}
               whileHover={{ y: -3 }}
               onClick={() => setActiveTab(item.id as ActiveTab)}
-              className="group relative flex flex-col items-start p-6 bg-white border border-zinc-100 rounded-2xl hover:shadow-xl hover:border-[#0A2540]/10 transition-all text-left"
+              className="group relative flex flex-col items-start p-6 bg-white border border-navy-100 rounded-[2px] hover:shadow-xl hover:border-[#0A2540]/10 transition-all text-left"
             >
-              <div className="p-3 rounded-xl bg-zinc-50 group-hover:bg-[#0A2540] group-hover:text-white transition-colors duration-300 mb-4">
+              <div className="p-3 rounded-xl bg-navy-50 group-hover:bg-[#0A2540] group-hover:text-white transition-colors duration-300 mb-4">
                 <item.icon className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-zinc-900">
+              <h3 className="text-base font-bold text-navy-900">
                 {item.label}
               </h3>
-              <p className="text-xs text-zinc-500 mt-1 font-medium">
+              <p className="text-xs text-navy-500 mt-1 font-medium">
                 {item.sub}
               </p>
             </motion.button>
@@ -364,8 +364,8 @@ function OverviewSection({
 
       {/* Profile Card */}
       {!loading && profile && (
-        <div className="bg-white rounded-2xl border border-zinc-100 p-8 shadow-sm">
-          <h2 className="text-sm font-bold text-zinc-400 tracking-[0.14em] mb-6 flex items-center gap-2">
+        <div className="bg-white rounded-[2px] border border-navy-100 p-8 shadow-sm">
+          <h2 className="text-sm font-bold text-navy-400 tracking-[0.14em] mb-6 flex items-center gap-2">
             <User className="w-4 h-4" /> Profile Summary
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -388,10 +388,10 @@ function OverviewSection({
               },
             ].map((f) => (
               <div key={f.label} className="space-y-1.5">
-                <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] flex items-center gap-1.5">
+                <p className="text-[10px] font-bold text-navy-400 tracking-[0.14em] flex items-center gap-1.5">
                   <f.icon className="w-3.5 h-3.5" /> {f.label}
                 </p>
-                <p className="font-semibold text-zinc-900 text-sm">
+                <p className="font-semibold text-navy-900 text-sm">
                   {f.value}
                 </p>
               </div>
@@ -471,8 +471,8 @@ function ProfileSection({
     return (
       <div className="p-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 bg-zinc-100 rounded-lg" />
-          <div className="h-64 bg-zinc-100 rounded-2xl" />
+          <div className="h-8 w-48 bg-navy-100 rounded-lg" />
+          <div className="h-64 bg-navy-100 rounded-[2px]" />
         </div>
       </div>
     );
@@ -480,7 +480,7 @@ function ProfileSection({
 
   if (!profile) {
     return (
-      <div className="p-8 text-center text-zinc-400">Profile not found</div>
+      <div className="p-8 text-center text-navy-400">Profile not found</div>
     );
   }
 
@@ -488,17 +488,17 @@ function ProfileSection({
     <div className="p-8 pb-20 space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-zinc-900 tracking-tight">
+          <h2 className="text-2xl font-bold text-navy-900 tracking-tight">
             My Profile
           </h2>
-          <p className="text-zinc-500 text-sm mt-1">
+          <p className="text-navy-500 text-sm mt-1">
             View and manage your faculty profile
           </p>
         </div>
         {!isEditing ? (
           <button
             onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#0A2540] text-white rounded-xl text-sm font-bold hover:bg-zinc-800 transition-all shadow-sm"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#0A2540] text-white rounded-xl text-sm font-bold hover:bg-navy-800 transition-all shadow-sm"
           >
             <Pencil className="w-4 h-4" /> Edit Profile
           </button>
@@ -506,14 +506,14 @@ function ProfileSection({
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsEditing(false)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-zinc-100 text-zinc-600 rounded-xl text-sm font-bold hover:bg-zinc-200 transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 bg-navy-100 text-navy-600 rounded-xl text-sm font-bold hover:bg-navy-200 transition-all"
             >
               <X className="w-4 h-4" /> Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#0A2540] text-white rounded-xl text-sm font-bold hover:bg-zinc-800 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#0A2540] text-white rounded-xl text-sm font-bold hover:bg-navy-800 transition-all disabled:opacity-50"
             >
               {saving ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -526,10 +526,10 @@ function ProfileSection({
         )}
       </div>
 
-      <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-[2px] border border-navy-100 shadow-sm overflow-hidden">
         {/* Profile header */}
-        <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 p-8 flex items-center gap-6">
-          <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-white font-bold text-3xl border-2 border-white/20 overflow-hidden shrink-0">
+        <div className="bg-gradient-to-br from-navy-900 to-navy-800 p-8 flex items-center gap-6">
+          <div className="w-20 h-20 rounded-[2px] bg-white/10 flex items-center justify-center text-white font-bold text-3xl border-2 border-white/20 overflow-hidden shrink-0">
             {profile.ProfileUrl ? (
               <img
                 src={profile.ProfileUrl}
@@ -542,7 +542,7 @@ function ProfileSection({
           </div>
           <div>
             <h3 className="text-2xl font-bold text-white">{profile.Name}</h3>
-            <p className="text-zinc-400 text-sm mt-1 tracking-[0.14em] font-bold">
+            <p className="text-navy-400 text-sm mt-1 tracking-[0.14em] font-bold">
               {profile.Designation || "Faculty"} · {profile.Department}
             </p>
             {profile.Role?.toLowerCase() === "hod" && (
@@ -570,10 +570,10 @@ function ProfileSection({
             },
           ].map((f) => (
             <div key={f.label} className="space-y-2">
-              <label className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
+              <label className="text-[10px] font-bold text-navy-400 tracking-[0.14em]">
                 {f.label}
               </label>
-              <p className="font-semibold text-zinc-900 text-base">
+              <p className="font-semibold text-navy-900 text-base">
                 {f.value}
               </p>
             </div>
@@ -581,17 +581,17 @@ function ProfileSection({
 
           {/* Editable: Full Name */}
           <div className="space-y-2">
-            <label className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
+            <label className="text-[10px] font-bold text-navy-400 tracking-[0.14em]">
               Full Name
             </label>
             {isEditing ? (
               <input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+                className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
               />
             ) : (
-              <p className="font-semibold text-zinc-900 text-base">
+              <p className="font-semibold text-navy-900 text-base">
                 {profile.Name || "Not set"}
               </p>
             )}
@@ -599,7 +599,7 @@ function ProfileSection({
 
           {/* Editable: Designation */}
           <div className="space-y-2">
-            <label className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
+            <label className="text-[10px] font-bold text-navy-400 tracking-[0.14em]">
               Designation
             </label>
             {isEditing ? (
@@ -608,10 +608,10 @@ function ProfileSection({
                 onChange={(e) =>
                   setForm({ ...form, designation: e.target.value })
                 }
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+                className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
               />
             ) : (
-              <p className="font-semibold text-zinc-900 text-base">
+              <p className="font-semibold text-navy-900 text-base">
                 {profile.Designation || "Not set"}
               </p>
             )}
@@ -619,7 +619,7 @@ function ProfileSection({
 
           {/* Editable: Contact */}
           <div className="space-y-2">
-            <label className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
+            <label className="text-[10px] font-bold text-navy-400 tracking-[0.14em]">
               Contact Number
             </label>
             {isEditing ? (
@@ -628,10 +628,10 @@ function ProfileSection({
                 value={form.contact}
                 onChange={(e) => setForm({ ...form, contact: e.target.value })}
                 placeholder="Your phone number"
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+                className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
               />
             ) : (
-              <p className="font-semibold text-zinc-900 text-base">
+              <p className="font-semibold text-navy-900 text-base">
                 {profile.Contact || "Not provided"}
               </p>
             )}
@@ -639,7 +639,7 @@ function ProfileSection({
 
           {/* Editable: Profile URL */}
           <div className="space-y-2">
-            <label className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
+            <label className="text-[10px] font-bold text-navy-400 tracking-[0.14em]">
               Profile Photo URL
             </label>
             {isEditing ? (
@@ -650,10 +650,10 @@ function ProfileSection({
                   setForm({ ...form, profileUrl: e.target.value })
                 }
                 placeholder="https://example.com/photo.jpg"
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+                className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
               />
             ) : (
-              <p className="font-semibold text-zinc-900 text-base truncate">
+              <p className="font-semibold text-navy-900 text-base truncate">
                 {profile.ProfileUrl || "No photo set"}
               </p>
             )}
@@ -662,10 +662,10 @@ function ProfileSection({
       </div>
 
       {/* Bio / Professional Details */}
-      <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden p-8 space-y-8">
+      <div className="bg-white rounded-[2px] border border-navy-100 shadow-sm overflow-hidden p-8 space-y-8">
         <div className="flex items-center gap-3">
-          <BookOpen className="w-5 h-5 text-zinc-400" />
-          <h3 className="text-lg font-bold text-zinc-900">
+          <BookOpen className="w-5 h-5 text-navy-400" />
+          <h3 className="text-lg font-bold text-navy-900">
             Professional Information
           </h3>
         </div>
@@ -687,7 +687,7 @@ function ProfileSection({
             const values = (form.bio as any)[key] || [];
             return (
               <div key={key} className="space-y-3">
-                <label className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] block">
+                <label className="text-[10px] font-bold text-navy-400 tracking-[0.14em] block">
                   {key}
                 </label>
                 {isEditing ? (
@@ -704,22 +704,22 @@ function ProfileSection({
                     }}
                     placeholder={`Enter ${key} (one per line)`}
                     rows={4}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-medium text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all text-sm leading-relaxed"
+                    className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-medium text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all text-sm leading-relaxed"
                   />
                 ) : values.length > 0 ? (
                   <ul className="space-y-2">
                     {values.map((v: string, i: number) => (
                       <li
                         key={i}
-                        className="text-zinc-600 text-sm flex items-start gap-2 leading-relaxed"
+                        className="text-navy-600 text-sm flex items-start gap-2 leading-relaxed"
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-300 mt-2 shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-navy-300 mt-2 shrink-0" />
                         {v}
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-zinc-400 text-sm italic">
+                  <p className="text-navy-400 text-sm italic">
                     No information provided
                   </p>
                 )}
@@ -835,24 +835,24 @@ function StudentsSection({
     <div className="p-8 pb-20 space-y-6 animate-in fade-in duration-500">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-zinc-900 tracking-tight">
+          <h2 className="text-2xl font-bold text-navy-900 tracking-tight">
             Branch Students
           </h2>
-          <p className="text-zinc-500 text-sm mt-1">
+          <p className="text-navy-500 text-sm mt-1">
             {isHOD
               ? "HOD - all department access"
               : `View students in ${department}`}
           </p>
         </div>
         {/* Mode Toggle */}
-        <div className="flex bg-zinc-100 p-1 rounded-full">
+        <div className="flex bg-navy-100 p-1 rounded-full">
           <button
             onClick={() => {
               setSearchMode("id");
               setSearchResults([]);
               setSelectedStudent(null);
             }}
-            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.14em] transition-all ${searchMode === "id" ? "bg-white text-[#061B33] shadow" : "text-zinc-500 hover:text-[#061B33]"}`}
+            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.14em] transition-all ${searchMode === "id" ? "bg-white text-[#061B33] shadow" : "text-navy-500 hover:text-[#061B33]"}`}
           >
             By ID
           </button>
@@ -862,7 +862,7 @@ function StudentsSection({
               setSearchResults([]);
               setSelectedStudent(null);
             }}
-            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.14em] transition-all ${searchMode === "filter" ? "bg-white text-[#061B33] shadow" : "text-zinc-500 hover:text-[#061B33]"}`}
+            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.14em] transition-all ${searchMode === "filter" ? "bg-white text-[#061B33] shadow" : "text-navy-500 hover:text-[#061B33]"}`}
           >
             By Filter
           </button>
@@ -880,7 +880,7 @@ function StudentsSection({
         >
           <div className="relative flex-1">
             <Hash
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-navy-400"
               size={16}
             />
             <input
@@ -888,13 +888,13 @@ function StudentsSection({
               placeholder="Enter Student ID (e.g. O210329)"
               value={studentId}
               onChange={(e) => setStudentId(e.target.value.toUpperCase())}
-              className="w-full h-12 pl-12 pr-5 bg-white border border-zinc-200 rounded-full focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] outline-none transition-all font-semibold text-zinc-900 text-sm shadow-sm"
+              className="w-full h-12 pl-12 pr-5 bg-white border border-navy-200 rounded-full focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] outline-none transition-all font-semibold text-navy-900 text-sm shadow-sm"
             />
           </div>
           <button
             disabled={loading}
             type="submit"
-            className="h-12 px-8 bg-[#0A2540] text-white rounded-full font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 transition-all flex items-center gap-2 disabled:opacity-50"
+            className="h-12 px-8 bg-[#0A2540] text-white rounded-full font-bold tracking-[0.14em] text-[10px] hover:bg-navy-800 transition-all flex items-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="animate-spin w-4 h-4" />
@@ -908,13 +908,13 @@ function StudentsSection({
         <div className="flex flex-wrap gap-4 items-center">
           <div className="relative">
             <Filter
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
               size={14}
             />
             <select
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
-              className="bg-white border border-zinc-200 pl-10 pr-8 h-12 rounded-full font-bold text-[11px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] shadow-sm min-w-[160px] appearance-none cursor-pointer"
+              className="bg-white border border-navy-200 pl-10 pr-8 h-12 rounded-full font-bold text-[11px] tracking-[0.14em] text-navy-600 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] shadow-sm min-w-[160px] appearance-none cursor-pointer"
             >
               {departments.map((d) => (
                 <option key={d} value={d}>
@@ -927,7 +927,7 @@ function StudentsSection({
             <select
               value={year}
               onChange={(e) => setYear(e.target.value)}
-              className="bg-white border border-zinc-200 pl-4 pr-8 h-12 rounded-full font-bold text-[11px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] shadow-sm min-w-[140px] appearance-none cursor-pointer"
+              className="bg-white border border-navy-200 pl-4 pr-8 h-12 rounded-full font-bold text-[11px] tracking-[0.14em] text-navy-600 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] shadow-sm min-w-[140px] appearance-none cursor-pointer"
             >
               <option value="">All Batches</option>
               {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
@@ -940,7 +940,7 @@ function StudentsSection({
           <button
             onClick={fetchByFilter}
             disabled={loading}
-            className="h-12 px-8 bg-[#0A2540] text-white rounded-full font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 transition-all flex items-center gap-2 disabled:opacity-50"
+            className="h-12 px-8 bg-[#0A2540] text-white rounded-full font-bold tracking-[0.14em] text-[10px] hover:bg-navy-800 transition-all flex items-center gap-2 disabled:opacity-50"
           >
             {loading ? <Loader2 className="animate-spin w-4 h-4" /> : null}
             Fetch Students
@@ -954,7 +954,7 @@ function StudentsSection({
       >
         <div className={`space-y-3 ${selectedStudent ? "lg:col-span-5" : ""}`}>
           {searchResults.length > 0 && (
-            <p className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 px-2">
+            <p className="text-[10px] font-bold tracking-[0.14em] text-navy-400 px-2">
               {searchResults.length} Student
               {searchResults.length !== 1 ? "s" : ""} Found
             </p>
@@ -963,34 +963,34 @@ function StudentsSection({
             <div
               key={std.username}
               onClick={() => fetchFullDetails(std.username)}
-              className={`group flex items-center justify-between p-4 px-6 bg-white border rounded-2xl cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 ${
+              className={`group flex items-center justify-between p-4 px-6 bg-white border rounded-[2px] cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 ${
                 selectedStudent?.username === std.username
                   ? "border-[#0A2540] ring-4 ring-black/5 shadow-xl"
-                  : "border-zinc-100 hover:border-zinc-200"
+                  : "border-navy-100 hover:border-navy-200"
               }`}
             >
               <div className="flex items-center gap-4">
                 <div
-                  className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-colors font-bold ${selectedStudent?.username === std.username ? "bg-[#0A2540] text-white" : "bg-zinc-50 text-zinc-400 group-hover:bg-[#0A2540] group-hover:text-white"}`}
+                  className={`w-11 h-11 rounded-[2px] flex items-center justify-center transition-colors font-bold ${selectedStudent?.username === std.username ? "bg-[#0A2540] text-white" : "bg-navy-50 text-navy-400 group-hover:bg-[#0A2540] group-hover:text-white"}`}
                 >
                   {std.name?.[0] || "S"}
                 </div>
                 <div>
-                  <p className="font-bold text-zinc-900 leading-tight">
+                  <p className="font-bold text-navy-900 leading-tight">
                     {std.name}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[9px] font-bold tracking-[0.14em] text-[#061B33] bg-zinc-100 px-2 py-0.5 rounded-md">
+                    <span className="text-[9px] font-bold tracking-[0.14em] text-[#061B33] bg-navy-100 px-2 py-0.5 rounded-md">
                       {std.username}
                     </span>
-                    <span className="w-1 h-1 rounded-full bg-zinc-200" />
-                    <span className="text-[9px] font-bold text-zinc-400 ">
+                    <span className="w-1 h-1 rounded-full bg-navy-200" />
+                    <span className="text-[9px] font-bold text-navy-400 ">
                       {std.branch}
                     </span>
                     {std.year && (
                       <>
-                        <span className="w-1 h-1 rounded-full bg-zinc-200" />
-                        <span className="text-[9px] font-bold text-zinc-400 ">
+                        <span className="w-1 h-1 rounded-full bg-navy-200" />
+                        <span className="text-[9px] font-bold text-navy-400 ">
                           {std.year}
                         </span>
                       </>
@@ -1000,19 +1000,19 @@ function StudentsSection({
               </div>
               <ChevronRight
                 size={16}
-                className={`text-zinc-300 transition-transform ${selectedStudent?.username === std.username ? "rotate-90 text-[#061B33]" : ""}`}
+                className={`text-navy-300 transition-transform ${selectedStudent?.username === std.username ? "rotate-90 text-[#061B33]" : ""}`}
               />
             </div>
           ))}
 
           {searchResults.length === 0 && !loading && (
-            <div className="p-20 flex flex-col items-center gap-4 bg-white rounded-2xl border border-zinc-100 text-center">
-              <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-100">
-                <Users size={36} className="text-zinc-300" />
+            <div className="p-20 flex flex-col items-center gap-4 bg-white rounded-[2px] border border-navy-100 text-center">
+              <div className="p-5 bg-navy-50 rounded-[2px] border border-navy-100">
+                <Users size={36} className="text-navy-300" />
               </div>
               <div>
-                <p className="font-bold text-zinc-900">No students yet</p>
-                <p className="text-sm text-zinc-400 mt-1">
+                <p className="font-bold text-navy-900">No students yet</p>
+                <p className="text-sm text-navy-400 mt-1">
                   Use a filter above to load students
                 </p>
               </div>
@@ -1030,13 +1030,13 @@ function StudentsSection({
               className="lg:col-span-7 sticky top-24 h-fit"
             >
               {detailLoading ? (
-                <div className="p-8 bg-white rounded-2xl border border-zinc-100 animate-pulse space-y-4">
-                  <div className="h-6 bg-zinc-100 w-1/2 rounded" />
-                  <div className="h-4 bg-zinc-100 w-2/3 rounded" />
-                  <div className="h-4 bg-zinc-100 w-1/3 rounded" />
+                <div className="p-8 bg-white rounded-[2px] border border-navy-100 animate-pulse space-y-4">
+                  <div className="h-6 bg-navy-100 w-1/2 rounded" />
+                  <div className="h-4 bg-navy-100 w-2/3 rounded" />
+                  <div className="h-4 bg-navy-100 w-1/3 rounded" />
                 </div>
               ) : (
-                <div className="bg-white rounded-2xl border border-zinc-100 shadow-xl overflow-hidden">
+                <div className="bg-white rounded-[2px] border border-navy-100 shadow-xl overflow-hidden">
                   <div className="bg-[#0A2540] p-8 text-white relative">
                     <button
                       onClick={() => setSelectedStudent(null)}
@@ -1045,11 +1045,11 @@ function StudentsSection({
                       <X size={18} />
                     </button>
                     <div className="flex items-center gap-5">
-                      <div className="w-16 h-16 rounded-2xl bg-white/10 border-2 border-white/20 flex items-center justify-center">
+                      <div className="w-16 h-16 rounded-[2px] bg-white/10 border-2 border-white/20 flex items-center justify-center">
                         {selectedStudent.profile_url ? (
                           <img
                             src={selectedStudent.profile_url}
-                            className="w-full h-full object-cover rounded-2xl"
+                            className="w-full h-full object-cover rounded-[2px]"
                             alt=""
                           />
                         ) : (
@@ -1062,7 +1062,7 @@ function StudentsSection({
                         <h3 className="text-xl font-bold">
                           {selectedStudent.name}
                         </h3>
-                        <p className="text-zinc-400 text-sm font-bold tracking-[0.14em] mt-1">
+                        <p className="text-navy-400 text-sm font-bold tracking-[0.14em] mt-1">
                           {selectedStudent.username}
                         </p>
                         <span
@@ -1094,20 +1094,20 @@ function StudentsSection({
                       ["Blood Group", selectedStudent.blood_group || "-"],
                     ].map(([k, v]) => (
                       <div key={k} className="space-y-1">
-                        <p className="text-[9px] font-bold text-zinc-400 tracking-[0.14em]">
+                        <p className="text-[9px] font-bold text-navy-400 tracking-[0.14em]">
                           {k}
                         </p>
-                        <p className="font-semibold text-zinc-900 truncate">
+                        <p className="font-semibold text-navy-900 truncate">
                           {v}
                         </p>
                       </div>
                     ))}
                     {selectedStudent.cgpa !== undefined && (
                       <div className="space-y-1 col-span-2">
-                        <p className="text-[9px] font-bold text-zinc-400 tracking-[0.14em]">
+                        <p className="text-[9px] font-bold text-navy-400 tracking-[0.14em]">
                           CGPA
                         </p>
-                        <p className="font-bold text-2xl text-zinc-900">
+                        <p className="font-bold text-2xl text-navy-900">
                           {String(selectedStudent.cgpa)}
                         </p>
                       </div>
@@ -1274,10 +1274,10 @@ function PasswordSection() {
   return (
     <div className="p-8 pb-20 max-w-2xl mx-auto animate-in fade-in duration-500">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-zinc-900 tracking-tight">
+        <h2 className="text-2xl font-bold text-navy-900 tracking-tight">
           Change Password
         </h2>
-        <p className="text-zinc-500 text-sm mt-1">
+        <p className="text-navy-500 text-sm mt-1">
           Secure your account with a new password
         </p>
       </div>
@@ -1287,23 +1287,23 @@ function PasswordSection() {
         {(["current", "otp", "new"] as PwdStep[]).map((s, i) => (
           <div key={s} className="flex items-center gap-3">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step === s ? "bg-[#0A2540] text-white" : i < ["current", "otp", "new"].indexOf(step) ? "bg-zinc-200 text-zinc-500" : "border-2 border-zinc-200 text-zinc-300"}`}
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step === s ? "bg-[#0A2540] text-white" : i < ["current", "otp", "new"].indexOf(step) ? "bg-navy-200 text-navy-500" : "border-2 border-navy-200 text-navy-300"}`}
             >
               {i + 1}
             </div>
             <span
-              className={`text-sm font-medium hidden sm:block ${step === s ? "text-zinc-900" : "text-zinc-400"}`}
+              className={`text-sm font-medium hidden sm:block ${step === s ? "text-navy-900" : "text-navy-400"}`}
             >
               {stepLabels[s]}
             </span>
             {i < 2 && (
-              <div className="w-8 h-0.5 bg-zinc-200 hidden sm:block" />
+              <div className="w-8 h-0.5 bg-navy-200 hidden sm:block" />
             )}
           </div>
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm p-8 space-y-6">
+      <div className="bg-white rounded-[2px] border border-navy-100 shadow-sm p-8 space-y-6">
         <AnimatePresence mode="wait">
           {step === "current" && (
             <motion.div
@@ -1313,17 +1313,17 @@ function PasswordSection() {
               exit={{ opacity: 0, x: -10 }}
               className="space-y-6"
             >
-              <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100">
-                <p className="text-sm text-zinc-600 font-medium">
+              <div className="p-4 bg-navy-50 rounded-xl border border-navy-100">
+                <p className="text-sm text-navy-600 font-medium">
                   We'll send a one-time password to your registered devices to
                   verify your identity.
                 </p>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
+                <label className="text-[10px] font-bold text-navy-400 tracking-[0.14em]">
                   Your Username
                 </label>
-                <div className="px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl font-bold text-zinc-900">
+                <div className="px-4 py-3 bg-navy-50 border border-navy-100 rounded-xl font-bold text-navy-900">
                   {username || "Not found"}
                 </div>
               </div>
@@ -1331,12 +1331,12 @@ function PasswordSection() {
                 <button
                   onClick={requestOtp}
                   disabled={loading || !username}
-                  className="w-full h-12 bg-[#0A2540] text-white rounded-xl font-bold text-sm hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full h-12 bg-[#0A2540] text-white rounded-xl font-bold text-sm hover:bg-navy-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Send OTP to my Device
                 </button>
-                <p className="text-center text-zinc-400 text-xs font-medium">
+                <p className="text-center text-navy-400 text-xs font-medium">
                   - or change with current password -
                 </p>
                 <div className="space-y-3">
@@ -1345,18 +1345,18 @@ function PasswordSection() {
                     placeholder="Current password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+                    className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
                   />
                   <input
                     type="password"
                     placeholder="New password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+                    className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
                   />
                   {newPassword && (
                     <div className="flex items-center gap-3">
-                      <div className="h-1.5 flex-1 bg-zinc-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 flex-1 bg-navy-100 rounded-full overflow-hidden">
                         <div
                           className={`h-full transition-all duration-300 ${strength.color}`}
                           style={{ width: `${(strength.score / 3) * 100}%` }}
@@ -1372,7 +1372,7 @@ function PasswordSection() {
                   <button
                     onClick={changeDirectly}
                     disabled={loading || !currentPassword || !newPassword}
-                    className="w-full h-12 bg-zinc-900 text-white rounded-xl font-bold text-sm hover:bg-[#0A2540] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full h-12 bg-navy-900 text-white rounded-xl font-bold text-sm hover:bg-[#0A2540] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                     Change Password
@@ -1390,13 +1390,13 @@ function PasswordSection() {
               exit={{ opacity: 0, x: -10 }}
               className="space-y-6"
             >
-              <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100">
-                <p className="text-sm text-zinc-600 font-medium">
+              <div className="p-4 bg-navy-50 rounded-xl border border-navy-100">
+                <p className="text-sm text-navy-600 font-medium">
                   Enter the 6-digit OTP sent to your registered devices.
                 </p>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
+                <label className="text-[10px] font-bold text-navy-400 tracking-[0.14em]">
                   One-Time Password
                 </label>
                 <input
@@ -1405,20 +1405,20 @@ function PasswordSection() {
                   placeholder="• • • • • •"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                  className="w-full px-4 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-2xl text-center text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all tracking-[0.14em]"
+                  className="w-full px-4 py-4 bg-navy-50 border border-navy-200 rounded-xl font-bold text-2xl text-center text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all tracking-[0.14em]"
                 />
               </div>
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setStep("current")}
-                  className="flex-1 h-12 bg-zinc-100 text-zinc-600 rounded-xl font-bold text-sm hover:bg-zinc-200 transition-all"
+                  className="flex-1 h-12 bg-navy-100 text-navy-600 rounded-xl font-bold text-sm hover:bg-navy-200 transition-all"
                 >
                   Back
                 </button>
                 <button
                   onClick={verifyOtp}
                   disabled={loading || otp.length !== 6}
-                  className="flex-[2] h-12 bg-[#0A2540] text-white rounded-xl font-bold text-sm hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-[2] h-12 bg-[#0A2540] text-white rounded-xl font-bold text-sm hover:bg-navy-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Verify OTP
@@ -1427,7 +1427,7 @@ function PasswordSection() {
               <button
                 onClick={requestOtp}
                 disabled={loading}
-                className="w-full text-center text-xs text-zinc-400 hover:text-zinc-900 font-medium transition-colors"
+                className="w-full text-center text-xs text-navy-400 hover:text-navy-900 font-medium transition-colors"
               >
                 Resend OTP
               </button>
@@ -1450,7 +1450,7 @@ function PasswordSection() {
               </div>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
+                  <label className="text-[10px] font-bold text-navy-400 tracking-[0.14em]">
                     New Password
                   </label>
                   <input
@@ -1458,11 +1458,11 @@ function PasswordSection() {
                     placeholder="Enter new password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+                    className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
                   />
                   {newPassword && (
                     <div className="flex items-center gap-3 mt-2">
-                      <div className="h-1.5 flex-1 bg-zinc-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 flex-1 bg-navy-100 rounded-full overflow-hidden">
                         <div
                           className={`h-full transition-all duration-300 ${strength.color}`}
                           style={{ width: `${(strength.score / 3) * 100}%` }}
@@ -1477,7 +1477,7 @@ function PasswordSection() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
+                  <label className="text-[10px] font-bold text-navy-400 tracking-[0.14em]">
                     Confirm Password
                   </label>
                   <input
@@ -1485,7 +1485,7 @@ function PasswordSection() {
                     placeholder="Re-enter new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+                    className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
                   />
                   {confirmPassword && (
                     <p
@@ -1503,7 +1503,7 @@ function PasswordSection() {
                 disabled={
                   loading || !newPassword || newPassword !== confirmPassword
                 }
-                className="w-full h-12 bg-[#0A2540] text-white rounded-xl font-bold text-sm hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full h-12 bg-[#0A2540] text-white rounded-xl font-bold text-sm hover:bg-navy-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                 Update Password

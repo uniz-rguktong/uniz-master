@@ -88,7 +88,7 @@ export default function WardenDashboard() {
             <div className="p-4 md:hidden">
               <button
                 onClick={() => setActiveTab("dashboard")}
-                className="flex items-center gap-2 text-zinc-500 font-bold tracking-[0.14em] text-[10px] mb-4"
+                className="flex items-center gap-2 text-navy-500 font-bold tracking-[0.14em] text-[10px] mb-4"
               >
                 <ChevronLeft size={14} /> Back to Hub
               </button>
@@ -102,7 +102,7 @@ export default function WardenDashboard() {
             <div className="p-4 md:hidden">
               <button
                 onClick={() => setActiveTab("dashboard")}
-                className="flex items-center gap-2 text-zinc-500 font-bold tracking-[0.14em] text-[10px] mb-4"
+                className="flex items-center gap-2 text-navy-500 font-bold tracking-[0.14em] text-[10px] mb-4"
               >
                 <ChevronLeft size={14} /> Back to Hub
               </button>
@@ -116,7 +116,7 @@ export default function WardenDashboard() {
             <div className="p-4 md:hidden">
               <button
                 onClick={() => setActiveTab("dashboard")}
-                className="flex items-center gap-2 text-zinc-500 font-bold tracking-[0.14em] text-[10px] mb-4"
+                className="flex items-center gap-2 text-navy-500 font-bold tracking-[0.14em] text-[10px] mb-4"
               >
                 <ChevronLeft size={14} /> Back to Hub
               </button>
@@ -127,9 +127,9 @@ export default function WardenDashboard() {
       default:
         return (
           <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
-            <div className="bg-gradient-to-br from-zinc-950 to-zinc-800 rounded-3xl py-6 px-10 text-white shadow-2xl shadow-zinc-200/50 relative overflow-hidden group">
+            <div className="bg-gradient-to-br from-navy-950 to-navy-800 rounded-[2px] py-6 px-10 text-white shadow-2xl shadow-navy-200/50 relative overflow-hidden group">
               <div className="relative z-10 space-y-2.5">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 backdrop-blur-md">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10">
                   <span
                     className={`w-1.5 h-1.5 rounded-full ${isMale ? "bg-blue-400" : "bg-pink-400"} animate-pulse`}
                   />
@@ -143,7 +143,7 @@ export default function WardenDashboard() {
                   <h1 className="text-3xl font-semibold tracking-[-0.03em] mb-1.5 leading-none">
                     Welcome, {username}
                   </h1>
-                  <p className="text-zinc-400 font-medium text-[15px] opacity-90 max-w-lg leading-relaxed">
+                  <p className="text-navy-400 font-medium text-[15px] opacity-90 max-w-lg leading-relaxed">
                     Residential Governance Terminal. Orchestrate hostel
                     operations and maintain student safety through your
                     administrative console.
@@ -171,14 +171,14 @@ export default function WardenDashboard() {
                   onClick={() => setActiveTab(item.id)}
                   className={`${adminHubCardClass} p-5 text-left group flex flex-col justify-between min-h-[150px]`}
                 >
-                  <div className="p-3.5 rounded-2xl bg-zinc-50 text-zinc-400 mb-4 inline-block transition-all duration-300">
+                  <div className="p-3.5 rounded-[2px] bg-navy-50 text-navy-400 mb-4 inline-block transition-all duration-300">
                     <item.icon size={20} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-zinc-900 text-[14px] mb-1 leading-tight">
+                    <h3 className="font-bold text-navy-900 text-[14px] mb-1 leading-tight">
                       {item.label}
                     </h3>
-                    <p className="text-[8px] text-zinc-400 tracking-[0.14em] font-semibold opacity-60 group-hover:text-zinc-700 transition-colors">
+                    <p className="text-[8px] text-navy-400 tracking-[0.14em] font-semibold opacity-60 group-hover:text-navy-700 transition-colors">
                       INITIALIZE MODULE
                     </p>
                   </div>

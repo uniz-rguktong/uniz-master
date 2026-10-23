@@ -248,7 +248,7 @@ export default function CurriculumManager() {
       <div className={cn(adminCardClass, "p-3 flex flex-col lg:flex-row gap-3")}>
         <div className="relative flex-1">
           <Search
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400"
             size={16}
           />
           <input
@@ -261,7 +261,7 @@ export default function CurriculumManager() {
           {refreshing && (
             <Loader2
               size={14}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-zinc-400"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-navy-400"
             />
           )}
         </div>
@@ -269,7 +269,7 @@ export default function CurriculumManager() {
         <div className="flex flex-wrap gap-2">
           <div className="relative">
             <Filter
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none z-10"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none z-10"
               size={14}
             />
             <select
@@ -291,7 +291,7 @@ export default function CurriculumManager() {
 
           <div className="relative">
             <BookOpen
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none z-10"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none z-10"
               size={14}
             />
             <select
@@ -316,18 +316,18 @@ export default function CurriculumManager() {
       {/* Grid Area */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
-          <Loader2 className="animate-spin text-zinc-900" size={32} />
-          <p className="text-zinc-400 font-medium text-[12px] tracking-[0.14em]">
+          <Loader2 className="animate-spin text-navy-900" size={32} />
+          <p className="text-navy-400 font-medium text-[12px] tracking-[0.14em]">
             Loading curriculum…
           </p>
         </div>
       ) : subjects.length === 0 ? (
-        <div className={cn(adminCardClass, "text-center py-20 border-dashed border-zinc-300")}>
-          <GraduationCap size={48} strokeWidth={1.5} className="mx-auto text-zinc-200 mb-4" />
-          <h3 className="text-[16px] font-semibold tracking-tight text-zinc-900">
+        <div className={cn(adminCardClass, "text-center py-20 border-dashed border-navy-300")}>
+          <GraduationCap size={48} strokeWidth={1.5} className="mx-auto text-navy-200 mb-4" />
+          <h3 className="text-[16px] font-semibold tracking-tight text-navy-900">
             No subjects found
           </h3>
-          <p className="text-zinc-500 text-[13px] mt-1">
+          <p className="text-navy-500 text-[13px] mt-1">
             Try adjusting your filters or search query.
           </p>
         </div>
@@ -347,19 +347,19 @@ export default function CurriculumManager() {
             >
               {/* Card Header */}
               <div className="flex justify-between items-start mb-4">
-                <div className="w-10 h-10 bg-zinc-100 rounded-xl flex items-center justify-center text-zinc-600 ring-1 ring-inset ring-zinc-900/5 group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
+                <div className="w-10 h-10 bg-navy-100 rounded-xl flex items-center justify-center text-navy-600 ring-1 ring-inset ring-navy-900/5 group-hover:bg-navy-900 group-hover:text-white transition-colors duration-300">
                   <GraduationCap size={20} />
                 </div>
                 <div className="flex gap-1">
                   <button
                     onClick={() => handleOpenModal(sub)}
-                    className="p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-lg transition-all"
+                    className="p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-lg transition-all"
                   >
                     <Edit size={16} />
                   </button>
                   <button
                     onClick={() => handleDelete(sub.id)}
-                    className="p-2 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                    className="p-2 text-navy-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -372,39 +372,39 @@ export default function CurriculumManager() {
                   code={sub.displayCode || sub.code}
                   academicCode={sub.academicCode}
                 />
-                <h3 className="text-[16px] font-semibold text-zinc-900 line-clamp-2 leading-tight">
+                <h3 className="text-[16px] font-semibold text-navy-900 line-clamp-2 leading-tight">
                   {sub.name}
                 </h3>
               </div>
 
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-6">
-                <span className="px-2.5 py-1 bg-zinc-900 text-white text-[10px] font-medium rounded-full tracking-wide">
+                <span className="px-2.5 py-1 bg-navy-900 text-white text-[10px] font-medium rounded-full tracking-wide">
                   {sub.department}
                 </span>
-                <span className="px-2.5 py-1 bg-zinc-50 text-zinc-600 text-[10px] font-medium rounded-full tracking-wide border border-zinc-200">
+                <span className="px-2.5 py-1 bg-navy-50 text-navy-600 text-[10px] font-medium rounded-full tracking-wide border border-navy-200">
                   {semesterLabel(sub)}
                 </span>
               </div>
 
               {/* Progress Bar (Weight) */}
               <div className="space-y-2">
-                <div className="flex justify-between items-center text-[10px] font-medium tracking-[0.12em] text-zinc-400">
+                <div className="flex justify-between items-center text-[10px] font-medium tracking-[0.12em] text-navy-400">
                   <span>Academic Weight</span>
                   <span className="tabular-nums">{((sub.credits / 4) * 100).toFixed(0)}%</span>
                 </div>
-                <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
+                <div className="h-1.5 w-full bg-navy-100 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${(sub.credits / 4) * 100}%` }}
-                    className="h-full bg-zinc-900 rounded-full"
+                    className="h-full bg-navy-900 rounded-full"
                   />
                 </div>
               </div>
 
               {/* Footer */}
-              <div className="mt-5 pt-4 border-t border-zinc-100 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-zinc-400">
+              <div className="mt-5 pt-4 border-t border-navy-100 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-navy-400">
                   <BookOpen size={14} />
                   <span className="text-[10px] font-medium tracking-[0.12em] tabular-nums">
                     {sub.credits} Credits
@@ -420,25 +420,25 @@ export default function CurriculumManager() {
       {/* Pagination Controls */}
       {!loading && totalRecords > 0 && (
         <div className={cn(adminCardClass, "flex flex-col md:flex-row items-center justify-between gap-4 px-6 py-4")}>
-          <div className="text-[11px] font-medium text-zinc-400 tracking-[0.12em]">
-            Showing <span className="text-zinc-900">{subjects.length}</span> of{" "}
+          <div className="text-[11px] font-medium text-navy-400 tracking-[0.12em]">
+            Showing <span className="text-navy-900">{subjects.length}</span> of{" "}
             {totalRecords} records
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="w-9 h-9 flex items-center justify-center bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="w-9 h-9 flex items-center justify-center bg-white border border-navy-200 rounded-lg text-navy-500 hover:text-navy-900 hover:border-navy-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             >
               <ChevronLeft size={18} />
             </button>
-            <div className="px-3 text-[12px] font-semibold text-zinc-900 tabular-nums">
+            <div className="px-3 text-[12px] font-semibold text-navy-900 tabular-nums">
               Page {page} of {totalPages}
             </div>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="w-9 h-9 flex items-center justify-center bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="w-9 h-9 flex items-center justify-center bg-white border border-navy-200 rounded-lg text-navy-500 hover:text-navy-900 hover:border-navy-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             >
               <ChevronRight size={18} />
             </button>
@@ -455,7 +455,7 @@ export default function CurriculumManager() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-zinc-900/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-navy-900/40"
             />
 
             <motion.div
@@ -476,7 +476,7 @@ export default function CurriculumManager() {
                   </div>
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="w-9 h-9 flex items-center justify-center bg-zinc-50 rounded-full text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
+                    className="w-9 h-9 flex items-center justify-center bg-navy-50 rounded-full text-navy-400 hover:text-navy-900 hover:bg-navy-100 transition-all"
                   >
                     <X size={18} />
                   </button>
@@ -488,7 +488,7 @@ export default function CurriculumManager() {
                       <label className={adminLabelClass}>Subject Code</label>
                       <div className="relative">
                         <Hash
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-300 z-10"
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-300 z-10"
                           size={16}
                         />
                         <input
@@ -509,7 +509,7 @@ export default function CurriculumManager() {
                       <label className={adminLabelClass}>Credits</label>
                       <div className="relative">
                         <CreditCard
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-300 z-10"
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-300 z-10"
                           size={16}
                         />
                         <input

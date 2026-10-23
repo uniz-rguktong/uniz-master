@@ -143,3 +143,44 @@ export const portalNumsClass = "tabular-nums [font-feature-settings:'tnum']";
 
 export const portalIconTileClass =
   "w-10 h-10 rounded-[2px] bg-[#FAFAFA] text-[#0A2540] flex items-center justify-center border border-[#EEEEEE]";
+
+/* ── Page interiors (section header + content, not card decks) ─ */
+
+export const portalCanvasClass = "bg-[#FAFAFA] text-[#061B33] font-sans";
+
+export const portalPageHeaderClass =
+  "flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between";
+
+export const portalPageHeaderTitleClass = portalTitleClass;
+
+export const portalPageHeaderSubtitleClass = cn(portalSubtitleClass, "mt-1 max-w-2xl");
+
+export const portalToolbarClass =
+  "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#EEEEEE] pb-4";
+
+export const portalTableWrapClass =
+  "w-full overflow-x-auto border border-[#EEEEEE] bg-white rounded-[2px]";
+
+export const portalTableClass = "w-full text-left border-collapse font-sans";
+
+export const portalThClass =
+  "px-4 py-3 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5A7A94] bg-[#FAFAFA] border-b border-[#EEEEEE] font-form";
+
+export const portalTdClass =
+  "px-4 py-3 text-[13px] text-[#222222] border-b border-[#EEEEEE] align-middle";
+
+export const portalTrClass = "hover:bg-[#FAFAFA] transition-colors";
+
+export const portalEmptyClass =
+  "px-6 py-12 text-center text-[13px] text-[#5A7A94] font-sans tracking-[0.4px]";
+
+export const portalStatStripClass =
+  "flex flex-wrap gap-x-8 gap-y-3 border-b border-[#EEEEEE] pb-4";
+
+export const portalStatItemClass = "min-w-[7rem]";
+
+export const portalStatValueClass =
+  "text-[22px] font-bold tabular-nums text-[#0A2540] leading-none font-sans";
+
+export const portalStatLabelClass =
+  "mt-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5A7A94] font-form";

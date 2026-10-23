@@ -75,13 +75,13 @@ const META: Record<NotificationVisualType, Meta> = {
     label: "System",
     Icon: Bell,
     iconClass: "text-navy-600",
-    bgClass: "bg-zinc-50 ring-zinc-100",
+    bgClass: "bg-navy-50 ring-navy-100",
   },
   GENERIC: {
     label: "Alert",
     Icon: Bell,
     iconClass: "text-navy-600",
-    bgClass: "bg-zinc-50 ring-zinc-100",
+    bgClass: "bg-navy-50 ring-navy-100",
   },
 };
 

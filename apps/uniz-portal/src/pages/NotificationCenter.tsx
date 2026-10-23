@@ -187,7 +187,7 @@ export default function NotificationCenter({
         "inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-md transition-colors disabled:opacity-40",
         danger
           ? "text-red-600 hover:bg-red-50"
-          : "text-zinc-600 hover:bg-zinc-100",
+          : "text-navy-600 hover:bg-navy-100",
       )}
     >
       {children}
@@ -208,14 +208,14 @@ export default function NotificationCenter({
             <button
               type="button"
               onClick={() => navigate(backPath)}
-              className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
+              className="p-1.5 rounded-md text-navy-400 hover:text-navy-900 hover:bg-navy-100 transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
             </button>
           )}
           <div className="flex items-center gap-2">
-            <Bell className="h-5 w-5 text-zinc-900" />
-            <h1 className="text-[16px] font-semibold text-zinc-900 tracking-tight">
+            <Bell className="h-5 w-5 text-navy-900" />
+            <h1 className="text-[16px] font-semibold text-navy-900 tracking-tight">
               Notifications
             </h1>
             {unreadCount > 0 && (
@@ -230,14 +230,14 @@ export default function NotificationCenter({
           title="Refresh"
           disabled={loading}
           onClick={load}
-          className="p-2 rounded-md text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors disabled:opacity-40"
+          className="p-2 rounded-md text-navy-400 hover:text-navy-900 hover:bg-navy-100 transition-colors disabled:opacity-40"
         >
           <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
         </button>
       </div>
 
       {/* Action bar */}
-      <div className="flex items-center gap-0.5 mb-3 border-b border-zinc-200 pb-2">
+      <div className="flex items-center gap-0.5 mb-3 border-b border-navy-200 pb-2">
         <ActionButton
           onClick={markAllRead}
           disabled={busy || unreadCount === 0}
@@ -259,18 +259,18 @@ export default function NotificationCenter({
       {/* Content */}
       {loading ? (
         <div className="flex justify-center py-20">
-          <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+          <Loader2 className="h-5 w-5 animate-spin text-navy-400" />
         </div>
       ) : empty ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <Bell className="h-8 w-8 text-zinc-200 mb-3" />
-          <p className="text-[14px] font-medium text-zinc-500">All caught up</p>
-          <p className="text-[12px] text-zinc-400 mt-1">
+          <Bell className="h-8 w-8 text-navy-200 mb-3" />
+          <p className="text-[14px] font-medium text-navy-500">All caught up</p>
+          <p className="text-[12px] text-navy-400 mt-1">
             New alerts will appear here.
           </p>
         </div>
       ) : (
-        <div className="rounded-lg border border-zinc-200 overflow-hidden divide-y divide-zinc-100">
+        <div className="rounded-lg border border-navy-200 overflow-hidden divide-y divide-navy-100">
           {items.map((item) => {
             const unread = !item.readAt;
             const highlighted = item.id === highlightId;
@@ -282,7 +282,7 @@ export default function NotificationCenter({
                 id={`notification-${item.id}`}
                 className={cn(
                   "flex items-start gap-3 px-4 py-3 transition-colors group",
-                  unread ? "bg-blue-50/40" : "bg-white hover:bg-zinc-50/60",
+                  unread ? "bg-blue-50/40" : "bg-white hover:bg-navy-50/60",
                   highlighted && "ring-2 ring-inset ring-navy-300",
                 )}
               >
@@ -313,17 +313,17 @@ export default function NotificationCenter({
                       className={cn(
                         "text-[13px] leading-tight truncate",
                         unread
-                          ? "font-semibold text-zinc-900"
-                          : "font-medium text-zinc-700",
+                          ? "font-semibold text-navy-900"
+                          : "font-medium text-navy-700",
                       )}
                     >
                       {item.title}
                     </p>
-                    <span className="text-[11px] text-zinc-400 whitespace-nowrap shrink-0">
+                    <span className="text-[11px] text-navy-400 whitespace-nowrap shrink-0">
                       {timeAgo(item.createdAt)}
                     </span>
                   </div>
-                  <p className="text-[12px] text-zinc-500 mt-0.5 line-clamp-2 leading-relaxed">
+                  <p className="text-[12px] text-navy-500 mt-0.5 line-clamp-2 leading-relaxed">
                     {item.body}
                   </p>
                 </div>
@@ -335,7 +335,7 @@ export default function NotificationCenter({
                       type="button"
                       title="Mark read"
                       onClick={() => markRead(item.id)}
-                      className="p-1.5 rounded-md text-zinc-400 hover:text-navy-700 hover:bg-zinc-100 transition-colors"
+                      className="p-1.5 rounded-md text-navy-400 hover:text-navy-700 hover:bg-navy-100 transition-colors"
                     >
                       <Check className="h-3.5 w-3.5" />
                     </button>
@@ -344,7 +344,7 @@ export default function NotificationCenter({
                     type="button"
                     title="Delete"
                     onClick={() => deleteOne(item.id)}
-                    className="p-1.5 rounded-md text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    className="p-1.5 rounded-md text-navy-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>

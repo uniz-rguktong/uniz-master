@@ -268,7 +268,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 )}
               </select>
               <ChevronDown
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 size={14}
               />
             </div>
@@ -290,7 +290,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 ))}
               </select>
               <ChevronDown
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 size={14}
               />
             </div>
@@ -311,7 +311,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 ))}
               </select>
               <ChevronDown
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 size={14}
               />
             </div>
@@ -333,7 +333,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 ))}
               </select>
               <ChevronDown
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 size={14}
               />
             </div>
@@ -345,7 +345,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 <label className={adminLabelClass}>
                   Subject
                   {subjectsLoading && (
-                    <span className="ml-2 text-zinc-500 normal-case tracking-normal font-medium">
+                    <span className="ml-2 text-navy-500 normal-case tracking-normal font-medium">
                       loading...
                     </span>
                   )}
@@ -371,7 +371,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                     ))}
                   </select>
                   <ChevronDown
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                     size={14}
                   />
                 </div>
@@ -421,7 +421,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
         <div
           className={cn(
             adminCardClass,
-            "overflow-hidden border-dashed border-zinc-300 bg-zinc-50/40 p-6",
+            "overflow-hidden border-dashed border-navy-300 bg-navy-50/40 p-6",
           )}
         >
           <FileUploader
@@ -457,7 +457,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
 
         {/* Only show error result - success is communicated via the progress bar */}
         {result && !result.success && (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50/60 p-5">
+          <div className="rounded-[2px] border border-rose-200 bg-rose-50/60 p-5">
             <div className="mb-2 flex items-center gap-2.5">
               <AlertCircle size={16} className="text-rose-500" />
               <h3 className="text-[14px] font-semibold tracking-tight text-rose-900">

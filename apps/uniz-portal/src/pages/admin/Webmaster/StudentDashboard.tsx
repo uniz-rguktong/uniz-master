@@ -25,8 +25,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { BadgeCheck, Loader2 } from "lucide-react";
-import { BackgroundIconCloud } from "../../../components/illustrations/FloatingIllustrations";
-
 import { cn } from "../../../utils/cn";
 import { DEFAULT_STUDENT_BRANCH } from "@/constants/branches";
 import {
@@ -82,9 +80,6 @@ export default function StudentDashboard({
     <div className="space-y-6 pb-20 font-sans">
       {/* Redesigned Profile Hero (Matches Webmaster Overview) */}
       <div className={cn(adminCardClass, "px-4 pt-10 pb-12 flex flex-col items-center justify-center relative overflow-hidden animate-in fade-in duration-500")}>
-        {/* Absolute Decorative Icon Cloud */}
-        <BackgroundIconCloud />
-
         {/* Avatar */}
         <div className="relative mb-6">
           <div
@@ -93,11 +88,11 @@ export default function StudentDashboard({
               background: student.is_suspended ? "#f43f5e" : "#18181b",
             }}
           >
-            <div className="relative bg-zinc-50 p-[3px] rounded-full">
+            <div className="relative bg-navy-50 p-[3px] rounded-full">
               <div
                 className={cn(
                   "relative w-[110px] h-[110px] md:w-[130px] md:h-[130px] rounded-full flex justify-center items-center text-white text-[54px] font-medium overflow-hidden transition-all duration-500",
-                  student.profile_url ? "bg-zinc-50" : "bg-zinc-900",
+                  student.profile_url ? "bg-navy-50" : "bg-navy-900",
                 )}
               >
                 {student.profile_url ? (
@@ -125,15 +120,15 @@ export default function StudentDashboard({
         {/* Name & Email */}
         <div className="flex flex-col items-center justify-center gap-1 mb-6 mt-1 z-10">
           <div className="flex items-center justify-center gap-2">
-            <h2 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em] text-zinc-900 leading-none text-center">
+            <h2 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em] text-navy-900 leading-none text-center">
               {student.name}
             </h2>
           </div>
-          <p className="text-zinc-500 font-medium text-[13px] tracking-tight text-center flex items-center justify-center gap-1.5 max-w-full px-4 break-all">
+          <p className="text-navy-500 font-medium text-[13px] tracking-tight text-center flex items-center justify-center gap-1.5 max-w-full px-4 break-all">
             {student.email}
             {!student.is_suspended && (
               <BadgeCheck
-                className="w-[15px] h-[15px] text-zinc-900"
+                className="w-[15px] h-[15px] text-navy-900"
                 fill="#18181b"
                 fillOpacity={0.12}
                 strokeWidth={2.5}
@@ -203,7 +198,7 @@ export default function StudentDashboard({
         </div>
         )}
 
-        <div className="w-full pt-12 border-t border-zinc-100 mt-8">
+        <div className="w-full pt-12 border-t border-navy-100 mt-8">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-12 gap-x-6">
             <HeroInfo
               label="Email"
@@ -277,7 +272,7 @@ export default function StudentDashboard({
         {/* Motivation Quote */}
         <div className={cn(adminCardClass, "p-8 text-center flex flex-col justify-center")}>
           <p className={cn(adminLabelClass, "mb-3")}>Motivation</p>
-          <p className="text-[15px] font-medium text-zinc-600 italic leading-relaxed max-w-2xl mx-auto">
+          <p className="text-[15px] font-medium text-navy-600 italic leading-relaxed max-w-2xl mx-auto">
             "{student.motivation || "—"}"
           </p>
         </div>
@@ -301,14 +296,14 @@ function HeroInfo({
 }) {
   return (
     <div className={cn("flex flex-col items-center gap-2 min-w-0 w-full px-1", className)}>
-      <div className="flex items-center justify-center gap-1.5 text-zinc-400 mb-0.5">
+      <div className="flex items-center justify-center gap-1.5 text-navy-400 mb-0.5">
         {icon}
         <span className={adminLabelClass}>{label}</span>
       </div>
       <p
         title={value}
         className={cn(
-          "text-[13px] font-semibold text-zinc-900 tracking-tight text-center max-w-full w-full",
+          "text-[13px] font-semibold text-navy-900 tracking-tight text-center max-w-full w-full",
           valueClassName,
         )}
       >
@@ -332,11 +327,11 @@ function GraphCard({
       <div className="flex items-center justify-between mb-6">
         <div>
           <h4 className={adminSectionTitleClass}>{title}</h4>
-          <p className="text-[11px] text-zinc-400 mt-0.5">{subtitle}</p>
+          <p className="text-[11px] text-navy-400 mt-0.5">{subtitle}</p>
         </div>
         <div className="text-right">
           <p className={adminLabelClass}>{label}</p>
-          <p className={cn("text-2xl font-semibold text-zinc-900 mt-1", adminNumsClass)}>
+          <p className={cn("text-2xl font-semibold text-navy-900 mt-1", adminNumsClass)}>
             {value}
           </p>
         </div>

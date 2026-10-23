@@ -186,7 +186,7 @@ function PasswordStrength({ password }: { password: string }) {
       return {
         score: 0,
         label: "",
-        color: "bg-zinc-200",
+        color: "bg-navy-200",
         width: "0%",
       };
     let s = 0;
@@ -216,7 +216,7 @@ function PasswordStrength({ password }: { password: string }) {
       animate={{ opacity: 1, height: "auto" }}
       transition={{ duration: 0.3 }}
     >
-      <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
+      <div className="h-1.5 w-full bg-navy-100 rounded-full overflow-hidden">
         <motion.div
           className={`h-full rounded-full ${color}`}
           initial={{ width: 0 }}
@@ -225,7 +225,7 @@ function PasswordStrength({ password }: { password: string }) {
         />
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-[10px] font-bold tracking-wider text-zinc-400">
+        <span className="text-[10px] font-bold tracking-wider text-navy-400">
           Password strength
         </span>
         <span

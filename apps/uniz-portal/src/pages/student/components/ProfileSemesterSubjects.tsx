@@ -76,7 +76,7 @@ export default function ProfileSemesterSubjects({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-10">
-        <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+        <Loader2 className="w-6 h-6 animate-spin text-navy-400" />
       </div>
     );
   }

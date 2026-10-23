@@ -225,7 +225,7 @@
   }
 
   .spinner-blade {
-    @apply absolute h-[20%] w-[8%] bg-zinc-400 rounded-[1px];
+    @apply absolute h-[20%] w-[8%] bg-navy-400 rounded-[1px];
     animation: spinner-blade 1s linear infinite;
     will-change: opacity;
     top: 37%;
@@ -447,6 +447,7 @@
   --navy-200: #eeeeee;
   --navy-100: #fafafa;
   --navy-50: #ffffff;
+  --navy-950: #021227;
 
   /* Layout rhythm */
   --space-1: 4px;
@@ -517,6 +518,7 @@
   --navy-200: #eeeeee;
   --navy-100: #fafafa;
   --navy-50: #ffffff;
+  --navy-950: #021227;
 
   --bg-page: #fafafa;
   --card-bg: #ffffff;
@@ -572,75 +574,23 @@
   background-color: var(--portal-navy);
 }
 
-.portal-theme .bg-zinc-900,
-.portal-theme .bg-zinc-950,
-.portal-theme .hover\:bg-zinc-900:hover {
-  background-color: var(--portal-navy) !important;
-}
-
-.portal-theme .hover\:bg-zinc-800:hover,
-.portal-theme .hover\:bg-black:hover {
-  background-color: var(--portal-navy-mid) !important;
-}
-
-.portal-theme .text-zinc-900,
-.portal-theme .text-zinc-950 {
-  color: var(--portal-navy);
-}
-
-.portal-theme .border-zinc-900,
-.portal-theme .border-zinc-950 {
-  border-color: var(--portal-navy);
-}
-
-.portal-theme .ring-zinc-900,
-.portal-theme .focus\:ring-zinc-900:focus {
-  --tw-ring-color: var(--portal-navy);
-}
-
-.portal-theme .bg-zinc-50\/50,
-.portal-theme .bg-zinc-50 {
-  background-color: #fafafa;
-}
-
-.portal-theme .border-zinc-100,
-.portal-theme .border-zinc-200 {
-  border-color: var(--portal-navy-border);
-}
-
 .portal-theme .portal-banner-gradient,
 .portal-theme .portal-header-chrome,
 .portal-header-chrome {
   background: var(--header-gradient) !important;
 }
 
-/* Strip SaaS glass / blur / glow on authenticated portal routes */
-.portal-theme .backdrop-blur,
-.portal-theme .backdrop-blur-sm,
-.portal-theme .backdrop-blur-md,
-.portal-theme .backdrop-blur-xl,
-.portal-theme .backdrop-blur-2xl {
+/* Flatten leftover large radii and overlays on portal routes */
+.portal-theme .rounded-xl,
+.portal-theme .rounded-\[2\.5rem\],
+.portal-theme .rounded-\[2rem\] {
+  border-radius: 2px !important;
+}
+
+.portal-theme [class*="backdrop-filter"],
+.portal-theme [style*="backdrop-filter"] {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
-}
-
-.portal-theme .bg-white\/70,
-.portal-theme .bg-white\/80,
-.portal-theme .bg-white\/95,
-.portal-theme .bg-black\/40,
-.portal-theme .bg-black\/50,
-.portal-theme .bg-black\/60 {
-  background-color: #ffffff !important;
-}
-
-.portal-theme .bg-black {
-  background-color: #0a2540 !important;
-}
-
-.portal-theme .rounded-2xl,
-.portal-theme .rounded-3xl,
-.portal-theme .rounded-xl {
-  border-radius: 2px !important;
 }
 
 .dark {

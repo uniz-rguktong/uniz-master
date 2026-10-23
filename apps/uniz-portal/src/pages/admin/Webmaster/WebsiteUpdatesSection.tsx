@@ -372,10 +372,10 @@ export default function WebsiteUpdatesSection() {
         />
       </div>
 
-      <div className="flex flex-1 min-h-0 border-t border-zinc-200/70">
+      <div className="flex flex-1 min-h-0 border-t border-navy-200/70">
         <aside
           className={cn(
-            "shrink-0 flex flex-col border-r border-zinc-200/70 bg-white transition-all duration-300 ease-out",
+            "shrink-0 flex flex-col border-r border-navy-200/70 bg-white transition-all duration-300 ease-out",
             sidebarOpen ? "w-[280px]" : "w-0 overflow-hidden border-r-0",
           )}
         >
@@ -392,15 +392,15 @@ export default function WebsiteUpdatesSection() {
                   className={cn(
                     "w-full flex items-start gap-3 p-3 rounded-xl text-left transition-all duration-200",
                     isActive
-                      ? "bg-zinc-900 text-white shadow-sm"
-                      : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900",
+                      ? "bg-navy-900 text-white shadow-sm"
+                      : "text-navy-600 hover:bg-navy-50 hover:text-navy-900",
                   )}
                 >
                   <Icon
                     size={16}
                     className={cn(
                       "mt-0.5 shrink-0",
-                      isActive ? "text-white" : "text-zinc-400",
+                      isActive ? "text-white" : "text-navy-400",
                     )}
                   />
                   <div className="min-w-0">
@@ -410,7 +410,7 @@ export default function WebsiteUpdatesSection() {
                     <p
                       className={cn(
                         "text-[11px] mt-0.5 leading-snug",
-                        isActive ? "text-zinc-300" : "text-zinc-400",
+                        isActive ? "text-navy-300" : "text-navy-400",
                       )}
                     >
                       {section.description}
@@ -422,7 +422,7 @@ export default function WebsiteUpdatesSection() {
           </div>
 
           {activeSection.pages && (
-            <div className="border-t border-zinc-100 p-4 space-y-3 max-h-[45%] flex flex-col">
+            <div className="border-t border-navy-100 p-4 space-y-3 max-h-[45%] flex flex-col">
               <p className={cn(adminLabelClass, "px-1")}>
                 {activeSectionId === "departments" ? "Department" : "Page"}
               </p>
@@ -430,7 +430,7 @@ export default function WebsiteUpdatesSection() {
                 <div className="relative">
                   <Search
                     size={14}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-400"
                   />
                   <input
                     type="text"
@@ -450,15 +450,15 @@ export default function WebsiteUpdatesSection() {
                     className={cn(
                       "w-full text-left px-3 py-2 rounded-lg text-[12px] font-medium transition-all duration-150",
                       activePage === page
-                        ? "bg-zinc-100 text-zinc-900"
-                        : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800",
+                        ? "bg-navy-100 text-navy-900"
+                        : "text-navy-500 hover:bg-navy-50 hover:text-navy-800",
                     )}
                   >
                     {formatPageLabel(page)}
                   </button>
                 ))}
                 {filteredPages.length === 0 && (
-                  <p className="text-[11px] text-zinc-400 px-2 py-4 text-center">
+                  <p className="text-[11px] text-navy-400 px-2 py-4 text-center">
                     No matches
                   </p>
                 )}
@@ -468,7 +468,7 @@ export default function WebsiteUpdatesSection() {
         </aside>
 
         <main className="flex-1 flex flex-col min-w-0 bg-[#fafafa]">
-          <header className="shrink-0 sticky top-0 z-20 flex items-center justify-between gap-4 px-5 py-3.5 bg-white/90 backdrop-blur-md border-b border-zinc-200/70">
+          <header className="shrink-0 sticky top-0 z-20 flex items-center justify-between gap-4 px-5 py-3.5 bg-white/90 border-b border-navy-200/70">
             <div className="flex items-center gap-3 min-w-0">
               <button
                 type="button"
@@ -482,10 +482,10 @@ export default function WebsiteUpdatesSection() {
                 <LayoutGrid size={16} />
               </button>
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold text-zinc-400 tracking-wide">
+                <p className="text-[10px] font-semibold text-navy-400 tracking-wide">
                   Workspace
                 </p>
-                <p className="text-sm font-semibold text-zinc-900 truncate">
+                <p className="text-sm font-semibold text-navy-900 truncate">
                   {breadcrumb}
                 </p>
               </div>
@@ -517,15 +517,15 @@ export default function WebsiteUpdatesSection() {
                     <SkeletonLoader />
                   ) : !data ? (
                     <div className="py-16 text-center">
-                      <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-100">
+                      <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-[2px] flex items-center justify-center mx-auto mb-4 border border-amber-100">
                         <AlertTriangle size={24} />
                       </div>
-                      <h4 className="text-lg font-semibold text-zinc-900 mb-1.5">
+                      <h4 className="text-lg font-semibold text-navy-900 mb-1.5">
                         Could not load content
                       </h4>
-                      <p className="text-sm text-zinc-500 max-w-sm mx-auto leading-relaxed">
+                      <p className="text-sm text-navy-500 max-w-sm mx-auto leading-relaxed">
                         Ensure the gateway and landing CMS are running. API:{" "}
-                        <code className="text-xs bg-zinc-100 px-1 py-0.5 rounded">
+                        <code className="text-xs bg-navy-100 px-1 py-0.5 rounded">
                           {LANDING_API_URL}
                         </code>
                       </p>

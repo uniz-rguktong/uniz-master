@@ -44,7 +44,7 @@ export function Modal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
       <div
-        className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-[#021227]/40 transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -59,7 +59,7 @@ export function Modal({
         aria-modal="true"
       >
         {(title || description) && (
-          <div className="flex items-start justify-between p-6 pb-4 border-b border-zinc-200/70">
+          <div className="flex items-start justify-between p-6 pb-4 border-b border-[#EEEEEE]">
             <div className="pr-10">
               {title && <h3 className={adminModalTitleClass}>{title}</h3>}
               {description && (

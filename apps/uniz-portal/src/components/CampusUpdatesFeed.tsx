@@ -53,16 +53,16 @@ const TICKER_THEMES: Record<
   },
   landing: {
     shell:
-      "rounded-portal-2xl border border-zinc-200/90 bg-white shadow-whisper-landing",
-    liveWrap: "border-zinc-200 bg-zinc-50 text-zinc-900",
-    liveLabel: "text-zinc-800",
+      "rounded-portal-2xl border border-navy-200/90 bg-white shadow-whisper-landing",
+    liveWrap: "border-navy-200 bg-navy-50 text-navy-900",
+    liveLabel: "text-navy-800",
     fadeFrom: "from-white",
-    text: "text-zinc-800",
-    textHover: "hover:text-zinc-950",
-    icon: "text-zinc-500",
-    time: "text-zinc-400",
-    count: "border-zinc-200 bg-zinc-50 text-zinc-600",
-    skeleton: "border-zinc-200 bg-zinc-50/80",
+    text: "text-navy-800",
+    textHover: "hover:text-navy-950",
+    icon: "text-navy-500",
+    time: "text-navy-400",
+    count: "border-navy-200 bg-navy-50 text-navy-600",
+    skeleton: "border-navy-200 bg-navy-50/80",
     marqueeClass: "landing-updates-marquee",
   },
 };
@@ -148,13 +148,13 @@ function UpdatesTicker({
           <span
             className={cn(
               "absolute inline-flex h-full w-full animate-ping rounded-full opacity-50",
-              theme === "portal" ? "bg-navy-500" : "bg-zinc-500",
+              theme === "portal" ? "bg-navy-500" : "bg-navy-500",
             )}
           />
           <span
             className={cn(
               "relative inline-flex h-2 w-2 rounded-full",
-              theme === "portal" ? "bg-navy-900" : "bg-zinc-900",
+              theme === "portal" ? "bg-navy-900" : "bg-navy-900",
             )}
           />
         </span>
@@ -280,9 +280,9 @@ export default function CampusUpdatesFeed({
         <UpdatesTicker items={items} loading={loading} theme="landing" />
 
         {!loading && !fromApi && (
-          <p className="text-center text-[12px] font-medium text-zinc-400">
+          <p className="text-center text-[12px] font-medium text-navy-400">
             Showing sample updates — connect CMS or run{" "}
-            <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-[11px] text-zinc-600">
+            <code className="rounded bg-navy-100 px-1.5 py-0.5 text-[11px] text-navy-600">
               npm run seed:local
             </code>{" "}
             for real data.

@@ -25,7 +25,7 @@ function validatePassword(pwd: string): Strength {
   if (/[0-9]/.test(pwd)) score++;
   if (/[^A-Za-z0-9]/.test(pwd)) score++;
 
-  if (!pwd) return { score: 0, label: "", barClass: "bg-zinc-100" };
+  if (!pwd) return { score: 0, label: "", barClass: "bg-navy-100" };
   if (score <= 1) return { score, label: "Weak", barClass: "bg-rose-500" };
   if (score === 2) return { score, label: "Fair", barClass: "bg-amber-500" };
   return { score, label: "Strong", barClass: "bg-emerald-600" };
@@ -111,7 +111,7 @@ export default function Resetpassword() {
     repassword.length > 0 && password !== repassword;
 
   return (
-    <div className="font-sans text-zinc-900">
+    <div className="font-sans text-navy-900">
       <div className="mx-auto max-w-6xl px-4 pb-4 md:pb-10">
         <header className="mb-2 flex flex-col gap-0.5 md:mb-6">
           <p className={portalEyebrowClass}>Security</p>
@@ -122,9 +122,9 @@ export default function Resetpassword() {
           </p>
         </header>
 
-        <div className="bg-transparent md:overflow-hidden md:rounded-xl md:border md:border-zinc-100 md:bg-white md:shadow-sm">
+        <div className="bg-transparent md:overflow-hidden md:rounded-xl md:border md:border-navy-100 md:bg-white md:shadow-sm">
           <div className="md:flex">
-            <div className="space-y-5 border-zinc-50 px-0 py-2 md:w-2/3 md:border-r md:space-y-6 md:p-10 md:py-6">
+            <div className="space-y-5 border-navy-50 px-0 py-2 md:w-2/3 md:border-r md:space-y-6 md:p-10 md:py-6">
               <Input
                 label="Current password"
                 type="password"
@@ -147,7 +147,7 @@ export default function Resetpassword() {
                 {password && (
                   <div className="space-y-2 px-0.5">
                     <div className="flex items-center gap-3">
-                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-100">
+                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-navy-100">
                         <div
                           className={cn(
                             "h-full rounded-full transition-all duration-300",
@@ -158,7 +158,7 @@ export default function Resetpassword() {
                           }}
                         />
                       </div>
-                      <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                      <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-navy-400">
                         {passwordStrength.label}
                       </span>
                     </div>
@@ -171,7 +171,7 @@ export default function Resetpassword() {
                             key={req.id}
                             className={cn(
                               "flex items-center gap-2 text-[12px] font-medium transition-colors",
-                              met ? "text-zinc-800" : "text-zinc-400",
+                              met ? "text-navy-800" : "text-navy-400",
                             )}
                           >
                             <span
@@ -179,7 +179,7 @@ export default function Resetpassword() {
                                 "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border",
                                 met
                                   ? "border-navy-900 bg-navy-900 text-white"
-                                  : "border-zinc-200 bg-white",
+                                  : "border-navy-200 bg-white",
                               )}
                             >
                               {met && <Check className="h-3 w-3" strokeWidth={3} />}
@@ -222,10 +222,10 @@ export default function Resetpassword() {
                 {isLoading ? "Updating…" : "Update password"}
               </button>
 
-              <div className="rounded-xl border border-zinc-100 bg-white p-4 shadow-sm md:hidden">
+              <div className="rounded-xl border border-navy-100 bg-white p-4 shadow-sm md:hidden">
                 <div className="flex items-start gap-3">
-                  <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-900" strokeWidth={2} />
-                  <p className="text-[11px] font-medium leading-relaxed text-zinc-500">
+                  <Shield className="mt-0.5 h-4 w-4 shrink-0 text-navy-900" strokeWidth={2} />
+                  <p className="text-[11px] font-medium leading-relaxed text-navy-500">
                     For your security, all active sessions are ended after a password
                     change. Sign in again with your new password.
                   </p>
@@ -233,19 +233,19 @@ export default function Resetpassword() {
               </div>
             </div>
 
-            <div className="hidden flex-col justify-between bg-zinc-50/30 p-8 md:flex md:w-1/3">
+            <div className="hidden flex-col justify-between bg-navy-50/30 p-8 md:flex md:w-1/3">
               <div>
-                <h3 className="mb-6 flex items-center gap-2 text-[10px] font-bold tracking-[0.14em] text-zinc-400">
+                <h3 className="mb-6 flex items-center gap-2 text-[10px] font-bold tracking-[0.14em] text-navy-400">
                   Password guidelines
                 </h3>
 
                 <div className="space-y-3 md:space-y-6">
                   {GUIDELINES.map((text, index) => (
                     <div key={text} className="flex items-start gap-4">
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-zinc-100 bg-white text-[10px] font-bold text-zinc-900 shadow-sm">
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-navy-100 bg-white text-[10px] font-bold text-navy-900 shadow-sm">
                         {String(index + 1).padStart(2, "0")}
                       </div>
-                      <p className="text-[13px] font-medium leading-relaxed text-zinc-500">
+                      <p className="text-[13px] font-medium leading-relaxed text-navy-500">
                         {text}
                       </p>
                     </div>
@@ -253,10 +253,10 @@ export default function Resetpassword() {
                 </div>
               </div>
 
-              <div className="mt-12 rounded-xl border border-zinc-100 bg-white p-5 shadow-sm">
+              <div className="mt-12 rounded-xl border border-navy-100 bg-white p-5 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <Shield size={16} className="mt-0.5 text-zinc-900" />
-                  <p className="text-[11px] font-medium leading-relaxed text-zinc-500">
+                  <Shield size={16} className="mt-0.5 text-navy-900" />
+                  <p className="text-[11px] font-medium leading-relaxed text-navy-500">
                     For your security, all active sessions are ended after a password
                     change. Sign in again with your new password.
                   </p>

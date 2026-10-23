@@ -81,7 +81,7 @@ function LiveField({
           placeholder={placeholder}
           className={cn(
             adminInputClass,
-            "mt-1 border-transparent bg-transparent hover:bg-slate-50 focus:bg-white focus:border-zinc-300 px-2 -mx-2",
+            "mt-1 border-transparent bg-transparent hover:bg-slate-50 focus:bg-white focus:border-navy-300 px-2 -mx-2",
             mono && "font-mono text-xs",
           )}
         />
@@ -184,14 +184,14 @@ function SectionBlock({
 }) {
   return (
     <section className={cn(adminCardClass, "overflow-hidden")}>
-      <div className="px-5 py-4 border-b border-zinc-100 flex items-center justify-between gap-3 bg-white">
+      <div className="px-5 py-4 border-b border-navy-100 flex items-center justify-between gap-3 bg-white">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-[#0B2A47]/5 text-[#0B2A47] flex items-center justify-center">
             <Icon size={16} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-zinc-900">{title}</h3>
-            <p className="text-[11px] text-zinc-400">{count} items</p>
+            <h3 className="text-sm font-semibold text-navy-900">{title}</h3>
+            <p className="text-[11px] text-navy-400">{count} items</p>
           </div>
         </div>
         <button
@@ -376,7 +376,7 @@ function ImagesEditor({
       <div className="pt-2 space-y-2 max-h-64 overflow-y-auto custom-sidebar-scroll">
         {items.map((url, idx) => (
           <div key={`url-${idx}`} className="flex gap-2 items-center">
-            <span className="text-[10px] text-zinc-400 w-6">#{idx + 1}</span>
+            <span className="text-[10px] text-navy-400 w-6">#{idx + 1}</span>
             <input
               type="text"
               value={url}
@@ -588,13 +588,13 @@ function GenericLiveForm({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-zinc-900 text-sm truncate">{String(name)}</p>
-                  <p className="text-[10px] text-zinc-400 mt-0.5">Click to edit</p>
+                  <p className="font-semibold text-navy-900 text-sm truncate">{String(name)}</p>
+                  <p className="text-[10px] text-navy-400 mt-0.5">Click to edit</p>
                 </div>
                 <ChevronRight
                   size={16}
                   className={cn(
-                    "text-zinc-400 shrink-0 transition-transform",
+                    "text-navy-400 shrink-0 transition-transform",
                     isExpanded && "rotate-90",
                   )}
                 />
@@ -720,12 +720,12 @@ function GenericLiveForm({
               onClick={() =>
                 setCollapsedKeys((prev) => ({ ...prev, [sectionKey]: !prev[sectionKey] }))
               }
-              className="w-full px-5 py-4 flex items-center justify-between gap-3 text-left bg-white border-b border-zinc-100"
+              className="w-full px-5 py-4 flex items-center justify-between gap-3 text-left bg-white border-b border-navy-100"
             >
               <div className="flex items-center gap-2">
                 <ChevronRight
                   size={14}
-                  className={cn("text-zinc-400 transition-transform", !isCollapsed && "rotate-90")}
+                  className={cn("text-navy-400 transition-transform", !isCollapsed && "rotate-90")}
                 />
                 <h4 className={cn(adminLabelClass, "normal-case capitalize mb-0")}>
                   {key.replace(/_/g, " ")}

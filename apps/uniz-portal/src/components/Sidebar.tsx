@@ -185,8 +185,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student/resetpassword",
       content: "resetpassword",
       icon: Lock,
-      activeColor: "text-zinc-600",
-      hoverColor: "hover:text-zinc-600",
+      activeColor: "text-navy-600",
+      hoverColor: "hover:text-navy-600",
     },
 
     {

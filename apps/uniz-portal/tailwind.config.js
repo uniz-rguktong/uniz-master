@@ -120,6 +120,7 @@ module.exports = {
           200: "var(--navy-200)",
           100: "var(--navy-100)",
           50: "var(--navy-50)",
+          950: "var(--navy-950, #021227)",
         },
 
         slate: {

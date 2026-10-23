@@ -62,7 +62,7 @@ export function Error() {
   useIsAuth();
   const navigate = useNavigate();
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center bg-white text-center px-4 font-sans overflow-hidden selection:bg-zinc-100">
+    <div className="relative min-h-screen flex flex-col items-center justify-center bg-white text-center px-4 font-sans overflow-hidden selection:bg-navy-100">
       {/* ── High-End Mesh Gradient Backdrop ── */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <motion.div
@@ -79,18 +79,18 @@ export function Error() {
         transition={{ duration: 0.5 }}
         className="relative z-10 flex flex-col items-center max-w-lg mx-auto"
       >
-        <div className="w-16 h-16 bg-zinc-950 rounded-2xl flex items-center justify-center mb-8 text-white shadow-xl shadow-zinc-200/50">
+        <div className="w-16 h-16 bg-navy-950 rounded-[2px] flex items-center justify-center mb-8 text-white shadow-xl shadow-navy-200/50">
           <FileQuestion size={28} strokeWidth={2.5} />
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-semibold text-zinc-950 mb-3 tracking-tight leading-none">
+        <h1 className="text-5xl md:text-7xl font-semibold text-navy-950 mb-3 tracking-tight leading-none">
           404{" "}
-          <span className="text-zinc-300 font-light tracking-[-0.04em]">
+          <span className="text-navy-300 font-light tracking-[-0.04em]">
             Error
           </span>
         </h1>
 
-        <p className="text-zinc-500 mb-10 font-medium text-[15px] leading-relaxed">
+        <p className="text-navy-500 mb-10 font-medium text-[15px] leading-relaxed">
           The requested resource is unavailable, has been relocated, or is
           simply a glitch in the matrix.
         </p>
@@ -98,16 +98,16 @@ export function Error() {
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           <button
             onClick={() => navigate(-1)}
-            className="group relative h-12 px-8 bg-white border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 text-zinc-900 text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-sm"
+            className="group relative h-12 px-8 bg-white border border-navy-200 hover:border-navy-300 hover:bg-navy-50 text-navy-900 text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-sm"
           >
-            <ArrowLeft className="w-4 h-4 text-zinc-400 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft className="w-4 h-4 text-navy-400 group-hover:-translate-x-1 transition-transform" />
             Go Back
           </button>
           <Link to="/" className="w-full sm:w-auto">
-            <button className="w-full sm:w-auto group relative h-12 px-8 bg-zinc-950 hover:bg-[#0A2540] text-white text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]">
+            <button className="w-full sm:w-auto group relative h-12 px-8 bg-navy-950 hover:bg-[#0A2540] text-white text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
               Return Home
-              <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-navy-400 group-hover:translate-x-1 transition-transform" />
             </button>
           </Link>
         </div>
@@ -119,14 +119,14 @@ export function Error() {
 export function Maintenance() {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50 text-center px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-navy-50 text-center px-4">
       <div className="w-20 h-20 bg-[#0A2540] rounded-full flex items-center justify-center mb-6 text-white animate-pulse">
         <Construction size={40} />
       </div>
-      <h1 className="text-3xl font-bold text-zinc-900 mb-2">
+      <h1 className="text-3xl font-bold text-navy-900 mb-2">
         Under Maintenance
       </h1>
-      <p className="text-zinc-500 max-w-md mb-8 leading-relaxed">
+      <p className="text-navy-500 max-w-md mb-8 leading-relaxed">
         We are currently updating the system to serve you better. Please check
         back later or contact administration if this persists.
       </p>

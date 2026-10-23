@@ -72,9 +72,9 @@ function SortableBannerCard({
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative bg-white border border-zinc-200 shadow-sm hover:shadow-md rounded-xl overflow-hidden transition-all duration-200"
+      className="group relative bg-white border border-navy-200 shadow-sm hover:shadow-md rounded-xl overflow-hidden transition-all duration-200"
     >
-      <div className="relative aspect-video bg-zinc-100">
+      <div className="relative aspect-video bg-navy-100">
         <img
           src={banner.imageUrl}
           alt={banner.title}
@@ -83,17 +83,17 @@ function SortableBannerCard({
         <div
           {...attributes}
           {...listeners}
-          className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm p-1.5 rounded-lg cursor-grab shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white text-zinc-600"
+          className="absolute top-3 left-3 bg-white/90 p-1.5 rounded-lg cursor-grab shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white text-navy-600"
         >
           <GripVertical className="w-5 h-5" />
         </div>
         <div className="absolute top-3 right-3">
           <span
             className={cn(
-              "px-2 py-1 text-xs font-bold tracking-wide rounded-md backdrop-blur-md shadow-sm border",
+              "px-2 py-1 text-xs font-bold tracking-wide rounded-md shadow-sm border",
               banner.isPublished
                 ? "bg-emerald-500/90 text-white border-emerald-400"
-                : "bg-zinc-500/90 text-white border-zinc-400",
+                : "bg-navy-500/90 text-white border-navy-400",
             )}
           >
             {banner.isPublished ? "Published" : "Draft"}
@@ -102,20 +102,20 @@ function SortableBannerCard({
       </div>
 
       <div className="p-4">
-        <h3 className="text-lg font-bold text-zinc-900 mb-1 line-clamp-1">
+        <h3 className="text-lg font-bold text-navy-900 mb-1 line-clamp-1">
           {banner.title}
         </h3>
-        <p className="text-zinc-500 text-sm line-clamp-2 min-h-[40px]">
+        <p className="text-navy-500 text-sm line-clamp-2 min-h-[40px]">
           {banner.text}
         </p>
 
-        <div className="flex gap-2 mt-4 pt-4 border-t border-zinc-100">
+        <div className="flex gap-2 mt-4 pt-4 border-t border-navy-100">
           <button
             onClick={() => publishBanner(banner.id, !banner.isPublished)}
             className={cn(
               "flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors border",
               banner.isPublished
-                ? "bg-zinc-50 text-zinc-700 border-zinc-200 hover:bg-zinc-100"
+                ? "bg-navy-50 text-navy-700 border-navy-200 hover:bg-navy-100"
                 : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100",
             )}
           >
@@ -131,7 +131,7 @@ function SortableBannerCard({
           </button>
           <button
             onClick={() => deleteBanner(banner.id)}
-            className="flex items-center justify-center p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="flex items-center justify-center p-2 text-navy-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
             title="Delete Banner"
           >
             <Trash2 className="w-4 h-4" />
@@ -250,23 +250,23 @@ export default function BannerManager() {
       <div className="flex flex-col gap-6">
         <button
           onClick={() => navigate("/admin")}
-          className="self-start inline-flex items-center text-sm font-medium text-zinc-500 hover:text-zinc-800 transition-colors"
+          className="self-start inline-flex items-center text-sm font-medium text-navy-500 hover:text-navy-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
         </button>
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900">
+            <h1 className="text-2xl font-bold text-navy-900">
               Banner Management
             </h1>
-            <p className="text-zinc-500 mt-1">
+            <p className="text-navy-500 mt-1">
               Create and manage homepage banners and announcements.
             </p>
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-semibold text-[10px] tracking-[0.14em] hover:bg-[#0A2540] transition-all flex items-center gap-3 shadow-lg shadow-zinc-100/50"
+            className="h-12 px-8 bg-navy-900 text-white rounded-xl font-semibold text-[10px] tracking-[0.14em] hover:bg-[#0A2540] transition-all flex items-center gap-3 shadow-lg shadow-navy-100/50"
           >
             <PlusCircle size={16} /> New Banner
           </button>
@@ -276,7 +276,7 @@ export default function BannerManager() {
       {/* Add Banner Modal */}
       {showAddModal && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-navy-900/40"
           onClick={() => setShowAddModal(false)}
         >
           <div
@@ -286,7 +286,7 @@ export default function BannerManager() {
             <button
               type="button"
               onClick={() => setShowAddModal(false)}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
@@ -305,10 +305,10 @@ export default function BannerManager() {
                   <div
                     {...getRootProps()}
                     className={cn(
-                      "h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer transition-all bg-zinc-50",
+                      "h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer transition-all bg-navy-50",
                       isDragActive
-                        ? "border-zinc-100 bg-zinc-50"
-                        : "border-zinc-300 hover:border-zinc-400 hover:bg-zinc-100",
+                        ? "border-navy-100 bg-navy-50"
+                        : "border-navy-300 hover:border-navy-400 hover:bg-navy-100",
                       image && "border-emerald-500 bg-emerald-50",
                     )}
                   >
@@ -324,8 +324,8 @@ export default function BannerManager() {
                         </p>
                       </div>
                     ) : (
-                      <div className="text-zinc-500">
-                        <Upload className="w-6 h-6 mx-auto mb-1.5 text-zinc-400" />
+                      <div className="text-navy-500">
+                        <Upload className="w-6 h-6 mx-auto mb-1.5 text-navy-400" />
                         <p className="font-bold text-[10px] tracking-wider">
                           Select Banner Image
                         </p>
@@ -388,7 +388,7 @@ export default function BannerManager() {
 
       {/* Banners Grid */}
       <div>
-        <h3 className="text-lg font-bold text-zinc-900 mb-4 px-1">
+        <h3 className="text-lg font-bold text-navy-900 mb-4 px-1">
           Active Banners
         </h3>
         <DndContext
@@ -412,7 +412,7 @@ export default function BannerManager() {
                 ))}
               </div>
             ) : (
-              <div className="bg-zinc-50 border border-dashed border-zinc-200 rounded-xl p-12 text-center text-zinc-500">
+              <div className="bg-navy-50 border border-dashed border-navy-200 rounded-xl p-12 text-center text-navy-500">
                 <LayoutDashboard className="w-10 h-10 mx-auto mb-3 opacity-50" />
                 <p className="font-medium">No banners created yet</p>
                 <p className="text-sm">

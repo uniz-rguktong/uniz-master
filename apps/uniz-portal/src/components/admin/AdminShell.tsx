@@ -392,7 +392,7 @@ export default function AdminShell({
 
       <main
         className={cn(
-          "flex-1 overflow-y-auto max-h-screen flex flex-col",
+          "flex-1 overflow-y-auto max-h-screen flex flex-col bg-[#FAFAFA]",
           isOverlayMobile && "w-full",
         )}
       >
