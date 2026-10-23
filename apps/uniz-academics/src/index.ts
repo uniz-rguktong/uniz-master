@@ -1,102 +1,10 @@
-import express from "express";
 import dotenv from "dotenv";
-import cors from "cors";
-import helmet from "helmet";
-import compression from "compression";
-import { redis } from "./utils/redis.util";
-
 dotenv.config({ override: true });
 
-const app = express();
+import { createApp } from "./createApp";
+
+const app = createApp();
 const PORT = process.env.PORT || 3004;
-
-app.use(
-  helmet({
-    // Portal (uniz.rguktong.in) calls this API cross-origin; default CORP
-    // same-origin blocks reading PDF/binary responses in the browser.
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-  }),
-);
-app.use(compression());
-// CORS is handled centrally at the gateway; services sit behind it.
-
-// File uploads go through multer (multipart), so JSON bodies only carry row
-// arrays / config — 20mb is far above any realistic payload.
-app.use(express.json({ limit: "20mb" }));
-app.use(express.urlencoded({ limit: "20mb", extended: true }));
-
-// Attribution & Malformed Activity Handling (Mandatory)
-import { attributionMiddleware } from "./middlewares/attribution.middleware";
-app.use(attributionMiddleware);
-
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok", service: "uniz-academics-service" });
-});
-
-import academicRoutes from "./routes/academic.routes";
-import queueRoutes from "./routes/queue.routes";
-import analyticsRoutes from "./routes/analytics.routes";
-import { authMiddleware } from "./middlewares/auth.middleware";
-import { startRegistrationPdfWorker } from "./workers/registration-pdf.queue";
-
-// Internal Queue Routes (No Auth Middleware)
-app.use("/api/queue", queueRoutes);
-
-// Analytics Routes (Auth Required)
-app.use("/analytics", authMiddleware, analyticsRoutes);
-
-// General Academic Routes (With Auth Middleware)
-app.use("/", academicRoutes);
-
-// Capped PDF generation worker (keeps PDFKit off the request path)
-startRegistrationPdfWorker();
-
-// Startup self-healing: Check for stuck jobs
-import { processNextBatch } from "./services/upload.service";
-const startWorker = async () => {
-  try {
-    const jobExists = await redis.llen("job:queue");
-    if (jobExists > 0) {
-      console.log(
-        `[Academics] 🔄 Found ${jobExists} stuck jobs on startup. Resuming...`,
-      );
-      let result;
-      do {
-        result = await processNextBatch();
-      } while (result && result.status === "continued");
-      console.log("[Academics]  All stuck jobs processed.");
-    }
-  } catch (err) {
-    console.warn("[Academics] Startup worker check failed:", err);
-  }
-};
-setTimeout(startWorker, 5000); // Wait for services to be ready
-
-// 404 Handler
-app.use((req, res) => {
-  res.status(404).json({
-    status: "error",
-    message: `Route ${req.method} ${req.url} not found`,
-    timestamp: new Date().toISOString(),
-    attribution: "SreeCharan",
-  });
-});
-
-// Error Handler
-app.use(
-  (
-    err: any,
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction,
-  ) => {
-    if (err.type === "request.aborted") {
-      return res.status(400).json({ error: "Request aborted" });
-    }
-    console.error(err.stack);
-    res.status(500).json({ error: "Internal Server Error" });
-  },
-);
 
 const server = app.listen(PORT, () => {
   console.log(`Academics Service running on port ${PORT}`);
@@ -104,16 +12,12 @@ const server = app.listen(PORT, () => {
   server.headersTimeout = 66000;
 });
 
-// Graceful Shutdown Handler
+export default app;
+
 process.on("SIGTERM", async () => {
   console.log("SIGTERM received. Starting graceful shutdown...");
   server.close(() => {
     console.log("HTTP server closed.");
   });
-  try {
-    if ((global as any).prisma || require("./utils/db.util").prisma) {
-      // generic attempt to close prisma if it exists
-    }
-  } catch (e) {}
   process.exit(0);
 });

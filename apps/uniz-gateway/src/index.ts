@@ -99,26 +99,23 @@ app.use(
   },
 );
 
+// Auth/user/academics consolidate into uniz-api; gateway still keys by URL segment.
+const UNIFIED_API =
+  process.env.UNIZ_API_URL ||
+  "http://uniz-api-service.default.svc.cluster.local:3001";
+
 const serviceMap: Record<string, string> = {
-  auth:
-    process.env.AUTH_SERVICE_URL ||
-    "http://uniz-auth-service.default.svc.cluster.local:3001",
-  profile:
-    process.env.USER_SERVICE_URL ||
-    "http://uniz-user-service.default.svc.cluster.local:3002",
-  cms:
-    process.env.USER_SERVICE_URL ||
-    "http://uniz-user-service.default.svc.cluster.local:3002",
-  academics:
-    process.env.ACADEMICS_SERVICE_URL ||
-    "http://uniz-academics-service.default.svc.cluster.local:3004",
+  auth: process.env.AUTH_SERVICE_URL || UNIFIED_API,
+  profile: process.env.USER_SERVICE_URL || UNIFIED_API,
+  cms: process.env.USER_SERVICE_URL || UNIFIED_API,
+  academics: process.env.ACADEMICS_SERVICE_URL || UNIFIED_API,
   requests:
     process.env.OUTPASS_SERVICE_URL ||
     "http://uniz-outpass-service.default.svc.cluster.local:3003",
   files:
     process.env.FILES_SERVICE_URL ||
     process.env.USER_SERVICE_URL ||
-    "http://uniz-user-service.default.svc.cluster.local:3002",
+    UNIFIED_API,
   mail:
     process.env.MAIL_SERVICE_URL ||
     process.env.NOTIFICATION_SERVICE_URL ||
@@ -130,15 +127,29 @@ const serviceMap: Record<string, string> = {
     process.env.CRON_SERVICE_URL ||
     process.env.OUTPASS_SERVICE_URL ||
     "http://uniz-outpass-service.default.svc.cluster.local:3003",
-  grievance:
-    process.env.USER_SERVICE_URL ||
-    "http://uniz-user-service.default.svc.cluster.local:3002",
+  grievance: process.env.USER_SERVICE_URL || UNIFIED_API,
   docs:
     process.env.DOCS_SERVICE_URL ||
     (process.env.NODE_ENV === "production"
       ? "http://uniz-docs-service.default.svc.cluster.local:3333"
       : "http://127.0.0.1:3333"),
 };
+
+/** Modules that uniz-api dispatches via X-Uniz-Service. */
+const UNIFIED_SERVICE_KEYS = new Set([
+  "auth",
+  "profile",
+  "cms",
+  "files",
+  "grievance",
+  "academics",
+]);
+
+function stampUnizService(req: any, service: string) {
+  if (UNIFIED_SERVICE_KEYS.has(service)) {
+    req.headers["x-uniz-service"] = service;
+  }
+}
 
 const landingApiTarget = (
   process.env.LANDING_API_URL ||
@@ -383,6 +394,7 @@ app.all("/api/v1/cms/*path", (req: any, res: any) => {
   if (!cmsTarget) {
     return res.status(503).json({ error: "CMS service unavailable" });
   }
+  stampUnizService(req, "cms");
   proxy.web(req, res, { target: cmsTarget, changeOrigin: true });
 });
 
@@ -417,12 +429,13 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
   }
 
   let targetUrl = target;
+  let dispatchService = service;
   if (isGrievanceViaRequests) {
     targetUrl =
-      serviceMap.grievance ||
-      process.env.USER_SERVICE_URL ||
-      "http://uniz-user-service.default.svc.cluster.local:3002";
+      serviceMap.grievance || process.env.USER_SERVICE_URL || UNIFIED_API;
+    dispatchService = "grievance";
   }
+  stampUnizService(req, dispatchService);
 
   const subPath = subPathEarly;
   const queryStart = req.originalUrl.indexOf("?");
@@ -491,7 +504,11 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
       const response = await internalClient.get(
         `${targetUrl.replace(/\/$/, "")}${req.url}`,
         {
-          headers: { ...req.headers, host: new URL(targetUrl).host },
+          headers: {
+            ...req.headers,
+            host: new URL(targetUrl).host,
+            "x-uniz-service": req.headers["x-uniz-service"] || dispatchService,
+          },
           responseType: "arraybuffer", // Use arraybuffer to handle mixed content
           validateStatus: () => true,
         },

@@ -73,18 +73,25 @@ if [ "$ec" = "0" ]; then
     echo "[Smoke] WARN — smoke checks failed (deploy itself succeeded)"
   fi
 
-  # Scale down retired always-on Deployments if they linger from prior releases
+  # Scale down retired / superseded Deployments (capacity → uniz-api + gateway)
   kubectl scale deploy/uniz-mail-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl scale deploy/uniz-files-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl scale deploy/uniz-cron-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl scale deploy/uniz-outpass-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
+  kubectl scale deploy/uniz-auth-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
+  kubectl scale deploy/uniz-user-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
+  kubectl scale deploy/uniz-academics-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl delete hpa uniz-outpass-service-hpa --ignore-not-found=true 2>/dev/null || true
   kubectl scale deploy/uniz-portal --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl delete hpa uniz-portal --ignore-not-found=true 2>/dev/null || true
   kubectl scale deploy/uniz-landing --replicas=0 --ignore-not-found=true 2>/dev/null || true
-  # nginx hop removed: Traefik → gateway-api
   kubectl scale deploy/uniz-gateway --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl delete hpa uniz-gateway-hpa --ignore-not-found=true 2>/dev/null || true
+  # Ensure vault file perms (open-source: secrets never in git)
+  if [ -f /root/uniz-secrets.env ]; then
+    chmod 600 /root/uniz-secrets.env
+    chown root:root /root/uniz-secrets.env
+  fi
 fi
 
 exit "$ec"

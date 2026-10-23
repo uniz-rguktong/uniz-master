@@ -7,13 +7,12 @@
 
 infra_yaml_to_dir() {
   case "$1" in
+    api-service.yaml) echo "uniz-api" ;;
     academics-service.yaml) echo "uniz-academics" ;;
     auth-service.yaml) echo "uniz-auth" ;;
     cron-service.yaml|cron-job.yaml|storage-cleanup-job.yaml) echo "uniz-cron" ;;
     docs-service.yaml) echo "uniz-docs" ;;
-    files-service.yaml) echo "uniz-files" ;;
     gateway-api.yaml|gateway.yaml) echo "uniz-gateway" ;;
-    mail-service.yaml) echo "uniz-mail" ;;
     notification-service.yaml) echo "uniz-notifications" ;;
     outpass-service.yaml) echo "uniz-outpass" ;;
     portal.yaml) echo "uniz-portal" ;;
@@ -28,11 +27,10 @@ rebuild_tag_to_dir() {
     docs) echo "uniz-docs" ;;
     portal) echo "uniz-portal" ;;
     gateway) echo "uniz-gateway" ;;
+    api) echo "uniz-api" ;;
     auth) echo "uniz-auth" ;;
     academics) echo "uniz-academics" ;;
     user) echo "uniz-user" ;;
-    files) echo "uniz-files" ;;
-    mail) echo "uniz-mail" ;;
     notifications) echo "uniz-notifications" ;;
     outpass) echo "uniz-outpass" ;;
     cron) echo "uniz-cron" ;;
@@ -41,14 +39,12 @@ rebuild_tag_to_dir() {
   esac
 }
 
-MONOREPO_SERVICES="uniz-academics uniz-auth uniz-user uniz-outpass uniz-files uniz-mail uniz-notifications uniz-cron uniz-gateway"
+MONOREPO_SERVICES="uniz-api uniz-academics uniz-auth uniz-user uniz-outpass uniz-notifications uniz-cron uniz-gateway"
 
-# Default CI/deploy image matrix. Mail + files apps remain in the monorepo for
-# local use, but production runtime folds them into notifications and user.
-# Set BUILD_OPTIONAL=true or SERVICES=... to rebuild retired images.
+# Default CI/deploy image matrix. uniz-api replaces always-on auth/user/academics.
+# Set BUILD_OPTIONAL=true to rebuild parked standalone auth/user/academics images.
 UNIZ_SERVICES=(
-  "uniz-academics:uniz-academics-service:uniz-academics-service:academics-service"
-  "uniz-auth:uniz-auth-service:uniz-auth-service:auth-service"
+  "uniz-api:uniz-api:uniz-api:api-service"
   "uniz-cron:uniz-cron-service:uniz-storage-cleanup-job:storage-cleaner"
   "uniz-outpass:uniz-outpass-service:uniz-maintenance-job:cron-worker"
   "uniz-gateway:uniz-gateway-api:uniz-gateway-api:gateway-api"
@@ -57,14 +53,14 @@ UNIZ_SERVICES=(
   "uniz-portal:uniz-portal:uniz-portal:portal"
   "uniz-landing:uniz-landing:uniz-landing:landing"
   "uniz-docs:uniz-docs-service:uniz-docs-service:docs-service"
-  "uniz-user:uniz-user-service:uniz-user-service:user-service"
   "infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
 )
 
-# Retired always-on images (code kept). Included when BUILD_OPTIONAL=true.
+# Parked standalone services (rollback images). Included when BUILD_OPTIONAL=true.
 UNIZ_OPTIONAL_SERVICES=(
-  "uniz-files:uniz-files-service:uniz-files-service:files-service"
-  "uniz-mail:uniz-mail-service:uniz-mail-service:mail-service"
+  "uniz-auth:uniz-auth-service:uniz-auth-service:auth-service"
+  "uniz-user:uniz-user-service:uniz-user-service:user-service"
+  "uniz-academics:uniz-academics-service:uniz-academics-service:academics-service"
   "uniz-cron:uniz-cron-service:uniz-cron-service:cron-worker"
 )
 
@@ -90,7 +86,11 @@ resolve_build_paths() {
   if uses_monorepo_dockerfile "$DIR"; then
     BUILD_CONTEXT="."
     # Production/CI ONLY — never docker/local/* (Compose fast-path).
-    DOCKERFILE="docker/prod/Dockerfile.service"
+    if [[ "$DIR" == "uniz-api" ]]; then
+      DOCKERFILE="docker/prod/Dockerfile.api"
+    else
+      DOCKERFILE="docker/prod/Dockerfile.service"
+    fi
     return
   fi
 
@@ -172,7 +172,7 @@ deploy_detect_changes() {
       echo "[Build] SERVICE override: $tag -> $dir"
     done
   else
-    for tag in docs portal gateway auth academics user files mail notifications outpass cron landing; do
+    for tag in docs portal gateway api auth academics user notifications outpass cron landing; do
       if [[ "$BUILD_MSG" == *"[rebuild $tag]"* ]]; then
         dir=$(rebuild_tag_to_dir "$tag")
         if [ -n "$dir" ]; then
@@ -245,7 +245,7 @@ service_should_build() {
       return 0
     fi
   fi
-  if [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -qE '^package\.json$|^package-lock\.json$|^docker/prod/Dockerfile\.service$'; then
+  if [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -qE '^package\.json$|^package-lock\.json$|^docker/prod/Dockerfile\.(service|api)$'; then
     if echo " $MONOREPO_SERVICES " | grep -q " $DIR "; then
       return 0
     fi
@@ -253,6 +253,13 @@ service_should_build() {
 
   if [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -q "^apps/$DIR/"; then
     return 0
+  fi
+
+  # uniz-api embeds auth/user/academics — rebuild when any of those change.
+  if [ "$DIR" = "uniz-api" ] && [ -n "$CHANGED_FILES" ]; then
+    if echo "$CHANGED_FILES" | grep -qE '^apps/uniz-(auth|user|academics)/'; then
+      return 0
+    fi
   fi
 
   if [ -n "${INFRA_CHANGED_DIRS[$DIR]:-}" ]; then

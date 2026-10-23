@@ -7,7 +7,6 @@ import {
   portalDangerButtonClass,
   portalEyebrowClass,
   portalGhostButtonClass,
-  portalHeaderClass,
   portalIconTileClass,
   portalInputClass,
   portalLabelClass,
@@ -26,8 +25,7 @@ import {
 } from "@/lib/portal-ui";
 
 /* ============================================================
-   UniZ Admin — extends portal-ui tokens
-   Premium, minimal. Inspired by Linear / Vercel / Raycast.
+   UniZ Admin — ExamCell institutional tokens (flat, no glass/mesh)
    ============================================================ */
 
 export const adminPageClass = cn(portalPageClass, "flex overflow-hidden");
@@ -41,37 +39,39 @@ export const adminSidebarClass = cn(
 );
 
 export const adminSidebarToggleClass =
-  "absolute -right-3 top-7 bg-white border border-navy-200 rounded-full p-1 text-navy-400 hover:text-navy-900 hover:border-navy-300 shadow-whisper active:scale-95 transition-all z-50 hidden lg:flex items-center justify-center";
+  "absolute -right-3 top-7 bg-white border border-navy-200 rounded-portal-sm p-1 text-navy-400 hover:text-navy-900 hover:border-navy-300 shadow-whisper active:scale-95 transition-colors z-50 hidden lg:flex items-center justify-center";
 
 export const adminNavGroupLabelClass = portalEyebrowClass;
 
-export const adminNavActiveClass =
-  "bg-navy-900 text-white shadow-whisper-navy";
+export const adminNavActiveClass = "bg-navy-900 text-white";
 
 export const adminNavInactiveClass =
-  "text-navy-500 hover:bg-navy-50 hover:text-navy-900";
+  "text-navy-500 hover:bg-[#FAFAFA] hover:text-navy-900";
 
 export const adminNavIconActiveClass = "text-white";
 export const adminNavIconInactiveClass =
   "text-navy-400 group-hover:text-navy-700";
 
-export const adminHeaderClass = cn(portalHeaderClass, "px-6 md:px-10");
+/** Light content header (sidebar carries branding; top bar stays flat white) */
+export const adminHeaderClass = cn(
+  "sticky top-0 z-40 h-[60px] flex items-center bg-white border-b border-navy-200 px-6 md:px-10",
+);
 
 export const adminAvatarButtonClass =
-  "w-9 h-9 rounded-full overflow-hidden bg-navy-50 ring-1 ring-navy-200 hover:ring-navy-300 transition-all active:scale-95 shrink-0";
+  "w-9 h-9 rounded-portal-sm overflow-hidden bg-[#FAFAFA] ring-1 ring-navy-200 hover:ring-navy-300 transition-colors active:scale-95 shrink-0";
 
 export const adminAvatarFallbackClass =
-  "w-full h-full flex items-center justify-center bg-navy-900 text-white font-semibold text-[13px]";
+  "w-full h-full flex items-center justify-center bg-navy-900 text-white font-semibold text-[13px] font-sans";
 
 export const adminLogoutButtonClass =
-  "w-9 h-9 rounded-full bg-white border border-navy-200 flex items-center justify-center text-navy-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all active:scale-95";
+  "w-9 h-9 rounded-portal-sm bg-white border border-navy-200 flex items-center justify-center text-navy-400 hover:text-[#EA2027] hover:border-[#EA2027]/40 hover:bg-red-50 transition-colors active:scale-95";
 
 export const adminSearchInputClass = cn(
   portalInputClass,
-  "h-10 py-2 bg-navy-50/70 border-transparent focus:bg-white",
+  "h-10 py-2 bg-[#FAFAFA] border-transparent focus:bg-white",
 );
 
-export const adminCardClass = cn(portalCardClass, "border-navy-200/80");
+export const adminCardClass = cn(portalCardClass, "border-navy-200");
 
 export const adminCardHoverClass = portalCardHoverClass;
 
@@ -81,7 +81,7 @@ export const adminEyebrowClass = portalEyebrowClass;
 
 export const adminTitleClass = cn(
   portalTitleClass,
-  "text-[1.625rem] md:text-[1.875rem] tracking-[-0.03em] leading-none",
+  "text-[1.625rem] md:text-[1.875rem] tracking-[-0.01em] leading-none",
 );
 
 export const adminSubtitleClass = cn(
@@ -93,13 +93,13 @@ export const adminSectionTitleClass = portalSectionTitleClass;
 
 export const adminStatCardClass = cn(
   adminCardClass,
-  "p-5 flex flex-col gap-4 transition-all duration-200 hover:border-navy-300",
+  "p-5 flex flex-col gap-4 transition-colors duration-150 hover:border-navy-300",
 );
 
 export const adminStatValueClass =
-  "text-[28px] font-semibold tracking-[-0.02em] text-navy-900 leading-none tabular-nums";
+  "text-[28px] font-semibold tracking-[-0.01em] text-navy-900 leading-none tabular-nums font-sans";
 
-export const adminStatLabelClass = "text-[12.5px] font-medium text-navy-500";
+export const adminStatLabelClass = "text-[12.5px] font-medium text-navy-500 font-sans";
 
 export const adminIconTileClass = portalIconTileClass;
 
@@ -124,13 +124,13 @@ export const adminGhostButtonClass = portalGhostButtonClass;
 export const adminDangerButtonClass = portalDangerButtonClass;
 
 export const adminSegmentWrapClass =
-  "inline-flex items-center gap-1 p-1 rounded-portal-xl bg-navy-50 border border-navy-200/80";
+  "inline-flex items-center gap-1 p-1 rounded-portal-sm bg-[#FAFAFA] border border-navy-200";
 
 export const adminSegmentActiveClass =
-  "px-4 py-1.5 rounded-portal-lg text-[11px] font-semibold tracking-tight bg-white text-navy-900 shadow-whisper transition-all";
+  "px-4 py-1.5 rounded-portal-sm text-[11px] font-semibold tracking-tight bg-white text-navy-900 shadow-whisper transition-colors font-button";
 
 export const adminSegmentInactiveClass =
-  "px-4 py-1.5 rounded-portal-lg text-[11px] font-semibold tracking-tight text-navy-500 hover:text-navy-900 transition-all";
+  "px-4 py-1.5 rounded-portal-sm text-[11px] font-semibold tracking-tight text-navy-500 hover:text-navy-900 transition-colors font-button";
 
 export const adminModalShellClass = portalModalShellClass;
 
@@ -139,10 +139,10 @@ export const adminModalTitleClass = portalModalTitleClass;
 export const adminModalDescClass = portalModalDescClass;
 
 export const adminModalCloseClass =
-  "absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10";
+  "absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-[#FAFAFA] rounded-portal-sm transition-colors z-10";
 
 export const adminWarningBannerClass =
-  "flex gap-3 p-4 rounded-portal-xl border border-amber-200/70 bg-amber-50/80";
+  "flex gap-3 p-4 rounded-portal-sm border border-amber-200 bg-amber-50";
 
 export const adminWarningTitleClass =
   "text-[12px] font-semibold text-amber-900";
@@ -150,7 +150,7 @@ export const adminWarningTitleClass =
 export const adminWarningTextClass = "text-[12px] text-amber-800/90 leading-relaxed";
 
 export const adminDangerInputClass =
-  "w-full min-h-11 px-3.5 bg-rose-50/60 border border-rose-200 rounded-portal-xl text-[13px] font-medium text-rose-800 placeholder:text-rose-300 focus:outline-none focus:border-rose-300 focus:ring-2 focus:ring-rose-500/10 transition-all";
+  "w-full min-h-11 px-3.5 bg-red-50 border border-red-200 rounded-portal-sm text-[13px] font-medium text-red-800 font-form placeholder:text-red-300 focus:outline-none focus:border-red-300 focus:ring-1 focus:ring-red-500/15 transition-colors";
 
 /** Re-export for admin banners / notices */
 export { portalBannerGradientClass as adminBannerGradientClass };

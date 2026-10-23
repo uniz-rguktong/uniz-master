@@ -1,36 +1,43 @@
-# UniZ Production URLs (Updated 2026-02-07)
+# UniZ Production URLs
 
-## API Gateway
+**Canonical topology:** [PRODUCTION_TOPOLOGY.md](./PRODUCTION_TOPOLOGY.md)
 
-- **Production Gateway**: `https://api-uniz.rguktong.in/api/v1`
-- **Legacy (broken edge SSL)**: `api-uniz.rguktong.in` — nested subdomain, do not use
+## Public hosts
 
-## Microservices
+| Surface | URL |
+|---------|-----|
+| Portal SPA | `https://uniz.rguktong.in` |
+| Landing SPA | `https://rguktong.in` |
+| API gateway | `https://api-uniz.rguktong.in/api/v1` |
+| Docs | `https://api-uniz.rguktong.in/docs` |
+| Landing CMS API | `https://landing-api.rguktong.in` |
 
-| Service       | Production URL                                       | GitHub Repo                      |
-| ------------- | ---------------------------------------------------- | -------------------------------- |
-| Auth          | `https://uniz-auth.vercel.app`                       | uniz-rguktong/uniz-auth          |
-| User          | `https://uniz-user-service-five.vercel.app`          | uniz-rguktong/uniz-user          |
-| Outpass       | `https://uniz-outpass-service-snowy.vercel.app`      | uniz-rguktong/uniz-outpass       |
-| Academics     | `https://uniz-academics-service-beryl.vercel.app`    | uniz-rguktong/uniz-academics     |
-| Mail          | `https://uniz-mail-service-phi.vercel.app`           | uniz-rguktong/uniz-mail          |
-| Notifications | `https://uniz-notification-service-sandy.vercel.app` | uniz-rguktong/uniz-notifications |
-| Files         | `https://uniz-files-service-blush.vercel.app`        | uniz-rguktong/uniz-files         |
-| Cron          | `https://uniz-cron-service-theta.vercel.app`         | uniz-rguktong/uniz-cron          |
+All authenticated SPA traffic goes through the gateway. Do not call per-service hostnames.
 
-## Health Check Endpoints
+## Gateway → backends (in-cluster)
 
-Each service has a `/health` endpoint for monitoring.
+| Gateway prefix | Backend |
+|----------------|---------|
+| `/api/v1/auth/*` | `uniz-api` (auth module) |
+| `/api/v1/profile/*`, `/cms/*` (non-`/api`), `/files/*`, `/grievance/*` | `uniz-api` (user module) |
+| `/api/v1/academics/*` | `uniz-api` (academics module) |
+| `/api/v1/mail/*`, `/notifications/*` | `uniz-notification-service` |
+| `/api/v1/requests/*` (non-grievance) | Outpass (parked unless `ENABLE_OUTPASS_OUTING=true`) |
+| `/api/v1/cms/api/*`, `/analytics/*` | landing-backend (FastAPI) |
 
-## Environment Variables
+## Health
 
-The following environment variables should be set in each service:
+- Gateway aggregate: `GET https://api-uniz.rguktong.in/api/v1/system/health` (or gateway `/health`)
+- Each Deployment exposes `/health` on its Service port
 
-- `GATEWAY_URL` - Points to the production gateway
-- `INTERNAL_SECRET` - Shared secret for internal service communication
-- `DATABASE_URL` - PostgreSQL connection string
-- `JWT_SECURITY_KEY` - JWT signing key
+## Secrets / env (high level)
 
-## GitHub Organization
+| Var | Where |
+|-----|--------|
+| `JWT_SECURITY_KEY`, `INTERNAL_SECRET` | K8s `uniz-secrets` |
+| `AUTH_DATABASE_URL`, `USER_DATABASE_URL`, `ACADEMICS_DATABASE_URL`, … | K8s `uniz-secrets` |
+| Service URLs | K8s `uniz-config` ConfigMap |
+| Portal `VITE_API_URL` | Cloudflare Pages build |
+| Landing `VITE_LANDING_API_URL` | Cloudflare Pages build |
 
-All repositories are under the `uniz-rguktong` organization.
+> **Deprecated:** per-service `*.vercel.app` URLs and multi-repo deploys. Everything ships from `uniz-master` → GHCR / Cloudflare Pages.

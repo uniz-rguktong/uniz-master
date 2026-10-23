@@ -2,16 +2,13 @@ import { useEffect, useState } from "react";
 import { getHomeData, getNotifications } from "../types/api";
 import type { HomeData } from "../types/api";
 
-
 import { HeroAndTitle } from "../components/sections/HeroAndTitle";
 import { Leadership } from "../components/sections/Leadership";
 import { Media } from "../components/sections/Media";
 import { Logos3 } from "../components/blocks/logos3";
 import { ExploreCampus } from "../components/sections/ExploreCampus";
 import { Stats } from "../components/sections/Stats";
-
 import { DirectorMessage } from "../components/sections/DirectorMessage";
-
 import { Gallery } from "../components/sections/Gallery";
 
 export function HomePage() {
@@ -32,7 +29,7 @@ export function HomePage() {
         setNotificationsData({
           news_updates: news,
           tenders: tenders,
-          careers: careers
+          careers: careers,
         });
       } catch (error) {
         console.error("Error loading home page data:", error);
@@ -45,20 +42,19 @@ export function HomePage() {
 
   if (loading || !homeData || !notificationsData) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-white cursor-wait">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
-          <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">Loading Campus Data...</p>
+      <div className="flex h-screen w-full items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-5">
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#800000] border-t-transparent" />
+          <p className="text-slate-500 font-medium tracking-[0.16em] text-xs uppercase">
+            Loading campus
+          </p>
         </div>
       </div>
     );
   }
 
-
-
   const allImages = homeData.images || [];
 
-  // Hero carousel – curated 10 images
   const heroImages = [
     "https://rguktong.ac.in/svgs/carosel/VRD.png",
     "https://rguktong.ac.in/svgs/carosel/all.jpg",
@@ -72,7 +68,6 @@ export function HomePage() {
     "https://rguktong.ac.in/svgs/carosel/swatch.png",
   ];
 
-  // Build a pool of ALL valid, displayable images (no gifs, svgs, logos, counters, icons, or profile photos)
   const goodImages = allImages.filter(
     (img) =>
       !img.includes(".gif") &&
@@ -87,7 +82,6 @@ export function HomePage() {
       (img.endsWith(".jpg") || img.endsWith(".jpeg") || img.endsWith(".png"))
   );
 
-  // Helper: take N images from the pool starting at an offset, cycling if needed
   const getPoolSlice = (offset: number, count: number) => {
     if (goodImages.length === 0) return [];
     const result: string[] = [];
@@ -97,71 +91,33 @@ export function HomePage() {
     return result;
   };
 
-
-
   const galleryImages = getPoolSlice(0, 16);
-
-  // Provide a fixed high quality image for the Director from the API
-  const directorImage = allImages.find(img => img.toLowerCase().includes("gupta")) || "https://rguktong.ac.in/images/gupta%20sir.jpeg";
-
-
+  const directorImage =
+    allImages.find((img) => img.toLowerCase().includes("gupta")) ||
+    "https://rguktong.ac.in/images/gupta%20sir.jpeg";
 
   return (
     <div className="w-full bg-white">
+      <HeroAndTitle
+        images={heroImages}
+        announcements={homeData.announcements || []}
+      />
 
-      {/* 1. Hero & Announcements */}
-      <div>
-        <HeroAndTitle
-          images={heroImages}
-          announcements={homeData.announcements || []}
-        />
-      </div>
+      <Leadership />
 
-      {/* 2. Leadership / Our Visionaries */}
-      <div className="clear-both">
-        <Leadership />
-      </div>
+      <DirectorMessage directorImage={directorImage} />
 
-      {/* 3. Media & Outreach */}
-      <div className="clear-both">
-        <Media news={notificationsData.news_updates || []} />
-      </div>
+      <Stats stats={homeData.stats || []} />
 
-      {/* 4. Explore Campus */}
-      <div className="clear-both">
-        <ExploreCampus />
-      </div>
+      <ExploreCampus />
 
-      {/* 5. Recruiters and Industry Partners */}
-      <div className="clear-both">
+      <Media news={notificationsData.news_updates || []} />
+
+      <div className="border-t border-slate-100">
         <Logos3 />
       </div>
 
-      {/* 8. Director's Message */}
-      <div className="clear-both">
-        <DirectorMessage
-          directorImage={directorImage}
-        />
-      </div>
-
-
-
-      {/* 6. Statistics */}
-      <div className="clear-both">
-        <Stats
-          stats={homeData.stats || []}
-        />
-      </div>
-
-
-
-      {/* 10. Photo Gallery */}
-      <div className="clear-both">
-        <Gallery
-          images={galleryImages}
-        />
-      </div>
-
+      <Gallery images={galleryImages} />
     </div>
   );
 }

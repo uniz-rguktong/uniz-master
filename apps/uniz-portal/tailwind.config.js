@@ -5,15 +5,17 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Google Sans"', "Inter", "system-ui", "sans-serif"],
-        body: ['"Google Sans Text"', "Inter", "system-ui", "sans-serif"],
-        condensed: ['"Cabin Condensed"', "sans-serif"],
+        sans: ['"Open Sans"', "system-ui", "sans-serif"],
+        body: ['"Open Sans"', "system-ui", "sans-serif"],
+        button: ['"Nunito"', '"Open Sans"', "system-ui", "sans-serif"],
+        form: ['"Cabin"', '"Open Sans"', "system-ui", "sans-serif"],
+        condensed: ['"Cabin Condensed"', '"Cabin"', "sans-serif"],
       },
 
       fontSize: {
         h1: [
           "48px",
-          { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "600" },
+          { lineHeight: "56px", letterSpacing: "-0.01em", fontWeight: "600" },
         ],
         h2: [
           "36px",
@@ -32,45 +34,48 @@ module.exports = {
 
       colors: {
         background: "#ffffff",
-        foreground: "#0f172a",
+        foreground: "#0A2540",
 
         primary: {
-          DEFAULT: "var(--portal-navy, #0B2A47)",
+          DEFAULT: "var(--portal-navy, #0A2540)",
           foreground: "#ffffff",
         },
 
         muted: {
-          DEFAULT: "#f1f5f9",
-          foreground: "#64748b",
+          DEFAULT: "#FAFAFA",
+          foreground: "#5A7A94",
         },
 
         accent: {
-          DEFAULT: "#eef2ff",
-          foreground: "#312e81",
+          DEFAULT: "#EA2027",
+          foreground: "#ffffff",
         },
 
         portal: {
-          DEFAULT: "var(--portal-navy, #0B2A47)",
-          mid: "var(--portal-navy-mid, #0F3B63)",
-          deep: "var(--portal-navy-deep, #081E33)",
-          soft: "var(--portal-navy-soft, #1A4A73)",
-          muted: "var(--portal-navy-muted, #5A94B8)",
-          tint: "var(--portal-navy-tint, #EDF5FB)",
-          border: "var(--portal-navy-border, #D4E8F5)",
+          DEFAULT: "var(--portal-navy, #0A2540)",
+          mid: "var(--portal-navy-mid, #0D3154)",
+          deep: "var(--portal-navy-deep, #021227)",
+          soft: "var(--portal-navy-soft, #163A5C)",
+          muted: "var(--portal-navy-muted, #5A7A94)",
+          tint: "var(--portal-navy-tint, #FAFAFA)",
+          border: "var(--portal-navy-border, #EEEEEE)",
+          accent: "#EA2027",
+          footer: "#EEEEEE",
         },
 
+        /* Map blue utilities to ExamCell navy (remove indigo remap) */
         blue: {
-          50: "#eef2ff",
-          100: "#e0e7ff",
-          200: "#c7d2fe",
-          300: "#a5b4fc",
-          400: "#818cf8",
-          500: "#6366f1",
-          600: "#4f46e5",
-          700: "#4338ca",
-          800: "#3730a3",
-          900: "#312e81",
-          950: "#1e1b4b",
+          50: "#ffffff",
+          100: "#fafafa",
+          200: "#eeeeee",
+          300: "#9bb0c4",
+          400: "#5a7a94",
+          500: "#3d6a8c",
+          600: "#1e4a73",
+          700: "#163a5c",
+          800: "#0d3154",
+          900: "#0a2540",
+          950: "#021227",
         },
 
         navy: {
@@ -87,8 +92,8 @@ module.exports = {
         },
 
         slate: {
-          50: "#f8fafc",
-          100: "#f1f5f9",
+          50: "#fafafa",
+          100: "#eeeeee",
           200: "#e2e8f0",
           300: "#cbd5e1",
           400: "#94a3b8",
@@ -97,36 +102,40 @@ module.exports = {
           600: "#475569",
           700: "#334155",
           800: "#1e293b",
-          900: "#0f172a",
-          950: "#020617",
+          900: "#0a2540",
+          950: "#021227",
         },
       },
 
       boxShadow: {
-        sm: "0 2px 8px -2px rgba(0,0,0,0.04), 0 1px 4px -1px rgba(0,0,0,0.02)",
-        DEFAULT:
-          "0 4px 12px -2px rgba(0,0,0,0.05), 0 2px 6px -1px rgba(0,0,0,0.03)",
-        md: "0 8px 24px -4px rgba(0,0,0,0.06), 0 4px 12px -2px rgba(0,0,0,0.04)",
-        lg: "0 16px 32px -8px rgba(0,0,0,0.08), 0 8px 16px -4px rgba(0,0,0,0.05)",
-        xl: "0 24px 48px -12px rgba(0,0,0,0.12), 0 12px 24px -6px rgba(0,0,0,0.06)",
-        "2xl":
-          "0 32px 64px -16px rgba(0,0,0,0.16), 0 16px 32px -8px rgba(0,0,0,0.08)",
-        inner: "inset 0 2px 4px 0 rgba(0,0,0,0.04)",
-        whisper: "0 1px 2px rgba(11, 42, 71, 0.04)",
-        "whisper-md": "0 4px 16px -6px rgba(11, 42, 71, 0.08)",
-        "whisper-lg": "0 20px 50px -24px rgba(11, 42, 71, 0.12)",
-        "whisper-navy": "0 1px 2px rgba(11, 42, 71, 0.16)",
-        "whisper-landing": "0 20px 40px -15px rgba(0, 0, 0, 0.12)",
+        sm: "0 1px 2px rgba(2, 18, 39, 0.04)",
+        DEFAULT: "0 1px 3px rgba(2, 18, 39, 0.06)",
+        md: "0 2px 6px rgba(2, 18, 39, 0.08)",
+        lg: "0 4px 12px rgba(2, 18, 39, 0.1)",
+        xl: "0 8px 20px rgba(2, 18, 39, 0.12)",
+        "2xl": "0 12px 28px rgba(2, 18, 39, 0.14)",
+        inner: "inset 0 1px 2px 0 rgba(2, 18, 39, 0.04)",
+        whisper: "0 1px 2px rgba(2, 18, 39, 0.04)",
+        "whisper-md": "0 2px 6px rgba(2, 18, 39, 0.06)",
+        "whisper-lg": "0 4px 12px rgba(2, 18, 39, 0.08)",
+        "whisper-navy": "0 1px 2px rgba(10, 37, 64, 0.12)",
+        "whisper-landing": "0 4px 12px rgba(0, 0, 0, 0.08)",
       },
 
       borderRadius: {
-        "portal-lg": "12px",
-        "portal-xl": "16px",
-        "portal-2xl": "20px",
+        "portal-sm": "2px",
+        "portal-lg": "4px",
+        "portal-xl": "6px",
+        "portal-2xl": "8px",
       },
 
       spacing: {
         portal: "32px",
+        header: "60px",
+      },
+
+      height: {
+        header: "60px",
       },
 
       transitionTimingFunction: {
@@ -140,8 +149,11 @@ module.exports = {
       },
 
       backgroundImage: {
-        "premium-gradient": "linear-gradient(to right, #ffffff, #ffffff)",
-        "portal-banner": "linear-gradient(to right, #0B2A47, #0F3B63)",
+        "premium-gradient": "linear-gradient(to right, #fafafa, #fafafa)",
+        "portal-banner":
+          "radial-gradient(circle farthest-corner at 16.5% 37.3%, #0A2540 0.1%, #021227 90%)",
+        "portal-header":
+          "radial-gradient(circle farthest-corner at 16.5% 37.3%, #0A2540 0.1%, #021227 90%)",
       },
 
       animation: {

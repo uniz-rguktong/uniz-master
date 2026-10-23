@@ -4,11 +4,12 @@ Thank you for contributing to UniZ. This guide matches the local workflow in [do
 
 ## Architecture
 
-UniZ is a **microservices monorepo**:
+UniZ is an **open monorepo** (students contribute). Production APIs consolidate into **uniz-api**; portal/landing are SPAs on Cloudflare Pages.
 
-- **Apps** — `apps/` (gateway, services, portal, docs)
+- **Apps** — `apps/` (gateway, uniz-api, notifications, portal, landing, docs)
 - **Infrastructure** — `infra/` (Kubernetes, Docker Compose)
 - **Scripts** — `scripts/` (local setup, vault sync)
+- **Secrets** — [docs/ops/SECRETS.md](docs/ops/SECRETS.md) — never commit real keys
 
 ---
 

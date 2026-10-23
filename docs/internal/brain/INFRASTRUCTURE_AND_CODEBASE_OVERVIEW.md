@@ -1,31 +1,23 @@
 # UniZ Infrastructure & Codebase Overview
 
-> **Context File**: Read this file to ground yourself in the system architecture, service map, and current infrastructure state.
+> **STALE (historical notes).** Canonical production topology:
+> [`docs/architecture/PRODUCTION_TOPOLOGY.md`](../../architecture/PRODUCTION_TOPOLOGY.md)
+> and root [`README.md`](../../../README.md). Prefer those over the tables below.
 
 ## 1. System Architecture
 
-UniZ is a **microservices-based monorepo** built with Node.js, Express, Docker, and Nginx.
+UniZ is a **npm workspaces monorepo**. Production edge is **Traefik → gateway-api**; portal/landing are on **Cloudflare Pages**. Always-on Node APIs are consolidating into **`uniz-api`** (auth + user + academics). Mail/files are folded; outpass is parked.
 
-- **Frontend**: `uniz-portal` (React/Vite)
-- **Backend API**: Accessible via `https://api-uniz.rguktong.in` (Production)
-- **Runtime**: Hybrid transition from Docker Compose to **Kubernetes (K3s)**.
-- **Gateway**: A dual-layer setup involving K8s Nginx Ingress/Nginx Load Balancer and an Express-based Application Gateway.
-
-### Core Components
+### Core Components (target)
 
 | Service                       | Port (Internal) | Description          | Key Responsibilities                                            |
 | :---------------------------- | :-------------- | :------------------- | :-------------------------------------------------------------- |
-| **uniz-gateway**              | 80 / 443        | Nginx Reverse Proxy  | SSL termination, entry point.                                   |
-| **uniz-gateway-api**          | 3000            | Express API Gateway  | **Primary Router** (Regex-based), Auth middleware, Aggregation. |
-| **uniz-auth-service**         | 3001            | Auth Service         | Authentication, Session management.                             |
-| **uniz-user-service**         | 3002            | User Service         | User profiles, **CMS (Banners/Content)**.                       |
-| **uniz-outpass-service**      | 3003            | Outpass Service      | Student outpasses, **SWO Grievances**, **Requests**.            |
-| **uniz-academics-service**    | 3004            | Academics Service    | Grades, Attendance, Curriculum, **Excel Ingestion**.            |
-| **uniz-files-service**        | 3005            | Files Service        | File uploads/downloads.                                         |
-| **uniz-mail-service**         | 3006            | Mail Service         | Email delivery.                                                 |
-| **uniz-notification-service** | 3007            | Notification Service | Push/In-app notifications.                                      |
-| **uniz-cron-service**         | 3008            | Cron Service         | Scheduled tasks, background jobs.                               |
-| **uniz-portal**               | 8081            | Frontend             | Web Interface.                                                  |
+| **uniz-gateway-api**          | 3000            | Express API Gateway  | Path router, Redis GET cache, feature gates                     |
+| **uniz-api**                  | 3001            | Unified API          | Auth, profiles, CMS, files upload, grievance, academics         |
+| **uniz-notification-service** | 3007            | Comms                | Push + SES mail                                                 |
+| **uniz-outpass-service**      | 3003            | Parked               | Outpass/outing when flag on; maintenance CronJob image          |
+| **uniz-docs-service**         | 3333            | Docs                 | VitePress under `/docs`                                         |
+| **uniz-portal / landing**     | —               | SPAs                 | Cloudflare Pages (K8s replicas 0)                               |
 
 ### Data Layer
 

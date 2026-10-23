@@ -9,9 +9,8 @@ SERVICES=(
   uniz-auth
   uniz-user
   uniz-academics
+  uniz-api
   uniz-outpass
-  uniz-files
-  uniz-mail
   uniz-notifications
   uniz-gateway
   uniz-cron

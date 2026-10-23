@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronDown, Search, X, ArrowRight } from "lucide-react";
+import { Search, X, ArrowRight, Menu } from "lucide-react";
 
 const SEARCH_DIRECTORY = [
   { title: "Home", path: "/", category: "General" },
@@ -35,187 +35,240 @@ const SEARCH_DIRECTORY = [
   { title: "Yoga", path: "/departments/YOGA", category: "Departments" }
 ];
 
+const MENU_SECTIONS = [
+  {
+    title: "Institute",
+    links: [
+      { label: "About RGUKT", path: "/institute/aboutrgukt" },
+      { label: "Campus Life", path: "/institute/campuslife" },
+      { label: "Education System", path: "/institute/edusys" },
+      { label: "Governing Council", path: "/institute/govcouncil" },
+      { label: "RTI Information", path: "/institute/rtiinfo" },
+      { label: "SC/ST Cell", path: "/institute/scst" },
+    ],
+  },
+  {
+    title: "Academics",
+    links: [
+      { label: "Academic Programs", path: "/academics/AcademicPrograms" },
+      { label: "Academic Calendar", path: "/academics/AcademicCalender" },
+      { label: "Academic Regulations", path: "/academics/AcademicRegulations" },
+      { label: "Curricula", path: "/academics/curicula" },
+    ],
+  },
+  {
+    title: "Departments",
+    links: [
+      "CSE", "CIVIL", "ECE", "EEE", "ME",
+      "MATHEMATICS", "PHYSICS", "CHEMISTRY",
+      "IT", "BIOLOGY", "ENGLISH", "LIB",
+      "MANAGEMENT", "PED", "TELUGU", "YOGA",
+    ].map((dept) => ({ label: `${dept}`, path: `/departments/${dept}` })),
+  },
+  {
+    title: "Notifications",
+    links: [
+      { label: "News & Updates", path: "/notifications/news" },
+      { label: "Tenders", path: "/notifications/tenders" },
+      { label: "Careers", path: "/notifications/careers" },
+    ],
+  },
+];
+
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
-  // Close search on escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsSearchOpen(false);
+      if (e.key === "Escape") {
+        setIsSearchOpen(false);
+        setIsMenuOpen(false);
+      }
     };
-    if (isSearchOpen) {
+    if (isSearchOpen || isMenuOpen) {
       document.addEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "hidden"; // Prevent background scrolling
+      document.body.style.overflow = "hidden";
     }
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "auto";
     };
-  }, [isSearchOpen]);
+  }, [isSearchOpen, isMenuOpen]);
 
-  const filteredResults = SEARCH_DIRECTORY.filter(item => 
-    item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredResults = SEARCH_DIRECTORY.filter(item =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <>
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 shadow-sm transition-all duration-300">
-      <div className="w-full px-4 lg:px-8 mx-auto flex h-[76px] items-center justify-between">
+      <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-sm border-b border-slate-200/80">
+        <div className="w-full max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 flex h-[64px] items-center justify-between">
 
-        {/* LOGO AREA */}
-        <Link to="/" className="flex items-center shrink-0 mr-auto z-10 ml-2 md:ml-6 lg:ml-10">
-          <img
-            src="/rgukt-logo.png"
-            alt="RGUKT Ongole Campus"
-            className="h-12 md:h-[54px] object-contain drop-shadow-none mix-blend-multiply"
-          />
-          <div className="hidden sm:flex flex-col justify-center gap-0.5 ml-3">
-            <span className="font-extrabold text-[#113255] tracking-tight leading-none text-xl md:text-[22px] whitespace-nowrap">
-              RGUKT
-            </span>
-            <span className="text-[11px] md:text-[12px] font-bold text-[#800000] tracking-[0.08em] whitespace-nowrap ">
-              Ongole Campus
-            </span>
-          </div>
-        </Link>
-
-        {/* NAVIGATION LINKS */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-[15.5px] font-medium text-slate-600 transition-all z-10">
-          <Link to="/" className="hover:text-[#800000] transition-colors whitespace-nowrap py-8">Home</Link>
-
-          <div className="relative group cursor-pointer flex items-center gap-1 hover:text-[#800000] transition-colors py-8 h-full whitespace-nowrap">
-            <span className="flex items-center gap-1">
-              Institute <ChevronDown className="w-[14px] h-[14px] text-slate-400 group-hover:text-[#800000] transition-colors" />
-            </span>
-            <div className="absolute top-[80px] left-0 w-56 bg-white border border-slate-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-3 z-50 transform origin-top translate-y-2 group-hover:translate-y-0 text-slate-700 text-[14.5px]">
-              <Link to="/institute/aboutrgukt" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">About RGUKT</Link>
-              <Link to="/institute/campuslife" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Campus Life</Link>
-              <Link to="/institute/edusys" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Education System</Link>
-              <Link to="/institute/govcouncil" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Governing Council</Link>
-              <Link to="/institute/rtiinfo" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">RTI Information</Link>
-              <Link to="/institute/scst" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">SC/ST Cell</Link>
-            </div>
-          </div>
-
-          <div className="relative group cursor-pointer flex items-center gap-1 hover:text-[#800000] transition-colors py-8 h-full whitespace-nowrap">
-            <span className="flex items-center gap-1">
-              Academics <ChevronDown className="w-[14px] h-[14px] text-slate-400 group-hover:text-[#800000] transition-colors" />
-            </span>
-            <div className="absolute top-[80px] left-0 w-56 bg-white border border-slate-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-3 z-50 transform origin-top translate-y-2 group-hover:translate-y-0 text-slate-700 text-[14.5px]">
-              <Link to="/academics/AcademicPrograms" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Academic Programs</Link>
-              <Link to="/academics/AcademicCalender" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Academic Calendar</Link>
-              <Link to="/academics/AcademicRegulations" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Academic Regulations</Link>
-              <Link to="/academics/curicula" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Curricula</Link>
-            </div>
-          </div>
-
-          <div className="relative group cursor-pointer flex items-center gap-1 hover:text-[#800000] transition-colors py-8 h-full whitespace-nowrap">
-            <span className="flex items-center gap-1">
-              Departments <ChevronDown className="w-[14px] h-[14px] text-slate-400 group-hover:text-[#800000] transition-colors" />
-            </span>
-            <div className="absolute top-[80px] left-1/2 -translate-x-1/2 w-[340px] bg-white border border-slate-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-4 z-50 transform origin-top translate-y-2 group-hover:translate-y-0 grid grid-cols-2 gap-x-2 gap-y-1 text-slate-700 text-[14px]">
-              {[
-                "CSE", "CIVIL", "ECE", "EEE", "ME",
-                "MATHEMATICS", "PHYSICS", "CHEMISTRY",
-                "IT", "BIOLOGY", "ENGLISH", "LIB",
-                "MANAGEMENT", "PED", "TELUGU", "YOGA"
-              ].map(dept => (
-                <Link key={dept} to={`/departments/${dept}`} className="block px-3 py-2 rounded-md hover:bg-slate-50 hover:text-[#800000] col-span-1">{dept} Dept.</Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="relative group cursor-pointer flex items-center gap-1 hover:text-[#800000] transition-colors py-8 h-full whitespace-nowrap">
-            <span className="flex items-center gap-1">
-              Notifications <ChevronDown className="w-[14px] h-[14px] text-slate-400 group-hover:text-[#800000] transition-colors" />
-            </span>
-            <div className="absolute top-[80px] left-0 w-52 bg-white border border-slate-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-3 z-50 transform origin-top translate-y-2 group-hover:translate-y-0 text-slate-700 text-[14.5px]">
-              <Link to="/notifications/news" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">News & Updates</Link>
-              <Link to="/notifications/tenders" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Tenders</Link>
-              <Link to="/notifications/careers" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Careers</Link>
-            </div>
-          </div>
-        </nav>
-
-        {/* RIGHT ACTION BUTTONS */}
-        <div className="flex items-center shrink-0 z-10 mr-2 md:mr-6 lg:mr-10 ml-auto">
-          <button 
-            onClick={() => setIsSearchOpen(true)}
-            aria-label="Search" 
-            className="w-10 h-10 flex items-center justify-center text-slate-800 hover:text-[#800000] hover:scale-110 transition-all duration-300 bg-transparent outline-none"
-          >
-            <Search className="w-[22px] h-[22px] stroke-[2.5]" />
-          </button>
-        </div>
-
-      </div>
-    </header>
-
-    {/* Search Modal Overlay */}
-    {isSearchOpen && (
-      <div className="fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-md flex items-start justify-center pt-24 sm:pt-32 px-4 transition-all duration-300 opacity-100">
-        <div 
-          className="absolute inset-0" 
-          onClick={() => setIsSearchOpen(false)} 
-        />
-        
-        <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col transform transition-all duration-300 translate-y-0 scale-100">
-          <div className="relative flex items-center border-b border-slate-100 px-6 py-4">
-            <Search className="w-5 h-5 text-[#800000]" />
-            <input
-              autoFocus
-              type="text"
-              placeholder="Search campus directory, departments, or notifications..."
-              className="flex-1 bg-transparent border-none outline-none px-4 text-slate-800 text-lg placeholder:text-slate-400 font-medium"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+          {/* Wordmark */}
+          <Link to="/" className="flex items-center shrink-0 gap-3 group">
+            <img
+              src="/rgukt-logo.png"
+              alt="RGUKT Ongole Campus"
+              className="h-10 md:h-11 object-contain mix-blend-multiply"
             />
-            <button 
-              onClick={() => setIsSearchOpen(false)}
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors"
+            <div className="hidden sm:flex flex-col justify-center">
+              <span className="font-serif text-[1.35rem] md:text-[1.5rem] font-semibold text-[#000035] tracking-tight leading-none">
+                RGUKT
+              </span>
+              <span className="mt-1 text-[10px] md:text-[11px] font-medium text-[#800000] tracking-[0.14em] uppercase">
+                Ongole Campus
+              </span>
+            </div>
+          </Link>
+
+          {/* Search + Menu */}
+          <div className="flex items-center gap-1 sm:gap-2">
+            <button
+              onClick={() => { setIsSearchOpen(true); setIsMenuOpen(false); }}
+              aria-label="Search"
+              className="w-10 h-10 flex items-center justify-center text-[#000035] hover:text-[#800000] transition-colors"
             >
-              <X className="w-4 h-4" />
+              <Search className="w-5 h-5 stroke-[1.75]" />
+            </button>
+            <button
+              onClick={() => { setIsMenuOpen(true); setIsSearchOpen(false); }}
+              aria-label="Open menu"
+              className="flex items-center gap-2 h-10 px-2 sm:px-3 text-[#000035] hover:text-[#800000] transition-colors"
+            >
+              <span className="hidden sm:inline text-[13px] font-medium tracking-wide uppercase">Menu</span>
+              <Menu className="w-5 h-5 stroke-[1.75]" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Full-screen menu panel */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-[100] bg-[#000035] text-white overflow-y-auto">
+          <div className="max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 py-5 flex items-center justify-between border-b border-white/10">
+            <Link
+              to="/"
+              onClick={() => setIsMenuOpen(false)}
+              className="font-serif text-xl font-semibold tracking-tight"
+            >
+              RGUKT Ongole
+            </Link>
+            <button
+              onClick={() => setIsMenuOpen(false)}
+              aria-label="Close menu"
+              className="w-10 h-10 flex items-center justify-center text-white/80 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
             </button>
           </div>
 
-          <div className="max-h-[60vh] overflow-y-auto px-4 py-4">
-            {searchQuery.trim() === "" ? (
-              <div className="px-4 py-8 text-center text-slate-500">
-                <p className="text-base font-medium">Type something to search the campus directory.</p>
-                <p className="text-sm mt-1 opacity-80">Try searching for "CSE", "Library", or "Tenders".</p>
-              </div>
-            ) : filteredResults.length === 0 ? (
-              <div className="px-4 py-8 text-center text-slate-500">
-                <p className="text-base font-medium">No results found for "{searchQuery}".</p>
-                <p className="text-sm mt-1 opacity-80">Double-check your spelling or try a different term.</p>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-1">
-                {filteredResults.map((item, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      setIsSearchOpen(false);
-                      navigate(item.path, { state: (item as any).state });
-                    }}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between w-full text-left px-5 py-3.5 hover:bg-slate-50 rounded-xl transition-colors group border border-transparent hover:border-slate-100"
-                  >
-                    <div>
-                      <span className="block text-slate-800 font-semibold group-hover:text-[#800000] transition-colors">{item.title}</span>
-                      <span className="block text-xs font-semibold tracking-wider text-slate-400 mt-0.5">{item.category}</span>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-[#800000] transform -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 hidden sm:block" />
-                  </button>
-                ))}
-              </div>
-            )}
+          <nav className="max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 py-12 sm:py-16">
+            <div className="mb-10">
+              <Link
+                to="/"
+                onClick={() => setIsMenuOpen(false)}
+                className="font-serif text-3xl sm:text-4xl text-white hover:text-white/80 transition-colors"
+              >
+                Home
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+              {MENU_SECTIONS.map((section) => (
+                <div key={section.title}>
+                  <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-white/40 mb-5">
+                    {section.title}
+                  </p>
+                  <ul className="flex flex-col gap-3">
+                    {section.links.map((link) => (
+                      <li key={link.path}>
+                        <Link
+                          to={link.path}
+                          onClick={() => setIsMenuOpen(false)}
+                          className="text-[15px] sm:text-base text-white/85 hover:text-white underline-offset-[0.22em] hover:underline transition-colors"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </nav>
+        </div>
+      )}
+
+      {/* Search overlay */}
+      {isSearchOpen && (
+        <div className="fixed inset-0 z-[100] bg-[#000035]/50 backdrop-blur-sm flex items-start justify-center pt-20 sm:pt-28 px-4">
+          <div
+            className="absolute inset-0"
+            onClick={() => setIsSearchOpen(false)}
+          />
+
+          <div className="relative w-full max-w-2xl bg-white overflow-hidden flex flex-col shadow-2xl">
+            <div className="relative flex items-center border-b border-slate-200 px-5 py-4">
+              <Search className="w-5 h-5 text-[#800000]" />
+              <input
+                autoFocus
+                type="text"
+                placeholder="Search campus directory…"
+                className="flex-1 bg-transparent border-none outline-none px-4 text-slate-800 text-lg placeholder:text-slate-400"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button
+                onClick={() => setIsSearchOpen(false)}
+                className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-colors"
+                aria-label="Close search"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="max-h-[60vh] overflow-y-auto px-3 py-3">
+              {searchQuery.trim() === "" ? (
+                <div className="px-4 py-10 text-center text-slate-500">
+                  <p className="text-base">Search departments, academics, or notifications.</p>
+                  <p className="text-sm mt-2 text-slate-400">Try “CSE”, “Library”, or “Tenders”.</p>
+                </div>
+              ) : filteredResults.length === 0 ? (
+                <div className="px-4 py-10 text-center text-slate-500">
+                  <p className="text-base">No results for “{searchQuery}”.</p>
+                </div>
+              ) : (
+                <div className="flex flex-col">
+                  {filteredResults.map((item, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setIsSearchOpen(false);
+                        navigate(item.path, { state: (item as any).state });
+                      }}
+                      className="flex items-center justify-between w-full text-left px-4 py-3.5 hover:bg-slate-50 transition-colors group border-b border-slate-100 last:border-0"
+                    >
+                      <div>
+                        <span className="block text-slate-900 font-medium group-hover:text-[#800000] transition-colors">
+                          {item.title}
+                        </span>
+                        <span className="block text-xs tracking-wider uppercase text-slate-400 mt-0.5">
+                          {item.category}
+                        </span>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-[#800000] opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
     </>
   );
 }

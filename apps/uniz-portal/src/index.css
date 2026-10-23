@@ -1,7 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Pattaya&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Nunito:wght@500;600;700;800&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cabin+Condensed:wght@400;500;600;700&display=swap");
 
 @tailwind base;
@@ -10,22 +7,33 @@
 
 @layer base {
   :root {
-    --font-sans:
-      "Google Sans", "Outfit", "Inter", system-ui, -apple-system, sans-serif;
+    --font-sans: "Open Sans", system-ui, -apple-system, sans-serif;
+    --font-button: "Nunito", "Open Sans", system-ui, sans-serif;
+    --font-form: "Cabin", "Open Sans", system-ui, sans-serif;
   }
 
   body {
     font-family: theme("fontFamily.body");
-    @apply bg-zinc-50 text-[#222222] antialiased selection:bg-zinc-100 selection:text-zinc-900;
+    @apply bg-[#FAFAFA] text-[#222222] antialiased selection:bg-[#EEEEEE] selection:text-[#0A2540];
   }
 
   h1,
   h2,
   h3,
   h4,
-  nav,
-  button {
+  nav {
     font-family: theme("fontFamily.sans");
+  }
+
+  button {
+    font-family: theme("fontFamily.button");
+  }
+
+  input,
+  select,
+  textarea,
+  label {
+    font-family: theme("fontFamily.form");
   }
 
   h1 {
@@ -73,16 +81,16 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-zinc-200 rounded-full transition-colors duration-300;
+    @apply bg-[#EEEEEE] rounded-sm transition-colors duration-300;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-zinc-300;
+    @apply bg-[#d4d4d4];
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: #e2e8f0 transparent;
+    scrollbar-color: #eeeeee transparent;
   }
 }
 
@@ -91,8 +99,8 @@
   .login-field:-webkit-autofill:hover,
   .login-field:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0 1000px #fafafa inset !important;
-    -webkit-text-fill-color: #18181b !important;
-    caret-color: #18181b;
+    -webkit-text-fill-color: #0a2540 !important;
+    caret-color: #0a2540;
     transition: background-color 9999s ease-out 0s;
   }
 
@@ -100,19 +108,23 @@
     -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
   }
 
+  /* Institutional wordmark — Open Sans uppercase (no cursive) */
   .uniz-logo-wordmark {
-    font-family: "Pattaya", cursive;
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    color: var(--portal-navy, #0b2a47);
+    font-family: "Open Sans", system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--portal-navy, #0a2540);
   }
 
   .uniz-primary-btn {
-    @apply min-h-11 flex items-center justify-center font-semibold text-sm rounded-portal-xl transition-all duration-200;
-    @apply bg-navy-900 text-white shadow-whisper-navy;
-    @apply hover:bg-navy-800 active:scale-[0.98];
+    @apply min-h-11 w-full flex items-center justify-center font-semibold text-sm transition-colors duration-150;
+    font-family: theme("fontFamily.button");
+    border-radius: 2px;
+    @apply bg-navy-900 text-white;
+    @apply hover:bg-navy-800 active:opacity-95;
     @apply focus:ring-2 focus:outline-none;
-    --tw-ring-color: rgb(11 42 71 / 0.2);
+    --tw-ring-color: rgb(10 37 64 / 0.25);
     @apply disabled:bg-navy-100 disabled:text-navy-300 disabled:cursor-not-allowed;
   }
 
@@ -121,15 +133,15 @@
     align-items: center;
     justify-content: space-around;
     background-color: #ffffff;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid #eeeeee;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     padding-top: 0.5rem;
     padding-bottom: env(safe-area-inset-bottom, 1.5rem);
-    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
     width: 100%;
     transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-    --component-active-color: #18181b;
+    --component-active-color: #0a2540;
   }
 
   .menu__item {
@@ -180,27 +192,14 @@
     position: absolute;
     bottom: 0;
     height: 2px;
-    background-color: #18181b;
-    border-radius: 9999px;
+    background-color: #0a2540;
+    border-radius: 1px;
     transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
     width: 0;
   }
 
   .menu__item.active::after {
     width: var(--lineWidth);
-  }
-
-  .unifrakturcook-bold {
-    font-family: "UnifrakturCook", cursive;
-    font-weight: 700;
-    font-style: normal;
-  }
-
-  .uniz-logo-wordmark {
-    font-family: "Pattaya", cursive;
-    font-weight: 400;
-    font-style: normal;
-    letter-spacing: 0;
   }
 
   .spinner-blade {
@@ -272,25 +271,25 @@
   }
 
   .cabin-condensed-regular {
-    font-family: "Cabin Condensed", sans-serif;
+    font-family: "Cabin Condensed", "Cabin", sans-serif;
     font-weight: 400;
     font-style: normal;
   }
 
   .cabin-condensed-medium {
-    font-family: "Cabin Condensed", sans-serif;
+    font-family: "Cabin Condensed", "Cabin", sans-serif;
     font-weight: 500;
     font-style: normal;
   }
 
   .cabin-condensed-semibold {
-    font-family: "Cabin Condensed", sans-serif;
+    font-family: "Cabin Condensed", "Cabin", sans-serif;
     font-weight: 600;
     font-style: normal;
   }
 
   .cabin-condensed-bold {
-    font-family: "Cabin Condensed", sans-serif;
+    font-family: "Cabin Condensed", "Cabin", sans-serif;
     font-weight: 700;
     font-style: normal;
   }
@@ -309,14 +308,13 @@
 }
 
 @layer utilities {
+  /* Flat institutional surfaces — no glass/mesh on portal */
   .glass-panel {
-    @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-sm;
+    @apply bg-white border border-[#EEEEEE];
   }
 
   .premium-shadow {
-    box-shadow:
-      0 8px 32px -4px rgba(0, 0, 0, 0.04),
-      0 4px 12px -2px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 1px 3px rgba(2, 18, 39, 0.06);
   }
 
   @keyframes marquee {
@@ -394,7 +392,7 @@
 
   .bg-grid {
     background-size: 40px 40px;
-    background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px);
+    background-image: radial-gradient(circle, #eeeeee 1px, transparent 1px);
     mask-image: radial-gradient(
       ellipse 50% 50% at 50% 50%,
       #000 70%,
@@ -404,28 +402,29 @@
 }
 
 :root {
-  --uniz-maroon: #0b2a47;
-  --uniz-maroon-light: #0f3b63;
+  --uniz-maroon: #0a2540;
+  --uniz-maroon-light: #0d3154;
+  --examcell-accent: #ea2027;
 
-  /* Portal navy scale — default (overridden in .portal-theme) */
-  --portal-navy: #0b2a47;
-  --portal-navy-mid: #0f3b63;
-  --portal-navy-deep: #081e33;
-  --portal-navy-soft: #1a4a73;
-  --portal-navy-muted: #5a94b8;
-  --portal-navy-tint: #edf5fb;
-  --portal-navy-border: #d4e8f5;
+  /* Portal navy — ExamCell institutional */
+  --portal-navy: #0a2540;
+  --portal-navy-mid: #0d3154;
+  --portal-navy-deep: #021227;
+  --portal-navy-soft: #163a5c;
+  --portal-navy-muted: #5a7a94;
+  --portal-navy-tint: #fafafa;
+  --portal-navy-border: #eeeeee;
 
-  --navy-900: #18181b;
-  --navy-800: #27272a;
-  --navy-700: #3f3f46;
-  --navy-600: #52525b;
-  --navy-500: #71717a;
-  --navy-400: #a1a1aa;
-  --navy-300: #d4d4d8;
-  --navy-200: #e4e4e7;
-  --navy-100: #f4f4f5;
-  --navy-50: #fafafa;
+  --navy-900: #0a2540;
+  --navy-800: #0d3154;
+  --navy-700: #163a5c;
+  --navy-600: #1e4a73;
+  --navy-500: #3d6a8c;
+  --navy-400: #5a7a94;
+  --navy-300: #9bb0c4;
+  --navy-200: #eeeeee;
+  --navy-100: #fafafa;
+  --navy-50: #ffffff;
 
   /* Layout rhythm */
   --space-1: 4px;
@@ -434,83 +433,97 @@
   --space-4: 16px;
   --space-6: 24px;
   --space-8: 32px;
-  --radius-portal-lg: 12px;
-  --radius-portal-xl: 16px;
-  --radius-portal-2xl: 20px;
+  --radius-portal-sm: 2px;
+  --radius-portal-lg: 4px;
+  --radius-portal-xl: 6px;
+  --radius-portal-2xl: 8px;
 
   --white: #ffffff;
-  --bg-page: #f4f6f8;
+  --bg-page: #fafafa;
   --card-bg: #ffffff;
   --text-primary: #222222;
   --text-secondary: #4f4f4f;
-  --accent-hover: #3f3f46;
+  --accent-hover: #0d3154;
+  --accent-red: #ea2027;
 
-  --muted-foreground: #64748b;
+  --muted-foreground: #5a7a94;
   --card: #ffffff;
-  --border: #e2e8f0;
-  --secondary: #f1f5f9;
-  --accent-foreground: #18181b;
+  --border: #eeeeee;
+  --secondary: #fafafa;
+  --accent-foreground: #0a2540;
 
   --background: var(--white);
-  --primary: #111111;
+  --primary: #0a2540;
   --component-inactive-color: var(--muted-foreground);
   --component-bg: var(--card);
   --component-shadow: var(--border);
   --component-active-bg: var(--secondary);
   --component-line-inactive-color: var(--border);
   --component-active-color-default: var(--accent-foreground);
+
+  --header-gradient: radial-gradient(
+    circle farthest-corner at 16.5% 37.3%,
+    #0a2540 0.1%,
+    #021227 90%
+  );
+  --footer-bg: #eeeeee;
+  --header-height: 60px;
 }
 
-/* ── Portal theme (student / admin / auth — not landing) ───────────────── */
+/* ── Portal theme (student / admin / auth — ExamCell institutional) ─ */
 .portal-theme {
-  --portal-navy: #0b2a47;
-  --portal-navy-mid: #0f3b63;
-  --portal-navy-deep: #081e33;
-  --portal-navy-soft: #1a4a73;
-  --portal-navy-muted: #5a94b8;
-  --portal-navy-tint: #edf5fb;
-  --portal-navy-border: #d4e8f5;
+  --portal-navy: #0a2540;
+  --portal-navy-mid: #0d3154;
+  --portal-navy-deep: #021227;
+  --portal-navy-soft: #163a5c;
+  --portal-navy-muted: #5a7a94;
+  --portal-navy-tint: #fafafa;
+  --portal-navy-border: #eeeeee;
 
-  --navy-900: #0b2a47;
-  --navy-800: #0f3b63;
-  --navy-700: #16466f;
-  --navy-600: #1e5a8c;
-  --navy-500: #2e7099;
-  --navy-400: #5a94b8;
-  --navy-300: #9bc0dc;
-  --navy-200: #d4e8f5;
-  --navy-100: #edf5fb;
-  --navy-50: #f7fafd;
+  --navy-900: #0a2540;
+  --navy-800: #0d3154;
+  --navy-700: #163a5c;
+  --navy-600: #1e4a73;
+  --navy-500: #3d6a8c;
+  --navy-400: #5a7a94;
+  --navy-300: #9bb0c4;
+  --navy-200: #eeeeee;
+  --navy-100: #fafafa;
+  --navy-50: #ffffff;
 
-  --bg-page: #ffffff;
+  --bg-page: #fafafa;
   --card-bg: #ffffff;
-  --primary: #0b2a47;
-  --accent-foreground: #0b2a47;
-  --component-active-color: #0b2a47;
-  --component-active-color-default: #0b2a47;
-  --border: #d4e8f5;
+  --primary: #0a2540;
+  --accent-foreground: #0a2540;
+  --component-active-color: #0a2540;
+  --component-active-color-default: #0a2540;
+  --border: #eeeeee;
 }
 
 .portal-theme body {
-  background-color: #ffffff;
-  color: #0b2a47;
+  background-color: #fafafa;
+  color: #222222;
+  font-family: "Open Sans", system-ui, sans-serif;
 }
 
 .portal-theme h1,
 .portal-theme h2,
 .portal-theme h3,
 .portal-theme h4 {
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  font-family: "Open Sans", system-ui, sans-serif;
 }
 
 .portal-theme .bg-premium-gradient,
 .portal-theme .portal-page-shell {
-  background: #ffffff !important;
+  background: #fafafa !important;
 }
 
 .portal-theme .uniz-primary-btn {
   background-color: var(--portal-navy);
   color: #ffffff;
+  border-radius: 2px;
+  font-family: "Nunito", "Open Sans", sans-serif;
 }
 
 .portal-theme .uniz-primary-btn:hover:not(:disabled) {
@@ -558,7 +571,7 @@
 
 .portal-theme .bg-zinc-50\/50,
 .portal-theme .bg-zinc-50 {
-  background-color: #ffffff;
+  background-color: #fafafa;
 }
 
 .portal-theme .border-zinc-100,
@@ -566,12 +579,25 @@
   border-color: var(--portal-navy-border);
 }
 
-.portal-theme .portal-banner-gradient {
-  background: linear-gradient(
-    to right,
-    var(--portal-navy),
-    var(--portal-navy-mid)
-  );
+.portal-theme .portal-banner-gradient,
+.portal-theme .portal-header-chrome {
+  background: var(--header-gradient);
+}
+
+/* Strip SaaS glass / blur / glow on authenticated portal routes */
+.portal-theme .backdrop-blur,
+.portal-theme .backdrop-blur-sm,
+.portal-theme .backdrop-blur-md,
+.portal-theme .backdrop-blur-xl,
+.portal-theme .backdrop-blur-2xl {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.portal-theme .bg-white\/70,
+.portal-theme .bg-white\/80,
+.portal-theme .bg-white\/95 {
+  background-color: #ffffff !important;
 }
 
 .dark {
@@ -613,7 +639,6 @@
   }
 }
 
-/* Modern Mobile Menu Additions */
 @keyframes iconBounce {
   0%,
   100% {
@@ -654,12 +679,10 @@
   100% {
     transform: scale(1);
     opacity: 0.88;
-    filter: drop-shadow(0 0 2px rgba(246, 130, 31, 0.25));
   }
   50% {
     transform: scale(1.08);
     opacity: 1;
-    filter: drop-shadow(0 0 10px rgba(246, 130, 31, 0.45));
   }
 }
 

@@ -1,5 +1,9 @@
 # SECURITY POLICY
 
+**Public campus repo:** never commit production secrets. Contributors use
+`secrets.env.example` only. Production vault: `/root/uniz-secrets.env` on the VPS.
+Full policy: [docs/ops/SECRETS.md](docs/ops/SECRETS.md).
+
 ## Supported Versions
 
 We provide security updates for the following versions of UniZ:

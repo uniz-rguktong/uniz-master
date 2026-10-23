@@ -329,32 +329,32 @@ export default function GradeHub() {
         </div>
 
         {/* Selection Criteria */}
-        <div className="mb-8 md:bg-white p-6 px-0 md:px-6 md:rounded-xl md:border md:border-zinc-100 md:shadow-sm bg-transparent">
+        <div className="mb-8 md:bg-white p-6 px-0 md:px-6 md:rounded-portal-lg md:border md:border-navy-200 md:shadow-whisper bg-transparent">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
             <div className="relative group">
-              <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
+              <label className="text-[10px] font-bold tracking-[0.14em] text-navy-500 mb-1.5 block font-form">
                 Academic Year
               </label>
               <div
-                className="w-full flex items-center justify-between bg-zinc-50 border border-zinc-200 rounded-lg p-3 cursor-pointer hover:border-zinc-900 transition-colors"
+                className="w-full flex items-center justify-between bg-[#FAFAFA] border border-navy-200 rounded-portal-sm p-3 cursor-pointer hover:border-navy-900 transition-colors font-form"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
                 <span className="font-bold text-sm">{selectedYear}</span>
                 <ChevronDown
                   size={16}
-                  className="text-zinc-400 group-hover:text-zinc-900 transition-colors"
+                  className="text-navy-400 group-hover:text-navy-900 transition-colors"
                 />
               </div>
 
               {showDropdown && (
-                <div className="absolute z-50 mt-1 w-full bg-white border border-zinc-100 rounded-xl shadow-xl overflow-hidden">
+                <div className="absolute z-50 mt-1 w-full bg-white border border-navy-200 rounded-portal-sm shadow-whisper-md overflow-hidden">
                   {years.map((year) => (
                     <div
                       key={year}
                       className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${
                         selectedYear === year
-                          ? "bg-zinc-900 text-white"
-                          : "hover:bg-zinc-50 text-zinc-600"
+                          ? "bg-navy-900 text-white"
+                          : "hover:bg-[#FAFAFA] text-navy-600"
                       }`}
                       onClick={() => {
                         setSelectedYear(year);
@@ -370,7 +370,7 @@ export default function GradeHub() {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
+              <label className="text-[10px] font-bold tracking-[0.14em] text-navy-500 mb-1.5 block font-form">
                 Semester
               </label>
               <div className="relative">
@@ -380,7 +380,7 @@ export default function GradeHub() {
                     setSelectedSemester(e.target.value);
                     setResultsFetched(false);
                   }}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-lg p-3 font-bold text-sm appearance-none focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                  className="w-full bg-[#FAFAFA] border border-navy-200 rounded-portal-sm p-3 font-bold text-sm appearance-none focus:outline-none focus:border-navy-900 focus:ring-1 focus:ring-navy-900/15 transition-colors font-form"
                 >
                   {semesterOptions.map((opt) => (
                     <option key={opt} value={opt}>
@@ -399,7 +399,7 @@ export default function GradeHub() {
               <div className="md:w-48">
                 <button
                   onClick={() => handleFetchResults(false)}
-                  className="w-full h-[46px] bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm disabled:opacity-50"
+                  className="w-full h-[46px] bg-navy-900 hover:bg-navy-800 text-white rounded-portal-sm font-bold text-sm transition-colors font-button active:opacity-95 disabled:opacity-50"
                   disabled={isLoading || !user?.username}
                 >
                   {isLoading ? (
@@ -441,7 +441,7 @@ export default function GradeHub() {
         {resultsFetched && grades && grades.success && !isLoading && (
           <div
             ref={resultsRef}
-            className="-mx-4 md:mx-0 md:bg-white md:border md:border-zinc-100 md:rounded-xl overflow-hidden md:shadow-sm bg-transparent scroll-mt-4"
+            className="-mx-4 md:mx-0 md:bg-white md:border md:border-navy-200 md:rounded-portal-lg overflow-hidden md:shadow-whisper bg-transparent scroll-mt-4"
           >
             {/* Results Header */}
             <div className="md:bg-white border-b border-zinc-100 md:px-6 px-4 py-5 flex justify-between items-center bg-transparent">
@@ -467,7 +467,7 @@ export default function GradeHub() {
                         { studentId: user.username, reportType: "REGULAR" },
                       );
                     }}
-                    className="h-10 px-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm"
+                    className="h-10 px-4 bg-navy-900 hover:bg-navy-800 text-white rounded-portal-sm font-bold text-xs transition-colors flex items-center gap-2 font-button"
                   >
                     <Download size={14} /> Output PDF
                   </button>

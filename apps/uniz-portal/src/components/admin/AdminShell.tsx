@@ -3,7 +3,6 @@ import { useState, useRef, useEffect, type ReactNode } from "react";
 import { LogOut, Search, ChevronLeft, Menu, type LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { LandingMeshBackdrop } from "@/components/ui/landing-section";
 import ProfilePopup from "@/pages/admin/ProfilePopup";
 import {
   adminPageClass,
@@ -176,8 +175,6 @@ export default function AdminShell({
 
   return (
     <div className={adminPageClass}>
-      <LandingMeshBackdrop />
-
       <aside
         className={cn(
           adminSidebarClass,
@@ -271,7 +268,7 @@ export default function AdminShell({
                       {isActive && (
                         <motion.div
                           layoutId="adminActiveTabGlow"
-                          className="absolute inset-0 bg-navy-900 rounded-lg shadow-whisper-navy"
+                          className="absolute inset-0 bg-navy-900 rounded-portal-sm"
                           initial={false}
                           transition={{ type: "spring", stiffness: 420, damping: 38 }}
                         />
@@ -375,15 +372,15 @@ export default function AdminShell({
 
           {isSidebarOpen && (
             <div className="px-2 pt-2 space-y-2">
-              <div className="rounded-xl bg-gradient-to-br from-navy-900 to-navy-800 p-3.5 text-white">
-                <p className="text-[10px] font-bold tracking-[0.12em] text-white/50 uppercase">
+              <div className="rounded-portal-sm bg-navy-900 p-3.5 text-white">
+                <p className="text-[10px] font-bold tracking-[0.12em] text-white/50 uppercase font-sans">
                   Platform
                 </p>
-                <p className="text-[13px] font-semibold mt-1 leading-tight">
-                  uniZ Admin Console
+                <p className="text-[13px] font-semibold mt-1 leading-tight font-sans">
+                  UNIZ Admin Console
                 </p>
-                <p className="text-[10px] text-white/40 font-medium mt-1.5 leading-relaxed">
-                  RGUKT Ongole &middot; Microservices v1.3
+                <p className="text-[10px] text-white/40 font-medium mt-1.5 leading-relaxed font-form">
+                  RGUKT Ongole &middot; Examination Cell
                 </p>
               </div>
             </div>
