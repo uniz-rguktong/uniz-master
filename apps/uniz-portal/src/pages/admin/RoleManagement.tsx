@@ -536,7 +536,7 @@ export default function RoleManagement() {
                       <Button
                         onclickFunction={updateRolePermissions}
                         value="Save Changes"
-                        className="bg-zinc-900 hover:bg-black"
+                        className="bg-zinc-900 hover:bg-[#0A2540]"
                       />
                     </div>
                   </div>

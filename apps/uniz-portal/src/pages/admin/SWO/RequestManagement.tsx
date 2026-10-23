@@ -284,7 +284,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 <button
                   onClick={() => handleAction("reject", request._id)}
                   disabled={!!actionLoading}
-                  className="h-12 bg-black text-white rounded-2xl font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="h-12 bg-[#0A2540] text-white rounded-2xl font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                   {actionLoading === request._id ? (
                     <Loader2 size={16} className="animate-spin" />

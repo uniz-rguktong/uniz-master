@@ -196,7 +196,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 flex items-center justify-center bg-black/55 backdrop-blur-[2px]"
+                    className="absolute inset-0 flex items-center justify-center bg-[#0A2540]/55 backdrop-blur-[2px]"
                   >
                     <Loader2 className="w-5 h-5 text-white animate-spin" />
                   </motion.div>

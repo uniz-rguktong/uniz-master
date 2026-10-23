@@ -266,7 +266,7 @@ export default function BannerManager() {
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-semibold text-[10px] tracking-[0.14em] hover:bg-black transition-all flex items-center gap-3 shadow-lg shadow-zinc-100/50"
+            className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-semibold text-[10px] tracking-[0.14em] hover:bg-[#0A2540] transition-all flex items-center gap-3 shadow-lg shadow-zinc-100/50"
           >
             <PlusCircle size={16} /> New Banner
           </button>

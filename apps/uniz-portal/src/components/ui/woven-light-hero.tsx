@@ -136,7 +136,7 @@ export const WovenLightHero = () => {
           <div className="flex justify-center gap-4">
             <Button
               size="lg"
-              className="rounded-full px-12 h-14 text-sm font-bold bg-[#0F172A] text-white hover:bg-black transition-all shadow-xl active:scale-95 group"
+              className="rounded-full px-12 h-14 text-sm font-bold bg-[#0F172A] text-white hover:bg-[#0A2540] transition-all shadow-xl active:scale-95 group"
               onClick={() => navigate("/student/signin")}
             >
               Explore the Weave

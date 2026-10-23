@@ -76,7 +76,7 @@ export function ModernSidebar({
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden transition-opacity duration-300"
+          className="fixed inset-0 bg-[#0A2540]/40 backdrop-blur-sm z-30 md:hidden transition-opacity duration-300"
           onClick={toggleSidebar}
         />
       )}

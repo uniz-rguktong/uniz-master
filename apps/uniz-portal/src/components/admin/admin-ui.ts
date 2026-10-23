@@ -28,44 +28,49 @@ import {
    UniZ Admin — ExamCell institutional tokens (flat, no glass/mesh)
    ============================================================ */
 
-export const adminPageClass = cn(portalPageClass, "flex overflow-hidden");
+export const adminPageClass = cn(
+  portalPageClass,
+  "flex overflow-hidden bg-white",
+);
 
 export const adminSidebarOpenWidth = "w-[272px]";
 export const adminSidebarClosedWidth = "w-[76px]";
 
 export const adminSidebarClass = cn(
-  "bg-white transition-[width] duration-300 ease-out z-50 flex flex-col h-screen",
-  "border-r border-navy-200",
+  "portal-header-chrome text-white transition-[width] duration-300 ease-out z-50 flex flex-col h-screen",
+  "border-r border-[#021227]",
 );
 
 export const adminSidebarToggleClass =
-  "absolute -right-3 top-7 bg-white border border-navy-200 rounded-portal-sm p-1 text-navy-400 hover:text-navy-900 hover:border-navy-300 shadow-whisper active:scale-95 transition-colors z-50 hidden lg:flex items-center justify-center";
+  "absolute -right-3 top-7 bg-white border border-[#EEEEEE] rounded-[1px] p-1 text-[#5A7A94] hover:text-[#0A2540] hover:border-[#9bb0c4] shadow-examcell active:scale-95 transition-colors z-50 hidden lg:flex items-center justify-center";
 
-export const adminNavGroupLabelClass = portalEyebrowClass;
+export const adminNavGroupLabelClass = cn(
+  portalEyebrowClass,
+  "!text-white/50",
+);
 
-export const adminNavActiveClass = "bg-navy-900 text-white";
+export const adminNavActiveClass = "bg-white/15 text-white";
 
 export const adminNavInactiveClass =
-  "text-navy-500 hover:bg-[#FAFAFA] hover:text-navy-900";
+  "text-white/70 hover:bg-white/10 hover:text-white";
 
 export const adminNavIconActiveClass = "text-white";
 export const adminNavIconInactiveClass =
-  "text-navy-400 group-hover:text-navy-700";
+  "text-white/60 group-hover:text-white";
 
-/** Light content header (sidebar carries branding; top bar stays flat white) */
+/** ExamCell 60px gradient content header */
 export const adminHeaderClass = cn(
-  "sticky top-0 z-40 h-[60px] flex items-center bg-white border-b border-navy-200 px-6 md:px-10",
+  "sticky top-0 z-40 h-[60px] flex items-center portal-header-chrome text-white px-6 md:px-10",
 );
 
 export const adminAvatarButtonClass =
-  "w-9 h-9 rounded-portal-sm overflow-hidden bg-[#FAFAFA] ring-1 ring-navy-200 hover:ring-navy-300 transition-colors active:scale-95 shrink-0";
+  "w-9 h-9 rounded-[1px] overflow-hidden bg-white/10 ring-1 ring-white/25 hover:ring-white/40 transition-colors active:scale-95 shrink-0";
 
 export const adminAvatarFallbackClass =
-  "w-full h-full flex items-center justify-center bg-navy-900 text-white font-semibold text-[13px] font-sans";
+  "w-full h-full flex items-center justify-center bg-[#34495e] text-white font-bold text-[13px] font-sans uppercase";
 
 export const adminLogoutButtonClass =
-  "w-9 h-9 rounded-portal-sm bg-white border border-navy-200 flex items-center justify-center text-navy-400 hover:text-[#EA2027] hover:border-[#EA2027]/40 hover:bg-red-50 transition-colors active:scale-95";
-
+  "w-9 h-9 rounded-[1px] bg-white/10 border border-white/20 flex items-center justify-center text-white/80 hover:text-white hover:bg-[#EA2027] hover:border-[#EA2027] transition-colors active:scale-95";
 export const adminSearchInputClass = cn(
   portalInputClass,
   "h-10 py-2 bg-[#FAFAFA] border-transparent focus:bg-white",

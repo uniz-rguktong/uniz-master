@@ -258,7 +258,7 @@ export default function ProfilePopup({
                         </span>
                       )}
                       {isUploading && (
-                        <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center">
+                        <div className="absolute inset-0 bg-[#0A2540]/40 rounded-full flex items-center justify-center">
                           <Loader2
                             size={20}
                             className="animate-spin text-white"

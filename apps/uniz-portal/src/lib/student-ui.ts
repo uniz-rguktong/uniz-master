@@ -18,7 +18,7 @@ import {
 
 /** Student portal shell — ExamCell institutional tokens. */
 
-export const studentShellClass = cn(portalPageClass, "flex flex-col");
+export const studentShellClass = cn(portalPageClass, "flex flex-col bg-white");
 
 export const studentMainWrapClass = cn(
   portalPageWrapClass,
@@ -37,7 +37,7 @@ export const studentDesktopHeaderClass = cn(
 );
 
 export const studentLogoClass =
-  "uniz-logo-wordmark text-xl md:text-2xl text-white";
+  "uniz-logo-wordmark text-xl md:text-2xl !text-white tracking-[2px]";
 
 export const studentCardClass = cn(portalCardClass, "p-4 md:p-5");
 
@@ -45,21 +45,21 @@ export const studentInfoGridClass =
   "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4";
 
 export const studentTabBarClass =
-  "flex gap-6 md:gap-8 min-w-max border-b border-navy-200 overflow-x-auto no-scrollbar";
+  "flex gap-6 md:gap-8 min-w-max border-b border-[#EEEEEE] overflow-x-auto no-scrollbar";
 
 export const studentTabButtonActiveClass = cn(
-  "pb-3 text-[11px] font-bold tracking-[0.14em] capitalize transition-colors relative font-sans",
+  "pb-3 text-[11px] font-bold tracking-[0.14em] uppercase transition-colors relative font-sans",
   portalTabActiveClass,
 );
 
 export const studentTabButtonInactiveClass = cn(
-  "pb-3 text-[11px] font-bold tracking-[0.14em] capitalize transition-colors font-sans",
+  "pb-3 text-[11px] font-bold tracking-[0.14em] uppercase transition-colors font-sans",
   portalTabInactiveClass,
 );
 
 export const studentBadgeClass = cn(
   portalPillClass,
-  "text-[10px] tracking-[0.12em] text-navy-900 font-bold",
+  "text-[10px] tracking-[0.12em] text-[#0A2540] font-bold",
 );
 
 export const studentEditButtonClass = cn(
@@ -78,12 +78,12 @@ export const studentCancelButtonClass = cn(
 );
 
 export const studentNavActiveIconClass = cn(
-  "flex h-11 w-11 items-center justify-center rounded-portal-sm transition-colors",
+  "flex h-11 w-11 items-center justify-center rounded-[2px] transition-colors",
   portalNavActiveClass,
 );
 
 export const studentNavInactiveIconClass = cn(
-  "flex h-11 w-11 items-center justify-center rounded-portal-sm text-navy-400 transition-colors",
+  "flex h-11 w-11 items-center justify-center rounded-[2px] text-[#5A7A94] transition-colors",
   portalNavInactiveClass,
 );
 
@@ -96,3 +96,7 @@ export const studentProfileSectionClass = cn(
   studentCardClass,
   portalSectionGapClass,
 );
+
+export const studentInsetPanelClass = portalInsetPanelClass;
+
+export const studentSectionGapClass = portalSectionGapClass;

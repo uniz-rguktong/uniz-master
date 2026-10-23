@@ -72,25 +72,25 @@
   }
 
   ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 10px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: #f1f1f1;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-[#EEEEEE] rounded-sm transition-colors duration-300;
+    background: #061b33;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-[#d4d4d4];
+    background: #eeeeee;
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: #eeeeee transparent;
+    scrollbar-color: #061b33 #f1f1f1;
   }
 }
 
@@ -98,7 +98,7 @@
   .login-field:-webkit-autofill,
   .login-field:-webkit-autofill:hover,
   .login-field:-webkit-autofill:focus {
-    -webkit-box-shadow: 0 0 0 1000px #fafafa inset !important;
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
     -webkit-text-fill-color: #0a2540 !important;
     caret-color: #0a2540;
     transition: background-color 9999s ease-out 0s;
@@ -106,6 +106,26 @@
 
   .login-field:focus:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  }
+
+  /* ExamCell login card form — force light inputs on navy panel */
+  .examcell-login-form label {
+    color: #ffffff !important;
+  }
+
+  .examcell-login-form input,
+  .examcell-login-form .login-field {
+    background: #ffffff !important;
+    color: #0a2540 !important;
+    border: none !important;
+    border-radius: 1px !important;
+  }
+
+  .examcell-login-form button.uniz-primary-btn,
+  .examcell-login-form .uniz-primary-btn {
+    background: #34495e !important;
+    letter-spacing: 2px;
+    text-transform: uppercase;
   }
 
   /* Institutional wordmark — Open Sans uppercase (no cursive) */
@@ -118,14 +138,16 @@
   }
 
   .uniz-primary-btn {
-    @apply min-h-11 w-full flex items-center justify-center font-semibold text-sm transition-colors duration-150;
-    font-family: theme("fontFamily.button");
-    border-radius: 2px;
-    @apply bg-navy-900 text-white;
-    @apply hover:bg-navy-800 active:opacity-95;
+    @apply min-h-9 w-full flex items-center justify-center font-bold text-[13px] uppercase tracking-[2px] transition-colors duration-150;
+    font-family: theme("fontFamily.form");
+    border-radius: 1px;
+    background: #34495e;
+    color: #fff;
+    box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.11), 0 5px 15px 0 rgba(0, 0, 0, 0.08);
+    @apply hover:bg-[#2c3e50] active:opacity-95;
     @apply focus:ring-2 focus:outline-none;
-    --tw-ring-color: rgb(10 37 64 / 0.25);
-    @apply disabled:bg-navy-100 disabled:text-navy-300 disabled:cursor-not-allowed;
+    --tw-ring-color: rgb(52 73 94 / 0.35);
+    @apply disabled:opacity-40 disabled:cursor-not-allowed;
   }
 
   .menu {
@@ -463,9 +485,14 @@
 
   --header-gradient: radial-gradient(
     circle farthest-corner at 16.5% 37.3%,
-    #0a2540 0.1%,
-    #021227 90%
+    rgba(10, 37, 64, 1) 0.1%,
+    rgba(2, 18, 39, 1) 90%
   );
+  --HOME-GRADIENT: var(--header-gradient);
+  --OPEN-SANS: "Open Sans", sans-serif;
+  --NUNITO: "Nunito", sans-serif;
+  --CABIN: "Cabin", sans-serif;
+  --examcell-cta: #34495e;
   --footer-bg: #eeeeee;
   --header-height: 60px;
 }
@@ -520,14 +547,16 @@
 }
 
 .portal-theme .uniz-primary-btn {
-  background-color: var(--portal-navy);
+  background-color: #34495e;
   color: #ffffff;
-  border-radius: 2px;
-  font-family: "Nunito", "Open Sans", sans-serif;
+  border-radius: 1px;
+  font-family: "Cabin", "Open Sans", sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .portal-theme .uniz-primary-btn:hover:not(:disabled) {
-  background-color: var(--portal-navy-mid);
+  background-color: #2c3e50;
 }
 
 .portal-theme .uniz-primary-btn:focus {
@@ -580,8 +609,9 @@
 }
 
 .portal-theme .portal-banner-gradient,
-.portal-theme .portal-header-chrome {
-  background: var(--header-gradient);
+.portal-theme .portal-header-chrome,
+.portal-header-chrome {
+  background: var(--header-gradient) !important;
 }
 
 /* Strip SaaS glass / blur / glow on authenticated portal routes */
@@ -596,8 +626,21 @@
 
 .portal-theme .bg-white\/70,
 .portal-theme .bg-white\/80,
-.portal-theme .bg-white\/95 {
+.portal-theme .bg-white\/95,
+.portal-theme .bg-black\/40,
+.portal-theme .bg-black\/50,
+.portal-theme .bg-black\/60 {
   background-color: #ffffff !important;
+}
+
+.portal-theme .bg-black {
+  background-color: #0a2540 !important;
+}
+
+.portal-theme .rounded-2xl,
+.portal-theme .rounded-3xl,
+.portal-theme .rounded-xl {
+  border-radius: 2px !important;
 }
 
 .dark {

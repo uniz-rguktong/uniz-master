@@ -40,40 +40,37 @@ function NoticeCard({ update }: { update: CampusUpdate }) {
   const card = (
     <article
       className={cn(
-        "group relative flex h-full flex-col gap-1.5 rounded-portal-xl border bg-white p-3.5 md:p-4 transition-all",
-        fresh
-          ? "border-navy-300 shadow-[0_1px_10px_rgba(15,35,66,0.08)]"
-          : "border-navy-200",
-        update.link &&
-          "cursor-pointer hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-[0_4px_16px_rgba(15,35,66,0.10)]",
+        "group relative flex h-full flex-col gap-1.5 rounded-[10px] bg-[#EEEEEE] p-3.5 italic tracking-[1px] transition-all md:p-4",
+        fresh && "ring-1 ring-[#0A2540]/15",
+        update.link && "cursor-pointer hover:bg-[#e4e4e4]",
       )}
     >
-      <div className="flex items-start justify-between gap-2">
-        <h3 className="min-w-0 text-[13px] md:text-sm font-semibold leading-snug text-navy-900 [overflow-wrap:anywhere]">
+      <div className="flex items-start justify-between gap-2 not-italic">
+        <h3 className="min-w-0 text-[13px] font-bold leading-snug tracking-[0.5px] text-[#061B33] md:text-sm [overflow-wrap:anywhere]">
           {update.title || body || "Campus update"}
         </h3>
         {update.link && (
           <ExternalLink
             size={13}
-            className="mt-0.5 shrink-0 text-navy-300 transition-colors group-hover:text-navy-600"
+            className="mt-0.5 shrink-0 text-[#061B33] underline transition-colors"
           />
         )}
       </div>
 
       {update.title && body && (
-        <p className="line-clamp-2 text-[12px] leading-relaxed text-navy-600 [overflow-wrap:anywhere]">
+        <p className="line-clamp-2 text-[12px] leading-relaxed text-[#061B33] [overflow-wrap:anywhere]">
           {body}
         </p>
       )}
 
-      <div className="mt-auto flex items-center gap-2 pt-1">
+      <div className="mt-auto flex items-center gap-2 pt-1 not-italic">
         {fresh && (
-          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-emerald-700">
-            <span className="h-1 w-1 rounded-full bg-emerald-500" />
+          <span className="inline-flex items-center gap-1 rounded-[2px] border border-[#0A2540]/20 bg-white px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[#0A2540]">
+            <span className="h-1 w-1 rounded-full bg-[#EA2027]" />
             New
           </span>
         )}
-        <span className="text-[10px] font-semibold tabular-nums text-navy-400">
+        <span className="text-[10px] font-semibold tabular-nums text-[#5A7A94]">
           {getTimeAgo(update.createdAt)}
         </span>
       </div>

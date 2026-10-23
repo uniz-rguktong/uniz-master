@@ -5,5 +5,8 @@ export const UNIZ_TAGLINE = {
 
 export const UNIZ_CAMPUS_LABEL = "RGUKT Ongole" as const;
 
-/** ExamCell institutional accent (CTAs stay navy; accent for alerts/links) */
+/** ExamCell institutional palette — match examcell.rguktrkv.ac.in */
 export const UNIZ_ACCENT_RED = "#EA2027" as const;
+export const UNIZ_CTA = "#34495e" as const;
+export const UNIZ_DEEP_LINK = "#061B33" as const;
+export const UNIZ_SUPPORT_EMAIL = "webadmin@rguktong.ac.in" as const;

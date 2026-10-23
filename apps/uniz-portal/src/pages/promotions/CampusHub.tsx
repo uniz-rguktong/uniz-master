@@ -50,22 +50,22 @@ export default function CampusHub() {
     {
       title: "Event Discovery",
       description: "Browse through all campus events in one central place.",
-      icon: <Search size={24} className="text-black" />,
+      icon: <Search size={24} className="text-[#061B33]" />,
     },
     {
       title: "Real-time Updates",
       description: "Get notified about new events and updates instantly.",
-      icon: <Bell size={24} className="text-black" />,
+      icon: <Bell size={24} className="text-[#061B33]" />,
     },
     {
       title: "Event Categories",
       description: "Filter events by type, department, or interest groups.",
-      icon: <Tag size={24} className="text-black" />,
+      icon: <Tag size={24} className="text-[#061B33]" />,
     },
     {
       title: "Save & Share",
       description: "Bookmark events and share them with friends.",
-      icon: <Share2 size={24} className="text-black" />,
+      icon: <Share2 size={24} className="text-[#061B33]" />,
     },
   ];
 
@@ -93,7 +93,7 @@ export default function CampusHub() {
   // Staggered animation for svg elements
 
   return (
-    <div className="min-h-screen text-black font-sans">
+    <div className="min-h-screen text-[#061B33] font-sans">
       {/* Hero Section */}
       <header className="relative overflow-hidden bg-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
@@ -109,7 +109,7 @@ export default function CampusHub() {
               transition={{ duration: 0.7, ease: "easeOut" }}
               className="mb-8"
             >
-              <div className="flex items-center justify-center w-20 h-20 bg-black rounded-full mb-4">
+              <div className="flex items-center justify-center w-20 h-20 bg-[#0A2540] rounded-full mb-4">
                 <Calendar size={36} className="text-white" />
               </div>
             </motion.div>
@@ -140,7 +140,7 @@ export default function CampusHub() {
             >
               <a
                 href="https://srees-campushub.vercel.app"
-                className="px-8 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-black transition-all flex items-center justify-center shadow-sm"
+                className="px-8 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-[#0A2540] transition-all flex items-center justify-center shadow-sm"
               >
                 Explore Events <ArrowRight size={16} className="ml-2" />
               </a>
@@ -225,7 +225,7 @@ export default function CampusHub() {
               className="flex flex-col items-center text-center"
             >
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                <Calendar size={28} className="text-black" />
+                <Calendar size={28} className="text-[#061B33]" />
               </div>
               <h3 className="text-xl font-semibold mb-3">
                 All Events, One Place
@@ -241,7 +241,7 @@ export default function CampusHub() {
               className="flex flex-col items-center text-center"
             >
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                <Bell size={28} className="text-black" />
+                <Bell size={28} className="text-[#061B33]" />
               </div>
               <h3 className="text-xl font-semibold mb-3">Stay Updated</h3>
               <p className="text-gray-600">
@@ -255,7 +255,7 @@ export default function CampusHub() {
               className="flex flex-col items-center text-center"
             >
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                <Users size={28} className="text-black" />
+                <Users size={28} className="text-[#061B33]" />
               </div>
               <h3 className="text-xl font-semibold mb-3">
                 Connect with Others
@@ -344,7 +344,7 @@ export default function CampusHub() {
                   whileInView="visible"
                   viewport={{ once: true }}
                 >
-                  <div className="mr-3 text-black">
+                  <div className="mr-3 text-[#061B33]">
                     <Star size={20} />
                   </div>
                   <span>Personalized event recommendations</span>
@@ -357,7 +357,7 @@ export default function CampusHub() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 }}
                 >
-                  <div className="mr-3 text-black">
+                  <div className="mr-3 text-[#061B33]">
                     <Clock size={20} />
                   </div>
                   <span>Calendar integration and reminders</span>
@@ -370,7 +370,7 @@ export default function CampusHub() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 }}
                 >
-                  <div className="mr-3 text-black">
+                  <div className="mr-3 text-[#061B33]">
                     <MapPin size={20} />
                   </div>
                   <span>Campus map with event locations</span>
@@ -386,7 +386,7 @@ export default function CampusHub() {
               >
                 <a
                   href="https://srees-campushub.vercel.app"
-                  className="inline-flex items-center px-6 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-black transition-all shadow-sm"
+                  className="inline-flex items-center px-6 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-[#0A2540] transition-all shadow-sm"
                 >
                   Browse Events <ArrowRight size={16} className="ml-2" />
                 </a>
@@ -436,10 +436,10 @@ export default function CampusHub() {
                             {event.category}
                           </span>
                           <div className="ml-auto flex">
-                            <button className="mr-2 text-gray-500 hover:text-black transition-colors">
+                            <button className="mr-2 text-gray-500 hover:text-[#061B33] transition-colors">
                               <Bookmark size={16} />
                             </button>
-                            <button className="text-gray-500 hover:text-black transition-colors">
+                            <button className="text-gray-500 hover:text-[#061B33] transition-colors">
                               <Share2 size={16} />
                             </button>
                           </div>
@@ -458,7 +458,7 @@ export default function CampusHub() {
                 >
                   <a
                     href="https://srees-campushub.vercel.app"
-                    className="text-black font-medium hover:underline inline-flex items-center"
+                    className="text-[#061B33] font-medium hover:underline inline-flex items-center"
                   >
                     View all events <ArrowRight size={14} className="ml-1" />
                   </a>
@@ -837,7 +837,7 @@ export default function CampusHub() {
                 <motion.div variants={itemVariants} className="flex">
                   <div className="flex-shrink-0 mr-4">
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                      <Megaphone size={24} className="text-black" />
+                      <Megaphone size={24} className="text-[#061B33]" />
                     </div>
                   </div>
                   <div>
@@ -854,7 +854,7 @@ export default function CampusHub() {
                 <motion.div variants={itemVariants} className="flex">
                   <div className="flex-shrink-0 mr-4">
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                      <MessageCircle size={24} className="text-black" />
+                      <MessageCircle size={24} className="text-[#061B33]" />
                     </div>
                   </div>
                   <div>
@@ -871,7 +871,7 @@ export default function CampusHub() {
                 <motion.div variants={itemVariants} className="flex">
                   <div className="flex-shrink-0 mr-4">
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                      <Star size={24} className="text-black" />
+                      <Star size={24} className="text-[#061B33]" />
                     </div>
                   </div>
                   <div>
@@ -895,7 +895,7 @@ export default function CampusHub() {
               >
                 <a
                   href="https://srees-campushub.vercel.app"
-                  className="inline-flex items-center px-6 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-black transition-all shadow-sm"
+                  className="inline-flex items-center px-6 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-[#0A2540] transition-all shadow-sm"
                 >
                   Create an Event <ArrowRight size={16} className="ml-2" />
                 </a>

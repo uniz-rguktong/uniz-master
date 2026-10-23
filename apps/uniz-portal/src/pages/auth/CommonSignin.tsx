@@ -16,7 +16,12 @@ import {
 import { apiClient } from "../../api/apiClient";
 import { parseJwt } from "../../utils/security";
 import { User, Lock, ArrowLeft, CheckCircle2, Mail } from "lucide-react";
-import LoginScreen from "../../components/ui/login-1";
+import LoginScreen, {
+  examcellLoginButtonClass,
+  examcellLoginInputClass,
+  examcellLoginLabelClass,
+  examcellLoginLinkClass,
+} from "../../components/ui/login-1";
 import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { motion } from "framer-motion";
@@ -241,33 +246,23 @@ function PasswordStrength({ password }: { password: string }) {
   );
 }
 
-// ─── Shared login styles (portal navy) ────────────────────────
-const loginLabelClass = cn(
-  portalLabelClass,
-  "normal-case tracking-normal !text-[12px] !font-medium !text-navy-600",
-);
+// ─── Shared login styles (ExamCell LOGIN PORTAL card) ─────────
+const loginLabelClass = examcellLoginLabelClass;
 
-const loginInputClass = cn(
-  portalInputClass,
-  "login-field !shadow-none hover:!border-navy-300",
-);
+const loginInputClass = cn(examcellLoginInputClass, "login-field");
 
 const loginInputWithIconClass = cn(loginInputClass, "!pl-10 !pr-3.5");
 
 const loginInputPasswordClass = cn(loginInputClass, "!pl-10 !pr-10");
 
-const loginBtnClass = cn(
-  portalPrimaryButtonClass,
-  "w-full !min-h-12 text-[15px] uniz-primary-btn",
-);
+const loginBtnClass = cn(examcellLoginButtonClass, "w-full uniz-primary-btn");
 
 const loginSecondaryBtnClass = cn(
   portalSecondaryButtonClass,
-  "w-full !min-h-12 text-[14px]",
+  "w-full !min-h-9 !text-[12px] !tracking-[1px] border-white/40 bg-transparent text-white hover:bg-white hover:text-[#0A2540]",
 );
 
-const loginLinkBtnClass =
-  "inline-flex items-center justify-center min-h-11 text-[13px] font-semibold text-navy-600 hover:text-navy-900 transition-colors";
+const loginLinkBtnClass = examcellLoginLinkClass;
 
 const TURNSTILE_TEST_SITE_KEY_PREFIX = "1x00000000000000000000AA";
 
@@ -849,31 +844,22 @@ export default function Signin({ type }: SigninProps) {
     if (step === "verifyOtp") resetPassword();
   };
 
-  const dashboardLabel =
-    type === "student"
-      ? "Sign in"
-      : type === "faculty"
-        ? "Faculty sign in"
-        : "Admin sign in";
-
   const stepSubtitle =
     step === "signin"
-      ? type === "student"
-        ? "Use your university ID or college email and password"
-        : "Use your staff credentials"
+      ? undefined
       : step === "forgot"
         ? "We'll send a code to your registered email"
         : "Check your mail or notifications";
 
   const stepTitle =
     step === "signin"
-      ? dashboardLabel
+      ? "Login Portal"
       : step === "forgot"
-        ? "Reset password"
-        : "New password";
+        ? "Reset Password"
+        : "New Password";
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-white">
       <LoginScreen
         isLogin={step === "signin"}
         onBack={() => navigate("/")}
@@ -888,13 +874,9 @@ export default function Signin({ type }: SigninProps) {
           {step === "signin" && (
             <div className="space-y-4">
               <Input
-                label={
-                  type === "student"
-                    ? "University ID or email"
-                    : "Staff ID or email"
-                }
+                label={type === "student" ? "Your Id:" : "Your Id:"}
                 labelClassName={loginLabelClass}
-                icon={<User className="w-4 h-4" />}
+                icon={<User className="w-4 h-4 text-[#5A7A94]" />}
                 value={username}
                 onChange={(e) =>
                   setUsername(
@@ -903,11 +885,7 @@ export default function Signin({ type }: SigninProps) {
                       : e.target.value,
                   )
                 }
-                placeholder={
-                  type === "student"
-                    ? "o210001 or o210001@rguktong.ac.in"
-                    : "username or email@rguktong.ac.in"
-                }
+                placeholder="Username"
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck={false}
@@ -916,25 +894,27 @@ export default function Signin({ type }: SigninProps) {
               />
               <div className="space-y-1">
                 <Input
-                  label="Password"
+                  label={
+                    type === "student"
+                      ? "Your Pass: (Default ID@rguktong)"
+                      : "Your Pass:"
+                  }
                   labelClassName={loginLabelClass}
                   type="password"
-                  icon={<Lock className="w-4 h-4" />}
+                  icon={<Lock className="w-4 h-4 text-[#5A7A94]" />}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter password"
+                  placeholder="Password"
                   autoComplete="current-password"
                   className={loginInputPasswordClass}
                 />
-                <div className="flex justify-end pt-0.5">
-                  <button
-                    type="button"
-                    className={loginLinkBtnClass}
-                    onClick={() => setStep("forgot")}
-                  >
-                    Forgot password?
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className={loginLinkBtnClass}
+                  onClick={() => setStep("forgot")}
+                >
+                  Forgot password?
+                </button>
               </div>
 
               {requiresCaptcha() && (
@@ -970,7 +950,7 @@ export default function Signin({ type }: SigninProps) {
                     ? "Signing in…"
                     : requiresCaptcha() && !captchaReady
                       ? "Complete security check"
-                      : "Continue"}
+                      : "Login"}
                 </span>
               </Button>
             </div>
@@ -980,11 +960,7 @@ export default function Signin({ type }: SigninProps) {
           {step === "forgot" && (
             <div className="space-y-4">
               <Input
-                label={
-                  type === "student"
-                    ? "University ID or email"
-                    : "Staff ID or email"
-                }
+                label="Your Id:"
                 labelClassName={loginLabelClass}
                 icon={<User className="w-4 h-4" />}
                 value={username}

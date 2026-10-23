@@ -191,7 +191,7 @@ export function LandingCTA({
     <button
       type="button"
       className={cn(
-        "group relative inline-flex h-12 items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-zinc-950 px-8 text-[14px] font-bold text-white shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] transition-all duration-300 hover:bg-black",
+        "group relative inline-flex h-12 items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-zinc-950 px-8 text-[14px] font-bold text-white shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] transition-all duration-300 hover:bg-[#0A2540]",
         className,
       )}
       {...props}

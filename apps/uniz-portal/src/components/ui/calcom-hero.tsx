@@ -746,7 +746,7 @@ export const CalcomHero = () => {
             ) : (
               <Button
                 onClick={handleDownload}
-                className="group relative h-12 px-8 bg-zinc-950 hover:bg-black text-white text-[14px] font-bold rounded-xl flex items-center gap-3 transition-all duration-300 overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]"
+                className="group relative h-12 px-8 bg-zinc-950 hover:bg-[#0A2540] text-white text-[14px] font-bold rounded-xl flex items-center gap-3 transition-all duration-300 overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
                 <platform.PlatformIcon size={16} />

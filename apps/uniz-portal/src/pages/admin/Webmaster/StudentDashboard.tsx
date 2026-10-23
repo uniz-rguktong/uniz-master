@@ -113,7 +113,7 @@ export default function StudentDashboard({
                 )}
 
                 {isActionLoading && (
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-[#0A2540]/40 flex items-center justify-center">
                     <Loader2 className="w-9 h-9 animate-spin text-white/80" />
                   </div>
                 )}

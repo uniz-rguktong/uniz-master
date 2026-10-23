@@ -44,7 +44,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative">
           {icon && (
-            <div className="pointer-events-none absolute left-3 top-1/2 flex -translate-y-1/2 items-center text-zinc-400 group-focus-within:text-zinc-600 transition-colors">
+            <div className="pointer-events-none absolute left-3 top-1/2 flex -translate-y-1/2 items-center text-[#5A7A94] transition-colors group-focus-within:text-[#0A2540]">
               {icon}
             </div>
           )}

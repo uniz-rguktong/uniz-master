@@ -346,9 +346,9 @@ function OverviewSection({
               key={item.id}
               whileHover={{ y: -3 }}
               onClick={() => setActiveTab(item.id as ActiveTab)}
-              className="group relative flex flex-col items-start p-6 bg-white border border-zinc-100 rounded-2xl hover:shadow-xl hover:border-black/10 transition-all text-left"
+              className="group relative flex flex-col items-start p-6 bg-white border border-zinc-100 rounded-2xl hover:shadow-xl hover:border-[#0A2540]/10 transition-all text-left"
             >
-              <div className="p-3 rounded-xl bg-zinc-50 group-hover:bg-black group-hover:text-white transition-colors duration-300 mb-4">
+              <div className="p-3 rounded-xl bg-zinc-50 group-hover:bg-[#0A2540] group-hover:text-white transition-colors duration-300 mb-4">
                 <item.icon className="w-5 h-5" />
               </div>
               <h3 className="text-base font-bold text-zinc-900">
@@ -498,7 +498,7 @@ function ProfileSection({
         {!isEditing ? (
           <button
             onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-black text-white rounded-xl text-sm font-bold hover:bg-zinc-800 transition-all shadow-sm"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#0A2540] text-white rounded-xl text-sm font-bold hover:bg-zinc-800 transition-all shadow-sm"
           >
             <Pencil className="w-4 h-4" /> Edit Profile
           </button>
@@ -513,7 +513,7 @@ function ProfileSection({
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2.5 bg-black text-white rounded-xl text-sm font-bold hover:bg-zinc-800 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#0A2540] text-white rounded-xl text-sm font-bold hover:bg-zinc-800 transition-all disabled:opacity-50"
             >
               {saving ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -588,7 +588,7 @@ function ProfileSection({
               <input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all"
+                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
               />
             ) : (
               <p className="font-semibold text-zinc-900 text-base">
@@ -608,7 +608,7 @@ function ProfileSection({
                 onChange={(e) =>
                   setForm({ ...form, designation: e.target.value })
                 }
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all"
+                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
               />
             ) : (
               <p className="font-semibold text-zinc-900 text-base">
@@ -628,7 +628,7 @@ function ProfileSection({
                 value={form.contact}
                 onChange={(e) => setForm({ ...form, contact: e.target.value })}
                 placeholder="Your phone number"
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all"
+                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
               />
             ) : (
               <p className="font-semibold text-zinc-900 text-base">
@@ -650,7 +650,7 @@ function ProfileSection({
                   setForm({ ...form, profileUrl: e.target.value })
                 }
                 placeholder="https://example.com/photo.jpg"
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all"
+                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
               />
             ) : (
               <p className="font-semibold text-zinc-900 text-base truncate">
@@ -704,7 +704,7 @@ function ProfileSection({
                     }}
                     placeholder={`Enter ${key} (one per line)`}
                     rows={4}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-medium text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all text-sm leading-relaxed"
+                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-medium text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all text-sm leading-relaxed"
                   />
                 ) : values.length > 0 ? (
                   <ul className="space-y-2">
@@ -852,7 +852,7 @@ function StudentsSection({
               setSearchResults([]);
               setSelectedStudent(null);
             }}
-            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.14em] transition-all ${searchMode === "id" ? "bg-white text-black shadow" : "text-zinc-500 hover:text-black"}`}
+            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.14em] transition-all ${searchMode === "id" ? "bg-white text-[#061B33] shadow" : "text-zinc-500 hover:text-[#061B33]"}`}
           >
             By ID
           </button>
@@ -862,7 +862,7 @@ function StudentsSection({
               setSearchResults([]);
               setSelectedStudent(null);
             }}
-            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.14em] transition-all ${searchMode === "filter" ? "bg-white text-black shadow" : "text-zinc-500 hover:text-black"}`}
+            className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-[0.14em] transition-all ${searchMode === "filter" ? "bg-white text-[#061B33] shadow" : "text-zinc-500 hover:text-[#061B33]"}`}
           >
             By Filter
           </button>
@@ -888,13 +888,13 @@ function StudentsSection({
               placeholder="Enter Student ID (e.g. O210329)"
               value={studentId}
               onChange={(e) => setStudentId(e.target.value.toUpperCase())}
-              className="w-full h-12 pl-12 pr-5 bg-white border border-zinc-200 rounded-full focus:ring-4 focus:ring-black/5 focus:border-black outline-none transition-all font-semibold text-zinc-900 text-sm shadow-sm"
+              className="w-full h-12 pl-12 pr-5 bg-white border border-zinc-200 rounded-full focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] outline-none transition-all font-semibold text-zinc-900 text-sm shadow-sm"
             />
           </div>
           <button
             disabled={loading}
             type="submit"
-            className="h-12 px-8 bg-black text-white rounded-full font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 transition-all flex items-center gap-2 disabled:opacity-50"
+            className="h-12 px-8 bg-[#0A2540] text-white rounded-full font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 transition-all flex items-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="animate-spin w-4 h-4" />
@@ -914,7 +914,7 @@ function StudentsSection({
             <select
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
-              className="bg-white border border-zinc-200 pl-10 pr-8 h-12 rounded-full font-bold text-[11px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-black/5 focus:border-black shadow-sm min-w-[160px] appearance-none cursor-pointer"
+              className="bg-white border border-zinc-200 pl-10 pr-8 h-12 rounded-full font-bold text-[11px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] shadow-sm min-w-[160px] appearance-none cursor-pointer"
             >
               {departments.map((d) => (
                 <option key={d} value={d}>
@@ -927,7 +927,7 @@ function StudentsSection({
             <select
               value={year}
               onChange={(e) => setYear(e.target.value)}
-              className="bg-white border border-zinc-200 pl-4 pr-8 h-12 rounded-full font-bold text-[11px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-black/5 focus:border-black shadow-sm min-w-[140px] appearance-none cursor-pointer"
+              className="bg-white border border-zinc-200 pl-4 pr-8 h-12 rounded-full font-bold text-[11px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] shadow-sm min-w-[140px] appearance-none cursor-pointer"
             >
               <option value="">All Batches</option>
               {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
@@ -940,7 +940,7 @@ function StudentsSection({
           <button
             onClick={fetchByFilter}
             disabled={loading}
-            className="h-12 px-8 bg-black text-white rounded-full font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 transition-all flex items-center gap-2 disabled:opacity-50"
+            className="h-12 px-8 bg-[#0A2540] text-white rounded-full font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 transition-all flex items-center gap-2 disabled:opacity-50"
           >
             {loading ? <Loader2 className="animate-spin w-4 h-4" /> : null}
             Fetch Students
@@ -965,13 +965,13 @@ function StudentsSection({
               onClick={() => fetchFullDetails(std.username)}
               className={`group flex items-center justify-between p-4 px-6 bg-white border rounded-2xl cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 ${
                 selectedStudent?.username === std.username
-                  ? "border-black ring-4 ring-black/5 shadow-xl"
+                  ? "border-[#0A2540] ring-4 ring-black/5 shadow-xl"
                   : "border-zinc-100 hover:border-zinc-200"
               }`}
             >
               <div className="flex items-center gap-4">
                 <div
-                  className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-colors font-bold ${selectedStudent?.username === std.username ? "bg-black text-white" : "bg-zinc-50 text-zinc-400 group-hover:bg-black group-hover:text-white"}`}
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-colors font-bold ${selectedStudent?.username === std.username ? "bg-[#0A2540] text-white" : "bg-zinc-50 text-zinc-400 group-hover:bg-[#0A2540] group-hover:text-white"}`}
                 >
                   {std.name?.[0] || "S"}
                 </div>
@@ -980,7 +980,7 @@ function StudentsSection({
                     {std.name}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[9px] font-bold tracking-[0.14em] text-black bg-zinc-100 px-2 py-0.5 rounded-md">
+                    <span className="text-[9px] font-bold tracking-[0.14em] text-[#061B33] bg-zinc-100 px-2 py-0.5 rounded-md">
                       {std.username}
                     </span>
                     <span className="w-1 h-1 rounded-full bg-zinc-200" />
@@ -1000,7 +1000,7 @@ function StudentsSection({
               </div>
               <ChevronRight
                 size={16}
-                className={`text-zinc-300 transition-transform ${selectedStudent?.username === std.username ? "rotate-90 text-black" : ""}`}
+                className={`text-zinc-300 transition-transform ${selectedStudent?.username === std.username ? "rotate-90 text-[#061B33]" : ""}`}
               />
             </div>
           ))}
@@ -1037,7 +1037,7 @@ function StudentsSection({
                 </div>
               ) : (
                 <div className="bg-white rounded-2xl border border-zinc-100 shadow-xl overflow-hidden">
-                  <div className="bg-black p-8 text-white relative">
+                  <div className="bg-[#0A2540] p-8 text-white relative">
                     <button
                       onClick={() => setSelectedStudent(null)}
                       className="absolute top-5 right-5 p-2 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white"
@@ -1287,7 +1287,7 @@ function PasswordSection() {
         {(["current", "otp", "new"] as PwdStep[]).map((s, i) => (
           <div key={s} className="flex items-center gap-3">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step === s ? "bg-black text-white" : i < ["current", "otp", "new"].indexOf(step) ? "bg-zinc-200 text-zinc-500" : "border-2 border-zinc-200 text-zinc-300"}`}
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step === s ? "bg-[#0A2540] text-white" : i < ["current", "otp", "new"].indexOf(step) ? "bg-zinc-200 text-zinc-500" : "border-2 border-zinc-200 text-zinc-300"}`}
             >
               {i + 1}
             </div>
@@ -1331,7 +1331,7 @@ function PasswordSection() {
                 <button
                   onClick={requestOtp}
                   disabled={loading || !username}
-                  className="w-full h-12 bg-black text-white rounded-xl font-bold text-sm hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full h-12 bg-[#0A2540] text-white rounded-xl font-bold text-sm hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Send OTP to my Device
@@ -1345,14 +1345,14 @@ function PasswordSection() {
                     placeholder="Current password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all"
+                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
                   />
                   <input
                     type="password"
                     placeholder="New password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all"
+                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
                   />
                   {newPassword && (
                     <div className="flex items-center gap-3">
@@ -1372,7 +1372,7 @@ function PasswordSection() {
                   <button
                     onClick={changeDirectly}
                     disabled={loading || !currentPassword || !newPassword}
-                    className="w-full h-12 bg-zinc-900 text-white rounded-xl font-bold text-sm hover:bg-black transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full h-12 bg-zinc-900 text-white rounded-xl font-bold text-sm hover:bg-[#0A2540] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                     Change Password
@@ -1405,7 +1405,7 @@ function PasswordSection() {
                   placeholder="• • • • • •"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                  className="w-full px-4 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-2xl text-center text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all tracking-[0.14em]"
+                  className="w-full px-4 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-2xl text-center text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all tracking-[0.14em]"
                 />
               </div>
               <div className="flex gap-3 pt-2">
@@ -1418,7 +1418,7 @@ function PasswordSection() {
                 <button
                   onClick={verifyOtp}
                   disabled={loading || otp.length !== 6}
-                  className="flex-[2] h-12 bg-black text-white rounded-xl font-bold text-sm hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-[2] h-12 bg-[#0A2540] text-white rounded-xl font-bold text-sm hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Verify OTP
@@ -1458,7 +1458,7 @@ function PasswordSection() {
                     placeholder="Enter new password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all"
+                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
                   />
                   {newPassword && (
                     <div className="flex items-center gap-3 mt-2">
@@ -1485,7 +1485,7 @@ function PasswordSection() {
                     placeholder="Re-enter new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all"
+                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-semibold text-zinc-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
                   />
                   {confirmPassword && (
                     <p
@@ -1503,7 +1503,7 @@ function PasswordSection() {
                 disabled={
                   loading || !newPassword || newPassword !== confirmPassword
                 }
-                className="w-full h-12 bg-black text-white rounded-xl font-bold text-sm hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full h-12 bg-[#0A2540] text-white rounded-xl font-bold text-sm hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                 Update Password
