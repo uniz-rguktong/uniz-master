@@ -44,7 +44,7 @@ MONOREPO_SERVICES="uniz-api uniz-academics uniz-auth uniz-user uniz-outpass uniz
 # Default CI/deploy image matrix. uniz-api replaces always-on auth/user/academics.
 # Set BUILD_OPTIONAL=true to rebuild parked standalone auth/user/academics images.
 UNIZ_SERVICES=(
-  "uniz-api:uniz-api:uniz-api:api-service"
+  "uniz-api:uniz-api:uniz-api:uniz-api"
   "uniz-cron:uniz-cron-service:uniz-storage-cleanup-job:storage-cleaner"
   "uniz-outpass:uniz-outpass-service:uniz-maintenance-job:cron-worker"
   "uniz-gateway:uniz-gateway-api:uniz-gateway-api:gateway-api"
