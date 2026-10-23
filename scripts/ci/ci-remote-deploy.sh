@@ -81,6 +81,8 @@ if [ "$ec" = "0" ]; then
   kubectl scale deploy/uniz-auth-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl scale deploy/uniz-user-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl scale deploy/uniz-academics-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
+  # Parked services: drop HPAs (K3s cannot minReplicas:0 on resource metrics only)
+  kubectl delete hpa uniz-auth-service-hpa uniz-user-service-hpa uniz-academics-service-hpa --ignore-not-found=true 2>/dev/null || true
   kubectl delete hpa uniz-outpass-service-hpa --ignore-not-found=true 2>/dev/null || true
   kubectl scale deploy/uniz-portal --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl delete hpa uniz-portal --ignore-not-found=true 2>/dev/null || true
