@@ -2,8 +2,9 @@
 
 [![Manual VPS Deployment](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml)
 
-**New here?** [Handover guide](docs/HANDOVER.md) · **Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Action flows:** [docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) · **Handover:** [Notion](https://app.notion.com/p/3a01ace6b28c819dbd07cf907944c082)
+Open-source campus platform for RGUKT Ongole — APIs, portal, landing, docs, and the Android TWA in **one monorepo**. Org map: [docs/org/README.md](docs/org/README.md). Layout: [STRUCTURE.md](STRUCTURE.md).
 
+**New here?** [Handover guide](docs/HANDOVER.md) · **Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Action flows:** [docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) · **Android APK:** [apps/uniz-android-twa](apps/uniz-android-twa/README.md) (`npm run android:apk`)
 ## Architecture
 
 <img width="1379" height="1141" alt="image" src="https://github.com/user-attachments/assets/e1a7c496-4754-4ef8-b045-f26dd9684317" />

@@ -23,6 +23,7 @@ uniz-android-twa/
 │   └── store-listing/        #   Short/full description + support email
 ├── twa-manifest.json         # Bubblewrap source config
 ├── init.sh                   # First-time bubblewrap init
+├── build-apk.sh              # Release APK → portal public/download/uniz.apk
 ├── sync-assetlinks.sh        # Writes SHA-256 into portal assetlinks.json
 ├── verify-assetlinks.sh      # Checks Google Digital Asset Links
 └── phase-a-setup.sh          # One-time tooling + asset verification
@@ -64,12 +65,26 @@ npm run deploy   # or your normal push → GHA deploy
 bash apps/uniz-android-twa/verify-assetlinks.sh
 ```
 
-## Build release AAB
+## Build release APK (student download — abcchess flow)
+
+Same pipeline as a large product monorepo: generate once, publish from the website.
+
+```bash
+# From repo root (after android:twa:init)
+npm run android:apk
+# → apps/uniz-portal/public/download/uniz.apk
+# → https://uniz.rguktong.in/download/uniz.apk after Cloudflare Pages deploy
+```
+
+Commit `uniz.apk` when you cut a shell release. The portal shows an Android download banner that points at this file. Never commit the keystore.
+
+## Build release AAB (Play Console)
 
 ```bash
 cd apps/uniz-android-twa
 bubblewrap build
 # Output: android/app/build/outputs/bundle/release/app-release.aab
+# or use: npm run android:apk  (also produces the public APK)
 ```
 
 Upload `app-release.aab` to Play Console → **Internal testing** first.
@@ -115,6 +130,7 @@ Run `sync-assetlinks.sh` again and redeploy the portal.
 |---|---|
 | `twa-manifest.json` | Bubblewrap source config |
 | `init.sh` | First-time `bubblewrap init` |
+| `build-apk.sh` | Release build → portal `public/download/uniz.apk` |
 | `sync-assetlinks.sh` | Writes SHA-256 into portal `assetlinks.json` |
 | `verify-assetlinks.sh` | Checks Google asset link statement |
 | `.gitignore` | Keystore + generated `android/` |

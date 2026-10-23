@@ -4,13 +4,13 @@ Thank you for contributing to UniZ. This guide matches the local workflow in [do
 
 ## Architecture
 
-UniZ is an **open monorepo** (students contribute). Production APIs consolidate into **uniz-api**; portal/landing are SPAs on Cloudflare Pages.
+UniZ is an **open monorepo** (students contribute). Production APIs consolidate into **uniz-api**; portal/landing are SPAs on Cloudflare Pages. The Android client is an in-tree TWA — not a separate repo (see [docs/org/README.md](docs/org/README.md)).
 
-- **Apps** — `apps/` (gateway, uniz-api, notifications, portal, landing, docs)
+- **Apps** — `apps/` (gateway, uniz-api, notifications, portal, landing, docs, `uniz-android-twa`)
 - **Infrastructure** — `infra/` (Kubernetes, Docker Compose)
 - **Scripts** — `scripts/` (local setup, vault sync)
+- **Org map** — [docs/org/README.md](docs/org/README.md)
 - **Secrets** — [docs/ops/SECRETS.md](docs/ops/SECRETS.md) — never commit real keys
-
 ---
 
 ## Local development setup

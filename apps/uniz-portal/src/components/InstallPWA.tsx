@@ -3,51 +3,49 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Download, Share } from "lucide-react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { is_authenticated, pwaInstallAtom } from "../store";
+import {
+  ANDROID_APK_FILENAME,
+  ANDROID_APK_URL,
+  isAndroidDownloadUa,
+  isStandaloneDisplay,
+} from "../lib/androidApp";
 
 export const InstallPWA = () => {
   const [deferredPrompt, setDeferredPrompt] = useRecoilState(pwaInstallAtom);
   const [isVisible, setIsVisible] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false);
   const auth = useRecoilValue(is_authenticated);
 
   useEffect(() => {
-    // Check standalone
-    const isStandaloneMatch =
-      window.matchMedia("(display-mode: standalone)").matches ||
-      (window.navigator as any).standalone === true;
-    setIsStandalone(isStandaloneMatch);
-
-    // iOS detection
+    setIsStandalone(isStandaloneDisplay());
     const ios =
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
     setIsIOS(ios);
+    setIsAndroid(isAndroidDownloadUa(navigator.userAgent));
   }, []);
 
-  // 4. Force visibility check for mobile
+  // Mobile install prompt — Android prefers the APK banner; keep toast for iOS / PWA.
   useEffect(() => {
     const isMobile =
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent,
       );
 
-    const isStandaloneMatch =
-      window.matchMedia("(display-mode: standalone)").matches ||
-      (window.navigator as any).standalone === true;
-
-    if (!isStandaloneMatch && isMobile) {
+    if (!isStandaloneDisplay() && isMobile && !isAndroidDownloadUa(navigator.userAgent)) {
       const timer = setTimeout(() => setIsVisible(true), 1500);
       return () => clearTimeout(timer);
     }
   }, [isStandalone]);
 
-  // 5. Show after login if not already standalone
+  // Show after login for iOS / desktop PWA only (Android uses DownloadAppBanner).
   useEffect(() => {
-    if (auth.is_authenticated && !isStandalone) {
+    if (auth.is_authenticated && !isStandalone && !isAndroid) {
       const timer = setTimeout(() => setIsVisible(true), 1000);
       return () => clearTimeout(timer);
     }
-  }, [auth.is_authenticated, isStandalone]);
+  }, [auth.is_authenticated, isStandalone, isAndroid]);
 
   // 6. Auto-dismiss after 5 seconds of visibility
   useEffect(() => {
@@ -65,6 +63,11 @@ export const InstallPWA = () => {
   };
 
   const handleInstallClick = async () => {
+    if (isAndroid) {
+      window.location.href = ANDROID_APK_URL;
+      setIsVisible(false);
+      return;
+    }
     const promptEvent =
       (window as any).deferredPWAInstallPrompt || deferredPrompt;
     if (promptEvent) {
@@ -80,13 +83,10 @@ export const InstallPWA = () => {
         console.error("[PWA] Installation prompt failed:", err);
       }
     } else if (isIOS) {
-      // For iOS, manual instructions are unavoidable but we make them as friendly as possible
       alert(
         "To install UniZ: Tap 'Share' in Safari and select 'Add to Home Screen'.",
       );
     } else {
-      // If we don't have the prompt, and it's not iOS, don't show the alert instructions
-      // Instead, just hide the toast since we can't fulfill the direct install yet.
       console.log("[PWA] Install clicked but no prompt available");
       setIsVisible(false);
     }
@@ -122,11 +122,24 @@ export const InstallPWA = () => {
                 </span>
               </div>
               <h4 className="text-zinc-900 font-bold text-[13px] truncate">
-                Install app to enjoy full services.
+                {isAndroid
+                  ? "Get the Android app for the campus portal."
+                  : "Install app to enjoy full services."}
               </h4>
             </div>
 
             <div className="flex items-center gap-2">
+              {isAndroid ? (
+                <a
+                  href={ANDROID_APK_URL}
+                  download={ANDROID_APK_FILENAME}
+                  className="bg-zinc-900 hover:bg-black text-white px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+                  onClick={() => setIsVisible(false)}
+                >
+                  <Download size={13} />
+                  Download
+                </a>
+              ) : (
               <button
                 onClick={handleInstallClick}
                 className="bg-zinc-900 hover:bg-black text-white px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
@@ -134,6 +147,7 @@ export const InstallPWA = () => {
                 <Download size={13} />
                 Install
               </button>
+              )}
               <button
                 onClick={handleDismiss}
                 className="p-1 rounded-md hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors"
