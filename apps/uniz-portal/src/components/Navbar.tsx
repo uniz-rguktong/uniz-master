@@ -2,7 +2,8 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { is_authenticated, student } from "../store";
 import { useStudentData } from "../hooks/student_info";
 import { Link, useNavigate } from "react-router-dom";
-import { LogOut, User as UserIcon } from "lucide-react";
+import { LogOut } from "lucide-react";
+import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 
 function formatNavDisplayName(name?: string | null): string {
   if (!name?.trim()) {
@@ -37,52 +38,55 @@ export default function Navbar() {
     (localStorage.getItem("student_token") && user);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-[100] bg-white/90 border-b border-navy-100/80">
-      <div className="w-full max-w-7xl mx-auto flex items-center justify-between h-16 px-6">
-        <Link to="/" className="uniz-logo-wordmark text-2xl text-navy-950 hover:opacity-80 transition-opacity">
-          uniZ.
+    <header className="fixed inset-x-0 top-0 z-[100] flex h-[52px] items-center bg-[#0A2540] text-white">
+      <div className="mx-auto flex h-full w-[94%] items-center justify-between">
+        <Link to="/" className="flex items-center gap-2 text-white no-underline">
+          <img
+            src="/logo.png"
+            alt=""
+            className="h-7 w-7 rounded-full object-cover brightness-0 invert"
+          />
+          <span className="text-[15px] font-bold uppercase tracking-[1.5px]">
+            Exam Cell
+          </span>
         </Link>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-4">
           {!isAuthenticated ? (
-            <button
-              onClick={() => navigate("/student/signin")}
-              className="px-5 py-2 bg-navy-950 text-white rounded-xl text-[13px] font-semibold hover:bg-navy-800 transition-colors active:scale-[0.98]"
-            >
-              Get started
-            </button>
+            <>
+              <span className="hidden text-[13px] font-bold uppercase tracking-[1px] sm:inline">
+                {UNIZ_CAMPUS_LABEL}
+              </span>
+              <button
+                type="button"
+                onClick={() => navigate("/student/signin")}
+                className="text-[12px] font-bold uppercase tracking-[1.5px] text-white hover:underline"
+              >
+                Login
+              </button>
+            </>
           ) : (
             <>
               <button
                 type="button"
                 onClick={() => navigate("/student")}
-                className="flex items-center gap-2.5 rounded-full py-1 pl-1 pr-3 hover:bg-navy-100/90 transition-colors"
+                className="flex items-center gap-2 text-white"
               >
-                <div className="w-8 h-8 rounded-full overflow-hidden bg-navy-100 ring-1 ring-navy-200/80 shrink-0">
-                  {user?.profile_url ? (
-                    <img
-                      src={user.profile_url}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="flex h-full w-full items-center justify-center text-navy-500">
-                      <UserIcon size={15} />
-                    </span>
-                  )}
-                </div>
-                <span className="text-sm font-medium text-navy-700 tracking-tight">
+                <span className="hidden text-[13px] font-bold uppercase tracking-[0.4px] sm:inline">
                   {formatNavDisplayName(user?.name)}
+                </span>
+                <span className="hidden text-[11px] font-medium uppercase tracking-[0.5px] text-white/70 sm:inline">
+                  {UNIZ_CAMPUS_LABEL}
                 </span>
               </button>
               <button
                 type="button"
                 onClick={logout}
-                className="w-9 h-9 flex items-center justify-center rounded-full text-navy-400 hover:text-navy-700 hover:bg-navy-100 transition-colors"
+                className="inline-flex h-8 w-8 items-center justify-center text-white/80 hover:text-white"
                 title="Sign out"
                 aria-label="Sign out"
               >
-                <LogOut size={17} strokeWidth={2} />
+                <LogOut size={16} />
               </button>
             </>
           )}
