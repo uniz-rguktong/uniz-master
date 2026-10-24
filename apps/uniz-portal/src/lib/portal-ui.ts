@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
  * (https://examcell.rguktrkv.ac.in/)
  *
  * Fonts: Open Sans (UI) · Nunito (buttons) · Cabin (forms/footer)
- * Chrome: 60px HOME-GRADIENT header · #eee footer · #34495e CTAs
- * No zinc, no pure-black buttons, no glass.
+ * Chrome: flat navy header · light-gray sidebar · white canvas · gray footer
+ * No pure black, no zinc, no glass, no dock.
  */
 
 export const EXAMCELL_HOME_GRADIENT =
@@ -22,7 +22,7 @@ export const EXAMCELL_DEEP = "#061B33";
 export const portalPageClass =
   "min-h-screen bg-white text-[#061B33] selection:bg-[#EEEEEE] selection:text-[#0A2540] font-sans";
 
-export const portalPageWrapClass = "px-4 py-6 md:px-8 md:py-8 space-y-6 md:space-y-8";
+export const portalPageWrapClass = "px-6 py-8 md:px-10 md:py-10 space-y-8";
 
 export const portalSectionGapClass = "space-y-4 md:space-y-6";
 
@@ -31,7 +31,7 @@ export const portalSafeBottomClass = "pb-[max(1rem,env(safe-area-inset-bottom))]
 /* ── Surfaces ────────────────────────────────────────────────── */
 
 export const portalCardClass =
-  "rounded-[2px] border border-[#EEEEEE] bg-white shadow-examcell";
+  "rounded-[2px] border border-[#E8E8E8] bg-white shadow-[0_8px_24px_rgba(10,37,64,0.06)]";
 
 export const portalCardHoverClass =
   "transition-colors duration-150 hover:border-[#9bb0c4]";
@@ -99,7 +99,34 @@ export const portalSelectClass =
 /* ── Navigation & chrome (fixed 60px gradient header) ────────── */
 
 export const portalHeaderClass =
-  "sticky top-0 z-40 h-[60px] flex items-center portal-header-chrome text-white";
+  "sticky top-0 z-40 h-[52px] flex items-center bg-[#0A2540] text-white";
+
+export const portalSidebarClass =
+  "flex w-[220px] shrink-0 flex-col bg-[#E8E8E8] text-[#0A2540]";
+
+export const portalSidebarItemClass =
+  "flex w-full items-center gap-3 px-5 py-3 text-left text-[13px] font-medium text-[#3d4f63] transition-colors hover:bg-white/70 hover:text-[#0A2540]";
+
+export const portalSidebarItemActiveClass =
+  "bg-white text-[#0A2540] font-semibold";
+
+export const portalLogoutPillClass =
+  "mx-4 mb-6 inline-flex h-10 items-center justify-center gap-2 rounded-full bg-[#0A2540] px-5 text-[12px] font-bold uppercase tracking-[1.5px] text-white hover:bg-[#021227] transition-colors";
+
+export const portalPageTitleClass =
+  "mb-6 border-b border-[#E8E8E8] pb-3 text-center text-[15px] font-bold uppercase tracking-[0.12em] text-[#0A2540] font-sans";
+
+export const portalDefTableClass =
+  "w-full border-collapse text-[13px] text-[#0A2540]";
+
+export const portalDefLabelClass =
+  "w-[38%] border border-[#E4E4E4] bg-[#E8E8E8] px-3 py-2 text-left text-[12px] font-bold uppercase tracking-[0.04em] text-[#0A2540]";
+
+export const portalDefValueClass =
+  "border border-[#E4E4E4] bg-white px-3 py-2 text-[13px] text-[#222222]";
+
+export const portalChoiceCardClass =
+  "flex min-h-[120px] min-w-[180px] items-center justify-center bg-white px-6 py-8 text-center text-[13px] font-bold uppercase tracking-[0.08em] text-[#0A2540] shadow-[0_10px_28px_rgba(10,37,64,0.08)]";
 
 export const portalHeaderLightClass =
   "sticky top-0 z-40 h-[60px] flex items-center bg-white border-b border-[#EEEEEE]";
@@ -146,7 +173,7 @@ export const portalIconTileClass =
 
 /* ── Page interiors (section header + content, not card decks) ─ */
 
-export const portalCanvasClass = "bg-[#FAFAFA] text-[#061B33] font-sans";
+export const portalCanvasClass = "bg-white text-[#061B33] font-sans";
 
 export const portalPageHeaderClass =
   "flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between";

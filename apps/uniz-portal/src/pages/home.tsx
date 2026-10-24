@@ -1,77 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import {
-  useEffect,
-  useState,
-  memo,
-  lazy,
-  Suspense,
-  useMemo,
-} from "react";
+import { useEffect, useState, memo, useMemo } from "react";
 import { useIsAuth } from "../hooks/is_authenticated";
-import { Activity, Lock, Smartphone, Monitor } from "lucide-react";
+import { Monitor } from "lucide-react";
 import { PUBLIC_BANNERS } from "../api/endpoints";
 import { usePWAInstall } from "../hooks/usePWAInstall";
-import { HeroBlock } from "../components/ui/hero-block-shadcnui";
 import { SEO } from "../components/SEO";
 import { HOME_SEO, homePageSchema } from "../lib/seo";
 import { SiteLegalFooter } from "../components/SiteLegalFooter";
-import { motion } from "framer-motion";
-import {
-  LandingSection,
-  LandingSectionHeader,
-  LandingDivider,
-  LandingCard,
-  LandingPill,
-  LandingCTA,
-} from "../components/ui/landing-section";
-import { cn } from "@/lib/utils";
-
-import FeaturedCarousel from "../components/FeaturedCarousel";
+import { UNIZ_CAMPUS_LABEL, UNIZ_TAGLINE } from "@/constants/branding";
 import CampusUpdatesFeed from "../components/CampusUpdatesFeed";
-
-// Lazy load below-fold sections; FeaturedCarousel is eager (first below fold)
-const Timeline = lazy(() =>
-  import("../components/ui/timeline").then((module) => ({
-    default: module.Timeline,
-  })),
-);
-const DatabaseWithRestApi = lazy(
-  () => import("../components/ui/database-with-rest-api"),
-);
-const Features = lazy(() =>
-  import("../components/ui/features-9").then((module) => ({
-    default: module.Features,
-  })),
-);
-const GlobeFeature = lazy(
-  () => import("../components/ui/globe-feature-section"),
-);
-
-const SectionSkeleton = ({ className = "h-64" }: { className?: string }) => (
-  <div className="max-w-[1280px] mx-auto px-6">
-    <div className={cn("w-full animate-pulse rounded-[2.5rem] bg-navy-50/80", className)} />
-  </div>
-);
-
-const MotionSection = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y: 24 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "200px 0px" }}
-    transition={{ duration: 0.5 }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
-
-// ─── Platform Icons ─────────────────────────────────────────────────────────
 
 const AppleIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -104,7 +41,6 @@ const Home = () => {
   useIsAuth();
   const navigate = useNavigate();
   const [banners, setBanners] = useState<any[]>([]);
-  const [bannersReady, setBannersReady] = useState(false);
   const { install, isInstalled } = usePWAInstall();
   const platform = useMemo(() => getPlatform(), []);
 
@@ -118,101 +54,28 @@ const Home = () => {
     }
   };
 
-  const timelineData = [
-    {
-      title: "Install the application",
-      subtitle: "Campus in your pocket",
-      step: "Step 01",
-      icon: Smartphone,
-      content: (
-        <div className="space-y-6">
-          <p className="text-navy-500 font-medium text-[15px] md:text-[17px] leading-relaxed">
-            UniZ is built with cutting-edge PWA technology. Directly install the
-            platform on your device for a lightning-fast experience.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 items-start pt-4">
-            {!isInstalled && (
-              <LandingCTA onClick={handleInstallClick} className="h-14 px-10 text-[15px]">
-                <platform.PlatformIcon size={18} />
-                Download for {platform.label}
-              </LandingCTA>
-            )}
-            {isInstalled && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold tracking-[0.14em] border border-emerald-100">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm" />
-                Native App Instance Active
-              </div>
-            )}
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "Secure your access",
-      subtitle: "Live Academic Dashboard",
-      step: "Step 02",
-      icon: Lock,
-      content: (
-        <div className="space-y-6">
-          <p className="text-navy-500 font-medium text-[15px] md:text-[17px] leading-relaxed">
-            Gain a God's-eye view of your university credentials. Track exact
-            GPA numbers and attendance thresholds automatically.
-          </p>
-        </div>
-      ),
-    },
-    {
-      title: "Master your campus",
-      subtitle: "Unified Mobility Hub",
-      step: "Step 03",
-      icon: Activity,
-      content: (
-        <div className="space-y-6">
-          <p className="text-navy-500 font-medium text-[15px] md:text-[17px] leading-relaxed">
-            Request outpasses, track results, and receive broadcast alerts
-            directly. Understand the pulse of your university life in real-time.
-          </p>
-        </div>
-      ),
-    },
-  ];
-
   useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();
     const headers = new Headers();
     headers.append("x-cms-api-key", "uniz-landing-v1-key");
 
-    const fetchOpts: RequestInit = {
+    fetch(PUBLIC_BANNERS, {
       method: "GET",
       headers,
       signal: controller.signal,
-    };
-
-    fetch(PUBLIC_BANNERS, fetchOpts)
+    })
       .then((res) => (res.ok ? res.json() : null))
       .then((bannerResult) => {
         if (cancelled) return;
-        if (bannerResult?.success) {
-          setBanners(bannerResult.banners || []);
-        }
+        if (bannerResult?.success) setBanners(bannerResult.banners || []);
       })
-      .catch(() => {})
-      .finally(() => {
-        if (!cancelled) setBannersReady(true);
-      });
+      .catch(() => {});
 
     return () => {
       cancelled = true;
       controller.abort();
     };
-  }, []);
-
-  useEffect(() => {
-    void import("../components/ui/timeline");
-    void import("../components/ui/database-with-rest-api");
-    void import("../components/ui/features-9");
-    void import("../components/ui/globe-feature-section");
   }, []);
 
   useEffect(() => {
@@ -227,114 +90,68 @@ const Home = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans selection:bg-navy-100 selection:text-navy-900 pt-16 relative overflow-x-hidden">
+    <div className="flex min-h-[calc(100vh-52px)] flex-col bg-white pt-[52px] font-sans text-[#0A2540]">
       <SEO
         title={HOME_SEO.title}
         description={HOME_SEO.description}
         canonical="https://uniz.rguktong.in/"
         schema={homePageSchema}
       />
-      <HeroBlock />
 
-      <main className="relative">
-        <CampusUpdatesFeed variant="landing" />
-        <LandingDivider />
+      <main className="flex flex-1 flex-col items-center px-6 py-16 text-center">
+        <h1 className="text-[22px] font-bold tracking-[0.02em]">
+          {UNIZ_TAGLINE.line1}
+        </h1>
+        <p className="mt-3 max-w-md text-[15px] text-[#3d4f63]">
+          {UNIZ_TAGLINE.line2} {UNIZ_CAMPUS_LABEL}.
+        </p>
 
-        {(!bannersReady || banners.length > 0) && (
-          <>
-            <MotionSection>
-              <FeaturedCarousel
-                loading={!bannersReady}
-                items={banners.map((b, i) => ({
-                  id: b.id || i,
-                  imageUrl: b.imageUrl,
-                  title: b.title,
-                  tag: i % 2 === 0 ? "Featured" : "New Update",
-                  hasHeart: true,
-                }))}
-              />
-            </MotionSection>
-            <LandingDivider />
-          </>
-        )}
-
-        <MotionSection>
-          <Suspense fallback={<SectionSkeleton className="h-96" />}>
-            <Timeline data={timelineData} />
-          </Suspense>
-        </MotionSection>
-
-        <LandingDivider />
-
-        <MotionSection>
-          <Suspense fallback={<SectionSkeleton className="h-[420px]" />}>
-            <LandingSection className="!pb-8 md:!pb-12">
-              <LandingSectionHeader
-                eyebrow="Platform"
-                title="Everything your campus needs,"
-                titleMuted="managed seamlessly."
-                description="Eliminate operational friction with smart syncing connecting students, faculty and admin seamlessly."
-              />
-              <LandingCard hover={false} className="p-4 md:p-8 shadow-[0_25px_60px_-22px_rgba(0,0,0,0.08)]">
-                <DatabaseWithRestApi />
-              </LandingCard>
-            </LandingSection>
-          </Suspense>
-        </MotionSection>
-
-        <LandingDivider />
-
-        <MotionSection>
-          <Suspense fallback={<SectionSkeleton className="h-80" />}>
-            <Features />
-          </Suspense>
-        </MotionSection>
-
-        <LandingDivider />
-
-        <MotionSection>
-          <Suspense fallback={<SectionSkeleton className="h-[480px]" />}>
-            <GlobeFeature />
-          </Suspense>
-        </MotionSection>
-
-        <LandingDivider />
-
-        <motion.section
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="w-full"
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => navigate("/student/signin")}
+            className="inline-flex h-10 items-center justify-center rounded-[2px] bg-[#0A2540] px-8 text-[13px] font-bold uppercase tracking-[1.5px] text-white hover:bg-[#021227]"
           >
-            <div className="max-w-[1280px] mx-auto px-6 py-20 md:py-24">
-              <LandingCard className="p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.08)]">
-                <div>
-                  <LandingPill label="UniZ" accent="emerald" className="mb-4" />
-                  <h3 className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-semibold text-navy-950 tracking-[-0.05em] leading-[1.05] mb-3">
-                    Built by RGUKT students,
-                    <span className="text-navy-400 font-light">
-                      {" "}
-                      for RGUKT students.
-                    </span>
-                  </h3>
-                  <p className="text-[15px] text-navy-500 font-medium leading-relaxed">
-                    From the developers of{" "}
-                    <a
-                      href="https://synapstore.me/"
-                      className="font-semibold text-navy-950 hover:text-navy-700 no-underline underline-offset-4 hover:underline"
-                    >
-                      Synapstore
-                    </a>
-                  </p>
-                </div>
-                <LandingCTA onClick={() => navigate("/student/signin")}>
-                  Get started now!
-                </LandingCTA>
-              </LandingCard>
-            </div>
-          </motion.section>
+            Login
+          </button>
+          {!isInstalled && (
+            <button
+              type="button"
+              onClick={handleInstallClick}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-[2px] border border-[#E8E8E8] bg-white px-6 text-[13px] font-bold uppercase tracking-[1px] text-[#0A2540]"
+            >
+              <platform.PlatformIcon size={16} />
+              Install
+            </button>
+          )}
+        </div>
+
+        <div className="mt-12 w-full">
+          <CampusUpdatesFeed />
+        </div>
+
+        {banners.length > 0 && (
+          <div className="mt-10 grid w-full max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
+            {banners.map((banner, index) => (
+              <figure key={banner.id || index} className="overflow-hidden bg-white">
+                {banner.imageUrl ? (
+                  <img
+                    src={banner.imageUrl}
+                    alt={banner.title || ""}
+                    className="h-40 w-full object-cover"
+                  />
+                ) : null}
+                {banner.title ? (
+                  <figcaption className="px-2 py-3 text-[13px] font-medium text-[#0A2540]">
+                    {banner.title}
+                  </figcaption>
+                ) : null}
+              </figure>
+            ))}
+          </div>
+        )}
       </main>
+
       <SiteLegalFooter />
     </div>
   );

@@ -22,6 +22,15 @@ import {
   portalEmptyClass,
   portalStatStripClass,
   portalCanvasClass,
+  portalSidebarClass,
+  portalSidebarItemClass,
+  portalSidebarItemActiveClass,
+  portalLogoutPillClass,
+  portalPageTitleClass,
+  portalDefTableClass,
+  portalDefLabelClass,
+  portalDefValueClass,
+  portalChoiceCardClass,
 } from "@/lib/portal-ui";
 
 export {
@@ -41,9 +50,19 @@ export const studentShellClass = cn(portalPageClass, "flex flex-col bg-white");
 
 export const studentMainWrapClass = cn(
   portalPageWrapClass,
-  "pb-32 md:pb-10 md:ml-28",
+  "bg-white",
   portalSafeBottomClass,
 );
+
+export const studentSidebarClass = portalSidebarClass;
+export const studentSidebarItemClass = portalSidebarItemClass;
+export const studentSidebarItemActiveClass = portalSidebarItemActiveClass;
+export const studentLogoutPillClass = portalLogoutPillClass;
+export const studentPageTitleClass = portalPageTitleClass;
+export const studentDefTableClass = portalDefTableClass;
+export const studentDefLabelClass = portalDefLabelClass;
+export const studentDefValueClass = portalDefValueClass;
+export const studentChoiceCardClass = portalChoiceCardClass;
 
 export const studentMobileHeaderClass = cn(
   portalHeaderClass,

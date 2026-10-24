@@ -172,98 +172,70 @@ export default function FacultyDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#FAFAFA] font-sans">
+    <div className="flex min-h-screen bg-white font-sans">
       {/* ── Sidebar ── */}
       <aside
-        className={`portal-header-chrome text-white border-r border-[#021227] transition-all duration-300 z-50 ${
-          isSidebarOpen ? "w-72" : "w-20"
-        } hidden md:flex flex-col h-screen sticky top-0`}
+        className={`flex flex-col sticky top-0 h-screen bg-[#E8E8E8] text-[#0A2540] border-r border-[#d9d9d9] transition-all duration-300 z-50 ${
+          isSidebarOpen ? "w-56" : "w-20"
+        } hidden md:flex`}
       >
-        <div className="p-6 flex items-center gap-4 border-b border-white/15 shrink-0">
-          <div className="w-12 h-12 bg-navy-900 rounded-portal-sm flex items-center justify-center shrink-0">
-            <BookOpen className="w-6 h-6 text-white" />
-          </div>
-          {isSidebarOpen && (
-            <div className="flex flex-col">
-              <span className="font-bold text-white text-lg tracking-tight leading-none uppercase uniz-logo-wordmark !text-white !text-base !tracking-[0.08em]">
-                Faculty
-              </span>
-              <span className="text-[9px] tracking-[0.2em] text-white/60 font-bold mt-1.5 leading-none uppercase">
-                {isHOD ? "HOD Dashboard" : "Staff Dashboard"}
-              </span>
-            </div>
-          )}
-        </div>
-
         <nav className="flex-1 p-3 space-y-1 mt-4 overflow-y-auto">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as ActiveTab)}
-              className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-portal-sm transition-colors duration-150 group ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-[2px] transition-colors duration-150 ${
                 activeTab === item.id
-                  ? "bg-white/15 text-white"
-                  : "text-white/70 hover:bg-white/10 hover:text-white"
+                  ? "bg-white text-[#0A2540]"
+                  : "text-[#3d4f63] hover:bg-white/80 hover:text-[#0A2540]"
               }`}
             >
               <item.icon
-                size={20}
-                className={`shrink-0 ${activeTab === item.id ? "text-white" : "text-white/60"}`}
+                size={18}
+                className={`shrink-0 ${activeTab === item.id ? "text-[#0A2540]" : "text-[#5A7A94]"}`}
               />
               {isSidebarOpen && (
-                <span
-                  className={`text-[14px] tracking-tight ${activeTab === item.id ? "font-semibold" : "font-medium"}`}
-                >
-                  {item.label}
-                </span>
-              )}
-              {isSidebarOpen && activeTab === item.id && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-portal-sm bg-white/50" />
+                <span className="text-[13px] font-medium">{item.label}</span>
               )}
             </button>
           ))}
         </nav>
 
-        <div className="p-4 border-t border-white/15 shrink-0">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3.5 px-4 py-3 rounded-[2px] text-white/80 hover:bg-[#EA2027] hover:text-white transition-colors group font-button"
-          >
-            <LogOut size={20} className="shrink-0" />
-            {isSidebarOpen && (
-              <span className="text-[14px] font-semibold">Sign Out</span>
-            )}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="mx-4 mb-6 inline-flex h-10 items-center justify-center gap-2 rounded-full bg-[#0A2540] px-5 text-[12px] font-bold uppercase tracking-[1.5px] text-white"
+        >
+          <LogOut size={14} />
+          {isSidebarOpen && <span>Logout</span>}
+        </button>
       </aside>
 
-      {/* ── Main ── */}
-      <main className="flex-1 overflow-y-auto max-h-screen">
-        {/* Header — flat institutional, no glass */}
-        <header className="portal-header-chrome sticky top-0 z-40 text-white h-[60px] px-8 flex justify-between items-center">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2.5 hover:bg-white/10 rounded-[2px] transition-colors hidden md:flex text-white/80"
-          >
-            {isSidebarOpen ? <Menu size={20} /> : <ChevronRight size={20} />}
-          </button>
-          <div className="flex items-center gap-4 ml-auto">
+      <div className="flex min-h-0 flex-1 flex-col">
+        <header className="sticky top-0 z-40 flex h-[52px] items-center justify-between bg-[#0A2540] px-4 text-white md:px-6">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="inline-flex h-8 w-8 items-center justify-center text-white/80"
+              aria-label="Toggle sidebar"
+            >
+              <Menu size={18} />
+            </button>
+            <span className="text-[15px] font-bold uppercase tracking-[1.5px]">Exam Cell</span>
+          </div>
+          <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold text-white leading-none tracking-tight">
+              <p className="text-[13px] font-bold uppercase leading-none tracking-[0.4px]">
                 {profile?.Name || username}
               </p>
-              <p className="text-[10px] font-bold text-white/70 tracking-[0.14em] mt-1.5 font-form">
-                {isHOD ? "Head of Department" : "Faculty"} ·{" "}
-                {profile?.Department}
+              <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.5px] text-white/70">
+                {isHOD ? "Head of Department" : "Faculty"}
+                {profile?.Department ? ` · ${profile.Department}` : ""}
               </p>
             </div>
-            <div className="w-10 h-10 rounded-portal-sm bg-navy-900 flex items-center justify-center font-bold text-white overflow-hidden">
+            <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-white/30 bg-white/10 text-xs font-bold">
               {profile?.ProfileUrl ? (
-                <img
-                  src={profile.ProfileUrl}
-                  alt={profile.Name}
-                  className="w-full h-full object-cover"
-                />
+                <img src={profile.ProfileUrl} alt="" className="h-full w-full object-cover" />
               ) : (
                 (profile?.Name || username || "F")[0].toUpperCase()
               )}
@@ -271,8 +243,10 @@ export default function FacultyDashboard() {
           </div>
         </header>
 
-        <div className="max-w-7xl mx-auto">{renderContent()}</div>
-      </main>
+        <div className="flex-1 overflow-y-auto bg-white">
+          <div className="mx-auto max-w-7xl">{renderContent()}</div>
+        </div>
+      </div>
     </div>
   );
 }
