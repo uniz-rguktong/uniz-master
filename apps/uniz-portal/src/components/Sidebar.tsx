@@ -19,23 +19,23 @@ import {
   Home,
   HelpCircle,
   ClipboardCheck,
+  Menu,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
 import { motion, AnimatePresence } from "framer-motion";
-import { Dock } from "./ui/dock-two";
-import { InteractiveMenu, InteractiveMenuItem } from "./ui/modern-mobile-menu";
 import {
   StudentPageSkeleton,
   studentContentSkeletonVariant,
 } from "./StudentPageSkeleton";
 import { NotificationBellButton } from "./NotificationBellButton";
+import { SiteLegalFooter } from "./SiteLegalFooter";
+import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 import {
-  studentDesktopHeaderClass,
-  studentLogoClass,
-  studentMobileHeaderClass,
-  studentShellClass,
-} from "@/lib/student-ui";
+  portalLogoutPillClass,
+  portalSidebarItemActiveClass,
+  portalSidebarItemClass,
+} from "@/lib/portal-ui";
 import { cn } from "@/lib/utils";
 
 const Attendance = lazy(() => import("../pages/attendance/Attendance"));
@@ -87,6 +87,7 @@ export default function Sidebar({ content }: MainContent) {
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [showNotice, setShowNotice] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     // Pull to Refresh Implementation
@@ -209,80 +210,6 @@ export default function Sidebar({ content }: MainContent) {
     },
   ];
 
-  const dockItems = [
-    ...navItems.map((item) => ({
-      icon: item.icon,
-      label: item.label,
-      activeColor: item.activeColor,
-      hoverColor: item.hoverColor,
-      onClick: () => {
-        navigate(item.href);
-      },
-      isActive: content === item.content,
-    })),
-    {
-      icon: LogOut,
-      label: "Logout",
-      onClick: () => setShowConfirm(true),
-      isActive: false,
-      activeColor: "text-red-600",
-      hoverColor: "hover:text-red-600",
-    },
-  ];
-
-  const primaryMobileItems: InteractiveMenuItem[] = [
-    {
-      label: "Home",
-      icon: Home,
-      onClick: () => navigate("/student"),
-      isActive: content === "dashboard",
-    },
-    {
-      label: "Register",
-      icon: ClipboardCheck,
-      onClick: () => navigate("/student/registration"),
-      isActive: content === "registration",
-    },
-    // Center tab — toggles academics panel
-    { label: "Academics", icon: GraduationCap },
-    {
-      label: "Grievance",
-      icon: AlertCircle,
-      onClick: () => navigate("/student/grievance"),
-      isActive: content === "grievance",
-    },
-    {
-      label: "Help",
-      icon: HelpCircle,
-      onClick: () => navigate("/student/help"),
-      isActive: content === "help",
-    },
-  ];
-
-  const moreMobileItems: InteractiveMenuItem[] = [
-    {
-      label: "Results",
-      icon: GraduationCap,
-      description: "Grades, SGPA & transcripts",
-      onClick: () => navigate("/student/gradehub"),
-      isActive: content === "gradehub",
-    },
-    {
-      label: "Attendance",
-      icon: CalendarCheck,
-      description: "Subject-wise attendance",
-      onClick: () => navigate("/student/attendance"),
-      isActive: content === "attendance",
-    },
-    {
-      label: "Security",
-      icon: Lock,
-      description: "Change your password",
-      onClick: () => navigate("/student/resetpassword"),
-      isActive: content === "resetpassword",
-    },
-  ];
-
   const contentMap: Record<MainContent["content"], ReactElement> = {
     outing: <OutpassOuting request="outing" />,
     outpass: <OutpassOuting request="outpass" />,
@@ -301,137 +228,142 @@ export default function Sidebar({ content }: MainContent) {
     error: <Error />,
   };
 
+  const go = (href: string) => {
+    setDrawerOpen(false);
+    navigate(href);
+  };
+
   return (
-    <div className={cn(studentShellClass)}>
+    <div className="flex min-h-screen flex-col bg-white font-sans text-[#0A2540]">
       <AnimatePresence>
         {!enableOutingsAndOutpasses && showNotice && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="portal-banner-gradient text-white py-2.5 px-6 flex items-center justify-between relative z-[100]"
+            className="relative z-[100] flex items-center justify-between bg-[#0A2540] px-6 py-2.5 text-white"
           >
-            <div className="flex-1 text-center text-[11px] md:text-[13px] font-sans font-bold tracking-tight">
+            <div className="flex-1 text-center text-[11px] font-sans font-bold tracking-tight md:text-[13px]">
               Outpass and outing feature has been currently disabled by the
               administration
             </div>
             <button
               onClick={() => setShowNotice(false)}
-              className="p-1 hover:bg-white/20 rounded-portal-sm transition-colors shrink-0"
+              className="shrink-0 rounded-[2px] p-1 transition-colors hover:bg-white/20"
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4" />
             </button>
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="flex flex-col flex-1 relative">
-        {/* Floating Desktop Dock */}
-        <div className="hidden md:flex fixed left-6 top-1/2 -translate-y-1/2 z-50">
-          <Dock
-            items={dockItems}
-            className="shadow-whisper border-navy-200"
-          />
+
+      <header className="z-40 flex h-[52px] shrink-0 items-center justify-between bg-[#0A2540] px-4 text-white md:px-6">
+        <div className="flex min-w-0 items-center gap-3">
+          <button
+            type="button"
+            className="inline-flex h-8 w-8 items-center justify-center md:hidden"
+            onClick={() => setDrawerOpen((open) => !open)}
+            aria-label="Open menu"
+          >
+            <Menu size={18} />
+          </button>
+          <a href="/" className="flex items-center gap-2 text-white no-underline">
+            <img src="/logo.png" alt="" className="h-7 w-7 rounded-full object-cover brightness-0 invert" />
+            <span className="text-[15px] font-bold uppercase tracking-[1.5px]">Exam Cell</span>
+          </a>
         </div>
-
-        {/* Main Content Area */}
-        <main
-          ref={mainRef}
-          className="flex-1 md:overflow-y-auto md:max-h-screen"
-        >
-          {/* Mobile Header — ExamCell navy chrome */}
-          <header className={cn(studentMobileHeaderClass, "px-6")}>
-            <h1 className={studentLogoClass}>UNIZ</h1>
-            <div className="flex items-center gap-2">
-              <NotificationBellButton
-                size="sm"
-                active={content === "notifications"}
-                className="!border-white/25 !bg-white/10 !text-white hover:!bg-white/20 hover:!text-white"
-              />
-              <button
-                onClick={() => setShowConfirm(true)}
-                className="p-2 transition-colors font-sans text-white/80 active:text-white"
-                aria-label="Log out"
-              >
-                <LogOut size={22} />
-              </button>
-            </div>
-          </header>
-
-          {/* Desktop Header — ExamCell navy chrome */}
-          <header className={cn(studentDesktopHeaderClass, "px-8 md:pl-36")}>
-            <div className="flex items-center gap-4">
-              <h1 className={studentLogoClass}>UNIZ</h1>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <NotificationBellButton
-                active={content === "notifications"}
-                className="!border-white/25 !bg-white/10 !text-white hover:!bg-white/20 hover:!text-white"
-              />
-              <div className="text-right hidden sm:block">
-                <p className="text-[14px] font-bold text-white leading-none font-sans">
-                  {userData?.name || "Student User"}
-                </p>
-                <p className="text-[11px] font-semibold text-white/70 mt-1 lowercase tracking-tight font-form">
-                  {userData?.email || "N/A"}
-                </p>
-              </div>
-              <div className="w-10 h-10 rounded-portal-sm ring-1 ring-white/25 border border-white/20 overflow-hidden">
-                {userData?.profile_url ? (
-                  <img
-                    src={userData.profile_url}
-                    className="w-full h-full object-cover"
-                    alt=""
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-white/15 text-white font-bold text-xs font-sans">
-                    {userData?.name?.charAt(0) || "S"}
-                  </div>
-                )}
-              </div>
-              <button
-                onClick={() => setShowConfirm(true)}
-                className="w-10 h-10 flex items-center justify-center bg-white/10 text-white/80 hover:text-white hover:bg-white/15 rounded-portal-sm border border-white/15 transition-colors ml-2"
-                aria-label="Log out"
-              >
-                <LogOut size={18} />
-              </button>
-            </div>
-          </header>
-
-          <div className="pt-4 px-4 pb-32 md:p-10 md:ml-28 min-h-full bg-[#FAFAFA]">
-            {content !== "dashboard" && (
-              <div className="md:hidden mb-6">
-                <button
-                  onClick={() => navigate("/student")}
-                  className="flex items-center gap-1 text-navy-500 font-bold text-[10px] tracking-[0.14em] py-2 font-sans"
-                >
-                  <ChevronLeft size={20} strokeWidth={3} />
-                </button>
+        <div className="flex items-center gap-3">
+          <NotificationBellButton
+            size="sm"
+            active={content === "notifications"}
+            className="!border-white/25 !bg-white/10 !text-white hover:!bg-white/20 hover:!text-white"
+          />
+          <div className="hidden text-right sm:block">
+            <p className="text-[13px] font-bold uppercase leading-none tracking-[0.4px]">
+              {userData?.username || "Student"}
+            </p>
+            <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.6px] text-white/75">
+              {UNIZ_CAMPUS_LABEL}
+            </p>
+          </div>
+          <div className="h-8 w-8 overflow-hidden rounded-full border border-white/30">
+            {userData?.profile_url ? (
+              <img src={userData.profile_url} className="h-full w-full object-cover" alt="" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-white/15 text-xs font-bold">
+                {userData?.name?.charAt(0) || "S"}
               </div>
             )}
-            <Suspense fallback={<ContentSkeleton content={content} />}>
-              {contentMap[content] || <Error />}
-            </Suspense>
           </div>
-        </main>
+        </div>
+      </header>
 
-        <ConfirmModal
-          open={showConfirm}
-          onClose={() => setShowConfirm(false)}
-          onConfirm={handleLogout}
-          message="Are you sure you want to end your session?"
-        />
-
-        {/* Modern Mobile Bottom Navigation - Sticky Animated Bar */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
-          <InteractiveMenu
-            primaryItems={primaryMobileItems}
-            moreItems={moreMobileItems}
-            moreTitle="Academics"
+      <div className="flex min-h-0 flex-1">
+        {drawerOpen && (
+          <button
+            type="button"
+            className="fixed inset-0 z-40 bg-[#021227]/30 md:hidden"
+            aria-label="Close menu"
+            onClick={() => setDrawerOpen(false)}
           />
+        )}
+        <aside
+          className={cn(
+            "z-50 flex w-[220px] shrink-0 flex-col bg-[#E8E8E8] md:sticky md:top-[52px] md:h-[calc(100vh-52px)]",
+            drawerOpen ? "fixed inset-y-[52px] left-0" : "hidden md:flex",
+          )}
+        >
+          <nav className="flex-1 overflow-y-auto py-4">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = content === item.content;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => go(item.href)}
+                  className={cn(portalSidebarItemClass, active && portalSidebarItemActiveClass)}
+                >
+                  <Icon size={16} strokeWidth={1.75} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+          <button type="button" onClick={() => setShowConfirm(true)} className={portalLogoutPillClass}>
+            <LogOut size={14} />
+            Logout
+          </button>
+        </aside>
+
+        <div className="flex min-w-0 flex-1 flex-col bg-white">
+          <main ref={mainRef} className="flex-1">
+            <div className="min-h-full bg-white px-4 py-6 md:px-10 md:py-8">
+              {content !== "dashboard" && (
+                <div className="mb-4 md:hidden">
+                  <button
+                    onClick={() => navigate("/student")}
+                    className="flex items-center gap-1 py-2 font-sans text-[10px] font-bold tracking-[0.14em] text-[#5A7A94]"
+                  >
+                    <ChevronLeft size={20} strokeWidth={3} />
+                  </button>
+                </div>
+              )}
+              <Suspense fallback={<ContentSkeleton content={content} />}>
+                {contentMap[content] || <Error />}
+              </Suspense>
+            </div>
+          </main>
+          <SiteLegalFooter />
         </div>
       </div>
+
+      <ConfirmModal
+        open={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={handleLogout}
+        message="Are you sure you want to end your session?"
+      />
     </div>
   );
 }

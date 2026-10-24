@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, Fragment, type ReactNode } from "react";
 import { useRecoilValue } from "recoil";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -51,6 +51,9 @@ import {
   studentTabBarClass,
   studentTabButtonActiveClass,
   studentTabButtonInactiveClass,
+  studentPageTitleClass,
+  studentDefLabelClass,
+  studentDefValueClass,
 } from "@/lib/student-ui";
 import NoticeBoard from "../../components/NoticeBoard";
 import { cn } from "@/lib/utils";
@@ -68,6 +71,31 @@ const STUDENT_LOCKED_PROFILE_FIELDS = new Set([
 // ─────────────────────────────────────────────────────────────────
 // Profile Skeleton
 // ─────────────────────────────────────────────────────────────────
+function FieldTable({
+  rows,
+}: {
+  rows: { label: string; value: ReactNode }[];
+}) {
+  const pairs: { label: string; value: ReactNode }[][] = [];
+  for (let i = 0; i < rows.length; i += 2) pairs.push(rows.slice(i, i + 2));
+  return (
+    <table className="w-full border-collapse">
+      <tbody>
+        {pairs.map((pair, idx) => (
+          <tr key={idx}>
+            {pair.map((field) => (
+              <Fragment key={field.label}>
+                <td className={studentDefLabelClass}>{field.label}:</td>
+                <td className={studentDefValueClass}>{field.value || "—"}</td>
+              </Fragment>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 function ProfileSkeleton() {
   return (
     <div className="font-sans text-navy-900 relative">
@@ -836,19 +864,29 @@ export default function StudentProfilePage() {
           >
             {activeTab === "personal" && (
               <div className="space-y-6">
+                <h2 className={studentPageTitleClass}>Profile</h2>
                 <SeatingSummaryWidget />
-                <div className={studentInfoGridClass}>
-                  {personalFields.map((f) => (
-                    <InfoCard
-                      key={f.name}
-                      {...f}
-                      value={fields[f.name]}
-                      isEditing={isEditing}
-                      isLoading={isLoading}
-                      onValueChange={handleFieldChange}
-                    />
-                  ))}
-                </div>
+                {isEditing ? (
+                  <div className={studentInfoGridClass}>
+                    {personalFields.map((f) => (
+                      <InfoCard
+                        key={f.name}
+                        {...f}
+                        value={fields[f.name]}
+                        isEditing={isEditing}
+                        isLoading={isLoading}
+                        onValueChange={handleFieldChange}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <FieldTable
+                    rows={personalFields.map((f) => ({
+                      label: f.label,
+                      value: fields[f.name],
+                    }))}
+                  />
+                )}
                 {/* Modern Analytics Section integrated into Personal view */}
                 {user?.username &&
                   /* <StudentAnalytics studentId={user.username} /> */
@@ -859,23 +897,13 @@ export default function StudentProfilePage() {
             {activeTab === "academic" && (
               <div className="space-y-10">
                 <div className="space-y-6">
-                  <div className="flex items-center gap-3">
-                    <div className="h-6 w-1.5 bg-navy-900 rounded-full"></div>
-                    <h3 className="text-[17px] font-semibold tracking-tight text-navy-900">
-                      Academic Overview
-                    </h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {academicFields.map((f) => (
-                      <InfoCard
-                        key={f.name}
-                        {...f}
-                        value={f.value}
-                        isEditing={false}
-                        isLoading={isLoading}
-                      />
-                    ))}
-                  </div>
+                  <h3 className={studentPageTitleClass}>Academic Overview</h3>
+                  <FieldTable
+                    rows={academicFields.map((f) => ({
+                      label: f.label,
+                      value: f.value,
+                    }))}
+                  />
                 </div>
 
                 <div className="space-y-4">

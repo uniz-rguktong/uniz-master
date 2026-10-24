@@ -577,7 +577,7 @@
 .portal-theme .portal-banner-gradient,
 .portal-theme .portal-header-chrome,
 .portal-header-chrome {
-  background: var(--header-gradient) !important;
+  background: #0a2540 !important;
 }
 
 /* Flatten leftover large radii and overlays on portal routes */

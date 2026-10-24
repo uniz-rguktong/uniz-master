@@ -95,6 +95,11 @@ export default function LoginScreen({
 
       {/* Body — ExamCell split login */}
       <main className="relative flex flex-1 flex-col bg-white pt-[60px]">
+        <div className="pointer-events-none absolute right-[3%] top-6 z-10 hidden max-w-sm lg:block">
+          <p className="pointer-events-auto rounded-[10px] bg-[#EEEEEE] px-5 py-2.5 text-[13px] italic tracking-[1px] text-[#061B33]">
+            For login issues contact @ {UNIZ_SUPPORT_EMAIL}
+          </p>
+        </div>
         <div className="mx-auto flex w-[94%] flex-1 flex-col py-6 md:py-10 lg:min-h-[calc(100vh-110px)] lg:flex-row lg:items-center lg:gap-[2%]">
           {/* Left: @ROLE gradient strip */}
           <div className="relative mb-6 w-full lg:mb-0 lg:w-[49%]">
@@ -184,17 +189,6 @@ export default function LoginScreen({
               </div>
             </div>
           </div>
-
-          <aside className="hidden w-[49%] flex-col justify-center gap-3 lg:flex">
-            {(features.length ? features : meta.features).map((line) => (
-              <p key={`notice-${line}`} className="rounded-[10px] bg-[#EEEEEE] px-5 py-2.5 text-[13px] italic tracking-[1px] text-[#061B33]">
-                {line}
-              </p>
-            ))}
-            <p className="rounded-[10px] bg-[#EEEEEE] px-5 py-2.5 text-[13px] italic tracking-[1px] text-[#061B33]">
-              Use your campus ID. For help, write {UNIZ_SUPPORT_EMAIL}.
-            </p>
-          </aside>
         </div>
       </main>
 

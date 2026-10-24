@@ -54,8 +54,8 @@ export const adminSidebarOpenWidth = "w-[272px]";
 export const adminSidebarClosedWidth = "w-[76px]";
 
 export const adminSidebarClass = cn(
-  "portal-header-chrome text-white transition-[width] duration-300 ease-out z-50 flex flex-col h-screen",
-  "border-r border-[#021227]",
+  "bg-[#E8E8E8] text-[#0A2540] transition-[width] duration-300 ease-out z-50 flex flex-col",
+  "border-r border-[#d9d9d9]",
 );
 
 export const adminSidebarToggleClass =
@@ -63,22 +63,25 @@ export const adminSidebarToggleClass =
 
 export const adminNavGroupLabelClass = cn(
   portalEyebrowClass,
-  "!text-white/50",
+  "!text-[#5A7A94]",
 );
 
-export const adminNavActiveClass = "bg-white/15 text-white";
+export const adminNavActiveClass = "bg-white text-[#0A2540]";
 
 export const adminNavInactiveClass =
-  "text-white/70 hover:bg-white/10 hover:text-white";
+  "text-[#3d4f63] hover:bg-white/80 hover:text-[#0A2540]";
 
-export const adminNavIconActiveClass = "text-white";
+export const adminNavIconActiveClass = "text-[#0A2540]";
 export const adminNavIconInactiveClass =
-  "text-white/60 group-hover:text-white";
+  "text-[#5A7A94] group-hover:text-[#0A2540]";
 
-/** ExamCell 60px gradient content header */
+/** Flat navy bar across the shell */
 export const adminHeaderClass = cn(
-  "sticky top-0 z-40 h-[60px] flex items-center portal-header-chrome text-white px-6 md:px-10",
+  "sticky top-0 z-40 h-[52px] shrink-0 flex items-center bg-[#0A2540] text-white px-4 md:px-6",
 );
+
+export const adminLogoutPillClass =
+  "mx-4 mb-5 inline-flex h-10 w-[calc(100%-2rem)] items-center justify-center gap-2 rounded-full bg-[#0A2540] px-5 text-[12px] font-bold uppercase tracking-[1.5px] text-white hover:bg-[#021227] transition-colors";
 
 export const adminAvatarButtonClass =
   "w-9 h-9 rounded-[1px] overflow-hidden bg-white/10 ring-1 ring-white/25 hover:ring-white/40 transition-colors active:scale-95 shrink-0";
@@ -129,7 +132,7 @@ export const adminChipClass = portalChipClass;
 
 export const adminNumsClass = portalNumsClass;
 
-export const adminPageWrapClass = cn(portalPageWrapClass, "space-y-8 text-navy-900");
+export const adminPageWrapClass = cn(portalPageWrapClass, "space-y-8 bg-white text-[#0A2540]");
 
 export const adminLabelClass = portalLabelClass;
 
