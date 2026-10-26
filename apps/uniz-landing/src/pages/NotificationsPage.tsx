@@ -160,7 +160,7 @@ export function NotificationsPage() {
           <div className="p-5 border-t border-slate-200 flex justify-center bg-slate-50/50">
             <button
               onClick={() => setVisibleLimit(prev => prev + 10)}
-              className="px-6 py-2.5 rounded-md bg-[#000035] text-white text-[14px] font-semibold shadow-sm hover:bg-[#800000] focus:outline-none transition-all duration-300"
+              className="px-6 py-2.5 rounded-md bg-[#061B33] text-white text-[14px] font-semibold shadow-sm hover:bg-[#0A2540] focus:outline-none transition-all duration-300"
             >
               View Next {Math.min(10, allItems.length - visibleLimit)} Updates
             </button>
@@ -175,10 +175,10 @@ export function NotificationsPage() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       {/* ── Hero Banner ── */}
-      <div className="relative bg-[#000035] overflow-hidden">
+      <div className="relative bg-[#061B33] overflow-hidden">
         <div
           className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #800000 0%, transparent 55%), radial-gradient(ellipse at 10% 80%, #1d4ed8 0%, transparent 50%)" }}
+          style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 10% 80%, #1d4ed8 0%, transparent 50%)" }}
         />
         {/* Faint grid pattern */}
         <div className="absolute inset-0 opacity-[0.04]"

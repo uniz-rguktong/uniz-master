@@ -42,10 +42,10 @@ const PAGE_META: Record<string, {
 // ── Shared hero banner ─────────────────────────────────────────────
 function HeroBanner({ meta }: { meta: typeof PAGE_META[string] }) {
   return (
-    <div className="relative bg-[#000035] overflow-hidden">
+    <div className="relative bg-[#061B33] overflow-hidden">
       <div
         className="absolute inset-0 opacity-15"
-        style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #800000 0%, transparent 55%), radial-gradient(ellipse at 15% 80%, #1e3a8a 0%, transparent 55%)" }}
+        style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 15% 80%, #1e3a8a 0%, transparent 55%)" }}
       />
       <div className="absolute inset-0 opacity-[0.04]"
         style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
@@ -75,7 +75,7 @@ function LinkRow({ label, url }: { label: string; url: string | null }) {
       href={url ?? "#"}
       target={url ? "_blank" : "_self"}
       rel="noreferrer"
-      className="flex items-center justify-between gap-4 px-4 py-3 rounded-xl bg-[#000035]/5 hover:bg-[#800000] text-[#000035] hover:text-white font-semibold text-sm transition-all duration-200 group"
+      className="flex items-center justify-between gap-4 px-4 py-3 rounded-xl bg-[#061B33]/5 hover:bg-[#0A2540] text-[#061B33] hover:text-white font-semibold text-sm transition-all duration-200 group"
     >
       <span className="flex items-center gap-2">
         <Download className="w-4 h-4 flex-shrink-0" />
@@ -96,7 +96,7 @@ function CalendarLayout({ sections }: { sections: AcademicSection[] }) {
         <div key={idx} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           {/* Year header */}
           <div className="flex items-center gap-3 px-7 py-5 border-b border-slate-100 bg-slate-50">
-            <div className="w-2 h-2 rounded-full bg-[#800000]" />
+            <div className="w-2 h-2 rounded-full bg-[#0A2540]" />
             <h2 className="text-lg font-extrabold text-slate-900 tracking-tight">
               {section.header.replace(/\n\s+/g, " ").trim()}
             </h2>
@@ -123,7 +123,7 @@ function CurriculaLayout({ sections }: { sections: AcademicSection[] }) {
       {depts.map((section, idx) => (
         <div
           key={idx}
-          className="bg-white rounded-2xl border border-slate-100 border-l-4 border-l-[#800000] shadow-sm hover:shadow-md transition-shadow"
+          className="bg-white rounded-2xl border border-slate-100 border-l-4 border-l-[#0A2540] shadow-sm hover:shadow-md transition-shadow"
         >
           {/* Dept header */}
           <div className="px-6 pt-6 pb-4 border-b border-slate-100">
@@ -151,7 +151,7 @@ function GenericLayout({ sections }: { sections: AcademicSection[] }) {
   return (
     <div className="space-y-6">
       {meaningful.map((section, idx) => (
-        <div key={idx} className="bg-white rounded-2xl border border-slate-100 border-l-4 border-l-[#800000] shadow-sm p-7 md:p-9">
+        <div key={idx} className="bg-white rounded-2xl border border-slate-100 border-l-4 border-l-[#0A2540] shadow-sm p-7 md:p-9">
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-5 tracking-tight">
             {section.header.replace(/\n\s+/g, " ").trim()}
           </h2>
@@ -209,7 +209,7 @@ export function AcademicsPage() {
     return (
       <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#000035] border-t-transparent" />
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#061B33] border-t-transparent" />
           <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">
             Loading {meta.displayName}...
           </p>

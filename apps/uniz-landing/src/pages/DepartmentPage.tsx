@@ -52,7 +52,7 @@ function FacultyCard({ faculty, onOpen }: { faculty: FacultyMember; onOpen: () =
   const hasFullProfile = allBioEntries(bio).length > 0;
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 hover:border-[#800000]/30 hover:shadow-md transition-all duration-200 group flex gap-0 overflow-hidden">
+    <div className="bg-white rounded-xl border border-slate-200 hover:border-[#0A2540]/30 hover:shadow-md transition-all duration-200 group flex gap-0 overflow-hidden">
 
       {/* ── Photo ── */}
       <div className="w-36 flex-shrink-0 bg-white flex items-center justify-center relative overflow-hidden border-r border-slate-100" style={{ minHeight: "150px" }}>
@@ -75,14 +75,14 @@ function FacultyCard({ faculty, onOpen }: { faculty: FacultyMember; onOpen: () =
           </div>
         )}
         {/* Subtle left border accent */}
-        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#800000] opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#0A2540] opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
 
       {/* ── Info ── */}
       <div className="flex-1 px-5 py-4 flex flex-col justify-between min-w-0 min-h-[130px]">
         <div>
           {/* Name */}
-          <h3 className="font-extrabold text-slate-900 text-[15px] leading-snug mb-0.5 group-hover:text-[#800000] transition-colors">
+          <h3 className="font-extrabold text-slate-900 text-[15px] leading-snug mb-0.5 group-hover:text-[#0A2540] transition-colors">
             {faculty.name}
           </h3>
 
@@ -101,8 +101,8 @@ function FacultyCard({ faculty, onOpen }: { faculty: FacultyMember; onOpen: () =
           {/* Contact info */}
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-xs text-slate-500">
-              <Mail className="w-3.5 h-3.5 text-[#800000] flex-shrink-0" />
-              <a href={`mailto:${faculty.email}`} className="hover:text-[#800000] hover:underline truncate">
+              <Mail className="w-3.5 h-3.5 text-[#0A2540] flex-shrink-0" />
+              <a href={`mailto:${faculty.email}`} className="hover:text-[#0A2540] hover:underline truncate">
                 {faculty.email}
               </a>
             </div>
@@ -120,7 +120,7 @@ function FacultyCard({ faculty, onOpen }: { faculty: FacultyMember; onOpen: () =
           <div className="mt-3 pt-3 border-t border-slate-100">
             <button
               onClick={onOpen}
-              className="inline-flex items-center gap-1 text-[12px] font-bold text-[#000035] hover:text-[#800000] transition-colors tracking-wide"
+              className="inline-flex items-center gap-1 text-[12px] font-bold text-[#061B33] hover:text-[#0A2540] transition-colors tracking-wide"
             >
               View Profile <ChevronRight className="w-3.5 h-3.5" />
             </button>
@@ -157,7 +157,7 @@ export function DepartmentPage() {
     return (
       <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#000035] border-t-transparent" />
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#061B33] border-t-transparent" />
           <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">
             Loading {deptName}...
           </p>
@@ -172,17 +172,17 @@ export function DepartmentPage() {
     <div className="min-h-screen bg-slate-50">
 
       {/* ── Hero Banner ── */}
-      <div className="relative bg-[#000035] overflow-hidden">
+      <div className="relative bg-[#061B33] overflow-hidden">
         <div
           className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: "radial-gradient(ellipse at 20% 60%, #800000 0%, transparent 55%), radial-gradient(ellipse at 85% 20%, #1e3a8a 0%, transparent 55%)" }}
+          style={{ backgroundImage: "radial-gradient(ellipse at 20% 60%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 85% 20%, #1e3a8a 0%, transparent 55%)" }}
         />
         <div
           className="absolute inset-0 opacity-[0.04]"
           style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
         />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <span className="inline-block px-5 py-2 mb-5 text-xs font-bold tracking-[0.2em] text-[#800000] bg-[#800000]/10 border border-[#800000]/30 rounded-full">
+          <span className="inline-block px-5 py-2 mb-5 text-xs font-bold tracking-[0.2em] text-[#0A2540] bg-[#0A2540]/10 border border-[#0A2540]/30 rounded-full">
             RGUKT Ongole · {code}
           </span>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
@@ -210,7 +210,7 @@ export function DepartmentPage() {
         ) : (
           <>
             <h2 className="text-lg font-extrabold text-slate-900 mb-6 tracking-tight flex items-center gap-2 ">
-              <span className="w-1 h-5 bg-[#800000] rounded-full inline-block" />
+              <span className="w-1 h-5 bg-[#0A2540] rounded-full inline-block" />
               Faculties
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

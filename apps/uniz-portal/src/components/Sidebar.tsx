@@ -32,6 +32,12 @@ import { NotificationBellButton } from "./NotificationBellButton";
 import { SiteLegalFooter } from "./SiteLegalFooter";
 import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 import {
+  ANDROID_APK_FILENAME,
+  ANDROID_APK_URL,
+  openIosDownloadModal,
+} from "../lib/androidApp";
+import { AndroidLogo, AppleLogo } from "./DownloadAppBanner";
+import {
   portalLogoutPillClass,
   portalSidebarItemActiveClass,
   portalSidebarItemClass,
@@ -86,7 +92,7 @@ export default function Sidebar({ content }: MainContent) {
   const mainRef = useRef<HTMLDivElement>(null);
 
   const [showConfirm, setShowConfirm] = useState(false);
-  const [showNotice, setShowNotice] = useState(true);
+  const [showNotice, setShowNotice] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -330,6 +336,26 @@ export default function Sidebar({ content }: MainContent) {
               );
             })}
           </nav>
+          <div className="mx-3 mb-2 grid grid-cols-2 gap-1.5 border-t border-[#d4d4d4] pt-3">
+            <a
+              href={ANDROID_APK_URL}
+              download={ANDROID_APK_FILENAME}
+              title="Download Android App (.apk)"
+              className="flex items-center justify-center gap-1.5 rounded-[2px] border border-[#c8d0da] bg-white px-2 py-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#0A2540] transition-colors hover:bg-[#0A2540] hover:text-white"
+            >
+              <AndroidLogo className="h-3.5 w-3.5 shrink-0" />
+              <span>Android</span>
+            </a>
+            <button
+              type="button"
+              onClick={openIosDownloadModal}
+              title="Download iOS App"
+              className="flex items-center justify-center gap-1.5 rounded-[2px] border border-[#c8d0da] bg-white px-2 py-2 text-[11px] font-bold uppercase tracking-[0.04em] text-[#0A2540] transition-colors hover:bg-[#0A2540] hover:text-white"
+            >
+              <AppleLogo className="h-3.5 w-3.5 shrink-0" />
+              <span>iOS App</span>
+            </button>
+          </div>
           <button type="button" onClick={() => setShowConfirm(true)} className={portalLogoutPillClass}>
             <LogOut size={14} />
             Logout

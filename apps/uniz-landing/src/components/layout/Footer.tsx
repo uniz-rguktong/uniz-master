@@ -43,7 +43,7 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="relative w-full bg-[#000035] text-white">
+    <footer className="relative w-full bg-[#061B33] text-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16 lg:py-20 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-12 border-b border-white/10">
 
         <div className="col-span-2 flex flex-col gap-5">
@@ -66,7 +66,7 @@ export function Footer() {
             Empowering gifted rural youth through world-class technical education in Andhra Pradesh.
           </p>
           <div className="flex gap-3 text-sm text-white/50 mt-1">
-            <MapPin className="w-4 h-4 mt-0.5 text-[#800000] flex-shrink-0" />
+            <MapPin className="w-4 h-4 mt-0.5 text-[#0A2540] flex-shrink-0" />
             <div className="flex flex-col gap-0.5 leading-relaxed">
               <span className="font-medium text-white/70 tracking-widest text-[10px] uppercase mb-1">
                 Contact
@@ -135,7 +135,7 @@ export function Footer() {
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         aria-label="Scroll to top"
-        className="fixed bottom-8 right-8 z-50 w-11 h-11 rounded-full bg-[#800000] hover:bg-[#660000] text-white flex items-center justify-center transition-colors"
+        className="fixed bottom-8 right-8 z-50 w-11 h-11 rounded-full bg-[#0A2540] hover:bg-[#021227] text-white flex items-center justify-center transition-colors"
       >
         <ArrowUp className="w-5 h-5" />
       </button>

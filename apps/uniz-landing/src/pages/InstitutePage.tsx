@@ -14,8 +14,8 @@ const PAGE_NAMES: Record<string, string> = {
 
 // Section icon mapping for About RGUKT
 const SECTION_META: Record<string, { accent: string }> = {
-  "Founding of RGUKT":            { accent: "border-l-[#800000]" },
-  "RGUKT Educational Objectives": { accent: "border-l-[#000035]" },
+  "Founding of RGUKT":            { accent: "border-l-[#0A2540]" },
+  "RGUKT Educational Objectives": { accent: "border-l-[#061B33]" },
   "Objectives of the University": { accent: "border-l-amber-500" },
   "Why RGUKT ?":                  { accent: "border-l-emerald-600" },
 };
@@ -30,10 +30,10 @@ function AboutRguktPage({ data }: { data: InstituteData }) {
     <div className="min-h-screen bg-slate-50">
 
       {/* ── Hero Banner ── */}
-      <div className="relative bg-[#000035] overflow-hidden">
+      <div className="relative bg-[#061B33] overflow-hidden">
         <div
           className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #800000 0%, transparent 55%), radial-gradient(ellipse at 10% 80%, #1d4ed8 0%, transparent 50%)" }}
+          style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 10% 80%, #1d4ed8 0%, transparent 50%)" }}
         />
         {/* Faint grid pattern */}
         <div className="absolute inset-0 opacity-[0.04]"
@@ -63,7 +63,7 @@ function AboutRguktPage({ data }: { data: InstituteData }) {
             { value: "4 Campuses", label: "Across AP" },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-2xl shadow-md border border-slate-100 px-6 py-5 text-center">
-              <div className="text-2xl font-extrabold text-[#000035]">{stat.value}</div>
+              <div className="text-2xl font-extrabold text-[#061B33]">{stat.value}</div>
               <div className="text-xs font-semibold text-slate-500 tracking-widest mt-1">{stat.label}</div>
             </div>
           ))}
@@ -110,12 +110,12 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
     <div className="min-h-screen bg-slate-50">
 
       {/* ── Hero Banner ── */}
-      <div className="relative bg-[#000035] overflow-hidden">
+      <div className="relative bg-[#061B33] overflow-hidden">
         <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #800000 0%, transparent 60%), radial-gradient(circle at 80% 50%, #4f46e5 0%, transparent 60%)" }}
+          style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #0A2540 0%, transparent 60%), radial-gradient(circle at 80% 50%, #4f46e5 0%, transparent 60%)" }}
         />
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] text-[#800000] bg-[#800000]/10 border border-[#800000]/30 rounded-full">
+          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] text-[#0A2540] bg-[#0A2540]/10 border border-[#0A2540]/30 rounded-full">
             Rajiv Gandhi University of Knowledge Technologies
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
@@ -134,7 +134,7 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
         {/* ── Chairperson Spotlight ── */}
         {chair && (
           <div className="relative -mt-10 mb-16 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden flex flex-col md:flex-row">
-            <div className="md:w-64 flex-shrink-0 bg-gradient-to-br from-[#000035] to-[#1e1b6e] flex items-center justify-center p-8">
+            <div className="md:w-64 flex-shrink-0 bg-gradient-to-br from-[#061B33] to-[#1e1b6e] flex items-center justify-center p-8">
               {chair.photo ? (
                 <img
                   src={chair.photo}
@@ -146,13 +146,13 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
                   }}
                 />
               ) : (
-                <div className="w-36 h-36 rounded-full bg-[#800000]/30 border-4 border-white/20 flex items-center justify-center text-white text-5xl font-extrabold">
+                <div className="w-36 h-36 rounded-full bg-[#0A2540]/30 border-4 border-white/20 flex items-center justify-center text-white text-5xl font-extrabold">
                   {chair.name.charAt(0)}
                 </div>
               )}
             </div>
             <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">
-              <span className="inline-block mb-3 px-3 py-1 text-[11px] font-bold tracking-widest text-[#800000] bg-[#800000]/8 border border-[#800000]/20 rounded-full w-fit">
+              <span className="inline-block mb-3 px-3 py-1 text-[11px] font-bold tracking-widest text-[#0A2540] bg-[#0A2540]/8 border border-[#0A2540]/20 rounded-full w-fit">
                 Chairman · Member-Convener
               </span>
               <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">{chair.name}</h2>
@@ -169,7 +169,7 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
         {members.length > 0 && (
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Council Members</h2>
-            <div className="mt-3 mx-auto w-16 h-1 bg-[#800000] rounded-full" />
+            <div className="mt-3 mx-auto w-16 h-1 bg-[#0A2540] rounded-full" />
           </div>
         )}
 
@@ -193,7 +193,7 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
                     }}
                   />
                 ) : (
-                  <div className="w-24 h-24 rounded-full bg-[#000035] flex items-center justify-center text-white text-4xl font-extrabold shadow-lg">
+                  <div className="w-24 h-24 rounded-full bg-[#061B33] flex items-center justify-center text-white text-4xl font-extrabold shadow-lg">
                     {member.name.charAt(0)}
                   </div>
                 )}
@@ -203,7 +203,7 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
 
               {/* Info */}
               <div className="p-5">
-                <h3 className="text-[17px] font-bold text-slate-900 leading-snug mb-2 group-hover:text-[#800000] transition-colors">
+                <h3 className="text-[17px] font-bold text-slate-900 leading-snug mb-2 group-hover:text-[#0A2540] transition-colors">
                   {member.name}
                 </h3>
                 <div className="space-y-0.5">
@@ -247,10 +247,10 @@ function GenericInstitutePage({ data, displayName, pageName }: { data: Institute
     <div className="min-h-screen bg-slate-50">
 
       {/* ── Hero Banner ── */}
-      <div className="relative bg-[#000035] overflow-hidden">
+      <div className="relative bg-[#061B33] overflow-hidden">
         <div
           className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: "radial-gradient(ellipse at 30% 60%, #800000 0%, transparent 55%), radial-gradient(ellipse at 80% 20%, #1e3a8a 0%, transparent 55%)" }}
+          style={{ backgroundImage: "radial-gradient(ellipse at 30% 60%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 80% 20%, #1e3a8a 0%, transparent 55%)" }}
         />
         <div className="absolute inset-0 opacity-[0.04]"
           style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
@@ -274,7 +274,7 @@ function GenericInstitutePage({ data, displayName, pageName }: { data: Institute
             {meaningfulSections.map((section, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-[#800000] p-8 md:p-10"
+                className="bg-white rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-[#0A2540] p-8 md:p-10"
               >
                 {section.title.trim() && (
                   <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-5 tracking-tight">
@@ -316,7 +316,7 @@ function GenericInstitutePage({ data, displayName, pageName }: { data: Institute
                         }}
                       />
                     ) : (
-                      <div className="w-24 h-24 rounded-full bg-[#000035] flex items-center justify-center text-white text-4xl font-extrabold shadow-lg">
+                      <div className="w-24 h-24 rounded-full bg-[#061B33] flex items-center justify-center text-white text-4xl font-extrabold shadow-lg">
                         {profile.name.charAt(0)}
                       </div>
                     )}
@@ -324,7 +324,7 @@ function GenericInstitutePage({ data, displayName, pageName }: { data: Institute
 
                   {/* Info */}
                   <div className="p-5 border-t border-slate-100">
-                    <h3 className="text-[15px] font-bold text-slate-900 mb-1 group-hover:text-[#800000] transition-colors">
+                    <h3 className="text-[15px] font-bold text-slate-900 mb-1 group-hover:text-[#0A2540] transition-colors">
                       {profile.name}
                     </h3>
                     <div className="space-y-1 mt-2">
@@ -333,7 +333,7 @@ function GenericInstitutePage({ data, displayName, pageName }: { data: Institute
                         const isPhone = /^\d[\d\s-]{7,}$/.test(line.trim());
                         const isEmail = line.includes("@");
                         return (
-                          <p key={i} className={`text-sm leading-relaxed ${isEmail || isPhone ? "font-medium text-[#800000]" : "text-slate-500"}`}>
+                          <p key={i} className={`text-sm leading-relaxed ${isEmail || isPhone ? "font-medium text-[#0A2540]" : "text-slate-500"}`}>
                             {isEmail ? (
                               <a href={`mailto:${line.trim()}`} className="hover:underline">{line.trim()}</a>
                             ) : isPhone ? (
@@ -352,8 +352,8 @@ function GenericInstitutePage({ data, displayName, pageName }: { data: Institute
 
         {/* ── Office Address block (for RTI / SC/ST) ── */}
         {(data?.sections ?? []).filter(s => s.title.toLowerCase().includes("address")).map((s, i) => (
-          <div key={i} className="mt-10 bg-[#000035]/5 border border-[#000035]/10 rounded-2xl p-7">
-            <h3 className="text-lg font-bold text-[#000035] mb-3">Office Address</h3>
+          <div key={i} className="mt-10 bg-[#061B33]/5 border border-[#061B33]/10 rounded-2xl p-7">
+            <h3 className="text-lg font-bold text-[#061B33] mb-3">Office Address</h3>
             <address className="not-italic text-slate-600 text-[15px] leading-relaxed space-y-1">
               {s.content.filter(c => c.trim()).map((line, idx) => (
                 <p key={idx}>{line.trim()}</p>
@@ -393,7 +393,7 @@ export function InstitutePage() {
     return (
       <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#000035] border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#061B33] border-t-transparent"></div>
           <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">Loading {displayName}...</p>
         </div>
       </div>

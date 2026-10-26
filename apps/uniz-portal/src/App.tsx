@@ -162,7 +162,8 @@ const AuthRedirect = () => {
 };
 
 import { InstallPWA } from "./components/InstallPWA";
-import { DownloadAppBanner } from "./components/DownloadAppBanner";
+import { DownloadAppBanner, IosInstallModal } from "./components/DownloadAppBanner";
+const IosInstallPage = lazy(() => import("./pages/IosInstallPage"));
 import { usePushNavigation } from "./hooks/usePushNavigation";
 
 function PushNavigationBridge() {
@@ -175,6 +176,7 @@ export default function App() {
     <>
       <PushNavigationBridge />
       <DownloadAppBanner />
+      <IosInstallModal />
       <InstallPWA />
       <Toaster defaultPosition="bottom-right" />
       <Suspense fallback={<LoadingFallback />}>

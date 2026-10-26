@@ -1,5 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { ArrowDown, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ANDROID_APK_FILENAME,
+  ANDROID_APK_URL,
+  AndroidIcon,
+  AppleIcon,
+  openLandingIosModal,
+} from "../MobileAppModal";
 
 interface Announcement {
   text: string;
@@ -48,7 +55,7 @@ export function HeroAndTitle({
     <>
       {/* Full-bleed photographic hero */}
       <section
-        className="relative w-full overflow-hidden bg-[#000035] select-none"
+        className="relative w-full overflow-hidden bg-[#061B33] select-none"
         style={{ height: "min(92vh, 820px)", minHeight: "420px" }}
       >
         {images.map((img, idx) => (
@@ -89,7 +96,7 @@ export function HeroAndTitle({
         ))}
 
         {/* Editorial overlay */}
-        <div className="absolute inset-0 z-[2] bg-gradient-to-t from-[#000035]/90 via-[#000035]/35 to-[#000035]/25 pointer-events-none" />
+        <div className="absolute inset-0 z-[2] bg-gradient-to-t from-[#061B33]/90 via-[#061B33]/35 to-[#061B33]/25 pointer-events-none" />
 
         <div className="absolute inset-0 z-[3] flex flex-col justify-end">
           <div className="max-w-7xl mx-auto w-full px-5 sm:px-8 lg:px-12 pb-16 sm:pb-20 lg:pb-24">
@@ -103,20 +110,36 @@ export function HeroAndTitle({
               {subtitle}
             </p>
 
-            <div className="mt-8 sm:mt-10 flex items-center gap-5">
+            <div className="mt-8 sm:mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
               <a
                 href="#leadership"
                 aria-label="Explore campus"
-                className="group inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-white/50 text-white hover:bg-white hover:text-[#000035] transition-colors duration-300"
+                className="group inline-flex items-center justify-center w-11 h-11 rounded-full border border-white/50 text-white hover:bg-white hover:text-[#061B33] transition-colors duration-300"
               >
-                <ArrowDown className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-y-0.5 transition-transform" />
+                <ArrowDown className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" />
               </a>
               <a
                 href="#explore"
-                className="editorial-link-light text-sm sm:text-[15px] font-medium tracking-wide"
+                className="editorial-link-light text-sm sm:text-[15px] font-medium tracking-wide mr-2"
               >
                 Explore the campus
               </a>
+              <a
+                href={ANDROID_APK_URL}
+                download={ANDROID_APK_FILENAME}
+                className="inline-flex h-10 items-center gap-2 rounded-[2px] bg-white px-4 text-xs font-bold uppercase tracking-[0.08em] text-[#061B33] transition-colors hover:bg-slate-100"
+              >
+                <AndroidIcon className="w-3.5 h-3.5" />
+                Download Android App
+              </a>
+              <button
+                type="button"
+                onClick={openLandingIosModal}
+                className="inline-flex h-10 items-center gap-2 rounded-[2px] border border-white/60 bg-[#061B33]/60 px-4 text-xs font-bold uppercase tracking-[0.08em] text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-[#061B33]"
+              >
+                <AppleIcon className="w-3.5 h-3.5" />
+                Download iOS App
+              </button>
             </div>
           </div>
         </div>
@@ -162,7 +185,7 @@ export function HeroAndTitle({
       {/* Calm announcement ticker */}
       {announcements.length > 0 && (
         <section className="relative w-full overflow-hidden announcement-bar flex h-11 sm:h-12 items-center">
-          <div className="relative z-20 flex items-center justify-center bg-[#800000] text-white px-4 sm:px-6 h-full shrink-0">
+          <div className="relative z-20 flex items-center justify-center bg-[#0A2540] text-white px-4 sm:px-6 h-full shrink-0">
             <span className="text-[11px] sm:text-xs font-medium tracking-[0.16em] uppercase">
               Announcements
             </span>
@@ -179,9 +202,9 @@ export function HeroAndTitle({
                   href={ann.link || "#"}
                   target={ann.link ? "_blank" : "_self"}
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-3 text-[13px] sm:text-sm text-slate-600 hover:text-[#800000] transition-colors"
+                  className="inline-flex items-center gap-3 text-[13px] sm:text-sm text-slate-600 hover:text-[#0A2540] transition-colors"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#800000] shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0A2540] shrink-0" />
                   <span>{ann.text || "Important notifications will be displayed here."}</span>
                 </a>
               ))}

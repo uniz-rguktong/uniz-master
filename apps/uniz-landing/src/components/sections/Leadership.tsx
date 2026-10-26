@@ -29,10 +29,10 @@ export function Leadership() {
     <section id="leadership" className="relative section-editorial bg-white">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-12">
         <div className="max-w-2xl mb-16 sm:mb-20">
-          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#800000] mb-4">
+          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#0A2540] mb-4">
             Leadership
           </p>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-[#000035] tracking-tight leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-[#061B33] tracking-tight leading-tight">
             Our visionaries
           </h2>
           <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed">
@@ -59,10 +59,10 @@ export function Leadership() {
                   }}
                 />
               </div>
-              <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#000035] leading-snug">
+              <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#061B33] leading-snug">
                 {leader.name}
               </h3>
-              <p className="mt-2 text-sm font-medium text-[#800000] tracking-wide">
+              <p className="mt-2 text-sm font-medium text-[#0A2540] tracking-wide">
                 {leader.role}
               </p>
               <p className="mt-1 text-sm text-slate-500">{leader.org}</p>

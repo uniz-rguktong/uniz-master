@@ -112,10 +112,10 @@ export function Gallery({ images }: { images: readonly string[] }) {
     <section id="photo-gallery" className="section-editorial bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 mb-12 sm:mb-16">
         <div className="max-w-2xl">
-          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#800000] mb-4">
+          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#0A2540] mb-4">
             Campus Gallery
           </p>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#000035] leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#061B33] leading-tight">
             Life @ campus
           </h2>
           <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed">
@@ -147,14 +147,14 @@ export function Gallery({ images }: { images: readonly string[] }) {
         <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-3 z-20">
           <button
             onClick={() => handleMove(-1)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-[#000035] hover:bg-[#000035] hover:text-white hover:border-[#000035] transition-colors"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-[#061B33] hover:bg-[#061B33] hover:text-white hover:border-[#061B33] transition-colors"
             aria-label="Previous image"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={() => handleMove(1)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-[#000035] hover:bg-[#000035] hover:text-white hover:border-[#000035] transition-colors"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-[#061B33] hover:bg-[#061B33] hover:text-white hover:border-[#061B33] transition-colors"
             aria-label="Next image"
           >
             <ChevronRight className="w-5 h-5" />

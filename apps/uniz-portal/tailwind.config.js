@@ -5,11 +5,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Open Sans"', "system-ui", "sans-serif"],
-        body: ['"Open Sans"', "system-ui", "sans-serif"],
-        button: ['"Nunito"', '"Open Sans"', "system-ui", "sans-serif"],
-        form: ['"Cabin"', '"Open Sans"', "system-ui", "sans-serif"],
-        condensed: ['"Cabin"', '"Open Sans"', "sans-serif"],
+        sans: ['"Cabin Condensed"', '"Cabin"', "system-ui", "sans-serif"],
+        body: ['"Cabin Condensed"', '"Cabin"', "system-ui", "sans-serif"],
+        button: ['"Cabin Condensed"', '"Cabin"', "system-ui", "sans-serif"],
+        form: ['"Cabin Condensed"', '"Cabin"', "system-ui", "sans-serif"],
+        condensed: ['"Cabin Condensed"', '"Cabin"', "sans-serif"],
+        mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
       },
 
       fontSize: {

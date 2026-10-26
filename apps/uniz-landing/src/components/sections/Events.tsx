@@ -13,7 +13,7 @@ export function Events({
     <section id="events" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="inline-flex items-center mb-6 px-6 py-3 text-lg font-bold tracking-wide text-white bg-[#000035] rounded-full shadow-sm">
+          <span className="inline-flex items-center mb-6 px-6 py-3 text-lg font-bold tracking-wide text-white bg-[#061B33] rounded-full shadow-sm">
             Procurement & Tenders
           </span>
           <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900">

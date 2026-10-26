@@ -10,3 +10,5 @@ export const UNIZ_ACCENT_RED = "#EA2027" as const;
 export const UNIZ_CTA = "#34495e" as const;
 export const UNIZ_DEEP_LINK = "#061B33" as const;
 export const UNIZ_SUPPORT_EMAIL = "webadmin@rguktong.ac.in" as const;
+
+export const RGUKT_CREST_URL = "/logo.png" as const;

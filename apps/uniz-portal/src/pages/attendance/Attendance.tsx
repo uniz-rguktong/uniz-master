@@ -53,7 +53,7 @@ const PIKACHU_IMAGE = "https://img.pokemondb.net/artwork/large/pikachu.jpg";
 export default function Attendance() {
   const user = useRecoilValue(student);
   const authLoading = useRecoilValue(studentAuthLoading);
-  const [selectedYear, setSelectedYear] = useState("E1");
+  const [selectedYear, setSelectedYear] = useState(user?.year || "E1");
   const [selectedSemester, setSelectedSemester] = useState("Sem - 1");
   const [attendanceData, setAttendanceData] =
     useState<AttendanceResponse | null>(null);
@@ -67,7 +67,12 @@ export default function Attendance() {
   // Guard: prevents concurrent duplicate API calls
   const isFetchingRef = useRef(false);
   // Stable primitive deps (avoids re-triggering on every Recoil poll tick)
+  const userYear = user?.year;
   const userUsername = user?.username;
+  useEffect(() => {
+    if (userYear) setSelectedYear(userYear);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userUsername]);
 
   // Ref for auto-scroll to results
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -204,12 +209,12 @@ export default function Attendance() {
             <div className="h-4 w-48 bg-navy-200 rounded mb-2" />
             <div className="h-7 w-64 bg-navy-200 rounded" />
           </div>
-          <div className="bg-white p-6 rounded-xl border border-navy-100 shadow-sm animate-pulse">
+          <div className="bg-white p-6 rounded-portal-lg border border-navy-100 shadow-sm animate-pulse">
             <div className="h-5 w-48 bg-navy-200 rounded mb-6" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="h-12 bg-navy-100 rounded-lg" />
-              <div className="h-12 bg-navy-100 rounded-lg" />
-              <div className="h-12 bg-navy-100 rounded-lg" />
+              <div className="h-12 bg-navy-100 rounded-portal-sm" />
+              <div className="h-12 bg-navy-100 rounded-portal-sm" />
+              <div className="h-12 bg-navy-100 rounded-portal-sm" />
             </div>
           </div>
         </div>
@@ -229,14 +234,14 @@ export default function Attendance() {
           </h1>
         </div>
         {/* Selection Criteria */}
-        <div className="mb-8 md:bg-white p-6 md:rounded-xl md:border md:border-navy-100 md:shadow-sm bg-transparent transition-all duration-300 px-0 md:px-6">
+        <div className="mb-8 md:bg-white p-6 md:rounded-portal-lg md:border md:border-navy-100 md:shadow-sm bg-transparent transition-all duration-300 px-0 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
             <div className="relative group">
               <label className="text-[10px] font-bold tracking-[0.14em] text-navy-500 mb-1.5 block">
                 Academic Year
               </label>
               <div
-                className="w-full flex items-center justify-between bg-navy-50 border border-navy-200 rounded-lg p-3 cursor-pointer hover:border-navy-900 transition-colors"
+                className="w-full flex items-center justify-between bg-navy-50 border border-navy-200 rounded-portal-sm p-3 cursor-pointer hover:border-navy-900 transition-colors"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
                 <span className="font-bold text-sm">{selectedYear}</span>
@@ -247,7 +252,7 @@ export default function Attendance() {
               </div>
 
               {showDropdown && (
-                <div className="absolute z-20 mt-1 w-full bg-white border border-navy-100 rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute z-20 mt-1 w-full bg-white border border-navy-100 rounded-portal-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                   {years.map((year) => (
                     <div
                       key={year}
@@ -286,7 +291,7 @@ export default function Attendance() {
                     setResultsFetched(false);
                     setAttendanceData(null);
                   }}
-                  className="w-full bg-navy-50 border border-navy-200 rounded-lg p-3 font-bold text-sm appearance-none focus:outline-none focus:border-navy-900 focus:ring-1 focus:ring-navy-900 transition-colors cursor-pointer"
+                  className="w-full bg-navy-50 border border-navy-200 rounded-portal-sm p-3 font-bold text-sm appearance-none focus:outline-none focus:border-navy-900 focus:ring-1 focus:ring-navy-900 transition-colors cursor-pointer"
                 >
                   {availableSemesters.map((semester) => (
                     <option key={semester} value={semester}>
@@ -305,7 +310,7 @@ export default function Attendance() {
               <div className="md:w-56">
                 <button
                   onClick={() => handleFetchAttendance(false)}
-                  className="w-full h-[46px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm flex items-center justify-center disabled:opacity-50"
+                  className="w-full h-[46px] bg-navy-900 hover:bg-navy-800 text-white rounded-portal-lg font-bold text-sm transition-all active:scale-[0.98] shadow-sm flex items-center justify-center disabled:opacity-50"
                   disabled={isLoading || !user?.username}
                 >
                   {isLoading ? (
@@ -327,7 +332,7 @@ export default function Attendance() {
           </div>
 
           {error && (
-            <div className="mt-8 bg-navy-900 text-white rounded-xl p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 shadow-lg shadow-navy-100">
+            <div className="mt-8 bg-navy-900 text-white rounded-portal-lg p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 shadow-lg shadow-navy-100">
               <AlertCircle size={20} className="text-white flex-shrink-0" />
               <div className="font-medium">{error}</div>
             </div>
@@ -336,7 +341,7 @@ export default function Attendance() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="bg-navy-50/50 border border-navy-100 rounded-xl p-10 text-center animate-pulse">
+          <div className="bg-navy-50/50 border border-navy-100 rounded-portal-lg p-10 text-center animate-pulse">
             <div className="w-16 h-16 mx-auto mb-4 bg-white/50 rounded-full flex items-center justify-center">
               <img
                 src={PIKACHU_IMAGE}
@@ -360,7 +365,7 @@ export default function Attendance() {
           !isLoading && (
             <div
               ref={resultsRef}
-              className="-mx-4 md:mx-0 space-y-0 animate-in fade-in slide-in-from-bottom-8 duration-500 scroll-mt-4 bg-white md:bg-transparent md:space-y-4 rounded-none md:rounded-xl overflow-hidden"
+              className="-mx-4 md:mx-0 space-y-0 animate-in fade-in slide-in-from-bottom-8 duration-500 scroll-mt-4 bg-white md:bg-transparent md:space-y-4 rounded-none md:rounded-portal-lg overflow-hidden"
             >
               {/* Header */}
               <div className="flex items-end justify-between border-b pb-4 border-navy-100 px-4 md:px-0 pt-5 md:pt-0">
@@ -391,7 +396,7 @@ export default function Attendance() {
                           },
                         );
                       }}
-                      className="h-10 px-4 bg-navy-50 hover:bg-navy-100 text-navy-600 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-navy-100 disabled:opacity-50"
+                      className="h-10 px-4 bg-navy-50 hover:bg-navy-100 text-navy-600 rounded-portal-sm font-bold text-xs transition-all flex items-center gap-2 border border-navy-100 disabled:opacity-50"
                       disabled={false}
                     >
                       <Download size={14} />
@@ -404,8 +409,8 @@ export default function Attendance() {
               {!attendanceData.attendance ||
               !Array.isArray(attendanceData.attendance) ||
               attendanceData.attendance.length === 0 ? (
-                <div className="bg-navy-50 rounded-xl p-8 text-center border border-navy-200">
-                  <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm border border-navy-100">
+                <div className="bg-navy-50 rounded-portal-lg p-8 text-center border border-navy-200">
+                  <div className="w-14 h-14 bg-white rounded-portal-sm flex items-center justify-center mx-auto mb-4 shadow-sm border border-navy-100">
                     <AlertCircle size={28} className="text-navy-400" />
                   </div>
                   <h3 className="text-lg font-bold mb-2">
@@ -417,7 +422,7 @@ export default function Attendance() {
                   </p>
                 </div>
               ) : (
-                <div className="md:bg-white md:rounded-xl overflow-hidden md:border md:border-navy-100 md:shadow-sm bg-transparent">
+                <div className="md:bg-white md:rounded-portal-lg overflow-hidden md:border md:border-navy-100 md:shadow-sm bg-transparent">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
@@ -513,7 +518,7 @@ export default function Attendance() {
 
         {/* Not Logged In State - only show AFTER /me has resolved */}
         {!authLoading && !user?.username && !isLoading && !resultsFetched && (
-          <div className="bg-navy-50/50 border border-navy-100 rounded-xl p-12 text-center">
+          <div className="bg-navy-50/50 border border-navy-100 rounded-portal-lg p-12 text-center">
             <div className="bg-white w-16 h-16 rounded-[2px] flex items-center justify-center mx-auto mb-6 shadow-sm border border-navy-50">
               <AlertCircle size={32} className="text-navy-300" />
             </div>
@@ -524,7 +529,7 @@ export default function Attendance() {
               Please authenticate to access your institutional attendance
               terminal.
             </p>
-            <button className="h-[46px] px-8 bg-navy-900 text-white rounded-xl font-bold text-sm transition-all hover:bg-navy-800 active:scale-[0.98]">
+            <button className="h-[46px] px-8 bg-navy-900 text-white rounded-portal-lg font-bold text-sm transition-all hover:bg-navy-800 active:scale-[0.98]">
               Sign In to Continue
             </button>
           </div>
@@ -536,7 +541,7 @@ export default function Attendance() {
           !isLoading &&
           !resultsFetched &&
           !error && (
-            <div className="bg-navy-50/50 border border-navy-100 rounded-xl p-12 text-center">
+            <div className="bg-navy-50/50 border border-navy-100 rounded-portal-lg p-12 text-center">
               <div className="md:bg-white w-16 h-16 md:rounded-[2px] flex items-center justify-center mx-auto mb-6 md:shadow-sm md:border md:border-navy-50 bg-transparent">
                 <CalendarCheck size={32} className="text-navy-300" />
               </div>
