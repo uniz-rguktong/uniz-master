@@ -273,8 +273,12 @@ export default function Sidebar({ content }: MainContent) {
           >
             <Menu size={18} />
           </button>
-          <a href="/" className="flex items-center gap-2 text-white no-underline">
-            <img src="/logo.png" alt="" className="h-7 w-7 rounded-full object-cover brightness-0 invert" />
+          <a href="/" className="flex items-center gap-2.5 text-white no-underline">
+            <img
+              src="/logo.png"
+              alt="UniZ — RGUKT Ongole"
+              className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-white/25 shadow-sm"
+            />
             <span className="text-[15px] font-bold uppercase tracking-[1.5px]">Exam Cell</span>
           </a>
         </div>

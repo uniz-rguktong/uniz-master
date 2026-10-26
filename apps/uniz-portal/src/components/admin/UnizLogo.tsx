@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { adminChipClass } from "@/components/admin/admin-ui";
-import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
+import { RGUKT_CREST_URL, UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 
 type UnizLogoProps = {
   /** Sidebar collapsed — compact wordmark */
@@ -30,7 +30,7 @@ function Wordmark({
     <p
       className={cn(
         "uniz-logo-wordmark shrink-0 leading-none",
-        inverted ? "text-white" : "text-navy-900",
+        inverted ? "text-white" : "text-[#0A2540]",
         compact
           ? large
             ? "text-[1.1rem]"
@@ -56,7 +56,7 @@ function CampusLabel({
     <p
       className={cn(
         "font-semibold uppercase tracking-[0.12em] font-sans",
-        inverted ? "text-white/70" : "text-navy-500",
+        inverted ? "text-white/70" : "text-[#5A7A94]",
         large ? "mt-1 text-[9px]" : "mt-0.5 text-[8px]",
       )}
     >
@@ -74,35 +74,42 @@ export function UnizLogo({
   className,
 }: UnizLogoProps) {
   const large = size === "lg";
-  const onNavy = variant === "auth" || variant === "sidebar";
+  const onNavy = variant === "auth";
 
   if (variant === "auth") {
     return (
       <div
         className={cn(
-          "flex w-full min-w-0 flex-col gap-0.5",
+          "flex w-full min-w-0 items-center gap-3",
           className,
         )}
       >
-        <Wordmark large={large} inverted />
-        <span
-          className={cn(
-            "shrink-0 font-semibold uppercase tracking-[0.12em] text-white/70 font-sans",
-            large ? "text-[9px]" : "text-[8px]",
-          )}
-        >
-          {UNIZ_CAMPUS_LABEL}
-        </span>
-        {portalLabel && (
+        <img
+          src={RGUKT_CREST_URL}
+          alt="UniZ"
+          className="h-9 w-9 shrink-0 rounded-full bg-white object-contain ring-1 ring-white/25 shadow-sm"
+        />
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <Wordmark large={large} inverted />
           <span
             className={cn(
-              adminChipClass,
-              "mt-1 hidden w-fit max-w-full truncate border-white/25 bg-white/10 text-white/90 sm:inline-flex",
+              "shrink-0 font-semibold uppercase tracking-[0.12em] text-white/70 font-sans",
+              large ? "text-[9px]" : "text-[8px]",
             )}
           >
-            {portalLabel}
+            {UNIZ_CAMPUS_LABEL}
           </span>
-        )}
+          {portalLabel && (
+            <span
+              className={cn(
+                adminChipClass,
+                "mt-1 hidden w-fit max-w-full truncate border-white/25 bg-white/10 text-white/90 sm:inline-flex",
+              )}
+            >
+              {portalLabel}
+            </span>
+          )}
+        </div>
       </div>
     );
   }
@@ -110,20 +117,26 @@ export function UnizLogo({
   if (collapsed) {
     return (
       <div className={cn("flex items-center justify-center", className)}>
-        <Wordmark
-          large={large}
-          compact
-          short={abbreviate}
-          inverted={onNavy}
+        <img
+          src={RGUKT_CREST_URL}
+          alt="UniZ"
+          className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/15 shadow-sm"
         />
       </div>
     );
   }
 
   return (
-    <div className={cn("min-w-0 leading-none", className)}>
-      <Wordmark large={large} inverted={onNavy} />
-      <CampusLabel large={large} inverted={onNavy} />
+    <div className={cn("flex min-w-0 items-center gap-2.5 leading-none", className)}>
+      <img
+        src={RGUKT_CREST_URL}
+        alt="UniZ"
+        className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/15 shadow-sm"
+      />
+      <div className="min-w-0">
+        <Wordmark large={large} inverted={onNavy} />
+        <CampusLabel large={large} inverted={onNavy} />
+      </div>
     </div>
   );
 }

@@ -194,7 +194,14 @@ export default function AdminShell({
           >
             <Menu size={18} />
           </button>
-          <span className="text-[15px] font-bold uppercase tracking-[1.5px]">Exam Cell</span>
+          <a href="/" className="flex items-center gap-2.5 text-white no-underline">
+            <img
+              src="/logo.png"
+              alt="UniZ — RGUKT Ongole"
+              className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-white/25 shadow-sm"
+            />
+            <span className="text-[15px] font-bold uppercase tracking-[1.5px]">Exam Cell</span>
+          </a>
           {headerLeft}
         </div>
         <div className="ml-auto flex items-center gap-3">

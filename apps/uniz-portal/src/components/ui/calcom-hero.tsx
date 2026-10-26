@@ -683,7 +683,11 @@ export const CalcomHero = () => {
             transition={{ duration: 0.45 }}
             className="inline-flex items-center gap-2.5 rounded-full border border-navy-200 bg-navy-50/80 px-4 py-1.5 mb-6 shadow-sm"
           >
-            <span className="h-2 w-2 rounded-full bg-[#0A2540]" />
+            <img
+              src="/logo.png"
+              alt="UniZ"
+              className="h-5 w-5 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/15"
+            />
             <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#0A2540]">
               RGUKT Ongole · UniZ Campus &amp; Examination Portal
             </span>

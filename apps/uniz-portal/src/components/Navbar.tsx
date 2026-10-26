@@ -47,8 +47,8 @@ export default function Navbar() {
           <Link to="/" className="flex items-center gap-2.5 text-white no-underline group">
             <img
               src="/logo.png"
-              alt="RGUKT Ongole"
-              className="h-7 w-7 rounded-full object-cover brightness-0 invert transition-transform group-hover:scale-105"
+              alt="UniZ — RGUKT Ongole"
+              className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-white/25 shadow-sm transition-transform group-hover:scale-105"
             />
             <div className="flex items-center gap-2">
               <span className="text-[15px] font-bold uppercase tracking-[1.5px]">

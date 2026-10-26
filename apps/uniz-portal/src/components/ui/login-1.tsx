@@ -79,8 +79,8 @@ export default function LoginScreen({
             >
               <img
                 src="/logo.png"
-                alt=""
-                className="h-8 w-8 shrink-0 rounded-full object-cover brightness-0 invert"
+                alt="UniZ — RGUKT Ongole"
+                className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-white/25 shadow-sm"
               />
               <h2 className="truncate text-[20px] font-bold uppercase tracking-[2px] sm:text-[22px]">
                 Exam Cell
@@ -195,13 +195,23 @@ export default function LoginScreen({
       {/* ExamCell #eee footer */}
       <footer className="relative z-20 mt-auto h-[50px] bg-[#EEEEEE] font-form text-[14px] font-bold tracking-[0.5px] text-[#061B33]">
         <div className="mx-auto flex h-full w-[94%] items-center justify-between">
-          <span className="truncate uppercase">
-            Copyright © {UNIZ_CAMPUS_LABEL}
-            {bottomText ? ` · ${bottomText}` : ""}
+          <span className="flex items-center gap-2.5 truncate uppercase">
+            <img
+              src="/logo.png"
+              alt="UniZ"
+              className="h-6 w-6 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/15 shadow-sm"
+            />
+            <span>
+              Copyright © {UNIZ_CAMPUS_LABEL}
+              {bottomText ? ` · ${bottomText}` : ""}
+            </span>
           </span>
-          <span className="hidden shrink-0 sm:inline">
-            Developed By SoftwareDevelopmentCell
-          </span>
+          <a
+            href="/developers"
+            className="hidden shrink-0 text-[#061B33] no-underline hover:underline sm:inline"
+          >
+            Developed By Software Development Cell
+          </a>
         </div>
       </footer>
     </div>

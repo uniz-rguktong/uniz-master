@@ -262,19 +262,19 @@ export default function Admin() {
     <AdminLayout className="pb-20">
       <header className={adminHeaderClass}>
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div
-              className={`w-10 h-10 ${adminAvatarFallbackClass} rounded-portal-sm text-lg`}
-            >
-              {username[0].toUpperCase()}
-            </div>
+          <div className="flex items-center gap-3">
+            <img
+              src="/logo.png"
+              alt="UniZ — RGUKT Ongole"
+              className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-white/25 shadow-sm"
+            />
             <div>
-              <h1 className="text-xl font-bold leading-none text-navy-900 font-sans">
+              <h1 className="text-base font-bold leading-none text-white font-sans uppercase tracking-[0.06em]">
                 {username}
               </h1>
               <div className="flex items-center gap-1.5 mt-1">
-                <span className="w-1.5 h-1.5 rounded-portal-sm bg-emerald-500" />
-                <p className="text-xs font-bold text-navy-400 tracking-[0.14em] font-sans">
+                <span className="w-1.5 h-1.5 rounded-portal-sm bg-emerald-400" />
+                <p className="text-[11px] font-bold text-white/75 tracking-[0.12em] font-sans uppercase">
                   {role.replace("_", " ")} Dashboard
                 </p>
               </div>

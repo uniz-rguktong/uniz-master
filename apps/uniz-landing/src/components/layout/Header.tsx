@@ -113,7 +113,7 @@ export function Header() {
             <img
               src="/rgukt-logo.png"
               alt="RGUKT Ongole Campus"
-              className="h-10 md:h-11 object-contain mix-blend-multiply"
+              className="h-10 w-10 md:h-11 md:w-11 object-contain"
             />
             <div className="hidden sm:flex flex-col justify-center">
               <span className="font-serif text-[1.35rem] md:text-[1.5rem] font-semibold text-[#061B33] tracking-tight leading-none">

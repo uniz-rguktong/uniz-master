@@ -83,8 +83,8 @@ export function IosInstallModal() {
           <div className="flex items-center gap-2.5">
             <img
               src={RGUKT_CREST_URL}
-              alt="RGUKT"
-              className="h-7 w-7 rounded-[2px] bg-white p-0.5 object-contain"
+              alt="UniZ — RGUKT Ongole"
+              className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-white/25 shadow-sm"
             />
             <div>
               <h2

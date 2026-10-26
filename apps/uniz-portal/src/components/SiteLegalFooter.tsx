@@ -6,9 +6,16 @@ export function SiteLegalFooter() {
   return (
     <footer className="border-t border-navy-200/80 bg-[#EEEEEE] font-form text-[13px] font-bold tracking-[0.5px] text-[#061B33]">
       <div className="mx-auto flex min-h-[56px] max-w-[1280px] flex-col sm:flex-row items-center justify-between gap-3 px-4 sm:px-6 py-3 sm:py-0">
-        <p className="truncate uppercase text-[12px] sm:text-[13px]">
-          Copyright © {UNIZ_CAMPUS_LABEL}
-        </p>
+        <div className="flex items-center gap-2.5">
+          <img
+            src="/logo.png"
+            alt="UniZ"
+            className="h-6 w-6 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/15 shadow-sm"
+          />
+          <p className="truncate uppercase text-[12px] sm:text-[13px]">
+            Copyright © {UNIZ_CAMPUS_LABEL}
+          </p>
+        </div>
 
         <Link
           to="/developers"

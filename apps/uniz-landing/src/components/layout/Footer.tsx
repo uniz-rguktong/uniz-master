@@ -50,8 +50,8 @@ export function Footer() {
           <Link to="/" className="flex items-center gap-3">
             <img
               src="/rgukt-logo.png"
-              alt="RGUKT"
-              className="w-10 h-10 object-contain mix-blend-lighten"
+              alt="RGUKT Ongole"
+              className="w-10 h-10 rounded-[4px] bg-white p-1 object-contain shadow-sm ring-1 ring-white/20"
             />
             <div className="flex flex-col leading-none">
               <span className="font-serif text-lg font-semibold text-white tracking-tight">

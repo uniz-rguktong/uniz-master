@@ -82,9 +82,16 @@ export default function SEOLanding() {
       <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-navy-100 flex items-center justify-between px-6 z-50">
         <Link
           to="/"
-          className="uniz-logo-wordmark text-2xl text-navy-900"
+          className="flex items-center gap-2.5 text-navy-900 no-underline"
         >
-          uniZ.
+          <img
+            src="/logo.png"
+            alt="UniZ"
+            className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/20 shadow-sm"
+          />
+          <span className="uniz-logo-wordmark text-2xl text-navy-900">
+            uniZ.
+          </span>
         </Link>
         <nav className="hidden md:flex gap-6 text-sm font-semibold text-navy-500">
           <Link
