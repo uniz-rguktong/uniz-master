@@ -44,10 +44,10 @@ export function ExploreCampus() {
     <section id="explore" className="relative bg-white section-editorial">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
         <div className="max-w-2xl mb-16 sm:mb-24">
-          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#800000] mb-4">
+          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#0A2540] mb-4">
             Campus Life
           </p>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-[#000035] tracking-tight leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-[#061B33] tracking-tight leading-tight">
             Explore our campus
           </h2>
           <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed">
@@ -74,7 +74,7 @@ export function ExploreCampus() {
                   </div>
                 </div>
                 <div className={imageFirst ? "md:order-2" : "md:order-1"}>
-                  <h3 className="font-serif text-2xl sm:text-3xl font-semibold text-[#000035] leading-snug">
+                  <h3 className="font-serif text-2xl sm:text-3xl font-semibold text-[#061B33] leading-snug">
                     {area.title}
                   </h3>
                   <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed">

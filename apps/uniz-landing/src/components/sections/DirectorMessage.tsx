@@ -27,10 +27,10 @@ export function DirectorMessage({ directorImage }: { directorImage: string }) {
     <section id="directors-message" className="section-editorial bg-white">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-12">
         <div className="max-w-2xl mb-14 sm:mb-16">
-          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#800000] mb-4">
+          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#0A2540] mb-4">
             From the Director&apos;s Desk
           </p>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#000035] leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#061B33] leading-tight">
             A message from the Director
           </h2>
           <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed">
@@ -52,10 +52,10 @@ export function DirectorMessage({ directorImage }: { directorImage: string }) {
               />
             </div>
             <div>
-              <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#000035] leading-snug">
+              <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#061B33] leading-snug">
                 Dr. A V S S Kumara Swami Gupta
               </h3>
-              <p className="mt-2 text-sm font-medium text-[#800000]">Director</p>
+              <p className="mt-2 text-sm font-medium text-[#0A2540]">Director</p>
               <p className="text-sm text-slate-500">RGUKT Ongole</p>
             </div>
           </div>
@@ -70,7 +70,7 @@ export function DirectorMessage({ directorImage }: { directorImage: string }) {
             <p className="mb-5">
               Our students graduate from RGUKT Ongole campus with the skills, mind sets and qualities that will best equip them for success in the world of the future. Our students are intelligent, resilient, creative, imaginative, disciplined, dedicated to life-long learning, respectful and ethical. They are the future leaders and role models of society.
             </p>
-            <p className="font-serif text-lg font-semibold text-[#000035] pt-2">
+            <p className="font-serif text-lg font-semibold text-[#061B33] pt-2">
               — Dr. A V S S Kumara Swami Gupta
             </p>
           </div>

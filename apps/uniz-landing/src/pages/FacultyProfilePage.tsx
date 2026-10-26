@@ -83,7 +83,7 @@ export function FacultyProfilePage() {
     return (
       <div className="flex min-h-[50vh] w-full items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#000035] border-t-transparent" />
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#061B33] border-t-transparent" />
           <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">Loading Profile...</p>
         </div>
       </div>
@@ -95,7 +95,7 @@ export function FacultyProfilePage() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-slate-500 text-lg font-semibold">Profile not found.</p>
-          <button onClick={() => navigate(-1)} className="mt-4 text-[#800000] text-sm font-bold hover:underline">
+          <button onClick={() => navigate(-1)} className="mt-4 text-[#0A2540] text-sm font-bold hover:underline">
             Go Back
           </button>
         </div>
@@ -116,12 +116,12 @@ export function FacultyProfilePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <button
             onClick={() => navigate(`/departments/${deptCode}`)}
-            className="inline-flex items-center gap-2 text-slate-500 hover:text-[#800000] text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 text-slate-500 hover:text-[#0A2540] text-sm font-semibold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to {deptName}
           </button>
-          <span className="hidden sm:inline-block px-3 py-1 text-[10px] font-bold tracking-[0.2em] text-[#800000] bg-[#800000]/5 border border-[#800000]/10 rounded-full">
+          <span className="hidden sm:inline-block px-3 py-1 text-[10px] font-bold tracking-[0.2em] text-[#0A2540] bg-[#0A2540]/5 border border-[#0A2540]/10 rounded-full">
             RGUKT Ongole · {code}
           </span>
         </div>
@@ -143,7 +143,7 @@ export function FacultyProfilePage() {
                 }}
               />
             ) : (
-              <div className="w-full aspect-square max-w-[200px] rounded-xl bg-[#000035] flex items-center justify-center text-white text-6xl font-extrabold shadow-sm">
+              <div className="w-full aspect-square max-w-[200px] rounded-xl bg-[#061B33] flex items-center justify-center text-white text-6xl font-extrabold shadow-sm">
                 {faculty.name.charAt(0)}
               </div>
             )}
@@ -155,7 +155,7 @@ export function FacultyProfilePage() {
               {faculty.name}
             </h1>
             {role && (
-              <p className="text-lg text-[#800000] font-semibold mb-6">{role}</p>
+              <p className="text-lg text-[#0A2540] font-semibold mb-6">{role}</p>
             )}
 
             <div className="space-y-4 max-w-2xl">
@@ -185,11 +185,11 @@ export function FacultyProfilePage() {
 
               <div className="flex items-start gap-3">
                 <div className="mt-0.5 p-1.5 rounded-md bg-rose-50 border border-rose-100 flex-shrink-0">
-                  <Mail className="w-4 h-4 text-[#800000]" />
+                  <Mail className="w-4 h-4 text-[#0A2540]" />
                 </div>
                 <div>
                   <p className="text-xs font-bold tracking-widest text-slate-400 mb-0.5">Contact</p>
-                  <a href={`mailto:${faculty.email}`} className="text-[#800000] text-sm font-semibold hover:underline">
+                  <a href={`mailto:${faculty.email}`} className="text-[#0A2540] text-sm font-semibold hover:underline">
                     {faculty.email}
                   </a>
                 </div>
@@ -207,8 +207,8 @@ export function FacultyProfilePage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
               {entries.map(({ key, items }) => (
                 <div key={key}>
-                  <h3 className="flex items-center gap-2 text-[11px] font-extrabold tracking-widest text-[#000035] mb-3 border-b border-slate-100 pb-2">
-                    <span className="text-[#800000]/60">
+                  <h3 className="flex items-center gap-2 text-[11px] font-extrabold tracking-widest text-[#061B33] mb-3 border-b border-slate-100 pb-2">
+                    <span className="text-[#0A2540]/60">
                       {SECTION_ICONS[key] ?? <FileText className="w-4 h-4" />}
                     </span>
                     {key}
@@ -222,7 +222,7 @@ export function FacultyProfilePage() {
                         const cleanItem = item.replace(/^[0-9]+\.\s*/, "");
                         return (
                           <li key={i} className="flex items-start gap-2.5 text-sm text-slate-700 leading-relaxed">
-                            <span className="text-[#800000]/40 font-bold mt-0.5 flex-shrink-0">•</span>
+                            <span className="text-[#0A2540]/40 font-bold mt-0.5 flex-shrink-0">•</span>
                             <span>{cleanItem}</span>
                           </li>
                         );

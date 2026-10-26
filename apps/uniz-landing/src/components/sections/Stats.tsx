@@ -45,7 +45,7 @@ export function Stats({ stats }: { stats: readonly any[] }) {
   return (
     <section
       id="statistics"
-      className="relative overflow-hidden bg-[#000035] text-white"
+      className="relative overflow-hidden bg-[#061B33] text-white"
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-20 sm:py-24 lg:py-28">
         <div className="max-w-2xl mb-14 sm:mb-20">
@@ -75,7 +75,7 @@ export function Stats({ stats }: { stats: readonly any[] }) {
                   >
                     0
                   </span>
-                  <span className="font-serif text-2xl text-[#800000] leading-none">+</span>
+                  <span className="font-serif text-2xl text-[#0A2540] leading-none">+</span>
                 </div>
                 <p className="mt-4 text-[11px] sm:text-xs font-medium tracking-[0.14em] uppercase text-white/50 leading-relaxed">
                   {stat.label}

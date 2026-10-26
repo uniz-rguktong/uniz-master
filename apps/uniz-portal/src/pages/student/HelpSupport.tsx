@@ -33,7 +33,7 @@ const faqs = [
   {
     question: "Is the student portal available as an app?",
     answer:
-      "Yes! You can install UniZ as a PWA by clicking 'Install App' in your browser menu on Android or 'Add to Home Screen' on iOS.",
+      "Yes! Click 'Download Android App' to install the signed uniZ.apk on Android, or click 'Download iOS App' to install the iOS app profile on iPhone and iPad.",
   },
 ];
 

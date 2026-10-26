@@ -3,10 +3,10 @@ import { FileText, Megaphone, Bell, GraduationCap, BookOpen } from "lucide-react
 
 const iconStyles = [
   { bg: "#113255", Icon: FileText },
-  { bg: "#800000", Icon: Megaphone },
-  { bg: "#000035", Icon: Bell },
+  { bg: "#0A2540", Icon: Megaphone },
+  { bg: "#061B33", Icon: Bell },
   { bg: "#113255", Icon: GraduationCap },
-  { bg: "#800000", Icon: BookOpen },
+  { bg: "#0A2540", Icon: BookOpen },
 ];
 
 export function Media({ news }: { news: readonly any[] }) {
@@ -19,10 +19,10 @@ export function Media({ news }: { news: readonly any[] }) {
         <div className="flex flex-col lg:flex-row gap-14 lg:gap-20 items-stretch">
 
           <div className="lg:w-2/5 flex flex-col justify-center">
-            <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#800000] mb-4">
+            <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#0A2540] mb-4">
               Notifications
             </p>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-[#000035] leading-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-[#061B33] leading-tight">
               News &amp; notifications
             </h2>
             <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed max-w-md">

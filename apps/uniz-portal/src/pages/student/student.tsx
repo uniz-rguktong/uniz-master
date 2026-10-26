@@ -670,12 +670,12 @@ export default function StudentProfilePage() {
               <div
                 className="relative p-[4px] md:p-[5px] rounded-full mb-4"
                 style={{
-                  background: "#2ebd59",
-                  boxShadow: "0 0 0 1px rgba(46, 189, 89, 0.1)",
+                  background: "#0A2540",
+                  boxShadow: "0 0 0 1px rgba(10, 37, 64, 0.14)",
                 }}
               >
                 <div className="relative bg-navy-50 p-[3px] rounded-full">
-                  <div className="relative w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-[#004e43] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
+                  <div className="relative w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-[#0A2540] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
                     {/* Profile image or initial */}
                     {user?.profile_url ? (
                       <img
@@ -755,8 +755,8 @@ export default function StudentProfilePage() {
             <p className="text-[#3c4043] font-medium text-[13px] tracking-tight text-center relative mb-3.5 flex items-center justify-center gap-1">
               {user?.email || user?.username + "@rguktong.ac.in"}
               <BadgeCheck
-                className="w-[15px] h-[15px] text-[#2ebd59]"
-                fill="#2ebd59"
+                className="w-[15px] h-[15px] text-[#0A2540]"
+                fill="#0A2540"
                 fillOpacity={0.15}
                 strokeWidth={2.5}
               />

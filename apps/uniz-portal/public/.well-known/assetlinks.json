@@ -1,11 +1,13 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "in.rguktong.uniz",
       "sha256_cert_fingerprints": [
-        "REPLACE_WITH_UPLOAD_KEY_SHA256"
+        "79:7B:4A:B6:7E:59:33:60:05:5E:06:4B:91:F5:7D:48:D4:94:06:F7:87:ED:10:C9:35:BD:A7:9D:4C:15:35:E0"
       ]
     }
   }

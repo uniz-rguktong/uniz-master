@@ -116,10 +116,10 @@ export function Header() {
               className="h-10 md:h-11 object-contain mix-blend-multiply"
             />
             <div className="hidden sm:flex flex-col justify-center">
-              <span className="font-serif text-[1.35rem] md:text-[1.5rem] font-semibold text-[#000035] tracking-tight leading-none">
+              <span className="font-serif text-[1.35rem] md:text-[1.5rem] font-semibold text-[#061B33] tracking-tight leading-none">
                 RGUKT
               </span>
-              <span className="mt-1 text-[10px] md:text-[11px] font-medium text-[#800000] tracking-[0.14em] uppercase">
+              <span className="mt-1 text-[10px] md:text-[11px] font-medium text-[#0A2540] tracking-[0.14em] uppercase">
                 Ongole Campus
               </span>
             </div>
@@ -130,14 +130,14 @@ export function Header() {
             <button
               onClick={() => { setIsSearchOpen(true); setIsMenuOpen(false); }}
               aria-label="Search"
-              className="w-10 h-10 flex items-center justify-center text-[#000035] hover:text-[#800000] transition-colors"
+              className="w-10 h-10 flex items-center justify-center text-[#061B33] hover:text-[#0A2540] transition-colors"
             >
               <Search className="w-5 h-5 stroke-[1.75]" />
             </button>
             <button
               onClick={() => { setIsMenuOpen(true); setIsSearchOpen(false); }}
               aria-label="Open menu"
-              className="flex items-center gap-2 h-10 px-2 sm:px-3 text-[#000035] hover:text-[#800000] transition-colors"
+              className="flex items-center gap-2 h-10 px-2 sm:px-3 text-[#061B33] hover:text-[#0A2540] transition-colors"
             >
               <span className="hidden sm:inline text-[13px] font-medium tracking-wide uppercase">Menu</span>
               <Menu className="w-5 h-5 stroke-[1.75]" />
@@ -148,7 +148,7 @@ export function Header() {
 
       {/* Full-screen menu panel */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[100] bg-[#000035] text-white overflow-y-auto">
+        <div className="fixed inset-0 z-[100] bg-[#061B33] text-white overflow-y-auto">
           <div className="max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 py-5 flex items-center justify-between border-b border-white/10">
             <Link
               to="/"
@@ -205,7 +205,7 @@ export function Header() {
 
       {/* Search overlay */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-[100] bg-[#000035]/50 backdrop-blur-sm flex items-start justify-center pt-20 sm:pt-28 px-4">
+        <div className="fixed inset-0 z-[100] bg-[#061B33]/50 backdrop-blur-sm flex items-start justify-center pt-20 sm:pt-28 px-4">
           <div
             className="absolute inset-0"
             onClick={() => setIsSearchOpen(false)}
@@ -213,7 +213,7 @@ export function Header() {
 
           <div className="relative w-full max-w-2xl bg-white overflow-hidden flex flex-col shadow-2xl">
             <div className="relative flex items-center border-b border-slate-200 px-5 py-4">
-              <Search className="w-5 h-5 text-[#800000]" />
+              <Search className="w-5 h-5 text-[#0A2540]" />
               <input
                 autoFocus
                 type="text"
@@ -253,14 +253,14 @@ export function Header() {
                       className="flex items-center justify-between w-full text-left px-4 py-3.5 hover:bg-slate-50 transition-colors group border-b border-slate-100 last:border-0"
                     >
                       <div>
-                        <span className="block text-slate-900 font-medium group-hover:text-[#800000] transition-colors">
+                        <span className="block text-slate-900 font-medium group-hover:text-[#0A2540] transition-colors">
                           {item.title}
                         </span>
                         <span className="block text-xs tracking-wider uppercase text-slate-400 mt-0.5">
                           {item.category}
                         </span>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-[#800000] opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block" />
+                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-[#0A2540] opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block" />
                     </button>
                   ))}
                 </div>

@@ -66,6 +66,8 @@ export function useIsAuth() {
       "/",
       "/login",
       "/signin",
+      "/ios",
+      "/ios-install",
       "/student/signin",
       "/admin/signin",
       "/admin/signin/",

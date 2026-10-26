@@ -44,7 +44,7 @@ export function HomePage() {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-5">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#800000] border-t-transparent" />
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#0A2540] border-t-transparent" />
           <p className="text-slate-500 font-medium tracking-[0.16em] text-xs uppercase">
             Loading campus
           </p>
