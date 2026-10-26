@@ -126,7 +126,24 @@ export function Header() {
           </Link>
 
           {/* Search + Menu */}
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
+            <a
+              href="https://uniz.rguktong.in/developers"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-flex items-center h-9 px-3 text-[12px] font-bold uppercase tracking-[0.08em] text-[#061B33] hover:text-[#0A2540] hover:bg-slate-100 rounded-[4px] transition-colors"
+            >
+              Developers
+            </a>
+            <a
+              href="https://uniz.rguktong.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3.5 bg-[#0A2540] hover:bg-[#061B33] text-white text-[12px] font-bold uppercase tracking-[0.08em] rounded-[4px] transition-colors"
+            >
+              <span>UniZ Portal</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </a>
             <button
               onClick={() => { setIsSearchOpen(true); setIsMenuOpen(false); }}
               aria-label="Search"

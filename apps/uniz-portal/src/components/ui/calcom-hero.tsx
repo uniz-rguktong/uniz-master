@@ -1,9 +1,8 @@
 import { UNIZ_TAGLINE } from "@/constants/branding";
 import { motion } from "framer-motion";
-import { Monitor } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { usePWAInstall } from "@/hooks/usePWAInstall";
-import { useMemo } from "react";
+import { ArrowRight, Code2, Monitor } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ANDROID_APK_FILENAME, ANDROID_APK_URL, openIosDownloadModal } from "@/lib/androidApp";
 
 // ─── Platform Icons (inline SVGs for brand marks) ────────────────────────────
 
@@ -575,25 +574,7 @@ const FEATURES = [
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const CalcomHero = () => {
-  const { install, isInstalled } = usePWAInstall();
-  const platform = useMemo(() => getPlatform(), []);
-
-  const handleDownload = async () => {
-    const result = await install();
-    if (result === "ios") {
-      window.alert(
-        "To install UniZ on iOS:\n\n1. Tap the Share icon (at bottom)\n2. Select 'Add to Home Screen'\n\nDirect native install is not supported by Apple yet.",
-      );
-    } else if (result === "fallback") {
-      window.alert(
-        "Direct installation is not supported by your current browser (like Safari), or the app is already installed. Try using Chrome or Edge, or manually install from your browser menu ('Add to Home Screen' or 'Install App').",
-      );
-    } else if (result === "error") {
-      window.alert(
-        "Installation failed. Please try installing manually from your browser menu.",
-      );
-    }
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="relative w-full bg-white font-sans overflow-hidden selection:bg-navy-100">
@@ -695,8 +676,20 @@ export const CalcomHero = () => {
 
       <div className="max-w-[1280px] mx-auto px-6 pt-24 pb-20 md:pt-32 md:pb-28">
         {/* ── Hero copy ── */}
-        <div className="flex flex-col items-center text-center mb-20 md:mb-24">
-          <motion.h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-semibold text-navy-950 leading-[1.0] tracking-[-0.05em] mb-6 max-w-6xl">
+        <div className="flex flex-col items-center text-center mb-16 md:mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45 }}
+            className="inline-flex items-center gap-2.5 rounded-full border border-navy-200 bg-navy-50/80 px-4 py-1.5 mb-6 shadow-sm"
+          >
+            <span className="h-2 w-2 rounded-full bg-[#0A2540]" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#0A2540]">
+              RGUKT Ongole · UniZ Campus &amp; Examination Portal
+            </span>
+          </motion.div>
+
+          <motion.h1 className="text-[clamp(2.6rem,6.5vw,5.25rem)] font-semibold text-navy-950 leading-[1.02] tracking-[-0.04em] mb-6 max-w-5xl">
             {UNIZ_TAGLINE.line1.split(" ").map((word, i) => (
               <motion.span
                 key={i}
@@ -735,24 +728,51 @@ export const CalcomHero = () => {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.0 }}
-            className="flex flex-col sm:flex-row items-center gap-4"
+            transition={{ delay: 0.9 }}
+            className="flex flex-wrap items-center justify-center gap-3 sm:gap-3.5"
           >
-            {isInstalled ? (
-              <div className="flex items-center gap-2.5 px-5 py-3 bg-emerald-50 text-emerald-700 rounded-xl text-[13px] font-bold border border-emerald-100">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                App installed — you're all set
-              </div>
-            ) : (
-              <Button
-                onClick={handleDownload}
-                className="group relative h-12 px-8 bg-navy-950 hover:bg-[#0A2540] text-white text-[14px] font-bold rounded-xl flex items-center gap-3 transition-all duration-300 overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
-                <platform.PlatformIcon size={16} />
-                Download for {platform.label}
-              </Button>
-            )}
+            <button
+              type="button"
+              onClick={() => navigate("/student/signin")}
+              className="inline-flex h-12 items-center gap-2.5 rounded-[4px] bg-[#0A2540] px-7 text-[14px] font-bold uppercase tracking-[0.08em] text-white shadow-[0_16px_32px_-12px_rgba(10,37,64,0.45)] transition-all hover:bg-[#061B33] active:scale-[0.99]"
+            >
+              <span>Student &amp; Staff Login</span>
+              <ArrowRight size={16} strokeWidth={2.4} />
+            </button>
+
+            <a
+              href={ANDROID_APK_URL}
+              download={ANDROID_APK_FILENAME}
+              className="inline-flex h-12 items-center gap-2.5 rounded-[4px] border border-[#0A2540] bg-white px-5 text-[13.5px] font-bold uppercase tracking-[0.06em] text-[#0A2540] no-underline shadow-sm transition-colors hover:bg-navy-50"
+            >
+              <AndroidIcon size={17} />
+              <span>Download Android App</span>
+            </a>
+
+            <button
+              type="button"
+              onClick={openIosDownloadModal}
+              className="inline-flex h-12 items-center gap-2.5 rounded-[4px] border border-[#0A2540] bg-white px-5 text-[13.5px] font-bold uppercase tracking-[0.06em] text-[#0A2540] shadow-sm transition-colors hover:bg-navy-50"
+            >
+              <AppleIcon size={17} />
+              <span>Download iOS App</span>
+            </button>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.05 }}
+            className="mt-5 flex flex-wrap items-center justify-center gap-4 text-[13px] font-semibold text-navy-600"
+          >
+            <Link
+              to="/developers"
+              className="inline-flex items-center gap-1.5 rounded-full border border-navy-200 bg-navy-50/70 px-4 py-1.5 text-[12.5px] font-bold text-[#0A2540] hover:bg-navy-100/80 transition-colors"
+            >
+              <Code2 size={14} />
+              <span>Meet the Developers (Software Development Cell)</span>
+              <ArrowRight size={13} />
+            </Link>
           </motion.div>
         </div>
 
@@ -766,6 +786,7 @@ export const CalcomHero = () => {
           {FEATURES.map((f, i) => (
             <motion.div
               key={i}
+              onClick={() => navigate("/student/signin")}
               whileHover={{
                 y: -10,
                 backgroundColor: "rgba(255,255,255,1)",

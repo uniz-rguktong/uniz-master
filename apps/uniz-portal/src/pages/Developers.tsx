@@ -1,57 +1,66 @@
+import { Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
-import MeetTheDevelopersSection from "@/components/MeetTheDevelopersSection";
-import GlobeFeature from "@/components/ui/globe-feature-section";
-import { LandingMeshBackdrop } from "@/components/ui/landing-section";
-import { SEO } from "@/components/SEO";
-import { SiteLegalFooter } from "@/components/SiteLegalFooter";
-import { landingContainerClass, landingDividerClass } from "@/lib/landing-ui";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { SEO } from "../components/SEO";
+import { SiteLegalFooter } from "../components/SiteLegalFooter";
+import MeetTheDevelopersSection from "../components/MeetTheDevelopersSection";
+import {
+  LandingDivider,
+  LandingMeshBackdrop,
+} from "../components/ui/landing-section";
 import { cn } from "@/lib/utils";
+
+const GlobeFeature = lazy(() => import("../components/ui/globe-feature-section"));
+
+function GlobeSectionSkeleton() {
+  return (
+    <div className="max-w-[1280px] mx-auto px-6 py-12">
+      <div
+        className={cn(
+          "h-72 w-full animate-pulse rounded-[2px] border border-navy-100 bg-navy-50/60",
+        )}
+      />
+    </div>
+  );
+}
 
 export default function Developers() {
   return (
-    <div className="relative min-h-screen bg-white pt-16 font-sans">
+    <div className="relative min-h-screen w-full overflow-x-hidden bg-white text-navy-900 font-sans selection:bg-navy-100">
       <SEO
-        title="Developers — uniZ"
-        description="Meet the RGUKT Ongole student team behind the UniZ campus platform."
-        canonical="https://uniz.rguktong.in/developers"
+        title="Developers | UniZ"
+        description="Meet the student engineers and creators behind the UniZ contributor platform for RGUKT Ongole."
+        canonical="/developers"
       />
 
       <LandingMeshBackdrop />
 
-      <div className={cn(landingContainerClass, "relative")}>
-        <header className="flex items-center py-4 md:py-6">
+      <div className="relative z-10 w-full pt-20 md:pt-24">
+        <div className="max-w-[1280px] mx-auto px-6 pt-2 pb-2 flex items-center justify-between gap-4">
           <Link
             to="/"
-            className="inline-flex min-h-11 items-center gap-2 rounded-portal-lg px-2 text-sm font-medium text-navy-500 transition-colors hover:bg-navy-50 hover:text-navy-900"
+            className="inline-flex items-center gap-2 rounded-[4px] border border-navy-200 bg-white px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[0.08em] text-[#0A2540] hover:bg-navy-50 transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Back to home
+            <ArrowLeft size={14} />
+            <span>Back to Home</span>
           </Link>
-        </header>
 
-        <MeetTheDevelopersSection
-          subtitle="Engineering, design, and security — built by students, for campus."
-          compact
-          fitScreen
-        />
+          <Link
+            to="/student/signin"
+            className="inline-flex items-center gap-1.5 rounded-[4px] bg-[#0A2540] px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.08em] text-white hover:bg-[#061B33] transition-colors"
+          >
+            <span>Student &amp; Staff Login</span>
+            <ArrowRight size={13} />
+          </Link>
+        </div>
 
-        <div className={cn(landingDividerClass, "my-2 md:my-4")} />
+        <MeetTheDevelopersSection />
 
-        <section className="pb-2 md:pb-6">
-          <div className="mx-auto max-w-3xl px-2 pb-6 pt-4 text-center md:pb-8 md:pt-8">
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-navy-400">
-              Open source
-            </p>
-            <h2 className="mt-2 text-[clamp(1.35rem,3vw,1.875rem)] font-semibold leading-snug tracking-tight text-navy-950">
-              Wanna make it here?{" "}
-              <span className="font-normal text-navy-400">
-                Contribute to the uniZ ecosystem.
-              </span>
-            </h2>
-          </div>
+        <LandingDivider />
+
+        <Suspense fallback={<GlobeSectionSkeleton />}>
           <GlobeFeature hideTitleOnMobile />
-        </section>
+        </Suspense>
       </div>
 
       <SiteLegalFooter />

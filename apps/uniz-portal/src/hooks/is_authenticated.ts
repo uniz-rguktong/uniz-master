@@ -68,11 +68,25 @@ export function useIsAuth() {
       "/signin",
       "/ios",
       "/ios-install",
+      "/developers",
+      "/privacy",
+      "/contact",
+      "/examcell",
       "/student/signin",
       "/admin/signin",
       "/admin/signin/",
       "/admin/signin#",
       "/notifications",
+    ];
+
+    const authRedirectOnlyPaths = [
+      "/",
+      "/login",
+      "/signin",
+      "/student/signin",
+      "/admin/signin",
+      "/admin/signin/",
+      "/admin/signin#",
     ];
 
     const logoutAndRedirect = (reason: string) => {
@@ -140,7 +154,7 @@ export function useIsAuth() {
         initPushNotifications(decoded.username, NOTIFICATION_SERVICE_URL);
       }
 
-      if (publicPaths.includes(location.pathname)) {
+      if (authRedirectOnlyPaths.includes(location.pathname)) {
         navigate("/admin");
       }
     } else if (studentToken) {
@@ -172,7 +186,7 @@ export function useIsAuth() {
         initPushNotifications(decoded.username, NOTIFICATION_SERVICE_URL);
       }
 
-      if (publicPaths.includes(location.pathname)) {
+      if (authRedirectOnlyPaths.includes(location.pathname)) {
         navigate("/student");
       }
     } else {

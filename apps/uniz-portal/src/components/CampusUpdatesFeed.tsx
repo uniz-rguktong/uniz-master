@@ -7,6 +7,7 @@ import {
   useCampusUpdates,
 } from "@/hooks/useCampusUpdates";
 import { CAMPUS_UPDATES_FALLBACK } from "@/constants/campusUpdates";
+import { LandingSection, LandingSectionHeader } from "@/components/ui/landing-section";
 
 function updateBody(update: CampusUpdate) {
   return update.content || update.description || "";
@@ -264,17 +265,20 @@ export default function CampusUpdatesFeed({
   }
 
   return (
-    <section id="campus-updates" className={cn("mx-auto w-[94%] max-w-xl space-y-3", className)}>
-      {loading
-        ? null
-        : items.map((item) => (
-            <p
-              key={item.id || updateLabel(item)}
-              className="rounded-[10px] bg-[#EEEEEE] px-5 py-2.5 text-center text-[13px] italic tracking-[0.4px] text-[#061B33]"
-            >
-              {updateLabel(item)}
-            </p>
-          ))}
-    </section>
+    <LandingSection
+      id="campus-updates"
+      className={cn("!pt-10 !pb-12 md:!pt-14 md:!pb-16", className)}
+    >
+      <div className="space-y-5 md:space-y-6">
+        <LandingSectionHeader
+          eyebrow="Live campus updates"
+          title="What's happening on campus,"
+          titleMuted="right now."
+          description="Official announcements from administration — semester registration, examination schedules, circulars, and campus events."
+        />
+
+        <UpdatesTicker items={items} loading={loading} theme="landing" />
+      </div>
+    </LandingSection>
   );
 }

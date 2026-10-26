@@ -36,7 +36,7 @@ export function Layout({ children }: LayoutProps) {
     );
   }
 
-  const isHomePage = location.pathname === "/";
+  const isHomePage = ["/", "/developers", "/privacy"].includes(location.pathname);
 
   return (
     <div

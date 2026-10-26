@@ -100,9 +100,27 @@ export function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-6 flex flex-col sm:flex-row justify-between items-center gap-5">
-        <p className="text-[11px] tracking-wide text-white/35 text-center sm:text-left">
-          © {new Date().getFullYear()} RGUKT Ongole. All rights reserved.
-        </p>
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-[11px] tracking-wide text-white/45 text-center sm:text-left">
+          <p>© {new Date().getFullYear()} RGUKT Ongole. All rights reserved.</p>
+          <span className="hidden sm:inline text-white/20">·</span>
+          <a
+            href="https://uniz.rguktong.in"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white/70 hover:text-white underline-offset-4 hover:underline"
+          >
+            UniZ Portal
+          </a>
+          <span className="hidden sm:inline text-white/20">·</span>
+          <a
+            href="https://uniz.rguktong.in/developers"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white/70 hover:text-white underline-offset-4 hover:underline"
+          >
+            Developed by Software Development Cell (Developers)
+          </a>
+        </div>
         <div className="flex gap-3">
           {[
             { Icon: Facebook, url: "https://www.facebook.com/RGUKTOfficial/" },

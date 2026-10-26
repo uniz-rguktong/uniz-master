@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Github, ArrowUpRight } from "lucide-react";
+import { Github, ArrowUpRight, Code2, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { LandingSection } from "./landing-section";
 
@@ -119,19 +120,31 @@ export default function GlobeFeature({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.0 }}
+          className="flex flex-wrap items-center justify-center gap-3.5"
         >
+          <Link
+            to="/developers"
+            className="group relative inline-flex w-fit items-center gap-2.5 overflow-hidden rounded-[4px] bg-[#0A2540] px-6 py-3 text-[13.5px] font-bold uppercase tracking-[0.06em] text-white shadow-[0_20px_40px_-12px_rgba(10,37,64,0.35)] transition-all duration-300 hover:bg-[#061B33] active:scale-[0.98]"
+          >
+            <Code2 size={15} className="relative text-white" />
+            <span className="relative">Meet the Developers</span>
+            <ArrowRight
+              size={14}
+              className="relative transition-transform duration-200 group-hover:translate-x-0.5"
+            />
+          </Link>
+
           <a
             href="https://github.com/uniz-rguktong"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex w-fit items-center gap-2.5 overflow-hidden rounded-xl bg-navy-950 px-6 py-3 text-[13.5px] font-bold text-white shadow-[0_20px_40px_-12px_rgba(0,0,0,0.3)] transition-all duration-300 hover:shadow-[0_24px_50px_-12px_rgba(0,0,0,0.4)] active:scale-[0.98]"
+            className="group relative inline-flex w-fit items-center gap-2.5 overflow-hidden rounded-[4px] border border-[#0A2540] bg-white px-6 py-3 text-[13.5px] font-bold uppercase tracking-[0.06em] text-[#0A2540] shadow-sm transition-all duration-300 hover:bg-navy-50 active:scale-[0.98]"
           >
-            <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/8 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-            <Github size={15} className="relative fill-white text-white" />
+            <Github size={15} className="relative text-[#0A2540]" />
             <span className="relative">Explore on GitHub</span>
             <ArrowUpRight
               size={14}
-              className="relative opacity-40 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100"
+              className="relative opacity-60 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100"
             />
           </a>
         </motion.div>
