@@ -66,7 +66,7 @@ export function Footer() {
             Empowering gifted rural youth through world-class technical education in Andhra Pradesh.
           </p>
           <div className="flex gap-3 text-sm text-white/50 mt-1">
-            <MapPin className="w-4 h-4 mt-0.5 text-[#0A2540] flex-shrink-0" />
+            <MapPin className="w-4 h-4 mt-0.5 text-white/75 flex-shrink-0" />
             <div className="flex flex-col gap-0.5 leading-relaxed">
               <span className="font-medium text-white/70 tracking-widest text-[10px] uppercase mb-1">
                 Contact

@@ -11,7 +11,7 @@ export const developers = [
     name: "Bhanu Prakash",
     designation: "FrontEnd and UI",
     image:
-      "https://res.cloudinary.com/diipfzmyj/image/upload/v1773550064/1000184711-modified_zmotfe.png",
+      "/assets/developers/bhanu.png",
     url: "https://bhanu-prakash.rguktong.in/",
   },
   {
@@ -19,7 +19,7 @@ export const developers = [
     name: "SitaRam",
     designation: "Security",
     image:
-      "https://res.cloudinary.com/diipfzmyj/image/upload/v1773549648/sita-modified_lw9ulf.png",
+      "/assets/developers/sitaram.png",
     url: "https://seetharam.rguktong.in/",
   },
   {
@@ -27,7 +27,7 @@ export const developers = [
     name: "Anand",
     designation: "AI and Backend",
     image:
-      "https://res.cloudinary.com/diipfzmyj/image/upload/v1773549648/anand-modified_lx5yvi.png",
+      "/assets/developers/anand.png",
     url: "https://anand-velpuri.rguktong.in/",
   },
 ];

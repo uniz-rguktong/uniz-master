@@ -105,7 +105,50 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-sm border-b border-slate-200/80">
+      <header className="sticky top-0 z-50 w-full bg-white border-b border-[#D8E0EA] shadow-[0_1px_2px_rgba(6,21,39,0.05)]">
+        {/* Tier 1: Harvard/MIT-style Slim Institutional Utility Bar */}
+        <div className="bg-[#061527] text-white/80 border-b border-white/10">
+          <div className="w-full max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 flex h-8 items-center justify-between text-[11.5px] tracking-[0.03em]">
+            <div className="flex items-center gap-2 truncate">
+              <span className="font-semibold text-white/95">RGUKT ANDHRA PRADESH</span>
+              <span className="hidden sm:inline text-white/30">·</span>
+              <span className="hidden sm:inline text-white/75">
+                Catering to the Educational Needs of Gifted Rural Youth
+              </span>
+            </div>
+            <div className="flex items-center gap-4 shrink-0">
+              <Link to="/academics/AcademicCalender" className="hidden md:inline text-white/80 hover:text-white transition-colors">
+                Academic Calendar
+              </Link>
+              <Link to="/notifications/tenders" className="hidden md:inline text-white/80 hover:text-white transition-colors">
+                Tenders
+              </Link>
+              <a
+                href="https://uniz.rguktong.in/download/uniz.apk"
+                download="uniz-android.apk"
+                className="text-white/85 hover:text-white transition-colors"
+              >
+                Android App
+              </a>
+              <a
+                href="https://uniz.rguktong.in/ios"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/85 hover:text-white transition-colors"
+              >
+                iOS App
+              </a>
+              <a
+                href="https://uniz.rguktong.in/developers"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:inline text-white/85 hover:text-white transition-colors"
+              >
+                Software Development Cell
+              </a>
+            </div>
+          </div>
+        </div>
         <div className="w-full max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 flex h-[64px] items-center justify-between">
 
           {/* Wordmark */}

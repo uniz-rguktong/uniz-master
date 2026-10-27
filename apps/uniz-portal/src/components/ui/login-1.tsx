@@ -1,232 +1,356 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft } from "lucide-react";
-import { UNIZ_CAMPUS_LABEL, UNIZ_SUPPORT_EMAIL } from "@/constants/branding";
+import React from "react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Download, ExternalLink, ShieldCheck, Smartphone } from "lucide-react";
 import { cn } from "@/lib/utils";
+import SiteLegalFooter from "@/components/SiteLegalFooter";
+import { UNIZ_APK_PATH, openIosDownloadModal } from "@/constants/downloads";
 
-interface LoginScreenProps {
-  isLogin?: boolean;
-  onToggleMode?: () => void;
-  onBack?: () => void;
+export const examcellLoginLabelClass =
+  "block text-[13px] font-bold tracking-[0.01em] text-[#0A2540] mb-1.5 font-form";
+
+export const examcellLoginInputClass =
+  "w-full h-11 rounded-[2px] border border-[#CBD5E1] bg-white px-3.5 text-[14.5px] font-medium text-[#0F172A] placeholder:text-[#94A3B8] placeholder:font-normal focus:outline-none focus:border-[#0A2540] focus:ring-2 focus:ring-[#0A2540]/12 font-form transition-all";
+
+export const examcellLoginLinkClass =
+  "inline-block text-[12.5px] font-semibold text-[#0A2540] hover:underline underline-offset-4 bg-transparent border-0 cursor-pointer p-0 mt-1 font-form";
+
+export const examcellLoginButtonClass =
+  "w-full h-11 rounded-[2px] border-0 bg-[#0A2540] px-6 text-[13.5px] font-bold uppercase tracking-[0.06em] text-white shadow-[0_1px_2px_rgba(10,37,64,0.15)] transition-colors hover:bg-[#061B33] active:opacity-95 disabled:opacity-75 disabled:cursor-not-allowed font-form cursor-pointer";
+
+export interface LoginProps {
   title?: string;
   subtitle?: string;
+  bottomText?: React.ReactNode;
   children?: React.ReactNode;
-  heroTitle?: string;
-  bottomText?: string;
+  isLogin?: boolean;
+  onBack?: () => void;
   role?: "student" | "admin" | "faculty";
   stepKey?: string;
-  /** Optional lines under @ROLE (ExamCell-style > bullets) */
-  roleFeatures?: string[];
-  formError?: string | null;
 }
 
-const roleMeta: Record<
-  NonNullable<LoginScreenProps["role"]>,
-  { atLabel: string; features: string[] }
+const ROLE_META: Record<
+  NonNullable<LoginProps["role"]>,
+  {
+    badge: string;
+    heading: string;
+    description: string;
+    bullets: string[];
+  }
 > = {
   student: {
-    atLabel: "@STUDENT",
-    features: ["Academic results", "Sem registrations", "Attendance & grades"],
-  },
-  admin: {
-    atLabel: "@STAFF",
-    features: ["Campus operations", "Records & uploads", "Approvals"],
+    badge: "Student Single Sign-On",
+    heading: "RGUKT Ongole Student Portal",
+    description:
+      "Authenticate with your official University ID to access academic records, examination grade sheets, and residential campus services.",
+    bullets: [
+      "End-Semester Examination Results & SGPA/CGPA Transcripts",
+      "Semester Course Registration & Credit Ledger",
+      "Subject-Wise Biometric & Class Attendance Records",
+      "Hostel Outpass & Leave Clearance Requests",
+    ],
   },
   faculty: {
-    atLabel: "@FACULTY",
-    features: ["Classes & marks", "Attendance", "Student lookup"],
+    badge: "Faculty Authentication",
+    heading: "Faculty Academic Portal",
+    description:
+      "Sign in with your departmental faculty credentials to manage course rosters, attendance logs, and examination grade submissions.",
+    bullets: [
+      "Departmental Course Allocation & Student Rosters",
+      "Lecture & Laboratory Attendance Submission",
+      "Mid-Semester & End-Semester Grade Uploads",
+      "Academic Circulars & Departmental Notices",
+    ],
+  },
+  admin: {
+    badge: "Administrative Authentication",
+    heading: "Campus & Examination Administration",
+    description:
+      "Authorized sign-in for the Office of the Controller of Examinations, Deans, Head of Departments, Chief Warden, and Campus Security.",
+    bullets: [
+      "Examination Results Publication & Curriculum Management",
+      "Student & Faculty Directory Administration",
+      "Hostel Warden Outpass Approvals & Security Gate Desk",
+      "Official Campus Announcements & Push Bulletins",
+    ],
   },
 };
 
-/**
- * ExamCell-faithful auth layout:
- * 60px gradient header · split @ROLE panel + overlapping LOGIN PORTAL · #eee footer
- */
-export default function LoginScreen({
-  isLogin = true,
-  onToggleMode,
-  onBack,
-  title,
+export const LoginScreen = ({
+  title = "University Sign In",
   subtitle,
-  children,
   bottomText,
+  children,
+  onBack,
   role = "student",
-  stepKey,
-  roleFeatures,
-  formError,
-}: LoginScreenProps) {
-  const meta = roleMeta[role];
-  const features = roleFeatures ?? meta.features;
+  stepKey = "signin",
+}: LoginProps) => {
+  const meta = ROLE_META[role] ?? ROLE_META.student;
+
+  const defaultSubtitle =
+    stepKey === "signin"
+      ? role === "student"
+        ? "Sign in using your RGUKT Ongole University ID and password."
+        : "Sign in using your authorized staff or administrative credentials."
+      : subtitle;
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-white font-sans selection:bg-[#EEEEEE] selection:text-[#0A2540]">
-      {/* Fixed 60px ExamCell header */}
-      <header className="fixed inset-x-0 top-0 z-[100] flex h-[60px] items-center portal-header-chrome text-white">
-        <div className="mx-auto flex w-[94%] items-center justify-between">
-          <div className="flex min-w-0 items-center gap-2.5">
-            {onBack && (
+    <div className="min-h-screen w-full flex flex-col bg-[#F8FAFC] text-[#0F172A] font-sans">
+      {/* Tier 1: Slim Institutional Utility Bar */}
+      <div className="bg-[#061527] text-white/80 border-b border-white/10">
+        <div className="mx-auto flex h-8 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 text-[11.5px] tracking-[0.03em]">
+          <div className="flex items-center gap-2 truncate">
+            <span className="font-semibold text-white/95">RGUKT ONGOLE</span>
+            <span className="hidden sm:inline text-white/30">·</span>
+            <span className="hidden sm:inline text-white/75">
+              Office of the Controller of Examinations &amp; Academic Affairs
+            </span>
+          </div>
+          <div className="flex items-center gap-4 shrink-0">
+            <a
+              href={UNIZ_APK_PATH}
+              download="uniz-android.apk"
+              className="inline-flex items-center gap-1 text-white/80 hover:text-white transition-colors"
+            >
+              <Download className="w-3 h-3" />
+              <span>Android App</span>
+            </a>
+            <button
+              type="button"
+              onClick={() => openIosDownloadModal()}
+              className="inline-flex items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer"
+            >
+              <Smartphone className="w-3 h-3" />
+              <span>iOS App</span>
+            </button>
+            <Link
+              to="/developers"
+              className="hidden sm:inline text-white/80 hover:text-white transition-colors"
+            >
+              Developers
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Tier 2: Formal Authentication Header */}
+      <header className="bg-[#0A2540] text-white border-b border-[#163A5C]">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Link to="/" className="flex items-center gap-3.5 text-white no-underline">
+            <img
+              src="/logo.png"
+              alt="RGUKT Ongole UniZ Seal"
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-full object-cover shrink-0 border border-white/25 bg-[#061527]"
+              decoding="async"
+            />
+            <div className="flex flex-col">
+              <div className="flex items-baseline gap-2.5">
+                <span className="text-[21px] font-bold tracking-[0.03em] text-white leading-none">
+                  uniZ
+                </span>
+                <span className="hidden sm:inline text-white/30">|</span>
+                <span className="hidden sm:inline text-[13px] font-medium text-white/90 leading-none">
+                  University Authentication Service
+                </span>
+              </div>
+              <span className="text-[10.5px] tracking-[0.08em] uppercase text-white/65 mt-1 leading-none">
+                Rajiv Gandhi University of Knowledge Technologies · Ongole
+              </span>
+            </div>
+          </Link>
+
+          <div className="flex items-center gap-3">
+            {onBack ? (
               <button
                 type="button"
                 onClick={onBack}
-                className="inline-flex h-8 items-center gap-1 text-sm font-medium tracking-[0.5px] text-white/90 hover:text-white"
-                aria-label="Back"
+                className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-[2px] border border-white/25 bg-white/5 hover:bg-white/10 text-white text-[12.5px] font-semibold transition-colors cursor-pointer"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Portal Home</span>
               </button>
+            ) : (
+              <Link
+                to="/"
+                className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-[2px] border border-white/25 bg-white/5 hover:bg-white/10 text-white text-[12.5px] font-semibold transition-colors"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Portal Home</span>
+              </Link>
             )}
-            <a
-              href="/"
-              className="flex min-w-0 items-center gap-2.5 text-white no-underline"
-            >
-              <img
-                src="/logo.png"
-                alt="UniZ — RGUKT Ongole"
-                className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-white/25 shadow-sm"
-              />
-              <h2 className="truncate text-[20px] font-bold uppercase tracking-[2px] sm:text-[22px]">
-                Exam Cell
-              </h2>
-            </a>
           </div>
-          <p className="hidden shrink-0 text-right text-[15px] font-bold uppercase tracking-[1.5px] text-white sm:block sm:text-[17px]">
-            {UNIZ_CAMPUS_LABEL}
-          </p>
         </div>
       </header>
 
-      {/* Body — ExamCell split login */}
-      <main className="relative flex flex-1 flex-col bg-white pt-[60px]">
-        <div className="pointer-events-none absolute right-[3%] top-6 z-10 hidden max-w-sm lg:block">
-          <p className="pointer-events-auto rounded-[10px] bg-[#EEEEEE] px-5 py-2.5 text-[13px] italic tracking-[1px] text-[#061B33]">
-            For login issues contact @ {UNIZ_SUPPORT_EMAIL}
-          </p>
-        </div>
-        <div className="mx-auto flex w-[94%] flex-1 flex-col py-6 md:py-10 lg:min-h-[calc(100vh-110px)] lg:flex-row lg:items-center lg:gap-[2%]">
-          {/* Left: @ROLE gradient strip */}
-          <div className="relative mb-6 w-full lg:mb-0 lg:w-[49%]">
-            <div
-              className="relative min-h-[200px] rounded-[2px] px-4 pb-6 pt-8 text-white shadow-examcell md:min-h-[250px] md:px-5 md:pt-9"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle farthest-corner at 16.5% 37.3%, rgba(10,37,64,1) 0.1%, rgba(2,18,39,1) 90%)",
-              }}
-            >
-              <div className="max-w-[320px] lg:max-w-[38%]">
-                <b className="mb-5 block text-center text-[20px] font-bold uppercase tracking-[1px] text-[#FAFAFA]">
-                  {meta.atLabel}
-                </b>
-                {features.map((line) => (
-                  <span
-                    key={line}
-                    className="mt-2.5 block pl-6 text-[11px] uppercase tracking-[0.8px] text-[#FAFAFA]"
-                  >
-                    <b className="mr-1">&gt;</b> {line}
+      {/* Main Centered HarvardKey-Style Institutional Sign-In Sheet */}
+      <main className="flex-1 flex flex-col justify-center py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-4xl">
+          <div className="grid grid-cols-1 md:grid-cols-12 border border-[#CBD5E1] bg-white rounded-[2px] shadow-[0_2px_10px_rgba(10,37,64,0.06)] overflow-hidden">
+            {/* Left Institutional Context Column (5 Cols) */}
+            <div className="order-2 md:order-1 md:col-span-5 bg-[#0A2540] text-white p-6 sm:p-8 flex flex-col justify-between space-y-8 border-t md:border-t-0 md:border-r border-[#163A5C]">
+              <div className="space-y-5">
+                <div className="flex items-center gap-2.5 border-b border-white/15 pb-3.5">
+                  <img
+                    src="/rgukt-logo.png"
+                    alt="RGUKT Emblem"
+                    width={24}
+                    height={28}
+                    className="h-6 w-auto object-contain shrink-0"
+                  />
+                  <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/85">
+                    {meta.badge}
                   </span>
-                ))}
-                <p className="mt-6 text-[12px] font-normal normal-case tracking-[0.5px] text-white/90 md:mt-8">
-                  For login issues contact @ {UNIZ_SUPPORT_EMAIL}
-                </p>
+                </div>
+
+                <div>
+                  <h2 className="text-[22px] font-bold text-white leading-snug tracking-[-0.01em]">
+                    {meta.heading}
+                  </h2>
+                  <p className="text-[13px] text-white/80 leading-relaxed mt-2">
+                    {meta.description}
+                  </p>
+                </div>
+
+                <div className="space-y-2.5 pt-1">
+                  <p className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-white/65">
+                    Authorized Portal Services
+                  </p>
+                  <ul className="space-y-2 text-[12.5px] text-white/85">
+                    {meta.bullets.map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <span className="text-white/60 font-bold leading-4">·</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
 
-              {/* Overlapping LOGIN PORTAL card (desktop) */}
-              <div
-                className="relative z-10 mt-6 w-full overflow-hidden rounded-[1px] px-6 py-8 text-white uppercase tracking-[0.5px] shadow-examcell-lg md:px-8 lg:absolute lg:right-[5%] lg:top-1/2 lg:mt-0 lg:w-[60%] lg:-translate-y-[48.5%] lg:min-h-[300px]"
-                style={{
-                  backgroundImage:
-                    "radial-gradient(circle farthest-corner at 16.5% 37.3%, rgba(10,37,64,1) 0.1%, rgba(2,18,39,1) 90%)",
-                  backgroundColor: "#032B3F",
-                }}
-              >
-                {formError ? (
-                  <div className="mb-4 min-h-[30px] bg-[#EA2027] px-2.5 text-[13px] font-normal normal-case leading-[30px] tracking-[1px]">
-                    &gt;&gt; {formError}
-                  </div>
-                ) : null}
-
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={stepKey || title}
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+              <div className="space-y-3 border-t border-white/15 pt-4 text-[12px] text-white/75">
+                <div className="flex items-center gap-2 text-white/90 font-semibold">
+                  <ShieldCheck className="w-4 h-4 shrink-0" />
+                  <span>Official Mobile Companion Apps</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href={UNIZ_APK_PATH}
+                    download="uniz-android.apk"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-[2px] border border-white/25 bg-white/5 hover:bg-white/10 text-white text-[11.5px] font-semibold transition-colors"
                   >
-                    <h2 className="mb-6 font-form text-[20px] font-bold tracking-[2px]">
-                      {title || (isLogin ? "Login Portal" : "Create Account")}
-                    </h2>
-                    {subtitle ? (
-                      <p className="mb-4 text-[12px] font-normal normal-case tracking-[1px] text-[#EEEEEE]">
-                        {subtitle}
-                      </p>
-                    ) : null}
-                  </motion.div>
-                </AnimatePresence>
-
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={stepKey || "form"}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.15 }}
-                    className="examcell-login-form font-form normal-case"
+                    <Download className="w-3 h-3" />
+                    <span>Android (.apk)</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => openIosDownloadModal()}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-[2px] border border-white/25 bg-white/5 hover:bg-white/10 text-white text-[11.5px] font-semibold transition-colors cursor-pointer"
                   >
-                    {children}
-                  </motion.div>
-                </AnimatePresence>
+                    <Smartphone className="w-3 h-3" />
+                    <span>iOS App</span>
+                  </button>
+                </div>
+              </div>
+            </div>
 
-                {onToggleMode && (
-                  <div className="mt-5 text-[12px] font-normal normal-case tracking-[1px] text-[#EEEEEE]">
-                    {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-                    <button
-                      type="button"
-                      onClick={onToggleMode}
-                      className="font-semibold text-white underline underline-offset-2"
-                    >
-                      {isLogin ? "Sign up" : "Sign in"}
-                    </button>
-                  </div>
-                )}
+            {/* Right Sign-In Form Column (7 Cols) */}
+            <div className="order-1 md:order-2 md:col-span-7 bg-white p-6 sm:p-9 flex flex-col justify-between">
+              <div className="space-y-6">
+                {/* Role Switcher Tabs */}
+                <div className="flex items-center border-b border-[#E2E8F0] gap-1">
+                  <Link
+                    to="/student/signin"
+                    className={cn(
+                      "px-3.5 py-2 text-[12.5px] font-bold tracking-[0.03em] border-b-2 -mb-px transition-colors",
+                      role === "student"
+                        ? "border-[#0A2540] text-[#0A2540]"
+                        : "border-transparent text-[#64748B] hover:text-[#0A2540]",
+                    )}
+                  >
+                    Student Portal
+                  </Link>
+                  <Link
+                    to="/faculty/signin"
+                    className={cn(
+                      "px-3.5 py-2 text-[12.5px] font-bold tracking-[0.03em] border-b-2 -mb-px transition-colors",
+                      role === "faculty"
+                        ? "border-[#0A2540] text-[#0A2540]"
+                        : "border-transparent text-[#64748B] hover:text-[#0A2540]",
+                    )}
+                  >
+                    Faculty Portal
+                  </Link>
+                  <Link
+                    to="/admin/signin"
+                    className={cn(
+                      "px-3.5 py-2 text-[12.5px] font-bold tracking-[0.03em] border-b-2 -mb-px transition-colors",
+                      role === "admin"
+                        ? "border-[#0A2540] text-[#0A2540]"
+                        : "border-transparent text-[#64748B] hover:text-[#0A2540]",
+                    )}
+                  >
+                    Administration
+                  </Link>
+                </div>
+
+                {/* Form Title & Subtitle */}
+                <div>
+                  <h1 className="text-[22px] sm:text-[24px] font-bold tracking-[-0.01em] text-[#0A2540]">
+                    {title === "Login Portal" ? "University Sign In" : title}
+                  </h1>
+                  {(defaultSubtitle || subtitle) && (
+                    <p className="text-[13.5px] text-[#475569] mt-1 leading-relaxed">
+                      {subtitle || defaultSubtitle}
+                    </p>
+                  )}
+                </div>
+
+                {/* Form Body */}
+                <div key={stepKey} className="w-full">
+                  {children}
+                </div>
+
+                {bottomText && <div className="pt-1">{bottomText}</div>}
+              </div>
+
+              {/* Institutional Help & Policy Note */}
+              <div className="mt-8 pt-4 border-t border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[12px] text-[#64748B]">
+                <span>
+                  Assistance:{" "}
+                  <a
+                    href="mailto:webadmin@rguktong.ac.in"
+                    className="font-semibold text-[#0A2540] hover:underline underline-offset-2"
+                  >
+                    webadmin@rguktong.ac.in
+                  </a>
+                </span>
+                <div className="flex items-center gap-3">
+                  <Link
+                    to="/developers"
+                    className="font-semibold text-[#0A2540] hover:underline underline-offset-2"
+                  >
+                    Software Development Cell
+                  </Link>
+                  <span>·</span>
+                  <a
+                    href="https://rguktong.in"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-0.5 font-semibold text-[#0A2540] hover:underline underline-offset-2"
+                  >
+                    <span>rguktong.in</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </main>
 
-      {/* ExamCell #eee footer */}
-      <footer className="relative z-20 mt-auto h-[50px] bg-[#EEEEEE] font-form text-[14px] font-bold tracking-[0.5px] text-[#061B33]">
-        <div className="mx-auto flex h-full w-[94%] items-center justify-between">
-          <span className="flex items-center gap-2.5 truncate uppercase">
-            <img
-              src="/logo.png"
-              alt="UniZ"
-              className="h-6 w-6 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/15 shadow-sm"
-            />
-            <span>
-              Copyright © {UNIZ_CAMPUS_LABEL}
-              {bottomText ? ` · ${bottomText}` : ""}
-            </span>
-          </span>
-          <a
-            href="/developers"
-            className="hidden shrink-0 text-[#061B33] no-underline hover:underline sm:inline"
-          >
-            Developed By Software Development Cell
-          </a>
-        </div>
-      </footer>
+      <SiteLegalFooter />
     </div>
   );
-}
+};
 
-/** Class helpers for fields inside the ExamCell login card */
-export const examcellLoginLabelClass =
-  "mb-1 block text-[12px] font-bold uppercase tracking-[1px] text-white font-form";
-
-export const examcellLoginInputClass =
-  "mb-4 w-full box-border rounded-[1px] border-0 bg-white px-2.5 py-2.5 text-[15px] font-bold tracking-[1px] text-[#0A2540] outline-none font-form placeholder:font-medium placeholder:text-[#9bb0c4]";
-
-export const examcellLoginButtonClass =
-  "mt-2 inline-flex h-[35px] items-center justify-center rounded-[1px] bg-[#34495e] px-[45px] font-form text-[13px] font-bold uppercase tracking-[2px] text-white shadow-examcell hover:bg-[#2c3e50] disabled:opacity-40";
-
-export const examcellLoginLinkClass =
-  "mt-5 block text-[12px] font-normal capitalize tracking-[1px] text-[#EEEEEE] underline-offset-2 hover:underline";
+export default LoginScreen;

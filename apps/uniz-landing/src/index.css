@@ -152,10 +152,9 @@ html {
   }
 
   .director-photo {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
+  opacity: 1;
+  transform: none;
+}
 }
 
 /* Hero crossfade — images fill the absolute-positioned slide div */

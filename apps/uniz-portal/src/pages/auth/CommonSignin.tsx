@@ -251,15 +251,15 @@ const loginLabelClass = examcellLoginLabelClass;
 
 const loginInputClass = cn(examcellLoginInputClass, "login-field");
 
-const loginInputWithIconClass = cn(loginInputClass, "!pl-10 !pr-3.5");
+const loginInputWithIconClass = cn(loginInputClass, "!px-3.5");
 
-const loginInputPasswordClass = cn(loginInputClass, "!pl-10 !pr-10");
+const loginInputPasswordClass = cn(loginInputClass, "!pl-3.5 !pr-10");
 
 const loginBtnClass = cn(examcellLoginButtonClass, "w-full uniz-primary-btn");
 
 const loginSecondaryBtnClass = cn(
   portalSecondaryButtonClass,
-  "w-full !min-h-9 !text-[12px] !tracking-[1px] border-white/40 bg-transparent text-white hover:bg-white hover:text-[#0A2540]",
+  "w-full !min-h-9 !text-[12px] !tracking-[0.04em] border-[#0A2540] bg-white text-[#0A2540] hover:bg-[#0A2540] hover:text-white",
 );
 
 const loginLinkBtnClass = examcellLoginLinkClass;
@@ -853,7 +853,7 @@ export default function Signin({ type }: SigninProps) {
 
   const stepTitle =
     step === "signin"
-      ? "Login Portal"
+      ? "University Sign In"
       : step === "forgot"
         ? "Reset Password"
         : "New Password";
@@ -874,7 +874,7 @@ export default function Signin({ type }: SigninProps) {
           {step === "signin" && (
             <div className="space-y-4">
               <Input
-                label={type === "student" ? "Your Id:" : "Your Id:"}
+                label={type === "student" ? "University ID" : "Institutional ID"}
                 labelClassName={loginLabelClass}
                 icon={<User className="w-4 h-4 text-[#5A7A94]" />}
                 value={username}
@@ -885,7 +885,7 @@ export default function Signin({ type }: SigninProps) {
                       : e.target.value,
                   )
                 }
-                placeholder="Username"
+                placeholder={type === "student" ? "e.g., O210001" : "Username or Staff ID"}
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck={false}
@@ -894,11 +894,7 @@ export default function Signin({ type }: SigninProps) {
               />
               <div className="space-y-1">
                 <Input
-                  label={
-                    type === "student"
-                      ? "Your Pass: (Default ID@rguktong)"
-                      : "Your Pass:"
-                  }
+                  label="Password"
                   labelClassName={loginLabelClass}
                   type="password"
                   icon={<Lock className="w-4 h-4 text-[#5A7A94]" />}
@@ -908,13 +904,22 @@ export default function Signin({ type }: SigninProps) {
                   autoComplete="current-password"
                   className={loginInputPasswordClass}
                 />
-                <button
-                  type="button"
-                  className={loginLinkBtnClass}
-                  onClick={() => setStep("forgot")}
-                >
-                  Forgot password?
-                </button>
+                <div className="flex items-center justify-between pt-0.5">
+                  {type === "student" ? (
+                    <span className="text-[11.5px] text-[#64748B]">
+                      Default student password: ID@rguktong
+                    </span>
+                  ) : (
+                    <span />
+                  )}
+                  <button
+                    type="button"
+                    className={loginLinkBtnClass}
+                    onClick={() => setStep("forgot")}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
               </div>
 
               {requiresCaptcha() && (
@@ -939,18 +944,14 @@ export default function Signin({ type }: SigninProps) {
                 size="lg"
                 isLoading={isLoading}
                 type="submit"
-                disabled={
-                  !username.trim() ||
-                  !password.trim() ||
-                  (requiresCaptcha() && !captchaReady)
-                }
+                disabled={isLoading || (requiresCaptcha() && !captchaReady)}
               >
                 <span className="relative z-10">
                   {isLoading
                     ? "Signing in…"
                     : requiresCaptcha() && !captchaReady
                       ? "Complete security check"
-                      : "Login"}
+                      : "Sign In"}
                 </span>
               </Button>
             </div>
@@ -960,7 +961,7 @@ export default function Signin({ type }: SigninProps) {
           {step === "forgot" && (
             <div className="space-y-4">
               <Input
-                label="Your Id:"
+                label={type === "student" ? "University ID" : "Institutional ID"}
                 labelClassName={loginLabelClass}
                 icon={<User className="w-4 h-4" />}
                 value={username}

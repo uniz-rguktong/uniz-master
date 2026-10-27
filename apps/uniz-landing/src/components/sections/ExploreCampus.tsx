@@ -69,7 +69,6 @@ export function ExploreCampus() {
                       src={area.imageUrl}
                       alt={area.title}
                       className="w-full h-full object-cover"
-                      loading="lazy"
                     />
                   </div>
                 </div>

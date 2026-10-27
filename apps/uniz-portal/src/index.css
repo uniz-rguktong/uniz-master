@@ -108,24 +108,30 @@
     -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
   }
 
-  /* ExamCell login card form — force light inputs on navy panel */
+  /* HarvardKey-inspired institutional login form */
   .examcell-login-form label {
-    color: #ffffff !important;
+    color: #0a2540;
   }
 
-  .examcell-login-form input,
-  .examcell-login-form .login-field {
-    background: #ffffff !important;
-    color: #0a2540 !important;
-    border: none !important;
-    border-radius: 1px !important;
+  /* Institutional wordmark — Cabin Condensed */
+  .uniz-logo-wordmark {
+    font-family: "Cabin Condensed", "Cabin", system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--portal-navy, #0a2540);
   }
 
-  .examcell-login-form button.uniz-primary-btn,
-  .examcell-login-form .uniz-primary-btn {
-    background: #34495e !important;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+  .uniz-primary-btn {
+    @apply min-h-10 w-full flex items-center justify-center font-semibold text-[14px] tracking-[0.04em] transition-colors duration-150;
+    font-family: theme("fontFamily.form");
+    border-radius: 2px;
+    background: #0a2540;
+    color: #fff;
+    box-shadow: 0 1px 2px rgba(10, 37, 64, 0.12);
+    @apply hover:bg-[#061b33] active:opacity-95;
+    @apply focus:ring-2 focus:outline-none;
+    --tw-ring-color: rgb(10 37 64 / 0.25);
+    @apply disabled:opacity-75 disabled:cursor-not-allowed;
   }
 
   /* Institutional wordmark — Open Sans uppercase (no cursive) */
@@ -530,9 +536,9 @@
 }
 
 .portal-theme body {
-  background-color: #fafafa;
-  color: #222222;
-  font-family: "Open Sans", system-ui, sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: "Cabin Condensed", "Cabin", system-ui, sans-serif;
 }
 
 .portal-theme h1,
@@ -540,25 +546,24 @@
 .portal-theme h3,
 .portal-theme h4 {
   letter-spacing: -0.01em;
-  font-family: "Open Sans", system-ui, sans-serif;
+  font-family: "Cabin Condensed", "Cabin", system-ui, sans-serif;
 }
 
 .portal-theme .bg-premium-gradient,
 .portal-theme .portal-page-shell {
-  background: #fafafa !important;
+  background: #f8fafc !important;
 }
 
 .portal-theme .uniz-primary-btn {
-  background-color: #34495e;
+  background-color: #0a2540;
   color: #ffffff;
-  border-radius: 1px;
-  font-family: "Cabin", "Open Sans", sans-serif;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  border-radius: 2px;
+  font-family: "Cabin Condensed", "Cabin", sans-serif;
+  letter-spacing: 0.04em;
 }
 
 .portal-theme .uniz-primary-btn:hover:not(:disabled) {
-  background-color: #2c3e50;
+  background-color: #061b33;
 }
 
 .portal-theme .uniz-primary-btn:focus {

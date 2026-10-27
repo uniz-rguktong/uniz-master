@@ -75,7 +75,7 @@ export function Stats({ stats }: { stats: readonly any[] }) {
                   >
                     0
                   </span>
-                  <span className="font-serif text-2xl text-[#0A2540] leading-none">+</span>
+                  <span className="font-serif text-2xl text-white/80 leading-none">+</span>
                 </div>
                 <p className="mt-4 text-[11px] sm:text-xs font-medium tracking-[0.14em] uppercase text-white/50 leading-relaxed">
                   {stat.label}

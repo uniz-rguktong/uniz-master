@@ -1,0 +1,18 @@
+import {
+  ANDROID_APK_URL,
+  ANDROID_APK_FILENAME,
+  IOS_PROFILE_URL,
+  IOS_PROFILE_FILENAME,
+  IOS_INSTALL_URL,
+  openIosDownloadModal,
+} from "@/lib/androidApp";
+
+export const UNIZ_APK_PATH = ANDROID_APK_URL;
+export {
+  ANDROID_APK_URL,
+  ANDROID_APK_FILENAME,
+  IOS_PROFILE_URL,
+  IOS_PROFILE_FILENAME,
+  IOS_INSTALL_URL,
+  openIosDownloadModal,
+};
