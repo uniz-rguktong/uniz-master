@@ -263,7 +263,7 @@ export default function Sidebar({ content }: MainContent) {
         )}
       </AnimatePresence>
 
-      <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between border-b border-white/[0.08] bg-[#021227]/[0.92] px-4 text-white backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[#021227]/[0.88] md:px-6">
+      <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between border-b border-white/[0.08] bg-[#021227]/[0.96] px-4 text-white backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[#021227]/[0.94] md:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
