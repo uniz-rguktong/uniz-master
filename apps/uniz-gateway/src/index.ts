@@ -1,5 +1,6 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
+import { isLoginRateLimitEnforced } from "@uniz/shared";
 import cors from "cors";
 import axios from "axios";
 import path from "path";
@@ -110,6 +111,19 @@ const gatewayIpLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   validate: { xForwardedForHeader: false },
+  // Observe by default: log and let the request through unless
+  // RATE_LIMIT_MODE=enforce.
+  handler: (req, res, next, options) => {
+    if (!isLoginRateLimitEnforced()) {
+      console.warn(`[gateway] rate limit observed for ${req.ip}`);
+      return next();
+    }
+    res.status(options.statusCode).json({
+      success: false,
+      message: "Too many requests. Please try again shortly.",
+      code: "GATEWAY_RATE_LIMIT",
+    });
+  },
 });
 
 app.use(gatewayIpLimiter as unknown as express.RequestHandler);
