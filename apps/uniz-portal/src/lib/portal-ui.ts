@@ -104,13 +104,13 @@ export const portalSidebarClass =
   "flex w-[240px] shrink-0 flex-col bg-[#F8FAFC] border-r border-[#E2E8F0] text-[#0A2540]";
 
 export const portalSidebarItemClass =
-  "flex w-full items-center gap-3 px-5 py-3 text-left text-[13.5px] font-medium text-[#334155] border-l-[3px] border-transparent transition-colors hover:bg-[#F1F5F9] hover:text-[#0A2540]";
+  "group relative mx-3 flex w-[calc(100%-1.5rem)] min-h-[44px] items-center gap-3 rounded-md px-3 text-left text-[14px] font-medium text-[#475569] transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] hover:bg-[#F1F5F9] hover:text-[#0A2540] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A2540]";
 
 export const portalSidebarItemActiveClass =
-  "bg-white text-[#0A2540] font-semibold border-l-[3px] border-l-[#0A2540] shadow-[0_1px_2px_rgba(10,37,64,0.04)]";
+  "bg-[#0A2540] !text-white font-semibold shadow-[0_8px_20px_-12px_rgba(10,37,64,0.8)] hover:!bg-[#0A2540] before:absolute before:-left-3 before:top-2 before:bottom-2 before:w-[3px] before:rounded-r-full before:bg-[#EA2027]";
 
 export const portalLogoutPillClass =
-  "mx-4 mb-5 inline-flex h-10 items-center justify-center gap-2 rounded-[2px] bg-[#0A2540] px-5 text-[12px] font-semibold uppercase tracking-[0.08em] text-white hover:bg-[#061B33] transition-colors";
+  "mx-3 mb-4 inline-flex h-11 items-center justify-center gap-2 rounded-md border border-[#E2E8F0] bg-white px-5 text-[13px] font-semibold text-[#0A2540] hover:border-[#EA2027] hover:bg-[#EA2027] hover:text-white transition-colors duration-150";
 
 export const portalPageTitleClass =
   "mb-6 border-b border-[#E2E8F0] pb-3.5 text-left text-[18px] font-bold tracking-[-0.01em] text-[#0A2540] font-sans";
