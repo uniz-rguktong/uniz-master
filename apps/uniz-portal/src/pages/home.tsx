@@ -132,7 +132,7 @@ export default function Home() {
                   </span>
                 </div>
 
-                <h1 className="text-[30px] sm:text-[38px] lg:text-[44px] font-bold tracking-[-0.02em] text-[#0A2540] leading-[1.12]">
+                <h1 className="text-[34px] sm:text-[44px] lg:text-[52px] font-bold tracking-[-0.025em] text-[#0A2540] leading-[1.05]">
                   Unified Academic, Examination &amp; Campus Operations Portal
                 </h1>
 
@@ -153,7 +153,7 @@ export default function Home() {
                     onClick={() =>
                       navigate(isAuth ? portalPath : "/student/signin")
                     }
-                    className="inline-flex items-center justify-center gap-2.5 h-11 px-6 rounded-[2px] bg-[#0A2540] hover:bg-[#061B33] text-white text-[13.5px] font-bold tracking-[0.04em] uppercase transition-colors cursor-pointer shadow-xs"
+                    className="inline-flex items-center justify-center gap-2.5 h-11 px-6 rounded-md bg-[#0A2540] hover:bg-[#061B33] text-white text-[15px] font-semibold transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] cursor-pointer shadow-[0_1px_2px_rgba(10,37,64,0.15),inset_0_1px_0_rgba(255,255,255,0.08)]"
                   >
                     <span>
                       {isAuth ? "Continue to Portal" : "Student Portal Sign In"}
@@ -163,7 +163,7 @@ export default function Home() {
 
                   <Link
                     to="/admin/signin"
-                    className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-[2px] border border-[#0A2540] bg-white hover:bg-[#0A2540] text-[#0A2540] hover:text-white text-[13.5px] font-bold tracking-[0.04em] uppercase transition-colors"
+                    className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-md border border-[#E2E8F0] bg-white hover:border-[#D8E0EA] hover:bg-[#F8FAFC] text-[#0A2540] text-[15px] font-semibold shadow-[0_1px_2px_rgba(10,37,64,0.04)] transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)]"
                   >
                     <span>Faculty &amp; Staff Sign In</span>
                   </Link>
@@ -180,7 +180,7 @@ export default function Home() {
                   <a
                     href={UNIZ_APK_PATH}
                     download="uniz-android.apk"
-                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[2px] border border-[#CBD5E1] bg-white hover:border-[#0A2540] text-[#0A2540] font-semibold transition-colors"
+                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md border border-[#E2E8F0] bg-white hover:border-[#D8E0EA] hover:bg-[#F8FAFC] duration-150 text-[#0A2540] font-semibold transition-colors"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download Android App (.apk)</span>
@@ -188,7 +188,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => openIosDownloadModal()}
-                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[2px] border border-[#CBD5E1] bg-white hover:border-[#0A2540] text-[#0A2540] font-semibold transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md border border-[#E2E8F0] bg-white hover:border-[#D8E0EA] hover:bg-[#F8FAFC] duration-150 text-[#0A2540] font-semibold transition-colors cursor-pointer"
                   >
                     <Smartphone className="w-3.5 h-3.5" />
                     <span>Download iOS App</span>
@@ -204,7 +204,7 @@ export default function Home() {
               </div>
 
               {/* Hairlined Institutional Key Facts Strip */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 border border-[#D8E0EA] bg-white rounded-[2px] divide-y sm:divide-y-0 sm:divide-x divide-[#E2E8F0] mt-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 border border-[#E2E8F0] bg-white rounded-lg shadow-[0_1px_2px_rgba(10,37,64,0.04)] divide-y sm:divide-y-0 sm:divide-x divide-[#E2E8F0] mt-2">
                 <div className="p-3.5">
                   <p className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-[#64748B]">
                     Academic Program
@@ -242,7 +242,7 @@ export default function Home() {
 
             {/* Right 5 Columns: Quick Access Service Directory (my.harvard.edu style) */}
             <div className="lg:col-span-5 w-full">
-              <div className="border border-[#0A2540] bg-white rounded-[2px] shadow-[0_2px_6px_rgba(10,37,64,0.06)] overflow-hidden">
+              <div className="border border-[#E2E8F0] bg-white rounded-lg shadow-[0_1px_2px_rgba(10,37,64,0.04),0_8px_24px_-12px_rgba(10,37,64,0.12)] overflow-hidden">
                 <div className="bg-[#0A2540] text-white px-5 py-3.5 flex items-center justify-between">
                   <div>
                     <h2 className="text-[13px] font-bold uppercase tracking-[0.12em] text-white">
@@ -334,7 +334,7 @@ export default function Home() {
 
             {/* Institutional Quick Reference & Schedule Ledger */}
             <div className="lg:col-span-4 space-y-5">
-              <div className="border border-[#D8E0EA] bg-[#F8FAFC] rounded-[2px] p-5 space-y-4">
+              <div className="border border-[#E2E8F0] bg-[#F8FAFC] rounded-lg shadow-[0_1px_2px_rgba(10,37,64,0.04)] p-5 space-y-4">
                 <div className="flex items-center gap-2.5 border-b border-[#E2E8F0] pb-3">
                   <CalendarCheck className="w-4 h-4 text-[#0A2540]" />
                   <h3 className="text-[13px] font-bold uppercase tracking-[0.1em] text-[#0A2540]">
@@ -366,7 +366,7 @@ export default function Home() {
                       <a
                         href={UNIZ_APK_PATH}
                         download="uniz-android.apk"
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11.5px] font-bold bg-[#0A2540] text-white rounded-[2px] hover:bg-[#061B33]"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11.5px] font-bold bg-[#0A2540] text-white rounded-md hover:bg-[#061B33]"
                       >
                         <Download className="w-3 h-3" />
                         Android (.apk)
@@ -374,7 +374,7 @@ export default function Home() {
                       <button
                         type="button"
                         onClick={() => openIosDownloadModal()}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11.5px] font-bold border border-[#0A2540] text-[#0A2540] bg-white rounded-[2px] hover:bg-[#0A2540] hover:text-white cursor-pointer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11.5px] font-bold border border-[#0A2540] text-[#0A2540] bg-white rounded-md hover:bg-[#0A2540] hover:text-white cursor-pointer"
                       >
                         <Smartphone className="w-3 h-3" />
                         iOS App
@@ -424,7 +424,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 border border-[#D8E0EA] bg-white rounded-[2px] divide-y md:divide-y-0 md:divide-x divide-[#D8E0EA]">
+          <div className="grid grid-cols-1 md:grid-cols-3 border border-[#E2E8F0] bg-white rounded-lg shadow-[0_1px_2px_rgba(10,37,64,0.04)] divide-y md:divide-y-0 md:divide-x divide-[#E2E8F0]">
             {GOVERNANCE_DIVISIONS.map((div) => {
               const Icon = div.icon;
               return (
@@ -502,14 +502,14 @@ export default function Home() {
 
             <Link
               to="/developers"
-              className="inline-flex items-center gap-2 h-9 px-4 rounded-[2px] bg-[#0A2540] hover:bg-[#061B33] text-white text-[12.5px] font-bold uppercase tracking-[0.06em] transition-colors shrink-0 w-fit"
+              className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-[#0A2540] hover:bg-[#061B33] text-white text-[14px] font-semibold transition-colors duration-150 shrink-0 w-fit"
             >
               <span>View Engineering Directory</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-[#D8E0EA] rounded-[2px] divide-y sm:divide-y-0 sm:divide-x divide-[#D8E0EA] bg-white">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-[#E2E8F0] rounded-lg shadow-[0_1px_2px_rgba(10,37,64,0.04)] divide-y sm:divide-y-0 sm:divide-x divide-[#E2E8F0] bg-white">
             {DEVELOPER_TESTIMONIALS.map((dev) => (
               <div
                 key={dev.name}
