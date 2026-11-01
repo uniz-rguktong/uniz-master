@@ -9,13 +9,13 @@ export const examcellLoginLabelClass =
   "block text-[13px] font-semibold text-[#0F172A] mb-1.5 font-form";
 
 export const examcellLoginInputClass =
-  "w-full h-11 min-h-[44px] rounded-[4px] border border-[#E2E8F0] bg-white px-3.5 text-[15px] font-medium text-[#0F172A] placeholder:text-[#64748B] placeholder:font-normal shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#D8E0EA] focus:outline-none focus:border-[#0A2540] focus:ring-2 focus:ring-[#0A2540]/15 font-form transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)]";
+  "w-full h-11 min-h-[44px] rounded-[4px] border border-[#E2E8F0] bg-white px-3.5 text-[15px] font-medium text-[#0F172A] placeholder:text-[#64748B] placeholder:font-normal shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#D8E0EA] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/15 font-form transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)]";
 
 export const examcellLoginLinkClass =
   "inline-block text-[12.5px] font-semibold text-[#0A2540] hover:underline underline-offset-4 bg-transparent border-0 cursor-pointer p-0 mt-1 font-form";
 
 export const examcellLoginButtonClass =
-  "w-full h-11 min-h-[44px] rounded-[6px] border-0 bg-[#0A2540] px-6 text-[15px] font-semibold text-white shadow-[0_1px_2px_rgba(10,37,64,0.15),inset_0_1px_0_rgba(255,255,255,0.08)] transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] hover:bg-[#061B33] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A2540] disabled:bg-[#5A7A94] disabled:cursor-not-allowed font-form cursor-pointer !rounded-[6px] !normal-case !tracking-normal !text-[15px]";
+  "w-full h-11 min-h-[44px] rounded-[6px] border-0 bg-[#EA2027] px-6 text-[15px] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(234,32,39,0.6),inset_0_1px_0_rgba(255,255,255,0.15)] transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] hover:bg-[#C81A20] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A2540] disabled:bg-[#5A7A94] disabled:cursor-not-allowed font-form cursor-pointer !rounded-[6px] !normal-case !tracking-normal !text-[15px] !bg-[#EA2027] hover:!bg-[#C81A20] !h-12";
 
 export interface LoginProps {
   title?: string;
@@ -184,11 +184,11 @@ export const LoginScreen = ({
       </header>
 
       {/* Main Centered HarvardKey-Style Institutional Sign-In Sheet */}
-      <main className="flex-1 flex flex-col justify-center py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-[960px] animate-[uniz-rise_200ms_cubic-bezier(0.2,0,0,1)_both] motion-reduce:animate-none">
-          <div className="grid grid-cols-1 md:grid-cols-12 border border-[#E2E8F0] bg-white rounded-lg shadow-[0_1px_2px_rgba(10,37,64,0.04),0_8px_24px_-12px_rgba(10,37,64,0.12)] overflow-hidden">
+      <main className="flex-1 flex flex-col justify-center py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[radial-gradient(120%_80%_at_0%_0%,#163A5C_0%,#0A2540_45%,#021227_100%)]">
+        <div className="mx-auto w-full max-w-[1040px] animate-[uniz-rise_200ms_cubic-bezier(0.2,0,0,1)_both] motion-reduce:animate-none">
+          <div className="grid grid-cols-1 md:grid-cols-12 border border-white/10 bg-white rounded-xl shadow-[0_32px_80px_-20px_rgba(2,18,39,0.8)] overflow-hidden">
             {/* Left Institutional Context Column (5 Cols) */}
-            <div className="order-2 md:order-1 md:col-span-5 bg-[linear-gradient(160deg,#0A2540_0%,#061B33_100%)] text-white p-6 sm:p-10 flex flex-col justify-between space-y-8 border-t md:border-t-0 md:border-r border-[#163A5C]">
+            <div className="order-2 md:order-1 md:col-span-5 relative bg-[#021227] text-white before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-[#EA2027] p-6 sm:p-10 flex flex-col justify-between space-y-8 border-t md:border-t-0 md:border-r border-[#163A5C]">
               <div className="space-y-5">
                 <div className="flex items-center gap-2.5 border-b border-white/15 pb-3.5">
                   <img
@@ -204,7 +204,7 @@ export const LoginScreen = ({
                 </div>
 
                 <div>
-                  <h2 className="text-[26px] font-bold text-white leading-tight tracking-[-0.015em]">
+                  <h2 className="text-[30px] sm:text-[34px] font-bold text-white leading-tight tracking-[-0.015em]">
                     {meta.heading}
                   </h2>
                   <p className="text-[13px] text-white/80 leading-relaxed mt-2">
@@ -254,7 +254,7 @@ export const LoginScreen = ({
             </div>
 
             {/* Right Sign-In Form Column (7 Cols) */}
-            <div className="order-1 md:order-2 md:col-span-7 bg-white p-6 sm:p-10 flex flex-col justify-between">
+            <div className="order-1 md:order-2 md:col-span-7 bg-white p-6 sm:p-12 flex flex-col justify-between">
               <div className="space-y-6">
                 {/* Role Switcher Tabs */}
                 <div className="flex items-center border-b border-[#E2E8F0] gap-0 sm:gap-1 overflow-x-auto">
@@ -295,7 +295,7 @@ export const LoginScreen = ({
 
                 {/* Form Title & Subtitle */}
                 <div>
-                  <h1 className="text-[28px] sm:text-[32px] font-bold leading-[1.1] tracking-[-0.02em] text-[#0A2540]">
+                  <h1 className="text-[34px] sm:text-[44px] font-bold leading-[1.02] tracking-[-0.03em] text-[#0A2540]">
                     {title === "Login Portal" ? "University Sign In" : title}
                   </h1>
                   {(defaultSubtitle || subtitle) && (
