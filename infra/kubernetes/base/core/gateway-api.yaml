@@ -21,6 +21,9 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
+          env:
+            - name: RATE_LIMIT_MODE
+              value: "enforce"
           envFrom:
             - configMapRef:
                 name: uniz-config
