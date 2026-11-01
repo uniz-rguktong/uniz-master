@@ -249,9 +249,9 @@ const loginLabelClass = examcellLoginLabelClass;
 
 const loginInputClass = cn(examcellLoginInputClass, "login-field");
 
-const loginInputWithIconClass = cn(loginInputClass, "!px-3.5");
+const loginInputWithIconClass = cn(loginInputClass, "!pl-11 !pr-3.5");
 
-const loginInputPasswordClass = cn(loginInputClass, "!pl-3.5 !pr-10");
+const loginInputPasswordClass = cn(loginInputClass, "!pl-11 !pr-11");
 
 const loginBtnClass = cn(examcellLoginButtonClass, "w-full uniz-primary-btn");
 

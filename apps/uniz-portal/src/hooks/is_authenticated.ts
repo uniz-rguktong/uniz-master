@@ -8,6 +8,7 @@ import { toast } from "@/utils/toast-ref";
 import { initPushNotifications } from "../utils/pushNotifications";
 import { NOTIFICATION_SERVICE_URL } from "../api/endpoints";
 import { signInWithReturn } from "../utils/returnUrl";
+import { isNotFoundRouteActive } from "../utils/notFoundRoute";
 
 // Module-level singleton - shared across ALL useIsAuth instances in the app.
 // useRef(false) would NOT work here because useIsAuth is called by 10+ components,
@@ -189,11 +190,13 @@ export function useIsAuth() {
       if (authRedirectOnlyPaths.includes(location.pathname)) {
         navigate("/student");
       }
-    } else {
-      // No tokens — send protected routes to the right sign-in, not always home.
-      if (!publicPaths.includes(location.pathname)) {
-        navigate(authRedirectTarget());
-      }
+    } else if (
+      !isNotFoundRouteActive() &&
+      !publicPaths.includes(location.pathname)
+    ) {
+      // Known app routes still go to the right sign-in. The catch-all 404
+      // screen opts out so an unknown URL is not replaced with the home page.
+      navigate(authRedirectTarget());
     }
     // Only re-run when the URL changes - NOT on every isAuth/setAuth change.
     // Auth state changes (setAuth calls) are idempotent; re-running on every

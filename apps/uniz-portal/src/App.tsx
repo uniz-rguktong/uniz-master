@@ -1,4 +1,4 @@
-import { Suspense, lazy, type ReactElement } from "react";
+import { Suspense, lazy, useEffect, type ReactElement } from "react";
 import { Route, Routes, Link, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 import "./index.css";
@@ -116,6 +116,38 @@ export function Error() {
   );
 }
 
+function NotFound() {
+  setNotFoundRouteActive(true);
+
+  useEffect(() => {
+    setNotFoundRouteActive(true);
+
+    let robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+    const createdRobots = !robots;
+    if (!robots) {
+      robots = document.createElement("meta");
+      robots.setAttribute("name", "robots");
+      document.head.appendChild(robots);
+    }
+    const previousRobots = robots.getAttribute("content");
+    robots.setAttribute("content", "noindex, nofollow");
+
+    return () => {
+      setNotFoundRouteActive(false);
+      if (!robots) return;
+      if (createdRobots) {
+        robots.remove();
+      } else if (previousRobots === null) {
+        robots.removeAttribute("content");
+      } else {
+        robots.setAttribute("content", previousRobots);
+      }
+    };
+  }, []);
+
+  return <Error />;
+}
+
 export function Maintenance() {
   const navigate = useNavigate();
   return (
@@ -164,6 +196,7 @@ const AuthRedirect = () => {
 import { InstallPWA } from "./components/InstallPWA";
 import { DownloadAppBanner, IosInstallModal } from "./components/DownloadAppBanner";
 import { usePushNavigation } from "./hooks/usePushNavigation";
+import { setNotFoundRouteActive } from "./utils/notFoundRoute";
 
 function PushNavigationBridge() {
   usePushNavigation();
@@ -190,9 +223,7 @@ export default function App() {
                 localStorage.getItem("faculty_token") ? (
                   <AuthRedirect />
                 ) : (
-                  <PageTransition>
-                    <Home />
-                  </PageTransition>
+                  <Home />
                 )}
               </MaintenanceGuard>
             }
@@ -606,7 +637,7 @@ export default function App() {
             path="*"
             element={
               <PageTransition>
-                <Error />
+                <NotFound />
               </PageTransition>
             }
           />

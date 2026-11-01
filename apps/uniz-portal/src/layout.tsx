@@ -37,6 +37,7 @@ export function Layout({ children }: LayoutProps) {
   }
 
   const isHomePage = ["/", "/developers", "/privacy"].includes(location.pathname);
+  const isPortalHome = location.pathname === "/";
 
   return (
     <div
@@ -46,7 +47,7 @@ export function Layout({ children }: LayoutProps) {
         <Navbar />
       </Suspense>
       <main
-        className={`flex-grow flex flex-col ${isHomePage ? "" : "max-w-[1600px] w-full mx-auto p-4 sm:p-6 md:p-10"} animate-in fade-in duration-500`}
+        className={`flex-grow flex flex-col ${isHomePage ? "" : "max-w-[1600px] w-full mx-auto p-4 sm:p-6 md:p-10"} ${isPortalHome ? "" : "animate-in fade-in duration-500"}`}
       >
         <div className="flex-grow h-full w-full">{children}</div>
       </main>
