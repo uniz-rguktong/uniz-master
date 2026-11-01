@@ -35,6 +35,8 @@ spec:
           env:
             - name: PORT
               value: "3001"
+            - name: RATE_LIMIT_MODE
+              value: "enforce"
             - name: AUTH_DATABASE_URL
               valueFrom:
                 secretKeyRef:
