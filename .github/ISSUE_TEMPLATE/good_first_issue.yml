@@ -1,0 +1,32 @@
+name: Good first issue (maintainers)
+description: A small, well scoped task for a first time contributor
+labels: ["good first issue", "help wanted"]
+body:
+  - type: markdown
+    attributes:
+      value: Write it so someone who has never seen the codebase can finish it in an evening.
+  - type: textarea
+    id: what
+    attributes:
+      label: What needs to change
+    validations:
+      required: true
+  - type: textarea
+    id: where
+    attributes:
+      label: Files to look at
+      placeholder: apps/uniz-portal/src/components/...
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: How the contributor and reviewer can tell it's finished.
+    validations:
+      required: true
+  - type: textarea
+    id: hints
+    attributes:
+      label: Hints
+      description: Commands to run, related PRs, gotchas.
