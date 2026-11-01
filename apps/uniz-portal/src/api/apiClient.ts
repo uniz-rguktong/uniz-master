@@ -1,5 +1,6 @@
 import { toast } from "@/utils/toast-ref";
 import { ANALYTICS_KEY } from "./endpoints";
+import { redirectToPasswordChange } from "../utils/passwordChange";
 
 export enum ErrorCode {
   AUTH_UNAUTHORIZED = "AUTH_UNAUTHORIZED",
@@ -440,7 +441,13 @@ function handleHttpError(
       }
       break;
     case 403:
-      if (code === ErrorCode.AUTH_SUSPENDED || data.code === "AUTH_SUSPENDED") {
+      if (data.code === "PASSWORD_CHANGE_REQUIRED") {
+        toast.error(message || "Change your password to continue.");
+        redirectToPasswordChange();
+      } else if (
+        code === ErrorCode.AUTH_SUSPENDED ||
+        data.code === "AUTH_SUSPENDED"
+      ) {
         toast.error("Your account is suspended. Contact administrator.");
       } else {
         toast.error(

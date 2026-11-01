@@ -1,6 +1,21 @@
 export { UserRole, ADMIN_ROLES } from "./roles.enum";
 export { JwtPayloadSchema, type JwtPayload } from "./jwt.schema";
 export { parseJwtPayload } from "./jwt-verify";
+export {
+  PASSWORD_CHANGE_REQUIRED,
+  LOGIN_LOCKOUT_SECONDS,
+  LOGIN_FAILURE_LIMIT,
+  LOAD_TEST_USERNAME_PREFIX,
+  isPasswordChangeEnforced,
+  isLoginRateLimitEnforced,
+  isLoadTestAccount,
+  loginIdLockoutKey,
+  loginIpFailureKey,
+  accessTokenBlacklistKey,
+  isPasswordChangeExemptRoute,
+  passwordChangeGateDecision,
+  readVerifiedJwtPayload,
+} from "./password-change";
 export { ErrorCode } from "./error-codes";
 export {
   resolveEffectiveRole,

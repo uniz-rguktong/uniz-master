@@ -25,6 +25,17 @@ export function defaultCampusPassword(username: string): string {
   return `${username.trim().toLowerCase()}${DEFAULT_CAMPUS_PASSWORD_SUFFIX}`;
 }
 
+/** True when the submitted password is this user's own campus default. */
+export function isOwnCampusDefaultPassword(
+  password: string,
+  username: string,
+): boolean {
+  const trimmed = password.trim();
+  if (!isCampusDefaultPassword(trimmed)) return false;
+  const idPart = trimmed.slice(0, -DEFAULT_CAMPUS_PASSWORD_SUFFIX.length);
+  return idPart.toLowerCase() === username.trim().toLowerCase();
+}
+
 /**
  * Login compare only. Custom passwords (after student reset) are checked as-is.
  * Default campus passwords accept upper/lower ID letter case for legacy hashes.

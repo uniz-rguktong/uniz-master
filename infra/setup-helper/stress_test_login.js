@@ -1,3 +1,6 @@
+// Test-account exemption: LOAD_TEST_* users are not locked and are not forced
+// to change password. Do not retarget this script at production accounts.
+// A locked ID clears when auth:login:lockout:id:<id> is deleted, or after 15 minutes.
 const http = require("http");
 
 // Configuration

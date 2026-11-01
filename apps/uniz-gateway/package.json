@@ -7,6 +7,7 @@
     "dev": "ts-node-dev --respawn src/index.ts"
   },
   "dependencies": {
+    "@uniz/shared": "*",
     "axios": "^1.18.1",
     "compression": "^1.8.1",
     "cors": "^2.8.6",

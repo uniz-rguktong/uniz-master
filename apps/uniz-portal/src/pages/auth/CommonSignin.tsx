@@ -29,6 +29,10 @@ import { prepareStudentSession } from "../../utils/studentSessionCache";
 import { cn } from "@/lib/utils";
 import { getSafeReturnUrl } from "@/utils/returnUrl";
 import {
+  PASSWORD_CHANGE_PATH,
+  sessionMustChangePassword,
+} from "../../utils/passwordChange";
+import {
   portalGhostButtonClass,
   portalInputClass,
   portalLabelClass,
@@ -95,6 +99,7 @@ interface SigninResponse {
   admin_token?: string;
   success?: boolean;
   role?: string;
+  mustChangePassword?: boolean;
 }
 
 // ─── OTP Input Component ──────────────────────────────────────
@@ -499,6 +504,10 @@ export default function Signin({ type }: SigninProps) {
       localStorage.getItem("faculty_token");
 
     if (authState.is_authenticated && hasToken) {
+      if (sessionMustChangePassword()) {
+        navigate(PASSWORD_CHANGE_PATH, { replace: true });
+        return;
+      }
       const redirectPath =
         authState.type === "student"
           ? postLoginPath("student")
@@ -599,7 +608,12 @@ export default function Signin({ type }: SigninProps) {
         toast.success(`Welcome back, ${resolvedUsername}.`, {
           title: "Signed in",
         });
-        navigate(postLoginPath("student"), { replace: true });
+        navigate(
+          data.mustChangePassword
+            ? PASSWORD_CHANGE_PATH
+            : postLoginPath("student"),
+          { replace: true },
+        );
       } else if (
         type === "admin" &&
         (data.role === "teacher" || data.role === "faculty") &&
@@ -614,7 +628,12 @@ export default function Signin({ type }: SigninProps) {
         toast.success(`Welcome, Professor ${resolvedUsername}.`, {
           title: "Signed in",
         });
-        navigate(postLoginPath("faculty"), { replace: true });
+        navigate(
+          data.mustChangePassword
+            ? PASSWORD_CHANGE_PATH
+            : postLoginPath("faculty"),
+          { replace: true },
+        );
       } else if (type === "admin" && (token || data.success)) {
         localStorage.removeItem("student_token");
         localStorage.removeItem("faculty_token");
@@ -640,10 +659,14 @@ export default function Signin({ type }: SigninProps) {
         toast.success("Your admin session is ready.", {
           title: "Signed in",
         });
-        setTimeout(
-          () => navigate(postLoginPath("admin"), { replace: true }),
-          100,
-        );
+        if (data.mustChangePassword) {
+          navigate(PASSWORD_CHANGE_PATH, { replace: true });
+        } else {
+          setTimeout(
+            () => navigate(postLoginPath("admin"), { replace: true }),
+            100,
+          );
+        }
       } else if (type === "faculty" && token) {
         localStorage.removeItem("student_token");
         localStorage.removeItem("admin_token");
@@ -654,7 +677,12 @@ export default function Signin({ type }: SigninProps) {
         toast.success(`Welcome, Professor ${resolvedUsername}.`, {
           title: "Signed in",
         });
-        navigate(postLoginPath("faculty"), { replace: true });
+        navigate(
+          data.mustChangePassword
+            ? PASSWORD_CHANGE_PATH
+            : postLoginPath("faculty"),
+          { replace: true },
+        );
       } else {
         toast.error("Access denied: Invalid credentials for this portal.");
       }

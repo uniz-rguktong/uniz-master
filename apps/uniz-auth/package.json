@@ -15,6 +15,8 @@
     "vercel-build": "prisma generate",
     "postinstall": "if [ -f prisma/schema.prisma ]; then npx prisma generate; fi",
     "seed": "ts-node prisma/seed.ts",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "data-reset": "npx prisma db push --force-reset && npm run seed",
     "deploy": "git add . && git commit -m \"deploy: auth-service updates\" && git push origin main",
     "redeploy": "bash redeploy.sh"
@@ -51,9 +53,11 @@
     "@types/node": "^22.0.0",
     "@types/ua-parser-js": "^0.7.39",
     "prisma": "^6.4.1",
+    "@vitest/coverage-v8": "^3.2.7",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "vitest": "^3.2.7"
   },
   "overrides": {
     "minimatch": "^10.2.3",

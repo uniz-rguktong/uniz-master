@@ -12,6 +12,7 @@ import {
 } from "../utils/studentSessionCache";
 import { seedAcademicCachesFromBootstrap } from "../utils/academicCache";
 import { asAttendanceList, asGradeList } from "../utils/bootstrapNormalize";
+import { sessionMustChangePassword } from "../utils/passwordChange";
 
 const PROFILE_LOAD_ERROR =
   "We couldn't load your profile. Please try again.";
@@ -82,6 +83,10 @@ export function useStudentData() {
 
   const fetchStudentData = useCallback(
     async (force = false) => {
+      if (sessionMustChangePassword()) {
+        setAuthLoading(false);
+        return;
+      }
       const owner = getActiveStudentUsername();
       if (!owner) {
         setAuthLoading(false);
@@ -159,6 +164,7 @@ export function useStudentData() {
     if (!isPollingStarted) {
       isPollingStarted = true;
       setInterval(() => {
+        if (sessionMustChangePassword()) return;
         const owner = getActiveStudentUsername();
         if (owner && globalSetStudent) {
           apiClient<BootstrapResponse>(STUDENT_BOOTSTRAP, {}, false)

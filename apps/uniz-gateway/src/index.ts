@@ -5,6 +5,7 @@ import path from "path";
 import compression from "compression";
 import crypto from "crypto";
 import Redis from "ioredis";
+import { passwordChangeGate } from "./password-gate";
 import httpProxy from "http-proxy";
 import http from "http";
 import dotenv from "dotenv";
@@ -98,6 +99,8 @@ app.use(
     next();
   },
 );
+
+app.use(passwordChangeGate(redis));
 
 // Auth/user/academics consolidate into uniz-api; gateway still keys by URL segment.
 const UNIFIED_API =
