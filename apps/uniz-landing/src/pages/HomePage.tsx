@@ -44,7 +44,7 @@ export function HomePage() {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-5">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#0A2540] border-t-transparent" />
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-navy border-t-transparent" />
           <p className="text-slate-500 font-medium tracking-[0.16em] text-xs uppercase">
             Loading campus
           </p>
@@ -56,16 +56,16 @@ export function HomePage() {
   const allImages = homeData.images || [];
 
   const heroImages = [
-    "https://rguktong.ac.in/svgs/carosel/VRD.png",
-    "https://rguktong.ac.in/svgs/carosel/all.jpg",
-    "https://rguktong.ac.in/svgs/carosel/Cul.png",
+    "/carousel/VRD.png.webp",
+    "/carousel/all.jpg.webp",
+    "/carousel/Cul.png.webp",
     "https://rguktong.ac.in/svgs/carosel/1%20ind.jpeg",
     "https://rguktong.ac.in/svgs/carosel/WS22.jpeg",
     "https://rguktong.ac.in/svgs/carosel/WS222.jpeg",
     "https://rguktong.ac.in/svgs/carosel/Events.jpeg",
     "https://rguktong.ac.in/svgs/carosel/C26.jpeg",
     "https://rguktong.ac.in/svgs/carosel/WS11.jpeg",
-    "https://rguktong.ac.in/svgs/carosel/swatch.png",
+    "/carousel/swatch.png.webp",
   ];
 
   const goodImages = allImages.filter(

@@ -105,9 +105,9 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-white border-b border-[#D8E0EA] shadow-[0_1px_2px_rgba(6,21,39,0.05)]">
+      <header className="sticky top-0 z-50 w-full bg-white border-b border-navy-200 shadow-[0_1px_2px_rgba(6,21,39,0.05)]">
         {/* Tier 1: Harvard/MIT-style Slim Institutional Utility Bar */}
-        <div className="bg-[#061527] text-white/80 border-b border-white/10">
+        <div className="bg-navy-850 text-white/80 border-b border-white/10">
           <div className="w-full max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 flex h-8 items-center justify-between text-[11.5px] tracking-[0.03em]">
             <div className="flex items-center gap-2 truncate">
               <span className="font-semibold text-white/95">RGUKT ANDHRA PRADESH</span>
@@ -159,10 +159,10 @@ export function Header() {
               className="h-10 w-10 md:h-11 md:w-11 object-contain"
             />
             <div className="hidden sm:flex flex-col justify-center">
-              <span className="font-serif text-[1.35rem] md:text-[1.5rem] font-semibold text-[#061B33] tracking-tight leading-none">
+              <span className="font-serif text-[1.35rem] md:text-[1.5rem] font-semibold text-navy-900 tracking-tight leading-none">
                 RGUKT
               </span>
-              <span className="mt-1 text-[10px] md:text-[11px] font-medium text-[#0A2540] tracking-[0.14em] uppercase">
+              <span className="mt-1 text-[10px] md:text-[11px] font-medium text-navy tracking-[0.14em] uppercase">
                 Ongole Campus
               </span>
             </div>
@@ -174,7 +174,7 @@ export function Header() {
               href="https://uniz.rguktong.in/developers"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center h-9 px-3 text-[12px] font-bold uppercase tracking-[0.08em] text-[#061B33] hover:text-[#0A2540] hover:bg-slate-100 rounded-[4px] transition-colors"
+              className="hidden md:inline-flex items-center h-9 px-3 text-[12px] font-bold uppercase tracking-[0.08em] text-navy-900 hover:text-navy hover:bg-slate-100 rounded-sm transition-colors"
             >
               Developers
             </a>
@@ -182,7 +182,7 @@ export function Header() {
               href="https://uniz.rguktong.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3.5 bg-[#0A2540] hover:bg-[#061B33] text-white text-[12px] font-bold uppercase tracking-[0.08em] rounded-[4px] transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3.5 bg-navy hover:bg-navy-900 text-white text-[12px] font-bold uppercase tracking-[0.08em] rounded-sm transition-colors"
             >
               <span>UniZ Portal</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -190,14 +190,14 @@ export function Header() {
             <button
               onClick={() => { setIsSearchOpen(true); setIsMenuOpen(false); }}
               aria-label="Search"
-              className="w-10 h-10 flex items-center justify-center text-[#061B33] hover:text-[#0A2540] transition-colors"
+              className="w-10 h-10 flex items-center justify-center text-navy-900 hover:text-navy transition-colors"
             >
               <Search className="w-5 h-5 stroke-[1.75]" />
             </button>
             <button
               onClick={() => { setIsMenuOpen(true); setIsSearchOpen(false); }}
               aria-label="Open menu"
-              className="flex items-center gap-2 h-10 px-2 sm:px-3 text-[#061B33] hover:text-[#0A2540] transition-colors"
+              className="flex items-center gap-2 h-10 px-2 sm:px-3 text-navy-900 hover:text-navy transition-colors"
             >
               <span className="hidden sm:inline text-[13px] font-medium tracking-wide uppercase">Menu</span>
               <Menu className="w-5 h-5 stroke-[1.75]" />
@@ -208,7 +208,7 @@ export function Header() {
 
       {/* Full-screen menu panel */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[100] bg-[#061B33] text-white overflow-y-auto">
+        <div className="fixed inset-0 z-[100] bg-navy-900 text-white overflow-y-auto">
           <div className="max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 py-5 flex items-center justify-between border-b border-white/10">
             <Link
               to="/"
@@ -240,7 +240,7 @@ export function Header() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
               {MENU_SECTIONS.map((section) => (
                 <div key={section.title}>
-                  <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-white/40 mb-5">
+                  <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-white/60 mb-5">
                     {section.title}
                   </p>
                   <ul className="flex flex-col gap-3">
@@ -265,7 +265,7 @@ export function Header() {
 
       {/* Search overlay */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-[100] bg-[#061B33]/50 backdrop-blur-sm flex items-start justify-center pt-20 sm:pt-28 px-4">
+        <div className="fixed inset-0 z-[100] bg-navy-900/50 backdrop-blur-sm flex items-start justify-center pt-20 sm:pt-28 px-4">
           <div
             className="absolute inset-0"
             onClick={() => setIsSearchOpen(false)}
@@ -273,7 +273,7 @@ export function Header() {
 
           <div className="relative w-full max-w-2xl bg-white overflow-hidden flex flex-col shadow-2xl">
             <div className="relative flex items-center border-b border-slate-200 px-5 py-4">
-              <Search className="w-5 h-5 text-[#0A2540]" />
+              <Search className="w-5 h-5 text-navy" />
               <input
                 autoFocus
                 type="text"
@@ -295,7 +295,7 @@ export function Header() {
               {searchQuery.trim() === "" ? (
                 <div className="px-4 py-10 text-center text-slate-500">
                   <p className="text-base">Search departments, academics, or notifications.</p>
-                  <p className="text-sm mt-2 text-slate-400">Try “CSE”, “Library”, or “Tenders”.</p>
+                  <p className="text-sm mt-2 text-ink-subtle">Try “CSE”, “Library”, or “Tenders”.</p>
                 </div>
               ) : filteredResults.length === 0 ? (
                 <div className="px-4 py-10 text-center text-slate-500">
@@ -313,14 +313,14 @@ export function Header() {
                       className="flex items-center justify-between w-full text-left px-4 py-3.5 hover:bg-slate-50 transition-colors group border-b border-slate-100 last:border-0"
                     >
                       <div>
-                        <span className="block text-slate-900 font-medium group-hover:text-[#0A2540] transition-colors">
+                        <span className="block text-slate-900 font-medium group-hover:text-navy transition-colors">
                           {item.title}
                         </span>
-                        <span className="block text-xs tracking-wider uppercase text-slate-400 mt-0.5">
+                        <span className="block text-xs tracking-wider uppercase text-ink-subtle mt-0.5">
                           {item.category}
                         </span>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-[#0A2540] opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block" />
+                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-navy opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block" />
                     </button>
                   ))}
                 </div>

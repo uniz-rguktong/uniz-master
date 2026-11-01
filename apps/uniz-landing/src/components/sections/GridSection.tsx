@@ -41,7 +41,7 @@ export function GridSection({
           {displayItems.map((item, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col"
+              className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-200 flex flex-col"
             >
               <div className="w-full aspect-[4/3] bg-slate-100 overflow-hidden">
                 <img
@@ -52,7 +52,7 @@ export function GridSection({
               </div>
               <div className="p-6 flex-1 flex flex-col">
                 {item.date && (
-                  <p className="text-sm font-medium text-[#0A2540]">{item.date}</p>
+                  <p className="text-sm font-medium text-navy">{item.date}</p>
                 )}
                 <h3 className="mt-2 text-xl font-semibold text-slate-800 line-clamp-3">
                   {item.title}
@@ -66,7 +66,7 @@ export function GridSection({
                       href={item.links?.[0]?.url || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[#0A2540] hover:text-[#061B33] font-semibold underline-offset-[0.22em] hover:underline"
+                      className="inline-flex items-center gap-1 text-navy hover:text-navy-900 font-semibold underline-offset-[0.22em] hover:underline"
                     >
                       Read More
                       <ArrowRight className="w-4 h-4" />

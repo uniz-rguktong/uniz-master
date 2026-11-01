@@ -43,7 +43,7 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="relative w-full bg-[#061B33] text-white">
+    <footer className="relative w-full bg-navy-900 text-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16 lg:py-20 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-12 border-b border-white/10">
 
         <div className="col-span-2 flex flex-col gap-5">
@@ -51,7 +51,7 @@ export function Footer() {
             <img
               src="/rgukt-logo.png"
               alt="RGUKT Ongole"
-              className="w-10 h-10 rounded-[4px] bg-white p-1 object-contain shadow-sm ring-1 ring-white/20"
+              className="w-10 h-10 rounded-sm bg-white p-1 object-contain shadow-sm ring-1 ring-white/20"
             />
             <div className="flex flex-col leading-none">
               <span className="font-serif text-lg font-semibold text-white tracking-tight">
@@ -100,7 +100,7 @@ export function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-6 flex flex-col sm:flex-row justify-between items-center gap-5">
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-[11px] tracking-wide text-white/45 text-center sm:text-left">
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-[11px] tracking-wide text-white/60 text-center sm:text-left">
           <p>© {new Date().getFullYear()} RGUKT Ongole. All rights reserved.</p>
           <span className="hidden sm:inline text-white/20">·</span>
           <a
@@ -135,7 +135,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Social Link"
-              className="w-9 h-9 flex items-center justify-center text-white/45 hover:text-white transition-colors"
+              className="w-9 h-9 flex items-center justify-center text-white/60 hover:text-white transition-colors"
             >
               <Icon className="w-4 h-4" />
             </a>
@@ -153,7 +153,7 @@ export function Footer() {
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         aria-label="Scroll to top"
-        className="fixed bottom-8 right-8 z-50 w-11 h-11 rounded-full bg-[#0A2540] hover:bg-[#021227] text-white flex items-center justify-center transition-colors"
+        className="fixed bottom-8 right-8 z-50 w-11 h-11 rounded-full bg-navy hover:bg-navy-950 text-white flex items-center justify-center transition-colors"
       >
         <ArrowUp className="w-5 h-5" />
       </button>

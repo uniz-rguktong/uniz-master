@@ -19,10 +19,10 @@ export function Media({ news }: { news: readonly any[] }) {
         <div className="flex flex-col lg:flex-row gap-14 lg:gap-20 items-stretch">
 
           <div className="lg:w-2/5 flex flex-col justify-center">
-            <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#0A2540] mb-4">
+            <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-navy mb-4">
               Notifications
             </p>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-[#061B33] leading-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-navy-900 leading-tight">
               News &amp; notifications
             </h2>
             <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed max-w-md">
@@ -66,11 +66,11 @@ export function Media({ news }: { news: readonly any[] }) {
                               {item.title}
                             </span>
                             <span className="text-slate-300 flex-shrink-0">·</span>
-                            <span className="text-xs text-slate-400 flex-shrink-0 whitespace-nowrap">
+                            <span className="text-xs text-ink-subtle flex-shrink-0 whitespace-nowrap">
                               {item.date || "Recent"}
                             </span>
                           </div>
-                          <p className="text-sm text-slate-400 mt-0.5">
+                          <p className="text-sm text-ink-subtle mt-0.5">
                             Official Notice · RGUKT Ongole
                           </p>
                         </div>
