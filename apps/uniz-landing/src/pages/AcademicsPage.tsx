@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getAcademicPage } from "../types/api";
 import type { AcademicSection, AcademicPageType } from "../types/api";
 import { Download, ExternalLink, FileText, BookOpen, Calendar, GraduationCap } from "lucide-react";
@@ -67,9 +67,14 @@ function HeroBanner({ meta }: { meta: typeof PAGE_META[string] }) {
   );
 }
 
+// Source data says "Semister"; show the right spelling.
+function fixSpelling(s: string) {
+  return s.replace(/semister/gi, (m) => (m[0] === "S" ? "Semester" : "semester"));
+}
+
 // ── Link row — always renders as a clickable link ─────────────────
 function LinkRow({ label, url }: { label: string; url: string | null }) {
-  const cleanLabel = label.replace(/\n\s+/g, " ").trim();
+  const cleanLabel = fixSpelling(label.replace(/\n\s+/g, " ").trim());
   return (
     <a
       href={url ?? "#"}
@@ -98,7 +103,7 @@ function CalendarLayout({ sections }: { sections: AcademicSection[] }) {
           <div className="flex items-center gap-3 px-7 py-5 border-b border-slate-100 bg-slate-50">
             <div className="w-2 h-2 rounded-full bg-navy" />
             <h2 className="text-lg font-extrabold text-slate-900 tracking-tight">
-              {section.header.replace(/\n\s+/g, " ").trim()}
+              {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
             </h2>
           </div>
           {/* Semester links */}
@@ -128,7 +133,7 @@ function CurriculaLayout({ sections }: { sections: AcademicSection[] }) {
           {/* Dept header */}
           <div className="px-6 pt-6 pb-4 border-b border-slate-100">
             <h2 className="text-[15px] font-extrabold text-slate-900 leading-snug">
-              {section.header.replace(/\n\s+/g, " ").trim()}
+              {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
             </h2>
           </div>
           {/* Curriculum links */}
@@ -153,7 +158,7 @@ function GenericLayout({ sections }: { sections: AcademicSection[] }) {
       {meaningful.map((section, idx) => (
         <div key={idx} className="bg-white rounded-2xl border border-slate-100 border-l-4 border-l-[#0A2540] shadow-sm p-7 md:p-9">
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-5 tracking-tight">
-            {section.header.replace(/\n\s+/g, " ").trim()}
+            {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
           </h2>
           <div className="flex flex-col gap-2">
             {section.links.map((link, i) => (
@@ -166,6 +171,15 @@ function GenericLayout({ sections }: { sections: AcademicSection[] }) {
   );
 }
 
+// Same departments the site header lists.
+const DEPT_LINKS = [
+  { code: "CSE", name: "CSE" },
+  { code: "ECE", name: "ECE" },
+  { code: "EEE", name: "EEE" },
+  { code: "CIVIL", name: "Civil" },
+  { code: "ME", name: "Mechanical" },
+];
+
 // ── Empty state ────────────────────────────────────────────────────
 function EmptyState() {
   return (
@@ -173,8 +187,15 @@ function EmptyState() {
       <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
         <FileText className="w-8 h-8 text-slate-300" />
       </div>
-      <p className="text-slate-500 font-semibold text-lg">Content Coming Soon</p>
-      <p className="text-ink-subtle text-sm mt-2">This section will be updated shortly.</p>
+      <p className="text-slate-600 font-semibold text-lg">Nothing published here yet</p>
+      <p className="text-ink-subtle text-sm mt-2">Check back later, or browse the department pages for course and faculty details.</p>
+      <div className="mt-6 flex flex-wrap justify-center gap-2 px-6">
+        {DEPT_LINKS.map((d) => (
+          <Link key={d.code} to={`/departments/${d.code}`} className="px-3 py-1.5 rounded-full bg-navy-900/5 hover:bg-navy hover:text-white text-navy-900 text-sm font-semibold transition-colors">
+            {d.name}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

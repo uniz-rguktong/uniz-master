@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getDepartmentStaff } from "../types/api";
 import type { FacultyMember, DeptCode } from "../types/api";
 import { Mail, ArrowLeft, BookOpen, Briefcase, FlaskConical, Award, FileText } from "lucide-react";
+import { PersonPhoto, initials } from "../components/common/PersonPhoto";
 
 const DEPT_NAMES: Record<string, string> = {
   CSE:         "Computer Science & Engineering",
@@ -132,21 +133,16 @@ export function FacultyProfilePage() {
         <div className="flex flex-col md:flex-row gap-8 items-start mb-12">
           {/* Photo */}
           <div className="w-full md:w-56 flex-shrink-0 bg-slate-50 rounded-2xl border border-slate-100 p-2 flex items-center justify-center overflow-hidden">
-            {faculty.photo ? (
-              <img
-                src={faculty.photo}
-                alt={faculty.name}
-                className="w-full max-w-[200px] h-auto object-contain rounded-xl"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(faculty.name)}&background=000035&color=fff&size=200`;
-                }}
-              />
-            ) : (
-              <div className="w-full aspect-square max-w-[200px] rounded-xl bg-navy-900 flex items-center justify-center text-white text-6xl font-extrabold shadow-sm">
-                {faculty.name.charAt(0)}
+            <PersonPhoto
+              src={faculty.photo}
+              name={faculty.name}
+              className="w-full max-w-[200px] h-auto object-contain rounded-xl"
+              fallback={
+                <div className="w-full aspect-square max-w-[200px] rounded-xl bg-navy-900 flex items-center justify-center text-white text-6xl font-extrabold shadow-sm">
+                {initials(faculty.name)}
               </div>
-            )}
+              }
+            />
           </div>
 
           {/* Info */}
