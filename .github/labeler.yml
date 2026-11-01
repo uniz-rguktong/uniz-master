@@ -1,0 +1,35 @@
+area/portal:
+  - changed-files:
+      - any-glob-to-any-file: apps/uniz-portal/**
+area/landing:
+  - changed-files:
+      - any-glob-to-any-file:
+          [apps/uniz-landing/**, apps/uniz-landing-backend/**]
+area/api:
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/uniz-api/**
+          - apps/uniz-auth/**
+          - apps/uniz-user/**
+          - apps/uniz-academics/**
+          - apps/uniz-outpass/**
+          - apps/uniz-notifications/**
+          - apps/uniz-cron/**
+area/gateway:
+  - changed-files:
+      - any-glob-to-any-file: [apps/uniz-gateway/**, infra/nginx/**]
+area/shared:
+  - changed-files:
+      - any-glob-to-any-file: packages/uniz-shared/**
+area/docs:
+  - changed-files:
+      - any-glob-to-any-file: [apps/uniz-docs/**, docs/**, "*.md"]
+area/infra:
+  - changed-files:
+      - any-glob-to-any-file: [infra/**, docker/**, scripts/**]
+area/ci:
+  - changed-files:
+      - any-glob-to-any-file: .github/**
+area/android:
+  - changed-files:
+      - any-glob-to-any-file: apps/uniz-android-twa/**

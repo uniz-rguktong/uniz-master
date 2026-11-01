@@ -1,0 +1,48 @@
+name: PR triage
+
+# pull_request_target so labels work on fork PRs. This workflow never checks
+# out or runs PR code and uses no repo secrets, only the scoped GITHUB_TOKEN.
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, edited]
+
+permissions: {}
+
+jobs:
+  labels:
+    name: Area and size labels
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/labeler@v5
+        with:
+          sync-labels: false
+      - uses: codelytv/pr-size-labeler@v1
+        with:
+          xs_label: size/XS
+          xs_max_size: "10"
+          s_label: size/S
+          s_max_size: "100"
+          m_label: size/M
+          m_max_size: "500"
+          l_label: size/L
+          l_max_size: "1000"
+          xl_label: size/XL
+          fail_if_xl: "false"
+          files_to_ignore: package-lock.json
+
+  welcome:
+    name: First time contributor
+    if: github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ github.token }}
+          pr-message: |
+            Thanks for your first PR to UniZ. A code owner will review it, usually within a few days.
+            While you wait: make sure CI is green and the title follows Conventional Commits (`fix(portal): ...`). If you get stuck, ask here or in Discussions.

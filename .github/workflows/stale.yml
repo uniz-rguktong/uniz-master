@@ -1,0 +1,28 @@
+name: Stale
+
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v9
+        with:
+          days-before-stale: 45
+          days-before-close: 14
+          stale-issue-label: stale
+          stale-pr-label: stale
+          exempt-issue-labels: pinned,security,priority/critical,priority/high,good first issue
+          exempt-pr-labels: pinned,security
+          exempt-all-assignees: false
+          stale-issue-message: No activity here for 45 days. It'll close in 2 weeks unless someone comments or it gets the pinned label.
+          stale-pr-message: No activity on this PR for 45 days. It'll close in 2 weeks. Push a commit or comment if you're still on it.
+          operations-per-run: 60
