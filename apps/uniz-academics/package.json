@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "tsc && (test -d src/generated && cp -r src/generated dist/generated || true)",
+    "test": "vitest run --coverage",
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn src/index.ts",
     "vercel-build": "prisma generate",
@@ -55,10 +56,14 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.12",
     "@types/pdfkit": "^0.17.5",
+    "@types/supertest": "^7.2.1",
+    "@vitest/coverage-v8": "^3.2.4",
     "prisma": "^6.4.1",
+    "supertest": "^7.3.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^3.2.4"
   },
   "overrides": {
     "ioredis": "5.4.1",

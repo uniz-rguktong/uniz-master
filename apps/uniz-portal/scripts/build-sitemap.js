@@ -11,26 +11,6 @@ const staticRoutes = [
   { path: "/college-team-collaboration", priority: 0.9, changefreq: "weekly" },
   { path: "/academic-task-tracker", priority: 0.9, changefreq: "weekly" },
   { path: "/blog", priority: 0.8, changefreq: "daily" },
-  {
-    path: "/blog/best-tools-for-student-collaboration-in-india",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
-  {
-    path: "/blog/how-to-manage-college-team-projects-online",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
-  {
-    path: "/blog/notion-alternative-for-engineering-students",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
-  {
-    path: "/blog/academic-productivity-system-guide",
-    priority: 0.7,
-    changefreq: "monthly",
-  },
 ];
 
 const generateSitemap = () => {

@@ -635,9 +635,12 @@ export default function StudentProfilePage() {
     <div className="font-sans text-navy-900 relative overflow-x-hidden">
       <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2 overflow-x-hidden">
         {/* Profile Header */}
-        <div className="flex flex-col items-center justify-center relative mb-8">
+        <div className="flex flex-col items-center justify-center relative mb-8 overflow-hidden rounded-xl border border-[#E2E8F0] bg-white px-4 pb-6 shadow-[0_1px_2px_rgba(10,37,64,0.05)] md:pb-8">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-br from-[#021227] via-[#0A2540] to-[#163A5C] md:h-28" aria-hidden="true">
+            <div className="absolute inset-x-0 bottom-0 h-[3px] bg-[#EA2027]" />
+          </div>
           {/* Actions - Top Right Absolute Position (Desktop Only) */}
-          <div className="hidden md:flex absolute top-0 right-0 gap-2 shrink-0 z-20">
+          <div className="hidden md:flex absolute top-4 right-4 gap-2 shrink-0 z-20">
             {isEditing && (
               <>
                 <button
@@ -664,7 +667,7 @@ export default function StudentProfilePage() {
           </div>
 
           {/* Centered Avatar and Info */}
-          <div className="flex flex-col items-center mt-4">
+          <div className="relative z-10 flex flex-col items-center mt-8 md:mt-10">
             {/* Avatar with upload state */}
             <div className="relative">
               <div

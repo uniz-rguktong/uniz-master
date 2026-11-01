@@ -96,17 +96,20 @@ export function HeroAndTitle({
         ))}
 
         {/* Editorial overlay */}
-        <div className="absolute inset-0 z-[2] bg-gradient-to-t from-navy-900/90 via-navy-900/35 to-navy-900/25 pointer-events-none" />
+        <div className="absolute inset-0 z-[2] bg-gradient-to-t from-navy-950/95 via-navy-900/45 to-navy-900/20 pointer-events-none" />
+        <div className="absolute inset-0 z-[2] bg-gradient-to-r from-navy-950/80 via-navy-900/30 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 z-[3] h-1 bg-brand-red" />
 
         <div className="absolute inset-0 z-[3] flex flex-col justify-end">
           <div className="max-w-7xl mx-auto w-full px-5 sm:px-8 lg:px-12 pb-16 sm:pb-20 lg:pb-24">
-            <p className="text-[11px] sm:text-xs font-medium tracking-[0.22em] uppercase text-white/70 mb-4 sm:mb-5">
+            <p className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] sm:text-xs font-semibold tracking-[0.22em] uppercase text-white/90 backdrop-blur-md mb-5 sm:mb-6">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand-red" aria-hidden="true" />
               Ongole Campus
             </p>
-            <h1 className="font-serif text-white font-semibold tracking-tight leading-[1.08] text-[2rem] sm:text-4xl md:text-5xl lg:text-[3.5rem] max-w-3xl">
+            <h1 className="font-serif text-white font-bold tracking-tight leading-[1.04] text-[2.25rem] sm:text-5xl md:text-6xl lg:text-[4.25rem] max-w-4xl [text-wrap:balance] drop-shadow-[0_2px_24px_rgba(2,18,39,0.45)]">
               {title}
             </h1>
-            <p className="mt-4 sm:mt-5 text-base sm:text-lg text-white/80 max-w-xl leading-relaxed font-light">
+            <p className="mt-5 sm:mt-6 border-l-2 border-brand-red pl-4 text-base sm:text-xl text-white/85 max-w-xl leading-relaxed">
               {subtitle}
             </p>
 
@@ -114,7 +117,7 @@ export function HeroAndTitle({
               <a
                 href="#leadership"
                 aria-label="Explore campus"
-                className="group inline-flex items-center justify-center w-11 h-11 rounded-full border border-white/50 text-white hover:bg-white hover:text-navy-900 transition-colors duration-200"
+                className="group inline-flex items-center justify-center w-11 h-11 rounded-full bg-brand-red text-white shadow-[0_8px_24px_-8px_rgba(234,32,39,0.7)] hover:bg-[#C81A20] transition-colors duration-150"
               >
                 <ArrowDown className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" />
               </a>
@@ -127,7 +130,7 @@ export function HeroAndTitle({
               <a
                 href={ANDROID_APK_URL}
                 download={ANDROID_APK_FILENAME}
-                className="inline-flex h-10 items-center gap-2 rounded-xs bg-white px-4 text-xs font-bold uppercase tracking-[0.08em] text-navy-900 transition-colors hover:bg-slate-100"
+                className="inline-flex h-11 items-center gap-2 rounded-md bg-white px-5 shadow-[0_8px_24px_-12px_rgba(2,18,39,0.6)] text-xs font-bold uppercase tracking-[0.08em] text-navy-900 transition-colors hover:bg-navy-200"
               >
                 <AndroidIcon className="w-3.5 h-3.5" />
                 Download Android App
@@ -135,7 +138,7 @@ export function HeroAndTitle({
               <button
                 type="button"
                 onClick={openLandingIosModal}
-                className="inline-flex h-10 items-center gap-2 rounded-xs border border-white/60 bg-navy-900/60 px-4 text-xs font-bold uppercase tracking-[0.08em] text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-navy-900"
+                className="inline-flex h-11 items-center gap-2 rounded-md border border-white/40 bg-white/10 px-5 text-xs font-bold uppercase tracking-[0.08em] text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-navy-900"
               >
                 <AppleIcon className="w-3.5 h-3.5" />
                 Download iOS App
@@ -150,19 +153,24 @@ export function HeroAndTitle({
             <button
               onClick={prev}
               aria-label="Previous"
-              className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-10 h-10 rounded-full border border-white/30 text-white/80 hover:text-white hover:border-white/60 transition-colors"
+              className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-10 hidden sm:flex items-center justify-center w-11 h-11 rounded-full border border-white/25 bg-navy-950/30 text-white/85 backdrop-blur-md hover:bg-white hover:text-navy-900 transition-colors duration-150"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={next}
               aria-label="Next"
-              className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-10 h-10 rounded-full border border-white/30 text-white/80 hover:text-white hover:border-white/60 transition-colors"
+              className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-10 hidden sm:flex items-center justify-center w-11 h-11 rounded-full border border-white/25 bg-navy-950/30 text-white/85 backdrop-blur-md hover:bg-white hover:text-navy-900 transition-colors duration-150"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
 
-            <div className="absolute bottom-6 right-5 sm:right-8 z-10 flex items-center gap-1.5">
+            <div className="absolute bottom-6 right-5 sm:right-8 z-10 flex items-center gap-3">
+              <span className="text-[11px] font-semibold tabular-nums tracking-[0.18em] text-white/80" aria-hidden="true">
+                {String(current + 1).padStart(2, "0")}
+                <span className="text-white/40"> / {String(images.length).padStart(2, "0")}</span>
+              </span>
+              <div className="flex items-center gap-1.5">
               {images.map((_, idx) => (
                 <button
                   key={idx}
@@ -170,13 +178,14 @@ export function HeroAndTitle({
                   aria-label={`Go to slide ${idx + 1}`}
                   className="rounded-full transition-all duration-200"
                   style={{
-                    width: idx === current ? "20px" : "6px",
-                    height: "6px",
+                    width: idx === current ? "28px" : "6px",
+                    height: "4px",
                     backgroundColor:
-                      idx === current ? "#ffffff" : "rgba(255,255,255,0.4)",
+                      idx === current ? "#EA2027" : "rgba(255,255,255,0.45)",
                   }}
                 />
               ))}
+              </div>
             </div>
           </>
         )}
@@ -185,7 +194,8 @@ export function HeroAndTitle({
       {/* Calm announcement ticker */}
       {announcements.length > 0 && (
         <section className="relative w-full overflow-hidden announcement-bar flex h-11 sm:h-12 items-center">
-          <div className="relative z-20 flex items-center justify-center bg-navy text-white px-4 sm:px-6 h-full shrink-0">
+          <div className="relative z-20 flex items-center justify-center gap-2 bg-navy text-white px-4 sm:px-6 h-full shrink-0">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-red animate-pulse motion-reduce:animate-none" aria-hidden="true" />
             <span className="text-[11px] sm:text-xs font-medium tracking-[0.16em] uppercase">
               Announcements
             </span>
