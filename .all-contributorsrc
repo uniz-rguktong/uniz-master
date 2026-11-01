@@ -1,0 +1,21 @@
+{
+  "projectName": "uniz-master",
+  "projectOwner": "uniz-rguktong",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": ["README.md"],
+  "imageSize": 80,
+  "commit": false,
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "linkToUsage": false,
+  "contributors": [
+    {
+      "login": "sreecharan-desu",
+      "name": "SreeCharan Desu",
+      "avatar_url": "https://avatars.githubusercontent.com/sreecharan-desu",
+      "profile": "https://github.com/sreecharan-desu",
+      "contributions": ["code", "infra", "maintenance", "review"]
+    }
+  ]
+}

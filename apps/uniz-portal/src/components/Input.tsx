@@ -67,8 +67,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               "min-h-[44px]",
               error &&
                 "border-rose-300 bg-rose-50/50 focus:border-rose-400 focus:ring-rose-500/10",
-              icon && "pl-10",
-              isPassword && "pr-12",
+              icon ? "pl-10" : false,
+              isPassword && "pr-10",
               className,
             )}
             placeholder={placeholder}

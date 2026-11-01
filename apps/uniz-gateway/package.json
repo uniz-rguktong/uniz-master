@@ -4,7 +4,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn src/index.ts"
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "test": "vitest run --coverage"
   },
   "dependencies": {
     "axios": "^1.18.1",
@@ -22,7 +23,9 @@
     "@types/express": "^5.0.6",
     "@types/http-proxy": "^1.17.17",
     "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^4.1.12",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^4.1.12"
   }
 }

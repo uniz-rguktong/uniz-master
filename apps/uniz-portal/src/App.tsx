@@ -1,4 +1,4 @@
-import { Suspense, lazy, type ReactElement } from "react";
+import { Suspense, lazy, useEffect, type ReactElement } from "react";
 import { Route, Routes, Link, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 import "./index.css";
@@ -29,7 +29,6 @@ const AdminNotificationsPage = lazy(
 
 // Admin Components
 const AddStudents = lazy(() => import("./pages/admin/AddStudents"));
-const ToasterDemo = lazy(() => import("./pages/student/ToasterDemo"));
 const FacultyDashboard = lazy(() => import("./pages/faculty/dashboard"));
 const AddGrades = lazy(() => import("./pages/admin/AddGrades"));
 const AddAttendance = lazy(() => import("./pages/attendance/AddAttendance"));
@@ -70,7 +69,7 @@ export function Error() {
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] rounded-full bg-gradient-to-br from-blue-50/40 via-blue-100/10 to-transparent blur-[120px] opacity-70"
         />
-        <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+        <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay portal-grain" />
       </div>
 
       <motion.div
@@ -114,6 +113,38 @@ export function Error() {
       </motion.div>
     </div>
   );
+}
+
+function NotFound() {
+  setNotFoundRouteActive(true);
+
+  useEffect(() => {
+    setNotFoundRouteActive(true);
+
+    let robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+    const createdRobots = !robots;
+    if (!robots) {
+      robots = document.createElement("meta");
+      robots.setAttribute("name", "robots");
+      document.head.appendChild(robots);
+    }
+    const previousRobots = robots.getAttribute("content");
+    robots.setAttribute("content", "noindex, nofollow");
+
+    return () => {
+      setNotFoundRouteActive(false);
+      if (!robots) return;
+      if (createdRobots) {
+        robots.remove();
+      } else if (previousRobots === null) {
+        robots.removeAttribute("content");
+      } else {
+        robots.setAttribute("content", previousRobots);
+      }
+    };
+  }, []);
+
+  return <Error />;
 }
 
 export function Maintenance() {
@@ -163,8 +194,8 @@ const AuthRedirect = () => {
 
 import { InstallPWA } from "./components/InstallPWA";
 import { DownloadAppBanner, IosInstallModal } from "./components/DownloadAppBanner";
-const IosInstallPage = lazy(() => import("./pages/IosInstallPage"));
 import { usePushNavigation } from "./hooks/usePushNavigation";
+import { setNotFoundRouteActive } from "./utils/notFoundRoute";
 
 function PushNavigationBridge() {
   usePushNavigation();
@@ -191,9 +222,7 @@ export default function App() {
                 localStorage.getItem("faculty_token") ? (
                   <AuthRedirect />
                 ) : (
-                  <PageTransition>
-                    <Home />
-                  </PageTransition>
+                  <Home />
                 )}
               </MaintenanceGuard>
             }
@@ -291,16 +320,6 @@ export default function App() {
               <MaintenanceGuard>
                 <PageTransition>
                   <Sidebar content="help" />
-                </PageTransition>
-              </MaintenanceGuard>
-            }
-          />
-          <Route
-            path="/student/toast-demo"
-            element={
-              <MaintenanceGuard>
-                <PageTransition>
-                  <ToasterDemo />
                 </PageTransition>
               </MaintenanceGuard>
             }
@@ -607,7 +626,7 @@ export default function App() {
             path="*"
             element={
               <PageTransition>
-                <Error />
+                <NotFound />
               </PageTransition>
             }
           />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, X, ArrowRight, Menu } from "lucide-react";
+import { Search, X, ArrowRight, Menu, ChevronDown } from "lucide-react";
 
 const SEARCH_DIRECTORY = [
   { title: "Home", path: "/", category: "General" },
@@ -105,9 +105,9 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-white border-b border-[#D8E0EA] shadow-[0_1px_2px_rgba(6,21,39,0.05)]">
+      <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md supports-[backdrop-filter]:bg-white/80 border-b border-line shadow-[0_1px_2px_rgba(6,21,39,0.04)]">
         {/* Tier 1: Harvard/MIT-style Slim Institutional Utility Bar */}
-        <div className="bg-[#061527] text-white/80 border-b border-white/10">
+        <div className="bg-navy-850 text-white/80 border-b border-white/10">
           <div className="w-full max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 flex h-8 items-center justify-between text-[11.5px] tracking-[0.03em]">
             <div className="flex items-center gap-2 truncate">
               <span className="font-semibold text-white/95">RGUKT ANDHRA PRADESH</span>
@@ -149,7 +149,7 @@ export function Header() {
             </div>
           </div>
         </div>
-        <div className="w-full max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 flex h-[64px] items-center justify-between">
+        <div className="w-full max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 flex h-[68px] items-center justify-between gap-6">
 
           {/* Wordmark */}
           <Link to="/" className="flex items-center shrink-0 gap-3 group">
@@ -159,14 +159,47 @@ export function Header() {
               className="h-10 w-10 md:h-11 md:w-11 object-contain"
             />
             <div className="hidden sm:flex flex-col justify-center">
-              <span className="font-serif text-[1.35rem] md:text-[1.5rem] font-semibold text-[#061B33] tracking-tight leading-none">
+              <span className="font-serif text-[1.35rem] md:text-[1.5rem] font-semibold text-navy-900 tracking-tight leading-none">
                 RGUKT
               </span>
-              <span className="mt-1 text-[10px] md:text-[11px] font-medium text-[#0A2540] tracking-[0.14em] uppercase">
+              <span className="mt-1 text-[10px] md:text-[11px] font-medium text-navy tracking-[0.14em] uppercase">
                 Ongole Campus
               </span>
             </div>
           </Link>
+
+          {/* Primary nav (desktop) */}
+          <nav aria-label="Primary" className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+            {MENU_SECTIONS.map((section) => (
+              <div key={section.title} className="relative group">
+                <Link
+                  to={section.links[0].path}
+                  className="inline-flex items-center gap-1 h-10 px-3.5 rounded-md text-[15px] font-medium text-navy-900 hover:bg-surface-2 hover:text-navy transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+                >
+                  {section.title}
+                  <ChevronDown className="w-3.5 h-3.5 text-ink-subtle transition-transform duration-150 group-hover:rotate-180 group-focus-within:rotate-180" />
+                </Link>
+                <div className="invisible opacity-0 translate-y-1 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-0 transition-[opacity,transform] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none absolute left-1/2 -translate-x-1/2 top-full pt-2">
+                  <ul
+                    className={`rounded-lg border border-line bg-white p-2 shadow-[0_12px_32px_-12px_rgba(6,21,39,0.25)] ${
+                      section.links.length > 8 ? "grid grid-cols-2 w-[360px]" : "w-60"
+                    }`}
+                  >
+                    {section.links.map((link) => (
+                      <li key={link.path}>
+                        <Link
+                          to={link.path}
+                          className="block rounded-md px-3 py-2 text-[14px] text-ink hover:bg-surface-2 hover:text-navy transition-colors duration-150"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </nav>
 
           {/* Search + Menu */}
           <div className="flex items-center gap-1.5 sm:gap-2.5">
@@ -174,7 +207,7 @@ export function Header() {
               href="https://uniz.rguktong.in/developers"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center h-9 px-3 text-[12px] font-bold uppercase tracking-[0.08em] text-[#061B33] hover:text-[#0A2540] hover:bg-slate-100 rounded-[4px] transition-colors"
+              className="hidden xl:inline-flex items-center h-10 px-3 text-[14px] font-medium text-navy-900 hover:text-navy hover:bg-surface-2 rounded-md transition-colors duration-150"
             >
               Developers
             </a>
@@ -182,7 +215,7 @@ export function Header() {
               href="https://uniz.rguktong.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3.5 bg-[#0A2540] hover:bg-[#061B33] text-white text-[12px] font-bold uppercase tracking-[0.08em] rounded-[4px] transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 h-10 px-4 bg-brand-red hover:bg-[#C81A20] text-white text-[14px] font-semibold rounded-md shadow-[0_6px_16px_-8px_rgba(234,32,39,0.6)] transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
             >
               <span>UniZ Portal</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -190,16 +223,16 @@ export function Header() {
             <button
               onClick={() => { setIsSearchOpen(true); setIsMenuOpen(false); }}
               aria-label="Search"
-              className="w-10 h-10 flex items-center justify-center text-[#061B33] hover:text-[#0A2540] transition-colors"
+              className="w-10 h-10 flex items-center justify-center rounded-md text-navy-900 hover:text-navy hover:bg-surface-2 transition-colors duration-150"
             >
               <Search className="w-5 h-5 stroke-[1.75]" />
             </button>
             <button
               onClick={() => { setIsMenuOpen(true); setIsSearchOpen(false); }}
               aria-label="Open menu"
-              className="flex items-center gap-2 h-10 px-2 sm:px-3 text-[#061B33] hover:text-[#0A2540] transition-colors"
+              className="lg:hidden flex items-center gap-2 h-10 px-2 sm:px-3 rounded-md text-navy-900 hover:text-navy hover:bg-surface-2 transition-colors duration-150"
             >
-              <span className="hidden sm:inline text-[13px] font-medium tracking-wide uppercase">Menu</span>
+              <span className="hidden sm:inline text-[14px] font-medium">Menu</span>
               <Menu className="w-5 h-5 stroke-[1.75]" />
             </button>
           </div>
@@ -208,7 +241,7 @@ export function Header() {
 
       {/* Full-screen menu panel */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[100] bg-[#061B33] text-white overflow-y-auto">
+        <div className="fixed inset-0 z-[100] bg-navy-950 text-white overflow-y-auto animate-[menu-in_200ms_cubic-bezier(0.2,0,0,1)_both] motion-reduce:animate-none">
           <div className="max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 py-5 flex items-center justify-between border-b border-white/10">
             <Link
               to="/"
@@ -240,16 +273,16 @@ export function Header() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
               {MENU_SECTIONS.map((section) => (
                 <div key={section.title}>
-                  <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-white/40 mb-5">
+                  <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-white/60 mb-5">
                     {section.title}
                   </p>
-                  <ul className="flex flex-col gap-3">
+                  <ul className="flex flex-col gap-0.5">
                     {section.links.map((link) => (
                       <li key={link.path}>
                         <Link
                           to={link.path}
                           onClick={() => setIsMenuOpen(false)}
-                          className="text-[15px] sm:text-base text-white/85 hover:text-white underline-offset-[0.22em] hover:underline transition-colors"
+                          className="inline-flex min-h-[44px] items-center text-[17px] text-white/85 hover:text-white transition-colors duration-150"
                         >
                           {link.label}
                         </Link>
@@ -265,15 +298,15 @@ export function Header() {
 
       {/* Search overlay */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-[100] bg-[#061B33]/50 backdrop-blur-sm flex items-start justify-center pt-20 sm:pt-28 px-4">
+        <div className="fixed inset-0 z-[100] bg-navy-900/50 backdrop-blur-sm flex items-start justify-center pt-20 sm:pt-28 px-4">
           <div
             className="absolute inset-0"
             onClick={() => setIsSearchOpen(false)}
           />
 
-          <div className="relative w-full max-w-2xl bg-white overflow-hidden flex flex-col shadow-2xl">
+          <div className="relative w-full max-w-2xl bg-white rounded-xl border border-line overflow-hidden flex flex-col shadow-[0_32px_80px_-20px_rgba(2,18,39,0.6)] animate-[menu-in_200ms_cubic-bezier(0.2,0,0,1)_both] motion-reduce:animate-none">
             <div className="relative flex items-center border-b border-slate-200 px-5 py-4">
-              <Search className="w-5 h-5 text-[#0A2540]" />
+              <Search className="w-5 h-5 text-navy" />
               <input
                 autoFocus
                 type="text"
@@ -295,7 +328,7 @@ export function Header() {
               {searchQuery.trim() === "" ? (
                 <div className="px-4 py-10 text-center text-slate-500">
                   <p className="text-base">Search departments, academics, or notifications.</p>
-                  <p className="text-sm mt-2 text-slate-400">Try “CSE”, “Library”, or “Tenders”.</p>
+                  <p className="text-sm mt-2 text-ink-subtle">Try “CSE”, “Library”, or “Tenders”.</p>
                 </div>
               ) : filteredResults.length === 0 ? (
                 <div className="px-4 py-10 text-center text-slate-500">
@@ -313,14 +346,14 @@ export function Header() {
                       className="flex items-center justify-between w-full text-left px-4 py-3.5 hover:bg-slate-50 transition-colors group border-b border-slate-100 last:border-0"
                     >
                       <div>
-                        <span className="block text-slate-900 font-medium group-hover:text-[#0A2540] transition-colors">
+                        <span className="block text-slate-900 font-medium group-hover:text-navy transition-colors">
                           {item.title}
                         </span>
-                        <span className="block text-xs tracking-wider uppercase text-slate-400 mt-0.5">
+                        <span className="block text-xs tracking-wider uppercase text-ink-subtle mt-0.5">
                           {item.category}
                         </span>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-[#0A2540] opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block" />
+                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-navy opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block" />
                     </button>
                   ))}
                 </div>

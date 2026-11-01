@@ -43,18 +43,20 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="relative w-full bg-[#061B33] text-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16 lg:py-20 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-12 border-b border-white/10">
+    <footer className="relative w-full overflow-hidden bg-navy-850 text-white">
+      <div className="h-1 w-full bg-gradient-to-r from-brand-red via-brand-red to-navy-700" aria-hidden="true" />
+      <div className="pointer-events-none absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-navy-600/40 blur-3xl" aria-hidden="true" />
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative py-16 lg:py-24 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-12 border-b border-white/10">
 
         <div className="col-span-2 flex flex-col gap-5">
           <Link to="/" className="flex items-center gap-3">
             <img
               src="/rgukt-logo.png"
               alt="RGUKT Ongole"
-              className="w-10 h-10 rounded-[4px] bg-white p-1 object-contain shadow-sm ring-1 ring-white/20"
+              className="w-12 h-12 rounded-lg bg-white p-1.5 object-contain shadow-sm ring-1 ring-white/20"
             />
             <div className="flex flex-col leading-none">
-              <span className="font-serif text-lg font-semibold text-white tracking-tight">
+              <span className="font-serif text-2xl font-bold text-white tracking-tight">
                 RGUKT
               </span>
               <span className="mt-1 text-[10px] font-medium tracking-[0.16em] uppercase text-white/50">
@@ -62,10 +64,10 @@ export function Footer() {
               </span>
             </div>
           </Link>
-          <p className="text-white/55 text-[15px] leading-relaxed max-w-sm">
+          <p className="text-white/70 text-[15px] leading-relaxed max-w-sm">
             Empowering gifted rural youth through world-class technical education in Andhra Pradesh.
           </p>
-          <div className="flex gap-3 text-sm text-white/50 mt-1">
+          <div className="flex gap-3 text-sm text-white/65 mt-1 rounded-lg border border-white/10 bg-white/[0.03] p-4 max-w-sm">
             <MapPin className="w-4 h-4 mt-0.5 text-white/75 flex-shrink-0" />
             <div className="flex flex-col gap-0.5 leading-relaxed">
               <span className="font-medium text-white/70 tracking-widest text-[10px] uppercase mb-1">
@@ -80,7 +82,7 @@ export function Footer() {
 
         {columns.map((col) => (
           <div key={col.title}>
-            <p className="text-[10px] font-medium tracking-[0.2em] uppercase text-white/35 mb-5">
+            <p className="relative pb-3 text-[11px] font-semibold tracking-[0.2em] uppercase text-white mb-5 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-6 after:bg-brand-red">
               {col.title}
             </p>
             <ul className="flex flex-col gap-3">
@@ -88,7 +90,7 @@ export function Footer() {
                 <li key={lk.p}>
                   <Link
                     to={lk.p}
-                    className="text-sm text-white/60 hover:text-white underline-offset-[0.22em] hover:underline transition-colors"
+                    className="inline-block text-sm text-white/65 hover:text-white hover:translate-x-0.5 transition-[color,transform] duration-150"
                   >
                     {lk.n}
                   </Link>
@@ -99,8 +101,8 @@ export function Footer() {
         ))}
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-6 flex flex-col sm:flex-row justify-between items-center gap-5">
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-[11px] tracking-wide text-white/45 text-center sm:text-left">
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-12 py-6 flex flex-col sm:flex-row justify-between items-center gap-5">
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-[11px] tracking-wide text-white/60 text-center sm:text-left">
           <p>© {new Date().getFullYear()} RGUKT Ongole. All rights reserved.</p>
           <span className="hidden sm:inline text-white/20">·</span>
           <a
@@ -135,7 +137,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Social Link"
-              className="w-9 h-9 flex items-center justify-center text-white/45 hover:text-white transition-colors"
+              className="w-10 h-10 flex items-center justify-center rounded-md border border-white/15 bg-white/[0.04] text-white/75 hover:bg-brand-red hover:border-brand-red hover:text-white transition-colors duration-150"
             >
               <Icon className="w-4 h-4" />
             </a>
@@ -145,7 +147,7 @@ export function Footer() {
 
       {/* Quiet wordmark — no canvas flicker */}
       <div className="border-t border-white/5 py-10 sm:py-14 text-center select-none">
-        <p className="font-serif text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white/[0.06]">
+        <p className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white/[0.14] to-white/[0.02]">
           RGUKT Ongole
         </p>
       </div>
@@ -153,7 +155,7 @@ export function Footer() {
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         aria-label="Scroll to top"
-        className="fixed bottom-8 right-8 z-50 w-11 h-11 rounded-full bg-[#0A2540] hover:bg-[#021227] text-white flex items-center justify-center transition-colors"
+        className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 w-11 h-11 rounded-full bg-navy text-white ring-1 ring-white/20 shadow-[0_12px_32px_-12px_rgba(2,18,39,0.7)] hover:bg-brand-red flex items-center justify-center transition-colors duration-150"
       >
         <ArrowUp className="w-5 h-5" />
       </button>

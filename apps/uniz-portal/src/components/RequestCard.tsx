@@ -8,12 +8,7 @@ import {
   ArrowRight,
   History,
 } from "lucide-react";
-import {
-  adminCardClass,
-  adminChipClass,
-  adminLabelClass,
-  adminSectionTitleClass,
-} from "./admin/admin-ui";
+import { adminCardClass, adminChipClass } from "./admin/admin-ui";
 import { cn } from "../utils/cn";
 
 export default function RequestCard({

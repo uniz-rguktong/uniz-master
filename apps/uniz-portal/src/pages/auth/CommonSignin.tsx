@@ -22,7 +22,6 @@ import LoginScreen, {
   examcellLoginLabelClass,
   examcellLoginLinkClass,
 } from "../../components/ui/login-1";
-import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { motion } from "framer-motion";
 import { prepareStudentSession } from "../../utils/studentSessionCache";
@@ -30,9 +29,7 @@ import { cn } from "@/lib/utils";
 import { getSafeReturnUrl } from "@/utils/returnUrl";
 import {
   portalGhostButtonClass,
-  portalInputClass,
   portalLabelClass,
-  portalPrimaryButtonClass,
   portalSecondaryButtonClass,
 } from "@/lib/portal-ui";
 
@@ -95,6 +92,7 @@ interface SigninResponse {
   admin_token?: string;
   success?: boolean;
   role?: string;
+  username?: string;
 }
 
 // ─── OTP Input Component ──────────────────────────────────────
@@ -251,9 +249,9 @@ const loginLabelClass = examcellLoginLabelClass;
 
 const loginInputClass = cn(examcellLoginInputClass, "login-field");
 
-const loginInputWithIconClass = cn(loginInputClass, "!px-3.5");
+const loginInputWithIconClass = cn(loginInputClass, "!pl-11 !pr-3.5");
 
-const loginInputPasswordClass = cn(loginInputClass, "!pl-3.5 !pr-10");
+const loginInputPasswordClass = cn(loginInputClass, "!pl-11 !pr-11");
 
 const loginBtnClass = cn(
   examcellLoginButtonClass,
@@ -283,14 +281,6 @@ function requiresCaptcha() {
 }
 
 const CAPTCHA_WAIT_MS = 6_000;
-
-function warmTurnstile(
-  turnstileRef: React.RefObject<{ execute?: () => void } | null>,
-  captchaTokenRef: React.MutableRefObject<string | null>,
-) {
-  if (!requiresCaptcha() || captchaTokenRef.current) return;
-  turnstileRef.current?.execute?.();
-}
 
 function waitForCaptchaToken(
   captchaTokenRef: React.MutableRefObject<string | null>,
@@ -375,7 +365,7 @@ function TurnstileWidget({
           action: "login",
           retry: "auto",
           "refresh-expired": "auto",
-        }}
+        } as any}
         onSuccess={(token) => {
           captchaTokenRef.current = token;
           onTokenChange(token);
@@ -914,7 +904,7 @@ export default function Signin({ type }: SigninProps) {
                 <div className="flex items-center justify-between pt-0.5">
                   {type === "student" ? (
                     <span className="text-[11.5px] text-[#64748B]">
-                      Default student password: ID@rguktong
+                      Forgot your password? Contact your admin.
                     </span>
                   ) : (
                     <span />

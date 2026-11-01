@@ -15,6 +15,7 @@
     "prisma:push": "prisma db push",
     "vercel-build": "prisma generate",
     "postinstall": "if [ -f prisma/schema.prisma ]; then npx prisma generate; fi",
+    "test": "vitest run --coverage",
     "seed": "ts-node prisma/seed.ts",
     "data-reset": "npx prisma db push --force-reset && npm run seed",
     "deploy": "git add . && git commit -m \"deploy: user-service updates\" && git push origin main",
@@ -30,7 +31,6 @@
     "axios": "^1.18.1",
     "cloudinary": "^2.9.0",
     "compression": "^1.8.1",
-    "sharp": "^0.33.5",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "exceljs": "^4.1.1",
@@ -41,6 +41,7 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.1.0",
     "redis": "^5.11.0",
+    "sharp": "^0.33.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -51,10 +52,12 @@
     "@types/ioredis": "^4.28.10",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^5.0.5",
     "prisma": "^6.4.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "vitest": "^5.0.5"
   },
   "overrides": {
     "minimatch": "^10.2.3",

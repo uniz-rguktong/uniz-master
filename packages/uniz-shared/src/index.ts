@@ -13,10 +13,7 @@ export {
   formatStudentDisplayName,
   isActionableGrievanceDescription,
 } from "./grievance-email";
-export {
-  getInternalSecret,
-  isValidInternalSecret,
-} from "./internal-secret";
+export { getInternalSecret, isValidInternalSecret } from "./internal-secret";
 export {
   ENGINEERING_BRANCHES,
   BRANCH_NAME_MAP,

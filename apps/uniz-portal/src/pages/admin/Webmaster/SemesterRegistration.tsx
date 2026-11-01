@@ -11,7 +11,6 @@ import {
   BookOpen,
   Users,
   ChevronRight,
-  ShieldCheck,
   AlertCircle,
   Trash2,
 } from "lucide-react";
@@ -30,7 +29,6 @@ import {
   adminModalDescClass,
   adminLabelClass,
   adminInputClass,
-  adminSelectClass,
   adminPrimaryButtonClass,
   adminGhostButtonClass,
   adminWarningBannerClass,

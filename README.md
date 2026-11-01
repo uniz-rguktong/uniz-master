@@ -5,6 +5,34 @@
 Open-source campus platform for RGUKT Ongole — APIs, portal, landing, docs, and the Android TWA in **one monorepo**. Org map: [docs/org/README.md](docs/org/README.md). Layout: [STRUCTURE.md](STRUCTURE.md).
 
 **New here?** [Handover guide](docs/HANDOVER.md) · **Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Action flows:** [docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) · **Android APK:** [apps/uniz-android-twa](apps/uniz-android-twa/README.md) (`npm run android:apk`)
+## New contributor? Start here
+
+UniZ is built by students across RGUKT. You don't need production access or any secrets to work on it.
+
+1. Pick a [good first issue](https://github.com/uniz-rguktong/uniz-master/issues?q=is%3Aopen+label%3A%22good+first+issue%22) and comment that you're on it.
+2. Install Node 20, Docker and Git, then fork and clone this repo.
+3. Run the stack locally:
+
+```bash
+cp secrets.env.example secrets.env   # dev placeholders only
+npm run setup:local                  # Postgres + Redis in Docker, deps, Prisma
+npm run seed:local                   # sample users and academics data
+npm run dev                          # gateway + api + portal
+```
+
+Portal: http://localhost:5173 (log in as `webadmin` / `password123` after seeding). API: http://localhost:3000/api/v1.
+
+4. Before you push, run what CI runs:
+
+```bash
+npm run build:shared && npm run ci:build   # shared package + backend services
+npm run build -w uniz                      # portal
+```
+
+5. Open a PR with a [Conventional Commits](https://www.conventionalcommits.org/) title and link the issue.
+
+Stuck? Ask in [Discussions](https://github.com/uniz-rguktong/uniz-master/discussions). Full guide: [CONTRIBUTING.md](CONTRIBUTING.md). How you grow from contributor to reviewer: [contributor ladder](docs/org/contributor-ladder.md).
+
 ## Architecture
 
 <img width="1379" height="1141" alt="image" src="https://github.com/user-attachments/assets/e1a7c496-4754-4ef8-b045-f26dd9684317" />
@@ -148,3 +176,10 @@ Use WSL2 + Docker Desktop. Prefer bash for `setup-local.sh`.
 `secrets.env.example` and `.env.example` ship **dev-only** placeholders. Never commit `secrets.env` or `.env`.
 
 </details>
+
+## Contributors
+
+Everyone who helps build UniZ is listed here, code or not (bug reports, docs, design, reviews). Maintainers add people with the [all-contributors](https://allcontributors.org) CLI: `npx all-contributors add <github-handle> code`.
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->

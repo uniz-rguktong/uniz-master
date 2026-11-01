@@ -13,7 +13,7 @@ export function Events({
     <section id="events" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="inline-flex items-center mb-6 px-6 py-3 text-lg font-bold tracking-wide text-white bg-[#061B33] rounded-full shadow-sm">
+          <span className="inline-flex items-center mb-6 px-6 py-3 text-lg font-bold tracking-wide text-white bg-navy-900 rounded-full shadow-sm">
             Procurement & Tenders
           </span>
           <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900">
@@ -28,7 +28,7 @@ export function Events({
           {displayEvents.map((event, index) => (
             <div
               key={index}
-              className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300"
+              className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-200"
             >
               <div className="relative">
                 <img

@@ -113,13 +113,13 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen w-full bg-white text-[#0F172A] font-sans">
       {/* ─── SECTION A: Harvard / MIT Style Institutional Hero & Service Directory ─── */}
-      <section className="w-full bg-[#F8FAFC] border-b border-[#D8E0EA]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 md:py-14 lg:py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+      <section className="relative w-full overflow-hidden bg-[radial-gradient(120%_80%_at_0%_0%,#163A5C_0%,#0A2540_45%,#021227_100%)] border-b border-[#061527]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 md:py-20 lg:py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             {/* Left 7 Columns: Formal Institutional Mandate & Primary Actions */}
             <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
               <div className="space-y-4">
-                <div className="inline-flex items-center gap-3 border-b border-[#CBD5E1] pb-2.5">
+                <div className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-3 py-1.5">
                   <img
                     src="/rgukt-logo.png"
                     alt="RGUKT Emblem"
@@ -127,16 +127,16 @@ export default function Home() {
                     height={28}
                     className="h-6 w-auto object-contain shrink-0"
                   />
-                  <span className="text-[11.5px] font-bold uppercase tracking-[0.14em] text-[#0A2540]">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/85">
                     Office of Academic Affairs &amp; Examinations · RGUKT Ongole
                   </span>
                 </div>
 
-                <h1 className="text-[30px] sm:text-[38px] lg:text-[44px] font-bold tracking-[-0.02em] text-[#0A2540] leading-[1.12]">
+                <h1 className="text-[40px] sm:text-[56px] lg:text-[68px] font-bold tracking-[-0.03em] text-white leading-[1.0]">
                   Unified Academic, Examination &amp; Campus Operations Portal
                 </h1>
 
-                <p className="text-[15.5px] sm:text-[16.5px] text-[#334155] leading-[1.65] max-w-2xl">
+                <p className="text-[16px] sm:text-[18px] text-white/80 leading-[1.6] max-w-2xl">
                   The official digital gateway for Rajiv Gandhi University of
                   Knowledge Technologies, Ongole Campus. Sign in with your
                   university credentials to access semester course registrations,
@@ -153,7 +153,7 @@ export default function Home() {
                     onClick={() =>
                       navigate(isAuth ? portalPath : "/student/signin")
                     }
-                    className="inline-flex items-center justify-center gap-2.5 h-11 px-6 rounded-[2px] bg-[#0A2540] hover:bg-[#061B33] text-white text-[13.5px] font-bold tracking-[0.04em] uppercase transition-colors cursor-pointer shadow-xs"
+                    className="inline-flex items-center justify-center gap-2.5 h-12 px-7 rounded-md bg-[#EA2027] hover:bg-[#C81A20] text-white text-[16px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white font-semibold transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] cursor-pointer shadow-[0_8px_24px_-8px_rgba(234,32,39,0.6),inset_0_1px_0_rgba(255,255,255,0.15)]"
                   >
                     <span>
                       {isAuth ? "Continue to Portal" : "Student Portal Sign In"}
@@ -163,7 +163,7 @@ export default function Home() {
 
                   <Link
                     to="/admin/signin"
-                    className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-[2px] border border-[#0A2540] bg-white hover:bg-[#0A2540] text-[#0A2540] hover:text-white text-[13.5px] font-bold tracking-[0.04em] uppercase transition-colors"
+                    className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md border border-white/25 bg-white/5 hover:bg-white/10 text-white text-[16px] font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)]"
                   >
                     <span>Faculty &amp; Staff Sign In</span>
                   </Link>
@@ -174,13 +174,13 @@ export default function Home() {
                   id="mobile-apps"
                   className="flex flex-wrap items-center gap-2.5 pt-1 text-[12.5px]"
                 >
-                  <span className="font-semibold text-[#475569] uppercase tracking-[0.06em] text-[11px] mr-1">
+                  <span className="font-semibold text-white/60 uppercase tracking-[0.06em] text-[11px] mr-1">
                     Official Mobile Companion:
                   </span>
                   <a
                     href={UNIZ_APK_PATH}
                     download="uniz-android.apk"
-                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[2px] border border-[#CBD5E1] bg-white hover:border-[#0A2540] text-[#0A2540] font-semibold transition-colors"
+                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md border border-white/20 bg-white/5 hover:bg-white/10 duration-150 text-white font-semibold transition-colors"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download Android App (.apk)</span>
@@ -188,14 +188,14 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => openIosDownloadModal()}
-                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[2px] border border-[#CBD5E1] bg-white hover:border-[#0A2540] text-[#0A2540] font-semibold transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md border border-white/20 bg-white/5 hover:bg-white/10 duration-150 text-white font-semibold transition-colors cursor-pointer"
                   >
                     <Smartphone className="w-3.5 h-3.5" />
                     <span>Download iOS App</span>
                   </button>
                   <Link
                     to="/developers"
-                    className="inline-flex items-center gap-1 h-8 px-2.5 text-[#0A2540] font-semibold hover:underline underline-offset-4"
+                    className="inline-flex items-center gap-1 h-8 px-2.5 text-white/85 font-semibold hover:underline underline-offset-4"
                   >
                     <span>Software Development Cell</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -204,36 +204,36 @@ export default function Home() {
               </div>
 
               {/* Hairlined Institutional Key Facts Strip */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 border border-[#D8E0EA] bg-white rounded-[2px] divide-y sm:divide-y-0 sm:divide-x divide-[#E2E8F0] mt-2">
-                <div className="p-3.5">
-                  <p className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-[#64748B]">
+              <div className="grid grid-cols-2 sm:grid-cols-4 border border-white/15 bg-white/5 rounded-lg divide-y sm:divide-y-0 sm:divide-x divide-white/10 mt-4 backdrop-blur-sm">
+                <div className="p-4">
+                  <p className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-white/55">
                     Academic Program
                   </p>
-                  <p className="text-[14px] font-bold text-[#0A2540] mt-0.5">
+                  <p className="text-[15px] font-bold text-white mt-1">
                     6-Yr Integrated B.Tech
                   </p>
                 </div>
-                <div className="p-3.5">
-                  <p className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-[#64748B]">
+                <div className="p-4">
+                  <p className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-white/55">
                     Transcripts &amp; Grades
                   </p>
-                  <p className="text-[14px] font-bold text-[#0A2540] mt-0.5">
+                  <p className="text-[15px] font-bold text-white mt-1">
                     SGPA / CGPA Ledger
                   </p>
                 </div>
-                <div className="p-3.5">
-                  <p className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-[#64748B]">
+                <div className="p-4">
+                  <p className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-white/55">
                     Campus Governance
                   </p>
-                  <p className="text-[14px] font-bold text-[#0A2540] mt-0.5">
+                  <p className="text-[15px] font-bold text-white mt-1">
                     Digital Outpass &amp; Gate
                   </p>
                 </div>
-                <div className="p-3.5">
-                  <p className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-[#64748B]">
+                <div className="p-4">
+                  <p className="text-[10.5px] font-bold uppercase tracking-[0.08em] text-white/55">
                     Mobile Platforms
                   </p>
-                  <p className="text-[14px] font-bold text-[#0A2540] mt-0.5">
+                  <p className="text-[15px] font-bold text-white mt-1">
                     Android &amp; iOS Ready
                   </p>
                 </div>
@@ -242,7 +242,7 @@ export default function Home() {
 
             {/* Right 5 Columns: Quick Access Service Directory (my.harvard.edu style) */}
             <div className="lg:col-span-5 w-full">
-              <div className="border border-[#0A2540] bg-white rounded-[2px] shadow-[0_2px_6px_rgba(10,37,64,0.06)] overflow-hidden">
+              <div className="border border-white/10 bg-white rounded-xl shadow-[0_24px_64px_-16px_rgba(2,18,39,0.7)] overflow-hidden">
                 <div className="bg-[#0A2540] text-white px-5 py-3.5 flex items-center justify-between">
                   <div>
                     <h2 className="text-[13px] font-bold uppercase tracking-[0.12em] text-white">
@@ -334,7 +334,7 @@ export default function Home() {
 
             {/* Institutional Quick Reference & Schedule Ledger */}
             <div className="lg:col-span-4 space-y-5">
-              <div className="border border-[#D8E0EA] bg-[#F8FAFC] rounded-[2px] p-5 space-y-4">
+              <div className="border border-[#E2E8F0] bg-[#F8FAFC] rounded-lg shadow-[0_1px_2px_rgba(10,37,64,0.04)] p-5 space-y-4">
                 <div className="flex items-center gap-2.5 border-b border-[#E2E8F0] pb-3">
                   <CalendarCheck className="w-4 h-4 text-[#0A2540]" />
                   <h3 className="text-[13px] font-bold uppercase tracking-[0.1em] text-[#0A2540]">
@@ -350,11 +350,7 @@ export default function Home() {
                     <dd className="text-[#475569] mt-0.5 leading-relaxed">
                       Use your official University ID (e.g.,{" "}
                       <code className="font-bold text-[#0A2540]">O210001</code>).
-                      First-time password format:{" "}
-                      <code className="font-bold text-[#0A2540]">
-                        id@rguktong
-                      </code>
-                      .
+                      Forgot your password? Contact your admin.
                     </dd>
                   </div>
 
@@ -370,7 +366,7 @@ export default function Home() {
                       <a
                         href={UNIZ_APK_PATH}
                         download="uniz-android.apk"
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11.5px] font-bold bg-[#0A2540] text-white rounded-[2px] hover:bg-[#061B33]"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11.5px] font-bold bg-[#0A2540] text-white rounded-md hover:bg-[#061B33]"
                       >
                         <Download className="w-3 h-3" />
                         Android (.apk)
@@ -378,7 +374,7 @@ export default function Home() {
                       <button
                         type="button"
                         onClick={() => openIosDownloadModal()}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11.5px] font-bold border border-[#0A2540] text-[#0A2540] bg-white rounded-[2px] hover:bg-[#0A2540] hover:text-white cursor-pointer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11.5px] font-bold border border-[#0A2540] text-[#0A2540] bg-white rounded-md hover:bg-[#0A2540] hover:text-white cursor-pointer"
                       >
                         <Smartphone className="w-3 h-3" />
                         iOS App
@@ -428,7 +424,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 border border-[#D8E0EA] bg-white rounded-[2px] divide-y md:divide-y-0 md:divide-x divide-[#D8E0EA]">
+          <div className="grid grid-cols-1 md:grid-cols-3 border border-[#E2E8F0] bg-white rounded-lg shadow-[0_1px_2px_rgba(10,37,64,0.04)] divide-y md:divide-y-0 md:divide-x divide-[#E2E8F0]">
             {GOVERNANCE_DIVISIONS.map((div) => {
               const Icon = div.icon;
               return (
@@ -506,14 +502,14 @@ export default function Home() {
 
             <Link
               to="/developers"
-              className="inline-flex items-center gap-2 h-9 px-4 rounded-[2px] bg-[#0A2540] hover:bg-[#061B33] text-white text-[12.5px] font-bold uppercase tracking-[0.06em] transition-colors shrink-0 w-fit"
+              className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-[#0A2540] hover:bg-[#061B33] text-white text-[14px] font-semibold transition-colors duration-150 shrink-0 w-fit"
             >
               <span>View Engineering Directory</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-[#D8E0EA] rounded-[2px] divide-y sm:divide-y-0 sm:divide-x divide-[#D8E0EA] bg-white">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-[#E2E8F0] rounded-lg shadow-[0_1px_2px_rgba(10,37,64,0.04)] divide-y sm:divide-y-0 sm:divide-x divide-[#E2E8F0] bg-white">
             {DEVELOPER_TESTIMONIALS.map((dev) => (
               <div
                 key={dev.name}

@@ -33,7 +33,7 @@ export function LandingMeshBackdrop({ className }: { className?: string }) {
         transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
         className="absolute top-[40%] -left-[10%] h-[50%] w-[50%] rounded-full bg-gradient-to-tr from-navy-100/50 via-navy-100/20 to-transparent blur-[140px] opacity-60"
       />
-      <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay pointer-events-none portal-grain" />
     </div>
   );
 }

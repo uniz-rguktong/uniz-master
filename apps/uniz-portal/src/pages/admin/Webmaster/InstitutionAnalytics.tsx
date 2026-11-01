@@ -67,7 +67,7 @@ export default function InstitutionAnalytics() {
     on_campus: number;
     off_campus: number;
   } | null>(null);
-  const [campusStatsKey, setCampusStatsKey] = useState(0);
+  const [campusStatsKey] = useState(0);
 
   const refreshCampusStats = useCallback(async () => {
     if (!isProdHost()) return;

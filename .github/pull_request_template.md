@@ -1,28 +1,17 @@
-## Summary
+## What and why
 
-<!-- What does this PR change and why? -->
+<!-- 2-3 sentences. Link the issue: Closes #123 -->
 
-## Type of change
+## How I tested it
 
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Documentation
-- [ ] Refactor / chore
-- [ ] Infrastructure / CI
-
-## Test plan
-
-- [ ] `npm run setup:local` (if setup/scripts changed)
-- [ ] `npm run build:shared && npm run ci:build`
-- [ ] `npm run build -w uniz` (if portal changed)
-- [ ] Manual verification: <!-- describe what you tested -->
+<!-- Commands you ran, pages you clicked through. Screenshots for UI changes. -->
 
 ## Checklist
 
-- [ ] No secrets or `.env` files committed
-- [ ] Follows [CONTRIBUTING.md](../CONTRIBUTING.md) workflow
-- [ ] Requested a review from a code owner (@sreecharan-desu) — PRs merge only after approval
-
-> Reviews & merges: this repo requires an approving review from a **code owner**
-> before merge, and only a maintainer with push access to `main` can merge. Push
-> your branch, open this PR, and request review — do not merge your own PR.
+- [ ] PR title follows Conventional Commits (`fix(portal): ...`, `feat(api): ...`)
+- [ ] One focused change, no unrelated formatting
+- [ ] `npm run build:shared && npm run ci:build` passes
+- [ ] `npm run build -w uniz` passes (if the portal changed)
+- [ ] `npm test -w @uniz/shared` passes (if shared changed), tests added where it makes sense
+- [ ] No secrets, `.env` files or real student data
+- [ ] Requested review from a code owner. Don't merge your own PR.

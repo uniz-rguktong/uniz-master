@@ -1,0 +1,25 @@
+process.env.NODE_ENV = "test";
+process.env.JWT_SECURITY_KEY = "unit-test-jwt-secret";
+process.env.INTERNAL_SECRET = "unit-test-internal";
+process.env.EMAIL_USER = "unit-test@example.com";
+process.env.EMAIL_PASS = "unit-test-pass";
+process.env.FORCE_GMAIL = "true";
+
+delete process.env.DOCKER_ENV;
+delete process.env.ENABLE_RESULT_EMAILS;
+delete process.env.VAPID_PUBLIC_KEY;
+delete process.env.VAPID_PRIVATE_KEY;
+delete process.env.INSTITUTION_LOGO_URL;
+delete process.env.REDIS_URL;
+delete process.env.AWS_ACCESS_KEY_ID;
+delete process.env.AWS_SECRET_ACCESS_KEY;
+delete process.env.PROD_AWS_ACCESS_KEY_NEWONE_AFTER_LEAK;
+delete process.env.PROD_AWS_ACCESS_KEY_SECRET_NEWONE_AFTER_LEAK;
+delete process.env.AWS_REGION;
+delete process.env.SLOW_QUERY_MS;
+delete process.env.PRISMA_CONNECTION_LIMIT;
+delete process.env.PRISMA_POOL_TIMEOUT;
+delete process.env.NOTIFICATION_DATABASE_URL;
+delete process.env.DATABASE_URL;
+delete process.env.NOTIFICATION_WORKER_CONCURRENCY;
+delete process.env.USER_SERVICE_URL;

@@ -63,8 +63,8 @@ spec:
               cpu: "2000m"
               memory: "2048Mi"
             requests:
-              cpu: "400m"
-              memory: "512Mi"
+              cpu: "100m"
+              memory: "192Mi"
           readinessProbe:
             httpGet:
               path: /health
@@ -120,13 +120,13 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 70
+          averageUtilization: 280
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: 80
+          averageUtilization: 213
   behavior:
     scaleUp:
       stabilizationWindowSeconds: 0

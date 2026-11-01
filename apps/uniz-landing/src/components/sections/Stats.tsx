@@ -45,11 +45,11 @@ export function Stats({ stats }: { stats: readonly any[] }) {
   return (
     <section
       id="statistics"
-      className="relative overflow-hidden bg-[#061B33] text-white"
+      className="relative overflow-hidden bg-navy-900 text-white"
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-20 sm:py-24 lg:py-28">
         <div className="max-w-2xl mb-14 sm:mb-20">
-          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-white/45 mb-4">
+          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-white/60 mb-4">
             By the numbers
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white leading-tight">

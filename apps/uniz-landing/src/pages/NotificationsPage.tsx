@@ -36,9 +36,15 @@ export function NotificationsPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] w-full items-center justify-center bg-slate-50 cursor-wait">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-300 border-t-slate-800" />
+      <div className="min-h-[60vh] w-full bg-surface cursor-wait" aria-busy="true">
+        <div className="bg-navy-950 h-56 sm:h-64" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 space-y-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-20 rounded-lg border border-line bg-white p-5 shadow-xs">
+              <div className="h-3 w-3/4 rounded bg-surface-2 animate-pulse motion-reduce:animate-none" />
+              <div className="mt-3 h-3 w-1/4 rounded bg-surface-2 animate-pulse motion-reduce:animate-none" />
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -75,11 +81,11 @@ export function NotificationsPage() {
   const renderList = (allItems: Notification[], emptyMsg: string, listType: string) => {
     if (allItems.length === 0) {
       return (
-        <div className="py-20 text-center bg-white border border-slate-200">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-50 flex items-center justify-center">
-            {listType === 'news' && <Newspaper className="w-8 h-8 text-slate-300" />}
-            {listType === 'tenders' && <FileText className="w-8 h-8 text-slate-300" />}
-            {listType === 'careers' && <Briefcase className="w-8 h-8 text-slate-300" />}
+        <div className="py-20 text-center bg-white border border-line rounded-lg shadow-xs">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-navy-200/50 ring-8 ring-surface-2 flex items-center justify-center">
+            {listType === 'news' && <Newspaper className="w-8 h-8 text-navy-400" />}
+            {listType === 'tenders' && <FileText className="w-8 h-8 text-navy-400" />}
+            {listType === 'careers' && <Briefcase className="w-8 h-8 text-navy-400" />}
           </div>
           <p className="text-slate-500 font-medium">{emptyMsg}</p>
         </div>
@@ -95,23 +101,49 @@ export function NotificationsPage() {
     if (listType === "news") descLabel = "News & Updates Description";
 
     return (
-      <div className="bg-white border border-slate-200 shadow-sm">
-        <div className="overflow-x-auto">
+      <div className="bg-white border border-line rounded-lg shadow-xs overflow-hidden">
+        <ul className="sm:hidden divide-y divide-line">
+          {items.map((item, idx) => {
+            const parsedDate = parseSafeDate(item.date);
+            const formattedDate = parsedDate
+              ? `${parsedDate.getDate().toString().padStart(2, '0')}/${(parsedDate.getMonth() + 1).toString().padStart(2, '0')}/${parsedDate.getFullYear()}`
+              : item.date || "-";
+            return (
+              <li key={idx} className="relative p-4 pl-5 before:absolute before:left-0 before:top-4 before:bottom-4 before:w-0.5 before:rounded-full before:bg-brand-red/80">
+                <span className="inline-flex items-center rounded-full bg-[#189B4B]/10 px-2.5 py-0.5 text-[12px] font-semibold tabular-nums text-[#137A3C]">{formattedDate}</span>
+                <p className="mt-2 text-[15px] font-medium leading-relaxed text-ink">{item.title}</p>
+                {item.links && item.links.length > 0 ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {item.links.map((link, lidx) => (
+                      <a key={lidx} href={link.url || "#"} target="_blank" rel="noreferrer" className="inline-flex min-h-[44px] items-center gap-1 rounded-md border border-line bg-surface-2 px-3 text-[13px] font-semibold text-navy hover:border-navy-200 hover:bg-white">
+                        {link.label || "Detailed Notification"}
+                        <ChevronRight className="w-4 h-4" />
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="mt-2 block text-ink-subtle italic text-[13px]">No notification available</span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
-              <tr className="bg-[#1c2434] text-white">
-                <th className="py-4 px-5 font-semibold text-[15px] border-b border-[#2a3447] w-[60%]">
+              <tr className="bg-navy text-white">
+                <th className="py-3.5 px-5 font-semibold text-[12px] uppercase tracking-[0.12em] text-white/85 border-b border-navy-700 w-[60%]">
                   {descLabel}
                 </th>
-                <th className="py-4 px-5 font-semibold text-[15px] border-b border-[#2a3447] border-l border-[#2a3447] w-[20%] whitespace-nowrap">
+                <th className="py-3.5 px-5 font-semibold text-[12px] uppercase tracking-[0.12em] text-white/85 border-b border-navy-700 border-l border-navy-700 w-[20%] whitespace-nowrap">
                   Posted date
                 </th>
-                <th className="py-4 px-5 font-semibold text-[15px] border-b border-[#2a3447] border-l border-[#2a3447] w-[20%] whitespace-nowrap">
+                <th className="py-3.5 px-5 font-semibold text-[12px] uppercase tracking-[0.12em] text-white/85 border-b border-navy-700 border-l border-navy-700 w-[20%] whitespace-nowrap">
                   Detailed Notification
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-line">
               {items.map((item, idx) => {
                 const parsedDate = parseSafeDate(item.date);
                 const formattedDate = parsedDate
@@ -119,17 +151,17 @@ export function NotificationsPage() {
                   : item.date || "-";
 
                 return (
-                  <tr key={idx} className="hover:bg-slate-50/80 transition-colors group">
-                    <td className="py-5 px-5 text-[15px] text-slate-700 align-top">
+                  <tr key={idx} className="hover:bg-surface-2 transition-colors duration-150 group shadow-[inset_0_0_0_0_#EA2027] hover:shadow-[inset_3px_0_0_0_#EA2027]">
+                    <td className="py-5 px-5 text-[15px] text-ink align-top">
                       <div className="flex items-start gap-3">
-                        <ArrowRightCircle className="w-[18px] h-[18px] text-slate-400 mt-0.5 flex-shrink-0 group-hover:text-slate-600 transition-colors" />
+                        <ArrowRightCircle className="w-[18px] h-[18px] text-navy-400 mt-0.5 flex-shrink-0 group-hover:text-brand-red transition-colors" />
                         <span className="leading-relaxed font-medium">{item.title}</span>
                       </div>
                     </td>
-                    <td className="py-5 px-5 text-[15px] align-top border-l border-slate-200">
-                      <span className="font-semibold text-[#189b4b]">{formattedDate}</span>
+                    <td className="py-5 px-5 text-[15px] align-top border-l border-line">
+                      <span className="inline-flex items-center rounded-full bg-[#189B4B]/10 px-2.5 py-1 text-[13px] font-semibold tabular-nums text-[#137A3C] whitespace-nowrap">{formattedDate}</span>
                     </td>
-                    <td className="py-5 px-5 text-[15px] align-top border-l border-slate-200">
+                    <td className="py-5 px-5 text-[15px] align-top border-l border-line">
                       {item.links && item.links.length > 0 ? (
                         <div className="flex flex-col gap-3">
                           {item.links.map((link, lidx) => (
@@ -138,15 +170,15 @@ export function NotificationsPage() {
                               href={link.url || "#"}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center gap-1.5 text-slate-700 hover:text-black hover:underline font-semibold text-[14px] transition-colors"
+                              className="inline-flex items-center gap-1.5 text-navy hover:text-brand-red font-semibold text-[14px] transition-colors"
                             >
-                              <ChevronRight className="w-4 h-4 text-slate-600" />
-                              <span className="underline decoration-slate-300 underline-offset-4">{link.label || "Detailed Notification"}</span>
+                              <ChevronRight className="w-4 h-4" />
+                              <span className="underline decoration-navy-200 underline-offset-4">{link.label || "Detailed Notification"}</span>
                             </a>
                           ))}
                         </div>
                       ) : (
-                        <span className="text-slate-400 italic text-[14px]">No notification available</span>
+                        <span className="text-ink-subtle italic text-[14px]">No notification available</span>
                       )}
                     </td>
                   </tr>
@@ -157,10 +189,10 @@ export function NotificationsPage() {
         </div>
 
         {hasMore && (
-          <div className="p-5 border-t border-slate-200 flex justify-center bg-slate-50/50">
+          <div className="p-5 border-t border-line flex justify-center bg-surface-2">
             <button
               onClick={() => setVisibleLimit(prev => prev + 10)}
-              className="px-6 py-2.5 rounded-md bg-[#061B33] text-white text-[14px] font-semibold shadow-sm hover:bg-[#0A2540] focus:outline-none transition-all duration-300"
+              className="min-h-[44px] px-6 rounded-md bg-navy text-white text-[14px] font-semibold shadow-[0_8px_20px_-10px_rgba(10,37,64,0.6)] hover:bg-navy-950 transition-colors duration-150"
             >
               View Next {Math.min(10, allItems.length - visibleLimit)} Updates
             </button>
@@ -173,32 +205,34 @@ export function NotificationsPage() {
   const headingText = currentTab === "news" ? "News & Updates" : currentTab === "tenders" ? "Tenders" : "Career Opportunities";
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans">
+    <div className="min-h-screen bg-surface font-sans">
       {/* ── Hero Banner ── */}
-      <div className="relative bg-[#061B33] overflow-hidden">
+      <div className="relative bg-navy-950 overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-1 bg-brand-red z-10" />
         <div
-          className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 10% 80%, #1d4ed8 0%, transparent 50%)" }}
+          className="absolute inset-0 opacity-80"
+          style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 10% 80%, #163A5C 0%, transparent 50%)" }}
         />
         {/* Faint grid pattern */}
         <div className="absolute inset-0 opacity-[0.04]"
           style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
         />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] text-amber-400 bg-amber-400/10 border border-amber-400/30 rounded-full">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 sm:pt-24 sm:pb-28">
+          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 mb-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/85 bg-white/10 border border-white/15 rounded-full">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-red" aria-hidden="true" />
             Rajiv Gandhi University of Knowledge Technologies
           </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-6">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.05] mb-5">
             {headingText}
           </h1>
-          <p className="max-w-2xl mx-auto text-slate-300 text-lg leading-relaxed">
+          <p className="max-w-2xl border-l-2 border-brand-red pl-4 text-white/75 text-lg leading-relaxed">
             Stay informed with the latest {headingText}
           </p>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-slate-50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-surface to-transparent" />
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-16 relative z-20">
         {/* ── Content ── */}
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           {renderList(itemsData, `No active ${headingText.toLowerCase()} available at this time.`, currentTab)}

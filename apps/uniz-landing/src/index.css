@@ -1,6 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Cabin+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 @import "tailwindcss";
 
@@ -17,10 +14,57 @@
   }
 }
 
+/*
+ * UniZ design tokens (shared with the portal; values taken from existing brand code).
+ * Colour: navy scale + one red accent. Spacing: Tailwind 4px base, use 8px steps for layout.
+ */
 @theme {
   --color-primary: #0A2540;
   --color-navy: #0A2540;
   --color-navy-deep: #113255;
+  --color-navy-950: #021227;
+  --color-navy-900: #061B33;
+  --color-navy-850: #061527;
+  --color-navy-800: #0A2540;
+  --color-navy-750: #0B2A47;
+  --color-navy-700: #0D3154;
+  --color-navy-600: #113255;
+  --color-navy-500: #163A5C;
+  --color-navy-400: #5A7A94;
+  --color-navy-300: #9BB0C4;
+  --color-navy-200: #D8E0EA;
+  --color-brand-red: #EA2027;
+  --color-ink: #0F172A;
+  --color-ink-muted: #475569;
+  --color-ink-subtle: #64748B;
+  --color-line: #E2E8F0;
+  --color-surface: #FAFAFA;
+  --color-surface-2: #F8FAFC;
+
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 12px;
+
+  --shadow-xs: 0 1px 2px 0 rgb(6 27 51 / 0.05);
+  --shadow-sm: 0 1px 2px 0 rgb(6 27 51 / 0.06), 0 1px 3px 0 rgb(6 27 51 / 0.04);
+  --shadow-md: 0 4px 8px -2px rgb(6 27 51 / 0.08), 0 2px 4px -2px rgb(6 27 51 / 0.04);
+  --shadow-lg: 0 12px 24px -6px rgb(6 27 51 / 0.10), 0 4px 8px -4px rgb(6 27 51 / 0.05);
+  --shadow-xl: 0 16px 32px -8px rgb(6 27 51 / 0.12);
+  --shadow-2xl: 0 24px 48px -12px rgb(6 27 51 / 0.16);
+
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  --ease-calm: cubic-bezier(0.2, 0, 0, 1);
+
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
@@ -32,8 +76,8 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-ring: var(--ring);
 
-  --font-sans: "Cabin Condensed", "Cabin", -apple-system, system-ui, sans-serif;
-  --font-serif: "Cabin Condensed", "Cabin", Georgia, serif;
+  --font-sans: "Cabin Condensed", -apple-system, system-ui, sans-serif;
+  --font-serif: "Cabin Condensed", Georgia, serif;
 }
 
 @theme inline {
@@ -62,8 +106,8 @@
   --muted: #f4f4f4;
   --muted-foreground: #585754;
 
-  --border: #e8e8e8;
-  --input: #e8e8e8;
+  --border: #E2E8F0;
+  --input: #E2E8F0;
 
   --primary-foreground: #ffffff;
 
@@ -96,6 +140,13 @@ html {
   scroll-behavior: smooth;
 }
 
+/* One visible focus style everywhere (keyboard only). */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid #0A2540;
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
 ::selection {
   background-color: #0A2540; color: #ffffff;
 }
@@ -110,7 +161,7 @@ html {
   text-decoration: underline;
   text-underline-offset: 0.22em;
   text-decoration-thickness: 1px;
-  transition: color 0.2s ease, text-decoration-thickness 0.2s ease;
+  transition: color 150ms var(--ease-calm), text-decoration-thickness 150ms var(--ease-calm);
 }
 
 .editorial-link:hover {
@@ -123,7 +174,7 @@ html {
   text-decoration: underline;
   text-underline-offset: 0.22em;
   text-decoration-thickness: 1px;
-  transition: opacity 0.2s ease;
+  transition: opacity 150ms var(--ease-calm);
 }
 
 .editorial-link-light:hover {
@@ -192,8 +243,8 @@ html {
 /* Director image — subtle fade-in only */
 .director-photo {
   opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  transform: translateY(8px);
+  transition: opacity 400ms var(--ease-calm), transform 400ms var(--ease-calm);
 }
 
 .director-photo.is-visible {
@@ -256,7 +307,7 @@ html {
 }
 
 .aspect-square img {
-  transition: transform 0.4s ease;
+  transition: transform 200ms var(--ease-calm);
 }
 
 .bg-white:hover .aspect-square img {
@@ -272,4 +323,15 @@ html {
   position: absolute;
   inset: 0;
   background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.12));
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
