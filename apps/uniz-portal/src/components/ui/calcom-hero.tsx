@@ -575,7 +575,7 @@ export const CalcomHero = () => {
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
           className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-gradient-to-tr from-navy-100/50 via-navy-100/20 to-transparent blur-[140px] opacity-60"
         />
-        <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+        <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay pointer-events-none portal-grain" />
       </div>
 
       {/* ── Floating Icon Particles ── */}
