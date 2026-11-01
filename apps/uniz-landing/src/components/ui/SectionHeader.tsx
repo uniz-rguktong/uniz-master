@@ -26,11 +26,11 @@ export function SectionHeader({
       {...props}
     >
       {pillText && (
-        <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-[#0A2540] mb-4">
+        <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-navy mb-4">
           {pillText}
         </p>
       )}
-      <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#061B33] leading-tight">
+      <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-navy-900 leading-tight">
         {heading}
       </h2>
       {subtitle && (

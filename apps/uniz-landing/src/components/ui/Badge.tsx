@@ -8,11 +8,11 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-[#0A2540] text-white hover:bg-[#021227]",
+          "border-transparent bg-navy text-white hover:bg-navy-950",
         secondary:
-          "border-transparent bg-[#061B33] text-white hover:bg-[#113255]",
+          "border-transparent bg-navy-900 text-white hover:bg-navy-600",
         pill: 
-          "border-transparent bg-[#0A2540]/10 text-[#0A2540] tracking-widest",
+          "border-transparent bg-navy/10 text-navy tracking-widest",
         date: 
           "border-transparent bg-sky-600 text-white", // specific to premium date badges
         outline: "text-slate-900 border-slate-200",

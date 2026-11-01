@@ -53,19 +53,19 @@ export function MobileAppModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-[#061B33]/65 p-4"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-navy-900/65 p-4"
       onClick={() => setOpen(false)}
     >
       <div
-        className="w-full max-w-md overflow-hidden rounded-[2px] border border-[#0A2540] bg-white text-[#061B33] shadow-2xl"
+        className="w-full max-w-md overflow-hidden rounded-xs border border-navy bg-white text-navy-900 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between bg-[#0A2540] px-5 py-3.5 text-white">
+        <div className="flex items-center justify-between bg-navy px-5 py-3.5 text-white">
           <div className="flex items-center gap-2.5">
             <img
               src="/rgukt-logo.png"
               alt="RGUKT"
-              className="h-7 w-7 rounded-[2px] bg-white p-0.5 object-contain"
+              className="h-7 w-7 rounded-xs bg-white p-0.5 object-contain"
             />
             <div>
               <h3 className="text-[15px] font-bold tracking-[0.02em] text-white">
@@ -79,7 +79,7 @@ export function MobileAppModal() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-[2px] p-1 text-white/80 hover:bg-white/10 hover:text-white"
+            className="rounded-xs p-1 text-white/80 hover:bg-white/10 hover:text-white"
             aria-label="Close"
           >
             <X className="h-4 w-4" />
@@ -87,46 +87,46 @@ export function MobileAppModal() {
         </div>
 
         <div className="space-y-4 p-5">
-          <div className="rounded-[2px] border border-slate-200 bg-[#FAFAFA] p-4">
+          <div className="rounded-xs border border-slate-200 bg-surface p-4">
             <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
               Option 1 · Direct iOS Profile
             </p>
             <p className="mt-1 text-[13px] text-slate-600">
               Download the signed iOS WebClip profile and approve it in{" "}
-              <strong className="text-[#061B33]">Settings → Profile Downloaded</strong>.
+              <strong className="text-navy-900">Settings → Profile Downloaded</strong>.
             </p>
             <a
               href={IOS_PROFILE_URL}
               download={IOS_PROFILE_FILENAME}
-              className="mt-3 inline-flex h-9 w-full items-center justify-center gap-2 rounded-[2px] bg-[#0A2540] px-4 text-xs font-bold uppercase tracking-[1px] text-white transition-colors hover:bg-[#021227]"
+              className="mt-3 inline-flex h-9 w-full items-center justify-center gap-2 rounded-xs bg-navy px-4 text-xs font-bold uppercase tracking-[1px] text-white transition-colors hover:bg-navy-950"
             >
               <AppleIcon className="w-3.5 h-3.5" />
               Download iOS App Profile (.mobileconfig)
             </a>
           </div>
 
-          <div className="rounded-[2px] border border-slate-200 bg-white p-4">
+          <div className="rounded-xs border border-slate-200 bg-white p-4">
             <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
               Option 2 · Safari Home Screen
             </p>
             <ol className="mt-2.5 space-y-2 text-[13px] text-slate-700">
               <li className="flex items-center gap-2">
-                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[2px] bg-[#0A2540] text-[11px] font-bold text-white">
+                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-navy text-[11px] font-bold text-white">
                   1
                 </span>
                 <span>
                   Open <strong>uniz.rguktong.in</strong> in Safari and tap{" "}
-                  <Share className="mx-0.5 inline h-3.5 w-3.5 text-[#0A2540]" />{" "}
+                  <Share className="mx-0.5 inline h-3.5 w-3.5 text-navy" />{" "}
                   <strong>Share</strong>.
                 </span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[2px] bg-[#0A2540] text-[11px] font-bold text-white">
+                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-navy text-[11px] font-bold text-white">
                   2
                 </span>
                 <span>
                   Select{" "}
-                  <PlusSquare className="mx-0.5 inline h-3.5 w-3.5 text-[#0A2540]" />{" "}
+                  <PlusSquare className="mx-0.5 inline h-3.5 w-3.5 text-navy" />{" "}
                   <strong>Add to Home Screen</strong>.
                 </span>
               </li>
@@ -134,7 +134,7 @@ export function MobileAppModal() {
             <button
               type="button"
               onClick={copyPortalUrl}
-              className="mt-3 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-[2px] border border-slate-200 bg-[#FAFAFA] px-3 text-xs font-bold text-[#0A2540] hover:bg-slate-100"
+              className="mt-3 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-xs border border-slate-200 bg-surface px-3 text-xs font-bold text-navy hover:bg-slate-100"
             >
               {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {copied ? "Copied uniz.rguktong.in" : "Copy Safari Portal Link"}
@@ -146,7 +146,7 @@ export function MobileAppModal() {
             <a
               href={ANDROID_APK_URL}
               download={ANDROID_APK_FILENAME}
-              className="inline-flex items-center gap-1 font-bold text-[#0A2540] underline underline-offset-2"
+              className="inline-flex items-center gap-1 font-bold text-navy underline underline-offset-2"
             >
               <Download className="h-3.5 w-3.5" />
               Download Android App (.apk)
