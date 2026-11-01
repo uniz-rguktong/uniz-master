@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { createRequire } from "node:module";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { hashPassword } from "../src/utils/password.util";
@@ -69,6 +70,12 @@ import {
   verifyOtp,
 } from "../src/controllers/auth.controller";
 
+// Fake values generated per run.
+const CORRECT_TEST_PW = "test-" + randomUUID();
+const WRONG_TEST_PW = "wrong-" + randomUUID();
+const NEW_TEST_PW = "new-" + randomUUID();
+const BAD_CURRENT_TEST_PW = "bad-" + randomUUID();
+
 function response() {
   return {
     statusCode: 200,
@@ -101,7 +108,7 @@ let passwordHash = "";
 
 describe("auth controller", () => {
   beforeAll(async () => {
-    passwordHash = await hashPassword("secret-pass");
+    passwordHash = await hashPassword(CORRECT_TEST_PW);
     // signup() loads axios with require(), which does not see vi.mock.
     const nodeAxios = createRequire(import.meta.url)("axios");
     vi.spyOn(nodeAxios, "put").mockImplementation((...args: unknown[]) =>
@@ -146,7 +153,7 @@ describe("auth controller", () => {
       turnstile.verifyTurnstileToken.mockResolvedValue(false);
       const res = response();
       await login(
-        request({ username: "o210008", password: "secret-pass" }) as never,
+        request({ username: "o210008", password: CORRECT_TEST_PW }) as never,
         res as never,
       );
       expect(res.statusCode).toBe(400);
@@ -158,7 +165,7 @@ describe("auth controller", () => {
       const unknown = response();
       prismaMock.authCredential.findFirst.mockResolvedValue(null);
       await login(
-        request({ username: "o210008", password: "secret-pass" }) as never,
+        request({ username: "o210008", password: CORRECT_TEST_PW }) as never,
         unknown as never,
       );
       expect(unknown.statusCode).toBe(401);
@@ -168,7 +175,7 @@ describe("auth controller", () => {
 
       const studentRes = response();
       await studentLogin(
-        request({ username: "o210008", password: "secret-pass" }) as never,
+        request({ username: "o210008", password: CORRECT_TEST_PW }) as never,
         studentRes as never,
       );
       expect(studentRes.body).toMatchObject({
@@ -177,7 +184,7 @@ describe("auth controller", () => {
 
       const adminRes = response();
       await adminLogin(
-        request({ username: "hod_cse", password: "secret-pass" }) as never,
+        request({ username: "hod_cse", password: CORRECT_TEST_PW }) as never,
         adminRes as never,
       );
       expect(adminRes.body).toMatchObject({
@@ -190,7 +197,7 @@ describe("auth controller", () => {
       });
       const suspended = response();
       await login(
-        request({ username: "o210008", password: "secret-pass" }) as never,
+        request({ username: "o210008", password: CORRECT_TEST_PW }) as never,
         suspended as never,
       );
       expect(suspended.statusCode).toBe(403);
@@ -199,7 +206,7 @@ describe("auth controller", () => {
       prismaMock.authCredential.findFirst.mockResolvedValue(activeUser());
       const bad = response();
       await login(
-        request({ username: "o210008", password: "wrong" }) as never,
+        request({ username: "o210008", password: WRONG_TEST_PW }) as never,
         bad as never,
       );
       expect(bad.statusCode).toBe(401);
@@ -209,7 +216,7 @@ describe("auth controller", () => {
       prismaMock.authCredential.findFirst.mockResolvedValue(activeUser());
       const student = response();
       await login(
-        request({ username: "o210008", password: "secret-pass" }) as never,
+        request({ username: "o210008", password: CORRECT_TEST_PW }) as never,
         student as never,
       );
       const studentBody = student.body as {
@@ -231,7 +238,7 @@ describe("auth controller", () => {
       });
       const staff = response();
       await login(
-        request({ username: "hod_cse", password: "secret-pass" }) as never,
+        request({ username: "hod_cse", password: CORRECT_TEST_PW }) as never,
         staff as never,
       );
       const staffBody = staff.body as { token: string; admin_token?: string };
@@ -248,7 +255,7 @@ describe("auth controller", () => {
       redisMock.get.mockResolvedValue("ECE");
       const cached = response();
       await login(
-        request({ username: "hod_cse", password: "secret-pass" }) as never,
+        request({ username: "hod_cse", password: CORRECT_TEST_PW }) as never,
         cached as never,
       );
       expect(
@@ -262,7 +269,7 @@ describe("auth controller", () => {
       });
       const lookedUp = response();
       await login(
-        request({ username: "hod_cse", password: "secret-pass" }) as never,
+        request({ username: "hod_cse", password: CORRECT_TEST_PW }) as never,
         lookedUp as never,
       );
       expect(
@@ -287,7 +294,7 @@ describe("auth controller", () => {
       await studentLogin(
         request({
           username: "o210008@rguktong.ac.in",
-          password: "secret-pass",
+          password: CORRECT_TEST_PW,
         }) as never,
         res as never,
       );
@@ -303,7 +310,7 @@ describe("auth controller", () => {
       prismaMock.authCredential.findFirst.mockRejectedValue(new Error("db"));
       const res = response();
       await login(
-        request({ username: "o210008", password: "secret-pass" }) as never,
+        request({ username: "o210008", password: CORRECT_TEST_PW }) as never,
         res as never,
       );
       expect(res.statusCode).toBe(500);
@@ -444,7 +451,7 @@ describe("auth controller", () => {
 
       const missingToken = response();
       await resetPassword(
-        request({ username: "o210008", newPassword: "new-pass-1" }) as never,
+        request({ username: "o210008", newPassword: NEW_TEST_PW }) as never,
         missingToken as never,
       );
       expect(missingToken.statusCode).toBe(400);
@@ -453,7 +460,7 @@ describe("auth controller", () => {
       await resetPassword(
         request({
           username: "o210008",
-          newPassword: "new-pass-1",
+          newPassword: NEW_TEST_PW,
           resetToken: "nope",
         }) as never,
         bad as never,
@@ -465,7 +472,7 @@ describe("auth controller", () => {
       await resetPassword(
         request({
           username: "o210008",
-          newPassword: "new-pass-1",
+          newPassword: NEW_TEST_PW,
           resetToken: token,
         }) as never,
         reused as never,
@@ -482,7 +489,7 @@ describe("auth controller", () => {
       await resetPassword(
         request({
           username: "O210008",
-          newPassword: "new-pass-1",
+          newPassword: NEW_TEST_PW,
           resetToken: token,
         }) as never,
         ok as never,
@@ -501,8 +508,8 @@ describe("auth controller", () => {
       const anon = response();
       await changePassword(
         request({
-          currentPassword: "secret-pass",
-          newPassword: "new-pass-1",
+          currentPassword: CORRECT_TEST_PW,
+          newPassword: NEW_TEST_PW,
         }) as never,
         anon as never,
       );
@@ -511,7 +518,7 @@ describe("auth controller", () => {
       const internal = response();
       await changePassword(
         request(
-          { currentPassword: "secret-pass", newPassword: "new-pass-1" },
+          { currentPassword: CORRECT_TEST_PW, newPassword: NEW_TEST_PW },
           {
             user: {
               id: "internal",
@@ -528,7 +535,7 @@ describe("auth controller", () => {
       const missing = response();
       await changePassword(
         request(
-          { currentPassword: "secret-pass", newPassword: "new-pass-1" },
+          { currentPassword: CORRECT_TEST_PW, newPassword: NEW_TEST_PW },
           { user: { id: "user-1", username: "o210008", role: "student" } },
         ) as never,
         missing as never,
@@ -543,7 +550,7 @@ describe("auth controller", () => {
       const wrong = response();
       await changePassword(
         request(
-          { currentPassword: "nope", newPassword: "new-pass-1" },
+          { currentPassword: BAD_CURRENT_TEST_PW, newPassword: NEW_TEST_PW },
           { user: { id: "user-1", username: "o210008", role: "student" } },
         ) as never,
         wrong as never,
@@ -553,7 +560,7 @@ describe("auth controller", () => {
       const ok = response();
       await changePassword(
         request(
-          { currentPassword: "secret-pass", newPassword: "new-pass-1" },
+          { currentPassword: CORRECT_TEST_PW, newPassword: NEW_TEST_PW },
           { user: { id: "user-1", username: "o210008", role: "student" } },
         ) as never,
         ok as never,
@@ -567,8 +574,8 @@ describe("auth controller", () => {
       await adminResetPassword(
         request({
           username: "hod_cse",
-          password: "secret-pass",
-          new_password: "new-pass-1",
+          password: CORRECT_TEST_PW,
+          new_password: NEW_TEST_PW,
         }) as never,
         missing as never,
       );
@@ -583,8 +590,8 @@ describe("auth controller", () => {
       await adminResetPassword(
         request({
           username: "hod_cse",
-          password: "wrong",
-          new_password: "new-pass-1",
+          password: WRONG_TEST_PW,
+          new_password: NEW_TEST_PW,
         }) as never,
         bad as never,
       );
@@ -594,8 +601,8 @@ describe("auth controller", () => {
       await adminResetPassword(
         request({
           username: "hod_cse",
-          password: "secret-pass",
-          new_password: "new-pass-1",
+          password: CORRECT_TEST_PW,
+          new_password: NEW_TEST_PW,
         }) as never,
         ok as never,
       );
@@ -612,8 +619,8 @@ describe("auth controller", () => {
       await adminResetPassword(
         request({
           username: "O210008",
-          password: "secret-pass",
-          new_password: "new-pass-1",
+          password: CORRECT_TEST_PW,
+          new_password: NEW_TEST_PW,
         }) as never,
         quiet as never,
       );
@@ -625,7 +632,7 @@ describe("auth controller", () => {
       const denied = response();
       await globalAdminResetPassword(
         request(
-          { targetUsername: "o210008", newPassword: "new-pass-1" },
+          { targetUsername: "o210008", newPassword: NEW_TEST_PW },
           { user: { id: "user-1", username: "o210008", role: "student" } },
         ) as never,
         denied as never,
@@ -643,7 +650,7 @@ describe("auth controller", () => {
       const missing = response();
       await globalAdminResetPassword(
         request(
-          { targetUsername: "o210008", newPassword: "new-pass-1" },
+          { targetUsername: "o210008", newPassword: NEW_TEST_PW },
           { user: { role: "dean", username: "dean" } },
         ) as never,
         missing as never,
@@ -657,7 +664,7 @@ describe("auth controller", () => {
       const ok = response();
       await globalAdminResetPassword(
         request(
-          { targetUsername: "o210008", newPassword: "new-pass-1" },
+          { targetUsername: "o210008", newPassword: NEW_TEST_PW },
           { user: { role: "webadmin", username: "root" } },
         ) as never,
         ok as never,
@@ -713,7 +720,7 @@ describe("auth controller", () => {
     it("refuses public signup and skips the password when the id already exists", async () => {
       const denied = response();
       await signup(
-        request({ username: "o210008", password: "secret-pass" }) as never,
+        request({ username: "o210008", password: CORRECT_TEST_PW }) as never,
         denied as never,
       );
       expect(denied.statusCode).toBe(403);
@@ -726,7 +733,7 @@ describe("auth controller", () => {
       const same = response();
       await signup(
         request(
-          { username: "o210008", password: "secret-pass", role: "student" },
+          { username: "o210008", password: CORRECT_TEST_PW, role: "student" },
           { headers: { "x-internal-secret": "unit-test-internal" } },
         ) as never,
         same as never,
@@ -739,7 +746,7 @@ describe("auth controller", () => {
       const changed = response();
       await signup(
         request(
-          { username: "o210008", password: "secret-pass", role: "faculty" },
+          { username: "o210008", password: CORRECT_TEST_PW, role: "faculty" },
           { headers: { "x-internal-secret": "unit-test-internal" } },
         ) as never,
         changed as never,
@@ -762,7 +769,7 @@ describe("auth controller", () => {
         request(
           {
             username: "o210008",
-            password: "secret-pass",
+            password: CORRECT_TEST_PW,
             role: "student",
             email: "o210008@rguktong.ac.in",
           },
@@ -785,7 +792,7 @@ describe("auth controller", () => {
       const hod = response();
       await signup(
         request(
-          { username: "hod_cse", password: "secret-pass", role: "hod" },
+          { username: "hod_cse", password: CORRECT_TEST_PW, role: "hod" },
           { headers: { "x-internal-secret": "unit-test-internal" } },
         ) as never,
         hod as never,
@@ -803,7 +810,7 @@ describe("auth controller", () => {
       const res = response();
       await signup(
         request(
-          { username: "o210008", password: "secret-pass", role: "webadmin" },
+          { username: "o210008", password: CORRECT_TEST_PW, role: "webadmin" },
           { headers: { "x-internal-secret": "unit-test-internal" } },
         ) as never,
         res as never,
@@ -817,7 +824,7 @@ describe("auth controller", () => {
       const failed = response();
       await signup(
         request(
-          { username: "o210008", password: "secret-pass" },
+          { username: "o210008", password: CORRECT_TEST_PW },
           { headers: { "x-internal-secret": "unit-test-internal" } },
         ) as never,
         failed as never,
@@ -958,7 +965,7 @@ describe("auth controller", () => {
       const changed = response();
       await changePassword(
         request(
-          { currentPassword: "secret-pass", newPassword: "new-pass-1" },
+          { currentPassword: CORRECT_TEST_PW, newPassword: NEW_TEST_PW },
           { user: { id: "user-1", username: "o210008", role: "student" } },
         ) as never,
         changed as never,
@@ -979,8 +986,8 @@ describe("auth controller", () => {
       await adminResetPassword(
         request({
           username: "o210008",
-          password: "secret-pass",
-          new_password: "new-pass-1",
+          password: CORRECT_TEST_PW,
+          new_password: NEW_TEST_PW,
         }) as never,
         reset as never,
       );
@@ -989,7 +996,7 @@ describe("auth controller", () => {
       const globalReset = response();
       await globalAdminResetPassword(
         request(
-          { targetUsername: "o210008", newPassword: "new-pass-1" },
+          { targetUsername: "o210008", newPassword: NEW_TEST_PW },
           { user: { role: "webadmin", username: "root" } },
         ) as never,
         globalReset as never,
@@ -1036,7 +1043,7 @@ describe("auth controller", () => {
       await resetPassword(
         request({
           username: "  ",
-          newPassword: "new-pass-1",
+          newPassword: NEW_TEST_PW,
           resetToken: token,
         }) as never,
         blank as never,
@@ -1048,7 +1055,7 @@ describe("auth controller", () => {
       await resetPassword(
         request({
           username: "o210008",
-          newPassword: "new-pass-1",
+          newPassword: NEW_TEST_PW,
           resetToken: token,
         }) as never,
         missing as never,
@@ -1064,7 +1071,7 @@ describe("auth controller", () => {
       await resetPassword(
         request({
           username: "o210008",
-          newPassword: "new-pass-1",
+          newPassword: NEW_TEST_PW,
           resetToken: token,
         }) as never,
         failed as never,
@@ -1103,7 +1110,7 @@ describe("auth controller", () => {
       axiosMock.get.mockResolvedValue({ data: { branch: "ME" } });
       const res = response();
       await login(
-        request({ username: "hod_cse", password: "secret-pass" }) as never,
+        request({ username: "hod_cse", password: CORRECT_TEST_PW }) as never,
         res as never,
       );
       expect(res.statusCode).toBe(200);
@@ -1123,7 +1130,7 @@ describe("auth controller", () => {
       email.sendLoginNotification.mockRejectedValue(new Error("push down"));
       const res = response();
       await login(
-        request({ username: "o210008", password: "secret-pass" }) as never,
+        request({ username: "o210008", password: CORRECT_TEST_PW }) as never,
         res as never,
       );
       expect(res.statusCode).toBe(200);
