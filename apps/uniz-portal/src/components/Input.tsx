@@ -23,10 +23,16 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       onchangeFunction,
       onChange,
       placeholder,
+      id,
+      "aria-label": ariaLabel,
       ...props
     },
     ref,
   ) => {
+    const generatedId = React.useId();
+    const inputId = id ?? generatedId;
+    const accessibleName =
+      ariaLabel ?? (typeof label === "string" ? label : undefined);
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const isPassword = type === "password";
     const finalType = isPassword
@@ -40,7 +46,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full space-y-1.5 group">
         {label && (
-          <label className={cn(adminLabelClass, labelClassName)}>{label}</label>
+          <label htmlFor={inputId} className={cn(adminLabelClass, labelClassName)}>
+            {label}
+          </label>
         )}
         <div className="relative">
           {icon && (
@@ -49,10 +57,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             </div>
           )}
           <input
+            {...props}
             ref={ref}
+            id={inputId}
             type={finalType}
+            aria-label={accessibleName}
             className={cn(
               adminInputClass,
+              "min-h-[44px]",
               error &&
                 "border-rose-300 bg-rose-50/50 focus:border-rose-400 focus:ring-rose-500/10",
               icon ? "pl-10" : false,
@@ -61,13 +73,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             )}
             placeholder={placeholder}
             onChange={finalOnChange}
-            {...props}
           />
           {isPassword && (
             <button
               type="button"
+              aria-label={isPasswordVisible ? "Hide password" : "Show password"}
               onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-400 hover:text-navy-700 focus:outline-none transition-colors"
+              className="absolute right-0.5 top-1/2 flex h-11 min-h-[44px] w-11 min-w-[44px] -translate-y-1/2 items-center justify-center text-navy-400 hover:text-navy-700 focus:outline-none transition-colors"
             >
               {isPasswordVisible ? (
                 <EyeOff className="h-4 w-4" />
