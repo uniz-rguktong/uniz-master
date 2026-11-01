@@ -171,7 +171,7 @@ function OtpInput({
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
-            className="w-11 h-14 sm:w-12 text-center text-xl font-semibold rounded-portal-sm border border-navy-200 bg-white text-navy-900 font-form focus:outline-none focus:border-navy-900 focus:ring-1 focus:ring-navy-900/15 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-11 h-14 sm:w-12 text-center text-xl font-semibold tabular-nums rounded-xl border border-[#E2E8F0] bg-white text-[#0A2540] font-form shadow-[0_1px_2px_rgba(10,37,64,0.04)] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/[0.08] transition-[border-color,box-shadow] duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.25 }}
@@ -931,7 +931,7 @@ export default function Signin({ type }: SigninProps) {
                 />
                 <div className="flex items-center justify-between pt-0.5">
                   {type === "student" ? (
-                    <span className="text-[11.5px] text-[#64748B]">
+                    <span className="text-[12.5px] text-[#64748B]">
                       Forgot your password? Contact your admin.
                     </span>
                   ) : (
@@ -1072,7 +1072,7 @@ export default function Signin({ type }: SigninProps) {
                     <span className="relative z-10">Verify code</span>
                   </Button>
 
-                  <div className="rounded-portal-sm border border-navy-200 bg-[#FAFAFA] p-4 space-y-3">
+                  <div className="rounded-xl border border-[#E6EAF0] bg-[#F7F8FA] p-4 space-y-3">
                     <p className="text-[12px] font-medium text-navy-700 text-center leading-relaxed font-form">
                       Didn&apos;t get a push notification? Send the code to your
                       registered college email instead.

@@ -6,16 +6,16 @@ import SiteLegalFooter from "@/components/SiteLegalFooter";
 import { UNIZ_APK_PATH, openIosDownloadModal } from "@/constants/downloads";
 
 export const examcellLoginLabelClass =
-  "block text-[13px] font-semibold text-[#0F172A] mb-1.5 font-form";
+  "block text-[13px] font-medium text-[#334155] mb-2 font-form";
 
 export const examcellLoginInputClass =
-  "w-full h-11 min-h-[44px] rounded-[4px] border border-[#E2E8F0] bg-white px-3.5 text-[15px] font-medium text-[#0F172A] placeholder:text-[#64748B] placeholder:font-normal shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#D8E0EA] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/15 font-form transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)]";
+  "w-full h-12 min-h-[44px] rounded-xl border border-[#E2E8F0] bg-white px-3.5 text-[15px] font-normal text-[#0F172A] placeholder:text-[#64748B] placeholder:font-normal shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/[0.08] font-form transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)]";
 
 export const examcellLoginLinkClass =
   "inline-block text-[12.5px] font-semibold text-[#0A2540] hover:underline underline-offset-4 bg-transparent border-0 cursor-pointer p-0 mt-1 font-form";
 
 export const examcellLoginButtonClass =
-  "w-full h-11 min-h-[44px] rounded-[6px] border-0 bg-[#EA2027] px-6 text-[15px] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(234,32,39,0.6),inset_0_1px_0_rgba(255,255,255,0.15)] transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] hover:bg-[#C81A20] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A2540] disabled:bg-[#5A7A94] disabled:cursor-not-allowed font-form cursor-pointer !rounded-[6px] !normal-case !tracking-normal !text-[15px] !bg-[#EA2027] hover:!bg-[#C81A20] !h-12";
+  "w-full h-11 min-h-[44px] rounded-xl border-0 bg-[#EA2027] px-6 text-[15px] font-semibold tracking-[-0.005em] text-white shadow-[0_1px_2px_rgba(200,26,32,0.4),0_8px_20px_-8px_rgba(234,32,39,0.55),inset_0_1px_0_rgba(255,255,255,0.18)] transition-[background-color,transform] duration-150 active:scale-[0.99] motion-reduce:active:scale-100 ease-[cubic-bezier(0.2,0,0,1)] hover:bg-[#C81A20] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540] focus-visible:ring-offset-2 disabled:bg-[#94A3B8] disabled:cursor-not-allowed font-form cursor-pointer !rounded-xl !normal-case !tracking-normal !text-[15px] !bg-[#EA2027] hover:!bg-[#C81A20] !h-12";
 
 export interface LoginProps {
   title?: string;
@@ -133,7 +133,7 @@ export const LoginScreen = ({
       </div>
 
       {/* Tier 2: Formal Authentication Header */}
-      <header className="bg-[#0A2540] text-white border-b border-[#163A5C]">
+      <header className="sticky top-0 z-30 bg-[#0A2540]/90 text-white border-b border-white/[0.08] backdrop-blur-xl backdrop-saturate-150">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3.5 text-white no-underline">
             <img
@@ -146,7 +146,7 @@ export const LoginScreen = ({
             />
             <div className="flex flex-col">
               <div className="flex items-baseline gap-2.5">
-                <span className="text-[21px] font-bold tracking-[0.03em] text-white leading-none">
+                <span className="text-[21px] font-semibold tracking-[-0.02em] text-white leading-none">
                   uniZ
                 </span>
                 <span className="hidden sm:inline text-white/30">|</span>
@@ -154,7 +154,7 @@ export const LoginScreen = ({
                   University Authentication Service
                 </span>
               </div>
-              <span className="text-[10.5px] tracking-[0.08em] uppercase text-white/65 mt-1 leading-none">
+              <span className="text-[11px] text-white/60 mt-1 leading-none">
                 Rajiv Gandhi University of Knowledge Technologies · Ongole
               </span>
             </div>
@@ -165,7 +165,7 @@ export const LoginScreen = ({
               <button
                 type="button"
                 onClick={onBack}
-                className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-md border border-white/20 bg-white/5 hover:bg-white/10 text-white text-[12.5px] font-semibold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 whitespace-nowrap min-h-11 px-3.5 rounded-lg border border-white/15 bg-white/[0.06] hover:bg-white/[0.12] text-white text-[12.5px] font-semibold transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Portal Home</span>
@@ -173,7 +173,7 @@ export const LoginScreen = ({
             ) : (
               <Link
                 to="/"
-                className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-md border border-white/20 bg-white/5 hover:bg-white/10 text-white text-[12.5px] font-semibold transition-colors"
+                className="inline-flex items-center gap-1.5 whitespace-nowrap min-h-11 px-3.5 rounded-lg border border-white/15 bg-white/[0.06] hover:bg-white/[0.12] text-white text-[12.5px] font-semibold transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Portal Home</span>
@@ -184,11 +184,11 @@ export const LoginScreen = ({
       </header>
 
       {/* Main Centered HarvardKey-Style Institutional Sign-In Sheet */}
-      <main className="flex-1 flex flex-col justify-center py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[radial-gradient(120%_80%_at_0%_0%,#163A5C_0%,#0A2540_45%,#021227_100%)]">
-        <div className="mx-auto w-full max-w-[1040px] animate-[uniz-rise_200ms_cubic-bezier(0.2,0,0,1)_both] motion-reduce:animate-none">
-          <div className="grid grid-cols-1 md:grid-cols-12 border border-white/10 bg-white rounded-xl shadow-[0_32px_80px_-20px_rgba(2,18,39,0.8)] overflow-hidden">
+      <main className="relative flex-1 flex flex-col justify-center py-10 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[radial-gradient(80%_60%_at_50%_0%,#163A5C_0%,#0A2540_40%,#021227_100%)] before:pointer-events-none before:absolute before:inset-0 before:bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] before:bg-[size:48px_48px] before:[mask-image:radial-gradient(70%_60%_at_50%_30%,black,transparent)]">
+        <div className="relative mx-auto w-full max-w-[1040px] animate-[uniz-rise_200ms_cubic-bezier(0.2,0,0,1)_both] motion-reduce:animate-none">
+          <div className="grid grid-cols-1 md:grid-cols-12 ring-1 ring-white/10 bg-white rounded-[20px] shadow-[0_0_0_1px_rgba(2,18,39,0.2),0_2px_4px_rgba(2,18,39,0.2),0_40px_100px_-24px_rgba(2,18,39,0.9)] overflow-hidden">
             {/* Left Institutional Context Column (5 Cols) */}
-            <div className="order-2 md:order-1 md:col-span-5 relative bg-[#021227] text-white before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-[#EA2027] p-6 sm:p-10 flex flex-col justify-between space-y-8 border-t md:border-t-0 md:border-r border-[#163A5C]">
+            <div className="order-2 md:order-1 md:col-span-5 relative bg-[linear-gradient(160deg,#0A2540_0%,#021227_70%)] text-white before:absolute before:left-8 before:top-0 before:h-[3px] before:w-12 before:rounded-b-full before:bg-[#EA2027] p-6 sm:p-10 flex flex-col justify-between space-y-8 border-t md:border-t-0 md:border-r border-[#163A5C]">
               <div className="space-y-5">
                 <div className="flex items-center gap-2.5 border-b border-white/15 pb-3.5">
                   <img
@@ -198,28 +198,28 @@ export const LoginScreen = ({
                     height={28}
                     className="h-6 w-auto object-contain shrink-0"
                   />
-                  <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/85">
+                  <span className="text-[12px] font-medium text-white/80">
                     {meta.badge}
                   </span>
                 </div>
 
                 <div>
-                  <h2 className="text-[30px] sm:text-[34px] font-bold text-white leading-tight tracking-[-0.015em]">
+                  <h2 className="text-[26px] sm:text-[30px] font-semibold text-white leading-[1.15] tracking-[-0.03em]">
                     {meta.heading}
                   </h2>
-                  <p className="text-[13px] text-white/80 leading-relaxed mt-2">
+                  <p className="text-[14px] text-white/70 leading-6 mt-3">
                     {meta.description}
                   </p>
                 </div>
 
                 <div className="space-y-2.5 pt-1">
-                  <p className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-white/65">
+                  <p className="text-[12px] font-medium text-white/60">
                     Authorized Portal Services
                   </p>
-                  <ul className="space-y-2 text-[12.5px] text-white/85">
+                  <ul className="space-y-2.5 text-[13px] text-white/85">
                     {meta.bullets.map((item) => (
                       <li key={item} className="flex items-start gap-2">
-                        <span className="text-white/60 font-bold leading-4">·</span>
+                        <span className="mt-[7px] size-1.5 shrink-0 rounded-full bg-[#EA2027]" aria-hidden="true" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -236,7 +236,7 @@ export const LoginScreen = ({
                   <a
                     href={UNIZ_APK_PATH}
                     download="uniz-android.apk"
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-white/20 bg-white/5 hover:bg-white/10 text-white text-[11.5px] font-semibold transition-colors"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-white/15 bg-white/[0.06] hover:bg-white/[0.12] text-white text-[11.5px] font-semibold transition-colors"
                   >
                     <Download className="w-3 h-3" />
                     <span>Android (.apk)</span>
@@ -244,7 +244,7 @@ export const LoginScreen = ({
                   <button
                     type="button"
                     onClick={() => openIosDownloadModal()}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-white/20 bg-white/5 hover:bg-white/10 text-white text-[11.5px] font-semibold transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-white/15 bg-white/[0.06] hover:bg-white/[0.12] text-white text-[11.5px] font-semibold transition-colors cursor-pointer"
                   >
                     <Smartphone className="w-3 h-3" />
                     <span>iOS App</span>
@@ -257,49 +257,52 @@ export const LoginScreen = ({
             <div className="order-1 md:order-2 md:col-span-7 bg-white p-6 sm:p-12 flex flex-col justify-between">
               <div className="space-y-6">
                 {/* Role Switcher Tabs */}
-                <div className="flex items-center border-b border-[#E2E8F0] gap-0 sm:gap-1 overflow-x-auto">
+                <div className="flex items-center gap-1 rounded-xl bg-[#0A2540]/[0.05] p-1 overflow-x-auto" aria-label="Choose portal">
                   <Link
                     to="/student/signin"
                     className={cn(
-                      "inline-flex items-center whitespace-nowrap min-h-[44px] px-2.5 sm:px-3.5 text-[13.5px] sm:text-[14px] font-semibold border-b-2 -mb-px transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)]",
+                      "inline-flex flex-1 items-center justify-center whitespace-nowrap min-h-[44px] px-2.5 sm:px-3.5 rounded-lg text-[13px] sm:text-[14px] font-semibold transition-[background-color,color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540]",
                       role === "student"
-                        ? "border-[#0A2540] text-[#0A2540]"
-                        : "border-transparent text-[#475569] hover:text-[#0A2540]",
+                        ? "bg-white text-[#0A2540] shadow-[0_1px_2px_rgba(10,37,64,0.08),0_0_0_1px_rgba(10,37,64,0.04)]"
+                        : "text-[#475569] hover:text-[#0A2540] hover:bg-white/60",
                     )}
                   >
-                    Student Portal
+                    <span className="sm:hidden">Student</span>
+                    <span className="hidden sm:inline">Student Portal</span>
                   </Link>
                   <Link
                     to="/faculty/signin"
                     className={cn(
-                      "inline-flex items-center whitespace-nowrap min-h-[44px] px-2.5 sm:px-3.5 text-[13.5px] sm:text-[14px] font-semibold border-b-2 -mb-px transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)]",
+                      "inline-flex flex-1 items-center justify-center whitespace-nowrap min-h-[44px] px-2.5 sm:px-3.5 rounded-lg text-[13px] sm:text-[14px] font-semibold transition-[background-color,color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540]",
                       role === "faculty"
-                        ? "border-[#0A2540] text-[#0A2540]"
-                        : "border-transparent text-[#475569] hover:text-[#0A2540]",
+                        ? "bg-white text-[#0A2540] shadow-[0_1px_2px_rgba(10,37,64,0.08),0_0_0_1px_rgba(10,37,64,0.04)]"
+                        : "text-[#475569] hover:text-[#0A2540] hover:bg-white/60",
                     )}
                   >
-                    Faculty Portal
+                    <span className="sm:hidden">Faculty</span>
+                    <span className="hidden sm:inline">Faculty Portal</span>
                   </Link>
                   <Link
                     to="/admin/signin"
                     className={cn(
-                      "inline-flex items-center whitespace-nowrap min-h-[44px] px-2.5 sm:px-3.5 text-[13.5px] sm:text-[14px] font-semibold border-b-2 -mb-px transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)]",
+                      "inline-flex flex-1 items-center justify-center whitespace-nowrap min-h-[44px] px-2.5 sm:px-3.5 rounded-lg text-[13px] sm:text-[14px] font-semibold transition-[background-color,color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540]",
                       role === "admin"
-                        ? "border-[#0A2540] text-[#0A2540]"
-                        : "border-transparent text-[#475569] hover:text-[#0A2540]",
+                        ? "bg-white text-[#0A2540] shadow-[0_1px_2px_rgba(10,37,64,0.08),0_0_0_1px_rgba(10,37,64,0.04)]"
+                        : "text-[#475569] hover:text-[#0A2540] hover:bg-white/60",
                     )}
                   >
-                    Administration
+                    <span className="sm:hidden">Admin</span>
+                    <span className="hidden sm:inline">Administration</span>
                   </Link>
                 </div>
 
                 {/* Form Title & Subtitle */}
                 <div>
-                  <h1 className="text-[34px] sm:text-[44px] font-bold leading-[1.02] tracking-[-0.03em] text-[#0A2540]">
+                  <h1 className="text-[30px] sm:text-[38px] font-semibold leading-[1.08] tracking-[-0.035em] text-[#0A2540]">
                     {title === "Login Portal" ? "University Sign In" : title}
                   </h1>
                   {(defaultSubtitle || subtitle) && (
-                    <p className="text-[15px] text-[#475569] mt-2 leading-relaxed">
+                    <p className="text-[15px] text-[#64748B] mt-2 leading-6">
                       {subtitle || defaultSubtitle}
                     </p>
                   )}
@@ -314,7 +317,7 @@ export const LoginScreen = ({
               </div>
 
               {/* Institutional Help & Policy Note */}
-              <div className="mt-8 pt-4 border-t border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[12px] text-[#64748B]">
+              <div className="mt-8 pt-5 border-t border-[#EEF1F5] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[12px] text-[#64748B]">
                 <span>
                   Assistance:{" "}
                   <a
