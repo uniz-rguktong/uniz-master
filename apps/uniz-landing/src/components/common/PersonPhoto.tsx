@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 // Initials from a name like "Mr. Krishna ManamM.Tech" -> "KM".
 export function initials(name: string): string {
   const words = (name ?? "")
-    .replace(/\b(mr|mrs|ms|dr|prof|sri|smt)\.?\s*/gi, " ")
+    .replace(/\b(mrs|mr|ms|dr|prof|smt|sri)\.?\s*/gi, " ")
     .replace(/[^A-Za-z\s]/g, " ")
     .split(/\s+/)
     .filter(Boolean);
