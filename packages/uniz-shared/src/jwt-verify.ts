@@ -7,7 +7,9 @@ import { ErrorCode } from "./error-codes";
  * their own jsonwebtoken + JWT_SECURITY_KEY from the VPS vault / local secrets.env.
  * Keeps payload validation consistent across uniz-api modules.
  */
-export function parseJwtPayload(payload: unknown):
+export function parseJwtPayload(
+  payload: unknown,
+):
   | { ok: true; data: JwtPayload }
   | { ok: false; code: ErrorCode; message: string } {
   const parsed = JwtPayloadSchema.safeParse(payload);
