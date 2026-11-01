@@ -1,5 +1,6 @@
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useState, useEffect, useCallback } from "react";
-import { Loader2, ClipboardList, BookOpenCheck } from "lucide-react";
+import { ClipboardList, BookOpenCheck } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
 import { GET_AVAILABLE_SUBJECTS, GET_CURRENT_SUBJECTS } from "../../../api/endpoints";
 import { cn } from "@/lib/utils";
@@ -76,8 +77,16 @@ export default function MySubjects({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 text-navy-900 animate-spin" />
+      <div className="space-y-6" aria-busy="true" aria-label="Loading subjects">
+        <div className="space-y-2">
+          <Skeleton className="h-3.5 w-32" />
+          <Skeleton className="h-8 w-64" />
+        </div>
+        <div className="rounded-2xl border border-[#E6EAF0] bg-white p-5 space-y-3">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-12 w-full" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -86,23 +95,23 @@ export default function MySubjects({
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <p className="text-[10px] font-semibold tracking-[0.14em] text-navy-400 uppercase">
+          <p className="text-[13px] font-medium text-[#64748B]">
             Semester registration
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight text-navy-900">
+          <h1 className="mt-1 text-[28px] md:text-[32px] font-semibold tracking-[-0.03em] leading-tight text-[#0A2540]">
             {hasRegistered ? "Your current semester" : "Course registration"}
           </h1>
         </div>
 
-        <div className="flex gap-1 p-1 bg-navy-100 rounded-xl w-fit">
+        <div className="flex gap-1 p-1 bg-[#0A2540]/[0.05] rounded-xl w-fit" role="tablist">
           <button
             type="button"
             onClick={() => setActiveTab("subjects")}
             className={cn(
-              "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all",
+              "inline-flex min-h-11 items-center gap-2 px-4 rounded-lg text-[13px] font-semibold transition-[background-color,color,box-shadow] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540]",
               activeTab === "subjects"
-                ? "bg-white text-navy-900 shadow-sm"
-                : "text-navy-500 hover:text-navy-800",
+                ? "bg-white text-[#0A2540] shadow-sm"
+                : "text-[#475569] hover:text-[#0A2540]",
             )}
           >
             <BookOpenCheck size={14} />
@@ -113,10 +122,10 @@ export default function MySubjects({
               type="button"
               onClick={() => setActiveTab("register")}
               className={cn(
-                "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all",
+                "inline-flex min-h-11 items-center gap-2 px-4 rounded-lg text-[13px] font-semibold transition-[background-color,color,box-shadow] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540]",
                 activeTab === "register"
-                  ? "bg-white text-navy-900 shadow-sm"
-                  : "text-navy-500 hover:text-navy-800",
+                  ? "bg-white text-[#0A2540] shadow-sm"
+                  : "text-[#475569] hover:text-[#0A2540]",
               )}
             >
               <ClipboardList size={14} />

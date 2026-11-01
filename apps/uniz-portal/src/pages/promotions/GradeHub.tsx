@@ -319,27 +319,27 @@ export default function GradeHub() {
 
       <div className="max-w-6xl mx-auto px-4 pb-10">
         {/* Header */}
-        <div className="flex flex-col gap-1.5 mb-8">
-          <p className="text-navy-500 font-medium text-[13px]">
-            Academic Performance Terminal
+        <div className="flex flex-col gap-1 mb-8">
+          <p className="text-[13px] font-medium text-[#64748B]">
+            Academics
           </p>
-          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-navy-900 leading-none">
+          <h1 className="text-[28px] md:text-[32px] font-semibold tracking-[-0.03em] text-[#0A2540] leading-tight">
             Results
           </h1>
         </div>
 
         {/* Selection Criteria */}
-        <div className="mb-8 md:bg-white p-6 px-0 md:px-6 md:rounded-portal-lg md:border md:border-navy-200 md:shadow-whisper bg-transparent">
+        <div className="mb-8 md:bg-white p-6 px-0 md:px-6 md:rounded-2xl md:border md:border-[#E6EAF0] md:shadow bg-transparent">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
             <div className="relative group">
-              <label className="text-[10px] font-bold tracking-[0.14em] text-navy-500 mb-1.5 block font-form">
+              <label className="text-[13px] font-medium text-[#334155] mb-2 block font-form">
                 Academic Year
               </label>
               <div
-                className="w-full flex items-center justify-between bg-[#FAFAFA] border border-navy-200 rounded-portal-sm p-3 cursor-pointer hover:border-navy-900 transition-colors font-form"
+                className="w-full min-h-11 flex items-center justify-between bg-white border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 cursor-pointer shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] transition-colors duration-150 font-form"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
-                <span className="font-bold text-sm">{selectedYear}</span>
+                <span className="font-medium text-[14px]">{selectedYear}</span>
                 <ChevronDown
                   size={16}
                   className="text-navy-400 group-hover:text-navy-900 transition-colors"
@@ -347,7 +347,7 @@ export default function GradeHub() {
               </div>
 
               {showDropdown && (
-                <div className="absolute z-50 mt-1 w-full bg-white border border-navy-200 rounded-portal-sm shadow-whisper-md overflow-hidden">
+                <div className="absolute z-50 mt-1.5 w-full bg-white border border-[#E6EAF0] rounded-xl shadow-md overflow-hidden p-1">
                   {years.map((year) => (
                     <div
                       key={year}
@@ -370,7 +370,7 @@ export default function GradeHub() {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold tracking-[0.14em] text-navy-500 mb-1.5 block font-form">
+              <label className="text-[13px] font-medium text-[#334155] mb-2 block font-form">
                 Semester
               </label>
               <div className="relative">
@@ -380,7 +380,7 @@ export default function GradeHub() {
                     setSelectedSemester(e.target.value);
                     setResultsFetched(false);
                   }}
-                  className="w-full bg-[#FAFAFA] border border-navy-200 rounded-portal-sm p-3 font-bold text-sm appearance-none focus:outline-none focus:border-navy-900 focus:ring-1 focus:ring-navy-900/15 transition-colors font-form"
+                  className="w-full min-h-11 bg-white border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 font-medium text-[14px] appearance-none shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/[0.08] transition-[border-color,box-shadow] duration-150 font-form"
                 >
                   {semesterOptions.map((opt) => (
                     <option key={opt} value={opt}>
@@ -399,7 +399,7 @@ export default function GradeHub() {
               <div className="md:w-48">
                 <button
                   onClick={() => handleFetchResults(false)}
-                  className="w-full h-[46px] bg-navy-900 hover:bg-navy-800 text-white rounded-portal-sm font-bold text-sm transition-colors font-button active:opacity-95 disabled:opacity-50"
+                  className="w-full min-h-11 bg-[#0A2540] hover:bg-[#0D3154] text-white rounded-xl font-semibold text-[14px] transition-[background-color,transform] duration-150 active:scale-[0.98] motion-reduce:active:scale-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_6px_16px_-8px_rgba(10,37,64,0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540] focus-visible:ring-offset-2 font-button disabled:opacity-50"
                   disabled={isLoading || !user?.username}
                 >
                   {isLoading ? (
@@ -496,7 +496,7 @@ export default function GradeHub() {
                   {grades.regular?.length > 0 ? (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <h3 className="text-[13px] font-bold text-navy-400 tracking-[0.14em] flex items-center gap-2">
+                        <h3 className="text-[14px] font-semibold text-[#0A2540] tracking-[-0.01em] flex items-center gap-2">
                           <div className="w-1.5 h-4 rounded-full bg-navy-900"></div>
                           REGULAR RESULTS
                         </h3>
@@ -505,16 +505,16 @@ export default function GradeHub() {
                         <table className="w-full text-sm table-fixed">
                           <thead>
                             <tr className="bg-navy-50/50 border-b border-navy-100">
-                              <th className="px-5 py-4 text-left font-bold text-[10px] tracking-[0.14em] text-navy-400 w-[55%]">
+                              <th className="px-5 py-4 text-left font-medium text-[12px] text-[#64748B] w-[55%]">
                                 Subjects
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] tracking-[0.14em] text-navy-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-medium text-[12px] text-[#64748B] w-[15%]">
                                 Credits
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] tracking-[0.14em] text-navy-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-medium text-[12px] text-[#64748B] w-[15%]">
                                 Grade
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] tracking-[0.14em] text-navy-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-medium text-[12px] text-[#64748B] w-[15%]">
                                 Status
                               </th>
                             </tr>
@@ -570,7 +570,7 @@ export default function GradeHub() {
                   {grades.remedial?.length > 0 ? (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <h3 className="text-[13px] font-bold text-navy-400 tracking-[0.14em] flex items-center gap-2">
+                        <h3 className="text-[14px] font-semibold text-[#0A2540] tracking-[-0.01em] flex items-center gap-2">
                           <div className="w-1.5 h-4 rounded-full bg-orange-500"></div>
                           REMEDIAL RESULTS
                         </h3>
@@ -597,16 +597,16 @@ export default function GradeHub() {
                         <table className="w-full text-sm table-fixed">
                           <thead>
                             <tr className="bg-navy-50/50 border-b border-navy-100">
-                              <th className="px-5 py-4 text-left font-bold text-[10px] tracking-[0.14em] text-navy-400 w-[55%]">
+                              <th className="px-5 py-4 text-left font-medium text-[12px] text-[#64748B] w-[55%]">
                                 Subjects
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] tracking-[0.14em] text-navy-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-medium text-[12px] text-[#64748B] w-[15%]">
                                 Credits
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] tracking-[0.14em] text-navy-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-medium text-[12px] text-[#64748B] w-[15%]">
                                 Grade
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] tracking-[0.14em] text-navy-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-medium text-[12px] text-[#64748B] w-[15%]">
                                 Status
                               </th>
                             </tr>
@@ -752,13 +752,13 @@ export default function GradeHub() {
           !isLoading &&
           !resultsFetched &&
           !error && (
-            <div className="bg-navy-50 border border-navy-200 rounded-[2px] p-12 text-center">
-              <div className="md:bg-white w-20 h-20 md:rounded-[2px] flex items-center justify-center mx-auto mb-6 md:shadow-sm md:border md:border-navy-100 bg-transparent">
-                <GraduationCap size={40} className="text-navy-900" />
+            <div className="rounded-2xl border border-dashed border-[#D5DCE6] bg-white px-6 py-14 text-center">
+              <div className="size-12 rounded-xl bg-[#0A2540]/[0.05] ring-1 ring-inset ring-[#0A2540]/[0.08] flex items-center justify-center mx-auto mb-5">
+                <GraduationCap size={22} strokeWidth={1.75} className="text-[#0A2540]" />
               </div>
 
-              <h3 className="text-2xl font-semibold mb-3">No Results Selected</h3>
-              <p className="text-navy-500 mb-6 max-w-sm mx-auto font-medium">
+              <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-[#0A2540] mb-1.5">Pick a semester</h3>
+              <p className="text-[14px] leading-6 text-[#64748B] max-w-sm mx-auto">
                 Select an academic year and semester above, then click "Get
                 Results" to see your grades.
               </p>
