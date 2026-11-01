@@ -48,12 +48,17 @@ const isEmailFormat = (value: string) =>
 const isValidStudentLoginId = (value: string) =>
   isStudentIdFormat(value) || isEmailFormat(value);
 
+/** IDs are stored uppercase (O210001); emails stay lowercase. */
+function studentIdCase(value: string): string {
+  return value.includes("@") ? value.toLowerCase() : value.toUpperCase();
+}
+
 function normalizeLoginIdentifier(
   value: string,
   type: SigninProps["type"],
 ): string {
-  const trimmed = value.trim().toLowerCase();
-  if (type === "student") return trimmed;
+  const trimmed = value.trim();
+  if (type === "student") return studentIdCase(trimmed);
   return value.trim();
 }
 
@@ -905,7 +910,7 @@ export default function Signin({ type }: SigninProps) {
                 onChange={(e) =>
                   setUsername(
                     type === "student"
-                      ? e.target.value.toLowerCase()
+                      ? studentIdCase(e.target.value)
                       : e.target.value,
                   )
                 }
@@ -993,7 +998,7 @@ export default function Signin({ type }: SigninProps) {
                 onChange={(e) =>
                   setUsername(
                     type === "student"
-                      ? e.target.value.toLowerCase()
+                      ? studentIdCase(e.target.value)
                       : e.target.value,
                   )
                 }
