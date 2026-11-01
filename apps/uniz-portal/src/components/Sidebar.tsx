@@ -263,11 +263,11 @@ export default function Sidebar({ content }: MainContent) {
         )}
       </AnimatePresence>
 
-      <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between border-b-2 border-[#EA2027] bg-[#021227] px-4 text-white shadow-[0_8px_24px_-16px_rgba(2,18,39,0.8)] md:px-6">
+      <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between border-b border-white/[0.08] bg-[#021227]/[0.96] px-4 text-white backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[#021227]/[0.94] md:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
-            className="inline-flex h-11 w-11 -ml-2 items-center justify-center rounded-md hover:bg-white/10 md:hidden"
+            className="inline-flex h-11 w-11 -ml-2 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 md:hidden"
             onClick={() => setDrawerOpen((open) => !open)}
             aria-label="Open menu"
           >
@@ -279,9 +279,9 @@ export default function Sidebar({ content }: MainContent) {
               alt="UniZ — RGUKT Ongole"
               className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-white/25 shadow-sm"
             />
-            <span className="text-[15px] font-bold uppercase tracking-[1.5px]">Exam Cell</span>
+            <span className="text-[15px] font-semibold tracking-[-0.01em]">Exam Cell</span>
             <span className="hidden h-5 w-px bg-white/20 lg:block" aria-hidden="true" />
-            <span className="hidden text-[13px] font-medium text-white/70 lg:block">
+            <span className="hidden text-[13px] font-medium text-white/60 lg:block">
               {navItems.find((n) => n.content === content)?.label}
             </span>
           </a>
@@ -293,14 +293,14 @@ export default function Sidebar({ content }: MainContent) {
             className="!border-white/25 !bg-white/10 !text-white hover:!bg-white/20 hover:!text-white"
           />
           <div className="hidden text-right sm:block">
-            <p className="text-[13px] font-bold uppercase leading-none tracking-[0.4px]">
+            <p className="text-[13px] font-semibold leading-none tabular-nums">
               {userData?.username || "Student"}
             </p>
-            <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.6px] text-white/75">
+            <p className="mt-1 text-[11px] font-medium text-white/60">
               {UNIZ_CAMPUS_LABEL}
             </p>
           </div>
-          <div className="h-9 w-9 overflow-hidden rounded-full ring-2 ring-white/25 ring-offset-2 ring-offset-[#021227]">
+          <div className="h-9 w-9 overflow-hidden rounded-full ring-1 ring-white/20">
             {userData?.profile_url ? (
               <img src={userData.profile_url} className="h-full w-full object-cover" alt="" />
             ) : (
@@ -323,12 +323,12 @@ export default function Sidebar({ content }: MainContent) {
         )}
         <aside
           className={cn(
-            "z-50 flex w-[248px] shrink-0 flex-col border-r border-[#E2E8F0] bg-white md:sticky md:top-14 md:h-[calc(100vh-56px)]",
-            drawerOpen ? "fixed top-14 bottom-16 left-0 shadow-[0_24px_48px_-12px_rgba(2,18,39,0.45)]" : "hidden md:flex",
+            "z-50 flex w-[248px] shrink-0 flex-col border-r border-[#E6EAF0] bg-white md:sticky md:top-14 md:h-[calc(100vh-56px)]",
+            drawerOpen ? "fixed top-14 bottom-16 left-0 rounded-r-2xl shadow-[0_24px_48px_-12px_rgba(2,18,39,0.45)]" : "hidden md:flex",
           )}
         >
-          <nav className="flex-1 space-y-1 overflow-y-auto py-5" aria-label="Student">
-            <p className="px-6 pb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#64748B]">Menu</p>
+          <nav className="flex-1 space-y-0.5 overflow-y-auto py-5" aria-label="Student">
+            <p className="px-6 pb-3 text-[12px] font-medium text-[#64748B]">Navigation</p>
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = content === item.content;
@@ -340,13 +340,13 @@ export default function Sidebar({ content }: MainContent) {
                   aria-current={active ? "page" : undefined}
                   className={cn(portalSidebarItemClass, active && portalSidebarItemActiveClass)}
                 >
-                  <Icon size={18} strokeWidth={active ? 2.25 : 1.75} className={active ? "text-white" : "text-[#5A7A94] group-hover:text-[#0A2540]"} />
+                  <Icon size={18} strokeWidth={active ? 2 : 1.75} className={active ? "text-[#0A2540]" : "text-[#94A3B8] transition-colors duration-150 group-hover:text-[#0A2540]"} />
                   <span>{item.label}</span>
                 </button>
               );
             })}
           </nav>
-          <div className="mx-3 mb-3 grid grid-cols-2 gap-2 border-t border-[#E2E8F0] pt-4">
+          <div className="mx-3 mb-3 grid grid-cols-2 gap-2 border-t border-[#EEF1F5] pt-4">
             <a
               href={ANDROID_APK_URL}
               download={ANDROID_APK_FILENAME}
@@ -372,16 +372,18 @@ export default function Sidebar({ content }: MainContent) {
           </button>
         </aside>
 
-        <div className="flex min-w-0 flex-1 flex-col bg-[#F8FAFC]">
+        <div className="flex min-w-0 flex-1 flex-col bg-[#F7F8FA]">
           <main ref={mainRef} className="flex-1 pb-20 md:pb-0">
-            <div className="min-h-full bg-[#F8FAFC] px-4 py-6 md:px-10 md:py-8">
+            <div className="mx-auto min-h-full w-full max-w-[1200px] px-4 py-6 md:px-10 md:py-10">
               {content !== "dashboard" && (
                 <div className="mb-4 md:hidden">
                   <button
                     onClick={() => navigate("/student")}
-                    className="flex items-center gap-1 py-2 font-sans text-[10px] font-bold tracking-[0.14em] text-[#5A7A94]"
+                    aria-label="Back to dashboard"
+                    className="-ml-2 flex h-11 items-center gap-1 rounded-xl px-2 font-sans text-[13px] font-medium text-[#64748B] transition-colors hover:bg-[#0A2540]/[0.04] hover:text-[#0A2540]"
                   >
-                    <ChevronLeft size={20} strokeWidth={3} />
+                    <ChevronLeft size={18} strokeWidth={2} />
+                    Dashboard
                   </button>
                 </div>
               )}
@@ -396,7 +398,7 @@ export default function Sidebar({ content }: MainContent) {
 
       <nav
         aria-label="Student quick links"
-        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-[#E2E8F0] bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_-16px_rgba(2,18,39,0.35)] backdrop-blur-md md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-[#E6EAF0] bg-white/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl backdrop-saturate-150 md:hidden"
       >
         {navItems
           .filter((n) => ["dashboard", "registration", "gradehub", "attendance"].includes(n.content))
@@ -410,12 +412,12 @@ export default function Sidebar({ content }: MainContent) {
                 onClick={() => go(item.href)}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-semibold transition-colors duration-150",
-                  active ? "text-[#0A2540]" : "text-[#64748B]",
+                  "relative flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0A2540]",
+                  active ? "text-[#0A2540] font-semibold" : "text-[#64748B]",
                 )}
               >
                 {active && <span className="absolute top-0 h-[3px] w-8 rounded-b-full bg-[#EA2027]" aria-hidden="true" />}
-                <span className={cn("flex h-8 w-12 items-center justify-center rounded-full", active && "bg-[#0A2540]/[0.08]")}>
+                <span className={cn("flex h-8 w-14 items-center justify-center rounded-full transition-colors duration-150", active && "bg-[#0A2540]/[0.07]")}>
                   <Icon size={20} strokeWidth={active ? 2.25 : 1.75} />
                 </span>
                 {item.label}

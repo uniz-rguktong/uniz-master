@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Nunito:wght@500;600;700;800&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cabin+Condensed:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -7,9 +8,35 @@
 
 @layer base {
   :root {
-    --font-sans: "Cabin Condensed", "Cabin", system-ui, -apple-system, sans-serif;
-    --font-button: "Cabin Condensed", "Cabin", system-ui, sans-serif;
-    --font-form: "Cabin Condensed", "Cabin", system-ui, sans-serif;
+    --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-button: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-form: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --portal-ease: cubic-bezier(0.2, 0, 0, 1);
+    --portal-hairline: #e6eaf0;
+  }
+
+  body {
+    font-feature-settings: "cv11", "ss01", "ss03";
+    letter-spacing: -0.006em;
+  }
+
+  .tabular-nums {
+    font-feature-settings: "tnum", "cv11";
+  }
+
+  :focus-visible {
+    outline-color: #0a2540;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   body {
@@ -77,20 +104,24 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #061b33;
+    background: #cbd5e1;
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #eeeeee;
+    background: #94a3b8;
+    background-clip: content-box;
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: #061b33 #f1f1f1;
+    scrollbar-color: #cbd5e1 transparent;
   }
 }
 
@@ -542,17 +573,17 @@
 }
 
 .portal-theme body {
-  background-color: #f8fafc;
+  background-color: #f7f8fa;
   color: #0f172a;
-  font-family: "Cabin Condensed", "Cabin", system-ui, sans-serif;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 .portal-theme h1,
 .portal-theme h2,
 .portal-theme h3,
 .portal-theme h4 {
-  letter-spacing: -0.01em;
-  font-family: "Cabin Condensed", "Cabin", system-ui, sans-serif;
+  letter-spacing: -0.025em;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 .portal-theme .bg-premium-gradient,
@@ -563,9 +594,9 @@
 .portal-theme .uniz-primary-btn {
   background-color: #0a2540;
   color: #ffffff;
-  border-radius: 2px;
-  font-family: "Cabin Condensed", "Cabin", sans-serif;
-  letter-spacing: 0.04em;
+  border-radius: 12px;
+  font-family: "Inter", system-ui, sans-serif;
+  letter-spacing: -0.005em;
 }
 
 .portal-theme .uniz-primary-btn:hover:not(:disabled) {
