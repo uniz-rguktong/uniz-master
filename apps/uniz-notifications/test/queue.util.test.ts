@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const queues = vi.hoisted(() => ({ list: [] as any[] }));
@@ -41,13 +42,16 @@ describe("notification queue", () => {
   });
 
   it("parses host, port, and password from REDIS_URL", async () => {
-    process.env.REDIS_URL = "redis://:s3cret@redis.internal:6380/0";
+    const fakePw = "test-" + randomUUID();
+    const url = new URL("redis://redis.internal:6380");
+    url.password = fakePw;
+    process.env.REDIS_URL = url.toString();
     const { getNotificationQueue } = await loadQueue();
     getNotificationQueue();
     expect(queues.list[0].opts.connection).toEqual({
       host: "redis.internal",
       port: 6380,
-      password: "s3cret",
+      password: fakePw,
       maxRetriesPerRequest: null,
     });
   });
