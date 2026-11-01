@@ -10,14 +10,14 @@
   "dependencies": {
     "@uniz/shared": "*",
     "axios": "^1.18.1",
-    "compression": "^1.8.1",
+    "compression": "^1.8.2",
     "cors": "^2.8.6",
     "dotenv": "^16.4.7",
-    "express": "^5.2.1",
-    "express-rate-limit": "^8.3.0",
+    "express": "^4.22.3",
+    "express-rate-limit": "^8.7.1",
     "http-proxy": "^1.18.1",
-    "http-proxy-middleware": "^3.0.5",
-    "ioredis": "^5.10.0"
+    "http-proxy-middleware": "^3.0.10",
+    "ioredis": "^5.11.1"
   },
   "devDependencies": {
     "@types/compression": "^1.8.1",

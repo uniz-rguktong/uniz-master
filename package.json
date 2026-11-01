@@ -52,26 +52,26 @@
   },
   "dependencies": {
     "@types/bcrypt": "^6.0.0",
-    "@types/pg": "^8.18.0",
+    "@types/pg": "^8.23.1",
     "axios": "^1.18.1",
     "bcrypt": "^6.0.0",
     "colors": "^1.4.0",
     "exceljs": "^4.4.0",
     "form-data": "^4.0.6",
-    "pg": "^8.20.0"
+    "pg": "^8.23.1"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
     "dotenv": "^17.3.1",
-    "prettier": "^3.8.1",
+    "prettier": "^3.9.10",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.3"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-arm64-musl": "4.62.2",
-    "@rollup/rollup-linux-x64-gnu": "4.62.2",
-    "@rollup/rollup-linux-x64-musl": "4.62.2"
+    "@rollup/rollup-linux-arm64-musl": "4.66.0",
+    "@rollup/rollup-linux-x64-gnu": "4.66.0",
+    "@rollup/rollup-linux-x64-musl": "4.66.0"
   },
   "overrides": {
     "@types/react": "18.3.12",
