@@ -1,4 +1,5 @@
 import { ANALYTICS_KEY } from "./endpoints";
+import { redirectToPasswordChange } from "../utils/passwordChange";
 
 /**
  * Global Network Interceptor
@@ -69,6 +70,17 @@ export function initializeGlobalInterceptor() {
     }
 
     const response = await originalFetch(resource, config);
+
+    if (response.status === 403) {
+      try {
+        const body = await response.clone().json();
+        if (body?.code === "PASSWORD_CHANGE_REQUIRED") {
+          redirectToPasswordChange();
+        }
+      } catch {
+        /* non-json 403 */
+      }
+    }
 
     // Auth-Aware Eviction: Don't logout if the 401 comes from a login attempt
     const isLoginAttempt =

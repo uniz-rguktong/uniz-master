@@ -1,4 +1,5 @@
 import rateLimit from "express-rate-limit";
+import { isLoginRateLimitEnforced } from "@uniz/shared";
 
 // Standard Auth limiter (Username-aware to prevent campus IP collisions)
 export const rateLimiter = rateLimit({
@@ -64,6 +65,63 @@ export const otpHourLimiter = rateLimit({
     code: "OTP_LIMIT_HOUR",
     attribution: "SreeCharan",
   },
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
+});
+
+const FIFTEEN_MIN = 15 * 60 * 1000;
+
+const idOf = (req: any): string =>
+  req.body?.username?.toString().trim().toLowerCase() || "anon";
+
+const limitMessage = (code: string) => ({
+  success: false,
+  message: "Too many attempts. Please try again after 15 minutes.",
+  code,
+});
+
+// Observe by default: log and let the request through unless
+// RATE_LIMIT_MODE=enforce. Many students share campus NAT IPs.
+const observeUnlessEnforced =
+  (code: string) => (req: any, res: any, next: any, options: any) => {
+    if (!isLoginRateLimitEnforced()) {
+      console.warn(`[AUTH] rate limit observed: ${code} for ${idOf(req)}`);
+      return next();
+    }
+    res.status(options.statusCode).json(limitMessage(code));
+  };
+
+// Failed logins per ID + IP. Successful logins do not count.
+export const loginFailureLimiter = rateLimit({
+  windowMs: FIFTEEN_MIN,
+  max: 20,
+  skipSuccessfulRequests: true,
+  keyGenerator: (req: any) => `login_${idOf(req)}_${req.ip}`,
+  handler: observeUnlessEnforced("LOGIN_RATE_LIMIT"),
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
+});
+
+// Per-IP ceiling for login traffic. Generous because a campus NAT IP
+// can carry thousands of students at peak.
+export const loginIpLimiter = rateLimit({
+  windowMs: FIFTEEN_MIN,
+  max: 5000,
+  keyGenerator: (req: any) => `login_ip_${req.ip}`,
+  handler: observeUnlessEnforced("LOGIN_IP_RATE_LIMIT"),
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
+});
+
+// Signed-in account actions (password change, admin tools), per ID + IP.
+export const accountActionLimiter = rateLimit({
+  windowMs: FIFTEEN_MIN,
+  max: 60,
+  keyGenerator: (req: any) => `acct_${idOf(req)}_${req.ip}`,
+  handler: observeUnlessEnforced("ACCOUNT_RATE_LIMIT"),
   standardHeaders: true,
   legacyHeaders: false,
   validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },

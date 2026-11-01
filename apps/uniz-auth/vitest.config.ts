@@ -24,7 +24,7 @@ export default defineConfig({
   ],
   test: {
     include: ["test/**/*.test.ts"],
-    setupFiles: ["test/setup-env.ts"],
+    setupFiles: ["test/setup.ts", "test/setup-env.ts"],
     coverage: {
       provider: "v8",
       include: ["src/**/*.ts"],

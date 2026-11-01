@@ -1,3 +1,7 @@
+// LOAD_TEST_* users are exempt from login lockout and forced password change.
+// Leave ENFORCE_PASSWORD_CHANGE unset and RATE_LIMIT_MODE at observe unless
+// this run is meant to exercise those gates. Do not point this script at
+// production student rows.
 const fs = require("fs");
 const { execSync } = require("child_process");
 

@@ -17,6 +17,13 @@ import {
   comparePasswordForUser,
   hashPassword,
 } from "../utils/password.util";
+import { resolveLoginPasswordFlag } from "../utils/password-flag";
+import { guardLoginRateLimit } from "../utils/login-ratelimit";
+import {
+  accessTokenBlacklistKey,
+  isLoadTestAccount,
+  isPasswordChangeEnforced,
+} from "@uniz/shared";
 import { ErrorCode } from "../shared/error-codes";
 import { UserRole, ADMIN_ROLES } from "../shared/roles.enum";
 import { isValidInternalSecret } from "@uniz/shared";
@@ -135,6 +142,23 @@ async function resolveDepartmentForLogin(
   return resolved;
 }
 
+function clientIp(req: Request): string {
+  const forwarded = req.headers["x-forwarded-for"];
+  const raw = Array.isArray(forwarded) ? forwarded[0] : forwarded;
+  if (typeof raw === "string" && raw.trim()) {
+    return raw.split(",")[0].trim();
+  }
+  return req.ip || req.socket.remoteAddress || "unknown";
+}
+
+function loginLockedResponse(res: Response) {
+  return res.status(429).json({
+    success: false,
+    message: "Security threshold exceeded. Please try again after 15 minutes.",
+    code: "RATE_LIMIT_EXCEEDED",
+  });
+}
+
 async function resolveLoginIdentifier(
   identifier: string,
   allowEmailLogin: boolean,
@@ -172,12 +196,21 @@ export const login = async (req: Request, res: Response) => {
     });
   }
 
+  const lockId = username.trim().toLowerCase();
+  const ip = clientIp(req);
+  if ((await guardLoginRateLimit(redis, lockId, ip, "check")) === "locked") {
+    return loginLockedResponse(res);
+  }
+
   try {
     const user = await prisma.authCredential.findFirst({
       where: { username: { equals: username, mode: "insensitive" } },
     });
 
     if (!user) {
+      if ((await guardLoginRateLimit(redis, lockId, ip, "fail")) === "locked") {
+        return loginLockedResponse(res);
+      }
       return res.status(401).json({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
         message: invalidCredentialsMessage,
@@ -202,19 +235,40 @@ export const login = async (req: Request, res: Response) => {
       resolveDepartmentForLogin(normalizedUsername, user.role as UserRole),
     ]);
     if (!isValid) {
+      if (
+        (await guardLoginRateLimit(redis, lockId, ip, "fail")) === "locked"
+      ) {
+        return loginLockedResponse(res);
+      }
       return res.status(401).json({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
         message: invalidCredentialsMessage,
       });
     }
 
+    const passwordFlag = resolveLoginPasswordFlag({
+      enforce: isPasswordChangeEnforced(),
+      submittedPassword: password,
+      username: user.username,
+      passwordChangedAt: user.passwordChangedAt,
+      alreadyFlagged: user.mustChangePassword,
+    });
+    if (passwordFlag.persistFlag) {
+      await prisma.authCredential.update({
+        where: { id: user.id },
+        data: { mustChangePassword: true },
+      });
+    }
+
+    const issuedAt = Math.floor(Date.now() / 1000);
     const token = signToken({
       id: user.id,
       username: normalizedUsername,
       role: user.role as UserRole,
       department,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+      iat: issuedAt,
+      exp: issuedAt + 7 * 24 * 60 * 60,
+      ...(passwordFlag.expose ? { mustChangePassword: true } : {}),
     });
 
     const response: any = {
@@ -223,6 +277,9 @@ export const login = async (req: Request, res: Response) => {
       role: user.role,
       username: normalizedUsername,
     };
+    if (passwordFlag.expose) {
+      response.mustChangePassword = true;
+    }
 
     if (user.role === UserRole.STUDENT) {
       response.student_token = token;
@@ -525,7 +582,11 @@ export const resetPassword = async (req: Request, res: Response) => {
 
     await prisma.authCredential.update({
       where: { id: targetUser.id },
-      data: { passwordHash: hashedPassword },
+      data: {
+        passwordHash: hashedPassword,
+        mustChangePassword: false,
+        passwordChangedAt: new Date(),
+      },
     });
 
     // Mark token as used in Redis
@@ -581,10 +642,11 @@ export const changePassword = async (
       });
     }
 
-    // Verify current password
-    const isValid = await comparePassword(
+    // Verify current password (campus default accepts ID letter case)
+    const isValid = await comparePasswordForUser(
       currentPassword,
       targetUser.passwordHash,
+      targetUser.username,
     );
     if (!isValid) {
       return res.status(401).json({
@@ -597,7 +659,11 @@ export const changePassword = async (
 
     await prisma.authCredential.update({
       where: { id: targetUser.id },
-      data: { passwordHash: hashedPassword },
+      data: {
+        passwordHash: hashedPassword,
+        mustChangePassword: false,
+        passwordChangedAt: new Date(),
+      },
     });
 
     // Send password change notification email
@@ -609,9 +675,44 @@ export const changePassword = async (
       );
     });
 
+    if (!isPasswordChangeEnforced()) {
+      return res.json({
+        success: true,
+        message: "Password updated successfully",
+      });
+    }
+
+    const header = String(req.headers.authorization || "");
+    const oldToken = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+    if (oldToken) {
+      const decoded = verifyToken(oldToken);
+      const now = Math.floor(Date.now() / 1000);
+      const ttl = Math.max(1, (decoded?.exp || now + 7 * 24 * 60 * 60) - now);
+      try {
+        await redis.setex(accessTokenBlacklistKey(oldToken), ttl, "1");
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "redis error";
+        console.error(
+          `[AUTH] Redis unavailable, could not blacklist previous token: ${message}`,
+        );
+      }
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    const fresh = signToken({
+      id: targetUser.id,
+      username: targetUser.username.toUpperCase(),
+      role: targetUser.role as UserRole,
+      department: user.department,
+      iat: now,
+      exp: now + 7 * 24 * 60 * 60,
+    });
+
     return res.json({
       success: true,
       message: "Password updated successfully",
+      token: fresh,
+      mustChangePassword: false,
     });
   } catch (e) {
     console.error("[AUTH] Change Password Error:", e);
@@ -704,7 +805,11 @@ export const adminResetPassword = async (req: Request, res: Response) => {
     const hashedPassword = await hashPassword(new_password);
     await prisma.authCredential.update({
       where: { id: user.id },
-      data: { passwordHash: hashedPassword },
+      data: {
+        passwordHash: hashedPassword,
+        mustChangePassword: false,
+        passwordChangedAt: new Date(),
+      },
     });
 
     // Send password change notification email as a courtesy
@@ -774,6 +879,8 @@ export const signup = async (req: Request, res: Response) => {
         username,
         passwordHash: hashedPassword,
         role: role || UserRole.STUDENT,
+        // New accounts must change the issued password. Load-test users are exempt.
+        mustChangePassword: !isLoadTestAccount(String(username || "")),
       },
     });
 
@@ -875,7 +982,11 @@ export const globalAdminResetPassword = async (
 
     await prisma.authCredential.update({
       where: { id: targetUser.id },
-      data: { passwordHash: hashedPassword },
+      data: {
+        passwordHash: hashedPassword,
+        mustChangePassword: true,
+        passwordChangedAt: null,
+      },
     });
 
     // Invalidate status cache to be safe

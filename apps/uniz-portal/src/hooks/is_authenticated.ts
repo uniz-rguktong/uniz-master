@@ -102,6 +102,7 @@ export function useIsAuth() {
 
     const studentToken = getSafeToken("student_token");
     const adminToken = getSafeToken("admin_token");
+    const facultyToken = getSafeToken("faculty_token");
     const storedUsername = getSafeToken("username");
 
     if (
@@ -189,6 +190,16 @@ export function useIsAuth() {
 
       if (authRedirectOnlyPaths.includes(location.pathname)) {
         navigate("/student");
+      }
+    } else if (
+      facultyToken &&
+      location.pathname === "/student/resetpassword"
+    ) {
+      if (!isTokenValid(facultyToken)) {
+        return logoutAndRedirect("Session expired or invalid");
+      }
+      if (!currentIsAuth.is_authenticated) {
+        setAuthFn({ is_authenticated: true, type: "faculty" });
       }
     } else if (
       !isNotFoundRouteActive() &&
