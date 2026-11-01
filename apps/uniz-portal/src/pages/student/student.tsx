@@ -38,6 +38,7 @@ import { Pagination } from "../../components/Pagination";
 // WebSocket side channel not deployed — useStudentData polling handles refresh.
 // import { useWebSocket } from "../../hooks/useWebSocket";
 import { InfoCard } from "./components/InfoCard";
+import DashboardOverview from "./components/DashboardOverview";
 import AcademicRecord from "./components/AcademicRecord";
 import ProfileSemesterSubjects from "./components/ProfileSemesterSubjects";
 import SeatingArrangement, {
@@ -633,11 +634,16 @@ export default function StudentProfilePage() {
 
   return (
     <div className="font-sans text-navy-900 relative overflow-x-hidden">
-      <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2 overflow-x-hidden">
+      <div className="mx-auto max-w-6xl relative z-10 pt-1 overflow-x-hidden">
+        <DashboardOverview user={user} />
+
+        <div className="mb-4 flex items-end justify-between border-b border-[#EEF1F5] pb-3">
+          <h2 className="text-[16px] font-semibold tracking-[-0.01em] text-[#0A2540]">Your profile</h2>
+        </div>
         {/* Profile Header */}
-        <div className="flex flex-col items-center justify-center relative mb-8 overflow-hidden rounded-xl border border-[#E2E8F0] bg-white px-4 pb-6 shadow-[0_1px_2px_rgba(10,37,64,0.05)] md:pb-8">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-br from-[#021227] via-[#0A2540] to-[#163A5C] md:h-28" aria-hidden="true">
-            <div className="absolute inset-x-0 bottom-0 h-[3px] bg-[#EA2027]" />
+        <div className="flex flex-col items-center justify-center relative mb-8 overflow-hidden rounded-2xl border border-[#E6EAF0] bg-white px-4 pb-6 shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)] md:pb-8">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[radial-gradient(120%_140%_at_0%_0%,#163A5C_0%,#0A2540_45%,#021227_100%)] md:h-24" aria-hidden="true">
+            <div className="absolute inset-x-0 bottom-0 h-px bg-white/10" />
           </div>
           {/* Actions - Top Right Absolute Position (Desktop Only) */}
           <div className="hidden md:flex absolute top-4 right-4 gap-2 shrink-0 z-20">
@@ -671,14 +677,10 @@ export default function StudentProfilePage() {
             {/* Avatar with upload state */}
             <div className="relative">
               <div
-                className="relative p-[4px] md:p-[5px] rounded-full mb-4"
-                style={{
-                  background: "#0A2540",
-                  boxShadow: "0 0 0 1px rgba(10, 37, 64, 0.14)",
-                }}
+                className="relative p-[4px] md:p-[5px] rounded-full mb-4 bg-white shadow-[0_8px_24px_-12px_rgba(2,18,39,0.5)]"
               >
                 <div className="relative bg-navy-50 p-[3px] rounded-full">
-                  <div className="relative w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-[#0A2540] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
+                  <div className="relative w-[88px] h-[88px] md:w-[104px] md:h-[104px] bg-[#0A2540] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
                     {/* Profile image or initial */}
                     {user?.profile_url ? (
                       <img
@@ -720,12 +722,13 @@ export default function StudentProfilePage() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploadingImage}
-                  className="absolute bottom-[-1px] right-2 w-8 h-8 bg-navy-100 border-[1.5px] border-navy-900 rounded-full flex items-center justify-center text-navy-800 hover:bg-navy-200 transition-all z-20 cursor-pointer shadow-sm hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label="Update profile photo"
+                  className="absolute -bottom-1 -right-1 w-11 h-11 bg-white border border-[#E6EAF0] rounded-full flex items-center justify-center text-[#0A2540] hover:bg-[#F7F8FA] transition-[background-color,transform] duration-150 z-20 cursor-pointer shadow-[0_4px_12px_-4px_rgba(10,37,64,0.3)] active:scale-95 motion-reduce:transition-none disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Update Profile Photo"
                 >
                   <Camera
                     className="w-[18px] h-[18px] overflow-hidden"
-                    strokeWidth={2.5}
+                    strokeWidth={1.75}
                   />
                 </button>
 
@@ -740,9 +743,9 @@ export default function StudentProfilePage() {
             </div>
 
             <div className="flex flex-col items-center gap-2.5 w-full max-w-xl px-3 mb-1.5 mt-1">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-[-0.01em] text-[#1f2122] leading-snug text-center w-full text-balance [overflow-wrap:anywhere]">
+              <h2 className="text-xl sm:text-2xl font-semibold tracking-[-0.025em] text-[#0A2540] leading-snug text-center w-full text-balance [overflow-wrap:anywhere]">
                 {user?.name}
-              </h1>
+              </h2>
               {!isEditing && (
                 <button
                   type="button"
@@ -755,7 +758,7 @@ export default function StudentProfilePage() {
                 </button>
               )}
             </div>
-            <p className="text-[#3c4043] font-medium text-[13px] tracking-tight text-center relative mb-3.5 flex items-center justify-center gap-1">
+            <p className="text-[#64748B] font-normal text-[14px] text-center relative mb-3.5 flex items-center justify-center gap-1">
               {user?.email || user?.username + "@rguktong.ac.in"}
               <BadgeCheck
                 className="w-[15px] h-[15px] text-[#0A2540]"
@@ -767,11 +770,11 @@ export default function StudentProfilePage() {
 
             {/* Badges */}
             <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] md:text-xs font-medium text-navy-500 mt-1">
-              <span className="text-navy-900 font-bold tracking-[0.14em] px-2 py-1 bg-navy-50 border border-navy-100 rounded">
+              <span className="text-[#0A2540] font-medium tabular-nums text-[12px] px-2.5 py-1 bg-[#0A2540]/[0.05] rounded-full">
                 {user?.username}
               </span>
               <span className="w-1 h-1 rounded-full bg-navy-300"></span>
-              <span className="tracking-wide font-bold text-navy-600">
+              <span className="text-[12px] font-medium text-[#475569]">
                 {user?.branch} • {user?.year}
               </span>
               {user?.has_pending_requests && (
@@ -848,7 +851,7 @@ export default function StudentProfilePage() {
                   {activeTab === tab && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-navy-900 rounded-t-full"
+                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#0A2540] rounded-t-full"
                     />
                   )}
                 </button>
