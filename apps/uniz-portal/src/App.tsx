@@ -29,7 +29,6 @@ const AdminNotificationsPage = lazy(
 
 // Admin Components
 const AddStudents = lazy(() => import("./pages/admin/AddStudents"));
-const ToasterDemo = lazy(() => import("./pages/student/ToasterDemo"));
 const FacultyDashboard = lazy(() => import("./pages/faculty/dashboard"));
 const AddGrades = lazy(() => import("./pages/admin/AddGrades"));
 const AddAttendance = lazy(() => import("./pages/attendance/AddAttendance"));
@@ -321,16 +320,6 @@ export default function App() {
               <MaintenanceGuard>
                 <PageTransition>
                   <Sidebar content="help" />
-                </PageTransition>
-              </MaintenanceGuard>
-            }
-          />
-          <Route
-            path="/student/toast-demo"
-            element={
-              <MaintenanceGuard>
-                <PageTransition>
-                  <ToasterDemo />
                 </PageTransition>
               </MaintenanceGuard>
             }
