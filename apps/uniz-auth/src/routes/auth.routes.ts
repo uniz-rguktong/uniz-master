@@ -20,6 +20,9 @@ import {
   otpPushLimiter,
   otpEmailLimiter,
   otpHourLimiter,
+  loginFailureLimiter,
+  loginIpLimiter,
+  accountActionLimiter,
 } from "../middlewares/ratelimit.middleware";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { validateRequest } from "../middlewares/validation.middleware";
@@ -71,9 +74,27 @@ const GlobalAdminResetSchema = z.object({
 });
 
 // Login lockout runs after Turnstile, inside the controller (failures only).
-router.post("/login", validateRequest(LoginSchema), login);
-router.post("/login/student", validateRequest(LoginSchema), studentLogin);
-router.post("/login/admin", validateRequest(LoginSchema), adminLogin);
+router.post(
+  "/login",
+  loginIpLimiter,
+  loginFailureLimiter,
+  validateRequest(LoginSchema),
+  login,
+);
+router.post(
+  "/login/student",
+  loginIpLimiter,
+  loginFailureLimiter,
+  validateRequest(LoginSchema),
+  studentLogin,
+);
+router.post(
+  "/login/admin",
+  loginIpLimiter,
+  loginFailureLimiter,
+  validateRequest(LoginSchema),
+  adminLogin,
+);
 router.post("/signup", validateRequest(SignupSchema), signup);
 router.post(
   "/otp/request",
@@ -103,6 +124,7 @@ router.post(
 );
 router.post(
   "/password/change",
+  accountActionLimiter,
   authMiddleware,
   validateRequest(PasswordChangeSchema),
   changePassword,
@@ -115,11 +137,17 @@ router.post(
 );
 router.post(
   "/admin/global-reset-password",
+  accountActionLimiter,
   authMiddleware,
   validateRequest(GlobalAdminResetSchema),
   globalAdminResetPassword,
 );
-router.post("/admin/suspend", authMiddleware, toggleSuspension);
+router.post(
+  "/admin/suspend",
+  accountActionLimiter,
+  authMiddleware,
+  toggleSuspension,
+);
 
 router.post("/logout", (req: Request, res: Response) => {
   res.json({ success: true });

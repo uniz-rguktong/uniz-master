@@ -1,4 +1,5 @@
 import express from "express";
+import rateLimit from "express-rate-limit";
 import cors from "cors";
 import axios from "axios";
 import path from "path";
@@ -100,6 +101,18 @@ app.use(
   },
 );
 
+// Per-IP ceiling in front of the password gate's Redis lookup. Set high
+// on purpose: campus NAT puts many students behind one IP.
+const gatewayIpLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 6000,
+  skip: (req) => req.method === "OPTIONS",
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
+});
+
+app.use(gatewayIpLimiter as unknown as express.RequestHandler);
 app.use(passwordChangeGate(redis));
 
 // Auth/user/academics consolidate into uniz-api; gateway still keys by URL segment.
