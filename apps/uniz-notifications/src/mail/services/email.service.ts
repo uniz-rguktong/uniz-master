@@ -24,7 +24,8 @@ const RESULT_EMAILS_ENABLED = process.env.ENABLE_RESULT_EMAILS === "true";
 const isProduction = process.env.DOCKER_ENV === "true";
 const forceGmail = process.env.FORCE_GMAIL === "true";
 
-let sesTransporter: nodemailer.Transporter | null = null;
+let sesTransporter: ReturnType<typeof nodemailer.createTransport> | null =
+  null;
 
 if (isProduction && !forceGmail) {
   try {
