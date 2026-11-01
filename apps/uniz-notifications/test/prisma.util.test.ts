@@ -1,11 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("../src/generated/prisma", () => import("./stubs/generated-prisma"));
+
 type Constructed = {
   opts: { datasources: { db: { url?: string } }; log: unknown };
   ons: unknown[][];
 };
 
-const registry = globalThis as { __prismaClients?: Constructed[]; prisma?: unknown };
+const registry = globalThis as {
+  __prismaClients?: Constructed[];
+  prisma?: unknown;
+};
 
 async function loadPrisma() {
   vi.resetModules();
@@ -76,9 +81,9 @@ describe("prisma pooled url", () => {
       { emit: "stdout", level: "error" },
       { emit: "event", level: "query" },
     ]);
-    const handler = client().ons.find((call) => call[0] === "query")?.[1] as (
-      event: { duration: number; query: string },
-    ) => void;
+    const handler = client().ons.find(
+      (call) => call[0] === "query",
+    )?.[1] as (event: { duration: number; query: string }) => void;
     handler({ duration: 49, query: "select 1" });
     handler({ duration: 50, query: "select 2" });
     expect(warn).toHaveBeenCalledTimes(1);
