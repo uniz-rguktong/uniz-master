@@ -255,7 +255,10 @@ const loginInputWithIconClass = cn(loginInputClass, "!px-3.5");
 
 const loginInputPasswordClass = cn(loginInputClass, "!pl-3.5 !pr-10");
 
-const loginBtnClass = cn(examcellLoginButtonClass, "w-full uniz-primary-btn");
+const loginBtnClass = cn(
+  examcellLoginButtonClass,
+  "w-full min-h-[44px] uniz-primary-btn",
+);
 
 const loginSecondaryBtnClass = cn(
   portalSecondaryButtonClass,
@@ -875,6 +878,9 @@ export default function Signin({ type }: SigninProps) {
             <div className="space-y-4">
               <Input
                 label={type === "student" ? "University ID" : "Institutional ID"}
+                aria-label={
+                  type === "student" ? "University ID" : "Institutional ID"
+                }
                 labelClassName={loginLabelClass}
                 icon={<User className="w-4 h-4 text-[#5A7A94]" />}
                 value={username}
@@ -895,6 +901,7 @@ export default function Signin({ type }: SigninProps) {
               <div className="space-y-1">
                 <Input
                   label="Password"
+                  aria-label="Password"
                   labelClassName={loginLabelClass}
                   type="password"
                   icon={<Lock className="w-4 h-4 text-[#5A7A94]" />}

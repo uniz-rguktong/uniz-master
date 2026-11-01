@@ -9,13 +9,13 @@ export const examcellLoginLabelClass =
   "block text-[13px] font-bold tracking-[0.01em] text-[#0A2540] mb-1.5 font-form";
 
 export const examcellLoginInputClass =
-  "w-full h-11 rounded-[2px] border border-[#CBD5E1] bg-white px-3.5 text-[14.5px] font-medium text-[#0F172A] placeholder:text-[#94A3B8] placeholder:font-normal focus:outline-none focus:border-[#0A2540] focus:ring-2 focus:ring-[#0A2540]/12 font-form transition-all";
+  "w-full h-11 min-h-[44px] rounded-[2px] border border-[#CBD5E1] bg-white px-3.5 text-[14.5px] font-medium text-[#0F172A] placeholder:text-[#94A3B8] placeholder:font-normal focus:outline-none focus:border-[#0A2540] focus:ring-2 focus:ring-[#0A2540]/12 font-form transition-all";
 
 export const examcellLoginLinkClass =
   "inline-block text-[12.5px] font-semibold text-[#0A2540] hover:underline underline-offset-4 bg-transparent border-0 cursor-pointer p-0 mt-1 font-form";
 
 export const examcellLoginButtonClass =
-  "w-full h-11 rounded-[2px] border-0 bg-[#0A2540] px-6 text-[13.5px] font-bold uppercase tracking-[0.06em] text-white shadow-[0_1px_2px_rgba(10,37,64,0.15)] transition-colors hover:bg-[#061B33] active:opacity-95 disabled:opacity-75 disabled:cursor-not-allowed font-form cursor-pointer";
+  "w-full h-11 min-h-[44px] rounded-[2px] border-0 bg-[#0A2540] px-6 text-[13.5px] font-bold uppercase tracking-[0.06em] text-white shadow-[0_1px_2px_rgba(10,37,64,0.15)] transition-colors hover:bg-[#061B33] active:opacity-95 disabled:opacity-75 disabled:cursor-not-allowed font-form cursor-pointer";
 
 export interface LoginProps {
   title?: string;
