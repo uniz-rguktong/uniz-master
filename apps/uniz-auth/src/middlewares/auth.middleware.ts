@@ -2,7 +2,12 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { JwtPayload, JwtPayloadSchema } from "../shared/jwt.schema";
 import { ErrorCode } from "../shared/error-codes";
-import { aliasWebadminRole } from "@uniz/shared";
+import {
+  accessTokenBlacklistKey,
+  aliasWebadminRole,
+  isPasswordChangeEnforced,
+  passwordChangeGateDecision,
+} from "@uniz/shared";
 import { prisma } from "../utils/prisma";
 import { redis } from "../utils/redis.util";
 
@@ -63,6 +68,23 @@ export const authMiddleware = async (
       });
     }
 
+    if (isPasswordChangeEnforced()) {
+      try {
+        const blacklisted = await redis.get(accessTokenBlacklistKey(token));
+        if (blacklisted) {
+          return res.status(401).json({
+            code: ErrorCode.AUTH_TOKEN_EXPIRED,
+            message: "Invalid or expired token",
+          });
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "redis error";
+        console.error(
+          `[AUTH] Redis unavailable, skipped token blacklist check: ${message}`,
+        );
+      }
+    }
+
     // --- SUSPENSION CHECK (OPTIMIZED WITH REDIS) ---
     const cacheKey = `user:status:${parsed.data.id}`;
     let userStatus = await redis.get(cacheKey);
@@ -103,6 +125,16 @@ export const authMiddleware = async (
       });
     }
     // ------------------------
+
+    const gate = passwordChangeGateDecision({
+      enforce: isPasswordChangeEnforced(),
+      method: req.method,
+      path: req.originalUrl || req.path,
+      mustChangePassword: parsed.data.mustChangePassword,
+    });
+    if (gate.block) {
+      return res.status(403).json({ code: gate.code });
+    }
 
     (req as AuthenticatedRequest).user = {
       ...parsed.data,

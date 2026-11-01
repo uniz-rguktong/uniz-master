@@ -40,6 +40,7 @@ bash scripts/ops/backup-postgres.sh
 | Custom domain Verifying on Pages | DNS not CNAME to Pages | Run cutover DNS script |
 | System health `down` but apps work | Stale Redis health / wrong FILES/MAIL URLs | Flush key + fix ConfigMap |
 | Outpass 503 | Expected when flag false | [Revive](/howto/revive-outpass) if intentional |
+| Login says try again in 15 minutes | Failed-login lockout for that ID (`RATE_LIMIT_MODE=enforce`) | Delete Redis key `auth:login:lockout:id:<id>` or wait 15 minutes |
 | Deploy cancelled mid-run | `cancel-in-progress: true` on new push | Avoid pushing until run finishes |
 
 ## Useful scripts

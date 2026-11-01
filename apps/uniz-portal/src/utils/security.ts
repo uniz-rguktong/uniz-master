@@ -4,6 +4,7 @@ export interface DecodedToken {
   department?: string;
   exp: number;
   iat: number;
+  mustChangePassword?: boolean;
 }
 
 export const parseJwt = (token: string): DecodedToken | null => {

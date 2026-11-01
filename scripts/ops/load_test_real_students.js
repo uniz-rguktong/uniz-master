@@ -1,3 +1,8 @@
+// Do not run this against production accounts. It rewrites passwords.
+// Scripted logins need a test-account exemption: use LOAD_TEST_* users
+// (they skip lockout and forced password change) or delete
+// auth:login:lockout:id:<id> and wait out the 15 minute window.
+// Keep ENFORCE_PASSWORD_CHANGE off and RATE_LIMIT_MODE=observe for a normal run.
 const { execSync } = require("child_process");
 
 // --- START ---

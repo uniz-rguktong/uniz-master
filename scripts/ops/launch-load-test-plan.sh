@@ -12,6 +12,12 @@
 # Phase C — authenticated reads (one real token, read-only):
 #   TOKEN='eyJ...' CONCURRENCY=50 bash scripts/ops/peak-load-profile.sh
 #
+# Login lockout and forced password change stay off unless
+# RATE_LIMIT_MODE=enforce and ENFORCE_PASSWORD_CHANGE=true.
+# Synthetic LOAD_TEST_* accounts are exempt. Do not change production
+# student passwords to make a run pass. Unlock a locked test ID by deleting
+# Redis key auth:login:lockout:id:<id>, or wait 15 minutes.
+#
 # Phase D — login storm (DB-heavy, max 200, off-peak only):
 #   CONCURRENT_USERS=50 node infra/setup-helper/stress_test_login.js
 set -euo pipefail

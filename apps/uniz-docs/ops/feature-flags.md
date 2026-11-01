@@ -8,6 +8,8 @@ description: "Production toggles — outpass/outing, maintenance mode — where 
 | `VITE_ENABLE_OUTPASS_OUTING` | Portal **build** | `false` | Hide outpass/outing UI |
 | `ENABLE_OUTPASS_OUTING` | Gateway **runtime** ConfigMap | `false` | Allow `/api/v1/requests/*` except grievance |
 | `VITE_MAINTENANCE_MODE` | Portal **build** | `false` | Show maintenance interstitial |
+| `ENFORCE_PASSWORD_CHANGE` | Auth and gateway **runtime** | off | Block flagged sessions until the password is changed |
+| `RATE_LIMIT_MODE` | Auth **runtime** | `observe` | `observe` counts failed logins. `enforce` locks the ID for 15 minutes |
 
 ```mermaid
 flowchart LR

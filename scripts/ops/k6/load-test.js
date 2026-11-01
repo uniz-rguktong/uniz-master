@@ -1,3 +1,6 @@
+// This script only hits public pages. Authenticated load tests need a
+// LOAD_TEST_* account exemption (see docs/ops/LOGIN_LOCKOUT.md) and must
+// not change production student passwords.
 import http from "k6/http";
 import { sleep, check } from "k6";
 

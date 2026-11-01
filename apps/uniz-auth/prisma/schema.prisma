@@ -16,7 +16,9 @@ model AuthCredential {
   role         String   @default("student")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  isDisabled   Boolean  @default(false)
+  isDisabled         Boolean   @default(false)
+  mustChangePassword Boolean   @default(false)
+  passwordChangedAt  DateTime?
 }
 
 model OtpLog {

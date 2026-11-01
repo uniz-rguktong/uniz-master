@@ -70,19 +70,10 @@ const GlobalAdminResetSchema = z.object({
   newPassword: z.string().min(6),
 });
 
-router.post("/login", rateLimiter, validateRequest(LoginSchema), login); // Keep for compatibility if needed, but better to use specific ones
-router.post(
-  "/login/student",
-  rateLimiter,
-  validateRequest(LoginSchema),
-  studentLogin,
-);
-router.post(
-  "/login/admin",
-  rateLimiter,
-  validateRequest(LoginSchema),
-  adminLogin,
-);
+// Login lockout runs after Turnstile, inside the controller (failures only).
+router.post("/login", validateRequest(LoginSchema), login);
+router.post("/login/student", validateRequest(LoginSchema), studentLogin);
+router.post("/login/admin", validateRequest(LoginSchema), adminLogin);
 router.post("/signup", validateRequest(SignupSchema), signup);
 router.post(
   "/otp/request",
