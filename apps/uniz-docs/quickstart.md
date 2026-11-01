@@ -3,13 +3,15 @@ title: "Quick Start"
 description: "Install UniZ as a PWA and sign in — student and admin portals."
 ---
 
+# Quick Start
+
 ## Open the portal
 
 Production portal: [https://uniz.rguktong.in](https://uniz.rguktong.in)
 
 Public college site: [https://rguktong.in](https://rguktong.in)
 
-API (integrators): [https://api-uniz.rguktong.in/api/v1](https://api-uniz.rguktong.in/api/v1)
+API (integrators): [https://api-uniz.rguktong.in/api/v1/system/health](https://api-uniz.rguktong.in/api/v1/system/health)
 
   ### Install as a PWA
 
