@@ -163,7 +163,6 @@ const AuthRedirect = () => {
 
 import { InstallPWA } from "./components/InstallPWA";
 import { DownloadAppBanner, IosInstallModal } from "./components/DownloadAppBanner";
-const IosInstallPage = lazy(() => import("./pages/IosInstallPage"));
 import { usePushNavigation } from "./hooks/usePushNavigation";
 
 function PushNavigationBridge() {

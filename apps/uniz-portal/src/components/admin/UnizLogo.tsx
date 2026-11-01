@@ -67,7 +67,6 @@ function CampusLabel({
 
 export function UnizLogo({
   collapsed = false,
-  abbreviate = false,
   size = "md",
   variant = "default",
   portalLabel,

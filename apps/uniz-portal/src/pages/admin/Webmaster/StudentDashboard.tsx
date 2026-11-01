@@ -36,7 +36,6 @@ import {
   adminLabelClass,
   adminSectionTitleClass,
   adminNumsClass,
-  adminStatValueClass,
 } from "../../../components/admin/admin-ui";
 
 interface StudentDashboardProps {

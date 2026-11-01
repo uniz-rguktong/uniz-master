@@ -64,7 +64,7 @@ let notifications = [
 
 notifications = notifications.slice(0, 5);
 
-const Notification = ({ name, description, icon: Icon, color, time }: Item) => {
+const Notification = ({ name, description, icon: Icon, time }: Item) => {
   return (
     <figure className="relative mx-auto min-h-fit w-full max-w-[400px] cursor-pointer overflow-hidden rounded-[2px] border border-navy-100/80 bg-white/90 p-4 transition-all duration-300 hover:shadow-[0_12px_28px_-12px_rgba(0,0,0,0.12)] hover:-translate-y-0.5">
       <div className="flex flex-row items-center gap-3">
@@ -243,7 +243,7 @@ function transformHealthServices(healthStatus: any): ServiceHealth[] {
     });
 }
 
-function getDisplayHealthStatus(healthStatus: any): "ok" | "degraded" {
+export function getDisplayHealthStatus(healthStatus: any): "ok" | "degraded" {
   const services = transformHealthServices(healthStatus);
   if (!services.length) {
     return healthStatus?.status === "ok" ? "ok" : "degraded";
@@ -292,7 +292,7 @@ function ServiceChip({ service }: { service: ServiceHealth }) {
   );
 }
 
-const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
+export const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
   const services = useMemo(
     () => transformHealthServices(healthStatus),
     [healthStatus],

@@ -5,7 +5,7 @@ import { portalCardClass } from "@/lib/portal-ui";
 
 // Define CardContext
 type CardContextType = {
-  variant: "default" | "accent";
+  variant: "default" | "portal" | "accent";
 };
 
 const CardContext = React.createContext<CardContextType>({
@@ -44,6 +44,7 @@ const cardHeaderVariants = cva(
     variants: {
       variant: {
         default: "border-b border-border",
+        portal: "",
         accent: "",
       },
     },
@@ -57,6 +58,7 @@ const cardContentVariants = cva("grow p-5", {
   variants: {
     variant: {
       default: "",
+      portal: "",
       accent: "bg-card rounded-t-xl [&:last-child]:rounded-b-xl",
     },
   },
@@ -69,6 +71,7 @@ const cardTableVariants = cva("grid grow", {
   variants: {
     variant: {
       default: "",
+      portal: "",
       accent: "bg-card rounded-xl",
     },
   },
@@ -81,6 +84,7 @@ const cardFooterVariants = cva("flex items-center px-5 min-h-14", {
   variants: {
     variant: {
       default: "border-t border-border",
+      portal: "",
       accent: "bg-card rounded-b-xl mt-[2px]",
     },
   },
