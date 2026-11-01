@@ -6162,11 +6162,11 @@ export const apiData = {
         "header": "Academic Calendar for the year\n                        2019-20",
         "links": [
           {
-            "label": "Semister-1",
+            "label": "Semester-1",
             "url": "https://rguktong.ac.in/pdfs/academics/AC1920S1.pdf"
           },
           {
-            "label": "Semister-2",
+            "label": "Semester-2",
             "url": null
           }
         ]
@@ -6175,11 +6175,11 @@ export const apiData = {
         "header": "Academic Calendar for the year\n                        2018-19",
         "links": [
           {
-            "label": "Semister-1",
+            "label": "Semester-1",
             "url": "https://rguktong.ac.in/pdfs/academics/AC1920S1.pdf"
           },
           {
-            "label": "Semister-2",
+            "label": "Semester-2",
             "url": "https://rguktong.ac.in/pdfs/academics/AC1819S2.pdf"
           }
         ]

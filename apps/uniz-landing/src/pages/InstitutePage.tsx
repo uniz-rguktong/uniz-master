@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getInstituteInfo } from "../types/api";
 import type { InstituteData, InstitutePage as InstitutePageType } from "../types/api";
+import { PersonPhoto, initials } from "../components/common/PersonPhoto";
 
 const PAGE_NAMES: Record<string, string> = {
   aboutrgukt: "About RGUKT",
@@ -135,21 +136,16 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
         {chair && (
           <div className="relative -mt-10 mb-16 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden flex flex-col md:flex-row">
             <div className="md:w-64 flex-shrink-0 bg-gradient-to-br from-navy-900 to-[#1e1b6e] flex items-center justify-center p-8">
-              {chair.photo ? (
-                <img
-                  src={chair.photo}
-                  alt={chair.name}
-                  className="w-36 h-36 rounded-full object-cover object-top border-4 border-white/30 shadow-lg"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      `https://ui-avatars.com/api/?name=${encodeURIComponent(chair.name)}&background=800000&color=fff&size=144`;
-                  }}
-                />
-              ) : (
+              <PersonPhoto
+              src={chair.photo}
+              name={chair.name}
+              className="w-36 h-36 rounded-full object-cover object-top border-4 border-white/30 shadow-lg"
+              fallback={
                 <div className="w-36 h-36 rounded-full bg-navy/30 border-4 border-white/20 flex items-center justify-center text-white text-5xl font-extrabold">
-                  {chair.name.charAt(0)}
+                  {initials(chair.name)}
                 </div>
-              )}
+              }
+            />
             </div>
             <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">
               <span className="inline-block mb-3 px-3 py-1 text-[11px] font-bold tracking-widest text-navy bg-navy/8 border border-navy/20 rounded-full w-fit">
@@ -182,21 +178,16 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
             >
               {/* Photo strip */}
               <div className="relative h-52 bg-slate-100 flex items-center justify-center overflow-hidden">
-                {member.photo ? (
-                  <img
-                    src={member.photo}
-                    alt={member.name}
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=000035&color=fff&size=208`;
-                    }}
-                  />
-                ) : (
-                  <div className="w-24 h-24 rounded-full bg-navy-900 flex items-center justify-center text-white text-4xl font-extrabold shadow-lg">
-                    {member.name.charAt(0)}
+                <PersonPhoto
+              src={member.photo}
+              name={member.name}
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+              fallback={
+                <div className="w-24 h-24 rounded-full bg-navy-900 flex items-center justify-center text-white text-4xl font-extrabold shadow-lg">
+                    {initials(member.name)}
                   </div>
-                )}
+              }
+            />
                 {/* Gradient overlay at bottom only */}
                 <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-slate-100/80 to-transparent pointer-events-none" />
               </div>
@@ -305,21 +296,16 @@ function GenericInstitutePage({ data, displayName, pageName }: { data: Institute
                 >
                   {/* Photo */}
                   <div className="h-52 bg-slate-100 flex items-center justify-center overflow-hidden">
-                    {profile.photo ? (
-                      <img
-                        src={profile.photo}
-                        alt={profile.name}
-                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name)}&background=000035&color=fff&size=208`;
-                        }}
-                      />
-                    ) : (
-                      <div className="w-24 h-24 rounded-full bg-navy-900 flex items-center justify-center text-white text-4xl font-extrabold shadow-lg">
-                        {profile.name.charAt(0)}
+                    <PersonPhoto
+              src={profile.photo}
+              name={profile.name}
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+              fallback={
+                <div className="w-24 h-24 rounded-full bg-navy-900 flex items-center justify-center text-white text-4xl font-extrabold shadow-lg">
+                        {initials(profile.name)}
                       </div>
-                    )}
+              }
+            />
                   </div>
 
                   {/* Info */}

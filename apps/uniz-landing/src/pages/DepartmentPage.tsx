@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getDepartmentStaff } from "../types/api";
 import type { DepartmentData, FacultyMember, DeptCode } from "../types/api";
 import { Mail, Phone, Users, ChevronRight } from "lucide-react";
+import { PersonPhoto, initials } from "../components/common/PersonPhoto";
 
 // ── Full department names ──────────────────────────────────────────
 const DEPT_NAMES: Record<string, string> = {
@@ -56,24 +57,18 @@ function FacultyCard({ faculty, onOpen }: { faculty: FacultyMember; onOpen: () =
 
       {/* ── Photo ── */}
       <div className="w-28 sm:w-36 flex-shrink-0 bg-gradient-to-b from-surface-2 to-navy-200/40 flex items-center justify-center relative overflow-hidden border-r border-line" style={{ minHeight: "150px" }}>
-        {faculty.photo ? (
-          <img
-            src={faculty.photo}
-            alt={faculty.name}
-            className="w-full h-full object-contain"
-            style={{ maxHeight: "150px" }}
-            onError={(e) => {
-              (e.target as HTMLImageElement).src =
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(faculty.name)}&background=e2e8f0&color=475569&size=112`;
-            }}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
+        <PersonPhoto
+              src={faculty.photo}
+              name={faculty.name}
+              className="w-full h-full object-contain" style={{ maxHeight: "150px" }}
+              fallback={
+                <div className="w-full h-full flex items-center justify-center">
             <div className="w-16 h-16 rounded-full bg-navy text-white ring-4 ring-white flex items-center justify-center text-2xl font-bold">
-              {faculty.name.charAt(0)}
+              {initials(faculty.name)}
             </div>
           </div>
-        )}
+              }
+            />
         {/* Subtle left border accent */}
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-brand-red opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
