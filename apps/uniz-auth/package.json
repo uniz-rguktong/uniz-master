@@ -39,7 +39,7 @@
     "helmet": "^7.1.0",
     "ioredis": "^5.9.2",
     "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^9.0.1",
+    "nodemailer": "^10.3.1",
     "tar": "^7.5.17",
     "ua-parser-js": "^2.0.9",
     "zod": "^3.23.8"
