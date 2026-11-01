@@ -1,9 +1,17 @@
 name: CI
 
-# PR gate only — pushes to main are built and deployed by deploy.yml
+# PR gate only. Pushes to main are built and deployed by deploy.yml.
+# Runs with a read-only token and no secrets, so it's safe for fork PRs.
 on:
   pull_request:
     branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -28,3 +36,75 @@ jobs:
 
       - name: Build portal
         run: npm run build -w uniz
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Prettier (shared package and workflows)
+        run: npx prettier --check packages/uniz-shared .github
+      # Landing has known lint errors. Non-blocking until they're fixed,
+      # then drop continue-on-error.
+      - name: ESLint landing
+        continue-on-error: true
+        run: npm run lint -w uniz-landing
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Shared package
+        run: npx tsc --noEmit -p packages/uniz-shared
+      - name: Landing
+        run: npx tsc -b apps/uniz-landing
+      # Portal has ~290 type errors, mostly from two @types/react versions
+      # in the tree. Non-blocking until that's fixed.
+      - name: Portal
+        continue-on-error: true
+        run: npm run build:shared && npm run typecheck -w uniz
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Unit tests
+        run: npm test --workspaces --if-present
+      - name: Coverage
+        run: npm run test:coverage --workspaces --if-present
+      - name: Coverage summary
+        if: always()
+        run: |
+          echo "### Coverage" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| package | lines | functions | branches |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          for f in $(ls packages/*/coverage/coverage-summary.json apps/*/coverage/coverage-summary.json 2>/dev/null); do
+            node -e 'const t=require("./"+process.argv[1]).total;console.log(`| ${process.argv[1].split("/")[1]} | ${t.lines.pct}% | ${t.functions.pct}% | ${t.branches.pct}% |`)' "$f" >> "$GITHUB_STEP_SUMMARY"
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: |
+            packages/*/coverage/
+            apps/*/coverage/
+          if-no-files-found: ignore
+          retention-days: 7

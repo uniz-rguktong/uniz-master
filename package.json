@@ -47,7 +47,8 @@
     "android:twa:assetlinks": "bash apps/uniz-android-twa/sync-assetlinks.sh",
     "android:twa:verify": "bash apps/uniz-android-twa/verify-assetlinks.sh",
     "android:apk": "bash apps/uniz-android-twa/build-apk.sh",
-    "postinstall": "node scripts/ci/prune-vitepress-vite.cjs && node scripts/ci/fix-vitepress-lock.cjs"
+    "postinstall": "node scripts/ci/prune-vitepress-vite.cjs && node scripts/ci/fix-vitepress-lock.cjs",
+    "test": "npm test --workspaces --if-present"
   },
   "dependencies": {
     "@types/bcrypt": "^6.0.0",
