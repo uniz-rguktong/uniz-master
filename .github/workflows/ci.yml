@@ -85,22 +85,26 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - name: Unit tests with coverage
-        run: npm run test:coverage -w @uniz/shared
+      - name: Unit tests
+        run: npm test --workspaces --if-present
+      - name: Coverage
+        run: npm run test:coverage --workspaces --if-present
       - name: Coverage summary
         if: always()
         run: |
-          f=packages/uniz-shared/coverage/coverage-summary.json
-          [ -f "$f" ] || exit 0
-          node -e '
-            const t = require("./'"$f"'").total;
-            const row = k => `| ${k} | ${t[k].pct}% | ${t[k].covered}/${t[k].total} |`;
-            console.log(["### Coverage (@uniz/shared)", "", "| | % | covered |", "|---|---|---|",
-              ...["lines","statements","functions","branches"].map(row)].join("\n"));
-          ' >> "$GITHUB_STEP_SUMMARY"
+          echo "### Coverage" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| package | lines | functions | branches |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          for f in $(ls packages/*/coverage/coverage-summary.json apps/*/coverage/coverage-summary.json 2>/dev/null); do
+            node -e 'const t=require("./"+process.argv[1]).total;console.log(`| ${process.argv[1].split("/")[1]} | ${t.lines.pct}% | ${t.functions.pct}% | ${t.branches.pct}% |`)' "$f" >> "$GITHUB_STEP_SUMMARY"
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: coverage-shared
-          path: packages/uniz-shared/coverage/
+          name: coverage
+          path: |
+            packages/*/coverage/
+            apps/*/coverage/
+          if-no-files-found: ignore
           retention-days: 7
