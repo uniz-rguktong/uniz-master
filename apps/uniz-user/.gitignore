@@ -11,6 +11,7 @@ node_modules/
 # Build
 dist/
 build/
+coverage/
 
 # IDE
 .vscode/
