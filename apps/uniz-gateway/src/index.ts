@@ -367,7 +367,7 @@ function startHealthWarmer(): void {
 }
 
 app.get(
-  "/api/v1/system/health/live",
+  ["/api/v1/system/health/live", "/api/v1/health"],
   (_req: express.Request, res: express.Response) => {
     const t0 = performance.now();
     res.setHeader("X-Process-Time-Ms", (performance.now() - t0).toFixed(2));
