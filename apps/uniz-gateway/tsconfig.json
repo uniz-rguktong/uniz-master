@@ -8,5 +8,6 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "rootDir": "./src"
-  }
+  },
+  "exclude": ["node_modules", "dist", "tests", "coverage", "vitest.config.ts"]
 }
