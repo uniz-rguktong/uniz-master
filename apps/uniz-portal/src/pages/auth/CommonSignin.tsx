@@ -907,7 +907,7 @@ export default function Signin({ type }: SigninProps) {
                 <div className="flex items-center justify-between pt-0.5">
                   {type === "student" ? (
                     <span className="text-[11.5px] text-[#64748B]">
-                      Default student password: ID@rguktong
+                      Forgot your password? Contact your admin.
                     </span>
                   ) : (
                     <span />
