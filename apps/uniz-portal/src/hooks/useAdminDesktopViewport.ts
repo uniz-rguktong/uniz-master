@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-const MOBILE_VIEWPORT =
-  "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+const MOBILE_VIEWPORT = "width=device-width, initial-scale=1";
 const ADMIN_DESKTOP_VIEWPORT =
   "width=1280, initial-scale=1.0, minimum-scale=0.25, maximum-scale=3.0, user-scalable=yes";
 
