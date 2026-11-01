@@ -5,28 +5,28 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Cabin Condensed"', '"Cabin"', "system-ui", "sans-serif"],
-        body: ['"Cabin Condensed"', '"Cabin"', "system-ui", "sans-serif"],
-        button: ['"Cabin Condensed"', '"Cabin"', "system-ui", "sans-serif"],
-        form: ['"Cabin Condensed"', '"Cabin"', "system-ui", "sans-serif"],
+        sans: ['"Inter"', "system-ui", "-apple-system", '"Segoe UI"', "sans-serif"],
+        body: ['"Inter"', "system-ui", "-apple-system", '"Segoe UI"', "sans-serif"],
+        button: ['"Inter"', "system-ui", "-apple-system", '"Segoe UI"', "sans-serif"],
+        form: ['"Inter"', "system-ui", "-apple-system", '"Segoe UI"', "sans-serif"],
         condensed: ['"Cabin Condensed"', '"Cabin"', "sans-serif"],
         mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
       },
 
       fontSize: {
         h1: [
-          "48px",
-          { lineHeight: "56px", letterSpacing: "-0.01em", fontWeight: "600" },
+          "44px",
+          { lineHeight: "48px", letterSpacing: "-0.035em", fontWeight: "600" },
         ],
         h2: [
-          "36px",
-          { lineHeight: "44px", letterSpacing: "-0.01em", fontWeight: "600" },
+          "32px",
+          { lineHeight: "40px", letterSpacing: "-0.03em", fontWeight: "600" },
         ],
         h3: [
-          "28px",
-          { lineHeight: "36px", letterSpacing: "-0.01em", fontWeight: "600" },
+          "24px",
+          { lineHeight: "32px", letterSpacing: "-0.02em", fontWeight: "600" },
         ],
-        h4: ["22px", { lineHeight: "30px", fontWeight: "500" }],
+        h4: ["18px", { lineHeight: "26px", letterSpacing: "-0.015em", fontWeight: "600" }],
 
         base: ["16px", { lineHeight: "24px", fontWeight: "400" }],
         small: ["14px", { lineHeight: "20px", fontWeight: "400" }],
@@ -141,9 +141,9 @@ module.exports = {
       },
 
       boxShadow: {
-        sm: "0 5px 15px 0 rgba(0,0,0,0.08)",
-        DEFAULT: "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",
-        md: "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",
+        sm: "0 0 0 1px rgba(10,37,64,0.04), 0 1px 2px rgba(10,37,64,0.05)",
+        DEFAULT: "0 0 0 1px rgba(10,37,64,0.04), 0 1px 2px rgba(10,37,64,0.04), 0 4px 12px -4px rgba(10,37,64,0.08)",
+        md: "0 0 0 1px rgba(10,37,64,0.04), 0 4px 8px -2px rgba(10,37,64,0.06), 0 12px 24px -12px rgba(10,37,64,0.14)",
         lg: "0 25px 40px 0 rgba(0,0,0,0.11), 0 10px 25px 0 rgba(0,0,0,0.08)",
         xl: "0 25px 40px 0 rgba(0,0,0,0.11), 0 10px 25px 0 rgba(0,0,0,0.08)",
         "2xl": "0 25px 40px 0 rgba(0,0,0,0.14), 0 10px 25px 0 rgba(0,0,0,0.1)",
@@ -165,10 +165,10 @@ module.exports = {
       },
 
       borderRadius: {
-        "portal-sm": "1px",
-        "portal-lg": "2px",
-        "portal-xl": "2px",
-        "portal-2xl": "4px",
+        "portal-sm": "8px",
+        "portal-lg": "12px",
+        "portal-xl": "14px",
+        "portal-2xl": "16px",
       },
 
       spacing: {
