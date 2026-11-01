@@ -223,9 +223,7 @@ export default function App() {
                 localStorage.getItem("faculty_token") ? (
                   <AuthRedirect />
                 ) : (
-                  <PageTransition>
-                    <Home />
-                  </PageTransition>
+                  <Home />
                 )}
               </MaintenanceGuard>
             }
