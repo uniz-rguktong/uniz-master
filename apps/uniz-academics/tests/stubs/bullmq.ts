@@ -10,6 +10,7 @@ export class Queue {
 }
 
 export class Worker {
+  static instances: Worker[] = [];
   handlers = new Map<string, (...args: any[]) => unknown>();
   on = vi.fn((event: string, handler: (...args: any[]) => unknown) => {
     this.handlers.set(event, handler);
@@ -20,5 +21,7 @@ export class Worker {
     public name: string,
     public processor: (job: { id?: string; data: any }) => Promise<unknown>,
     public opts?: unknown,
-  ) {}
+  ) {
+    Worker.instances.push(this);
+  }
 }

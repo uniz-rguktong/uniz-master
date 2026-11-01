@@ -1,6 +1,10 @@
 import axios from "axios";
 import prisma from "../src/utils/prisma.util";
-import { redis } from "../src/utils/redis.util";
+import {
+  createRedisPipeline,
+  notificationQueue,
+  redis,
+} from "../src/utils/redis.util";
 
 export function resetInfraMocks() {
   prisma.academicSemester.findUnique.mockReset();
@@ -34,6 +38,23 @@ export function resetInfraMocks() {
   redis.incr.mockResolvedValue(1);
   redis.expire.mockResolvedValue(1);
 
+  for (const fn of [redis.rpush, redis.lpop, redis.llen, redis.pipeline]) {
+    fn.mockReset();
+  }
+  redis.rpush.mockResolvedValue(1);
+  redis.lpop.mockResolvedValue(null);
+  redis.llen.mockResolvedValue(0);
+  redis.pipeline.mockImplementation(() => createRedisPipeline());
+
+  notificationQueue.add.mockReset();
+  notificationQueue.add.mockResolvedValue({
+    id: "notification-job",
+    opts: { attempts: 5 },
+  });
+
   axios.get.mockReset();
   axios.post.mockReset();
+  axios.put.mockReset();
+  axios.patch.mockReset();
+  axios.delete.mockReset();
 }
