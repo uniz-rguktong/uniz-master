@@ -31,7 +31,6 @@ import SecurityPortal from "./SecurityPortal";
 import DirectorDashboard from "./Director/DirectorDashboard";
 import AdminLayout from "./layout";
 import {
-  adminAvatarFallbackClass,
   adminHeaderClass,
   adminHubCardClass,
   adminLogoutButtonClass,

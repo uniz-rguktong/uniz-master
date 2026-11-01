@@ -18,7 +18,6 @@ import {
   adminAvatarButtonClass,
   adminAvatarFallbackClass,
   adminLogoutPillClass,
-  adminSearchInputClass,
 } from "./admin-ui";
 import { UnizLogo } from "./UnizLogo";
 import { SiteLegalFooter } from "@/components/SiteLegalFooter";

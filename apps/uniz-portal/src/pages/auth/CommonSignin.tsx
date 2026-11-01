@@ -22,7 +22,6 @@ import LoginScreen, {
   examcellLoginLabelClass,
   examcellLoginLinkClass,
 } from "../../components/ui/login-1";
-import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { motion } from "framer-motion";
 import { prepareStudentSession } from "../../utils/studentSessionCache";
@@ -30,9 +29,7 @@ import { cn } from "@/lib/utils";
 import { getSafeReturnUrl } from "@/utils/returnUrl";
 import {
   portalGhostButtonClass,
-  portalInputClass,
   portalLabelClass,
-  portalPrimaryButtonClass,
   portalSecondaryButtonClass,
 } from "@/lib/portal-ui";
 
@@ -95,6 +92,7 @@ interface SigninResponse {
   admin_token?: string;
   success?: boolean;
   role?: string;
+  username?: string;
 }
 
 // ─── OTP Input Component ──────────────────────────────────────
@@ -281,14 +279,6 @@ function requiresCaptcha() {
 
 const CAPTCHA_WAIT_MS = 6_000;
 
-function warmTurnstile(
-  turnstileRef: React.RefObject<{ execute?: () => void } | null>,
-  captchaTokenRef: React.MutableRefObject<string | null>,
-) {
-  if (!requiresCaptcha() || captchaTokenRef.current) return;
-  turnstileRef.current?.execute?.();
-}
-
 function waitForCaptchaToken(
   captchaTokenRef: React.MutableRefObject<string | null>,
   timeoutMs: number,
@@ -372,7 +362,7 @@ function TurnstileWidget({
           action: "login",
           retry: "auto",
           "refresh-expired": "auto",
-        }}
+        } as any}
         onSuccess={(token) => {
           captchaTokenRef.current = token;
           onTokenChange(token);

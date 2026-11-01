@@ -1,6 +1,6 @@
 import { UNIZ_TAGLINE } from "@/constants/branding";
 import { motion } from "framer-motion";
-import { ArrowRight, Code2, Monitor } from "lucide-react";
+import { ArrowRight, Code2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { ANDROID_APK_FILENAME, ANDROID_APK_URL, openIosDownloadModal } from "@/lib/androidApp";
 
@@ -17,21 +17,6 @@ const AndroidIcon = ({ size = 16 }: { size?: number }) => (
     <path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.27-.86-.31-.16-.69-.04-.86.27l-1.86 3.22c-1.23-.57-2.6-.89-4.05-.89-1.45 0-2.82.32-4.05.89L6.47 5.71c-.16-.31-.55-.43-.86-.27-.31.16-.43.55-.27.86l1.84 3.18C4.21 10.96 2.17 13.76 2 17h20c-.17-3.24-2.21-6.04-4.4-7.52zM8.5 14c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm7 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" />
   </svg>
 );
-
-const getPlatform = () => {
-  if (typeof navigator === "undefined")
-    return { label: "Desktop", PlatformIcon: Monitor };
-  const ua = navigator.userAgent.toLowerCase();
-  if (/iphone|ipad|ipod/.test(ua))
-    return { label: "iOS", PlatformIcon: AppleIcon };
-  if (/android/.test(ua))
-    return { label: "Android", PlatformIcon: AndroidIcon };
-  if (/macintosh|mac os x/.test(ua))
-    return { label: "macOS", PlatformIcon: AppleIcon };
-  if (/windows/.test(ua)) return { label: "Windows", PlatformIcon: Monitor };
-  if (/linux/.test(ua)) return { label: "Linux", PlatformIcon: Monitor };
-  return { label: "Desktop", PlatformIcon: Monitor };
-};
 
 // ─── Tiny SVG Illustrations ───────────────────────────────────────────────────
 
