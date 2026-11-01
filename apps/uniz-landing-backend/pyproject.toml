@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.138.1",
-    "sqlalchemy>=2.0.48",
+    "sqlalchemy[asyncio]>=2.1.6",
     "bcrypt==5.0.0",
     "cloudinary>=1.44.1",
     "dotenv>=0.9.9",
