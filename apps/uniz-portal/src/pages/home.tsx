@@ -350,11 +350,7 @@ export default function Home() {
                     <dd className="text-[#475569] mt-0.5 leading-relaxed">
                       Use your official University ID (e.g.,{" "}
                       <code className="font-bold text-[#0A2540]">O210001</code>).
-                      First-time password format:{" "}
-                      <code className="font-bold text-[#0A2540]">
-                        id@rguktong
-                      </code>
-                      .
+                      Forgot your password? Contact your admin.
                     </dd>
                   </div>
 

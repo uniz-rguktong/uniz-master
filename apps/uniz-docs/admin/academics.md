@@ -264,7 +264,7 @@ Content-Type: application/json
 ```
 
 ::: info
-Provisioning a new student automatically generates a default password: `{username.toLowerCase()}@rguktong`. The student can change this upon their first login.
+Provisioning a new student automatically generates an initial password. The student can change it after their first login.
 :::
 
 ### Modifying an existing record
