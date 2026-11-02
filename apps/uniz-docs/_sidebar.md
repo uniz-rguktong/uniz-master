@@ -13,6 +13,7 @@
   - [Alumni](students/alumni)
   - [Information Centre](students/information-centre)
   - [Clubs and Consultancy](students/clubs-consultancy)
+  - [Admissions](students/admissions)
   - [Outpass](students/outpass)
   - [Profile](students/profile)
 

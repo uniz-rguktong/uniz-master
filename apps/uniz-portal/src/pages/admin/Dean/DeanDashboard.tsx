@@ -17,6 +17,7 @@ import {
   Briefcase,
   Info,
   Handshake,
+  ClipboardList,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -34,6 +35,7 @@ import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
 import FeedbackAdmin from "../feedback/FeedbackAdmin";
 import FeesAdmin from "../fees/FeesAdmin";
 import PlacementAdmin from "../placement/PlacementAdmin";
+import AdmissionsAdmin from "../admissions/AdmissionsAdmin";
 import ConsultancyAdmin from "../consultancy/ConsultancyAdmin";
 import ClubsAdmin from "../../clubs/ClubsAdmin";
 import InfoAdmin from "../../info/InfoAdmin";
@@ -87,6 +89,7 @@ export default function DeanDashboard() {
             "feedback",
             "fees",
             "placement",
+            "admissions",
             "consultancy",
             "clubs",
             "info",
@@ -196,6 +199,9 @@ export default function DeanDashboard() {
             ...(isModuleEnabled("CLUBS")
               ? [{ id: "consultancy", label: "Consultancy", icon: Handshake }]
               : []),
+            ...(isModuleEnabled("ADMISSIONS")
+              ? [{ id: "admissions", label: "Admissions", icon: ClipboardList }]
+              : []),
             ...(isModuleEnabled("PLACEMENT")
               ? [{ id: "placement", label: "Placements", icon: Briefcase }]
               : []),
@@ -248,6 +254,8 @@ export default function DeanDashboard() {
         return <FeesAdmin />;
       case "placement":
         return <PlacementAdmin />;
+      case "admissions":
+        return <AdmissionsAdmin />;
       case "consultancy":
         return <ConsultancyAdmin />;
       case "clubs":

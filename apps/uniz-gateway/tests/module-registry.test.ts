@@ -17,6 +17,7 @@ describe("module registry", () => {
         FEATURE_ALUMNI: "false",
         FEATURE_INFO_CENTRE: "false",
         FEATURE_CLUBS: "false",
+        FEATURE_ADMISSIONS: "false",
       }),
     ).toEqual([]);
   });
@@ -103,5 +104,14 @@ describe("module registry", () => {
     expect(
       activeModuleRoutes({ FEATURE_CLUBS: "false" }).map((r) => r.prefix),
     ).not.toContain("/api/v1/clubs");
+  });
+
+  it("lists admissions under FEATURE_ADMISSIONS", () => {
+    expect(activeModuleRoutes({}).map((r) => r.prefix)).toContain(
+      "/api/v1/admissions",
+    );
+    expect(
+      activeModuleRoutes({ FEATURE_ADMISSIONS: "false" }).map((r) => r.prefix),
+    ).not.toContain("/api/v1/admissions");
   });
 });
