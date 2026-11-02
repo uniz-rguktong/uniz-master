@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getNotifications } from "../types/api";
-import type { Notification } from "../types/api";
+import type { Notification, NotificationType } from "../types/api";
+import { usePageTitle } from "../lib/usePageTitle";
+import { PageIntro } from "../components/layout/PageIntro";
 import {
   Newspaper,
   FileText,
@@ -14,24 +16,24 @@ export function NotificationsPage() {
   const { type } = useParams<{ type: string }>();
   const currentTab = (type === "tenders" || type === "careers") ? type : "news";
 
-  const [itemsData, setItemsData] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [visibleLimit, setVisibleLimit] = useState(10);
+  const [snapshot, setSnapshot] = useState<{ tab: string; items: Notification[] } | null>(null);
+  const [limits, setLimits] = useState<Record<string, number>>({});
+  const visibleLimit = limits[currentTab] ?? 10;
+  const loading = !snapshot || snapshot.tab !== currentTab;
+  const itemsData = snapshot?.tab === currentTab ? snapshot.items : [];
 
-  // Reset limit when changing pages
-  useEffect(() => {
-    setVisibleLimit(10);
-  }, [currentTab]);
+  const headingText = currentTab === "news" ? "News & Updates" : currentTab === "tenders" ? "Tenders" : "Career Opportunities";
+  usePageTitle(`${headingText} · RGUKT Ongole`);
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const apiType = currentTab === "news" ? "news_updates" : currentTab;
-      const data = await getNotifications(apiType as any);
-      setItemsData(data);
-      setLoading(false);
-    }
-    fetchData();
+    let cancelled = false;
+    const apiType: NotificationType = currentTab === "news" ? "news_updates" : currentTab;
+    getNotifications(apiType).then((data) => {
+      if (!cancelled) setSnapshot({ tab: currentTab, items: data });
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [currentTab]);
 
   if (loading) {
@@ -55,8 +57,8 @@ export function NotificationsPage() {
     let d = new Date(dateStr);
     if (!isNaN(d.getTime())) return d;
 
-    const cleaned = dateStr.replace(/[\(\)]/g, '').trim();
-    const parts = cleaned.match(/(\d{1,2})[\.\-\/]([a-zA-Z]+|\d{1,2})[\.\-\/](\d{4})/);
+    const cleaned = dateStr.replace(/[()]/g, "").trim();
+    const parts = cleaned.match(/(\d{1,2})[./-]([a-zA-Z]+|\d{1,2})[./-](\d{4})/);
 
     if (parts) {
       const day = parseInt(parts[1], 10);
@@ -191,7 +193,12 @@ export function NotificationsPage() {
         {hasMore && (
           <div className="p-5 border-t border-line flex justify-center bg-surface-2">
             <button
-              onClick={() => setVisibleLimit(prev => prev + 10)}
+              onClick={() =>
+                setLimits((prev) => ({
+                  ...prev,
+                  [currentTab]: (prev[currentTab] ?? 10) + 10,
+                }))
+              }
               className="min-h-[44px] px-6 rounded-md bg-navy text-white text-[14px] font-semibold shadow-[0_8px_20px_-10px_rgba(10,37,64,0.6)] hover:bg-navy-950 transition-colors duration-150"
             >
               View Next {Math.min(10, allItems.length - visibleLimit)} Updates
@@ -202,37 +209,15 @@ export function NotificationsPage() {
     );
   };
 
-  const headingText = currentTab === "news" ? "News & Updates" : currentTab === "tenders" ? "Tenders" : "Career Opportunities";
-
   return (
-    <div className="min-h-screen bg-surface font-sans">
-      {/* ── Hero Banner ── */}
-      <div className="relative bg-navy-950 overflow-hidden">
-        <div className="absolute inset-x-0 top-0 h-1 bg-brand-red z-10" />
-        <div
-          className="absolute inset-0 opacity-80"
-          style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 10% 80%, #163A5C 0%, transparent 50%)" }}
-        />
-        {/* Faint grid pattern */}
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
-        />
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 sm:pt-24 sm:pb-28">
-          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 mb-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/85 bg-white/10 border border-white/15 rounded-full">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-red" aria-hidden="true" />
-            Rajiv Gandhi University of Knowledge Technologies
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.05] mb-5">
-            {headingText}
-          </h1>
-          <p className="max-w-2xl border-l-2 border-brand-red pl-4 text-white/75 text-lg leading-relaxed">
-            Stay informed with the latest {headingText}
-          </p>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-surface to-transparent" />
-      </div>
+    <div className="min-h-screen bg-paper font-sans">
+      <PageIntro
+        kicker="RGUKT Ongole"
+        title={headingText}
+        lede={`Stay informed with the latest ${headingText.toLowerCase()}.`}
+      />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-16 relative z-20">
+      <div className="relative z-20 mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
         {/* ── Content ── */}
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           {renderList(itemsData, `No active ${headingText.toLowerCase()} available at this time.`, currentTab)}

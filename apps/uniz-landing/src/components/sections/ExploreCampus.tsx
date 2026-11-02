@@ -5,8 +5,7 @@ const campusAreas = [
     title: "Central Library",
     description:
       "A well-equipped central library housing over 20,000 books and 10,000 periodicals, providing students with a rich academic ecosystem to explore knowledge, pursue research, and study in a focused, serene environment.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=2128&auto=format&fit=crop",
+    imageUrl: "/carousel/all.jpg.webp",
     link: "/departments/LIB",
     linkLabel: "Visit the Library",
   },
@@ -14,8 +13,7 @@ const campusAreas = [
     title: "Internships & Placements",
     description:
       "RGUKT Ongole's dedicated Career Development and Placement Cell (CDPC) bridges academics and industry. It actively facilitates campus placements, internship drives, and career guidance to prepare students for a competitive world.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=2126&auto=format&fit=crop",
+    imageUrl: "/carousel/VRD.png.webp",
     link: "/notifications/news",
     linkLabel: "Latest opportunities",
   },
@@ -23,8 +21,7 @@ const campusAreas = [
     title: "Resources & Facilities",
     description:
       "State-of-the-art infrastructure set amidst pristine greenery makes RGUKT Ongole an ideal destination for learning and continuous growth. Modern labs, seminar halls, and residential facilities ensure comfort and excellence at every step.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=2086&auto=format&fit=crop",
+    imageUrl: "/college.jpg",
     link: "/institute/campuslife",
     linkLabel: "Campus facilities",
   },
@@ -32,8 +29,7 @@ const campusAreas = [
     title: "Extra-Curricular Activities",
     description:
       "At RGUKT, we believe in holistic development. Sports and cultural activities foster physical coordination, mental strength, teamwork, and character — shaping well-rounded individuals ready to lead with confidence beyond the classroom.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070&auto=format&fit=crop",
+    imageUrl: "/carousel/Sports.png.webp",
     link: "/institute/campuslife",
     linkLabel: "Campus life",
   },
@@ -44,11 +40,11 @@ export function ExploreCampus() {
     <section id="explore" className="relative bg-white section-editorial">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
         <div className="max-w-2xl mb-16 sm:mb-24">
-          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-navy mb-4">
-            Campus Life
+          <p className="mb-3 text-[13px] font-semibold text-crimson">
+            Campus
           </p>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-navy-900 tracking-tight leading-tight">
-            Explore our campus
+          <h2 className="font-serif text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl md:text-5xl">
+            Explore the campus
           </h2>
           <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed">
             From cutting-edge labs to world-class sports — discover the spaces that shape our students into leaders.

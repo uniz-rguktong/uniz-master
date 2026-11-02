@@ -43,9 +43,8 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="relative w-full overflow-hidden bg-navy-850 text-white">
-      <div className="h-1 w-full bg-gradient-to-r from-brand-red via-brand-red to-navy-700" aria-hidden="true" />
-      <div className="pointer-events-none absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-navy-600/40 blur-3xl" aria-hidden="true" />
+    <footer className="relative w-full bg-ink text-white">
+      <div className="h-1 w-full bg-crimson" aria-hidden="true" />
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative py-16 lg:py-24 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-12 border-b border-white/10">
 
         <div className="col-span-2 flex flex-col gap-5">
@@ -82,7 +81,7 @@ export function Footer() {
 
         {columns.map((col) => (
           <div key={col.title}>
-            <p className="relative pb-3 text-[11px] font-semibold tracking-[0.2em] uppercase text-white mb-5 after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-6 after:bg-brand-red">
+            <p className="mb-4 text-[13px] font-semibold text-white">
               {col.title}
             </p>
             <ul className="flex flex-col gap-3">
@@ -145,17 +144,14 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Quiet wordmark — no canvas flicker */}
-      <div className="border-t border-white/5 py-10 sm:py-14 text-center select-none">
-        <p className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white/[0.14] to-white/[0.02]">
-          RGUKT Ongole
-        </p>
+      <div className="border-t border-white/10 px-6 py-8 text-center">
+        <p className="font-serif text-2xl text-white/80">RGUKT Ongole</p>
       </div>
 
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         aria-label="Scroll to top"
-        className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 w-11 h-11 rounded-full bg-navy text-white ring-1 ring-white/20 shadow-[0_12px_32px_-12px_rgba(2,18,39,0.7)] hover:bg-brand-red flex items-center justify-center transition-colors duration-150"
+        className="fixed bottom-6 right-6 z-50 flex h-11 w-11 items-center justify-center border border-line bg-white text-ink hover:text-crimson"
       >
         <ArrowUp className="w-5 h-5" />
       </button>

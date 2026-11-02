@@ -49,10 +49,7 @@ jobs:
       - run: npm ci
       - name: Prettier (shared package and workflows)
         run: npx prettier --check packages/uniz-shared .github
-      # Landing has known lint errors. Non-blocking until they're fixed,
-      # then drop continue-on-error.
       - name: ESLint landing
-        continue-on-error: true
         run: npm run lint -w uniz-landing
 
   typecheck:

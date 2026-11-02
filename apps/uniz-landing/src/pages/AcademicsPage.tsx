@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getAcademicPage } from "../types/api";
 import type { AcademicSection, AcademicPageType } from "../types/api";
+import { usePageTitle } from "../lib/usePageTitle";
+import { PageIntro } from "../components/layout/PageIntro";
 import { Download, ExternalLink, FileText, BookOpen, Calendar, GraduationCap } from "lucide-react";
 
 // ── Page metadata ──────────────────────────────────────────────────
@@ -42,28 +44,7 @@ const PAGE_META: Record<string, {
 // ── Shared hero banner ─────────────────────────────────────────────
 function HeroBanner({ meta }: { meta: typeof PAGE_META[string] }) {
   return (
-    <div className="relative bg-navy-900 overflow-hidden">
-      <div
-        className="absolute inset-0 opacity-15"
-        style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 15% 80%, #1e3a8a 0%, transparent 55%)" }}
-      />
-      <div className="absolute inset-0 opacity-[0.04]"
-        style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
-      />
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <span className={`inline-flex items-center gap-2 px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] ${meta.pill} ${meta.pillBg} border ${meta.pillBorder} rounded-full`}>
-          {meta.icon}
-          RGUKT Ongole · Academics
-        </span>
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-5">
-          {meta.displayName}
-        </h1>
-        <p className="max-w-2xl mx-auto text-slate-300 text-lg leading-relaxed">
-          {meta.subtitle}
-        </p>
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-50 to-transparent" />
-    </div>
+    <PageIntro kicker="RGUKT Ongole · Academics" title={meta.displayName} lede={meta.subtitle} />
   );
 }
 
@@ -213,6 +194,8 @@ export function AcademicsPage() {
     pill: "text-slate-300", pillBg: "bg-slate-400/10", pillBorder: "border-slate-400/30",
     icon: <GraduationCap className="w-5 h-5" />,
   };
+
+  usePageTitle(`${meta.displayName} · RGUKT Ongole`);
 
   useEffect(() => {
     async function fetchPage() {

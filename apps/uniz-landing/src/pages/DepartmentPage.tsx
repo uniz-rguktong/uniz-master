@@ -3,7 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getDepartmentStaff } from "../types/api";
 import type { DepartmentData, FacultyMember, DeptCode } from "../types/api";
 import { Mail, Phone, Users, ChevronRight } from "lucide-react";
-import { PersonPhoto, initials } from "../components/common/PersonPhoto";
+import { PersonPhoto } from "../components/common/PersonPhoto";
+import { initials } from "../lib/initials";
+import { usePageTitle } from "../lib/usePageTitle";
+import { PageIntro } from "../components/layout/PageIntro";
 
 // ── Full department names ──────────────────────────────────────────
 const DEPT_NAMES: Record<string, string> = {
@@ -135,6 +138,7 @@ export function DepartmentPage() {
 
   const code     = deptCode?.toUpperCase() ?? "";
   const deptName = DEPT_NAMES[code] ?? `Department of ${code}`;
+  usePageTitle(`${deptName} · RGUKT Ongole`);
 
   useEffect(() => {
     async function fetchData() {
@@ -177,37 +181,17 @@ export function DepartmentPage() {
   return (
     <div className="min-h-screen bg-surface">
 
-      {/* ── Hero Banner ── */}
-      <div className="relative bg-navy-950 overflow-hidden">
-        <div className="absolute inset-x-0 top-0 h-1 bg-brand-red z-10" />
-        <div
-          className="absolute inset-0 opacity-80"
-          style={{ backgroundImage: "radial-gradient(ellipse at 20% 60%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 85% 20%, #163A5C 0%, transparent 55%)" }}
-        />
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
-        />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 sm:pt-24 sm:pb-28">
-          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 mb-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/85 bg-white/10 border border-white/15 rounded-full">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-red" aria-hidden="true" />
-            RGUKT Ongole · {code}
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.05] max-w-4xl [text-wrap:balance]">
-            {deptName}
-          </h1>
-          {faculties.length > 0 && (
-            <p className="mt-5 inline-flex items-center gap-2 rounded-md border border-white/15 bg-white/5 px-3 py-1.5 text-white/80 text-sm font-medium">
-              <Users className="w-4 h-4 text-white/60" aria-hidden="true" />
-              {faculties.length} Faculty Member{faculties.length !== 1 ? "s" : ""}
-            </p>
-          )}
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-surface to-transparent" />
-      </div>
+      <PageIntro
+        kicker={`RGUKT Ongole · ${code}`}
+        title={deptName}
+        lede={
+          faculties.length > 0
+            ? `${faculties.length} faculty member${faculties.length === 1 ? "" : "s"}`
+            : undefined
+        }
+      />
 
-      {/* ── Faculty List ── */}
-      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-16">
+      <div className="relative z-20 mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         {faculties.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-lg border border-line shadow-xs">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-navy-200/50 ring-8 ring-surface-2 flex items-center justify-center">

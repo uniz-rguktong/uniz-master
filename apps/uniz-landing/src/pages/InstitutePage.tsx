@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getInstituteInfo } from "../types/api";
 import type { InstituteData, InstitutePage as InstitutePageType } from "../types/api";
-import { PersonPhoto, initials } from "../components/common/PersonPhoto";
+import { PersonPhoto } from "../components/common/PersonPhoto";
+import { initials } from "../lib/initials";
+import { usePageTitle } from "../lib/usePageTitle";
+import { PageIntro } from "../components/layout/PageIntro";
 
 const PAGE_NAMES: Record<string, string> = {
   aboutrgukt: "About RGUKT",
@@ -31,32 +34,15 @@ function AboutRguktPage({ data }: { data: InstituteData }) {
     <div className="min-h-screen bg-slate-50">
 
       {/* ── Hero Banner ── */}
-      <div className="relative bg-navy-900 overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 10% 80%, #1d4ed8 0%, transparent 50%)" }}
-        />
-        {/* Faint grid pattern */}
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
-        />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] text-amber-400 bg-amber-400/10 border border-amber-400/30 rounded-full">
-            Rajiv Gandhi University of Knowledge Technologies
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-6">
-            About RGUKT
-          </h1>
-          <p className="max-w-2xl mx-auto text-slate-300 text-lg leading-relaxed">
-            Established to provide world-class education to the gifted rural youth of Andhra Pradesh — a bold, unique experiment in residential, technology-driven higher education.
-          </p>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-50 to-transparent" />
-      </div>
+      <PageIntro
+        kicker="Rajiv Gandhi University of Knowledge Technologies"
+        title="About RGUKT"
+        lede="Established to provide world-class education to the gifted rural youth of Andhra Pradesh — a residential, technology-driven university."
+      />
 
       {/* ── Key Stats Bar ── */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative -mt-8 mb-16 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="relative mb-16 mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
           {[
             { value: "2008", label: "Year Founded" },
             { value: "6 Yrs", label: "Integrated Program" },
@@ -110,31 +96,17 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
   return (
     <div className="min-h-screen bg-slate-50">
 
-      {/* ── Hero Banner ── */}
-      <div className="relative bg-navy-900 overflow-hidden">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #0A2540 0%, transparent 60%), radial-gradient(circle at 80% 50%, #4f46e5 0%, transparent 60%)" }}
-        />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] text-navy bg-navy/10 border border-navy/30 rounded-full">
-            Rajiv Gandhi University of Knowledge Technologies
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
-            Governing Council
-          </h1>
-          <p className="mt-5 max-w-2xl mx-auto text-slate-300 text-lg leading-relaxed">
-            The Governing Council is the apex body that provides strategic direction and policy oversight to RGUKT, comprising distinguished academics, administrators, and industry experts.
-          </p>
-        </div>
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-slate-50 to-transparent" />
-      </div>
+      <PageIntro
+        kicker="Rajiv Gandhi University of Knowledge Technologies"
+        title="Governing Council"
+        lede="The Governing Council is the apex body that provides strategic direction and policy oversight to RGUKT."
+      />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
 
         {/* ── Chairperson Spotlight ── */}
         {chair && (
-          <div className="relative -mt-10 mb-16 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden flex flex-col md:flex-row">
+          <div className="relative mb-16 mt-10 flex flex-col overflow-hidden border border-line bg-white md:flex-row">
             <div className="md:w-64 flex-shrink-0 bg-gradient-to-br from-navy-900 to-[#1e1b6e] flex items-center justify-center p-8">
               <PersonPhoto
               src={chair.photo}
@@ -215,19 +187,7 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
 //  Generic Institute Page — upgraded premium render
 //  Handles: Campus Life, Education System, RTI Info, SC/ST Cell
 // ────────────────────────────────────────────────────────────
-function GenericInstitutePage({ data, displayName, pageName }: { data: InstituteData; displayName: string; pageName?: string }) {
-
-  // Page-specific hero accent colour
-  const PAGE_ACCENT: Record<string, { pill: string; pillBg: string; pillBorder: string }> = {
-    campuslife: { pill: "text-sky-300",   pillBg: "bg-sky-400/10",    pillBorder: "border-sky-400/30" },
-    edusys:     { pill: "text-violet-300",pillBg: "bg-violet-400/10", pillBorder: "border-violet-400/30" },
-    rtiinfo:    { pill: "text-amber-300", pillBg: "bg-amber-400/10",  pillBorder: "border-amber-400/30" },
-    scst:       { pill: "text-emerald-300",pillBg:"bg-emerald-400/10",pillBorder:"border-emerald-400/30" },
-  };
-  const accent = PAGE_ACCENT[pageName?.toLowerCase() ?? ""] ?? {
-    pill: "text-slate-300", pillBg: "bg-slate-400/10", pillBorder: "border-slate-400/30"
-  };
-
+function GenericInstitutePage({ data, displayName }: { data: InstituteData; displayName: string }) {
   // Only show sections that have content and are not the address block (shown separately)
   const meaningfulSections = (data?.sections ?? []).filter(
     s => s.content.some(c => c.trim()) && !s.title.toLowerCase().includes("address")
@@ -238,24 +198,7 @@ function GenericInstitutePage({ data, displayName, pageName }: { data: Institute
     <div className="min-h-screen bg-slate-50">
 
       {/* ── Hero Banner ── */}
-      <div className="relative bg-navy-900 overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: "radial-gradient(ellipse at 30% 60%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 80% 20%, #1e3a8a 0%, transparent 55%)" }}
-        />
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
-        />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <span className={`inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] ${accent.pill} ${accent.pillBg} border ${accent.pillBorder} rounded-full`}>
-            RGUKT Ongole Campus
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
-            {displayName}
-          </h1>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-50 to-transparent" />
-      </div>
+      <PageIntro kicker="RGUKT Ongole Campus" title={displayName} />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
 
@@ -362,6 +305,7 @@ export function InstitutePage() {
   const [loading, setLoading] = useState(true);
 
   const displayName = PAGE_NAMES[pageName?.toLowerCase() ?? ""] ?? (pageName?.replace(/([A-Z])/g, " $1").trim() ?? "");
+  usePageTitle(`${displayName || "Institute"} · RGUKT Ongole`);
 
   useEffect(() => {
     async function fetchData() {
@@ -407,6 +351,6 @@ export function InstitutePage() {
     return <AboutRguktPage data={data} />;
   }
 
-  return <GenericInstitutePage data={data!} displayName={displayName} pageName={pageName} />;
+  return <GenericInstitutePage data={data!} displayName={displayName} />;
 }
 

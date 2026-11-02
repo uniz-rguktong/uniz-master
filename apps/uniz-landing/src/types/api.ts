@@ -29,11 +29,26 @@ export interface Stat {
     value: string;
 }
 
+export interface ExploreCampusCard {
+    title?: string;
+    name?: string;
+    description?: string;
+    image?: string;
+    url?: string;
+}
+
 export interface HomeData {
     announcements: Announcement[];
     stats: Stat[];
     images: string[];
-    explore_campus?: any[];
+    explore_campus?: ExploreCampusCard[];
+}
+
+export interface FeedItem {
+    title: string;
+    date?: string;
+    desc?: string;
+    links?: NotificationLink[];
 }
 
 export async function getHomeData(): Promise<HomeData> {

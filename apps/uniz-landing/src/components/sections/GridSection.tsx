@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import type { FeedItem } from "../../types/api";
 
 export function GridSection({
   id,
@@ -15,7 +16,7 @@ export function GridSection({
   id: string;
   title: string;
   subtitle?: string;
-  items: readonly any[];
+  items: readonly FeedItem[];
   images: readonly string[];
   viewAllLink: string;
   viewAllText: string;

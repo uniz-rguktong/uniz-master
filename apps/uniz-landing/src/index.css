@@ -33,12 +33,14 @@
   --color-navy-400: #5A7A94;
   --color-navy-300: #9BB0C4;
   --color-navy-200: #D8E0EA;
-  --color-brand-red: #EA2027;
-  --color-ink: #0F172A;
+  --color-brand-red: #A51C30;
+  --color-crimson: #A51C30;
+  --color-paper: #F7F4EF;
+  --color-ink: #1A1A1A;
   --color-ink-muted: #475569;
   --color-ink-subtle: #64748B;
-  --color-line: #E2E8F0;
-  --color-surface: #FAFAFA;
+  --color-line: #E4DDD2;
+  --color-surface: #F7F4EF;
   --color-surface-2: #F8FAFC;
 
   --radius-xs: 2px;
@@ -76,8 +78,8 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-ring: var(--ring);
 
-  --font-sans: "Cabin Condensed", -apple-system, system-ui, sans-serif;
-  --font-serif: "Cabin Condensed", Georgia, serif;
+  --font-sans: "Source Sans 3", "Segoe UI", sans-serif;
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
 }
 
 @theme inline {
@@ -98,9 +100,9 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #0f172a;
-  --surface: #fafafa;
-  --text-main: #0f172a;
+  --foreground: #1a1a1a;
+  --surface: #f7f4ef;
+  --text-main: #1a1a1a;
   --text-muted: #475569;
 
   --muted: #f4f4f4;
@@ -114,7 +116,7 @@
   --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
 
-  --ring: #0A2540;
+  --ring: #A51C30;
 
   --destructive-foreground: oklch(1 0 0);
 
@@ -142,13 +144,13 @@ html {
 
 /* One visible focus style everywhere (keyboard only). */
 :where(a, button, input, select, textarea, [tabindex]):focus-visible {
-  outline: 2px solid #0A2540;
+  outline: 2px solid #A51C30;
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
 
 ::selection {
-  background-color: #0A2540; color: #ffffff;
+  background-color: #A51C30; color: #ffffff;
 }
 
 /* Editorial type utilities */
@@ -157,16 +159,14 @@ html {
 }
 
 .editorial-link {
-  color: #0A2540;
+  color: #A51C30;
   text-decoration: underline;
-  text-underline-offset: 0.22em;
+  text-underline-offset: 0.18em;
   text-decoration-thickness: 1px;
-  transition: color 150ms var(--ease-calm), text-decoration-thickness 150ms var(--ease-calm);
 }
 
 .editorial-link:hover {
-  color: #061B33;
-  text-decoration-thickness: 2px;
+  color: #1A1A1A;
 }
 
 .editorial-link-light {

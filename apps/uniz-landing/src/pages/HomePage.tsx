@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getHomeData, getNotifications } from "../types/api";
-import type { HomeData } from "../types/api";
+import type { HomeData, Notification } from "../types/api";
+import { usePageTitle } from "../lib/usePageTitle";
 
 import { HeroAndTitle } from "../components/sections/HeroAndTitle";
 import { Leadership } from "../components/sections/Leadership";
@@ -13,8 +14,14 @@ import { Gallery } from "../components/sections/Gallery";
 
 export function HomePage() {
   const [homeData, setHomeData] = useState<HomeData | null>(null);
-  const [notificationsData, setNotificationsData] = useState<any>(null);
+  const [notificationsData, setNotificationsData] = useState<{
+    news_updates: Notification[];
+    tenders: Notification[];
+    careers: Notification[];
+  } | null>(null);
   const [loading, setLoading] = useState(true);
+
+  usePageTitle("RGUKT Ongole · IIIT");
 
   useEffect(() => {
     async function loadData() {

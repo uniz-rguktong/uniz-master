@@ -105,9 +105,9 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md supports-[backdrop-filter]:bg-white/80 border-b border-line shadow-[0_1px_2px_rgba(6,21,39,0.04)]">
+      <header className="sticky top-0 z-50 w-full border-b border-line bg-white">
         {/* Tier 1: Harvard/MIT-style Slim Institutional Utility Bar */}
-        <div className="bg-navy-850 text-white/80 border-b border-white/10">
+        <div className="border-b border-white/10 bg-ink text-white/80">
           <div className="w-full max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 flex h-8 items-center justify-between text-[11.5px] tracking-[0.03em]">
             <div className="flex items-center gap-2 truncate">
               <span className="font-semibold text-white/95">RGUKT ANDHRA PRADESH</span>
@@ -215,7 +215,7 @@ export function Header() {
               href="https://uniz.rguktong.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 h-10 px-4 bg-brand-red hover:bg-[#C81A20] text-white text-[14px] font-semibold rounded-md shadow-[0_6px_16px_-8px_rgba(234,32,39,0.6)] transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+              className="hidden sm:inline-flex items-center gap-1.5 h-10 px-1 text-[15px] font-semibold text-crimson hover:text-ink"
             >
               <span>UniZ Portal</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -241,8 +241,8 @@ export function Header() {
 
       {/* Full-screen menu panel */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[100] bg-navy-950 text-white overflow-y-auto animate-[menu-in_200ms_cubic-bezier(0.2,0,0,1)_both] motion-reduce:animate-none">
-          <div className="max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 py-5 flex items-center justify-between border-b border-white/10">
+        <div className="fixed inset-0 z-[100] overflow-y-auto bg-white text-ink">
+          <div className="max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 py-5 flex items-center justify-between border-b border-line">
             <Link
               to="/"
               onClick={() => setIsMenuOpen(false)}
@@ -253,7 +253,7 @@ export function Header() {
             <button
               onClick={() => setIsMenuOpen(false)}
               aria-label="Close menu"
-              className="w-10 h-10 flex items-center justify-center text-white/80 hover:text-white transition-colors"
+              className="flex h-10 w-10 items-center justify-center text-ink hover:text-crimson"
             >
               <X className="w-5 h-5" />
             </button>
@@ -264,7 +264,7 @@ export function Header() {
               <Link
                 to="/"
                 onClick={() => setIsMenuOpen(false)}
-                className="font-serif text-3xl sm:text-4xl text-white hover:text-white/80 transition-colors"
+                className="font-serif text-3xl sm:text-4xl text-ink hover:text-crimson"
               >
                 Home
               </Link>
@@ -273,7 +273,7 @@ export function Header() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
               {MENU_SECTIONS.map((section) => (
                 <div key={section.title}>
-                  <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-white/60 mb-5">
+                  <p className="mb-4 text-[13px] font-semibold text-crimson">
                     {section.title}
                   </p>
                   <ul className="flex flex-col gap-0.5">
@@ -282,7 +282,7 @@ export function Header() {
                         <Link
                           to={link.path}
                           onClick={() => setIsMenuOpen(false)}
-                          className="inline-flex min-h-[44px] items-center text-[17px] text-white/85 hover:text-white transition-colors duration-150"
+                          className="inline-flex min-h-[44px] items-center text-[17px] text-ink hover:text-crimson"
                         >
                           {link.label}
                         </Link>
@@ -298,7 +298,7 @@ export function Header() {
 
       {/* Search overlay */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-[100] bg-navy-900/50 backdrop-blur-sm flex items-start justify-center pt-20 sm:pt-28 px-4">
+        <div className="fixed inset-0 z-[100] flex items-start justify-center bg-ink/40 px-4 pt-20 sm:pt-28">
           <div
             className="absolute inset-0"
             onClick={() => setIsSearchOpen(false)}
@@ -341,7 +341,7 @@ export function Header() {
                       key={idx}
                       onClick={() => {
                         setIsSearchOpen(false);
-                        navigate(item.path, { state: (item as any).state });
+                        navigate(item.path);
                       }}
                       className="flex items-center justify-between w-full text-left px-4 py-3.5 hover:bg-slate-50 transition-colors group border-b border-slate-100 last:border-0"
                     >
