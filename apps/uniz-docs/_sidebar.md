@@ -12,6 +12,9 @@
   - [Placements](students/placement)
   - [Alumni](students/alumni)
   - [Information Centre](students/information-centre)
+  - [Clubs and Consultancy](students/clubs-consultancy)
+  - [Admissions](students/admissions)
+  - [Establishment](students/establishment)
   - [Outpass](students/outpass)
   - [Profile](students/profile)
 

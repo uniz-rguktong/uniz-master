@@ -3,6 +3,8 @@ title: "Roles"
 description: "UniZ uses role-based access to give every user the tools they need. Learn what each role can do on the platform."
 ---
 
+# Roles
+
 Every user in UniZ is assigned a role when their account is created. Your role determines which features you can access, which dashboards you see after logging in, and what actions you are authorized to take. There is no manual role switching — your role is fixed to your account.
 
 ## Role overview

@@ -394,3 +394,12 @@ export const ALUMNI = `${BASE_URL}/alumni`;
 
 // Information centre
 export const INFOCENTRE = `${BASE_URL}/infocentre`;
+
+// Clubs and consultancy
+export const CLUBS = `${BASE_URL}/clubs`;
+
+// Admissions
+export const ADMISSIONS = `${BASE_URL}/admissions`;
+
+// Establishment
+export const ESTABLISHMENT = `${BASE_URL}/establishment`;

@@ -6,7 +6,7 @@ import { Mail, Phone, Users, ChevronRight } from "lucide-react";
 import { PersonPhoto } from "../components/common/PersonPhoto";
 import { initials } from "../lib/initials";
 import { usePageTitle } from "../lib/usePageTitle";
-import { PageIntro } from "../components/layout/PageIntro";
+import { PageHero } from "../components/layout/PageHero";
 
 // ── Full department names ──────────────────────────────────────────
 const DEPT_NAMES: Record<string, string> = {
@@ -181,17 +181,18 @@ export function DepartmentPage() {
   return (
     <div className="min-h-screen bg-surface">
 
-      <PageIntro
-        kicker={`RGUKT Ongole · ${code}`}
+      <PageHero
+        eyebrow={`RGUKT Ongole · ${code}`}
         title={deptName}
-        lede={
+        description={
           faculties.length > 0
-            ? `${faculties.length} faculty member${faculties.length === 1 ? "" : "s"}`
+            ? `${faculties.length} faculty member${faculties.length !== 1 ? "s" : ""} listed for this department.`
             : undefined
         }
       />
 
-      <div className="relative z-20 mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+      {/* ── Faculty List ── */}
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-8">
         {faculties.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-lg border border-line shadow-xs">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-navy-200/50 ring-8 ring-surface-2 flex items-center justify-center">
@@ -202,9 +203,8 @@ export function DepartmentPage() {
           </div>
         ) : (
           <>
-            <h2 className="inline-flex items-center gap-2.5 rounded-lg border border-line bg-white px-4 py-2.5 shadow-xs text-sm font-semibold uppercase tracking-[0.16em] text-navy mb-6">
-              <span className="w-1.5 h-1.5 bg-brand-red rounded-full inline-block" />
-              Faculties
+            <h2 className="text-base font-medium text-navy mb-6">
+              Faculty
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {faculties.map((faculty, index) => (

@@ -16,6 +16,9 @@ describe("module registry", () => {
         FEATURE_PLACEMENT: "false",
         FEATURE_ALUMNI: "false",
         FEATURE_INFO_CENTRE: "false",
+        FEATURE_CLUBS: "false",
+        FEATURE_ADMISSIONS: "false",
+        FEATURE_ESTABLISHMENT: "false",
       }),
     ).toEqual([]);
   });
@@ -93,5 +96,34 @@ describe("module registry", () => {
     expect(
       activeModuleRoutes({ FEATURE_INFO_CENTRE: "false" }).map((r) => r.prefix),
     ).not.toContain("/api/v1/infocentre");
+  });
+
+  it("lists clubs under FEATURE_CLUBS", () => {
+    expect(activeModuleRoutes({}).map((r) => r.prefix)).toContain(
+      "/api/v1/clubs",
+    );
+    expect(
+      activeModuleRoutes({ FEATURE_CLUBS: "false" }).map((r) => r.prefix),
+    ).not.toContain("/api/v1/clubs");
+  });
+
+  it("lists admissions under FEATURE_ADMISSIONS", () => {
+    expect(activeModuleRoutes({}).map((r) => r.prefix)).toContain(
+      "/api/v1/admissions",
+    );
+    expect(
+      activeModuleRoutes({ FEATURE_ADMISSIONS: "false" }).map((r) => r.prefix),
+    ).not.toContain("/api/v1/admissions");
+  });
+
+  it("lists establishment under FEATURE_ESTABLISHMENT", () => {
+    expect(activeModuleRoutes({}).map((r) => r.prefix)).toContain(
+      "/api/v1/establishment",
+    );
+    expect(
+      activeModuleRoutes({ FEATURE_ESTABLISHMENT: "false" }).map(
+        (r) => r.prefix,
+      ),
+    ).not.toContain("/api/v1/establishment");
   });
 });

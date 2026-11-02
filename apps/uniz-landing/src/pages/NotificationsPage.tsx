@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { getNotifications } from "../types/api";
 import type { Notification, NotificationType } from "../types/api";
 import { usePageTitle } from "../lib/usePageTitle";
-import { PageIntro } from "../components/layout/PageIntro";
 import {
   Newspaper,
   FileText,
@@ -11,6 +10,7 @@ import {
   ArrowRightCircle,
   ChevronRight
 } from "lucide-react";
+import { PageHero } from "../components/layout/PageHero";
 
 export function NotificationsPage() {
   const { type } = useParams<{ type: string }>();
@@ -22,7 +22,7 @@ export function NotificationsPage() {
   const loading = !snapshot || snapshot.tab !== currentTab;
   const itemsData = snapshot?.tab === currentTab ? snapshot.items : [];
 
-  const headingText = currentTab === "news" ? "News & Updates" : currentTab === "tenders" ? "Tenders" : "Career Opportunities";
+  const headingText = currentTab === "news" ? "News and updates" : currentTab === "tenders" ? "Tenders" : "Careers";
   usePageTitle(`${headingText} · RGUKT Ongole`);
 
   useEffect(() => {
@@ -209,17 +209,23 @@ export function NotificationsPage() {
     );
   };
 
+  const heroDescription =
+    currentTab === "news"
+      ? "Official news and notices published by RGUKT Ongole."
+      : currentTab === "tenders"
+        ? "Active tender notices from RGUKT Ongole."
+        : "Career openings and recruitment notices.";
+
   return (
-    <div className="min-h-screen bg-paper font-sans">
-      <PageIntro
-        kicker="RGUKT Ongole"
+    <div className="min-h-screen bg-surface font-sans">
+      <PageHero
+        eyebrow="RGUKT Ongole · Notifications"
         title={headingText}
-        lede={`Stay informed with the latest ${headingText.toLowerCase()}.`}
+        description={heroDescription}
       />
 
-      <div className="relative z-20 mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
-        {/* ── Content ── */}
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-8 relative z-20">
+        <div>
           {renderList(itemsData, `No active ${headingText.toLowerCase()} available at this time.`, currentTab)}
         </div>
       </div>

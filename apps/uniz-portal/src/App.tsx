@@ -22,6 +22,7 @@ const Sidebar = lazy(() => import("./components/Sidebar"));
 const SEOLanding = lazy(() => import("./pages/seo-landing"));
 const AlumniDirectory = lazy(() => import("./pages/alumni/AlumniDirectory"));
 const InfoCentre = lazy(() => import("./pages/info/InfoCentre"));
+const AdmissionsApply = lazy(() => import("./pages/admissions/AdmissionsApply"));
 const Developers = lazy(() => import("./pages/Developers"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const NotificationDeepLink = lazy(() => import("./pages/NotificationDeepLink"));
@@ -242,6 +243,14 @@ export default function App() {
             element={
               <PageTransition>
                 <InfoCentre />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/admissions"
+            element={
+              <PageTransition>
+                <AdmissionsApply />
               </PageTransition>
             }
           />
@@ -504,6 +513,16 @@ export default function App() {
               <MaintenanceGuard>
                 <PageTransition>
                   <Sidebar content="info" />
+                </PageTransition>
+              </MaintenanceGuard>
+            }
+          />
+          <Route
+            path="/student/clubs"
+            element={
+              <MaintenanceGuard>
+                <PageTransition>
+                  <Sidebar content="clubs" />
                 </PageTransition>
               </MaintenanceGuard>
             }

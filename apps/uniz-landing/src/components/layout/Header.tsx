@@ -105,9 +105,9 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-line bg-white">
+      <header className="sticky top-0 z-50 w-full bg-white border-b border-line">
         {/* Tier 1: Harvard/MIT-style Slim Institutional Utility Bar */}
-        <div className="border-b border-white/10 bg-ink text-white/80">
+        <div className="bg-navy-850 text-white/80 border-b border-white/10">
           <div className="w-full max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 flex h-8 items-center justify-between text-[11.5px] tracking-[0.03em]">
             <div className="flex items-center gap-2 truncate">
               <span className="font-semibold text-white/95">RGUKT ANDHRA PRADESH</span>
@@ -162,8 +162,8 @@ export function Header() {
               <span className="font-serif text-[1.35rem] md:text-[1.5rem] font-semibold text-navy-900 tracking-tight leading-none">
                 RGUKT
               </span>
-              <span className="mt-1 text-[10px] md:text-[11px] font-medium text-navy tracking-[0.14em] uppercase">
-                Ongole Campus
+              <span className="mt-1 text-[11px] md:text-xs font-medium text-ink-muted">
+                Ongole campus
               </span>
             </div>
           </Link>
@@ -215,7 +215,7 @@ export function Header() {
               href="https://uniz.rguktong.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 h-10 px-1 text-[15px] font-semibold text-crimson hover:text-ink"
+              className="hidden sm:inline-flex items-center gap-1.5 h-10 px-4 bg-brand-red hover:bg-[#C81A20] text-white text-sm font-medium rounded-lg transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
             >
               <span>UniZ Portal</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -241,8 +241,8 @@ export function Header() {
 
       {/* Full-screen menu panel */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[100] overflow-y-auto bg-white text-ink">
-          <div className="max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 py-5 flex items-center justify-between border-b border-line">
+        <div className="fixed inset-0 z-[100] bg-navy-950 text-white overflow-y-auto animate-[menu-in_200ms_cubic-bezier(0.2,0,0,1)_both] motion-reduce:animate-none">
+          <div className="max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 py-5 flex items-center justify-between border-b border-white/10">
             <Link
               to="/"
               onClick={() => setIsMenuOpen(false)}
@@ -253,7 +253,7 @@ export function Header() {
             <button
               onClick={() => setIsMenuOpen(false)}
               aria-label="Close menu"
-              className="flex h-10 w-10 items-center justify-center text-ink hover:text-crimson"
+              className="w-10 h-10 flex items-center justify-center text-white/80 hover:text-white transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -264,7 +264,7 @@ export function Header() {
               <Link
                 to="/"
                 onClick={() => setIsMenuOpen(false)}
-                className="font-serif text-3xl sm:text-4xl text-ink hover:text-crimson"
+                className="font-serif text-3xl sm:text-4xl text-white hover:text-white/80 transition-colors"
               >
                 Home
               </Link>
@@ -273,7 +273,7 @@ export function Header() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
               {MENU_SECTIONS.map((section) => (
                 <div key={section.title}>
-                  <p className="mb-4 text-[13px] font-semibold text-crimson">
+                  <p className="text-xs font-medium text-white/55 mb-5">
                     {section.title}
                   </p>
                   <ul className="flex flex-col gap-0.5">
@@ -282,7 +282,7 @@ export function Header() {
                         <Link
                           to={link.path}
                           onClick={() => setIsMenuOpen(false)}
-                          className="inline-flex min-h-[44px] items-center text-[17px] text-ink hover:text-crimson"
+                          className="inline-flex min-h-[44px] items-center text-[17px] text-white/85 hover:text-white transition-colors duration-150"
                         >
                           {link.label}
                         </Link>
@@ -298,7 +298,7 @@ export function Header() {
 
       {/* Search overlay */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center bg-ink/40 px-4 pt-20 sm:pt-28">
+        <div className="fixed inset-0 z-[100] bg-navy-900/50 backdrop-blur-sm flex items-start justify-center pt-20 sm:pt-28 px-4">
           <div
             className="absolute inset-0"
             onClick={() => setIsSearchOpen(false)}
@@ -349,7 +349,7 @@ export function Header() {
                         <span className="block text-slate-900 font-medium group-hover:text-navy transition-colors">
                           {item.title}
                         </span>
-                        <span className="block text-xs tracking-wider uppercase text-ink-subtle mt-0.5">
+                        <span className="block text-xs text-ink-subtle mt-0.5">
                           {item.category}
                         </span>
                       </div>

@@ -9,9 +9,9 @@ export default {
         navy: "#0A2540",
       },
       fontFamily: {
-        sans: ['"Source Sans 3"', "Segoe UI", "sans-serif"],
-        serif: ['"Source Serif 4"', "Georgia", "serif"],
-        inter: ['"Source Sans 3"', "sans-serif"],
+        sans: ['"Cabin Condensed"', '"Cabin"', "system-ui", "sans-serif"],
+        serif: ['"Cabin Condensed"', '"Cabin"', "Georgia", "serif"],
+        inter: ['"Cabin Condensed"', '"Cabin"', "sans-serif"],
       },
     },
   },

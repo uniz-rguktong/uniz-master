@@ -152,7 +152,7 @@ export function FacultyProfilePage() {
 
           {/* Info */}
           <div className="flex-1 pt-2">
-            <h1 className="mb-2 font-serif text-3xl font-semibold leading-tight tracking-tight text-ink md:text-4xl">
+            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-2 tracking-tight">
               {faculty.name}
             </h1>
             {role && (

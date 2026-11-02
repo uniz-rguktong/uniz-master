@@ -27,14 +27,12 @@ export function DirectorMessage({ directorImage }: { directorImage: string }) {
     <section id="directors-message" className="section-editorial bg-white">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-12">
         <div className="max-w-2xl mb-14 sm:mb-16">
-          <p className="mb-3 text-[13px] font-semibold text-crimson">
-            From the Director&apos;s Desk
-          </p>
-          <h2 className="font-serif text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl md:text-5xl">
-            A message from the Director
+          <p className="text-sm text-ink-muted mb-3">From the Director&apos;s desk</p>
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-navy-900 leading-tight">
+            Message from the Director
           </h2>
           <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed">
-            Leadership, vision, and the journey of our campus.
+            Dr. A V S S Kumara Swami Gupta on learning and community at RGUKT Ongole.
           </p>
         </div>
 

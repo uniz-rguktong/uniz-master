@@ -16,6 +16,8 @@ import {
   Wallet,
   Briefcase,
   Info,
+  Handshake,
+  ClipboardList,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -33,6 +35,10 @@ import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
 import FeedbackAdmin from "../feedback/FeedbackAdmin";
 import FeesAdmin from "../fees/FeesAdmin";
 import PlacementAdmin from "../placement/PlacementAdmin";
+import EstablishmentAdmin from "../establishment/EstablishmentAdmin";
+import AdmissionsAdmin from "../admissions/AdmissionsAdmin";
+import ConsultancyAdmin from "../consultancy/ConsultancyAdmin";
+import ClubsAdmin from "../../clubs/ClubsAdmin";
 import InfoAdmin from "../../info/InfoAdmin";
 import AlumniAdmin from "../../alumni/AlumniAdmin";
 import { isModuleEnabled } from "@/lib/flags";
@@ -84,6 +90,10 @@ export default function DeanDashboard() {
             "feedback",
             "fees",
             "placement",
+            "establishment",
+            "admissions",
+            "consultancy",
+            "clubs",
             "info",
             "alumni",
           ] as const),
@@ -185,6 +195,24 @@ export default function DeanDashboard() {
             ...(isModuleEnabled("INFO_CENTRE")
               ? [{ id: "info", label: "Info Centre", icon: Info }]
               : []),
+            ...(isModuleEnabled("CLUBS")
+              ? [{ id: "clubs", label: "Clubs", icon: Users }]
+              : []),
+            ...(isModuleEnabled("CLUBS")
+              ? [{ id: "consultancy", label: "Consultancy", icon: Handshake }]
+              : []),
+            ...(isModuleEnabled("ADMISSIONS")
+              ? [{ id: "admissions", label: "Admissions", icon: ClipboardList }]
+              : []),
+            ...(isModuleEnabled("ESTABLISHMENT")
+              ? [
+                  {
+                    id: "establishment",
+                    label: "Establishment",
+                    icon: Briefcase,
+                  },
+                ]
+              : []),
             ...(isModuleEnabled("PLACEMENT")
               ? [{ id: "placement", label: "Placements", icon: Briefcase }]
               : []),
@@ -237,6 +265,14 @@ export default function DeanDashboard() {
         return <FeesAdmin />;
       case "placement":
         return <PlacementAdmin />;
+      case "establishment":
+        return <EstablishmentAdmin />;
+      case "admissions":
+        return <AdmissionsAdmin />;
+      case "consultancy":
+        return <ConsultancyAdmin />;
+      case "clubs":
+        return <ClubsAdmin />;
       case "info":
         return <InfoAdmin />;
       case "alumni":

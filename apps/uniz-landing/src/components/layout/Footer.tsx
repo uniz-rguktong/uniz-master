@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Linkedin, Instagram, Youtube, ArrowUp, MapPin } from "lucide-react";
 
@@ -42,9 +43,17 @@ const columns = [
 ];
 
 export function Footer() {
+  const [showTop, setShowTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 640);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <footer className="relative w-full bg-ink text-white">
-      <div className="h-1 w-full bg-crimson" aria-hidden="true" />
+    <footer className="relative w-full overflow-hidden bg-navy-850 text-white">
+      <div className="h-0.5 w-full bg-brand-red" aria-hidden="true" />
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative py-16 lg:py-24 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-12 border-b border-white/10">
 
         <div className="col-span-2 flex flex-col gap-5">
@@ -58,8 +67,8 @@ export function Footer() {
               <span className="font-serif text-2xl font-bold text-white tracking-tight">
                 RGUKT
               </span>
-              <span className="mt-1 text-[10px] font-medium tracking-[0.16em] uppercase text-white/50">
-                Ongole Campus
+              <span className="mt-1 text-xs text-white/50">
+                Ongole campus
               </span>
             </div>
           </Link>
@@ -69,7 +78,7 @@ export function Footer() {
           <div className="flex gap-3 text-sm text-white/65 mt-1 rounded-lg border border-white/10 bg-white/[0.03] p-4 max-w-sm">
             <MapPin className="w-4 h-4 mt-0.5 text-white/75 flex-shrink-0" />
             <div className="flex flex-col gap-0.5 leading-relaxed">
-              <span className="font-medium text-white/70 tracking-widest text-[10px] uppercase mb-1">
+              <span className="text-sm font-medium text-white/70 mb-1">
                 Contact
               </span>
               <span>RGUKT Ongole Campus,</span>
@@ -81,7 +90,7 @@ export function Footer() {
 
         {columns.map((col) => (
           <div key={col.title}>
-            <p className="mb-4 text-[13px] font-semibold text-white">
+            <p className="text-sm font-medium text-white/70 mb-5">
               {col.title}
             </p>
             <ul className="flex flex-col gap-3">
@@ -144,17 +153,22 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-white/10 px-6 py-8 text-center">
-        <p className="font-serif text-2xl text-white/80">RGUKT Ongole</p>
+      <div className="border-t border-white/5 py-10 sm:py-12 text-center select-none">
+        <p className="font-serif text-3xl sm:text-4xl font-medium tracking-tight text-white/20">
+          RGUKT Ongole
+        </p>
       </div>
 
-      <button
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        aria-label="Scroll to top"
-        className="fixed bottom-6 right-6 z-50 flex h-11 w-11 items-center justify-center border border-line bg-white text-ink hover:text-crimson"
-      >
-        <ArrowUp className="w-5 h-5" />
-      </button>
+      {showTop && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Scroll to top"
+          className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 w-11 h-11 rounded-lg bg-navy text-white border border-white/15 hover:bg-brand-red flex items-center justify-center transition-colors duration-150"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
     </footer>
   );
 }

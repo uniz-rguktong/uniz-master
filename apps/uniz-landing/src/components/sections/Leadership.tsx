@@ -29,14 +29,12 @@ export function Leadership() {
     <section id="leadership" className="relative section-editorial bg-white">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-12">
         <div className="max-w-2xl mb-16 sm:mb-20">
-          <p className="mb-3 text-[13px] font-semibold text-crimson">
-            Leadership
-          </p>
-          <h2 className="font-serif text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl md:text-5xl">
-            University leadership
+          <p className="text-sm text-ink-muted mb-3">Leadership</p>
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-navy-900 tracking-tight leading-tight">
+            Governing leadership
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-ink-muted sm:text-lg">
-            The chancellor, vice-chancellor, and director of RGUKT Ongole.
+          <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed">
+            Chancellor, Vice Chancellor, and Director serving RGUKT Andhra Pradesh and the Ongole campus.
           </p>
         </div>
 

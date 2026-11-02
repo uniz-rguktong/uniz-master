@@ -5,7 +5,7 @@ import type { InstituteData, InstitutePage as InstitutePageType } from "../types
 import { PersonPhoto } from "../components/common/PersonPhoto";
 import { initials } from "../lib/initials";
 import { usePageTitle } from "../lib/usePageTitle";
-import { PageIntro } from "../components/layout/PageIntro";
+import { PageHero } from "../components/layout/PageHero";
 
 const PAGE_NAMES: Record<string, string> = {
   aboutrgukt: "About RGUKT",
@@ -32,26 +32,24 @@ function AboutRguktPage({ data }: { data: InstituteData }) {
 
   return (
     <div className="min-h-screen bg-slate-50">
-
-      {/* ── Hero Banner ── */}
-      <PageIntro
-        kicker="Rajiv Gandhi University of Knowledge Technologies"
+      <PageHero
+        eyebrow="Rajiv Gandhi University of Knowledge Technologies"
         title="About RGUKT"
-        lede="Established to provide world-class education to the gifted rural youth of Andhra Pradesh — a residential, technology-driven university."
+        description="Residential, technology-driven higher education for gifted rural youth of Andhra Pradesh."
       />
 
       {/* ── Key Stats Bar ── */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative mb-16 mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="relative mb-16 grid grid-cols-2 md:grid-cols-4 gap-4 pt-10">
           {[
-            { value: "2008", label: "Year Founded" },
-            { value: "6 Yrs", label: "Integrated Program" },
-            { value: "Top 1%", label: "Rural Students" },
-            { value: "4 Campuses", label: "Across AP" },
+            { value: "2008", label: "Year founded" },
+            { value: "6 years", label: "Integrated program" },
+            { value: "Residential", label: "Campus model" },
+            { value: "4", label: "AP campuses" },
           ].map((stat) => (
-            <div key={stat.label} className="bg-white rounded-2xl shadow-md border border-slate-100 px-6 py-5 text-center">
-              <div className="text-2xl font-extrabold text-navy-900">{stat.value}</div>
-              <div className="text-xs font-semibold text-slate-500 tracking-widest mt-1">{stat.label}</div>
+            <div key={stat.label} className="bg-white rounded-xl border border-line px-6 py-5 text-left">
+              <div className="text-2xl font-medium text-navy-900 tabular-nums">{stat.value}</div>
+              <div className="text-sm text-ink-muted mt-1">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -95,19 +93,18 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
 
   return (
     <div className="min-h-screen bg-slate-50">
-
-      <PageIntro
-        kicker="Rajiv Gandhi University of Knowledge Technologies"
+      <PageHero
+        eyebrow="Rajiv Gandhi University of Knowledge Technologies"
         title="Governing Council"
-        lede="The Governing Council is the apex body that provides strategic direction and policy oversight to RGUKT."
+        description="Strategic direction and policy oversight for RGUKT from academics, administrators, and industry representatives."
       />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-8">
 
         {/* ── Chairperson Spotlight ── */}
         {chair && (
-          <div className="relative mb-16 mt-10 flex flex-col overflow-hidden border border-line bg-white md:flex-row">
-            <div className="md:w-64 flex-shrink-0 bg-gradient-to-br from-navy-900 to-[#1e1b6e] flex items-center justify-center p-8">
+          <div className="relative -mt-10 mb-16 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden flex flex-col md:flex-row">
+            <div className="md:w-64 flex-shrink-0 bg-navy-900 flex items-center justify-center p-8">
               <PersonPhoto
               src={chair.photo}
               name={chair.name}
@@ -187,7 +184,8 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
 //  Generic Institute Page — upgraded premium render
 //  Handles: Campus Life, Education System, RTI Info, SC/ST Cell
 // ────────────────────────────────────────────────────────────
-function GenericInstitutePage({ data, displayName }: { data: InstituteData; displayName: string }) {
+function GenericInstitutePage({ data, displayName }: { data: InstituteData; displayName: string; pageName?: string }) {
+
   // Only show sections that have content and are not the address block (shown separately)
   const meaningfulSections = (data?.sections ?? []).filter(
     s => s.content.some(c => c.trim()) && !s.title.toLowerCase().includes("address")
@@ -196,11 +194,9 @@ function GenericInstitutePage({ data, displayName }: { data: InstituteData; disp
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <PageHero eyebrow="RGUKT Ongole campus" title={displayName} />
 
-      {/* ── Hero Banner ── */}
-      <PageIntro kicker="RGUKT Ongole Campus" title={displayName} />
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-8">
 
         {/* ── Text Sections ── */}
         {meaningfulSections.length > 0 && (
@@ -324,7 +320,7 @@ export function InstitutePage() {
       <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-navy-900 border-t-transparent"></div>
-          <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">Loading {displayName}...</p>
+          <p className="text-sm text-ink-muted">Loading {displayName}</p>
         </div>
       </div>
     );
@@ -351,6 +347,6 @@ export function InstitutePage() {
     return <AboutRguktPage data={data} />;
   }
 
-  return <GenericInstitutePage data={data!} displayName={displayName} />;
+  return <GenericInstitutePage data={data!} displayName={displayName} pageName={pageName} />;
 }
 

@@ -4,6 +4,7 @@ import type { HomeData, Notification } from "../types/api";
 import { usePageTitle } from "../lib/usePageTitle";
 
 import { HeroAndTitle } from "../components/sections/HeroAndTitle";
+import { UniZPortalStrip } from "../components/sections/UniZPortalStrip";
 import { Leadership } from "../components/sections/Leadership";
 import { Media } from "../components/sections/Media";
 import { Logos3 } from "../components/blocks/logos3";
@@ -21,7 +22,7 @@ export function HomePage() {
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
-  usePageTitle("RGUKT Ongole · IIIT");
+  usePageTitle("IIIT Ongole :: RGUKT-AP");
 
   useEffect(() => {
     async function loadData() {
@@ -52,9 +53,7 @@ export function HomePage() {
       <div className="flex h-screen w-full items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-5">
           <div className="h-10 w-10 animate-spin rounded-full border-2 border-navy border-t-transparent" />
-          <p className="text-slate-500 font-medium tracking-[0.16em] text-xs uppercase">
-            Loading campus
-          </p>
+          <p className="text-sm text-ink-muted">Loading campus</p>
         </div>
       </div>
     );
@@ -65,6 +64,7 @@ export function HomePage() {
   const heroImages = [
     "/carousel/VRD.png.webp",
     "/carousel/all.jpg.webp",
+    "/carousel/Sports.png.webp",
     "/carousel/Cul.png.webp",
     "https://rguktong.ac.in/svgs/carosel/1%20ind.jpeg",
     "https://rguktong.ac.in/svgs/carosel/WS22.jpeg",
@@ -109,6 +109,8 @@ export function HomePage() {
         images={heroImages}
         announcements={homeData.announcements || []}
       />
+
+      <UniZPortalStrip />
 
       <Leadership />
 

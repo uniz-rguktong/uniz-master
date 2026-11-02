@@ -2,49 +2,45 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getAcademicPage } from "../types/api";
 import type { AcademicSection, AcademicPageType } from "../types/api";
+import { Download, ExternalLink, FileText, GraduationCap } from "lucide-react";
+import { PageHero } from "../components/layout/PageHero";
 import { usePageTitle } from "../lib/usePageTitle";
-import { PageIntro } from "../components/layout/PageIntro";
-import { Download, ExternalLink, FileText, BookOpen, Calendar, GraduationCap } from "lucide-react";
 
 // ── Page metadata ──────────────────────────────────────────────────
 const PAGE_META: Record<string, {
   displayName: string;
   subtitle: string;
-  pill: string;
-  pillBg: string;
-  pillBorder: string;
-  icon: React.ReactNode;
+  eyebrow: string;
 }> = {
   academicprograms: {
     displayName: "Academic Programs",
-    subtitle: "Explore the undergraduate and integrated programs offered at RGUKT Ongole, designed to empower gifted rural youth with world-class technical education.",
-    pill: "text-sky-300", pillBg: "bg-sky-400/10", pillBorder: "border-sky-400/30",
-    icon: <GraduationCap className="w-5 h-5" />,
+    subtitle: "Undergraduate and integrated programs offered at RGUKT Ongole for gifted rural youth.",
+    eyebrow: "RGUKT Ongole · Academics",
   },
   academiccalender: {
     displayName: "Academic Calendar",
-    subtitle: "Access semester-wise academic calendars with key dates, examination schedules, and holiday information for each academic year.",
-    pill: "text-amber-300", pillBg: "bg-amber-400/10", pillBorder: "border-amber-400/30",
-    icon: <Calendar className="w-5 h-5" />,
+    subtitle: "Semester calendars with examination schedules and holidays for each academic year.",
+    eyebrow: "RGUKT Ongole · Academics",
   },
   academicregulations: {
     displayName: "Academic Regulations",
-    subtitle: "Official academic rules, regulations, and guidelines governing the conduct and evaluation of students at RGUKT Ongole.",
-    pill: "text-violet-300", pillBg: "bg-violet-400/10", pillBorder: "border-violet-400/30",
-    icon: <FileText className="w-5 h-5" />,
+    subtitle: "Rules and guidelines governing student conduct and evaluation at RGUKT Ongole.",
+    eyebrow: "RGUKT Ongole · Academics",
   },
   curicula: {
     displayName: "Curricula",
-    subtitle: "Download department-wise curriculum documents covering course structures, credit requirements, and syllabi for each engineering discipline.",
-    pill: "text-emerald-300", pillBg: "bg-emerald-400/10", pillBorder: "border-emerald-400/30",
-    icon: <BookOpen className="w-5 h-5" />,
+    subtitle: "Department-wise curriculum documents, credit requirements, and syllabi.",
+    eyebrow: "RGUKT Ongole · Academics",
   },
 };
 
-// ── Shared hero banner ─────────────────────────────────────────────
 function HeroBanner({ meta }: { meta: typeof PAGE_META[string] }) {
   return (
-    <PageIntro kicker="RGUKT Ongole · Academics" title={meta.displayName} lede={meta.subtitle} />
+    <PageHero
+      eyebrow={meta.eyebrow}
+      title={meta.displayName}
+      description={meta.subtitle}
+    />
   );
 }
 
@@ -214,9 +210,7 @@ export function AcademicsPage() {
       <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-navy-900 border-t-transparent" />
-          <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">
-            Loading {meta.displayName}...
-          </p>
+          <p className="text-sm text-ink-muted">Loading {meta.displayName}</p>
         </div>
       </div>
     );

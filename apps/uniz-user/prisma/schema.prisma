@@ -455,3 +455,145 @@ model InfoItem {
 
   @@index([category])
 }
+
+model Club {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String   @unique
+  category     String   @default("technical")
+  description  String   @default("")
+  coordinators String   @default("")
+  active       Boolean  @default(true)
+  createdBy    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ClubMember {
+  id        String   @id @default(uuid()) @db.Uuid
+  clubId    String   @db.Uuid
+  username  String
+  role      String   @default("member")
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+
+  @@unique([clubId, username])
+  @@index([username])
+}
+
+model ClubEvent {
+  id          String   @id @default(uuid()) @db.Uuid
+  clubId      String   @db.Uuid
+  title       String
+  description String   @default("")
+  venue       String   @default("")
+  startsAt    DateTime
+  infoItemId  String?
+  createdBy   String
+  createdAt   DateTime @default(now())
+
+  @@index([clubId])
+}
+
+model ConsultancyProject {
+  id         String    @id @default(uuid()) @db.Uuid
+  title      String
+  client     String
+  faculty    String    @default("")
+  department String    @default("")
+  valueInr   Float     @default(0)
+  status     String    @default("proposed")
+  startDate  DateTime?
+  endDate    DateTime?
+  notes      String    @default("")
+  createdBy  String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([status])
+}
+
+model AdmissionCycle {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String   @unique
+  academicYear String
+  programs     String   @default("")
+  opensAt      DateTime
+  closesAt     DateTime
+  feeInr       Float    @default(0)
+  instructions String   @default("")
+  active       Boolean  @default(true)
+  createdBy    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Application {
+  id         String   @id @default(uuid()) @db.Uuid
+  cycleId    String   @db.Uuid
+  refNo      String   @unique
+  name       String
+  email      String
+  phone      String
+  dob        String   @default("")
+  gender     String   @default("")
+  category   String   @default("")
+  program    String
+  board      String   @default("")
+  percentage Float    @default(0)
+  guardian   String   @default("")
+  address    String   @default("")
+  status     String   @default("submitted")
+  reviewNote String   @default("")
+  reviewedBy String   @default("")
+  feeStatus  String   @default("pending")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([cycleId, email])
+  @@index([cycleId, status])
+}
+
+model ApplicationDocument {
+  id            String   @id @default(uuid()) @db.Uuid
+  applicationId String   @db.Uuid
+  kind          String
+  url           String
+  createdAt     DateTime @default(now())
+
+  @@index([applicationId])
+}
+
+model StaffRecord {
+  id             String         @id @default(uuid()) @db.Uuid
+  personType     String
+  personId       String
+  employeeId     String         @default("")
+  designation    String         @default("")
+  department     String         @default("")
+  cadre          String         @default("")
+  employmentType String         @default("regular")
+  joinedOn       DateTime?
+  status         String         @default("active")
+  notes          String         @default("")
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  events         ServiceEvent[]
+
+  @@unique([personType, personId])
+  @@index([department])
+}
+
+model ServiceEvent {
+  id        String      @id @default(uuid()) @db.Uuid
+  staffId   String      @db.Uuid
+  staff     StaffRecord @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  kind      String
+  date      DateTime
+  fromValue String      @default("")
+  toValue   String      @default("")
+  details   String      @default("")
+  createdBy String
+  createdAt DateTime    @default(now())
+
+  @@index([staffId, date])
+}

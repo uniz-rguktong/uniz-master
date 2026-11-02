@@ -17,6 +17,7 @@ import {
   Library,
   Briefcase,
   Info,
+  Handshake,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { adminCardClass } from "@/components/admin/admin-ui";
@@ -39,6 +40,10 @@ import SystemLogsSection from "./SystemLogsSection";
 import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
 import FeedbackAdmin from "../feedback/FeedbackAdmin";
 import FeesAdmin from "../fees/FeesAdmin";
+import EstablishmentAdmin from "../establishment/EstablishmentAdmin";
+import AdmissionsAdmin from "../admissions/AdmissionsAdmin";
+import ConsultancyAdmin from "../consultancy/ConsultancyAdmin";
+import ClubsAdmin from "../../clubs/ClubsAdmin";
 import InfoAdmin from "../../info/InfoAdmin";
 import AlumniAdmin from "../../alumni/AlumniAdmin";
 import PlacementAdmin from "../placement/PlacementAdmin";
@@ -79,6 +84,10 @@ export default function WebmasterDashboard() {
               "exam_duties",
               "feedback",
               "fees",
+              "establishment",
+              "admissions",
+              "consultancy",
+              "clubs",
               "info",
               "alumni",
               "placement",
@@ -168,6 +177,18 @@ export default function WebmasterDashboard() {
         ...(role === "webadmin" && isModuleEnabled("INFO_CENTRE")
           ? [{ id: "info", label: "Info Centre", icon: Info }]
           : []),
+        ...(role === "webadmin" && isModuleEnabled("CLUBS")
+          ? [{ id: "clubs", label: "Clubs", icon: Users }]
+          : []),
+        ...(role === "webadmin" && isModuleEnabled("CLUBS")
+          ? [{ id: "consultancy", label: "Consultancy", icon: Handshake }]
+          : []),
+        ...(role === "webadmin" && isModuleEnabled("ADMISSIONS")
+          ? [{ id: "admissions", label: "Admissions", icon: ClipboardList }]
+          : []),
+        ...(role === "webadmin" && isModuleEnabled("ESTABLISHMENT")
+          ? [{ id: "establishment", label: "Establishment", icon: Briefcase }]
+          : []),
         ...(role === "webadmin" && isModuleEnabled("FEES")
           ? [{ id: "fees", label: "Fees", icon: Wallet }]
           : []),
@@ -238,6 +259,14 @@ export default function WebmasterDashboard() {
         return <FeedbackAdmin />;
       case "fees":
         return <FeesAdmin />;
+      case "establishment":
+        return <EstablishmentAdmin />;
+      case "admissions":
+        return <AdmissionsAdmin />;
+      case "consultancy":
+        return <ConsultancyAdmin />;
+      case "clubs":
+        return <ClubsAdmin />;
       case "info":
         return <InfoAdmin />;
       case "alumni":
