@@ -10,7 +10,18 @@ export interface ModuleRoute {
   roles: string[];
 }
 
-export const MODULE_ROUTES: ModuleRoute[] = [];
+export const MODULE_ROUTES: ModuleRoute[] = [
+  {
+    flag: "FEATURE_FACULTY",
+    prefix: "/api/v1/leave",
+    roles: ["faculty", "teacher", "hod", "dean", "director", "webadmin"],
+  },
+  {
+    flag: "FEATURE_FACULTY",
+    prefix: "/api/v1/duty",
+    roles: ["faculty", "teacher", "hod", "dean", "director", "webadmin"],
+  },
+];
 
 export function activeModuleRoutes(
   env: Record<string, string | undefined> = process.env,
