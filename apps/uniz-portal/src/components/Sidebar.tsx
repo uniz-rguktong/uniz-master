@@ -26,6 +26,7 @@ import {
   BookOpen,
   Briefcase,
   Info,
+  Users,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -63,6 +64,7 @@ const MyLibrary = lazy(() => import("../pages/library/MyLibrary"));
 const StudentPlacement = lazy(() => import("../pages/student/placement/StudentPlacement"));
 const AlumniHome = lazy(() => import("../pages/alumni/AlumniHome"));
 const StudentInfo = lazy(() => import("../pages/info/StudentInfo"));
+const Clubs = lazy(() => import("../pages/clubs/Clubs"));
 const StudentFees = lazy(() => import("../pages/student/fees/StudentFees"));
 const StudentFeedback = lazy(
   () => import("../pages/student/feedback/StudentFeedback"),
@@ -88,6 +90,7 @@ interface MainContent {
     | "grievance"
     | "feedback"
     | "fees"
+    | "clubs"
     | "info"
     | "alumni"
     | "placement"
@@ -268,6 +271,19 @@ export default function Sidebar({ content }: MainContent) {
           },
         ]
       : []),
+    ...(isModuleEnabled("CLUBS")
+      ? [
+          {
+            id: "clubs",
+            label: "Clubs",
+            href: "/student/clubs",
+            content: "clubs" as const,
+            icon: Users,
+            activeColor: "text-navy-900",
+            hoverColor: "hover:text-navy-700",
+          },
+        ]
+      : []),
     ...(isModuleEnabled("FEES")
       ? [
           {
@@ -328,6 +344,7 @@ export default function Sidebar({ content }: MainContent) {
     grievance: <Grievance />,
     feedback: <StudentFeedback />,
     fees: <StudentFees />,
+    "clubs": <Clubs />,
     "info": <StudentInfo />,
     "alumni": <AlumniHome />,
     "placement": <StudentPlacement />,
