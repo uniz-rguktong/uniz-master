@@ -107,7 +107,7 @@ export default function FeedbackAdmin() {
     >
       {error ? <DisabledState reason={error} /> : null}
       <select
-        className="rounded-lg border px-3 py-2 text-sm"
+ className="rounded-lg border px-3 py-2 text-sm"
         value={semesterId}
         onChange={(e) => setSemesterId(e.target.value)}
       >
@@ -118,15 +118,15 @@ export default function FeedbackAdmin() {
         ))}
       </select>
 
-      <div className="flex flex-wrap items-end gap-2 rounded-xl border p-4 text-sm">
+ <div className="flex flex-wrap items-end gap-2 rounded-xl border p-4 text-sm">
         <input
-          className="rounded border px-2 py-1"
+ className="rounded border px-2 py-1"
           placeholder="Search subject"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
         <select
-          className="rounded border px-2 py-1"
+ className="rounded border px-2 py-1"
           value={form.subjectId}
           onChange={(e) => setForm({ ...form, subjectId: e.target.value })}
         >
@@ -138,7 +138,7 @@ export default function FeedbackAdmin() {
           ))}
         </select>
         <input
-          className="rounded border px-2 py-1"
+ className="rounded border px-2 py-1"
           placeholder="Faculty username (optional)"
           value={form.facultyUsername}
           onChange={(e) =>
@@ -147,12 +147,12 @@ export default function FeedbackAdmin() {
         />
         <input
           type="date"
-          className="rounded border px-2 py-1"
+ className="rounded border px-2 py-1"
           value={form.closesAt}
           onChange={(e) => setForm({ ...form, closesAt: e.target.value })}
         />
         <button
-          className="rounded bg-slate-900 px-3 py-1 text-white"
+ className="rounded bg-slate-900 px-3 py-1 text-white"
           onClick={create}
         >
           Open form
@@ -161,10 +161,10 @@ export default function FeedbackAdmin() {
 
       <div className="space-y-2">
         {forms.length === 0 ? (
-          <p className="text-sm text-slate-500">No forms for this semester.</p>
+ <p className="text-sm text-slate-500">No forms for this semester.</p>
         ) : null}
         {forms.map((f) => (
-          <div key={f.id} className="rounded-xl border p-3 text-sm">
+ <div key={f.id} className="rounded-xl border p-3 text-sm">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span>
                 <b>{f.title}</b>
@@ -176,14 +176,14 @@ export default function FeedbackAdmin() {
               </span>
               <span className="flex gap-2">
                 <button
-                  className="rounded border px-2 py-1"
+ className="rounded border px-2 py-1"
                   onClick={() => setOpen(open === f.id ? null : f.id)}
                 >
                   Results
                 </button>
                 {f.status === "open" ? (
                   <button
-                    className="rounded border px-2 py-1"
+ className="rounded border px-2 py-1"
                     onClick={() => close(f.id)}
                   >
                     Close

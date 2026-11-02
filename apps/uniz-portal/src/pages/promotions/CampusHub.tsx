@@ -50,22 +50,22 @@ export default function CampusHub() {
     {
       title: "Event Discovery",
       description: "Browse through all campus events in one central place.",
-      icon: <Search size={24} className="text-[#061B33]" />,
+ icon: <Search size={24} className="text-[#061B33]" />,
     },
     {
       title: "Real-time Updates",
       description: "Get notified about new events and updates instantly.",
-      icon: <Bell size={24} className="text-[#061B33]" />,
+ icon: <Bell size={24} className="text-[#061B33]" />,
     },
     {
       title: "Event Categories",
       description: "Filter events by type, department, or interest groups.",
-      icon: <Tag size={24} className="text-[#061B33]" />,
+ icon: <Tag size={24} className="text-[#061B33]" />,
     },
     {
       title: "Save & Share",
       description: "Bookmark events and share them with friends.",
-      icon: <Share2 size={24} className="text-[#061B33]" />,
+ icon: <Share2 size={24} className="text-[#061B33]" />,
     },
   ];
 
@@ -93,12 +93,12 @@ export default function CampusHub() {
   // Staggered animation for svg elements
 
   return (
-    <div className="min-h-screen text-[#061B33] font-sans">
+ <div className="min-h-screen text-[#061B33] font-sans">
       {/* Hero Section */}
-      <header className="relative overflow-hidden bg-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+ <header className="relative overflow-hidden bg-gray-100">
+ <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
           <motion.div
-            className="flex flex-col items-center text-center"
+ className="flex flex-col items-center text-center"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -109,22 +109,22 @@ export default function CampusHub() {
               transition={{ duration: 0.7, ease: "easeOut" }}
               className="mb-8"
             >
-              <div className="flex items-center justify-center w-20 h-20 bg-[#0A2540] rounded-full mb-4">
-                <Calendar size={36} className="text-white" />
+ <div className="flex items-center justify-center w-20 h-20 bg-[#0A2540] rounded-full mb-4">
+ <Calendar size={36} className="text-white" />
               </div>
             </motion.div>
 
             <motion.h1
-              className="text-5xl md:text-6xl font-bold tracking-tight mb-6"
+ className="text-5xl md:text-6xl font-medium tracking-tight mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
             >
-              Campus<span className="text-gray-500">Hub</span>
+ Campus<span className="text-gray-500">Hub</span>
             </motion.h1>
 
             <motion.p
-              className="text-xl md:text-2xl text-gray-700 max-w-2xl mb-10"
+ className="text-xl md:text-2xl text-gray-700 max-w-2xl mb-10"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.8 }}
@@ -140,13 +140,13 @@ export default function CampusHub() {
             >
               <a
                 href="https://srees-campushub.vercel.app"
-                className="px-8 py-3 bg-navy-900 text-white font-bold rounded-xl hover:bg-[#0A2540] transition-all flex items-center justify-center shadow-sm"
+ className="px-8 py-3 bg-navy-900 text-white font-medium rounded-xl hover:bg-[#0A2540] transition-all flex items-center justify-center shadow-sm"
               >
                 Explore Events <ArrowRight size={16} className="ml-2" />
               </a>
               <a
                 href="https://srees-campushub.vercel.app"
-                className="px-8 py-3 border-2 border-navy-200 text-navy-600 font-bold rounded-xl hover:bg-navy-50 transition-all flex items-center justify-center"
+ className="px-8 py-3 border-2 border-navy-200 text-navy-600 font-medium rounded-xl hover:bg-navy-50 transition-all flex items-center justify-center"
               >
                 Learn More
               </a>
@@ -195,19 +195,19 @@ export default function CampusHub() {
       </header>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+ <section className="py-20 bg-white">
+ <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
-            className="text-center mb-16"
+ className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl font-bold mb-3">
+ <h2 className="text-3xl font-medium mb-3">
               Never Miss a Campus Event Again
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+ <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               CampusHub brings together all events from across your campus in
               one easy-to-use platform
             </p>
@@ -222,15 +222,15 @@ export default function CampusHub() {
           >
             <motion.div
               variants={itemVariants}
-              className="flex flex-col items-center text-center"
+ className="flex flex-col items-center text-center"
             >
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                <Calendar size={28} className="text-[#061B33]" />
+ <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+ <Calendar size={28} className="text-[#061B33]" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">
+ <h3 className="text-xl font-semibold mb-3">
                 All Events, One Place
               </h3>
-              <p className="text-gray-600">
+ <p className="text-gray-600">
                 Find academic, social, cultural, and athletic events all in a
                 single platform.
               </p>
@@ -238,13 +238,13 @@ export default function CampusHub() {
 
             <motion.div
               variants={itemVariants}
-              className="flex flex-col items-center text-center"
+ className="flex flex-col items-center text-center"
             >
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                <Bell size={28} className="text-[#061B33]" />
+ <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+ <Bell size={28} className="text-[#061B33]" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Stay Updated</h3>
-              <p className="text-gray-600">
+ <h3 className="text-xl font-semibold mb-3">Stay Updated</h3>
+ <p className="text-gray-600">
                 Get personalized notifications about events that match your
                 interests.
               </p>
@@ -252,15 +252,15 @@ export default function CampusHub() {
 
             <motion.div
               variants={itemVariants}
-              className="flex flex-col items-center text-center"
+ className="flex flex-col items-center text-center"
             >
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                <Users size={28} className="text-[#061B33]" />
+ <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+ <Users size={28} className="text-[#061B33]" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">
+ <h3 className="text-xl font-semibold mb-3">
                 Connect with Others
               </h3>
-              <p className="text-gray-600">
+ <p className="text-gray-600">
                 See who's attending and connect with fellow students with
                 similar interests.
               </p>
@@ -270,17 +270,17 @@ export default function CampusHub() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+ <section className="py-20 bg-gray-50">
+ <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
-            className="text-center mb-16"
+ className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl font-bold mb-3">Powerful Features</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+ <h2 className="text-3xl font-medium mb-3">Powerful Features</h2>
+ <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Everything you need to stay connected with campus life
             </p>
           </motion.div>
@@ -296,19 +296,19 @@ export default function CampusHub() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-white p-8 rounded-xl shadow-sm border border-navy-100 hover:shadow-md transition-shadow"
+ className="bg-white p-8 rounded-xl shadow-sm border border-navy-100 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start">
                   <div className="flex-shrink-0 mr-4">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+ <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
                       {feature.icon}
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">
+ <h3 className="text-xl font-semibold mb-2">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-600">{feature.description}</p>
+ <p className="text-gray-600">{feature.description}</p>
                   </div>
                 </div>
               </motion.div>
@@ -318,8 +318,8 @@ export default function CampusHub() {
       </section>
 
       {/* Event Preview Section */}
-      <section className="py-20 bg-white overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+ <section className="py-20 bg-white overflow-hidden">
+ <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-5 gap-12 items-center">
             <motion.div
               className="md:col-span-2"
@@ -328,10 +328,10 @@ export default function CampusHub() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-3xl font-bold mb-6">
+ <h2 className="text-3xl font-medium mb-6">
                 Discover what's happening on campus
               </h2>
-              <p className="text-lg text-gray-600 mb-8">
+ <p className="text-lg text-gray-600 mb-8">
                 From academic lectures to sports events, clubs, and social
                 gatherings - find everything that matches your interests.
               </p>
@@ -344,7 +344,7 @@ export default function CampusHub() {
                   whileInView="visible"
                   viewport={{ once: true }}
                 >
-                  <div className="mr-3 text-[#061B33]">
+ <div className="mr-3 text-[#061B33]">
                     <Star size={20} />
                   </div>
                   <span>Personalized event recommendations</span>
@@ -357,7 +357,7 @@ export default function CampusHub() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 }}
                 >
-                  <div className="mr-3 text-[#061B33]">
+ <div className="mr-3 text-[#061B33]">
                     <Clock size={20} />
                   </div>
                   <span>Calendar integration and reminders</span>
@@ -370,7 +370,7 @@ export default function CampusHub() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 }}
                 >
-                  <div className="mr-3 text-[#061B33]">
+ <div className="mr-3 text-[#061B33]">
                     <MapPin size={20} />
                   </div>
                   <span>Campus map with event locations</span>
@@ -386,7 +386,7 @@ export default function CampusHub() {
               >
                 <a
                   href="https://srees-campushub.vercel.app"
-                  className="inline-flex items-center px-6 py-3 bg-navy-900 text-white font-bold rounded-xl hover:bg-[#0A2540] transition-all shadow-sm"
+ className="inline-flex items-center px-6 py-3 bg-navy-900 text-white font-medium rounded-xl hover:bg-[#0A2540] transition-all shadow-sm"
                 >
                   Browse Events <ArrowRight size={16} className="ml-2" />
                 </a>
@@ -400,8 +400,8 @@ export default function CampusHub() {
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <div className="bg-gray-50 p-6 rounded-xl">
-                <h3 className="text-xl font-semibold mb-6">Featured Events</h3>
+ <div className="bg-gray-50 p-6 rounded-xl">
+ <h3 className="text-xl font-semibold mb-6">Featured Events</h3>
 
                 <motion.div
                   className="space-y-4"
@@ -414,32 +414,32 @@ export default function CampusHub() {
                     <motion.div
                       key={index}
                       variants={itemVariants}
-                      className="bg-white p-4 rounded-lg border border-gray-100 flex"
+ className="bg-white p-4 rounded-lg border border-gray-100 flex"
                     >
-                      <div className="w-16 h-16 bg-gray-100 rounded-md flex flex-col items-center justify-center mr-4 flex-shrink-0">
-                        <span className="text-sm text-gray-500">May</span>
-                        <span className="text-xl font-bold">
+ <div className="w-16 h-16 bg-gray-100 rounded-md flex flex-col items-center justify-center mr-4 flex-shrink-0">
+ <span className="text-sm text-gray-500">May</span>
+ <span className="text-xl font-medium">
                           {event.date.split(" ")[1]}
                         </span>
                       </div>
 
                       <div>
-                        <h4 className="font-semibold mb-1">{event.title}</h4>
-                        <div className="flex items-center text-sm text-gray-500 mb-2">
+ <h4 className="font-semibold mb-1">{event.title}</h4>
+ <div className="flex items-center text-sm text-gray-500 mb-2">
                           <Clock size={14} className="mr-1" />
                           <span className="mr-3">{event.date}</span>
                           <MapPin size={14} className="mr-1" />
                           <span>{event.location}</span>
                         </div>
                         <div className="flex items-center">
-                          <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+ <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
                             {event.category}
                           </span>
                           <div className="ml-auto flex">
-                            <button className="mr-2 text-gray-500 hover:text-[#061B33] transition-colors">
+ <button className="mr-2 text-gray-500 hover:text-[#061B33] transition-colors">
                               <Bookmark size={16} />
                             </button>
-                            <button className="text-gray-500 hover:text-[#061B33] transition-colors">
+ <button className="text-gray-500 hover:text-[#061B33] transition-colors">
                               <Share2 size={16} />
                             </button>
                           </div>
@@ -450,7 +450,7 @@ export default function CampusHub() {
                 </motion.div>
 
                 <motion.div
-                  className="mt-6 text-center"
+ className="mt-6 text-center"
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
@@ -458,7 +458,7 @@ export default function CampusHub() {
                 >
                   <a
                     href="https://srees-campushub.vercel.app"
-                    className="text-[#061B33] font-medium hover:underline inline-flex items-center"
+ className="text-[#061B33] font-medium hover:underline inline-flex items-center"
                   >
                     View all events <ArrowRight size={14} className="ml-1" />
                   </a>
@@ -470,17 +470,17 @@ export default function CampusHub() {
       </section>
 
       {/* Interactive Demo */}
-      <section className="py-20 bg-gray-50 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+ <section className="py-20 bg-gray-50 overflow-hidden">
+ <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
-            className="text-center mb-16"
+ className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl font-bold mb-3">How It Works</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+ <h2 className="text-3xl font-medium mb-3">How It Works</h2>
+ <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               A simple, intuitive platform designed for campus communities
             </p>
           </motion.div>
@@ -718,8 +718,8 @@ export default function CampusHub() {
       </section>
 
       {/* For Event Organizers Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+ <section className="py-20 bg-white">
+ <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -821,8 +821,8 @@ export default function CampusHub() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-3xl font-bold mb-6">For Event Organizers</h2>
-              <p className="text-lg text-gray-600 mb-8">
+ <h2 className="text-3xl font-medium mb-6">For Event Organizers</h2>
+ <p className="text-lg text-gray-600 mb-8">
                 Easily create and promote your campus events to reach the
                 largest audience possible.
               </p>
@@ -836,15 +836,15 @@ export default function CampusHub() {
               >
                 <motion.div variants={itemVariants} className="flex">
                   <div className="flex-shrink-0 mr-4">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                      <Megaphone size={24} className="text-[#061B33]" />
+ <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+ <Megaphone size={24} className="text-[#061B33]" />
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">
+ <h3 className="text-lg font-semibold mb-2">
                       Maximum Visibility
                     </h3>
-                    <p className="text-gray-600">
+ <p className="text-gray-600">
                       Reach thousands of students across campus with just a few
                       clicks.
                     </p>
@@ -853,15 +853,15 @@ export default function CampusHub() {
 
                 <motion.div variants={itemVariants} className="flex">
                   <div className="flex-shrink-0 mr-4">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                      <MessageCircle size={24} className="text-[#061B33]" />
+ <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+ <MessageCircle size={24} className="text-[#061B33]" />
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">
+ <h3 className="text-lg font-semibold mb-2">
                       Attendee Engagement
                     </h3>
-                    <p className="text-gray-600">
+ <p className="text-gray-600">
                       Interact with attendees before, during, and after your
                       events.
                     </p>
@@ -870,15 +870,15 @@ export default function CampusHub() {
 
                 <motion.div variants={itemVariants} className="flex">
                   <div className="flex-shrink-0 mr-4">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                      <Star size={24} className="text-[#061B33]" />
+ <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+ <Star size={24} className="text-[#061B33]" />
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">
+ <h3 className="text-lg font-semibold mb-2">
                       Analytics & Insights
                     </h3>
-                    <p className="text-gray-600">
+ <p className="text-gray-600">
                       Track attendance and gather feedback to improve future
                       events.
                     </p>
@@ -895,7 +895,7 @@ export default function CampusHub() {
               >
                 <a
                   href="https://srees-campushub.vercel.app"
-                  className="inline-flex items-center px-6 py-3 bg-navy-900 text-white font-bold rounded-xl hover:bg-[#0A2540] transition-all shadow-sm"
+ className="inline-flex items-center px-6 py-3 bg-navy-900 text-white font-medium rounded-xl hover:bg-[#0A2540] transition-all shadow-sm"
                 >
                   Create an Event <ArrowRight size={16} className="ml-2" />
                 </a>

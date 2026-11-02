@@ -101,7 +101,7 @@ export default function AdmissionsAdmin() {
       title="Admissions"
       description="Cycles, applications, review. Public form at /admissions."
     >
-      {error && <p className="text-sm text-red-600">{error}</p>}
+ {error && <p className="text-sm text-red-600">{error}</p>}
       <div className={`${cardCls} grid gap-2 md:grid-cols-3`}>
         <input
           className={inputCls}
@@ -179,7 +179,7 @@ export default function AdmissionsAdmin() {
         {cid && (
           <button
             type="button"
-            className="rounded-md border px-2"
+ className="rounded-md border px-2"
             onClick={() => {
               const c = cycles.find((x) => x.id === cid);
               run(
@@ -228,7 +228,7 @@ export default function AdmissionsAdmin() {
           />
           <button
             type="button"
-            className="rounded-md border px-2 py-1"
+ className="rounded-md border px-2 py-1"
             onClick={() => exportCsv(false)}
           >
             Download
@@ -247,7 +247,7 @@ export default function AdmissionsAdmin() {
           <div className="flex flex-wrap justify-between gap-2">
             <button
               type="button"
-              className="text-left"
+ className="text-left"
               onClick={async () =>
                 setOpen(
                   open?.id === a.id
@@ -281,14 +281,14 @@ export default function AdmissionsAdmin() {
             )}
           </div>
           {open?.id === a.id && (
-            <div className="text-slate-600">
+ <div className="text-slate-600">
               {open.email} . {open.phone} . {open.gender} . {open.category} .{" "}
               {open.board} . DOB {open.dob} . {open.guardian}
               <p>{open.address}</p>
               {open.documents.map((d: any) => (
                 <a
                   key={d.id}
-                  className="mr-3 text-blue-700 underline"
+ className="mr-3 text-blue-700 underline"
                   href={d.url}
                   target="_blank"
                   rel="noreferrer"
@@ -298,7 +298,7 @@ export default function AdmissionsAdmin() {
               ))}
               <button
                 type="button"
-                className="ml-2 rounded-md border px-2"
+ className="ml-2 rounded-md border px-2"
                 onClick={() =>
                   run(
                     () =>

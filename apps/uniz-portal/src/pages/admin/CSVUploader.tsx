@@ -98,8 +98,8 @@ export default function SpreadsheetUploader({
   };
 
   return (
-    <div className="bg-white shadow-xl rounded-[2px] p-6">
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
+ <div className="bg-white shadow-xl rounded-lg p-6">
+ <h2 className="text-xl font-medium mb-4">{title}</h2>
 
       <input
         type="file"
@@ -109,19 +109,19 @@ export default function SpreadsheetUploader({
       />
 
       {file && (
-        <p className="text-sm text-gray-600 mb-2">
+ <p className="text-sm text-gray-600 mb-2">
           Selected: <strong>{file.name}</strong> ({data.length} records)
         </p>
       )}
 
-      {error && <div className="text-red-600 font-medium mb-3">⚠️ {error}</div>}
+ {error && <div className="text-red-600 font-medium mb-3">⚠️ {error}</div>}
 
       <button
         onClick={handleUpload}
         disabled={loading || !data.length}
-        className={`px-4 py-2 rounded-lg text-white ${
-          loading ? "bg-gray-500" : "bg-[#0A2540] hover:bg-gray-800"
-        }`}
+ className={`px-4 py-2 rounded-lg text-white ${
+ loading ? "bg-gray-500" : "bg-[#0A2540] hover:bg-gray-800"
+ }`}
       >
         {loading ? "Uploading..." : "Upload"}
       </button>

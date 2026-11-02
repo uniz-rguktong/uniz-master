@@ -19,7 +19,7 @@ const toneBorder: Record<CohortActionConfig["tone"], string> = {
 };
 
 const toneIcon: Record<CohortActionConfig["tone"], string> = {
-  neutral: "bg-navy-100 text-[#0B2A47]",
+  neutral: "bg-navy-100 text-[#0A2540]",
   warning: "bg-amber-50 text-amber-700",
   danger: "bg-rose-50 text-rose-700",
 };
@@ -36,7 +36,7 @@ export default function StudentBulkActionsPanel({
       <div className="space-y-4">
         <div>
           <p className={adminLabelClass}>Cohort bulk actions</p>
-          <p className="text-[13px] text-navy-500 mt-1 max-w-2xl">
+ <p className="text-[13px] text-navy-500 mt-1 max-w-2xl">
             Filter by department, year, and batch — then apply one action at a
             time. Each combination is supported (e.g. all O23 CSE E1 → mark IN).
           </p>
@@ -68,16 +68,16 @@ export default function StudentBulkActionsPanel({
                   </div>
                   <ChevronRight
                     size={16}
-                    className="text-navy-300 group-hover:text-navy-500 mt-1 transition-colors"
+ className="text-navy-300 group-hover:text-navy-500 mt-1 transition-colors"
                   />
                 </div>
-                <h3 className="text-[14px] font-semibold text-navy-900 mt-4 tracking-tight">
+ <h3 className="text-[14px] font-semibold text-navy-900 mt-4 tracking-tight">
                   {action.title}
                 </h3>
-                <p className="text-[12px] text-navy-500 mt-1.5 leading-relaxed">
+ <p className="text-[12px] text-navy-500 mt-1.5 leading-relaxed">
                   {action.description}
                 </p>
-                <p className="text-[10px] font-medium text-navy-400 mt-3 tracking-[0.12em] uppercase">
+ <p className="text-[10px] font-medium text-navy-400 mt-3 ">
                   {action.filterMode === "promote"
                     ? "Dept · from/to year · batch"
                     : "Dept · year · batch"}

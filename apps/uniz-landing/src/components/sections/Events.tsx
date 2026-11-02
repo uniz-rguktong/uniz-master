@@ -14,10 +14,10 @@ export function Events({
     <section id="events" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="inline-flex items-center mb-6 px-6 py-3 text-lg font-bold tracking-wide text-white bg-navy-900 rounded-full shadow-sm">
+          <span className="inline-flex items-center mb-6 px-6 py-3 text-lg font-medium tracking-wide text-white bg-navy-900 rounded-full shadow-sm">
             Procurement & Tenders
           </span>
-          <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900">
+          <h2 className="text-4xl sm:text-5xl font-medium tracking-tight text-slate-900">
             Latest Tenders
           </h2>
           <p className="mt-5 max-w-3xl mx-auto text-lg text-gray-600">
@@ -35,14 +35,14 @@ export function Events({
                 <img
                   src={images[index % images.length]}
                   alt={event.title}
-                  className="h-56 w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="h-56 w-full object-cover group- transition-transform duration-500"
                 />
                 <div className="absolute top-4 left-4 bg-emerald-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
                   {event.date}
                 </div>
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold text-slate-900 leading-snug line-clamp-3">
+                <h3 className="text-xl font-medium text-slate-900 leading-snug line-clamp-3">
                   {event.title}
                 </h3>
                 <a

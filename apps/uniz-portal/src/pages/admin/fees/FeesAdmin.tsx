@@ -133,8 +133,8 @@ export default function FeesAdmin() {
       title="Fees"
       description={`Fee structures and invoices. Record counter and bank payments here. Online payment: ${PAYMENTS_COMING_SOON}.`}
     >
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <div className="grid gap-2 rounded-lg border border-slate-200 bg-white p-4 md:grid-cols-3">
+ {error && <p className="text-sm text-red-600">{error}</p>}
+ <div className="grid gap-2 rounded-lg border border-slate-200 bg-white p-4 md:grid-cols-3">
         <input
           className={input}
           placeholder="Name (e.g. Tuition 2026-27)"
@@ -181,21 +181,21 @@ export default function FeesAdmin() {
         <button
           type="button"
           onClick={create}
-          className="rounded-md bg-navy-900 px-3 py-1.5 text-sm text-white md:col-span-3"
+ className="rounded-md bg-navy-900 px-3 py-1.5 text-sm text-white md:col-span-3"
         >
           Create structure
         </button>
       </div>
 
       <div className="space-y-2">
-        <p className="font-medium text-slate-900">Structures</p>
+ <p className="font-medium text-slate-900">Structures</p>
         {structures.length === 0 && (
-          <p className="text-sm text-slate-500">None yet.</p>
+ <p className="text-sm text-slate-500">None yet.</p>
         )}
         {structures.map((s) => (
           <div
             key={s.id}
-            className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white p-3 text-sm"
+ className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white p-3 text-sm"
           >
             <span>
               {s.name} . {s.academicYear} .{" "}
@@ -206,7 +206,7 @@ export default function FeesAdmin() {
             <button
               type="button"
               onClick={() => issue(s.id)}
-              className="rounded-md border border-slate-300 px-3 py-1"
+ className="rounded-md border border-slate-300 px-3 py-1"
             >
               Issue invoices
             </button>
@@ -216,7 +216,7 @@ export default function FeesAdmin() {
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <p className="font-medium text-slate-900">Invoices</p>
+ <p className="font-medium text-slate-900">Invoices</p>
           <select
             className={input}
             value={status}
@@ -229,12 +229,12 @@ export default function FeesAdmin() {
           </select>
         </div>
         {invoices.length === 0 && (
-          <p className="text-sm text-slate-500">No invoices.</p>
+ <p className="text-sm text-slate-500">No invoices.</p>
         )}
         {invoices.map((i) => (
           <div
             key={i.id}
-            className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white p-3 text-sm"
+ className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white p-3 text-sm"
           >
             <span>
               {i.username} . {i.title} . {rupees(i.paidPaise)} /{" "}
@@ -268,7 +268,7 @@ export default function FeesAdmin() {
                 <button
                   type="button"
                   onClick={() => record(i.id)}
-                  className="rounded-md border border-slate-300 px-3 py-1"
+ className="rounded-md border border-slate-300 px-3 py-1"
                 >
                   Record
                 </button>

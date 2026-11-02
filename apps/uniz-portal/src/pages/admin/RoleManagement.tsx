@@ -190,22 +190,22 @@ export default function RoleManagement() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
+ <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
       {/* Header */}
       <div className="flex flex-col gap-6">
         <button
           onClick={() => navigate("/admin")}
-          className="self-start inline-flex items-center text-sm font-medium text-navy-500 hover:text-navy-800 transition-colors"
+ className="self-start inline-flex items-center text-sm font-medium text-navy-500 hover:text-navy-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
         </button>
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-navy-900">
+ <h1 className="text-2xl font-medium text-navy-900">
               Role Management
             </h1>
-            <p className="text-navy-500 mt-1">
+ <p className="text-navy-500 mt-1">
               Configure admin access and role-based permissions.
             </p>
           </div>
@@ -261,32 +261,32 @@ export default function RoleManagement() {
                   icon={<Search className="w-4 h-4" />}
                 />
               </div>
-              <span className="text-sm text-navy-500 font-medium bg-navy-100 px-3 py-1 rounded-full">
+ <span className="text-sm text-navy-500 font-medium bg-navy-100 px-3 py-1 rounded-full">
                 {filtered.length} Admins
               </span>
             </div>
 
-            <div className="bg-white border border-navy-200 rounded-xl overflow-hidden shadow-sm">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-navy-50 text-navy-500 text-xs font-semibold">
+ <div className="bg-white border border-navy-200 rounded-xl overflow-hidden shadow-sm">
+ <table className="w-full text-left text-sm">
+ <thead className="bg-navy-50 text-navy-500 text-xs font-semibold">
                   <tr>
-                    <th className="px-6 py-4">Admin User</th>
-                    <th className="px-6 py-4">Assigned Role</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
+ <th className="px-6 py-4">Admin User</th>
+ <th className="px-6 py-4">Assigned Role</th>
+ <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-navy-100">
                   {loading ? (
                     [1, 2, 3].map((i) => (
                       <tr key={i} className="animate-pulse">
-                        <td className="px-6 py-4">
-                          <div className="h-4 bg-navy-100 rounded w-32" />
+ <td className="px-6 py-4">
+ <div className="h-4 bg-navy-100 rounded w-32" />
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="h-8 bg-navy-100 rounded w-24" />
+ <td className="px-6 py-4">
+ <div className="h-8 bg-navy-100 rounded w-24" />
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="h-8 bg-navy-100 rounded w-8 ml-auto" />
+ <td className="px-6 py-4">
+ <div className="h-8 bg-navy-100 rounded w-8 ml-auto" />
                         </td>
                       </tr>
                     ))
@@ -294,7 +294,7 @@ export default function RoleManagement() {
                     <tr>
                       <td
                         colSpan={3}
-                        className="px-6 py-12 text-center text-navy-500"
+ className="px-6 py-12 text-center text-navy-500"
                       >
                         No admins found matching your search.
                       </td>
@@ -303,19 +303,19 @@ export default function RoleManagement() {
                     filtered.map((a) => (
                       <tr
                         key={a.id}
-                        className="hover:bg-navy-50 transition-colors group"
+ className="hover:bg-navy-50 transition-colors group"
                       >
-                        <td className="px-6 py-4 font-medium text-navy-900 group-hover:text-navy-900 transition-colors">
+ <td className="px-6 py-4 font-medium text-navy-900 group-hover:text-navy-900 transition-colors">
                           {a.username}
                         </td>
-                        <td className="px-6 py-4">
+ <td className="px-6 py-4">
                           <div className="relative inline-block w-40">
                             <select
                               value={a.role}
                               onChange={(e) =>
                                 assignRole(a.username, e.target.value as Role)
                               }
-                              className="appearance-none w-full bg-white border border-navy-200 text-navy-700 py-1.5 pl-3 pr-8 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent font-medium shadow-sm transition-all hover:border-navy-300"
+ className="appearance-none w-full bg-white border border-navy-200 text-navy-700 py-1.5 pl-3 pr-8 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent font-medium shadow-sm transition-all hover:border-navy-300"
                             >
                               {roles.map((r) => (
                                 <option
@@ -327,7 +327,7 @@ export default function RoleManagement() {
                                 </option>
                               ))}
                             </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-navy-500">
+ <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-navy-500">
                               <svg
                                 className="h-4 w-4 fill-current"
                                 viewBox="0 0 20 20"
@@ -337,10 +337,10 @@ export default function RoleManagement() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-right">
+ <td className="px-6 py-4 text-right">
                           <button
                             onClick={() => deleteAdmin(a.username)}
-                            className="text-navy-400 hover:text-red-600 transition-colors p-2 hover:bg-red-50 rounded-lg"
+ className="text-navy-400 hover:text-red-600 transition-colors p-2 hover:bg-red-50 rounded-lg"
                             title="Delete Admin"
                           >
                             <Trash2 className="w-5 h-5" />
@@ -358,15 +358,15 @@ export default function RoleManagement() {
         {/* Add Admin Tab */}
         {tab === "add" && (
           <div className="max-w-xl mx-auto animate-in fade-in duration-300 pt-8">
-            <div className="bg-white p-8 rounded-[2px] border border-navy-200 shadow-sm">
-              <div className="text-center mb-8">
-                <div className="mx-auto h-12 w-12 bg-navy-50 rounded-full flex items-center justify-center mb-4 text-navy-900">
+ <div className="bg-white p-8 rounded-lg border border-navy-200 shadow-sm">
+ <div className="text-center mb-8">
+ <div className="mx-auto h-12 w-12 bg-navy-50 rounded-full flex items-center justify-center mb-4 text-navy-900">
                   <UserPlus className="w-6 h-6" />
                 </div>
-                <h2 className="text-xl font-bold text-navy-900">
+ <h2 className="text-xl font-medium text-navy-900">
                   Create New Admin
                 </h2>
-                <p className="text-navy-500 mt-1">
+ <p className="text-navy-500 mt-1">
                   Grant administrative access to a new user.
                 </p>
               </div>
@@ -391,7 +391,7 @@ export default function RoleManagement() {
                 />
 
                 <div>
-                  <label className="block text-sm font-medium text-navy-700 mb-1.5 ml-1">
+ <label className="block text-sm font-medium text-navy-700 mb-1.5 ml-1">
                     Initial Role
                   </label>
                   <select
@@ -399,7 +399,7 @@ export default function RoleManagement() {
                     onChange={(e) =>
                       setNewAdmin({ ...newAdmin, role: e.target.value as Role })
                     }
-                    className="w-full bg-navy-50 border border-navy-200 rounded-xl px-4 py-3 text-navy-900 focus:ring-2 focus:ring-navy-900 focus:bg-white outline-none transition-all"
+ className="w-full bg-navy-50 border border-navy-200 rounded-xl px-4 py-3 text-navy-900 focus:ring-2 focus:ring-navy-900 focus:bg-white outline-none transition-all"
                   >
                     {roles.map((r) => (
                       <option key={r} value={r} className="capitalize">
@@ -413,7 +413,7 @@ export default function RoleManagement() {
                   <Button
                     onclickFunction={addAdmin}
                     value="Create Admin Account"
-                    className="w-full bg-navy-900 hover:bg-navy-800"
+ className="w-full bg-navy-900 hover:bg-navy-800"
                   />
                 </div>
               </div>
@@ -426,8 +426,8 @@ export default function RoleManagement() {
           <div className="max-w-4xl mx-auto animate-in fade-in duration-300">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Role Selector Sidebar */}
-              <div className="bg-white border border-navy-200 rounded-xl p-4 h-fit">
-                <h3 className="font-semibold text-navy-900 px-2 mb-3 text-sm tracking-wide">
+ <div className="bg-white border border-navy-200 rounded-xl p-4 h-fit">
+ <h3 className="font-semibold text-navy-900 px-2 mb-3 text-sm tracking-wide">
                   Select Role
                 </h3>
                 <div className="space-y-1">
@@ -468,16 +468,16 @@ export default function RoleManagement() {
               {/* Permissions Editor */}
               <div className="md:col-span-2">
                 {selectedRole ? (
-                  <div className="bg-white border border-navy-200 rounded-xl p-8 shadow-sm">
+ <div className="bg-white border border-navy-200 rounded-xl p-8 shadow-sm">
                     <div className="flex items-center gap-3 mb-6 pb-6 border-b border-navy-100">
-                      <div className="h-10 w-10 rounded-lg bg-navy-100 flex items-center justify-center text-navy-900 font-bold text-lg">
+ <div className="h-10 w-10 rounded-lg bg-navy-100 flex items-center justify-center text-navy-900 font-medium text-lg">
                         {selectedRole[0]}
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-navy-900 capitalize">
+ <h3 className="text-xl font-medium text-navy-900 capitalize">
                           {selectedRole} Permissions
                         </h3>
-                        <p className="text-sm text-navy-500">
+ <p className="text-sm text-navy-500">
                           Configure what this role can access.
                         </p>
                       </div>
@@ -524,7 +524,7 @@ export default function RoleManagement() {
                                 <CheckCircle2 className="w-3.5 h-3.5" />
                               )}
                             </div>
-                            <span className="font-medium text-navy-800 capitalize select-none">
+ <span className="font-medium text-navy-800 capitalize select-none">
                               {perm.replace("_", " ")}
                             </span>
                           </div>
@@ -536,17 +536,17 @@ export default function RoleManagement() {
                       <Button
                         onclickFunction={updateRolePermissions}
                         value="Save Changes"
-                        className="bg-navy-900 hover:bg-[#0A2540]"
+ className="bg-navy-900 hover:bg-[#0A2540]"
                       />
                     </div>
                   </div>
                 ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-navy-50 rounded-xl border border-dashed border-navy-300 text-navy-400">
+ <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-navy-50 rounded-xl border border-dashed border-navy-300 text-navy-400">
                     <ShieldCheck className="w-12 h-12 mb-4 opacity-50" />
-                    <p className="font-medium text-navy-600">
+ <p className="font-medium text-navy-600">
                       No Role Selected
                     </p>
-                    <p className="text-sm mt-1">
+ <p className="text-sm mt-1">
                       Select a role from the sidebar to configure permissions.
                     </p>
                   </div>

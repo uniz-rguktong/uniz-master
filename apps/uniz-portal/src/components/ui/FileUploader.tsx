@@ -95,37 +95,37 @@ export function FileUploader({
   const isImage = selectedFile?.type.startsWith("image/");
 
   return (
-    <div className="w-full space-y-4 rounded-xl bg-transparent">
+ <div className="w-full space-y-4 rounded-xl bg-transparent">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h3 className="text-lg font-bold text-navy-900 tracking-tight">
+ <h3 className="text-lg font-medium text-navy-900 tracking-tight">
             {label}
           </h3>
-          <p className="text-sm text-navy-500 font-medium">{description}</p>
+ <p className="text-sm text-navy-500 font-medium">{description}</p>
         </div>
         <div className="flex items-center gap-3">
           {isUploading && (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-100 animate-in fade-in slide-in-from-right-2">
-              <span className="text-[10px] font-bold text-emerald-600 tracking-[0.14em]">
+ <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-100 animate-in fade-in slide-in-from-right-2">
+ <span className="text-[10px] font-medium text-emerald-600 ">
                 Uploading {typeof progress === "number" ? `${progress}%` : ""}
               </span>
-              <Loader2 className="h-3.5 w-3.5 text-emerald-500 animate-spin" />
+ <Loader2 className="h-3.5 w-3.5 text-emerald-500 animate-spin" />
             </div>
           )}
           {isSuccess && !isUploading && (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500 rounded-lg shadow-sm animate-in zoom-in-95">
-              <span className="text-[10px] font-bold text-white tracking-[0.14em]">
+ <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500 rounded-lg shadow-sm animate-in zoom-in-95">
+ <span className="text-[10px] font-medium text-white ">
                 Success
               </span>
-              <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+ <CheckCircle2 className="h-3.5 w-3.5 text-white" />
             </div>
           )}
           {isError && !isUploading && (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500 rounded-lg shadow-sm animate-in head-shake">
-              <span className="text-[10px] font-bold text-white tracking-[0.14em]">
+ <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500 rounded-lg shadow-sm animate-in head-shake">
+ <span className="text-[10px] font-medium text-white ">
                 Failed
               </span>
-              <X className="h-3.5 w-3.5 text-white" />
+ <X className="h-3.5 w-3.5 text-white" />
             </div>
           )}
         </div>
@@ -147,53 +147,53 @@ export function FileUploader({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            "flex h-48 cursor-pointer flex-col items-center justify-center gap-4 rounded-[2px] border-2 border-dashed border-navy-200 bg-navy-50/50 transition-all hover:bg-navy-50 hover:border-navy-900",
+            "flex h-48 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-navy-200 bg-navy-50/50 transition-all hover:bg-navy-50 hover:border-navy-900",
             isDragging && "border-navy-900 bg-navy-50/50",
           )}
         >
-          <div className="rounded-full bg-white p-4 shadow-sm border border-navy-100 transition-transform group-hover:scale-110">
-            <FileUp className="h-6 w-6 text-navy-400" />
+ <div className="rounded-full bg-white p-4 shadow-sm border border-navy-100 transition-transform group-hover:scale-110">
+ <FileUp className="h-6 w-6 text-navy-400" />
           </div>
-          <div className="text-center">
-            <p className="text-sm font-bold text-navy-900 tracking-tight">
+ <div className="text-center">
+ <p className="text-sm font-medium text-navy-900 tracking-tight">
               Click to select
             </p>
-            <p className="text-[11px] text-navy-400 font-bold tracking-[0.14em] mt-1">
+ <p className="text-[11px] text-navy-400 font-medium mt-1">
               or drag and drop file here
             </p>
           </div>
         </div>
       ) : (
         <div className="relative">
-          <div className="group relative h-48 overflow-hidden rounded-[2px] border border-navy-100 bg-navy-50 flex items-center justify-center">
+ <div className="group relative h-48 overflow-hidden rounded-lg border border-navy-100 bg-navy-50 flex items-center justify-center">
             {isImage && previewUrl ? (
               <img
                 src={previewUrl}
                 alt="Preview"
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-300 group-"
               />
             ) : (
               <div className="flex flex-col items-center gap-3">
                 {fileName?.endsWith(".csv") ||
                 fileName?.endsWith(".xlsx") ||
                 fileName?.endsWith(".xls") ? (
-                  <FileSpreadsheet className="h-12 w-12 text-navy-900" />
+ <FileSpreadsheet className="h-12 w-12 text-navy-900" />
                 ) : (
-                  <FileText className="h-12 w-12 text-navy-400" />
+ <FileText className="h-12 w-12 text-navy-400" />
                 )}
-                <span className="text-sm font-bold text-navy-900 max-w-[200px] truncate">
+ <span className="text-sm font-medium text-navy-900 max-w-[200px] truncate">
                   {fileName}
                 </span>
               </div>
             )}
 
-            <div className="absolute inset-0 bg-navy-900/40 opacity-0 transition-opacity group-hover:opacity-100" />
+ <div className="absolute inset-0 bg-navy-900/40 opacity-0 transition-opacity group-hover:opacity-100" />
             <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 transition-opacity group-hover:opacity-100">
               <Button
                 size="sm"
                 variant="secondary"
                 onClick={handleThumbnailClick}
-                className="h-10 w-10 p-0 rounded-full shadow-lg"
+ className="h-10 w-10 p-0 rounded-full shadow-lg"
               >
                 <Upload className="h-4 w-4" />
               </Button>
@@ -201,18 +201,18 @@ export function FileUploader({
                 size="sm"
                 variant="destructive"
                 onClick={handleRemove}
-                className="h-10 w-10 p-0 rounded-full shadow-lg"
+ className="h-10 w-10 p-0 rounded-full shadow-lg"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           </div>
           {fileName && (
-            <div className="mt-3 flex items-center gap-2 text-[11px] text-navy-400 font-bold tracking-[0.14em]">
+ <div className="mt-3 flex items-center gap-2 text-[11px] text-navy-400 font-medium">
               <span className="truncate">{fileName}</span>
               <button
                 onClick={handleRemove}
-                className="ml-auto rounded-full p-1.5 hover:bg-navy-100 text-red-500 transition-colors"
+ className="ml-auto rounded-full p-1.5 hover:bg-navy-100 text-red-500 transition-colors"
                 title="Remove file"
               >
                 <X className="h-3.5 w-3.5" />

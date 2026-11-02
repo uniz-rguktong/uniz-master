@@ -46,31 +46,31 @@ function NoticeCard({ update }: { update: CampusUpdate }) {
       )}
     >
       <div className="flex items-start justify-between gap-2 not-italic">
-        <h3 className="min-w-0 text-[13px] font-bold leading-snug tracking-[0.5px] text-[#061B33] md:text-sm [overflow-wrap:anywhere]">
+ <h3 className="min-w-0 text-[13px] font-medium leading-snug tracking-[0.5px] text-[#061B33] md:text-sm [overflow-wrap:anywhere]">
           {update.title || body || "Campus update"}
         </h3>
         {update.link && (
           <ExternalLink
             size={13}
-            className="mt-0.5 shrink-0 text-[#061B33] underline transition-colors"
+ className="mt-0.5 shrink-0 text-[#061B33] underline transition-colors"
           />
         )}
       </div>
 
       {update.title && body && (
-        <p className="line-clamp-2 text-[12px] leading-relaxed text-[#061B33] [overflow-wrap:anywhere]">
+ <p className="line-clamp-2 text-[12px] leading-relaxed text-[#061B33] [overflow-wrap:anywhere]">
           {body}
         </p>
       )}
 
       <div className="mt-auto flex items-center gap-2 pt-1 not-italic">
         {fresh && (
-          <span className="inline-flex items-center gap-1 rounded-[2px] border border-[#0A2540]/20 bg-white px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[#0A2540]">
-            <span className="h-1 w-1 rounded-full bg-[#EA2027]" />
+ <span className="inline-flex items-center gap-1 rounded-lg border border-[#0A2540]/20 bg-white px-1.5 py-0.5 text-[9px] font-medium text-[#0A2540]">
+ <span className="h-1 w-1 rounded-full bg-[#EA2027]" />
             New
           </span>
         )}
-        <span className="text-[10px] font-semibold tabular-nums text-[#5A7A94]">
+ <span className="text-[10px] font-semibold tabular-nums text-[#5A7A94]">
           {getTimeAgo(update.createdAt)}
         </span>
       </div>
@@ -113,10 +113,10 @@ export default function NoticeBoard({
   if (loading) {
     return (
       <section className={cn("space-y-3", className)}>
-        <div className="h-5 w-36 animate-pulse rounded bg-navy-100" />
+ <div className="h-5 w-36 animate-pulse rounded bg-navy-100" />
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <div className="h-24 animate-pulse rounded-portal-xl border border-navy-200 bg-navy-50/60" />
-          <div className="hidden h-24 animate-pulse rounded-portal-xl border border-navy-200 bg-navy-50/60 md:block" />
+ <div className="h-24 animate-pulse rounded-portal-xl border border-navy-200 bg-navy-50/60" />
+ <div className="hidden h-24 animate-pulse rounded-portal-xl border border-navy-200 bg-navy-50/60 md:block" />
         </div>
       </section>
     );
@@ -126,14 +126,14 @@ export default function NoticeBoard({
     return (
       <section className={cn("space-y-2", className)} aria-label="Notice board">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-navy-200 bg-navy-50 text-navy-700">
+ <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-navy-200 bg-navy-50 text-navy-700">
             <Pin size={13} strokeWidth={2.5} />
           </span>
-          <h2 className="text-[13px] md:text-sm font-bold uppercase tracking-[0.12em] text-navy-900">
+ <h2 className="text-[13px] md:text-sm font-medium text-navy-900">
             Notice board
           </h2>
         </div>
-        <p className="rounded-portal-xl border border-dashed border-navy-200 bg-navy-50/40 px-4 py-3 text-[12px] text-navy-500">
+ <p className="rounded-portal-xl border border-dashed border-navy-200 bg-navy-50/40 px-4 py-3 text-[12px] text-navy-500">
           No campus notices right now.
         </p>
       </section>
@@ -148,19 +148,19 @@ export default function NoticeBoard({
     <section className={cn("space-y-3", className)} aria-label="Notice board">
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-navy-200 bg-navy-50 text-navy-700">
+ <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-navy-200 bg-navy-50 text-navy-700">
             <Pin size={13} strokeWidth={2.5} />
           </span>
-          <h2 className="truncate text-[13px] md:text-sm font-bold uppercase tracking-[0.12em] text-navy-900">
+ <h2 className="truncate text-[13px] md:text-sm font-medium text-navy-900">
             Notice board
           </h2>
           {newCount > 0 && (
-            <span className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold tabular-nums text-emerald-700">
+ <span className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-medium tabular-nums text-emerald-700">
               {newCount} new
             </span>
           )}
         </div>
-        <span className="flex shrink-0 items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-navy-400">
+ <span className="flex shrink-0 items-center gap-1.5 text-[10px] font-medium text-navy-400">
           <Megaphone size={11} strokeWidth={2.5} />
           {items.length} {items.length === 1 ? "notice" : "notices"}
         </span>
@@ -176,7 +176,7 @@ export default function NoticeBoard({
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="flex w-full items-center justify-center gap-1.5 rounded-portal-xl border border-dashed border-navy-200 bg-navy-50/40 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-navy-600 transition-colors hover:border-navy-300 hover:bg-navy-50 hover:text-navy-900"
+ className="flex w-full items-center justify-center gap-1.5 rounded-portal-xl border border-dashed border-navy-200 bg-navy-50/40 py-2 text-[11px] font-medium text-navy-600 transition-colors hover:border-navy-300 hover:bg-navy-50 hover:text-navy-900"
         >
           {expanded ? "Show less" : `Show ${hiddenCount} more`}
           <ChevronDown

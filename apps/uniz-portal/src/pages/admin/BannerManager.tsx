@@ -72,9 +72,9 @@ function SortableBannerCard({
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative bg-white border border-navy-200 shadow-sm hover:shadow-md rounded-xl overflow-hidden transition-all duration-200"
+ className="group relative bg-white border border-navy-200 shadow-sm hover:shadow-md rounded-xl overflow-hidden transition-all duration-200"
     >
-      <div className="relative aspect-video bg-navy-100">
+ <div className="relative aspect-video bg-navy-100">
         <img
           src={banner.imageUrl}
           alt={banner.title}
@@ -83,14 +83,14 @@ function SortableBannerCard({
         <div
           {...attributes}
           {...listeners}
-          className="absolute top-3 left-3 bg-white/90 p-1.5 rounded-lg cursor-grab shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white text-navy-600"
+ className="absolute top-3 left-3 bg-white/90 p-1.5 rounded-lg cursor-grab shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white text-navy-600"
         >
           <GripVertical className="w-5 h-5" />
         </div>
         <div className="absolute top-3 right-3">
           <span
             className={cn(
-              "px-2 py-1 text-xs font-bold tracking-wide rounded-md shadow-sm border",
+              "px-2 py-1 text-xs font-medium tracking-wide rounded-md shadow-sm border",
               banner.isPublished
                 ? "bg-emerald-500/90 text-white border-emerald-400"
                 : "bg-navy-500/90 text-white border-navy-400",
@@ -102,10 +102,10 @@ function SortableBannerCard({
       </div>
 
       <div className="p-4">
-        <h3 className="text-lg font-bold text-navy-900 mb-1 line-clamp-1">
+ <h3 className="text-lg font-medium text-navy-900 mb-1 line-clamp-1">
           {banner.title}
         </h3>
-        <p className="text-navy-500 text-sm line-clamp-2 min-h-[40px]">
+ <p className="text-navy-500 text-sm line-clamp-2 min-h-[40px]">
           {banner.text}
         </p>
 
@@ -131,7 +131,7 @@ function SortableBannerCard({
           </button>
           <button
             onClick={() => deleteBanner(banner.id)}
-            className="flex items-center justify-center p-2 text-navy-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+ className="flex items-center justify-center p-2 text-navy-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
             title="Delete Banner"
           >
             <Trash2 className="w-4 h-4" />
@@ -245,28 +245,28 @@ export default function BannerManager() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
+ <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
       {/* Header */}
       <div className="flex flex-col gap-6">
         <button
           onClick={() => navigate("/admin")}
-          className="self-start inline-flex items-center text-sm font-medium text-navy-500 hover:text-navy-800 transition-colors"
+ className="self-start inline-flex items-center text-sm font-medium text-navy-500 hover:text-navy-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
         </button>
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-navy-900">
+ <h1 className="text-2xl font-medium text-navy-900">
               Banner Management
             </h1>
-            <p className="text-navy-500 mt-1">
+ <p className="text-navy-500 mt-1">
               Create and manage homepage banners and announcements.
             </p>
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="h-12 px-8 bg-navy-900 text-white rounded-xl font-semibold text-[10px] tracking-[0.14em] hover:bg-[#0A2540] transition-all flex items-center gap-3 shadow-lg shadow-navy-100/50"
+ className="h-12 px-8 bg-navy-900 text-white rounded-xl font-semibold text-[10px] hover:bg-[#0A2540] transition-all flex items-center gap-3 shadow-lg shadow-navy-100/50"
           >
             <PlusCircle size={16} /> New Banner
           </button>
@@ -276,7 +276,7 @@ export default function BannerManager() {
       {/* Add Banner Modal */}
       {showAddModal && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-navy-900/40"
+ className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-navy-900/40"
           onClick={() => setShowAddModal(false)}
         >
           <div
@@ -286,7 +286,7 @@ export default function BannerManager() {
             <button
               type="button"
               onClick={() => setShowAddModal(false)}
-              className="absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10"
+ className="absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
@@ -314,22 +314,22 @@ export default function BannerManager() {
                   >
                     <input {...getInputProps()} />
                     {image ? (
-                      <div className="text-emerald-700">
+ <div className="text-emerald-700">
                         <ImageIcon className="w-6 h-6 mx-auto mb-1.5" />
-                        <p className="font-bold text-[10px] truncate max-w-[250px] ">
+ <p className="font-medium text-[10px] truncate max-w-[250px]">
                           {image.name}
                         </p>
-                        <p className="text-[9px] opacity-70 mt-0.5 font-semibold ">
+ <p className="text-[9px] opacity-70 mt-0.5 font-semibold">
                           Click to change
                         </p>
                       </div>
                     ) : (
-                      <div className="text-navy-500">
-                        <Upload className="w-6 h-6 mx-auto mb-1.5 text-navy-400" />
-                        <p className="font-bold text-[10px] tracking-wider">
+ <div className="text-navy-500">
+ <Upload className="w-6 h-6 mx-auto mb-1.5 text-navy-400" />
+ <p className="font-medium text-[10px] tracking-wider">
                           Select Banner Image
                         </p>
-                        <p className="text-[9px] opacity-60 mt-0.5 font-semibold ">
+ <p className="text-[9px] opacity-60 mt-0.5 font-semibold">
                           Drop or click
                         </p>
                       </div>
@@ -388,7 +388,7 @@ export default function BannerManager() {
 
       {/* Banners Grid */}
       <div>
-        <h3 className="text-lg font-bold text-navy-900 mb-4 px-1">
+ <h3 className="text-lg font-medium text-navy-900 mb-4 px-1">
           Active Banners
         </h3>
         <DndContext
@@ -412,10 +412,10 @@ export default function BannerManager() {
                 ))}
               </div>
             ) : (
-              <div className="bg-navy-50 border border-dashed border-navy-200 rounded-xl p-12 text-center text-navy-500">
+ <div className="bg-navy-50 border border-dashed border-navy-200 rounded-xl p-12 text-center text-navy-500">
                 <LayoutDashboard className="w-10 h-10 mx-auto mb-3 opacity-50" />
-                <p className="font-medium">No banners created yet</p>
-                <p className="text-sm">
+ <p className="font-medium">No banners created yet</p>
+ <p className="text-sm">
                   Use the form above to add your first banner.
                 </p>
               </div>

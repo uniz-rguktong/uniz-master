@@ -86,7 +86,7 @@ export default function CohortPromotionModal({
     >
       <form onSubmit={handlePromote} className="space-y-6">
         <div className={adminWarningBannerClass}>
-          <ShieldAlert size={18} className="text-amber-600 shrink-0 mt-0.5" />
+ <ShieldAlert size={18} className="text-amber-600 shrink-0 mt-0.5" />
           <div>
             <p className={adminWarningTitleClass}>Destructive operation</p>
             <p className={adminWarningTextClass}>
@@ -111,7 +111,7 @@ export default function CohortPromotionModal({
               ))}
             </select>
           </div>
-          <div className="h-11 flex items-center justify-center text-navy-300">
+ <div className="h-11 flex items-center justify-center text-navy-300">
             <ArrowRight size={16} />
           </div>
           <div className="space-y-2">
@@ -146,7 +146,7 @@ export default function CohortPromotionModal({
         </div>
 
         <div className="space-y-2">
-          <label className={cn(adminLabelClass, "text-rose-500")}>
+ <label className={cn(adminLabelClass, "text-rose-500")}>
             Type Promote to confirm
           </label>
           <input

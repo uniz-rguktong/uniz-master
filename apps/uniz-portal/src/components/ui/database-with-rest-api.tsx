@@ -64,33 +64,33 @@ const DatabaseWithRestApi = ({
   return (
     <div className={cn("relative w-full", className)}>
       {/* ── Mobile: stacked layout (no overlapping SVG art) ── */}
-      <div className="flex flex-col items-center gap-4 sm:hidden px-1">
+ <div className="flex flex-col items-center gap-4 sm:hidden px-1">
         <div className="grid grid-cols-2 gap-2 w-full max-w-sm">
           {TOP_BADGES.map((badge) => (
             <span
               key={badge.key}
-              className="rounded-full border border-navy-200 bg-white px-3 py-2 text-center text-[11px] font-semibold text-navy-800 shadow-sm"
+ className="rounded-full border border-navy-200 bg-white px-3 py-2 text-center text-[11px] font-semibold text-navy-800 shadow-sm"
             >
               {badgeTexts[badge.key]}
             </span>
           ))}
         </div>
 
-        <div className="w-full max-w-sm rounded-[2px] border border-navy-200 bg-white px-4 py-3 text-center shadow-sm">
-          <span className="text-[12px] font-bold text-navy-800 leading-snug">
+ <div className="w-full max-w-sm rounded-lg border border-navy-200 bg-white px-4 py-3 text-center shadow-sm">
+ <span className="text-[12px] font-medium text-navy-800 leading-snug">
             {title}
           </span>
         </div>
 
-        <div className="relative w-full max-w-sm rounded-[1.5rem] border border-navy-200 bg-white p-4 pt-5 shadow-lg shadow-navy-200/40">
+ <div className="relative w-full max-w-sm rounded-[1.5rem] border border-navy-200 bg-white p-4 pt-5 shadow-lg shadow-navy-200/40">
           <div className="grid grid-cols-2 gap-2.5">
             {FEATURE_ITEMS.map(({ key, Icon }) => (
               <div
                 key={key}
-                className="flex items-center gap-2 rounded-xl border border-navy-100 bg-navy-50/80 px-3 py-2.5"
+ className="flex items-center gap-2 rounded-xl border border-navy-100 bg-navy-50/80 px-3 py-2.5"
               >
-                <Icon className="size-4 shrink-0 text-navy-900" />
-                <span className="text-[11px] font-semibold text-navy-700 leading-tight">
+ <Icon className="size-4 shrink-0 text-navy-900" />
+ <span className="text-[11px] font-semibold text-navy-700 leading-tight">
                   {buttonTexts[key]}
                 </span>
               </div>
@@ -98,8 +98,8 @@ const DatabaseWithRestApi = ({
           </div>
 
           <div className="mt-4 flex justify-center">
-            <div className="grid h-[72px] w-[72px] place-items-center rounded-full border border-navy-200 bg-white shadow-md">
-              <span className="uniz-logo-wordmark text-[2rem] text-navy-900 leading-none">
+ <div className="grid h-[72px] w-[72px] place-items-center rounded-full border border-navy-200 bg-white shadow-md">
+ <span className="uniz-logo-wordmark text-[2rem] text-navy-900 leading-none">
                 uniZ
               </span>
             </div>
@@ -110,7 +110,7 @@ const DatabaseWithRestApi = ({
       {/* ── Desktop: animated diagram ── */}
       <div className="relative hidden h-[450px] w-full flex-col items-center sm:flex">
         <svg
-          className="h-full w-full text-navy-300"
+ className="h-full w-full text-navy-300"
           width="100%"
           height="100%"
           viewBox="0 0 200 100"
@@ -120,7 +120,7 @@ const DatabaseWithRestApi = ({
             fill="none"
             strokeWidth="0.4"
             strokeDasharray="1 2"
-            className="text-navy-300 opacity-50"
+ className="text-navy-300 opacity-50"
           >
             <path d="M 31 0 v 5" />
             <path d="M 77 0 v 5" />
@@ -247,19 +247,19 @@ const DatabaseWithRestApi = ({
           </defs>
         </svg>
 
-        <div className="absolute bottom-10 flex w-full flex-col items-center px-10">
-          <div className="absolute -bottom-2 h-[100px] w-full max-w-[95%] rounded-[2px] bg-navy-950/10 scale-95" />
-          <div className="absolute -top-4 z-20 flex items-center justify-center rounded-lg border border-navy-200 bg-white px-3 py-2 shadow-sm">
-            <span className="text-[12px] font-bold text-navy-800">{title}</span>
+ <div className="absolute bottom-10 flex w-full flex-col items-center px-10">
+ <div className="absolute -bottom-2 h-[100px] w-full max-w-[95%] rounded-lg bg-navy-950/10 scale-95" />
+ <div className="absolute -top-4 z-20 flex items-center justify-center rounded-lg border border-navy-200 bg-white px-3 py-2 shadow-sm">
+ <span className="text-[12px] font-medium text-navy-800">{title}</span>
           </div>
-          <div className="absolute -bottom-12 z-30 grid h-[100px] w-[100px] place-items-center rounded-full border border-navy-200 bg-white shadow-md text-navy-950 font-semibold group cursor-pointer">
-            <span className="uniz-logo-wordmark text-[3rem] text-navy-900 leading-none group-hover:scale-110 transition-transform duration-300">
+ <div className="absolute -bottom-12 z-30 grid h-[100px] w-[100px] place-items-center rounded-full border border-navy-200 bg-white shadow-md text-navy-950 font-semibold group cursor-pointer">
+ <span className="uniz-logo-wordmark text-[3rem] text-navy-900 leading-none group-hover:scale-110 transition-transform duration-300">
               uniZ
             </span>
           </div>
-          <div className="relative z-10 flex h-[250px] w-full items-center justify-center overflow-hidden rounded-[2px] border border-navy-200 bg-white shadow-xl shadow-navy-200/50">
+ <div className="relative z-10 flex h-[250px] w-full items-center justify-center overflow-hidden rounded-lg border border-navy-200 bg-white shadow-xl shadow-navy-200/50">
             <motion.div
-              className="absolute top-6 left-12 z-20 h-9 rounded-full bg-navy-50 px-4 text-sm font-semibold text-navy-700 border border-navy-200 flex items-center gap-2 shadow-sm"
+ className="absolute top-6 left-12 z-20 h-9 rounded-full bg-navy-50 px-4 text-sm font-semibold text-navy-700 border border-navy-200 flex items-center gap-2 shadow-sm"
               animate={{ y: [0, -6, 0] }}
               transition={{
                 duration: 4,
@@ -267,11 +267,11 @@ const DatabaseWithRestApi = ({
                 ease: "easeInOut",
               }}
             >
-              <Bell className="size-4 text-navy-950" />
+ <Bell className="size-4 text-navy-950" />
               <span>{buttonTexts.first}</span>
             </motion.div>
             <motion.div
-              className="absolute bottom-6 left-32 z-20 h-9 rounded-full bg-navy-50 px-4 text-sm font-semibold text-navy-700 border border-navy-200 flex items-center gap-2 shadow-sm"
+ className="absolute bottom-6 left-32 z-20 h-9 rounded-full bg-navy-50 px-4 text-sm font-semibold text-navy-700 border border-navy-200 flex items-center gap-2 shadow-sm"
               animate={{ y: [0, -8, 0] }}
               transition={{
                 duration: 5,
@@ -280,11 +280,11 @@ const DatabaseWithRestApi = ({
                 delay: 1,
               }}
             >
-              <AlertCircle className="size-4 text-navy-950" />
+ <AlertCircle className="size-4 text-navy-950" />
               <span>{buttonTexts.third}</span>
             </motion.div>
             <motion.div
-              className="absolute top-8 right-32 z-20 h-9 rounded-full bg-navy-50 px-4 text-sm font-semibold text-navy-700 border border-navy-200 flex items-center gap-2 shadow-sm"
+ className="absolute top-8 right-32 z-20 h-9 rounded-full bg-navy-50 px-4 text-sm font-semibold text-navy-700 border border-navy-200 flex items-center gap-2 shadow-sm"
               animate={{ y: [0, -5, 0] }}
               transition={{
                 duration: 4.5,
@@ -293,11 +293,11 @@ const DatabaseWithRestApi = ({
                 delay: 2,
               }}
             >
-              <Smartphone className="size-4 text-navy-950" />
+ <Smartphone className="size-4 text-navy-950" />
               <span>{buttonTexts.fourth}</span>
             </motion.div>
             <motion.div
-              className="absolute bottom-6 right-12 z-20 h-9 rounded-full bg-navy-50 px-4 text-sm font-semibold text-navy-700 border border-navy-200 flex items-center gap-2 shadow-sm"
+ className="absolute bottom-6 right-12 z-20 h-9 rounded-full bg-navy-50 px-4 text-sm font-semibold text-navy-700 border border-navy-200 flex items-center gap-2 shadow-sm"
               animate={{ y: [0, -7, 0] }}
               transition={{
                 duration: 3.5,
@@ -306,60 +306,60 @@ const DatabaseWithRestApi = ({
                 delay: 0.5,
               }}
             >
-              <Megaphone className="size-4 text-navy-950" />
+ <Megaphone className="size-4 text-navy-950" />
               <span>{buttonTexts.second}</span>
             </motion.div>
             <motion.div
-              className="absolute -bottom-14 h-[100px] w-[100px] rounded-full border-t border-navy-200 bg-navy-50/50"
+ className="absolute -bottom-14 h-[100px] w-[100px] rounded-full border-t border-navy-200 bg-navy-50/50"
               animate={{ scale: [0.98, 1.02, 0.98, 1, 1, 1, 1, 1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
             <motion.div
-              className="absolute -bottom-20 h-[145px] w-[145px] rounded-full border-t border-navy-200 bg-navy-50/50"
+ className="absolute -bottom-20 h-[145px] w-[145px] rounded-full border-t border-navy-200 bg-navy-50/50"
               animate={{ scale: [1, 1, 1, 0.98, 1.02, 0.98, 1, 1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
             <motion.div
-              className="absolute -bottom-[100px] h-[190px] w-[190px] rounded-full border-t border-navy-200 bg-navy-50/50"
+ className="absolute -bottom-[100px] h-[190px] w-[190px] rounded-full border-t border-navy-200 bg-navy-50/50"
               animate={{ scale: [1, 1, 1, 1, 1, 0.98, 1.02, 0.98, 1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
             <motion.div
-              className="absolute -bottom-[120px] h-[235px] w-[235px] rounded-full border-t border-navy-200 bg-navy-50/50"
+ className="absolute -bottom-[120px] h-[235px] w-[235px] rounded-full border-t border-navy-200 bg-navy-50/50"
               animate={{
                 scale: [1, 1, 1, 1, 1, 1, 0.98, 1.02, 0.98, 1],
               }}
               transition={{ duration: 2, repeat: Infinity }}
             />
-            <div className="absolute inset-0 flex items-center justify-center gap-8 z-30 pointer-events-none px-4">
+ <div className="absolute inset-0 flex items-center justify-center gap-8 z-30 pointer-events-none px-4">
               <motion.div
-                className="flex flex-col items-center justify-center bg-white/70 border border-navy-200 shadow-sm rounded-[2px] p-4 w-[140px] h-[120px]"
+ className="flex flex-col items-center justify-center bg-white/70 border border-navy-200 shadow-sm rounded-lg p-4 w-[140px] h-[120px]"
                 animate={{ y: [-2, 2, -2] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               >
-                <Database className="text-navy-950 mb-2 size-6" />
-                <span className="text-sm font-bold text-navy-800 text-center">
+ <Database className="text-navy-950 mb-2 size-6" />
+ <span className="text-sm font-medium text-navy-800 text-center">
                   Core Sync
                 </span>
-                <span className="text-[10px] text-navy-500 text-center leading-tight mt-1">
+ <span className="text-[10px] text-navy-500 text-center leading-tight mt-1">
                   Real-time data flow
                 </span>
               </motion.div>
               <motion.div
-                className="flex flex-col items-center justify-center bg-white/70 border border-navy-200 shadow-sm rounded-[2px] p-4 w-[160px] h-[130px] border-b-2 border-b-navy-950 mb-4"
+ className="flex flex-col items-center justify-center bg-white/70 border border-navy-200 shadow-sm rounded-lg p-4 w-[160px] h-[130px] border-b-2 border-b-navy-950 mb-4"
                 animate={{ y: [2, -2, 2] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
               >
-                <ShieldCheck className="text-navy-950 mb-2 size-7" />
-                <span className="text-base font-bold text-navy-900 text-center">
+ <ShieldCheck className="text-navy-950 mb-2 size-7" />
+ <span className="text-base font-medium text-navy-900 text-center">
                   API Gateway
                 </span>
-                <span className="text-xs text-navy-500 text-center leading-tight mt-1">
+ <span className="text-xs text-navy-500 text-center leading-tight mt-1">
                   Secure endpoints
                 </span>
               </motion.div>
               <motion.div
-                className="flex flex-col items-center justify-center bg-white/70 border border-navy-200 shadow-sm rounded-[2px] p-4 w-[140px] h-[120px]"
+ className="flex flex-col items-center justify-center bg-white/70 border border-navy-200 shadow-sm rounded-lg p-4 w-[140px] h-[120px]"
                 animate={{ y: [-2, 2, -2] }}
                 transition={{
                   duration: 3.5,
@@ -368,11 +368,11 @@ const DatabaseWithRestApi = ({
                   delay: 1,
                 }}
               >
-                <Activity className="text-navy-950 mb-2 size-6" />
-                <span className="text-sm font-bold text-navy-800 text-center">
+ <Activity className="text-navy-950 mb-2 size-6" />
+ <span className="text-sm font-medium text-navy-800 text-center">
                   Webhooks
                 </span>
-                <span className="text-[10px] text-navy-500 text-center leading-tight mt-1">
+ <span className="text-[10px] text-navy-500 text-center leading-tight mt-1">
                   Live metrics
                 </span>
               </motion.div>

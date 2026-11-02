@@ -203,18 +203,18 @@ export default function Attendance() {
   // Show a loading state while the /me call is in-flight to prevent false "Sign In" flash
   if (authLoading) {
     return (
-      <div className="font-sans text-navy-900">
-        <div className="max-w-6xl mx-auto px-4 pb-10">
+ <div className="font-sans text-navy-900">
+ <div className="max-w-6xl mx-auto px-4 pb-10">
           <div className="flex flex-col gap-1.5 mb-8 animate-pulse">
-            <div className="h-4 w-48 bg-navy-200 rounded mb-2" />
-            <div className="h-7 w-64 bg-navy-200 rounded" />
+ <div className="h-4 w-48 bg-navy-200 rounded mb-2" />
+ <div className="h-7 w-64 bg-navy-200 rounded" />
           </div>
-          <div className="bg-white p-6 rounded-2xl border border-[#E6EAF0] shadow animate-pulse motion-reduce:animate-none">
-            <div className="h-5 w-48 bg-navy-200 rounded mb-6" />
+ <div className="bg-white p-6 rounded-2xl border border-[#E2E8F0] shadow animate-pulse motion-reduce:animate-none">
+ <div className="h-5 w-48 bg-navy-200 rounded mb-6" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="h-12 bg-navy-100 rounded-portal-sm" />
-              <div className="h-12 bg-navy-100 rounded-portal-sm" />
-              <div className="h-12 bg-navy-100 rounded-portal-sm" />
+ <div className="h-12 bg-navy-100 rounded-portal-sm" />
+ <div className="h-12 bg-navy-100 rounded-portal-sm" />
+ <div className="h-12 bg-navy-100 rounded-portal-sm" />
             </div>
           </div>
         </div>
@@ -223,44 +223,44 @@ export default function Attendance() {
   }
 
   return (
-    <div className="font-sans text-navy-900">
-      <div className="max-w-6xl mx-auto px-4 pb-10">
+ <div className="font-sans text-navy-900">
+ <div className="max-w-6xl mx-auto px-4 pb-10">
         <div className="flex flex-col gap-1 mb-8">
-          <p className="text-[13px] font-medium text-[#64748B]">
+ <p className="text-[13px] font-medium text-[#64748B]">
             Academics
           </p>
-          <h1 className="text-[28px] md:text-[32px] font-semibold tracking-[-0.03em] text-[#0A2540] leading-tight">
+ <h1 className="text-[28px] md:text-[32px] font-semibold tracking-[-0.03em] text-[#0A2540] leading-tight">
             Attendance Tracking
           </h1>
         </div>
         {/* Selection Criteria */}
-        <div className="mb-8 md:bg-white p-6 md:rounded-2xl md:border md:border-[#E6EAF0] md:shadow bg-transparent px-0 md:px-6">
+ <div className="mb-8 md:bg-white p-6 md:rounded-2xl md:border md:border-[#E2E8F0] md:shadow bg-transparent px-0 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
             <div className="relative group">
-              <label className="text-[13px] font-medium text-[#334155] mb-2 block">
+ <label className="text-[13px] font-medium text-[#334155] mb-2 block">
                 Academic Year
               </label>
               <div
-                className="w-full min-h-11 flex items-center justify-between bg-white border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 cursor-pointer shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] transition-colors duration-150"
+ className="w-full min-h-11 flex items-center justify-between bg-white border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 cursor-pointer shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] transition-colors duration-150"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
-                <span className="font-medium text-[14px]">{selectedYear}</span>
+ <span className="font-medium text-[14px]">{selectedYear}</span>
                 <ChevronDown
                   size={16}
-                  className={`transition-transform duration-300 ${showDropdown ? "rotate-180" : ""} group-hover:text-navy-900`}
+ className={`transition-transform duration-300 ${showDropdown ? "rotate-180" : ""} group-hover:text-navy-900`}
                 />
               </div>
 
               {showDropdown && (
-                <div className="absolute z-20 mt-1 w-full bg-white border border-navy-100 rounded-portal-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+ <div className="absolute z-20 mt-1 w-full bg-white border border-navy-100 rounded-portal-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-semibold hover:bg-navy-50 transition-colors ${
-                        selectedYear === year
-                          ? "bg-navy-900 text-white"
-                          : "text-navy-600"
-                      }`}
+ className={`p-3 cursor-pointer text-sm font-semibold hover:bg-navy-50 transition-colors ${
+ selectedYear === year
+ ? "bg-navy-900 text-white"
+ : "text-navy-600"
+ }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setSelectedSemester(
@@ -280,7 +280,7 @@ export default function Attendance() {
             </div>
 
             <div>
-              <label className="text-[13px] font-medium text-[#334155] mb-2 block">
+ <label className="text-[13px] font-medium text-[#334155] mb-2 block">
                 Semester
               </label>
               <div className="relative">
@@ -291,7 +291,7 @@ export default function Attendance() {
                     setResultsFetched(false);
                     setAttendanceData(null);
                   }}
-                  className="w-full min-h-11 bg-white border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 font-medium text-[14px] appearance-none shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/[0.08] transition-[border-color,box-shadow] duration-150 cursor-pointer"
+ className="w-full min-h-11 bg-white border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 font-medium text-[14px] appearance-none shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/[0.08] transition-[border-color,box-shadow] duration-150 cursor-pointer"
                 >
                   {availableSemesters.map((semester) => (
                     <option key={semester} value={semester}>
@@ -300,7 +300,7 @@ export default function Attendance() {
                   ))}
                 </select>
                 <ChevronDown
-                  className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-navy-500"
+ className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-navy-500"
                   size={16}
                 />
               </div>
@@ -310,11 +310,11 @@ export default function Attendance() {
               <div className="md:w-56">
                 <button
                   onClick={() => handleFetchAttendance(false)}
-                  className="w-full min-h-11 bg-[#0A2540] hover:bg-[#0D3154] text-white rounded-xl font-semibold text-[14px] transition-[background-color,transform] duration-150 active:scale-[0.98] motion-reduce:active:scale-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_6px_16px_-8px_rgba(10,37,64,0.6)] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540] focus-visible:ring-offset-2 disabled:opacity-50"
+ className="flex min-h-11 w-full items-center justify-center rounded-lg bg-navy text-sm font-medium text-white transition-colors duration-150 hover:bg-navy-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:opacity-40"
                   disabled={isLoading || !user?.username}
                 >
                   {isLoading ? (
-                    <span className="flex items-center gap-1.5 text-sm tracking-[0.14em]">
+ <span className="flex items-center gap-1.5 text-sm ">
                       Syncing...
                     </span>
                   ) : fromCache ? (
@@ -332,27 +332,27 @@ export default function Attendance() {
           </div>
 
           {error && (
-            <div className="mt-8 bg-navy-900 text-white rounded-portal-lg p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 shadow-lg shadow-navy-100">
-              <AlertCircle size={20} className="text-white flex-shrink-0" />
-              <div className="font-medium">{error}</div>
+ <div className="mt-8 bg-navy-900 text-white rounded-portal-lg p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 shadow-lg shadow-navy-100">
+ <AlertCircle size={20} className="text-white flex-shrink-0" />
+ <div className="font-medium">{error}</div>
             </div>
           )}
         </div>
 
         {/* Loading State */}
         {isLoading && (
-          <div className="bg-navy-50/50 border border-navy-100 rounded-portal-lg p-10 text-center animate-pulse">
-            <div className="w-16 h-16 mx-auto mb-4 bg-white/50 rounded-full flex items-center justify-center">
+ <div className="bg-navy-50/50 border border-navy-100 rounded-portal-lg p-10 text-center animate-pulse">
+ <div className="w-16 h-16 mx-auto mb-4 bg-white/50 rounded-full flex items-center justify-center">
               <img
                 src={PIKACHU_IMAGE}
                 alt="Pikachu"
                 className="w-12 h-12 object-contain grayscale opacity-30"
               />
             </div>
-            <h3 className="text-base font-semibold text-navy-600 mb-1">
+ <h3 className="text-base font-semibold text-navy-600 mb-1">
               Terminal Synchronization
             </h3>
-            <p className="text-navy-400 text-xs font-medium">
+ <p className="text-navy-400 text-xs font-medium">
               {loadingMessage}
             </p>
           </div>
@@ -365,17 +365,17 @@ export default function Attendance() {
           !isLoading && (
             <div
               ref={resultsRef}
-              className="-mx-4 md:mx-0 space-y-0 animate-in fade-in slide-in-from-bottom-8 duration-500 scroll-mt-4 bg-white md:bg-transparent md:space-y-4 rounded-none md:rounded-portal-lg overflow-hidden"
+ className="-mx-4 md:mx-0 space-y-0 animate-in fade-in slide-in-from-bottom-8 duration-500 scroll-mt-4 bg-white md:bg-transparent md:space-y-4 rounded-none md:rounded-portal-lg overflow-hidden"
             >
               {/* Header */}
-              <div className="flex items-end justify-between border-b pb-4 border-navy-100 px-4 md:px-0 pt-5 md:pt-0">
+ <div className="flex items-end justify-between border-b pb-4 border-navy-100 px-4 md:px-0 pt-5 md:pt-0">
                 <div>
-                  <span className="text-[10px] font-bold tracking-[0.14em] text-navy-400 block mb-1">
+ <span className="text-[10px] font-medium text-navy-400 block mb-1">
                     Matrix Snapshot
                   </span>
-                  <h2 className="text-[17px] font-semibold tracking-tight text-navy-900">
+ <h2 className="text-[17px] font-semibold tracking-tight text-navy-900">
                     {selectedYear}{" "}
-                    <span className="text-navy-300 mx-1">/</span>{" "}
+ <span className="text-navy-300 mx-1">/</span>{" "}
                     {selectedSemester}
                   </h2>
                 </div>
@@ -396,7 +396,7 @@ export default function Attendance() {
                           },
                         );
                       }}
-                      className="min-h-11 px-4 bg-white hover:bg-[#F7F8FA] text-[#0A2540] rounded-xl font-semibold text-[13px] transition-colors duration-150 flex items-center gap-2 border border-[#E6EAF0] shadow-[0_1px_2px_rgba(10,37,64,0.04)] disabled:opacity-50"
+ className="min-h-11 px-4 bg-white hover:bg-[#F8FAFC] text-[#0A2540] rounded-xl font-semibold text-[13px] transition-colors duration-150 flex items-center gap-2 border border-[#E2E8F0] shadow-[0_1px_2px_rgba(10,37,64,0.04)] disabled:opacity-50"
                       disabled={false}
                     >
                       <Download size={14} />
@@ -409,34 +409,34 @@ export default function Attendance() {
               {!attendanceData.attendance ||
               !Array.isArray(attendanceData.attendance) ||
               attendanceData.attendance.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-[#D5DCE6] bg-white px-6 py-14 text-center">
-                  <div className="size-12 rounded-xl bg-[#0A2540]/[0.05] ring-1 ring-inset ring-[#0A2540]/[0.08] flex items-center justify-center mx-auto mb-5">
-                    <AlertCircle size={22} strokeWidth={1.75} className="text-[#0A2540]" />
+ <div className="rounded-2xl border border-dashed border-[#E2E8F0] bg-white px-6 py-14 text-center">
+ <div className="size-12 rounded-xl bg-[#0A2540]/[0.05] ring-1 ring-inset ring-[#0A2540]/[0.08] flex items-center justify-center mx-auto mb-5">
+ <AlertCircle size={22} strokeWidth={1.75} className="text-[#0A2540]" />
                   </div>
-                  <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-[#0A2540] mb-1.5">
+ <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-[#0A2540] mb-1.5">
                     Attendance not available yet
                   </h3>
-                  <p className="text-[14px] leading-6 text-[#64748B] max-w-sm mx-auto">
+ <p className="text-[14px] leading-6 text-[#64748B] max-w-sm mx-auto">
                     These records have not been updated yet. Please check back
                     shortly.
                   </p>
                 </div>
               ) : (
-                <div className="md:bg-white md:rounded-portal-lg overflow-hidden md:border md:border-navy-100 md:shadow-sm bg-transparent">
+ <div className="md:bg-white md:rounded-portal-lg overflow-hidden md:border md:border-navy-100 md:shadow-sm bg-transparent">
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+ <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-navy-200 md:bg-navy-50/50 bg-transparent">
-                          <th className="px-4 py-2 text-left text-[10px] font-bold tracking-[0.14em] text-navy-500">
+ <tr className="border-b border-navy-200 md:bg-navy-50/50 bg-transparent">
+ <th className="px-4 py-2 text-left text-[10px] font-medium text-navy-500">
                             Subject
                           </th>
-                          <th className="px-4 py-2 text-center text-[10px] font-bold tracking-[0.14em] text-navy-500">
+ <th className="px-4 py-2 text-center text-[10px] font-medium text-navy-500">
                             Total Classes
                           </th>
-                          <th className="px-4 py-2 text-center text-[10px] font-bold tracking-[0.14em] text-navy-500">
+ <th className="px-4 py-2 text-center text-[10px] font-medium text-navy-500">
                             Attended
                           </th>
-                          <th className="px-4 py-2 text-center text-[10px] font-bold tracking-[0.14em] text-navy-500">
+ <th className="px-4 py-2 text-center text-[10px] font-medium text-navy-500">
                             Percentage
                           </th>
                         </tr>
@@ -447,31 +447,31 @@ export default function Attendance() {
                             (record: any, index: number) => (
                               <tr
                                 key={index}
-                                className="group hover:bg-navy-50 transition-colors"
+ className="group hover:bg-navy-50 transition-colors"
                               >
-                                <td className="px-4 py-2 font-bold text-xs text-navy-900">
+ <td className="px-4 py-2 font-medium text-xs text-navy-900">
                                   {typeof record.subject === "string"
                                     ? record.subject
                                     : record.subject?.name || "Unknown Subject"}
                                 </td>
-                                <td className="px-4 py-2 text-center text-navy-600 font-medium text-xs">
+ <td className="px-4 py-2 text-center text-navy-600 font-medium text-xs">
                                   {record.totalClasses}
                                 </td>
-                                <td className="px-4 py-2 text-center text-navy-600 font-medium text-xs">
+ <td className="px-4 py-2 text-center text-navy-600 font-medium text-xs">
                                   {record.attendedClasses}
                                 </td>
-                                <td className="px-4 py-2 text-center">
+ <td className="px-4 py-2 text-center">
                                   <span
-                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                                      parseFloat(String(record.percentage)) >=
-                                      75
-                                        ? "bg-navy-900 text-white"
-                                        : parseFloat(
-                                              String(record.percentage),
-                                            ) >= 65
-                                          ? "bg-navy-200 text-navy-700"
-                                          : "bg-navy-100 text-navy-400"
-                                    }`}
+ className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-medium ${
+ parseFloat(String(record.percentage)) >=
+ 75
+ ? "bg-navy-900 text-white"
+ : parseFloat(
+ String(record.percentage),
+ ) >= 65
+ ? "bg-navy-200 text-navy-700"
+ : "bg-navy-100 text-navy-400"
+ }`}
                                   >
                                     {record.percentage}%
                                   </span>
@@ -483,20 +483,20 @@ export default function Attendance() {
                     </table>
                   </div>
 
-                  <div className="px-6 py-8 md:bg-navy-900 text-white md:mt-0 shadow-inner bg-transparent mt-4 border-t border-navy-100">
+ <div className="px-6 py-8 md:bg-navy-900 text-white md:mt-0 shadow-inner bg-transparent mt-4 border-t border-navy-100">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                       <div>
-                        <h3 className="text-base font-semibold tracking-tight text-navy-800 md:text-white">
+ <h3 className="text-base font-semibold tracking-tight text-navy-800 md:text-white">
                           Aggregate Attendance
                         </h3>
                       </div>
                       {/* Summary calculation if available, or just a placeholder */}
                       <div className="flex items-center gap-6">
-                        <div className="text-right flex items-center gap-3">
-                          <p className="text-navy-400 font-bold text-[10px] tracking-[0.14em]">
+ <div className="text-right flex items-center gap-3">
+ <p className="text-navy-400 font-medium text-[10px] ">
                             Semester Avg :
                           </p>
-                          <p className="text-3xl font-semibold text-navy-900 md:text-white tracking-tighter">
+ <p className="text-3xl font-semibold text-navy-900 md:text-white tracking-tighter">
                             {(
                               attendanceData.attendance.reduce(
                                 (acc, curr: any) =>
@@ -518,18 +518,18 @@ export default function Attendance() {
 
         {/* Not Logged In State - only show AFTER /me has resolved */}
         {!authLoading && !user?.username && !isLoading && !resultsFetched && (
-          <div className="bg-navy-50/50 border border-navy-100 rounded-portal-lg p-12 text-center">
-            <div className="bg-white w-16 h-16 rounded-[2px] flex items-center justify-center mx-auto mb-6 shadow-sm border border-navy-50">
-              <AlertCircle size={32} className="text-navy-300" />
+ <div className="bg-navy-50/50 border border-navy-100 rounded-portal-lg p-12 text-center">
+ <div className="bg-white w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-6 shadow-sm border border-navy-50">
+ <AlertCircle size={32} className="text-navy-300" />
             </div>
-            <h3 className="text-lg font-semibold mb-2 text-navy-800">
+ <h3 className="text-lg font-semibold mb-2 text-navy-800">
               Authorization Required
             </h3>
-            <p className="text-navy-500 mb-8 max-w-xs mx-auto text-xs font-medium leading-relaxed">
+ <p className="text-navy-500 mb-8 max-w-xs mx-auto text-xs font-medium leading-relaxed">
               Please authenticate to access your institutional attendance
               terminal.
             </p>
-            <button className="h-[46px] px-8 bg-navy-900 text-white rounded-portal-lg font-bold text-sm transition-all hover:bg-navy-800 active:scale-[0.98]">
+ <button className="h-[46px] px-8 bg-navy-900 text-white rounded-portal-lg font-medium text-sm transition-all hover:bg-navy-800 ">
               Sign In to Continue
             </button>
           </div>
@@ -541,14 +541,14 @@ export default function Attendance() {
           !isLoading &&
           !resultsFetched &&
           !error && (
-            <div className="rounded-2xl border border-dashed border-[#D5DCE6] bg-white px-6 py-14 text-center">
-              <div className="size-12 rounded-xl bg-[#0A2540]/[0.05] ring-1 ring-inset ring-[#0A2540]/[0.08] flex items-center justify-center mx-auto mb-5">
-                <CalendarCheck size={22} strokeWidth={1.75} className="text-[#0A2540]" />
+ <div className="rounded-2xl border border-dashed border-[#E2E8F0] bg-white px-6 py-14 text-center">
+ <div className="size-12 rounded-xl bg-[#0A2540]/[0.05] ring-1 ring-inset ring-[#0A2540]/[0.08] flex items-center justify-center mx-auto mb-5">
+ <CalendarCheck size={22} strokeWidth={1.75} className="text-[#0A2540]" />
               </div>
-              <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-[#0A2540] mb-1.5">
+ <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-[#0A2540] mb-1.5">
                 Pick a semester
               </h3>
-              <p className="text-[14px] leading-6 text-[#64748B] max-w-sm mx-auto">
+ <p className="text-[14px] leading-6 text-[#64748B] max-w-sm mx-auto">
                 Choose an academic year and semester above to see your
                 subject-wise attendance.
               </p>

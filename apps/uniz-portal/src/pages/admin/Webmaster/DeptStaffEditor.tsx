@@ -164,22 +164,22 @@ export function DeptStaffEditor({
   return (
     <div className="relative pb-24">
       {/* Live page chrome — mirrors public department page */}
-      <div className="rounded-[2px] border border-slate-200 bg-white overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)] mb-8">
-        <div className="px-6 py-8 md:px-10 md:py-10 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
+ <div className="rounded-lg border border-slate-200 bg-white overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)] mb-8">
+ <div className="px-6 py-8 md:px-10 md:py-10 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#0B2A47]/70 mb-2">
+ <p className="text-[11px] font-semibold text-[#0A2540]/70 mb-2">
                 RGUKT Ongole · {deptCode}
               </p>
-              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
+ <h2 className="text-2xl md:text-3xl font-medium text-slate-900 tracking-tight">
                 {deptTitle}
               </h2>
-              <p className="text-sm text-slate-500 mt-2 max-w-lg">
+ <p className="text-sm text-slate-500 mt-2 max-w-lg">
                 Edit cards below — changes match the live department page students see.
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0B2A47]/5 text-[#0B2A47] border border-[#0B2A47]/10 text-[11px] font-semibold">
+ <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0A2540]/5 text-[#0A2540] border border-[#0A2540]/10 text-[11px] font-semibold">
                 <Sparkles size={12} />
                 Live editor
               </span>
@@ -195,15 +195,15 @@ export function DeptStaffEditor({
           </div>
         </div>
 
-        <div className="px-6 py-5 md:px-10 flex items-center justify-between gap-3 bg-slate-50/80 border-b border-slate-100">
-          <p className="text-sm font-medium text-slate-600">
-            <span className="font-bold text-slate-900">{data.faculties.length}</span>{" "}
+ <div className="px-6 py-5 md:px-10 flex items-center justify-between gap-3 bg-slate-50/80 border-b border-slate-100">
+ <p className="text-sm font-medium text-slate-600">
+ <span className="font-medium text-slate-900">{data.faculties.length}</span>{" "}
             faculty {data.faculties.length === 1 ? "member" : "members"}
           </p>
           <button
             type="button"
             onClick={addFaculty}
-            className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-[#0B2A47] hover:bg-[#081E33] text-white text-[13px] font-semibold shadow-sm transition-colors active:scale-[0.98]"
+ className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-[#0A2540] hover:bg-[#061B33] text-white text-[13px] font-semibold shadow-sm transition-colors "
           >
             <UserPlus size={16} />
             Add faculty
@@ -234,8 +234,8 @@ export function DeptStaffEditor({
                 className={cn(
                   "group rounded-xl border bg-white overflow-hidden transition-all duration-200",
                   isExpanded
-                    ? "border-[#0B2A47]/30 shadow-lg ring-2 ring-[#0B2A47]/10"
-                    : "border-slate-200 hover:border-[#0B2A47]/25 hover:shadow-md",
+                    ? "border-[#0A2540]/30 shadow-lg ring-2 ring-[#0A2540]/10"
+                    : "border-slate-200 hover:border-[#0A2540]/25 hover:shadow-md",
                 )}
               >
                 <div className="flex gap-0 flex-col sm:flex-row">
@@ -264,23 +264,23 @@ export function DeptStaffEditor({
                         className="w-full h-full object-contain max-h-[180px]"
                       />
                     ) : (
-                      <div className="flex flex-col items-center gap-2 text-slate-400 p-4">
-                        <div className="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-2xl font-bold">
+ <div className="flex flex-col items-center gap-2 text-slate-400 p-4">
+ <div className="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-2xl font-medium">
                           {faculty.name.charAt(0) || "?"}
                         </div>
-                        <span className="text-[10px] font-semibold flex items-center gap-1">
+ <span className="text-[10px] font-semibold flex items-center gap-1">
                           <Upload size={12} /> Add photo
                         </span>
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-[#0B2A47]/0 group-hover:bg-[#0B2A47]/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="text-[10px] font-bold text-[#0B2A47] bg-white/90 px-2 py-1 rounded-lg shadow-sm">
+ <div className="absolute inset-0 bg-[#0A2540]/0 group-hover:bg-[#0A2540]/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+ <span className="text-[10px] font-medium text-[#0A2540] bg-white/90 px-2 py-1 rounded-lg shadow-sm">
                         Change photo
                       </span>
                     </div>
                     {uploadingIdx === idx && (
-                      <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
-                        <Loader2 className="animate-spin text-[#0B2A47]" size={24} />
+ <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
+ <Loader2 className="animate-spin text-[#0A2540]" size={24} />
                       </div>
                     )}
                   </label>
@@ -290,7 +290,7 @@ export function DeptStaffEditor({
                     <div className="flex items-start justify-between gap-3 mb-4">
                       <div className="flex-1 space-y-3 min-w-0">
                         <div>
-                          <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+ <label className="text-[10px] font-semibold text-slate-400 tracking-normal">
                             Name
                           </label>
                           <input
@@ -301,13 +301,13 @@ export function DeptStaffEditor({
                             }
                             className={cn(
                               adminInputClass,
-                              "mt-1 font-bold text-slate-900 border-transparent bg-transparent hover:bg-slate-50 focus:bg-white focus:border-navy-300 px-2 -mx-2",
+                              "mt-1 font-medium text-slate-900 border-transparent bg-transparent hover:bg-slate-50 focus:bg-white focus:border-navy-300 px-2 -mx-2",
                             )}
                             placeholder="Faculty name"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+ <label className="text-[10px] font-semibold text-slate-400 tracking-normal">
                             Designation
                           </label>
                           <input
@@ -337,24 +337,24 @@ export function DeptStaffEditor({
                           <button
                             type="button"
                             onClick={() => setDeleteConfirm(idx)}
-                            className="p-2 rounded-lg text-slate-300 hover:text-rose-600 hover:bg-rose-50 transition-colors opacity-0 group-hover:opacity-100"
+ className="p-2 rounded-lg text-slate-300 hover:text-rose-600 hover:bg-rose-50 transition-colors opacity-0 group-hover:opacity-100"
                             title="Remove faculty"
                           >
                             <Trash2 size={16} />
                           </button>
                         ) : (
-                          <div className="flex items-center gap-1 bg-rose-50 rounded-lg p-1 border border-rose-100">
+ <div className="flex items-center gap-1 bg-rose-50 rounded-lg p-1 border border-rose-100">
                             <button
                               type="button"
                               onClick={() => removeFaculty(idx)}
-                              className="px-2 py-1 text-[11px] font-bold text-rose-700 hover:bg-rose-100 rounded-md"
+ className="px-2 py-1 text-[11px] font-medium text-rose-700 hover:bg-rose-100 rounded-md"
                             >
                               Delete
                             </button>
                             <button
                               type="button"
                               onClick={() => setDeleteConfirm(null)}
-                              className="p-1 text-rose-400 hover:text-rose-700"
+ className="p-1 text-rose-400 hover:text-rose-700"
                             >
                               <X size={14} />
                             </button>
@@ -365,8 +365,8 @@ export function DeptStaffEditor({
 
                     <div className="grid sm:grid-cols-2 gap-3 mb-4">
                       <div>
-                        <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide flex items-center gap-1">
-                          <Mail size={10} className="text-[#0B2A47]" /> Email
+ <label className="text-[10px] font-semibold text-slate-400 tracking-normal flex items-center gap-1">
+ <Mail size={10} className="text-[#0A2540]" /> Email
                         </label>
                         <input
                           type="email"
@@ -374,12 +374,12 @@ export function DeptStaffEditor({
                           onChange={(e) =>
                             updateFaculty(idx, { email: e.target.value })
                           }
-                          className={cn(adminInputClass, "mt-1 h-9 text-xs")}
+ className={cn(adminInputClass, "mt-1 h-9 text-xs")}
                           placeholder="name@rguktong.ac.in"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide flex items-center gap-1">
+ <label className="text-[10px] font-semibold text-slate-400 tracking-normal flex items-center gap-1">
                           <Phone size={10} /> Phone (optional)
                         </label>
                         <input
@@ -391,14 +391,14 @@ export function DeptStaffEditor({
                               setBioLines(bio, "Phone", e.target.value),
                             )
                           }
-                          className={cn(adminInputClass, "mt-1 h-9 text-xs")}
+ className={cn(adminInputClass, "mt-1 h-9 text-xs")}
                           placeholder="+91 …"
                         />
                       </div>
                     </div>
 
                     <div className="mb-3">
-                      <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+ <label className="text-[10px] font-semibold text-slate-400 tracking-normal">
                         Specialization
                       </label>
                       <input
@@ -410,7 +410,7 @@ export function DeptStaffEditor({
                             setBioLines(bio, "Specialization", e.target.value),
                           )
                         }
-                        className={cn(adminInputClass, "mt-1 h-9 text-xs italic")}
+ className={cn(adminInputClass, "mt-1 h-9 text-xs italic")}
                         placeholder="Research / teaching focus"
                       />
                     </div>
@@ -418,7 +418,7 @@ export function DeptStaffEditor({
                     <button
                       type="button"
                       onClick={() => setExpandedBio(isExpanded ? null : idx)}
-                      className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#0B2A47] hover:text-[#081E33] transition-colors"
+ className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#0A2540] hover:text-[#061B33] transition-colors"
                     >
                       <ChevronDown
                         size={14}
@@ -439,16 +439,16 @@ export function DeptStaffEditor({
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.22 }}
-                      className="overflow-hidden border-t border-slate-100 bg-slate-50/50"
+ className="overflow-hidden border-t border-slate-100 bg-slate-50/50"
                     >
                       <div className="p-5 md:p-6 space-y-4">
-                        <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
+ <p className="text-[11px] font-semibold text-slate-500 tracking-normal">
                           Extended bio sections
                         </p>
                         <div className="grid gap-4 md:grid-cols-2">
                           {bioKeys(idx).map((key) => (
                             <div key={key}>
-                              <label className="text-[10px] font-semibold text-slate-400 capitalize">
+ <label className="text-[10px] font-semibold text-slate-400 capitalize">
                                 {key}
                               </label>
                               <textarea
@@ -460,14 +460,14 @@ export function DeptStaffEditor({
                                   )
                                 }
                                 rows={3}
-                                className={cn(adminTextareaClass, "mt-1 text-xs")}
+ className={cn(adminTextareaClass, "mt-1 text-xs")}
                                 placeholder="One item per line"
                               />
                             </div>
                           ))}
                         </div>
                         <div>
-                          <label className="text-[10px] font-semibold text-slate-400">
+ <label className="text-[10px] font-semibold text-slate-400">
                             Photo URL (or upload above)
                           </label>
                           <input
@@ -478,7 +478,7 @@ export function DeptStaffEditor({
                                 photo: e.target.value || null,
                               })
                             }
-                            className={cn(adminInputClass, "mt-1 h-9 text-xs font-mono")}
+ className={cn(adminInputClass, "mt-1 h-9 text-xs font-mono")}
                             placeholder="https://…"
                           />
                         </div>
@@ -495,16 +495,16 @@ export function DeptStaffEditor({
         <button
           type="button"
           onClick={addFaculty}
-          className="w-full rounded-xl border-2 border-dashed border-slate-200 hover:border-[#0B2A47]/40 hover:bg-[#0B2A47]/[0.02] py-10 flex flex-col items-center gap-2 text-slate-400 hover:text-[#0B2A47] transition-all duration-200 group"
+ className="w-full rounded-xl border-2 border-dashed border-slate-200 hover:border-[#0A2540]/40 hover:bg-[#0A2540]/[0.02] py-10 flex flex-col items-center gap-2 text-slate-400 hover:text-[#0A2540] transition-all duration-200 group"
         >
-          <div className="w-12 h-12 rounded-full bg-slate-100 group-hover:bg-[#0B2A47]/10 flex items-center justify-center transition-colors">
+ <div className="w-12 h-12 rounded-full bg-slate-100 group-hover:bg-[#0A2540]/10 flex items-center justify-center transition-colors">
             <Plus size={22} />
           </div>
-          <span className="text-sm font-semibold">Add another faculty member</span>
+ <span className="text-sm font-semibold">Add another faculty member</span>
         </button>
       </div>
 
-      <p className="text-center text-[11px] text-slate-400 mt-8 flex items-center justify-center gap-1.5">
+ <p className="text-center text-[11px] text-slate-400 mt-8 flex items-center justify-center gap-1.5">
         <ExternalLink size={12} />
         Matches public page at rguktong.in/departments/{deptCode}
       </p>

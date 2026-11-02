@@ -24,7 +24,7 @@ export function OutButton({ request }: requestProps) {
     <div className="flex justify-center items-center w-full md:w-auto mt-2 md:mt-0">
       <button
         onClick={() => navigateTo(`/student/${request}/request${request}`)}
-        className="w-full md:w-auto px-10 h-[48px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-md shadow-navy-100 flex items-center justify-center gap-2"
+ className="w-full md:w-auto px-10 h-[48px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-medium text-sm transition-all shadow-md shadow-navy-100 flex items-center justify-center gap-2"
       >
         <Plus className="w-4 h-4" />
         <span>New {request.charAt(0).toUpperCase() + request.slice(1)}</span>
@@ -99,25 +99,25 @@ export default function Outpass_Outing({ request }: requestProps) {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[50vh]">
-        <Loader2 className="w-10 h-10 animate-spin text-navy-200" />
+ <Loader2 className="w-10 h-10 animate-spin text-navy-200" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-10 pb-24 md:pb-12">
+ <div className="max-w-7xl mx-auto px-4 md:px-10 pb-24 md:pb-12">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-6 mb-10 mt-4 md:mt-0">
-        <div className="flex flex-col gap-1.5 text-center md:text-left">
-          <p className="text-navy-400 font-medium text-[12px] tracking-[0.14em] leading-none mb-1">
+ <div className="flex flex-col gap-1.5 text-center md:text-left">
+ <p className="text-navy-400 font-medium text-[12px] leading-none mb-1">
             Institutional Permission Records
           </p>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.02em] text-navy-900 leading-none">
+ <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.02em] text-navy-900 leading-none">
             {request === "outing" ? "Outing" : "Outpass"} Logs & History
           </h1>
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-4">
             {pendingCount > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-bold tracking-[0.14em] border border-amber-100/50">
+ <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-medium border border-amber-100/50">
                 <Clock className="w-3 h-3 animate-pulse" />
                 {pendingCount} Pending Requests
               </span>
@@ -132,35 +132,35 @@ export default function Outpass_Outing({ request }: requestProps) {
       {/* Main Content */}
       <div className="space-y-6">
         {requests.length === 0 ? (
-          <div className="text-center py-20 bg-navy-50/30 rounded-xl border border-navy-100 border-dashed">
-            <div className="mx-auto h-20 w-20 bg-white rounded-xl flex items-center justify-center mb-6 border border-navy-50 shadow-sm">
-              <Clock className="h-8 w-8 text-navy-100" />
+ <div className="text-center py-20 bg-navy-50/30 rounded-xl border border-navy-100 border-dashed">
+ <div className="mx-auto h-20 w-20 bg-white rounded-xl flex items-center justify-center mb-6 border border-navy-50 shadow-sm">
+ <Clock className="h-8 w-8 text-navy-100" />
             </div>
-            <h3 className="text-lg font-semibold text-navy-800 mb-2 tracking-tight">
+ <h3 className="text-lg font-semibold text-navy-800 mb-2 tracking-tight">
               No History Found
             </h3>
-            <p className="text-navy-400 font-medium text-[13px] max-w-[240px] mx-auto leading-relaxed">
+ <p className="text-navy-400 font-medium text-[13px] max-w-[240px] mx-auto leading-relaxed">
               Your past {request} requests will be archived here once you start.
             </p>
           </div>
         ) : (
           <>
             {/* Desktop Table View */}
-            <div className="hidden md:block bg-white rounded-xl border border-navy-100 shadow-sm overflow-hidden mb-10">
+ <div className="hidden md:block bg-white rounded-xl border border-navy-100 shadow-sm overflow-hidden mb-10">
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+ <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-navy-50">
-                      <th className="px-8 py-5 text-[11px] font-semibold tracking-[0.14em] text-navy-400 bg-navy-50/20">
+ <th className="px-8 py-5 text-[11px] font-semibold text-navy-400 bg-navy-50/20">
                         Request Detail
                       </th>
-                      <th className="px-8 py-5 text-[11px] font-semibold tracking-[0.14em] text-navy-400 bg-navy-50/20">
+ <th className="px-8 py-5 text-[11px] font-semibold text-navy-400 bg-navy-50/20">
                         Period & Interval
                       </th>
-                      <th className="px-8 py-5 text-[11px] font-semibold tracking-[0.14em] text-navy-400 bg-navy-50/20">
+ <th className="px-8 py-5 text-[11px] font-semibold text-navy-400 bg-navy-50/20">
                         Reason for Leave
                       </th>
-                      <th className="px-8 py-5 text-[11px] font-semibold tracking-[0.14em] text-navy-400 bg-navy-50/20 text-right">
+ <th className="px-8 py-5 text-[11px] font-semibold text-navy-400 bg-navy-50/20 text-right">
                         Status
                       </th>
                     </tr>
@@ -204,11 +204,11 @@ export default function Outpass_Outing({ request }: requestProps) {
                       return (
                         <tr
                           key={req._id}
-                          className="hover:bg-navy-50/30 transition-all group"
+ className="hover:bg-navy-50/30 transition-all group"
                         >
-                          <td className="px-8 py-5 text-nowrap">
+ <td className="px-8 py-5 text-nowrap">
                             <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-xl bg-navy-100 text-navy-500 flex items-center justify-center group-hover:bg-navy-900 group-hover:text-white transition-all duration-300">
+ <div className="w-10 h-10 rounded-xl bg-navy-100 text-navy-500 flex items-center justify-center group-hover:bg-navy-900 group-hover:text-white transition-all duration-300">
                                 {request === "outing" ? (
                                   <Clock size={16} />
                                 ) : (
@@ -216,42 +216,42 @@ export default function Outpass_Outing({ request }: requestProps) {
                                 )}
                               </div>
                               <div className="flex flex-col">
-                                <p className="font-bold text-navy-900 tracking-tight leading-none mb-1.5 capitalize text-[15px]">
+ <p className="font-medium text-navy-900 tracking-tight leading-none mb-1.5 capitalize text-[15px]">
                                   {request} Protocol
                                 </p>
-                                <p className="text-[10px] font-bold tracking-[0.14em] text-navy-400 leading-none">
+ <p className="text-[10px] font-medium text-navy-400 leading-none">
                                   ID:{" "}
                                   {req._id?.slice(-8).toUpperCase() || "N/A"}
                                 </p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-8 py-5 text-nowrap">
+ <td className="px-8 py-5 text-nowrap">
                             <div className="flex flex-col gap-1.5">
-                              <p className="text-[14px] font-bold text-navy-800 tracking-tight">
+ <p className="text-[14px] font-medium text-navy-800 tracking-tight">
                                 {timeRange}
                               </p>
                               <div className="flex items-center gap-2">
-                                <span className="text-[10px] text-navy-400 font-bold tracking-[0.14em]">
+ <span className="text-[10px] text-navy-400 font-medium">
                                   {dateStr}
                                 </span>
-                                <span className="px-1.5 py-0.5 bg-navy-900 text-white rounded text-[9px] font-bold tracking-wider">
+ <span className="px-1.5 py-0.5 bg-navy-900 text-white rounded text-[9px] font-medium tracking-wider">
                                   {durationText}
                                 </span>
                               </div>
                             </div>
                           </td>
-                          <td className="px-8 py-5">
+ <td className="px-8 py-5">
                             <p
-                              className="text-[13px] font-medium text-navy-500 italic line-clamp-1 max-w-[200px]"
+ className="text-[13px] font-medium text-navy-500 italic line-clamp-1 max-w-[200px]"
                               title={req.reason}
                             >
                               "{req.reason}"
                             </p>
                           </td>
-                          <td className="px-8 py-5 text-right">
+ <td className="px-8 py-5 text-right">
                             <div
-                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-bold tracking-[0.14em] border border-current opacity-80 ${status.color.includes("bg-navy-900") ? "text-navy-900 bg-navy-50 border-navy-100" : status.color.includes("bg-white border border-red-50") ? "text-red-500 bg-red-50 border-red-100" : "text-navy-400 bg-navy-50 border-navy-100"}`}
+ className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-medium border border-current opacity-80 ${status.color.includes("bg-navy-900") ? "text-navy-900 bg-navy-50 border-navy-100" : status.color.includes("bg-white border border-red-50") ? "text-red-500 bg-red-50 border-red-100" : "text-navy-400 bg-navy-50 border-navy-100"}`}
                             >
                               {status.label}
                             </div>
@@ -299,11 +299,11 @@ export default function Outpass_Outing({ request }: requestProps) {
                 return (
                   <div
                     key={req._id}
-                    className="bg-white rounded-xl border border-navy-100 p-5 shadow-sm active:scale-[0.99] transition-all"
+ className="bg-white rounded-xl border border-navy-100 p-5 shadow-sm transition-all"
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-navy-50 text-navy-500 flex items-center justify-center">
+ <div className="w-10 h-10 rounded-xl bg-navy-50 text-navy-500 flex items-center justify-center">
                           {request === "outing" ? (
                             <Clock size={18} />
                           ) : (
@@ -311,16 +311,16 @@ export default function Outpass_Outing({ request }: requestProps) {
                           )}
                         </div>
                         <div>
-                          <p className="font-bold text-navy-900 capitalize text-[15px] tracking-tight">
+ <p className="font-medium text-navy-900 capitalize text-[15px] tracking-tight">
                             {request} Protocol
                           </p>
-                          <p className="text-[10px] font-bold text-navy-400 tracking-[0.14em]">
+ <p className="text-[10px] font-medium text-navy-400 ">
                             ID: {req._id?.slice(-8).toUpperCase()}
                           </p>
                         </div>
                       </div>
                       <div
-                        className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-[0.14em] border border-current ${status.color.includes("bg-navy-900") ? "text-navy-900 bg-navy-50 border-navy-100" : status.color.includes("bg-white border border-red-50") ? "text-red-500 bg-red-50 border-red-100" : "text-navy-400 bg-navy-50 border-navy-100"}`}
+ className={`px-2.5 py-0.5 rounded-full text-[9px] font-medium border border-current ${status.color.includes("bg-navy-900") ? "text-navy-900 bg-navy-50 border-navy-100" : status.color.includes("bg-white border border-red-50") ? "text-red-500 bg-red-50 border-red-100" : "text-navy-400 bg-navy-50 border-navy-100"}`}
                       >
                         {status.label}
                       </div>
@@ -329,29 +329,29 @@ export default function Outpass_Outing({ request }: requestProps) {
                     <div className="space-y-3 pt-3 border-t border-navy-50">
                       <div className="flex justify-between items-end">
                         <div className="space-y-1">
-                          <p className="text-[9px] font-bold text-navy-300 tracking-[0.14em] leading-none">
+ <p className="text-[9px] font-medium text-navy-300 leading-none">
                             Interval Period
                           </p>
-                          <p className="text-[14px] font-bold text-navy-800 tracking-tight">
+ <p className="text-[14px] font-medium text-navy-800 tracking-tight">
                             {timeRange}
                           </p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-[9px] font-bold text-navy-300 tracking-[0.14em] leading-none mb-1">
+ <div className="text-right">
+ <p className="text-[9px] font-medium text-navy-300 leading-none mb-1">
                             {dateStr}
                           </p>
-                          <span className="px-2 py-0.5 bg-navy-900 text-white rounded text-[9px] font-bold tracking-wider">
+ <span className="px-2 py-0.5 bg-navy-900 text-white rounded text-[9px] font-medium tracking-wider">
                             {durationText}
                           </span>
                         </div>
                       </div>
 
                       {req.reason && (
-                        <div className="bg-navy-50/50 p-3 rounded-lg border border-navy-50">
-                          <p className="text-[10px] font-bold text-navy-300 tracking-[0.14em] mb-1">
+ <div className="bg-navy-50/50 p-3 rounded-lg border border-navy-50">
+ <p className="text-[10px] font-medium text-navy-300 mb-1">
                             Reason Statement
                           </p>
-                          <p className="text-[13px] font-medium text-navy-600 italic leading-relaxed">
+ <p className="text-[13px] font-medium text-navy-600 italic leading-relaxed">
                             "{req.reason}"
                           </p>
                         </div>

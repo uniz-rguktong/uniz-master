@@ -59,7 +59,7 @@
     <!-- Preload fonts -->
     <link
       rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@600;700;800&family=Cabin:ital,wght@0,500;0,700;1,400&family=Cabin+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cabin+Condensed:wght@400;500;600;700&display=swap"
       as="style"
       onload="
         this.onload = null;
@@ -69,7 +69,7 @@
     <noscript
       ><link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@600;700;800&family=Cabin:ital,wght@0,500;0,700;1,400&family=Cabin+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cabin+Condensed:wght@400;500;600;700&display=swap"
     /></noscript>
 
     <title>uniZ — Campus platform for RGUKT students</title>
@@ -83,8 +83,9 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 0.625rem;
-        background: radial-gradient(circle farthest-corner at 16.5% 37.3%, #0a2540 0.1%, #021227 90%);
+        gap: 1.75rem;
+        background: #ffffff;
+        color: #0f172a;
         transition:
           opacity 0.4s ease,
           visibility 0.4s ease;
@@ -96,71 +97,87 @@
         pointer-events: none;
       }
 
-      #pwa-splash .pwa-splash-wordmark {
-        font-family: "Open Sans", system-ui, sans-serif;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        font-size: clamp(1.75rem, 8vw, 2.25rem);
-        line-height: 1;
-        color: #ffffff;
-        margin: 0 0 0.25rem;
-      }
-
-      #pwa-splash .pwa-splash-tagline {
+      #pwa-splash .pwa-splash-lockup {
         display: flex;
-        flex-direction: column;
         align-items: center;
-        gap: 0.125rem;
-        margin: 0;
-        padding: 0 1.25rem;
-        max-width: 20rem;
-        text-align: center;
+        gap: 0.75rem;
       }
 
-      #pwa-splash .pwa-splash-tagline-line {
-        font-family: "Open Sans", system-ui, sans-serif;
+      #pwa-splash .pwa-splash-lockup img {
+        width: 2.75rem;
+        height: 2.75rem;
+        object-fit: contain;
+      }
+
+      #pwa-splash .pwa-splash-wordmark {
+        font-family: "Cabin Condensed", system-ui, sans-serif;
         font-weight: 600;
-        letter-spacing: 0.04em;
-        font-size: clamp(0.95rem, 4vw, 1.15rem);
-        line-height: 1.35;
-        color: #ffffff;
+        letter-spacing: -0.02em;
+        text-transform: none;
+        font-size: 1.5rem;
+        line-height: 1;
+        color: #0a2540;
         margin: 0;
-      }
-
-      #pwa-splash .pwa-splash-tagline-line--muted {
-        color: rgba(255, 255, 255, 0.72);
       }
 
       #pwa-splash .pwa-splash-sub {
-        font-family: "Cabin", "Open Sans", system-ui, sans-serif;
+        font-family: "Cabin Condensed", system-ui, sans-serif;
         font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.72);
+        font-weight: 500;
+        letter-spacing: 0;
+        text-transform: none;
+        color: #475569;
+        margin: 0.25rem 0 0;
+      }
+
+      #pwa-splash .pwa-splash-status {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin: 0;
+      }
+
+      #pwa-splash .pwa-splash-spin {
+        width: 2.5rem;
+        height: 2.5rem;
+        border: 2px solid #0a2540;
+        border-top-color: transparent;
+        border-radius: 999px;
+        animation: pwa-splash-spin 0.7s linear infinite;
+      }
+
+      #pwa-splash .pwa-splash-status p {
+        font-family: "Cabin Condensed", system-ui, sans-serif;
+        font-size: 0.875rem;
+        font-weight: 500;
+        letter-spacing: 0;
+        color: #475569;
         margin: 0;
       }
 
       #pwa-splash .pwa-splash-bar {
         position: absolute;
-        bottom: max(2.75rem, env(safe-area-inset-bottom, 0px));
-        left: 50%;
-        transform: translateX(-50%);
-        width: 2.75rem;
+        bottom: 0;
+        left: 0;
+        width: 100%;
         height: 2px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.2);
+        background: #e2e8f0;
         overflow: hidden;
       }
 
       #pwa-splash .pwa-splash-bar span {
         display: block;
         height: 100%;
-        width: 45%;
-        border-radius: inherit;
-        background: #ffffff;
+        width: 32%;
+        background: #ea2027;
         animation: pwa-splash-slide 1.15s ease-in-out infinite;
+      }
+
+      @keyframes pwa-splash-spin {
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       @keyframes pwa-splash-slide {
@@ -169,6 +186,13 @@
         }
         100% {
           transform: translateX(320%);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #pwa-splash .pwa-splash-spin,
+        #pwa-splash .pwa-splash-bar span {
+          animation: none;
         }
       }
 
@@ -242,20 +266,18 @@
   </head>
 
   <body>
-    <div id="pwa-splash" role="status" aria-label="Loading uniZ">
-      <img
-        src="/logo.png"
-        alt="uniZ"
-        style="width: 56px; height: 56px; border-radius: 9999px; background: #ffffff; object-fit: contain; margin-bottom: 0.25rem; box-shadow: 0 4px 16px rgba(0,0,0,0.25);"
-      />
-      <p class="pwa-splash-wordmark">uniZ.</p>
-      <p class="pwa-splash-tagline">
-        <span class="pwa-splash-tagline-line">__UNIZ_TAGLINE_LINE1__</span>
-        <span class="pwa-splash-tagline-line pwa-splash-tagline-line--muted"
-          >__UNIZ_TAGLINE_LINE2__</span
-        >
-      </p>
-      <p class="pwa-splash-sub">__UNIZ_CAMPUS_LABEL__</p>
+    <div id="pwa-splash" role="status" aria-label="Loading campus">
+      <div class="pwa-splash-lockup">
+        <img src="/rgukt-logo.png" alt="" />
+        <div>
+          <p class="pwa-splash-wordmark">uniZ</p>
+          <p class="pwa-splash-sub">Ongole campus portal</p>
+        </div>
+      </div>
+      <div class="pwa-splash-status">
+        <div class="pwa-splash-spin" aria-hidden="true"></div>
+        <p>Loading campus</p>
+      </div>
       <div class="pwa-splash-bar" aria-hidden="true"><span></span></div>
     </div>
     <div id="root"></div>

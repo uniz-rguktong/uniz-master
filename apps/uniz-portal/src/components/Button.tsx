@@ -30,22 +30,17 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     const variants = {
-      primary:
-        "bg-[#34495e] text-white hover:bg-[#2c3e50] shadow-examcell uppercase tracking-[2px] font-form",
-      secondary:
-        "bg-[#FAFAFA] text-[#0A2540] hover:bg-[#EEEEEE] shadow-none border border-[#EEEEEE] font-form uppercase tracking-[1px]",
-      outline:
-        "border border-[#0A2540] bg-transparent hover:bg-[#0A2540] hover:text-white text-[#0A2540] font-form uppercase tracking-[1px]",
-      danger:
-        "bg-[#EA2027] text-white hover:bg-[#c41b21] shadow-none uppercase tracking-[1px] font-form",
-      ghost:
-        "bg-transparent hover:bg-[#FAFAFA] text-[#5A7A94] hover:text-[#0A2540] font-button",
+      primary: "bg-navy text-white hover:bg-navy-950",
+      secondary: "border border-line bg-white text-navy-900 hover:bg-surface-2",
+      outline: "border border-line bg-white text-navy-900 hover:bg-surface-2",
+      danger: "bg-brand-red text-white hover:bg-[#C81A20]",
+      ghost: "bg-transparent text-ink-muted hover:bg-surface-2 hover:text-navy-900",
     };
 
     const sizes = {
-      sm: "h-9 min-h-9 px-4 text-[12px] rounded-[1px]",
-      md: "min-h-9 px-5 text-[13px] rounded-[1px]",
-      lg: "min-h-[35px] px-8 text-[13px] rounded-[1px]",
+      sm: "h-9 min-h-9 px-3 text-sm rounded-lg",
+      md: "h-10 min-h-10 px-4 text-sm rounded-lg",
+      lg: "h-11 min-h-11 px-5 text-sm rounded-lg",
     };
 
     const finalIsLoading = isLoading || loading;
@@ -57,7 +52,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         onClick={finalOnClick}
         disabled={disabled || finalIsLoading}
         className={cn(
-          "inline-flex items-center justify-center font-bold transition-colors duration-150 ease-smooth focus:outline-none focus:ring-2 focus:ring-[#34495e]/30 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:opacity-95",
+          "inline-flex items-center justify-center text-sm font-medium transition-colors duration-150 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:opacity-50 disabled:pointer-events-none",
           variants[variant],
           sizes[size],
           className,

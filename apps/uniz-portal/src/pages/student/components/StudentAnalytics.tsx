@@ -56,22 +56,22 @@ interface AnalyticsProps {
 const CustomTooltip = ({ active, payload, label, mode }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-[2px] border border-white/40 bg-white/70 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] min-w-[200px] text-navy-900 animate-in zoom-in-95 duration-200">
-        <div className="text-[10px] font-semibold text-navy-400 tracking-[0.14em] mb-3 pb-2 border-b border-navy-100/50">
+ <div className="rounded-lg border border-white/40 bg-white/70 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] min-w-[200px] text-navy-900 animate-in zoom-in-95 duration-200">
+ <div className="text-[10px] font-semibold text-navy-400 mb-3 pb-2 border-b border-navy-100/50">
           {mode === "subject" ? "Intelligence Unit" : `${label} Overview`}
         </div>
 
         {mode === "subject" ? (
           <div className="space-y-3">
-            <div className="text-xs font-semibold leading-tight text-navy-900">
+ <div className="text-xs font-semibold leading-tight text-navy-900">
               {payload[0].payload.subject_name}
             </div>
-            <div className="flex justify-between items-center py-1">
-              <span className="text-[10px] font-bold text-navy-500 tracking-wider">
+ <div className="flex justify-between items-center py-1">
+ <span className="text-[10px] font-medium text-navy-500 tracking-wider">
                 Attendance
               </span>
               <span
-                className={`text-xs font-semibold ${payload[0].value < 75 ? "text-rose-500" : "text-emerald-500"}`}
+ className={`text-xs font-semibold ${payload[0].value < 75 ? "text-rose-500" : "text-emerald-500"}`}
               >
                 {payload[0].value}%
               </span>
@@ -86,14 +86,14 @@ const CustomTooltip = ({ active, payload, label, mode }: any) => {
               >
                 <div className="flex items-center gap-2.5">
                   <div
-                    className="w-1.5 h-1.5 rounded-full shadow-sm"
+ className="w-1.5 h-1.5 rounded-full shadow-sm"
                     style={{ backgroundColor: entry.color }}
                   />
-                  <span className="text-[10px] font-bold text-navy-500 tracking-[0.14em]">
+ <span className="text-[10px] font-medium text-navy-500 ">
                     {entry.name}
                   </span>
                 </div>
-                <span className="text-xs font-semibold tabular-nums text-navy-900">
+ <span className="text-xs font-semibold tabular-nums text-navy-900">
                   {entry.name?.includes("Attendance")
                     ? `${Number(entry.value).toFixed(1)}%`
                     : Number(entry.value).toFixed(2)}
@@ -243,12 +243,12 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
       <div className="w-full h-[400px] flex items-center justify-center">
         <div className="flex flex-col items-center gap-6">
           <div className="relative">
-            <div className="w-20 h-20 rounded-full border border-navy-100 flex items-center justify-center">
-              <Activity className="w-8 h-8 text-navy-900 animate-pulse" />
+ <div className="w-20 h-20 rounded-full border border-navy-100 flex items-center justify-center">
+ <Activity className="w-8 h-8 text-navy-900 animate-pulse" />
             </div>
-            <div className="absolute inset-0 border-t-2 border-navy-900 rounded-full animate-spin" />
+ <div className="absolute inset-0 border-t-2 border-navy-900 rounded-full animate-spin" />
           </div>
-          <span className="text-[10px] font-semibold tracking-[0.3em] text-navy-900/40">
+ <span className="text-[10px] font-semibold text-navy-900/40">
             Piping Academic Intelligence
           </span>
         </div>
@@ -256,27 +256,27 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
     );
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-8">
+ <div className="w-full max-w-7xl mx-auto py-8">
       <div className="space-y-8">
         {/* DASHBOARD CARD */}
-        <div className="bg-white rounded-[2px] border border-navy-100/80 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.02)] overflow-hidden">
+ <div className="bg-white rounded-lg border border-navy-100/80 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.02)] overflow-hidden">
           <div className="p-8 lg:p-12 space-y-12">
             {/* HEADER & CONTROLS */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-2 h-2 rounded-full bg-navy-900 animate-pulse" />
-                  <span className="text-[10px] font-semibold tracking-[0.25em] text-navy-900/40">
+ <div className="w-2 h-2 rounded-full bg-navy-900 animate-pulse" />
+ <span className="text-[10px] font-semibold text-navy-900/40">
                     Real-time Visualizer
                   </span>
                 </div>
-                <h2 className="text-4xl font-semibold text-navy-900 tracking-tight leading-none">
+ <h2 className="text-4xl font-semibold text-navy-900 tracking-tight leading-none">
                   Academic Analytics
                 </h2>
                 <div className="flex items-center gap-3 pt-1">
-                  <span className="text-xs font-bold text-navy-400 capitalize">
+ <span className="text-xs font-medium text-navy-400 capitalize">
                     Visualizing{" "}
-                    <span className="text-navy-900">
+ <span className="text-navy-900">
                       {view === "semester"
                         ? "Semester Trends"
                         : "Subject Proficiency"}
@@ -285,55 +285,55 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 bg-navy-50/50 p-1.5 rounded-[2px] border border-navy-100">
+ <div className="flex items-center gap-2 bg-navy-50/50 p-1.5 rounded-lg border border-navy-100">
                 <button
                   onClick={() => setView("semester")}
-                  className={`px-6 py-2.5 rounded-xl text-[11px] font-semibold tracking-[0.14em] transition-all duration-500 ${
-                    view === "semester"
-                      ? "bg-white text-navy-900 shadow-xl shadow-navy-200"
-                      : "text-navy-400 hover:text-navy-900"
-                  }`}
+ className={`px-6 py-2.5 rounded-xl text-[11px] font-semibold transition-all duration-500 ${
+ view === "semester"
+ ? "bg-white text-navy-900 shadow-xl shadow-navy-200"
+ : "text-navy-400 hover:text-navy-900"
+ }`}
                 >
                   Semesters
                 </button>
                 <button
                   onClick={() => setView("subject")}
-                  className={`px-6 py-2.5 rounded-xl text-[11px] font-semibold tracking-[0.14em] transition-all duration-500 ${
-                    view === "subject"
-                      ? "bg-white text-navy-900 shadow-xl shadow-navy-200"
-                      : "text-navy-400 hover:text-navy-900"
-                  }`}
+ className={`px-6 py-2.5 rounded-xl text-[11px] font-semibold transition-all duration-500 ${
+ view === "subject"
+ ? "bg-white text-navy-900 shadow-xl shadow-navy-200"
+ : "text-navy-400 hover:text-navy-900"
+ }`}
                 >
                   Subjects
                 </button>
-                <div className="w-px h-6 bg-navy-200 mx-2" />
+ <div className="w-px h-6 bg-navy-200 mx-2" />
                 <Select
                   value={view === "semester" ? timeHorizon : subjectFilter}
                   onValueChange={
                     view === "semester" ? setTimeHorizon : setSubjectFilter
                   }
                 >
-                  <SelectTrigger className="w-[140px] h-10 rounded-xl bg-transparent border-none text-[10px] font-semibold tracking-[0.14em] text-navy-600 focus:ring-0">
+ <SelectTrigger className="w-[140px] h-10 rounded-xl bg-transparent border-none text-[10px] font-semibold text-navy-600 focus:ring-0">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="rounded-[2px] border-navy-100 shadow-2xl">
+ <SelectContent className="rounded-lg border-navy-100 shadow-2xl">
                     {view === "semester" ? (
                       <>
                         <SelectItem
                           value="overall"
-                          className="text-[10px] font-semibold tracking-[0.14em] "
+ className="text-[10px] font-semibold "
                         >
                           Overall
                         </SelectItem>
                         <SelectItem
                           value="year"
-                          className="text-[10px] font-semibold tracking-[0.14em] "
+ className="text-[10px] font-semibold "
                         >
                           Past Year
                         </SelectItem>
                         <SelectItem
                           value="recent"
-                          className="text-[10px] font-semibold tracking-[0.14em] "
+ className="text-[10px] font-semibold "
                         >
                           Recent
                         </SelectItem>
@@ -342,25 +342,25 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                       <>
                         <SelectItem
                           value="all"
-                          className="text-[10px] font-semibold tracking-[0.14em] "
+ className="text-[10px] font-semibold "
                         >
                           All Classes
                         </SelectItem>
                         <SelectItem
                           value="theory"
-                          className="text-[10px] font-semibold tracking-[0.14em] "
+ className="text-[10px] font-semibold "
                         >
                           Theory
                         </SelectItem>
                         <SelectItem
                           value="lab"
-                          className="text-[10px] font-semibold tracking-[0.14em] "
+ className="text-[10px] font-semibold "
                         >
                           Labs
                         </SelectItem>
                         <SelectItem
                           value="low"
-                          className="text-[10px] font-semibold tracking-[0.14em] "
+ className="text-[10px] font-semibold "
                         >
                           Low (75%)
                         </SelectItem>
@@ -374,65 +374,65 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
             {/* METRICS ROW */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16 pt-4">
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-navy-400">
-                  <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500">
+ <div className="flex items-center gap-2 text-navy-400">
+ <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500">
                     <Monitor size={14} />
                   </div>
-                  <span className="text-[10px] font-semibold tracking-[0.14em]">
+ <span className="text-[10px] font-semibold ">
                     Presence
                   </span>
                 </div>
                 <div className="flex items-baseline gap-3">
-                  <span className="text-4xl lg:text-5xl font-semibold text-navy-900 tracking-tighter text-nowrap">
+ <span className="text-4xl lg:text-5xl font-semibold text-navy-900 tracking-tighter text-nowrap">
                     {Number(globalStats?.avgAtt || 0).toFixed(1)}%
                   </span>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-navy-400">
-                  <div className="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500">
+ <div className="flex items-center gap-2 text-navy-400">
+ <div className="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500">
                     <Award size={14} />
                   </div>
-                  <span className="text-[10px] font-semibold tracking-[0.14em]">
+ <span className="text-[10px] font-semibold ">
                     Latest SGPA
                   </span>
                 </div>
                 <div className="flex items-baseline gap-3">
-                  <span className="text-4xl lg:text-5xl font-semibold text-navy-900 tracking-tighter">
+ <span className="text-4xl lg:text-5xl font-semibold text-navy-900 tracking-tighter">
                     {Number(globalStats?.latestG || 0).toFixed(2)}
                   </span>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-navy-400">
-                  <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500">
+ <div className="flex items-center gap-2 text-navy-400">
+ <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500">
                     <Activity size={14} />
                   </div>
-                  <span className="text-[10px] font-semibold tracking-[0.14em]">
+ <span className="text-[10px] font-semibold ">
                     Cumulative
                   </span>
                 </div>
                 <div className="flex items-baseline gap-3">
-                  <span className="text-4xl lg:text-5xl font-semibold text-navy-900 tracking-tighter underline decoration-blue-100 decoration-8 underline-offset-[-2px]">
+ <span className="text-4xl lg:text-5xl font-semibold text-navy-900 tracking-tighter underline decoration-blue-100 decoration-8 underline-offset-[-2px]">
                     {finalCGPA.toFixed(2)}
                   </span>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-navy-400">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500">
+ <div className="flex items-center gap-2 text-navy-400">
+ <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500">
                     <TrendingUp size={14} />
                   </div>
-                  <span className="text-[10px] font-semibold tracking-[0.14em]">
+ <span className="text-[10px] font-semibold ">
                     Momentum
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div
-                    className={`px-4 py-2 rounded-[2px] text-[13px] font-semibold ${trends.gpa >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"}`}
+ className={`px-4 py-2 rounded-lg text-[13px] font-semibold ${trends.gpa >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"}`}
                   >
                     {trends.gpa >= 0 ? "+" : ""}
                     {trends.gpa.toFixed(1)}%
@@ -617,7 +617,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                                       textAnchor="end"
                                       fill="#94a3b8"
                                       transform="rotate(-30)"
-                                      className="text-[10px] font-semibold tracking-tighter"
+ className="text-[10px] font-semibold tracking-tighter"
                                     >
                                       {payload.value?.length > 20
                                         ? payload.value.substring(0, 18) + ".."
@@ -699,23 +699,23 @@ const InsightCard = ({ title, subject, value, icon, color }: any) => {
   };
 
   return (
-    <div className="bg-white p-8 rounded-[2px] border border-navy-100/80 shadow-sm flex items-center justify-between group hover:bg-navy-50 transition-all duration-500">
+ <div className="bg-white p-8 rounded-lg border border-navy-100/80 shadow-sm flex items-center justify-between group hover:bg-navy-50 transition-all duration-500">
       <div className="flex items-center gap-5">
         <div
-          className={`w-14 h-14 rounded-[2px] flex items-center justify-center ${colorClasses[color]} group-hover:scale-110 transition-transform duration-500`}
+ className={`w-14 h-14 rounded-lg flex items-center justify-center ${colorClasses[color]} group-hover:scale-110 transition-transform duration-500`}
         >
           {icon}
         </div>
         <div className="space-y-1">
-          <p className="text-[10px] font-semibold text-navy-400 tracking-[0.14em]">
+ <p className="text-[10px] font-semibold text-navy-400 ">
             {title}
           </p>
-          <p className="text-sm font-semibold text-navy-900 leading-none truncate max-w-[150px]">
+ <p className="text-sm font-semibold text-navy-900 leading-none truncate max-w-[150px]">
             {subject || "No Data"}
           </p>
         </div>
       </div>
-      <div className="text-xl font-semibold text-navy-900">{value}</div>
+ <div className="text-xl font-semibold text-navy-900">{value}</div>
     </div>
   );
 };

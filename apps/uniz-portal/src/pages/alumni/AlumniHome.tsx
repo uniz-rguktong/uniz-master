@@ -92,7 +92,7 @@ export default function AlumniHome({ staff = false }: { staff?: boolean }) {
       title="Alumni"
       description="Alumni profiles, the alumni jobs board and the public directory."
     >
-      {error && <p className="text-sm text-red-600">{error}</p>}
+ {error && <p className="text-sm text-red-600">{error}</p>}
       {!staff && !profile?.verifiedAt && (
         <div className={`${cardCls} space-y-2`}>
           <p>
@@ -112,7 +112,7 @@ export default function AlumniHome({ staff = false }: { staff?: boolean }) {
           </button>
           {sent && (
             <div className="flex gap-2">
-              <span className="self-center text-slate-600">Sent to {sent}</span>
+ <span className="self-center text-slate-600">Sent to {sent}</span>
               <input
                 className={inputCls}
                 placeholder="6 digit code"
@@ -171,9 +171,9 @@ export default function AlumniHome({ staff = false }: { staff?: boolean }) {
           </button>
         </div>
       )}
-      <h3 className="font-medium text-slate-900">Jobs from alumni</h3>
+ <h3 className="font-medium text-slate-900">Jobs from alumni</h3>
       {jobs.length === 0 && (
-        <p className="text-sm text-slate-500">No open jobs.</p>
+ <p className="text-sm text-slate-500">No open jobs.</p>
       )}
       {jobs.map((j) => (
         <div key={j.id} className={`${cardCls} flex justify-between gap-2`}>
@@ -181,7 +181,7 @@ export default function AlumniHome({ staff = false }: { staff?: boolean }) {
             {j.title} . {j.company} {j.location ? `. ${j.location}` : ""} .{" "}
             {j.kind} {j.deadline ? `. by ${day(j.deadline)}` : ""}
             {j.description && (
-              <span className="block text-slate-600">{j.description}</span>
+ <span className="block text-slate-600">{j.description}</span>
             )}
           </span>
           <span className="flex gap-2">
@@ -196,7 +196,7 @@ export default function AlumniHome({ staff = false }: { staff?: boolean }) {
             {staff && (
               <button
                 type="button"
-                className="rounded-md border px-2"
+ className="rounded-md border px-2"
                 onClick={() =>
                   run(() => f(`/jobs/${j.id}/close`, post()), "Closed")
                 }
@@ -255,18 +255,18 @@ export default function AlumniHome({ staff = false }: { staff?: boolean }) {
       )}
       {staff && (
         <div className={cardCls}>
-          <p className="font-medium">
+ <p className="font-medium">
             {all.length} alumni claimed, {all.filter((a) => a.visible).length}{" "}
             listed publicly
           </p>
           {all.slice(0, 200).map((a) => (
-            <p key={a.id} className="text-slate-600">
+ <p key={a.id} className="text-slate-600">
               {a.username} . {a.name} . {a.company || "-"} . {a.email}
             </p>
           ))}
         </div>
       )}
-      <h3 className="font-medium text-slate-900">Directory</h3>
+ <h3 className="font-medium text-slate-900">Directory</h3>
       <AlumniDirectory embedded />
     </ModulePage>
   );

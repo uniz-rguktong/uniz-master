@@ -51,7 +51,7 @@ export default function InfoCentre({
     return <DisabledState reason="Information centre is turned off" />;
   return (
     <div className={embedded ? "space-y-3" : "mx-auto max-w-4xl space-y-3 p-6"}>
-      <h1 className="text-2xl font-semibold text-slate-900">
+ <h1 className="text-2xl font-semibold text-slate-900">
         Information Centre
       </h1>
       <div className="flex flex-wrap gap-2">
@@ -60,7 +60,7 @@ export default function InfoCentre({
             key={k}
             type="button"
             onClick={() => setCat(k)}
-            className={`rounded-full border px-3 py-1 text-sm ${cat === k ? "bg-navy-900 text-white" : "bg-white"}`}
+ className={`rounded-full border px-3 py-1 text-sm ${cat === k ? "bg-navy-900 text-white" : "bg-white"}`}
           >
             {v}
           </button>
@@ -72,26 +72,26 @@ export default function InfoCentre({
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />
-      {msg && <p className="text-sm text-slate-500">{msg}</p>}
+ {msg && <p className="text-sm text-slate-500">{msg}</p>}
       {!msg && items.length === 0 && (
-        <p className="text-sm text-slate-500">Nothing here yet.</p>
+ <p className="text-sm text-slate-500">Nothing here yet.</p>
       )}
       {items.map((i) => (
         <div key={`${i.source}-${i.id}`} className={cardCls}>
-          <p className="font-medium text-slate-900">
+ <p className="font-medium text-slate-900">
             {i.pinned ? "Pinned . " : ""}
             {i.title}
           </p>
-          <p className="text-xs uppercase text-slate-500">
+ <p className="text-xs text-slate-500">
             {LABELS[i.category] || i.category} . {day(i.date)}{" "}
             {i.deadline ? `. closes ${day(i.deadline)}` : ""}
           </p>
           {i.summary && (
-            <p className="whitespace-pre-line text-slate-600">{i.summary}</p>
+ <p className="whitespace-pre-line text-slate-600">{i.summary}</p>
           )}
           {i.url && (
             <a
-              className="text-blue-700 underline"
+ className="text-blue-700 underline"
               href={i.url}
               target="_blank"
               rel="noreferrer"

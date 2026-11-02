@@ -84,7 +84,7 @@ export default function StudentFeedback() {
       description="Anonymous. Your name is never stored with your answers, and faculty only see averages once 5 or more students reply."
     >
       {error ? <DisabledState reason={error} /> : null}
-      <p className="text-xs text-slate-500">
+ <p className="text-xs text-slate-500">
         Have a complaint instead? Use{" "}
         <Link to="/student/grievance" className="underline">
           Grievance
@@ -92,13 +92,13 @@ export default function StudentFeedback() {
         .
       </p>
       {forms.length === 0 && !error ? (
-        <p className="text-sm text-slate-500">
+ <p className="text-sm text-slate-500">
           No feedback forms open right now.
         </p>
       ) : null}
       <div className="space-y-3">
         {forms.map((f) => (
-          <div key={f.id} className="rounded-xl border p-4 text-sm">
+ <div key={f.id} className="rounded-xl border p-4 text-sm">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span>
                 <b>{f.title}</b>
@@ -106,10 +106,10 @@ export default function StudentFeedback() {
                 {String(f.closesAt).slice(0, 10)}
               </span>
               {f.answered ? (
-                <span className="text-emerald-600">Submitted</span>
+ <span className="text-emerald-600">Submitted</span>
               ) : (
                 <button
-                  className="rounded border px-3 py-1"
+ className="rounded border px-3 py-1"
                   onClick={() => open(f)}
                 >
                   {active === f.id ? "Hide" : "Give feedback"}
@@ -125,7 +125,7 @@ export default function StudentFeedback() {
                       {SCALE.map((n) => (
                         <button
                           key={n}
-                          className={`h-8 w-8 rounded border ${ratings[i] === n ? "bg-slate-900 text-white" : ""}`}
+ className={`h-8 w-8 rounded border ${ratings[i] === n ? "bg-slate-900 text-white" : ""}`}
                           onClick={() => {
                             const next = [...ratings];
                             next[i] = n;
@@ -148,7 +148,7 @@ export default function StudentFeedback() {
                 />
                 <button
                   disabled={saving}
-                  className="rounded bg-slate-900 px-4 py-2 text-white disabled:opacity-50"
+ className="rounded bg-slate-900 px-4 py-2 text-white disabled:opacity-50"
                   onClick={() => submit(f)}
                 >
                   {saving ? "Sending..." : "Submit"}

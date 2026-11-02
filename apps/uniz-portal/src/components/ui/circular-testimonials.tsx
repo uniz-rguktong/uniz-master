@@ -189,7 +189,7 @@ export const CircularTestimonials = ({
                   href={activeTestimonial.linkedin || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#0077b5] hover:opacity-80 transition-opacity"
+ className="text-[#0077b5] hover:opacity-80 transition-opacity"
                   aria-label={`LinkedIn profile of ${activeTestimonial.name}`}
                 >
                   <FaLinkedin className="testimonial-linkedin" size={24} />
@@ -323,7 +323,7 @@ export const CircularTestimonials = ({
           border-radius: 50%;
           box-shadow: 0 16px 48px rgba(11, 42, 71, 0.14);
           border: 4px solid #fff;
-          outline: 2px solid #0b2a47;
+          outline: 2px solid #0A2540;
         }
         .testimonial-content {
           display: flex;
@@ -399,7 +399,7 @@ export const CircularTestimonials = ({
         }
         .progress-dot--active {
           width: 1.5rem;
-          background: #0b2a47;
+          background: #0A2540;
         }
         .progress-counter {
           font-size: 0.7rem;

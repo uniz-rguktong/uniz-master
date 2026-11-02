@@ -79,22 +79,22 @@ export default function AddAttendance() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 space-y-8">
+ <div className="max-w-4xl mx-auto px-6 py-10 space-y-8">
       {/* Header */}
       <div className="flex flex-col gap-6">
         <button
           onClick={() => navigate("/admin")}
-          className="self-start inline-flex items-center text-sm font-medium text-navy-500 hover:text-navy-800 transition-colors"
+ className="self-start inline-flex items-center text-sm font-medium text-navy-500 hover:text-navy-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
         </button>
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-navy-900">
+ <h1 className="text-2xl font-medium text-navy-900">
               Upload Attendance
             </h1>
-            <p className="text-navy-500 mt-1">
+ <p className="text-navy-500 mt-1">
               Bulk upload attendance records via Excel.
             </p>
           </div>
@@ -130,20 +130,20 @@ export default function AddAttendance() {
             htmlFor="fileInput"
             className="cursor-pointer flex flex-col items-center gap-4"
           >
-            <div className="w-16 h-16 bg-navy-50 text-navy-900 rounded-full flex items-center justify-center">
+ <div className="w-16 h-16 bg-navy-50 text-navy-900 rounded-full flex items-center justify-center">
               <Upload className="w-8 h-8" />
             </div>
             <div>
-              <p className="text-lg font-semibold text-navy-900">
+ <p className="text-lg font-semibold text-navy-900">
                 Click to upload excel sheet
               </p>
-              <p className="text-navy-500 text-sm mt-1">
+ <p className="text-navy-500 text-sm mt-1">
                 Supports .xlsx, .xls, .csv
               </p>
             </div>
           </label>
           {error && (
-            <p className="text-red-600 font-medium mt-4 flex items-center justify-center gap-2">
+ <p className="text-red-600 font-medium mt-4 flex items-center justify-center gap-2">
               <AlertCircle className="w-4 h-4" /> {error}
             </p>
           )}
@@ -151,20 +151,20 @@ export default function AddAttendance() {
       ) : (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* File Info Bar */}
-          <div className="bg-navy-900 text-white p-4 rounded-xl flex items-center justify-between shadow-lg shadow-navy-100/20">
+ <div className="bg-navy-900 text-white p-4 rounded-xl flex items-center justify-between shadow-lg shadow-navy-100/20">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-navy-800 rounded-lg">
-                <FileSpreadsheet className="w-6 h-6 text-green-400" />
+ <div className="p-2 bg-navy-800 rounded-lg">
+ <FileSpreadsheet className="w-6 h-6 text-green-400" />
               </div>
               <div>
-                <p className="font-semibold">{file?.name}</p>
-                <p className="text-xs text-navy-400">Ready to upload</p>
+ <p className="font-semibold">{file?.name}</p>
+ <p className="text-xs text-navy-400">Ready to upload</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={clearFile}
-                className="p-2 hover:bg-navy-800 rounded-lg text-navy-400 hover:text-white transition-colors"
+ className="p-2 hover:bg-navy-800 rounded-lg text-navy-400 hover:text-white transition-colors"
                 title="Remove File"
               >
                 <X className="w-5 h-5" />
@@ -177,25 +177,25 @@ export default function AddAttendance() {
               onClick={handleUpload}
               isLoading={uploading}
               disabled={uploading}
-              className="bg-navy-900 hover:bg-navy-800 w-full md:w-auto"
+ className="bg-navy-900 hover:bg-navy-800 w-full md:w-auto"
             >
               <Upload className="w-4 h-4 mr-2" /> Process File
             </Button>
           </div>
 
           {success && (
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-green-800">
-              <div className="flex items-center gap-2 font-semibold">
+ <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-green-800">
+ <div className="flex items-center gap-2 font-semibold">
                 <CheckCircle2 className="w-5 h-5" />
                 Upload Successful
               </div>
-              <p className="mt-1 text-sm">
+ <p className="mt-1 text-sm">
                 Processed {success.processed} records. Success:{" "}
                 {success.successCount}, Failed: {success.failCount}.
               </p>
               {success.errors && success.errors.length > 0 && (
-                <div className="mt-2 p-2 bg-white rounded border border-green-200 max-h-40 overflow-y-auto text-xs text-red-600">
-                  <p className="font-semibold text-navy-700 mb-1">Errors:</p>
+ <div className="mt-2 p-2 bg-white rounded border border-green-200 max-h-40 overflow-y-auto text-xs text-red-600">
+ <p className="font-semibold text-navy-700 mb-1">Errors:</p>
                   {success.errors.map((e: string, i: number) => (
                     <div key={i}>{e}</div>
                   ))}
@@ -205,12 +205,12 @@ export default function AddAttendance() {
           )}
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-800">
-              <div className="flex items-center gap-2 font-semibold">
+ <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-800">
+ <div className="flex items-center gap-2 font-semibold">
                 <AlertCircle className="w-5 h-5" />
                 Upload Failed
               </div>
-              <p className="mt-1 text-sm">{error}</p>
+ <p className="mt-1 text-sm">{error}</p>
             </div>
           )}
         </div>

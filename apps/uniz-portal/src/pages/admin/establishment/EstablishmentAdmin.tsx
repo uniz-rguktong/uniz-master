@@ -90,7 +90,7 @@ export default function EstablishmentAdmin() {
       title="Establishment"
       description="Staff master, designations and service history."
     >
-      {error && <p className="text-sm text-red-600">{error}</p>}
+ {error && <p className="text-sm text-red-600">{error}</p>}
       <div className={cardCls}>
         {Object.entries(desig)
           .map(([k, v]) => `${k}: ${v}`)
@@ -109,11 +109,11 @@ export default function EstablishmentAdmin() {
       </div>
       {sel && (
         <div className={`${cardCls} space-y-2`}>
-          <div className="font-semibold">
+ <div className="font-semibold">
             {sel.profile?.name || sel.personId} . {sel.designation || "-"} .{" "}
             {sel.department || "-"} . {sel.status}
           </div>
-          <div className="text-sm">
+ <div className="text-sm">
             Leave this year:{" "}
             {sel.leave?.length
               ? sel.leave
@@ -122,7 +122,7 @@ export default function EstablishmentAdmin() {
               : "none"}
           </div>
           {(sel.events || []).map((e: any) => (
-            <div key={e.id} className="text-sm">
+ <div key={e.id} className="text-sm">
               {day(e.date)} . {e.kind} {e.fromValue && `from ${e.fromValue}`}{" "}
               {e.toValue && `to ${e.toValue}`} {e.details}
             </div>

@@ -35,7 +35,7 @@ export function SectionHeader({
       <div className="flex min-w-0 flex-1 items-center gap-4">
         {icon && (
           <div
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-portal-xl bg-navy-900 text-white shadow-whisper-navy [&_svg]:h-[18px] [&_svg]:w-[18px]"
+ className="flex h-11 w-11 shrink-0 items-center justify-center rounded-portal-xl bg-navy-900 text-white shadow-whisper-navy [&_svg]:h-[18px] [&_svg]:w-[18px]"
             aria-hidden
           >
             {icon}

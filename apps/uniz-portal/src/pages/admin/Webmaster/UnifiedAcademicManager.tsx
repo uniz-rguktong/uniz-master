@@ -353,10 +353,10 @@ export default function UnifiedAcademicManager() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex flex-col gap-1.5 mb-2">
-          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-navy-900 leading-none">
+ <h2 className="text-3xl font-semibold tracking-[-0.02em] text-navy-900 leading-none">
             Sem Registration
           </h2>
-          <p className="text-navy-500 font-medium text-[15px]">
+ <p className="text-navy-500 font-medium text-[15px]">
             Master curriculum control and semester lifecycle management.
           </p>
         </div>
@@ -366,13 +366,13 @@ export default function UnifiedAcademicManager() {
               fetchSemesters();
               fetchMasterSubjects();
             }}
-            className="p-3 bg-white border border-navy-100 rounded-xl text-navy-400 hover:text-navy-900 transition-all active:scale-95"
+ className="p-3 bg-white border border-navy-100 rounded-xl text-navy-400 hover:text-navy-900 transition-all "
           >
             <RefreshCcw size={20} className={loading ? "animate-spin" : ""} />
           </button>
           <button
             onClick={() => setShowNewSemModal(true)}
-            className="h-12 px-8 bg-navy-900 text-white rounded-xl font-semibold text-[10px] tracking-[0.14em] hover:bg-[#0A2540] transition-all flex items-center gap-3 shadow-lg shadow-navy-100/50"
+ className="h-12 px-8 bg-navy-900 text-white rounded-xl font-semibold text-[10px] hover:bg-[#0A2540] transition-all flex items-center gap-3 shadow-lg shadow-navy-100/50"
           >
             <Zap size={14} /> New Rollout
           </button>
@@ -380,7 +380,7 @@ export default function UnifiedAcademicManager() {
       </div>
 
       {/* Main Tab Navigation */}
-      <div className="flex gap-2 bg-white/50 p-1.5 rounded-xl border border-navy-100 w-fit">
+ <div className="flex gap-2 bg-white/50 p-1.5 rounded-xl border border-navy-100 w-fit">
         {(["catalog", "subjects", "rollout"] as const).map((tabId) => {
           const labels: Record<string, string> = {
             catalog: "Catalog",
@@ -400,14 +400,14 @@ export default function UnifiedAcademicManager() {
               disabled={tabId === "rollout" && !selectedSem}
               onClick={() => setActiveTab(tabId)}
               className={`
-                flex items-center gap-3 px-6 py-2.5 rounded-xl font-bold text-xs tracking-[0.14em] transition-all
-                ${
-                  activeTab === tabId
-                    ? "bg-white text-navy-900 border border-navy-100"
-                    : "text-navy-400 hover:text-navy-900 hover:bg-white/80"
-                }
-                ${tabId === "rollout" && !selectedSem ? "opacity-30 cursor-not-allowed" : ""}
-              `}
+ flex items-center gap-3 px-6 py-2.5 rounded-xl font-medium text-xs transition-all
+ ${
+ activeTab === tabId
+ ? "bg-white text-navy-900 border border-navy-100"
+ : "text-navy-400 hover:text-navy-900 hover:bg-white/80"
+ }
+ ${tabId === "rollout" && !selectedSem ? "opacity-30 cursor-not-allowed" : ""}
+ `}
             >
               <Icon size={16} />
               {labels[tabId]}
@@ -427,35 +427,35 @@ export default function UnifiedAcademicManager() {
                   setSelectedSem(sem);
                   setActiveTab("rollout");
                 }}
-                className="bg-white rounded-xl border border-navy-100 p-8 transition-all group cursor-pointer overflow-hidden relative"
+ className="bg-white rounded-xl border border-navy-100 p-8 transition-all group cursor-pointer overflow-hidden relative"
               >
                 <div className="flex justify-between items-start mb-10">
                   <div
-                    className={`p-4 rounded-xl ${sem.status === "REGISTRATION_OPEN" ? "bg-emerald-50 text-emerald-600" : "bg-navy-50 text-navy-400"}`}
+ className={`p-4 rounded-xl ${sem.status === "REGISTRATION_OPEN" ? "bg-emerald-50 text-emerald-600" : "bg-navy-50 text-navy-400"}`}
                   >
                     <Calendar size={28} />
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span
-                      className={`px-4 py-1.5 rounded-xl text-[9px] font-semibold tracking-[0.14em] border ${
-                        sem.status === "REGISTRATION_OPEN"
-                          ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                          : "bg-navy-50 text-navy-400 border-navy-100"
-                      }`}
+ className={`px-4 py-1.5 rounded-xl text-[9px] font-semibold border ${
+ sem.status === "REGISTRATION_OPEN"
+ ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+ : "bg-navy-50 text-navy-400 border-navy-100"
+ }`}
                     >
                       {formatStatus(sem.status)}
                     </span>
                   </div>
                 </div>
-                <h3 className="text-2xl font-semibold text-navy-900 tracking-tight group-hover:text-navy-900 transition-colors ">
+ <h3 className="text-2xl font-semibold text-navy-900 tracking-tight group-hover:text-navy-900 transition-colors">
                   {sem.name}
                 </h3>
                 <div className="flex items-center gap-6 mt-6 mb-8">
                   <div>
-                    <p className="text-[9px] font-bold text-navy-400 tracking-[0.14em] mb-1">
+ <p className="text-[9px] font-medium text-navy-400 mb-1">
                       Enrollment
                     </p>
-                    <p className="text-lg font-semibold text-navy-900">
+ <p className="text-lg font-semibold text-navy-900">
                       {sem._count?.registrations || 0}
                     </p>
                   </div>
@@ -465,34 +465,34 @@ export default function UnifiedAcademicManager() {
                         e.stopPropagation();
                         handleDeleteSem(sem.id);
                       }}
-                      className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-none"
+ className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-none"
                     >
                       <Trash2 size={16} />
                     </button>
                   </div>
                 </div>
-                <div className="w-full h-2 bg-navy-50 rounded-full overflow-hidden mt-auto">
+ <div className="w-full h-2 bg-navy-50 rounded-full overflow-hidden mt-auto">
                   <div
-                    className={`h-full transition-all duration-1000 ${sem.status === "REGISTRATION_OPEN" ? "w-full bg-emerald-500" : "w-1/3 bg-navy-500"}`}
+ className={`h-full transition-all duration-1000 ${sem.status === "REGISTRATION_OPEN" ? "w-full bg-emerald-500" : "w-1/3 bg-navy-500"}`}
                   ></div>
                 </div>
               </div>
             ))}
             {semesters.length === 0 && (
-              <div className="col-span-full py-24 bg-white rounded-xl border-dashed border-2 border-navy-100 p-12 text-center animate-in fade-in zoom-in-95 duration-700">
-                <div className="w-24 h-24 bg-navy-50 text-navy-900 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-white shadow-none">
+ <div className="col-span-full py-24 bg-white rounded-xl border-dashed border-2 border-navy-100 p-12 text-center animate-in fade-in zoom-in-95 duration-700">
+ <div className="w-24 h-24 bg-navy-50 text-navy-900 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-white shadow-none">
                   <BookOpen size={40} strokeWidth={2.5} />
                 </div>
-                <h3 className="text-2xl font-semibold text-navy-900 mb-3 tracking-tight italic">
+ <h3 className="text-2xl font-semibold text-navy-900 mb-3 tracking-tight italic">
                   Relaxation levels are dangerously high.
                 </h3>
-                <p className="text-navy-500 font-medium max-w-md mx-auto mb-10 leading-relaxed">
+ <p className="text-navy-500 font-medium max-w-md mx-auto mb-10 leading-relaxed">
                   Campus vibes: 100% chill. Students are relaxing… but don't
                   worry, semester registration is loading to take care of that.
                 </p>
                 <button
                   onClick={() => setShowNewSemModal(true)}
-                  className="px-10 py-5 bg-navy-900 text-white rounded-xl font-semibold tracking-[0.14em] text-[10px] hover:bg-[#0A2540] transition-all active:scale-95 shadow-none"
+ className="px-10 py-5 bg-navy-900 text-white rounded-xl font-semibold text-[10px] hover:bg-[#0A2540] transition-all shadow-none"
                 >
                   Initiate New Rollout
                 </button>
@@ -503,10 +503,10 @@ export default function UnifiedAcademicManager() {
 
         {activeTab === "subjects" && (
           <div className="space-y-8">
-            <div className="flex flex-wrap gap-4 bg-white p-6 rounded-xl border border-navy-100">
+ <div className="flex flex-wrap gap-4 bg-white p-6 rounded-xl border border-navy-100">
               <div className="relative flex-1 min-w-[300px]">
                 <Search
-                  className="absolute left-5 top-1/2 -translate-y-1/2 text-navy-400"
+ className="absolute left-5 top-1/2 -translate-y-1/2 text-navy-400"
                   size={18}
                 />
                 <input
@@ -514,13 +514,13 @@ export default function UnifiedAcademicManager() {
                   placeholder="Search master subjects..."
                   value={subSearch}
                   onChange={(e) => setSubSearch(e.target.value)}
-                  className="w-full h-12 pl-14 pr-6 bg-navy-50 rounded-xl outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 font-bold text-navy-900"
+ className="w-full h-12 pl-14 pr-6 bg-navy-50 rounded-xl outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 font-medium text-navy-900"
                 />
               </div>
               <select
                 value={subDept}
                 onChange={(e) => setSubDept(e.target.value)}
-                className="h-12 px-8 bg-navy-50 rounded-xl font-bold tracking-[0.14em] text-[10px] text-navy-600 border-none outline-none appearance-none"
+ className="h-12 px-8 bg-navy-50 rounded-xl font-medium text-[10px] text-navy-600 border-none outline-none appearance-none"
               >
                 <option value="">All Departments</option>
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((d) => (
@@ -541,7 +541,7 @@ export default function UnifiedAcademicManager() {
                   });
                   setShowSubModal(true);
                 }}
-                className="h-12 px-8 bg-navy-900 text-white rounded-xl font-bold tracking-[0.14em] text-[10px] transition-all flex items-center gap-2 border-2 border-white/20 shadow-none"
+ className="h-12 px-8 bg-navy-900 text-white rounded-xl font-medium text-[10px] transition-all flex items-center gap-2 border-2 border-white/20 shadow-none"
               >
                 <PlusCircle size={16} /> Add New Subject
               </button>
@@ -551,21 +551,21 @@ export default function UnifiedAcademicManager() {
               {allSubjects.map((sub, i) => (
                 <div
                   key={i}
-                  className="bg-white border border-navy-100 rounded-xl p-5 group overflow-hidden"
+ className="bg-white border border-navy-100 rounded-xl p-5 group overflow-hidden"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 bg-navy-50 rounded-xl text-navy-900 border border-navy-100 transition-all">
+ <div className="p-3 bg-navy-50 rounded-xl text-navy-900 border border-navy-100 transition-all">
                       <BookText size={20} />
                     </div>
-                    <div className="px-3 py-1 bg-navy-50 rounded-xl text-[9px] font-semibold tracking-[0.14em] text-navy-400">
+ <div className="px-3 py-1 bg-navy-50 rounded-xl text-[9px] font-semibold text-navy-400">
                       {sub.code}
                     </div>
                   </div>
-                  <h3 className="text-base font-semibold text-navy-900 leading-tight mb-2">
+ <h3 className="text-base font-semibold text-navy-900 leading-tight mb-2">
                     {sub.name}
                   </h3>
                   <div className="flex items-center justify-between mt-auto pt-4 border-t border-navy-50">
-                    <div className="text-[10px] font-semibold tracking-[0.14em] text-navy-400">
+ <div className="text-[10px] font-semibold text-navy-400">
                       {sub.department} • {sub.credits} Credits
                     </div>
                     <button
@@ -580,7 +580,7 @@ export default function UnifiedAcademicManager() {
                         });
                         setShowSubModal(true);
                       }}
-                      className="text-navy-300 hover:text-navy-900 transition-colors"
+ className="text-navy-300 hover:text-navy-900 transition-colors"
                     >
                       <Edit3 size={16} />
                     </button>
@@ -593,20 +593,20 @@ export default function UnifiedAcademicManager() {
 
         {activeTab === "rollout" && selectedSem && (
           <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
-            <div className="bg-navy-900 rounded-xl p-10 text-white relative overflow-hidden">
+ <div className="bg-navy-900 rounded-xl p-10 text-white relative overflow-hidden">
               <div className="relative z-10 flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="px-4 py-1.5 bg-navy-500/20 text-blue-400 rounded-xl text-[10px] font-semibold tracking-[0.14em] border border-navy-100/30">
+ <span className="px-4 py-1.5 bg-navy-500/20 text-blue-400 rounded-xl text-[10px] font-semibold border border-navy-100/30">
                       Active Rollout
                     </span>
-                    <span className="text-navy-500">•</span>
-                    <span className="text-xs font-bold text-navy-400 italic">
+ <span className="text-navy-500">•</span>
+ <span className="text-xs font-medium text-navy-400 italic">
                       Created{" "}
                       {new Date(selectedSem.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <h2 className="text-5xl font-semibold tracking-tighter italic">
+ <h2 className="text-5xl font-semibold tracking-tighter italic">
                     {selectedSem.name}
                   </h2>
                 </div>
@@ -620,11 +620,11 @@ export default function UnifiedAcademicManager() {
                           : "REGISTRATION_OPEN",
                       )
                     }
-                    className={`h-14 px-10 rounded-xl font-semibold text-[10px] tracking-[0.14em] transition-all flex items-center gap-3 ${
-                      selectedSem.status === "REGISTRATION_OPEN"
-                        ? "bg-red-50/5 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white"
-                        : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-100"
-                    }`}
+ className={`h-14 px-10 rounded-xl font-semibold text-[10px] transition-all flex items-center gap-3 ${
+ selectedSem.status === "REGISTRATION_OPEN"
+ ? "bg-red-50/5 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white"
+ : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-100"
+ }`}
                   >
                     {selectedSem.status === "REGISTRATION_OPEN" ? (
                       <>Stop Enrollment</>
@@ -634,13 +634,13 @@ export default function UnifiedAcademicManager() {
                   </button>
                   <button
                     onClick={handleGlobalApprove}
-                    className="h-14 px-8 bg-white/10 text-white rounded-xl font-semibold text-xs tracking-[0.14em] hover:bg-white/20 transition-all border border-white/10"
+ className="h-14 px-8 bg-white/10 text-white rounded-xl font-semibold text-xs hover:bg-white/20 transition-all border border-white/10"
                   >
                     Push Progress
                   </button>
                 </div>
               </div>
-              <div className="absolute right-0 top-0 w-64 h-64 bg-navy-900/10 blur-[120px] rounded-full"></div>
+ <div className="absolute right-0 top-0 w-64 h-64 bg-navy-900/10 blur-[120px] rounded-full"></div>
             </div>
 
             <div className="flex items-center justify-between border-b border-navy-200 pb-2">
@@ -649,27 +649,27 @@ export default function UnifiedAcademicManager() {
                   <button
                     key={v}
                     onClick={() => setRolloutView(v)}
-                    className={`pb-4 text-[13px] font-semibold tracking-[0.14em] transition-all relative ${
-                      rolloutView === v
-                        ? "text-navy-900"
-                        : "text-navy-400 hover:text-navy-600"
-                    }`}
+ className={`pb-4 text-[13px] font-semibold transition-all relative ${
+ rolloutView === v
+ ? "text-navy-900"
+ : "text-navy-400 hover:text-navy-600"
+ }`}
                   >
                     {v}
                     {rolloutView === v && (
-                      <div className="absolute bottom-0 left-0 w-full h-1 bg-navy-900 rounded-full animate-in fade-in duration-500"></div>
+ <div className="absolute bottom-0 left-0 w-full h-1 bg-navy-900 rounded-full animate-in fade-in duration-500"></div>
                     )}
                   </button>
                 ))}
               </div>
 
               <div className="flex gap-3 mb-4">
-                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-navy-100 shadow-none">
-                  <Filter size={14} className="text-navy-400" />
+ <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-navy-100 shadow-none">
+ <Filter size={14} className="text-navy-400" />
                   <select
                     value={filterBranch}
                     onChange={(e) => setFilterBranch(e.target.value)}
-                    className="font-semibold text-[10px] tracking-[0.14em] text-navy-700 outline-none border-none bg-transparent"
+ className="font-semibold text-[10px] text-navy-700 outline-none border-none bg-transparent"
                   >
                     <option value="all">All Branches</option>
                     {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
@@ -679,12 +679,12 @@ export default function UnifiedAcademicManager() {
                     ))}
                   </select>
                 </div>
-                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-navy-100 shadow-none">
-                  <Users size={14} className="text-navy-400" />
+ <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-navy-100 shadow-none">
+ <Users size={14} className="text-navy-400" />
                   <select
                     value={filterYear}
                     onChange={(e) => setFilterYear(e.target.value)}
-                    className="font-semibold text-[10px] tracking-[0.14em] text-navy-700 outline-none border-none bg-transparent"
+ className="font-semibold text-[10px] text-navy-700 outline-none border-none bg-transparent"
                   >
                     <option value="all">All Years</option>
                     {["E1", "E2", "E3", "E4"].map((y) => (
@@ -694,12 +694,12 @@ export default function UnifiedAcademicManager() {
                     ))}
                   </select>
                 </div>
-                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-navy-100 shadow-none">
-                  <BookText size={14} className="text-navy-400" />
+ <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-navy-100 shadow-none">
+ <BookText size={14} className="text-navy-400" />
                   <select
                     value={filterBatch}
                     onChange={(e) => setFilterBatch(e.target.value)}
-                    className="font-semibold text-[10px] tracking-[0.14em] text-navy-700 outline-none border-none bg-transparent"
+ className="font-semibold text-[10px] text-navy-700 outline-none border-none bg-transparent"
                   >
                     <option value="all">All Batches</option>
                     {availableBatches.map((b) => (
@@ -712,7 +712,7 @@ export default function UnifiedAcademicManager() {
                 {rolloutView === "allocations" && (
                   <button
                     onClick={() => setShowAddAllocModal(true)}
-                    className="flex items-center gap-2 bg-navy-900 text-white px-6 py-2.5 rounded-xl font-semibold text-[10px] tracking-[0.14em] shadow-none hover:scale-105 active:scale-95 transition-all"
+ className="flex items-center gap-2 bg-navy-900 text-white px-6 py-2.5 rounded-xl font-semibold text-[10px] shadow-none transition-all"
                   >
                     <Plus size={14} /> Add subject
                   </button>
@@ -720,33 +720,33 @@ export default function UnifiedAcademicManager() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-navy-100 overflow-hidden">
+ <div className="bg-white rounded-xl border border-navy-100 overflow-hidden">
               {rolloutView === "allocations" ? (
-                <table className="w-full text-left">
+ <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-navy-50/50 text-[10px] font-semibold tracking-[0.14em] text-navy-400 border-b border-navy-100">
-                      <th className="px-10 py-6">Course Structure</th>
-                      <th className="px-10 py-6">Branch / Year</th>
-                      <th className="px-10 py-6">Status</th>
-                      <th className="px-10 py-6 text-right">Manage</th>
+ <tr className="bg-navy-50/50 text-[10px] font-semibold text-navy-400 border-b border-navy-100">
+ <th className="px-10 py-6">Course Structure</th>
+ <th className="px-10 py-6">Branch / Year</th>
+ <th className="px-10 py-6">Status</th>
+ <th className="px-10 py-6 text-right">Manage</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-navy-50">
                     {rolloutAllocations.map((item) => (
                       <tr
                         key={item.id}
-                        className="group hover:bg-navy-50/50 transition-colors"
+ className="group hover:bg-navy-50/50 transition-colors"
                       >
-                        <td className="px-10 py-6">
+ <td className="px-10 py-6">
                           <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 bg-navy-50 rounded-xl flex items-center justify-center text-navy-300 group-hover:text-navy-900 group-hover:bg-navy-50 transition-all">
+ <div className="w-12 h-12 bg-navy-50 rounded-xl flex items-center justify-center text-navy-300 group-hover:text-navy-900 group-hover:bg-navy-50 transition-all">
                               <BookOpen size={20} />
                             </div>
                             <div>
-                              <p className="font-bold text-navy-900">
+ <p className="font-medium text-navy-900">
                                 {item.customName || item.subject.name}
                               </p>
-                              <p className="text-[10px] font-semibold text-navy-400 tracking-[0.14em]">
+ <p className="text-[10px] font-semibold text-navy-400 ">
                                 {item.subject.code} •{" "}
                                 {item.customCredits || item.subject.credits}{" "}
                                 Credits
@@ -754,35 +754,35 @@ export default function UnifiedAcademicManager() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-10 py-6">
+ <td className="px-10 py-6">
                           <div className="flex items-center gap-2">
-                            <span className="px-3 py-1 bg-navy-100 text-navy-600 rounded-xl text-[9px] font-semibold tracking-[0.14em]">
+ <span className="px-3 py-1 bg-navy-100 text-navy-600 rounded-xl text-[9px] font-semibold ">
                               {item.branch}
                             </span>
-                            <span className="px-3 py-1 bg-navy-50 text-navy-900 rounded-xl text-[9px] font-semibold tracking-[0.14em]">
+ <span className="px-3 py-1 bg-navy-50 text-navy-900 rounded-xl text-[9px] font-semibold ">
                               {item.academicYear}
                             </span>
                             {item.batch && (
-                              <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-semibold tracking-[0.14em]">
+ <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-semibold ">
                                 {item.batch}
                               </span>
                             )}
                           </div>
                         </td>
-                        <td className="px-10 py-6">
+ <td className="px-10 py-6">
                           <div className="flex items-center gap-2">
                             <div
-                              className={`w-2 h-2 rounded-full ${item.status === "APPROVED" ? "bg-emerald-500 animate-pulse" : "bg-amber-400"}`}
+ className={`w-2 h-2 rounded-full ${item.status === "APPROVED" ? "bg-emerald-500 animate-pulse" : "bg-amber-400"}`}
                             ></div>
-                            <span className="text-[11px] font-extrabold tracking-tight text-navy-600">
+ <span className="text-[11px] font-medium tracking-tight text-navy-600">
                               {formatStatus(item.status)}
                             </span>
                           </div>
                         </td>
-                        <td className="px-10 py-6 text-right">
+ <td className="px-10 py-6 text-right">
                           <button
                             onClick={() => handleRemoveAlloc(item.id)}
-                            className="p-3 bg-red-50 text-red-500 rounded-xl opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
+ className="p-3 bg-red-50 text-red-500 rounded-xl opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -792,47 +792,47 @@ export default function UnifiedAcademicManager() {
                   </tbody>
                 </table>
               ) : (
-                <table className="w-full text-left">
+ <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-navy-50/50 text-[10px] font-semibold tracking-[0.14em] text-navy-400 border-b border-navy-100">
-                      <th className="px-10 py-6">Enrolled Student</th>
-                      <th className="px-10 py-6">Batch</th>
-                      <th className="px-10 py-6">Allocated Course</th>
-                      <th className="px-10 py-6">Timestamp</th>
+ <tr className="bg-navy-50/50 text-[10px] font-semibold text-navy-400 border-b border-navy-100">
+ <th className="px-10 py-6">Enrolled Student</th>
+ <th className="px-10 py-6">Batch</th>
+ <th className="px-10 py-6">Allocated Course</th>
+ <th className="px-10 py-6">Timestamp</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-navy-50">
                     {rolloutRegistrations.map((reg) => (
                       <tr
                         key={reg.id}
-                        className="hover:bg-navy-50 transition-colors"
+ className="hover:bg-navy-50 transition-colors"
                       >
-                        <td className="px-10 py-6">
+ <td className="px-10 py-6">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 bg-navy-100 rounded-xl flex items-center justify-center font-semibold text-navy-400">
+ <div className="w-10 h-10 bg-navy-100 rounded-xl flex items-center justify-center font-semibold text-navy-400">
                               {reg.studentId[0]}
                             </div>
-                            <p className="font-bold text-navy-900 tracking-tight">
+ <p className="font-medium text-navy-900 tracking-tight">
                               {reg.studentId}
                             </p>
                           </div>
                         </td>
-                        <td className="px-10 py-6">
-                          <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-semibold tracking-[0.14em]">
+ <td className="px-10 py-6">
+ <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-semibold ">
                             {reg.batch || "N/A"}
                           </span>
                         </td>
-                        <td className="px-10 py-6">
+ <td className="px-10 py-6">
                           <div className="space-y-1">
-                            <p className="text-xs font-bold text-navy-800">
+ <p className="text-xs font-medium text-navy-800">
                               {reg.subject.name}
                             </p>
-                            <p className="text-[9px] font-semibold italic text-navy-400">
+ <p className="text-[9px] font-semibold italic text-navy-400">
                               {reg.subject.code}
                             </p>
                           </div>
                         </td>
-                        <td className="px-10 py-6 text-xs font-bold text-navy-400">
+ <td className="px-10 py-6 text-xs font-medium text-navy-400">
                           {new Date(reg.createdAt).toLocaleString()}
                         </td>
                       </tr>
@@ -845,11 +845,11 @@ export default function UnifiedAcademicManager() {
                 rolloutAllocations.length === 0) ||
                 (rolloutView === "registrations" &&
                   rolloutRegistrations.length === 0)) && (
-                <div className="p-32 text-center">
-                  <div className="w-20 h-20 bg-navy-50 rounded-full flex items-center justify-center mx-auto mb-6 text-navy-200">
+ <div className="p-32 text-center">
+ <div className="w-20 h-20 bg-navy-50 rounded-full flex items-center justify-center mx-auto mb-6 text-navy-200">
                     <X size={40} />
                   </div>
-                  <p className="text-navy-400 font-bold tracking-[0.14em] text-xs">
+ <p className="text-navy-400 font-medium text-xs">
                     Zero activity detected for these parameters.
                   </p>
                 </div>
@@ -861,7 +861,7 @@ export default function UnifiedAcademicManager() {
 
       {showNewSemModal && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-navy-900/40"
+ className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-navy-900/40"
           onClick={() => setShowNewSemModal(false)}
         >
           <div
@@ -871,7 +871,7 @@ export default function UnifiedAcademicManager() {
             <button
               type="button"
               onClick={() => setShowNewSemModal(false)}
-              className="absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10"
+ className="absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
@@ -921,10 +921,10 @@ export default function UnifiedAcademicManager() {
                         )}
                       >
                         {allBranchesSelected && (
-                          <Check size={12} className="text-white" strokeWidth={4} />
+ <Check size={12} className="text-white" strokeWidth={4} />
                         )}
                       </div>
-                      <span className="text-[12px] font-medium text-navy-600">
+ <span className="text-[12px] font-medium text-navy-600">
                         All branches
                       </span>
                     </div>
@@ -984,7 +984,7 @@ export default function UnifiedAcademicManager() {
       )}
 
       {showAddAllocModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-900/40 p-4">
+ <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-900/40 p-4">
           <div className={cn("w-full max-w-xl p-8 space-y-6", adminModalShellClass)}>
             <div className="flex justify-between items-start gap-4">
               <div>
@@ -996,7 +996,7 @@ export default function UnifiedAcademicManager() {
               <button
                 type="button"
                 onClick={() => setShowAddAllocModal(false)}
-                className="text-navy-400 hover:text-navy-900 p-1"
+ className="text-navy-400 hover:text-navy-900 p-1"
               >
                 <X size={20} />
               </button>
@@ -1080,8 +1080,8 @@ export default function UnifiedAcademicManager() {
             </div>
 
             <div className={cn(adminWarningBannerClass, "mt-2")}>
-              <p className="text-[12px] font-medium leading-relaxed">
-                <ShieldCheck size={14} className="inline mr-2 align-text-bottom" />
+ <p className="text-[12px] font-medium leading-relaxed">
+ <ShieldCheck size={14} className="inline mr-2 align-text-bottom" />
                 This creates a new BranchAllocation record for the target semester.
                 Changes are visible to students once enrollment opens.
               </p>
@@ -1091,7 +1091,7 @@ export default function UnifiedAcademicManager() {
       )}
 
       {showSubModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-900/40 p-4">
+ <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-900/40 p-4">
           <div className={cn("w-full max-w-xl p-8 relative", adminModalShellClass)}>
             <div className="flex items-start justify-between gap-4 mb-6">
               <div>
@@ -1107,7 +1107,7 @@ export default function UnifiedAcademicManager() {
               <button
                 type="button"
                 onClick={() => setShowSubModal(false)}
-                className="text-navy-400 hover:text-navy-900 p-1"
+ className="text-navy-400 hover:text-navy-900 p-1"
               >
                 <X size={20} />
               </button>

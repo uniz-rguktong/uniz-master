@@ -22,10 +22,10 @@ function StatPill({
       transition={{ delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="flex flex-col"
     >
-      <span className="text-[28px] font-semibold tracking-[-0.04em] text-navy-950 leading-none">
+ <span className="text-[28px] font-semibold tracking-[-0.04em] text-navy-950 leading-none">
         {value}
       </span>
-      <span className="mt-1 text-[10px] font-bold tracking-[0.16em] text-navy-400">
+ <span className="mt-1 text-[10px] font-medium text-navy-400">
         {label}
       </span>
     </motion.div>
@@ -42,18 +42,18 @@ export default function GlobeFeature({
 
   return (
     <LandingSection>
-      <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
+ <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex w-fit items-center gap-2.5 rounded-full border border-navy-200 bg-white px-3.5 py-1.5 shadow-sm mb-8"
+ className="inline-flex w-fit items-center gap-2.5 rounded-full border border-navy-200 bg-white px-3.5 py-1.5 shadow-sm mb-8"
         >
           <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+ <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+ <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
           </span>
-          <span className="text-[10.5px] font-bold tracking-[0.14em] text-navy-500">
+ <span className="text-[10.5px] font-medium text-navy-500">
             Open Source
           </span>
         </motion.div>
@@ -84,7 +84,7 @@ export default function GlobeFeature({
                 initial={{ opacity: 0, y: 28 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.32 + i * 0.07, duration: 0.55 }}
-                className="mr-[0.15em] inline-block text-navy-300"
+ className="mr-[0.15em] inline-block text-navy-300"
               >
                 {w}
               </motion.span>
@@ -96,7 +96,7 @@ export default function GlobeFeature({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.55 }}
-          className="text-[15px] md:text-[17px] font-medium leading-[1.75] text-navy-500 mb-10"
+ className="text-[15px] md:text-[17px] font-medium leading-[1.75] text-navy-500 mb-10"
         >
           Empowering the RGUKT community through open-source collaboration.
           Join us in building a smarter, unified digital ecosystem for students
@@ -110,9 +110,9 @@ export default function GlobeFeature({
           className="flex items-center justify-center gap-8 mb-10"
         >
           <StatPill value="4+" label="Contributors" delay={0.65} />
-          <div className="h-8 w-px bg-navy-100" />
+ <div className="h-8 w-px bg-navy-100" />
           <StatPill value="100%" label="Open Source" delay={0.75} />
-          <div className="h-8 w-px bg-navy-100" />
+ <div className="h-8 w-px bg-navy-100" />
           <StatPill value="∞" label="Ideas" delay={0.85} />
         </motion.div>
 
@@ -124,9 +124,9 @@ export default function GlobeFeature({
         >
           <Link
             to="/developers"
-            className="group relative inline-flex w-fit items-center gap-2.5 overflow-hidden rounded-[4px] bg-[#0A2540] px-6 py-3 text-[13.5px] font-bold uppercase tracking-[0.06em] text-white shadow-[0_20px_40px_-12px_rgba(10,37,64,0.35)] transition-all duration-300 hover:bg-[#061B33] active:scale-[0.98]"
+ className="group relative inline-flex w-fit items-center gap-2.5 overflow-hidden rounded-lg bg-[#0A2540] px-6 py-3 text-[13.5px] font-medium text-white shadow-[0_20px_40px_-12px_rgba(10,37,64,0.35)] transition-all duration-300 hover:bg-[#061B33] "
           >
-            <Code2 size={15} className="relative text-white" />
+ <Code2 size={15} className="relative text-white" />
             <span className="relative">Meet the Developers</span>
             <ArrowRight
               size={14}
@@ -138,9 +138,9 @@ export default function GlobeFeature({
             href="https://github.com/uniz-rguktong"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex w-fit items-center gap-2.5 overflow-hidden rounded-[4px] border border-[#0A2540] bg-white px-6 py-3 text-[13.5px] font-bold uppercase tracking-[0.06em] text-[#0A2540] shadow-sm transition-all duration-300 hover:bg-navy-50 active:scale-[0.98]"
+ className="group relative inline-flex w-fit items-center gap-2.5 overflow-hidden rounded-lg border border-[#0A2540] bg-white px-6 py-3 text-[13.5px] font-medium text-[#0A2540] shadow-sm transition-all duration-300 hover:bg-navy-50 "
           >
-            <Github size={15} className="relative text-[#0A2540]" />
+ <Github size={15} className="relative text-[#0A2540]" />
             <span className="relative">Explore on GitHub</span>
             <ArrowUpRight
               size={14}

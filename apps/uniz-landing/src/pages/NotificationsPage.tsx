@@ -134,13 +134,13 @@ export function NotificationsPage() {
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
               <tr className="bg-navy text-white">
-                <th className="py-3.5 px-5 font-semibold text-[12px] uppercase tracking-[0.12em] text-white/85 border-b border-navy-700 w-[60%]">
+                <th className="py-3.5 px-5 font-semibold text-[12px] text-white/85 border-b border-navy-700 w-[60%]">
                   {descLabel}
                 </th>
-                <th className="py-3.5 px-5 font-semibold text-[12px] uppercase tracking-[0.12em] text-white/85 border-b border-navy-700 border-l border-navy-700 w-[20%] whitespace-nowrap">
+                <th className="py-3.5 px-5 font-semibold text-[12px] text-white/85 border-b border-navy-700 border-l border-navy-700 w-[20%] whitespace-nowrap">
                   Posted date
                 </th>
-                <th className="py-3.5 px-5 font-semibold text-[12px] uppercase tracking-[0.12em] text-white/85 border-b border-navy-700 border-l border-navy-700 w-[20%] whitespace-nowrap">
+                <th className="py-3.5 px-5 font-semibold text-[12px] text-white/85 border-b border-navy-700 border-l border-navy-700 w-[20%] whitespace-nowrap">
                   Detailed Notification
                 </th>
               </tr>

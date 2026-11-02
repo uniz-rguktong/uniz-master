@@ -34,8 +34,8 @@ export default function DonutChartDemo() {
     : 100;
 
   return (
-    <Card className="p-6 md:p-8 w-full max-w-md mx-auto flex flex-col items-center justify-center space-y-6 bg-background text-foreground shadow-lg rounded-xl">
-      <h2 className="text-xl font-semibold text-center tracking-tight text-foreground">
+ <Card className="p-6 md:p-8 w-full max-w-md mx-auto flex flex-col items-center justify-center space-y-6 bg-background text-foreground shadow-lg rounded-xl">
+ <h2 className="text-xl font-semibold text-center tracking-tight text-foreground">
         Objection Breakdown
       </h2>
       <div className="relative flex items-center justify-center">
@@ -57,16 +57,16 @@ export default function DonutChartDemo() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2, ease: "circOut" }}
-                className="flex flex-col items-center justify-center text-center"
+ className="flex flex-col items-center justify-center text-center"
               >
-                <p className="text-muted-foreground text-sm font-medium truncate max-w-[150px]">
+ <p className="text-muted-foreground text-sm font-medium truncate max-w-[150px]">
                   {displayLabel}
                 </p>
-                <p className="text-4xl font-bold text-foreground">
+ <p className="text-4xl font-medium text-foreground">
                   {displayValue}
                 </p>
                 {activeSegment && (
-                  <p className="text-lg font-medium text-muted-foreground">
+ <p className="text-lg font-medium text-muted-foreground">
                     [{displayPercentage.toFixed(0)}%]
                   </p>
                 )}
@@ -92,14 +92,14 @@ export default function DonutChartDemo() {
           >
             <div className="flex items-center space-x-3">
               <span
-                className="h-3 w-3 rounded-full"
+ className="h-3 w-3 rounded-full"
                 style={{ backgroundColor: segment.color }}
               ></span>
-              <span className="text-sm font-medium text-foreground">
+ <span className="text-sm font-medium text-foreground">
                 {segment.label}
               </span>
             </div>
-            <span className="text-sm font-semibold text-muted-foreground">
+ <span className="text-sm font-semibold text-muted-foreground">
               {segment.value}
             </span>
           </motion.div>

@@ -162,10 +162,10 @@ export default function LibraryAdmin() {
         </button>
       }
     >
-      {error && <p className="text-sm text-red-600">{error}</p>}
+ {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="grid gap-3 md:grid-cols-2">
-        <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-4">
-          <p className="font-medium text-slate-900">Issue</p>
+ <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-4">
+ <p className="font-medium text-slate-900">Issue</p>
           <input
             className={`${input} w-full`}
             placeholder="Copy barcode"
@@ -186,8 +186,8 @@ export default function LibraryAdmin() {
             Issue
           </button>
         </div>
-        <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-4">
-          <p className="font-medium text-slate-900">Return</p>
+ <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-4">
+ <p className="font-medium text-slate-900">Return</p>
           <input
             className={`${input} w-full`}
             placeholder="Copy barcode"
@@ -201,8 +201,8 @@ export default function LibraryAdmin() {
         </div>
       </div>
 
-      <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-4">
-        <p className="font-medium text-slate-900">Catalogue</p>
+ <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-4">
+ <p className="font-medium text-slate-900">Catalogue</p>
         <div className="grid gap-2 md:grid-cols-4">
           <input
             className={input}
@@ -233,14 +233,14 @@ export default function LibraryAdmin() {
           <button type="button" className={btn} onClick={addBook}>
             Add book
           </button>
-          <label className="text-sm text-slate-600">
+ <label className="text-sm text-slate-600">
             {importing
               ? "Importing..."
               : "Import CSV (title, author, isbn, publisher, year, category, barcode, shelf; one row per copy):"}
             <input
               type="file"
               accept=".csv,text/csv"
-              className="ml-2 text-sm"
+ className="ml-2 text-sm"
               disabled={importing}
               onChange={(e) =>
                 e.target.files?.[0] && importFile(e.target.files[0])
@@ -261,7 +261,7 @@ export default function LibraryAdmin() {
           </button>
         </div>
         {books.map((b) => (
-          <p key={b.id} className="text-sm">
+ <p key={b.id} className="text-sm">
             {b.title} {b.author ? `. ${b.author}` : ""} . {b.available}/
             {b.copies} available
           </p>
@@ -270,7 +270,7 @@ export default function LibraryAdmin() {
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <p className="font-medium text-slate-900">Loans</p>
+ <p className="font-medium text-slate-900">Loans</p>
           <select
             className={input}
             value={loanStatus}
@@ -281,11 +281,11 @@ export default function LibraryAdmin() {
             <option value="returned">Returned</option>
           </select>
         </div>
-        {loans.length === 0 && <p className="text-sm text-slate-500">None.</p>}
+ {loans.length === 0 && <p className="text-sm text-slate-500">None.</p>}
         {loans.map((l) => (
           <p
             key={l.id}
-            className="rounded-lg border border-slate-200 bg-white p-2 text-sm"
+ className="rounded-lg border border-slate-200 bg-white p-2 text-sm"
           >
             {l.borrowerUsername} ({l.borrowerType}) . issued {day(l.issuedAt)} .
             due {day(l.dueDate)}
@@ -295,12 +295,12 @@ export default function LibraryAdmin() {
       </div>
 
       <div className="space-y-2">
-        <p className="font-medium text-slate-900">Unpaid fines</p>
-        {fines.length === 0 && <p className="text-sm text-slate-500">None.</p>}
+ <p className="font-medium text-slate-900">Unpaid fines</p>
+ {fines.length === 0 && <p className="text-sm text-slate-500">None.</p>}
         {fines.map((f) => (
           <div
             key={f.id}
-            className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white p-2 text-sm"
+ className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white p-2 text-sm"
           >
             <span>
               {f.username} . {rupees(f.amountPaise)} . {f.note}
@@ -308,7 +308,7 @@ export default function LibraryAdmin() {
             <span className="flex gap-2">
               <button
                 type="button"
-                className="rounded-md border border-slate-300 px-2 py-1"
+ className="rounded-md border border-slate-300 px-2 py-1"
                 onClick={() =>
                   run(
                     () =>
@@ -324,7 +324,7 @@ export default function LibraryAdmin() {
               </button>
               <button
                 type="button"
-                className="rounded-md border border-slate-300 px-2 py-1"
+ className="rounded-md border border-slate-300 px-2 py-1"
                 onClick={() =>
                   run(
                     () =>

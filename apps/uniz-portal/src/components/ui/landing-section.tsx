@@ -10,7 +10,7 @@ import {
 
 /** Frosted card shell — matches calcom-hero feature cards */
 export const landingCardClass =
-  "rounded-[2px] border border-navy-100/60 bg-white/60 overflow-hidden transition-all duration-500";
+  "rounded-lg border border-navy-100/60 bg-white/60 overflow-hidden transition-all duration-500";
 
 export const landingCardHoverClass =
   "hover:border-navy-200 hover:bg-white hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)]";
@@ -26,12 +26,12 @@ export function LandingMeshBackdrop({ className }: { className?: string }) {
       <motion.div
         animate={{ x: [0, 50, 0], y: [0, -30, 0], scale: [1, 1.1, 1] }}
         transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -top-[10%] -right-[5%] h-[60%] w-[60%] rounded-full bg-gradient-to-br from-blue-50/40 via-blue-100/10 to-transparent blur-[120px] opacity-70"
+ className="absolute -top-[10%] -right-[5%] h-[60%] w-[60%] rounded-full bg-gradient-to-br from-blue-50/40 via-blue-100/10 to-transparent blur-[120px] opacity-70"
       />
       <motion.div
         animate={{ x: [0, -40, 0], y: [0, 60, 0], scale: [1, 1.2, 1] }}
         transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[40%] -left-[10%] h-[50%] w-[50%] rounded-full bg-gradient-to-tr from-navy-100/50 via-navy-100/20 to-transparent blur-[140px] opacity-60"
+ className="absolute top-[40%] -left-[10%] h-[50%] w-[50%] rounded-full bg-gradient-to-tr from-navy-100/50 via-navy-100/20 to-transparent blur-[140px] opacity-60"
       />
       <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay pointer-events-none portal-grain" />
     </div>
@@ -56,8 +56,8 @@ export function LandingSection({
 
 export function LandingDivider() {
   return (
-    <div className="max-w-[1280px] mx-auto px-6">
-      <div className="h-px w-full bg-gradient-to-r from-transparent via-navy-200/80 to-transparent" />
+ <div className="max-w-[1280px] mx-auto px-6">
+ <div className="h-px w-full bg-gradient-to-r from-transparent via-navy-200/80 to-transparent" />
     </div>
   );
 }
@@ -91,7 +91,7 @@ export function LandingSectionHeader({
           align === "center" && "justify-center",
         )}
       >
-        <div className="w-1.5 h-1.5 rounded-full bg-navy-950 animate-pulse" />
+ <div className="w-1.5 h-1.5 rounded-full bg-navy-950 animate-pulse" />
         <span className={landingEyebrowClass}>{eyebrow}</span>
       </div>
       <h2
@@ -102,7 +102,7 @@ export function LandingSectionHeader({
       >
         {title}
         {titleMuted && (
-          <span className="text-navy-400 font-light"> {titleMuted}</span>
+ <span className="text-navy-400 font-light"> {titleMuted}</span>
         )}
       </h2>
       {description && (
@@ -142,7 +142,7 @@ export function LandingPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[9.5px] font-semibold tracking-[0.14em] ",
+        "inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[9.5px] font-semibold ",
         PILL_ACCENTS[accent],
         className,
       )}
@@ -191,12 +191,12 @@ export function LandingCTA({
     <button
       type="button"
       className={cn(
-        "group relative inline-flex h-12 items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-navy-950 px-8 text-[14px] font-bold text-white shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] transition-all duration-300 hover:bg-[#0A2540]",
+        "group relative inline-flex h-12 items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-navy-950 px-8 text-[14px] font-medium text-white shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] transition-all duration-300 hover:bg-[#0A2540]",
         className,
       )}
       {...props}
     >
-      <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
+ <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
       <span className="relative flex items-center gap-2.5">{children}</span>
     </button>
   );

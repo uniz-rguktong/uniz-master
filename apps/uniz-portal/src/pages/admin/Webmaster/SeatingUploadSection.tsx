@@ -157,13 +157,13 @@ export default function SeatingUploadSection() {
   };
 
   return (
-    <div className="p-6 space-y-8 pb-20 text-navy-900">
+ <div className="p-6 space-y-8 pb-20 text-navy-900">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex flex-col gap-1.5">
-          <h2 className="text-2xl font-semibold tracking-[-0.02em] text-navy-900 leading-none">
+ <h2 className="text-2xl font-semibold tracking-[-0.02em] text-navy-900 leading-none">
             Exam Seating Management
           </h2>
-          <p className="text-navy-500 font-medium text-[13px]">
+ <p className="text-navy-500 font-medium text-[13px]">
             Upload seating arrangements for students based on their exam
             schedule.
           </p>
@@ -171,11 +171,11 @@ export default function SeatingUploadSection() {
 
         <button
           onClick={downloadTemplate}
-          className="group flex items-center gap-2.5 px-4 py-2 bg-navy-100 text-navy-600 rounded-xl border border-navy-200 hover:bg-white hover:text-navy-900 hover:border-navy-300 transition-all font-bold tracking-[0.14em] text-[9px] active:scale-95"
+ className="group flex items-center gap-2.5 px-4 py-2 bg-navy-100 text-navy-600 rounded-xl border border-navy-200 hover:bg-white hover:text-navy-900 hover:border-navy-300 transition-all font-medium text-[9px] "
         >
           <FileDown
             size={13}
-            className="text-navy-500 group-hover:scale-110 transition-transform"
+ className="text-navy-500 group-hover:scale-110 transition-transform"
           />
           Download Template
         </button>
@@ -184,14 +184,14 @@ export default function SeatingUploadSection() {
       <div className="flex flex-col gap-8 w-full">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="space-y-2">
-            <label className="text-[9px] font-bold tracking-[0.14em] text-navy-400 ml-1">
+ <label className="text-[9px] font-medium text-navy-400 ml-1">
               Academic Semester
             </label>
             <div className="relative group">
               <select
                 value={semesterId}
                 onChange={(e) => setSemesterId(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-navy-100/50 border border-navy-200/60 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-400 outline-none transition-all font-semibold text-[10px] tracking-[0.14em] text-navy-900 cursor-pointer appearance-none shadow-none"
+ className="w-full h-11 pl-5 pr-10 bg-navy-100/50 border border-navy-200/60 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-400 outline-none transition-all font-semibold text-[10px] text-navy-900 cursor-pointer appearance-none shadow-none"
                 disabled={semestersLoading}
               >
                 {semestersLoading ? (
@@ -205,21 +205,21 @@ export default function SeatingUploadSection() {
                 )}
               </select>
               <ChevronDown
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
+ className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 size={14}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[9px] font-bold tracking-[0.14em] text-navy-400 ml-1">
+ <label className="text-[9px] font-medium text-navy-400 ml-1">
               Target Branch
             </label>
             <div className="relative group">
               <select
                 value={branch}
                 onChange={(e) => setBranch(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-navy-100/50 border border-navy-200/60 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-400 outline-none transition-all font-semibold text-[10px] tracking-[0.14em] text-navy-900 cursor-pointer appearance-none shadow-none"
+ className="w-full h-11 pl-5 pr-10 bg-navy-100/50 border border-navy-200/60 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-400 outline-none transition-all font-semibold text-[10px] text-navy-900 cursor-pointer appearance-none shadow-none"
               >
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
                   (b) => (
@@ -230,21 +230,21 @@ export default function SeatingUploadSection() {
                 )}
               </select>
               <ChevronDown
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
+ className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 size={14}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[9px] font-bold tracking-[0.14em] text-navy-400 ml-1">
+ <label className="text-[9px] font-medium text-navy-400 ml-1">
               Year (Batch)
             </label>
             <div className="relative group">
               <select
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-navy-100/50 border border-navy-200/60 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-400 outline-none transition-all font-semibold text-[10px] tracking-[0.14em] text-navy-900 cursor-pointer appearance-none shadow-none"
+ className="w-full h-11 pl-5 pr-10 bg-navy-100/50 border border-navy-200/60 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-400 outline-none transition-all font-semibold text-[10px] text-navy-900 cursor-pointer appearance-none shadow-none"
               >
                 {["E1", "E2", "E3", "E4"].map((y) => (
                   <option key={y} value={y}>
@@ -253,21 +253,21 @@ export default function SeatingUploadSection() {
                 ))}
               </select>
               <ChevronDown
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
+ className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 size={14}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[9px] font-bold tracking-[0.14em] text-navy-400 ml-1">
+ <label className="text-[9px] font-medium text-navy-400 ml-1">
               Examination
             </label>
             <div className="relative group">
               <select
                 value={examName}
                 onChange={(e) => setExamName(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-navy-100/50 border border-navy-200/60 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-400 outline-none transition-all font-semibold text-[10px] tracking-[0.14em] text-navy-900 cursor-pointer appearance-none shadow-none"
+ className="w-full h-11 pl-5 pr-10 bg-navy-100/50 border border-navy-200/60 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-400 outline-none transition-all font-semibold text-[10px] text-navy-900 cursor-pointer appearance-none shadow-none"
               >
                 {["MID-1", "MID-2", "SEM-END", "REMEDIAL"].map((e) => (
                   <option key={e} value={e}>
@@ -276,7 +276,7 @@ export default function SeatingUploadSection() {
                 ))}
               </select>
               <ChevronDown
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
+ className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 size={14}
               />
             </div>
@@ -284,7 +284,7 @@ export default function SeatingUploadSection() {
         </div>
 
         <div className="w-full space-y-6">
-          <div className="rounded-xl border border-navy-900 overflow-hidden bg-transparent p-6">
+ <div className="rounded-xl border border-navy-900 overflow-hidden bg-transparent p-6">
             <FileUploader
               onFileSelect={(f) => {
                 setFile(f);
@@ -303,7 +303,7 @@ export default function SeatingUploadSection() {
           <button
             disabled={!file || loading || !!uploadId || !semesterId}
             onClick={handleUpload}
-            className="w-full h-12 bg-navy-900 text-white rounded-xl font-bold tracking-[0.14em] text-[10px] shadow-none hover:bg-navy-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
+ className="w-full h-12 bg-navy-900 text-white rounded-xl font-medium text-[10px] shadow-none hover:bg-navy-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 "
           >
             {loading || uploadId ? (
               <div className="flex items-center gap-3">
@@ -321,15 +321,15 @@ export default function SeatingUploadSection() {
 
         {result && (
           <div
-            className={`p-6 rounded-xl border shadow-none ${
-              result.success
-                ? "bg-emerald-50/50 border-emerald-200"
-                : "bg-red-50/50 border-red-200"
-            }`}
+ className={`p-6 rounded-xl border shadow-none ${
+ result.success
+ ? "bg-emerald-50/50 border-emerald-200"
+ : "bg-red-50/50 border-red-200"
+ }`}
           >
             <div className="flex items-center gap-3 mb-4">
               <div
-                className={`p-2 rounded-lg ${result.success ? "bg-emerald-500 text-white" : "bg-red-500 text-white"}`}
+ className={`p-2 rounded-lg ${result.success ? "bg-emerald-500 text-white" : "bg-red-500 text-white"}`}
               >
                 {result.success ? (
                   <CheckCircle2 size={18} />
@@ -338,7 +338,7 @@ export default function SeatingUploadSection() {
                 )}
               </div>
               <h3
-                className={`text-lg font-semibold tracking-tight ${result.success ? "text-emerald-900" : "text-red-900"}`}
+ className={`text-lg font-semibold tracking-tight ${result.success ? "text-emerald-900" : "text-red-900"}`}
               >
                 {result?.success ? "Upload successful" : "Process failed"}
               </h3>
@@ -347,20 +347,20 @@ export default function SeatingUploadSection() {
             <div className="space-y-3">
               {result.success ? (
                 <>
-                  <p className="text-emerald-800 font-medium text-[13px]">
+ <p className="text-emerald-800 font-medium text-[13px]">
                     {result.message}
                   </p>
-                  <div className="p-4 bg-white/40 rounded-xl border border-emerald-200/40">
-                    <p className="text-[9px] font-bold text-emerald-600 tracking-[0.14em] mb-1 leading-none">
+ <div className="p-4 bg-white/40 rounded-xl border border-emerald-200/40">
+ <p className="text-[9px] font-medium text-emerald-600 mb-1 leading-none">
                       Immediate Sync
                     </p>
-                    <p className="text-emerald-900 font-medium text-[13px]">
+ <p className="text-emerald-900 font-medium text-[13px]">
                       Student portals will reflect these updates instantly.
                     </p>
                   </div>
                 </>
               ) : (
-                <p className="text-red-800 font-medium text-[13px]">
+ <p className="text-red-800 font-medium text-[13px]">
                   {result.msg}
                 </p>
               )}

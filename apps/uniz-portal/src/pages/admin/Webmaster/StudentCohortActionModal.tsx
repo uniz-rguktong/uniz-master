@@ -127,7 +127,7 @@ export default function StudentCohortActionModal({
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className={adminWarningBannerClass}>
-          <ShieldAlert size={18} className="text-amber-600 shrink-0 mt-0.5" />
+ <ShieldAlert size={18} className="text-amber-600 shrink-0 mt-0.5" />
           <div>
             <p className={adminWarningTitleClass}>{action.warningTitle}</p>
             <p className={adminWarningTextClass}>{action.warningText}</p>
@@ -245,7 +245,7 @@ export default function StudentCohortActionModal({
         )}
 
         <div className="space-y-2">
-          <label className={cn(adminLabelClass, "text-rose-500")}>
+ <label className={cn(adminLabelClass, "text-rose-500")}>
             Type {confirmPhrase} to confirm
           </label>
           <input

@@ -85,18 +85,18 @@ export default function AdmissionsApply() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-4 p-6">
-      <h1 className="text-2xl font-semibold text-slate-900">Admissions</h1>
-      {msg && <p className="text-sm text-red-600">{msg}</p>}
+ <h1 className="text-2xl font-semibold text-slate-900">Admissions</h1>
+ {msg && <p className="text-sm text-red-600">{msg}</p>}
       {done ? (
         <div className={cardCls}>
-          <p className="font-medium">
+ <p className="font-medium">
             Application submitted. Your reference number is {done.refNo}.
           </p>
-          <p className="text-slate-600">
+ <p className="text-slate-600">
             Keep it with your email to check the status below.
           </p>
           {done.payment?.required && (
-            <p className="text-amber-700">
+ <p className="text-amber-700">
               Application fee:{" "}
               {done.payment.enabled
                 ? "pay from the status page"
@@ -105,7 +105,7 @@ export default function AdmissionsApply() {
           )}
         </div>
       ) : data && data.cycles.length === 0 ? (
-        <p className="text-slate-600">No admission cycle is open right now.</p>
+ <p className="text-slate-600">No admission cycle is open right now.</p>
       ) : data && !data.formReady ? (
         <DisabledState reason={data.reason || "Online form not configured"} />
       ) : (
@@ -132,7 +132,7 @@ export default function AdmissionsApply() {
               ))}
             </select>
             {cycle && (
-              <p className="text-slate-600 md:col-span-2">
+ <p className="text-slate-600 md:col-span-2">
                 Closes {day(cycle.closesAt)}.{" "}
                 {cycle.feeInr
                   ? `Application fee Rs ${cycle.feeInr} (${cycle.payment.enabled ? "online" : cycle.payment.reason}).`
@@ -174,7 +174,7 @@ export default function AdmissionsApply() {
               value={f.address || ""}
               onChange={set("address")}
             />
-            <p className="text-slate-600 md:col-span-2">
+ <p className="text-slate-600 md:col-span-2">
               Documents: share each as a public link (Google Drive or similar).
             </p>
             {DOCS.map(([k, l]) => (
@@ -207,7 +207,7 @@ export default function AdmissionsApply() {
         )
       )}
       <div className={`${cardCls} space-y-2`}>
-        <p className="font-medium">Check application status</p>
+ <p className="font-medium">Check application status</p>
         <div className="flex flex-wrap gap-2">
           <input
             className={inputCls}
@@ -227,7 +227,7 @@ export default function AdmissionsApply() {
         </div>
         {found &&
           (found.error ? (
-            <p className="text-red-600">{found.error}</p>
+ <p className="text-red-600">{found.error}</p>
           ) : (
             <p>
               {found.name} . {found.program} . {found.status.replace("_", " ")}{" "}

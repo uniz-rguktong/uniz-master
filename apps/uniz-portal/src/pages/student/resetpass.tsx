@@ -111,8 +111,8 @@ export default function Resetpassword() {
     repassword.length > 0 && password !== repassword;
 
   return (
-    <div className="font-sans text-navy-900">
-      <div className="mx-auto max-w-6xl px-4 pb-4 md:pb-10">
+ <div className="font-sans text-navy-900">
+ <div className="mx-auto max-w-6xl px-4 pb-4 md:pb-10">
         <header className="mb-2 flex flex-col gap-0.5 md:mb-6">
           <p className={portalEyebrowClass}>Security</p>
           <h1 className={cn(portalTitleClass, "mt-1")}>Change password</h1>
@@ -122,16 +122,16 @@ export default function Resetpassword() {
           </p>
         </header>
 
-        <div className="bg-transparent md:overflow-hidden md:rounded-xl md:border md:border-navy-100 md:bg-white md:shadow-sm">
+ <div className="bg-transparent md:overflow-hidden md:rounded-xl md:border md:border-navy-100 md:bg-white md:shadow-sm">
           <div className="md:flex">
-            <div className="space-y-5 border-navy-50 px-0 py-2 md:w-2/3 md:border-r md:space-y-6 md:p-10 md:py-6">
+ <div className="space-y-5 border-navy-50 px-0 py-2 md:w-2/3 md:border-r md:space-y-6 md:p-10 md:py-6">
               <Input
                 label="Current password"
                 type="password"
                 onchangeFunction={handleInputChange(setCurrentPassword)}
                 placeholder="Enter current password"
                 labelClassName={portalLabelClass}
-                icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
+ icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
               />
 
               <div className="space-y-3">
@@ -141,13 +141,13 @@ export default function Resetpassword() {
                   onchangeFunction={handleInputChange(setPassword)}
                   placeholder="Create a new password"
                   labelClassName={portalLabelClass}
-                  icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
+ icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
                 />
 
                 {password && (
-                  <div className="space-y-2 px-0.5">
+ <div className="space-y-2 px-0.5">
                     <div className="flex items-center gap-3">
-                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-navy-100">
+ <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-navy-100">
                         <div
                           className={cn(
                             "h-full rounded-full transition-all duration-300",
@@ -158,7 +158,7 @@ export default function Resetpassword() {
                           }}
                         />
                       </div>
-                      <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-navy-400">
+ <span className="shrink-0 text-[10px] font-medium text-navy-400">
                         {passwordStrength.label}
                       </span>
                     </div>
@@ -200,13 +200,13 @@ export default function Resetpassword() {
                   onchangeFunction={handleInputChange(setRePassword)}
                   placeholder="Repeat new password"
                   labelClassName={portalLabelClass}
-                  icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
+ icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
                   error={
                     passwordsMismatch ? "Passwords do not match" : undefined
                   }
                 />
                 {passwordsMatch && (
-                  <p className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700">
+ <p className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700">
                     <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
                     Passwords match
                   </p>
@@ -217,15 +217,15 @@ export default function Resetpassword() {
                 type="button"
                 onClick={handleResetPassword}
                 disabled={isLoading}
-                className={cn(portalPrimaryButtonClass, "w-full min-h-12 text-[15px]")}
+ className={cn(portalPrimaryButtonClass, "w-full min-h-12 text-[15px]")}
               >
                 {isLoading ? "Updating…" : "Update password"}
               </button>
 
-              <div className="rounded-xl border border-navy-100 bg-white p-4 shadow-sm md:hidden">
+ <div className="rounded-xl border border-navy-100 bg-white p-4 shadow-sm md:hidden">
                 <div className="flex items-start gap-3">
-                  <Shield className="mt-0.5 h-4 w-4 shrink-0 text-navy-900" strokeWidth={2} />
-                  <p className="text-[11px] font-medium leading-relaxed text-navy-500">
+ <Shield className="mt-0.5 h-4 w-4 shrink-0 text-navy-900" strokeWidth={2} />
+ <p className="text-[11px] font-medium leading-relaxed text-navy-500">
                     For your security, all active sessions are ended after a password
                     change. Sign in again with your new password.
                   </p>
@@ -233,19 +233,19 @@ export default function Resetpassword() {
               </div>
             </div>
 
-            <div className="hidden flex-col justify-between bg-navy-50/30 p-8 md:flex md:w-1/3">
+ <div className="hidden flex-col justify-between bg-navy-50/30 p-8 md:flex md:w-1/3">
               <div>
-                <h3 className="mb-6 flex items-center gap-2 text-[10px] font-bold tracking-[0.14em] text-navy-400">
+ <h3 className="mb-6 flex items-center gap-2 text-[10px] font-medium text-navy-400">
                   Password guidelines
                 </h3>
 
                 <div className="space-y-3 md:space-y-6">
                   {GUIDELINES.map((text, index) => (
                     <div key={text} className="flex items-start gap-4">
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-navy-100 bg-white text-[10px] font-bold text-navy-900 shadow-sm">
+ <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-navy-100 bg-white text-[10px] font-medium text-navy-900 shadow-sm">
                         {String(index + 1).padStart(2, "0")}
                       </div>
-                      <p className="text-[13px] font-medium leading-relaxed text-navy-500">
+ <p className="text-[13px] font-medium leading-relaxed text-navy-500">
                         {text}
                       </p>
                     </div>
@@ -253,10 +253,10 @@ export default function Resetpassword() {
                 </div>
               </div>
 
-              <div className="mt-12 rounded-xl border border-navy-100 bg-white p-5 shadow-sm">
+ <div className="mt-12 rounded-xl border border-navy-100 bg-white p-5 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <Shield size={16} className="mt-0.5 text-navy-900" />
-                  <p className="text-[11px] font-medium leading-relaxed text-navy-500">
+ <Shield size={16} className="mt-0.5 text-navy-900" />
+ <p className="text-[11px] font-medium leading-relaxed text-navy-500">
                     For your security, all active sessions are ended after a password
                     change. Sign in again with your new password.
                   </p>

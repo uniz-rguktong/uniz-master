@@ -61,7 +61,7 @@ export default function ConsultancyAdmin() {
       title="Consultancy"
       description="Consultancy projects with faculty, client, value and status."
     >
-      {error && <p className="text-sm text-red-600">{error}</p>}
+ {error && <p className="text-sm text-red-600">{error}</p>}
       <div className={cardCls}>
         {STATUSES.map((s) => `${s}: ${inr(totals[s] || 0)}`).join(" . ")}
       </div>

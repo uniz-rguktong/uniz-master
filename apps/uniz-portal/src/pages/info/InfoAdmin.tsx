@@ -60,7 +60,7 @@ export default function InfoAdmin() {
       title="Information Centre"
       description="Circulars, calendars, downloads and forms. Public notices and tenders from their tabs show here too."
     >
-      {error && <p className="text-sm text-red-600">{error}</p>}
+ {error && <p className="text-sm text-red-600">{error}</p>}
       <div className={`${cardCls} grid gap-2 md:grid-cols-3`}>
         <select
           className={inputCls}
@@ -151,7 +151,7 @@ export default function InfoAdmin() {
           <span className="flex gap-2">
             <button
               type="button"
-              className="rounded-md border px-2"
+ className="rounded-md border px-2"
               onClick={() =>
                 run(() => put(i.id, { pinned: !i.pinned }), "Saved")
               }
@@ -160,7 +160,7 @@ export default function InfoAdmin() {
             </button>
             <button
               type="button"
-              className="rounded-md border px-2"
+ className="rounded-md border px-2"
               onClick={() =>
                 run(() => put(i.id, { isVisible: !i.isVisible }), "Saved")
               }

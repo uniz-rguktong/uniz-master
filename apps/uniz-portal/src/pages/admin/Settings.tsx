@@ -143,26 +143,26 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-navy-50 flex items-center justify-center p-6">
+ <div className="min-h-screen bg-navy-50 flex items-center justify-center p-6">
       <div className="max-w-4xl w-full">
         <button
           onClick={() => navigateTo("/admin")}
-          className="mb-8 inline-flex items-center text-sm font-medium text-navy-500 hover:text-navy-800 transition-colors"
+ className="mb-8 inline-flex items-center text-sm font-medium text-navy-500 hover:text-navy-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
         </button>
 
-        <div className="bg-white rounded-[2px] shadow-sm border border-navy-200 overflow-hidden flex flex-col md:flex-row">
+ <div className="bg-white rounded-lg shadow-sm border border-navy-200 overflow-hidden flex flex-col md:flex-row">
           {/* Form Section */}
           <div className="md:w-3/5 p-8 lg:p-12">
             <div className="mb-8">
-              <div className="h-12 w-12 bg-navy-100 rounded-full flex items-center justify-center mb-4 text-navy-900">
+ <div className="h-12 w-12 bg-navy-100 rounded-full flex items-center justify-center mb-4 text-navy-900">
                 <Lock className="w-6 h-6" />
               </div>
-              <h1 className="text-2xl font-bold text-navy-900">
+ <h1 className="text-2xl font-medium text-navy-900">
                 Reset Password
               </h1>
-              <p className="text-navy-500 mt-1">
+ <p className="text-navy-500 mt-1">
                 Enhance your account security with a strong password.
               </p>
             </div>
@@ -186,13 +186,13 @@ export default function Settings() {
                 />
                 {password && (
                   <div className="mt-2.5">
-                    <div className="flex items-center justify-between text-xs mb-1">
-                      <span className="text-navy-500 font-medium">
+ <div className="flex items-center justify-between text-xs mb-1">
+ <span className="text-navy-500 font-medium">
                         Strength
                       </span>
                       <span
                         className={cn(
-                          "font-bold capitalize",
+                          "font-medium capitalize",
                           passwordStrength.score === 3
                             ? "text-emerald-600"
                             : passwordStrength.score === 2
@@ -203,7 +203,7 @@ export default function Settings() {
                         {passwordStrength.label}
                       </span>
                     </div>
-                    <div className="h-1.5 w-full bg-navy-100 rounded-full overflow-hidden">
+ <div className="h-1.5 w-full bg-navy-100 rounded-full overflow-hidden">
                       <div
                         className={cn(
                           "h-full transition-all duration-300",
@@ -226,13 +226,13 @@ export default function Settings() {
                   placeholder="Re-enter new password"
                 />
                 {password && repassword && (
-                  <div className="mt-2 flex items-center text-xs font-medium">
+ <div className="mt-2 flex items-center text-xs font-medium">
                     {password === repassword ? (
-                      <span className="text-emerald-600 flex items-center gap-1.5">
+ <span className="text-emerald-600 flex items-center gap-1.5">
                         <CheckCircle className="w-3.5 h-3.5" /> Passwords match
                       </span>
                     ) : (
-                      <span className="text-red-500 flex items-center gap-1.5">
+ <span className="text-red-500 flex items-center gap-1.5">
                         <XCircle className="w-3.5 h-3.5" /> Passwords do not
                         match
                       </span>
@@ -246,17 +246,17 @@ export default function Settings() {
                   value="Reset Password"
                   loading={isLoading}
                   onclickFunction={sendDataToBackend}
-                  className="w-full bg-navy-900 hover:bg-navy-800"
+ className="w-full bg-navy-900 hover:bg-navy-800"
                 />
               </div>
             </div>
           </div>
 
           {/* Sidebar Info */}
-          <div className="md:w-2/5 bg-navy-50 border-t md:border-t-0 md:border-l border-navy-200 p-8 lg:p-12 flex flex-col justify-between">
+ <div className="md:w-2/5 bg-navy-50 border-t md:border-t-0 md:border-l border-navy-200 p-8 lg:p-12 flex flex-col justify-between">
             <div>
-              <h3 className="font-semibold text-navy-900 flex items-center gap-2 mb-6">
-                <ShieldCheck className="w-5 h-5 text-navy-900" /> Security
+ <h3 className="font-semibold text-navy-900 flex items-center gap-2 mb-6">
+ <ShieldCheck className="w-5 h-5 text-navy-900" /> Security
                 Requirements
               </h3>
 
@@ -276,10 +276,10 @@ export default function Settings() {
               </ul>
             </div>
 
-            <div className="bg-navy-50/50 rounded-xl p-4 border border-navy-100 mt-8">
+ <div className="bg-navy-50/50 rounded-xl p-4 border border-navy-100 mt-8">
               <div className="flex gap-3">
-                <AlertTriangle className="w-5 h-5 text-navy-900 shrink-0 mt-0.5" />
-                <p className="text-sm text-navy-800 leading-relaxed">
+ <AlertTriangle className="w-5 h-5 text-navy-900 shrink-0 mt-0.5" />
+ <p className="text-sm text-navy-800 leading-relaxed">
                   For security reasons, you will be automatically logged out
                   after successfully changing your password.
                 </p>
@@ -306,7 +306,7 @@ function RequirementItem({ met, text }: { met: boolean; text: string }) {
         {met ? (
           <CheckCircle className="w-3.5 h-3.5" />
         ) : (
-          <div className="w-2 h-2 rounded-full bg-navy-400" />
+ <div className="w-2 h-2 rounded-full bg-navy-400" />
         )}
       </div>
       <span

@@ -108,7 +108,7 @@ export default function ExamDutiesAdmin() {
       actions={
         roster.length > 0 ? (
           <button
-            className="rounded-lg border px-3 py-2 text-sm print:hidden"
+ className="rounded-lg border px-3 py-2 text-sm print:hidden"
             onClick={() => window.print()}
           >
             Print roster
@@ -119,7 +119,7 @@ export default function ExamDutiesAdmin() {
       {error ? <DisabledState reason={error} /> : null}
       <div className="flex flex-wrap gap-3 print:hidden">
         <select
-          className="rounded-lg border px-3 py-2 text-sm"
+ className="rounded-lg border px-3 py-2 text-sm"
           value={semesterId}
           onChange={(e) => setSemesterId(e.target.value)}
         >
@@ -130,7 +130,7 @@ export default function ExamDutiesAdmin() {
           ))}
         </select>
         <select
-          className="rounded-lg border px-3 py-2 text-sm"
+ className="rounded-lg border px-3 py-2 text-sm"
           value={examName}
           onChange={(e) => setExamName(e.target.value)}
         >
@@ -140,15 +140,15 @@ export default function ExamDutiesAdmin() {
         </select>
       </div>
 
-      <div className="rounded-xl border p-4 print:hidden">
-        <p className="text-sm text-slate-600">
+ <div className="rounded-xl border p-4 print:hidden">
+ <p className="text-sm text-slate-600">
           {halls.length} halls found in seating for this exam.
           {halls.length === 0
             ? " Upload the seating arrangement with dates first."
             : ""}
         </p>
         <textarea
-          className="mt-3 w-full rounded-lg border p-2 text-sm"
+ className="mt-3 w-full rounded-lg border p-2 text-sm"
           rows={3}
           placeholder="Faculty usernames, comma or space separated"
           value={faculty}
@@ -156,7 +156,7 @@ export default function ExamDutiesAdmin() {
         />
         <button
           disabled={busy || halls.length === 0}
-          className="mt-2 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white disabled:opacity-50"
+ className="mt-2 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white disabled:opacity-50"
           onClick={() => generate(false)}
         >
           {busy ? "Generating..." : "Generate duties"}
@@ -164,12 +164,12 @@ export default function ExamDutiesAdmin() {
       </div>
 
       {swaps.length > 0 ? (
-        <div className="rounded-xl border p-4 print:hidden">
-          <h2 className="mb-2 font-medium">Swap requests</h2>
+ <div className="rounded-xl border p-4 print:hidden">
+ <h2 className="mb-2 font-medium">Swap requests</h2>
           {swaps.map((s) => (
             <div
               key={s.id}
-              className="flex flex-wrap items-center justify-between gap-2 border-t py-2 text-sm"
+ className="flex flex-wrap items-center justify-between gap-2 border-t py-2 text-sm"
             >
               <span>
                 {s.facultyUsername} to {s.swapTo}, {s.room} on {fmtDate(s.date)}{" "}
@@ -177,13 +177,13 @@ export default function ExamDutiesAdmin() {
               </span>
               <span className="flex gap-2">
                 <button
-                  className="rounded border px-2 py-1"
+ className="rounded border px-2 py-1"
                   onClick={() => decide(s.id, true)}
                 >
                   Approve
                 </button>
                 <button
-                  className="rounded border px-2 py-1"
+ className="rounded border px-2 py-1"
                   onClick={() => decide(s.id, false)}
                 >
                   Reject
@@ -194,9 +194,9 @@ export default function ExamDutiesAdmin() {
         </div>
       ) : null}
 
-      <div className="overflow-x-auto rounded-xl border">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-left">
+ <div className="overflow-x-auto rounded-xl border">
+ <table className="w-full text-sm">
+ <thead className="bg-slate-50 text-left">
             <tr>
               <th className="p-2">Date</th>
               <th className="p-2">Time</th>
@@ -219,7 +219,7 @@ export default function ExamDutiesAdmin() {
             ))}
             {roster.length === 0 ? (
               <tr>
-                <td className="p-4 text-slate-500" colSpan={6}>
+ <td className="p-4 text-slate-500" colSpan={6}>
                   No duties yet for {examName}.
                 </td>
               </tr>

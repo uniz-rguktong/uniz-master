@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
  * UniZ portal design system.
  *
  * Palette: navy (#0A2540 / #021227), red accent (#EA2027), slate neutrals.
- * Surfaces: hairline borders (#E6EAF0), layered soft shadows, 12-16px radii.
- * Type: Inter with tight headings and tabular numbers for stats.
+ * Same tokens as rguktong.in: navy #0A2540, navy-900 #061B33, line #E2E8F0, 8px controls.
+ * Type: Cabin Condensed. Headings and buttons are medium weight.
  * Motion: 150-200ms, disabled under prefers-reduced-motion.
  */
 
@@ -20,7 +20,7 @@ export const EXAMCELL_DEEP = "#061B33";
 /* ── Page & layout ───────────────────────────────────────────── */
 
 export const portalPageClass =
-  "min-h-screen bg-[#F7F8FA] text-[#0F172A] selection:bg-[#0A2540] selection:text-white font-sans antialiased";
+  "campus-canvas min-h-screen bg-surface text-ink selection:bg-navy selection:text-white antialiased";
 
 export const portalPageWrapClass = "px-4 py-8 md:px-10 md:py-10 space-y-8";
 
@@ -31,31 +31,30 @@ export const portalSafeBottomClass = "pb-[max(1rem,env(safe-area-inset-bottom))]
 /* ── Surfaces ────────────────────────────────────────────────── */
 
 export const portalCardClass =
-  "rounded-2xl border border-[#E6EAF0] bg-white shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)]";
+  "rounded-lg border border-line bg-white shadow-[0_1px_2px_0_rgb(6_27_51/0.06)]";
 
 export const portalCardHoverClass =
-  "transition-[border-color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.2,0,0,1)] hover:border-[#D5DCE6] hover:shadow-[0_0_0_1px_rgba(10,37,64,0.05),0_4px_8px_-2px_rgba(10,37,64,0.06),0_16px_32px_-12px_rgba(10,37,64,0.18)] hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0";
+  "transition-colors duration-150 hover:bg-surface-2 motion-reduce:transition-none";
 
 export const portalCardInteractiveClass = cn(portalCardClass, portalCardHoverClass);
 
 export const portalInsetPanelClass =
-  "rounded-xl border border-[#E6EAF0] bg-[#F7F8FA] p-4 md:p-6";
+  "rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 md:p-6";
 
 export const portalBannerGradientClass = "portal-banner-gradient text-white";
 
 export const portalFooterClass =
-  "bg-white border-t border-[#E6EAF0] text-[#475569] font-sans";
+  "bg-white border-t border-[#E2E8F0] text-[#475569] font-sans";
 
 export const portalNoticeClass =
-  "rounded-xl border border-[#E6EAF0] bg-white px-4 py-3 text-[13px] text-[#0F172A] font-sans shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)] relative pl-5 before:absolute before:left-0 before:top-3 before:bottom-3 before:w-[3px] before:rounded-r-full before:bg-[#EA2027]";
+  "rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 text-[13px] text-[#0F172A] font-sans shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)] relative pl-5 before:absolute before:left-0 before:top-3 before:bottom-3 before:w-[3px] before:rounded-r-full before:bg-[#EA2027]";
 
 /* ── Typography ──────────────────────────────────────────────── */
 
-export const portalEyebrowClass =
-  "text-[11px] font-semibold tracking-[0.08em] uppercase text-[#64748B] font-sans";
+export const portalEyebrowClass = "text-sm text-ink-muted";
 
 export const portalTitleClass =
-  "text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-[-0.025em] text-[#0A2540] leading-[1.15] font-sans text-balance";
+  "font-serif text-[clamp(1.75rem,2.6vw,2.5rem)] font-medium tracking-tight text-navy-900 leading-tight text-balance";
 
 export const portalSubtitleClass =
   "text-[14px] md:text-[15px] text-[#64748B] leading-6 font-sans";
@@ -71,109 +70,106 @@ export const portalMutedClass = "text-[12px] text-[#64748B] font-sans";
 /* ── Buttons (Harvard/MIT Institutional Solid Navy & Hairline) ─ */
 
 export const portalPrimaryButtonClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 px-5 rounded-xl bg-[#0A2540] text-white text-[14px] font-semibold tracking-[-0.005em] font-sans shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_1px_2px_rgba(2,18,39,0.3),0_6px_16px_-8px_rgba(10,37,64,0.6)] hover:bg-[#0D3154] active:bg-[#021227] active:scale-[0.98] transition-[background-color,transform,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540] focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:bg-[#94A3B8] disabled:shadow-none disabled:cursor-not-allowed [&_svg]:size-4 [&_svg]:shrink-0";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-navy px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-navy-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40 [&_svg]:size-4 [&_svg]:shrink-0";
 
 export const portalSecondaryButtonClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 px-5 rounded-xl border border-[#E6EAF0] bg-white text-[#0A2540] text-[14px] font-semibold tracking-[-0.005em] font-sans shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)] hover:border-[#CBD5E1] hover:bg-[#F7F8FA] active:scale-[0.98] transition-[border-color,background-color,transform] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540] focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:size-4 [&_svg]:shrink-0";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line bg-white px-5 text-sm font-medium text-navy transition-colors duration-150 hover:bg-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40 [&_svg]:size-4 [&_svg]:shrink-0";
 
 export const portalGhostButtonClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded-xl bg-transparent text-[#475569] text-[13px] font-semibold font-sans hover:text-[#0A2540] hover:bg-[#0A2540]/[0.05] active:bg-[#0A2540]/[0.08] transition-colors duration-150 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540] focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:size-4 [&_svg]:shrink-0";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-transparent px-4 text-sm font-medium text-ink-muted transition-colors duration-150 hover:bg-surface-2 hover:text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:cursor-not-allowed disabled:opacity-40 [&_svg]:size-4 [&_svg]:shrink-0";
 
 export const portalDangerButtonClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded-xl bg-white border border-[#EA2027]/25 text-[#C81A20] text-[13px] font-semibold font-sans hover:bg-[#EA2027] hover:border-[#EA2027] hover:text-white active:scale-[0.98] transition-[background-color,border-color,color,transform] duration-150 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EA2027] focus-visible:ring-offset-2 [&_svg]:size-4 [&_svg]:shrink-0";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-brand-red/30 bg-white px-4 text-sm font-medium text-[#C81A20] transition-colors duration-150 hover:border-brand-red hover:bg-brand-red hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red [&_svg]:size-4 [&_svg]:shrink-0";
 
-/* ── Forms (Cabin Condensed; 2px radius; crisp borders) ──────── */
+/* ── Forms ───────────────────────────────────────────────────── */
 
-export const portalLabelClass =
-  "block text-[13px] font-medium text-[#334155] mb-2 font-sans";
+export const portalLabelClass = "mb-2 block text-sm font-medium text-ink";
 
 export const portalInputClass =
-  "w-full min-h-11 px-3.5 text-[15px] font-normal placeholder:text-[#64748B] bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] font-sans shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/[0.08] transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none disabled:bg-[#F7F8FA] disabled:text-[#64748B]";
+  "w-full min-h-11 rounded-lg border border-line bg-white px-3.5 text-sm text-ink placeholder:text-ink-subtle transition-colors duration-150 hover:border-navy-200 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20 disabled:bg-surface disabled:text-ink-subtle";
 
 export const portalTextareaClass =
-  "w-full min-h-[96px] px-3.5 py-3 text-[14px] font-normal placeholder:text-[#64748B] bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] font-sans shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/[0.08] transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none resize-none";
+  "w-full min-h-[96px] resize-none rounded-lg border border-line bg-white px-3.5 py-3 text-sm text-ink placeholder:text-ink-subtle transition-colors duration-150 hover:border-navy-200 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20";
 
 export const portalSelectClass =
-  "w-full min-h-11 pl-3.5 pr-10 text-[14px] font-medium appearance-none cursor-pointer bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] font-sans shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/[0.08] transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none disabled:opacity-50";
+  "w-full min-h-11 cursor-pointer appearance-none rounded-lg border border-line bg-white pl-3.5 pr-10 text-sm font-medium text-ink transition-colors duration-150 hover:border-navy-200 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20 disabled:opacity-50";
 
 /* ── Navigation & chrome (Institutional Masthead & Sidebar) ──── */
 
 export const portalHeaderClass =
-  "sticky top-0 z-40 h-16 flex items-center bg-[#021227]/90 backdrop-blur-xl backdrop-saturate-150 border-b border-white/[0.08] text-white";
+  "sticky top-0 z-40 flex h-[68px] items-center border-b border-line bg-white text-navy-900";
 
 export const portalSidebarClass =
-  "flex w-[248px] shrink-0 flex-col bg-white border-r border-[#E6EAF0] text-[#0A2540]";
+  "flex w-[248px] shrink-0 flex-col border-r border-line bg-white text-navy-900";
 
 export const portalSidebarItemClass =
-  "group relative mx-3 flex w-[calc(100%-1.5rem)] min-h-11 items-center gap-3 rounded-xl px-3 text-left text-[14px] font-medium tracking-[-0.005em] text-[#475569] transition-[background-color,color] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none hover:bg-[#0A2540]/[0.04] hover:text-[#0A2540] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540] focus-visible:ring-offset-2 focus-visible:ring-offset-white [&_svg]:size-[18px] [&_svg]:shrink-0";
+  "group relative mx-3 flex min-h-10 w-[calc(100%-1.5rem)] items-center gap-3 rounded-lg px-3 text-left text-sm font-medium text-ink-muted transition-colors duration-150 hover:bg-surface-2 hover:text-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy [&_svg]:size-[18px] [&_svg]:shrink-0";
 
 export const portalSidebarItemActiveClass =
-  "bg-[#0A2540]/[0.06] !text-[#0A2540] font-semibold hover:!bg-[#0A2540]/[0.08] before:absolute before:-left-3 before:top-2.5 before:bottom-2.5 before:w-[3px] before:rounded-r-full before:bg-[#EA2027]";
+  "bg-surface-2 font-medium !text-navy hover:!bg-surface-2";
 
 export const portalLogoutPillClass =
-  "mx-3 mb-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#E6EAF0] bg-white px-5 text-[13px] font-semibold text-[#475569] hover:border-[#EA2027]/30 hover:bg-[#EA2027]/[0.05] hover:text-[#C81A20] transition-colors duration-150 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "mx-3 mb-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line bg-white px-4 text-sm font-medium text-ink-muted transition-colors duration-150 hover:border-brand-red/40 hover:text-[#C81A20] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy";
 
 export const portalPageTitleClass =
-  "mb-6 text-left text-[20px] md:text-[22px] font-semibold tracking-[-0.02em] text-[#0A2540] font-sans";
+  "mb-6 text-left font-serif text-2xl font-medium tracking-tight text-navy-900 md:text-3xl";
 
 export const portalDefTableClass =
-  "w-full border-separate border-spacing-0 overflow-hidden rounded-2xl border border-[#E6EAF0] bg-white text-[14px] text-[#0F172A] shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)]";
+  "w-full overflow-hidden rounded-lg border border-line bg-white text-sm text-ink";
 
 export const portalDefLabelClass =
-  "w-[38%] border-b border-[#EEF1F5] bg-white px-5 py-3.5 text-left text-[13px] font-medium text-[#64748B]";
+  "w-[38%] border-b border-line bg-white px-5 py-3.5 text-left text-sm font-medium text-ink-subtle";
 
 export const portalDefValueClass =
-  "border-b border-[#EEF1F5] bg-white px-5 py-3.5 text-[14px] font-medium text-[#0F172A] tabular-nums";
+  "border-b border-line bg-white px-5 py-3.5 text-sm font-medium text-ink tabular-nums";
 
 export const portalChoiceCardClass =
-  "flex min-h-[120px] min-w-[180px] items-center justify-center rounded-2xl border border-[#E6EAF0] bg-white px-6 py-8 text-center text-[14px] font-semibold tracking-[-0.01em] text-[#0A2540] shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)] hover:border-[#CBD5E1] hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 transition-[border-color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.2,0,0,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540] focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "flex min-h-[120px] min-w-[180px] items-center justify-center rounded-lg border border-line bg-white px-6 py-8 text-center text-sm font-medium text-navy transition-colors duration-150 hover:bg-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy";
 
 export const portalHeaderLightClass =
-  "sticky top-0 z-40 h-16 flex items-center bg-white/80 backdrop-blur-xl backdrop-saturate-150 border-b border-[#E6EAF0]";
+  "sticky top-0 z-40 flex h-[68px] items-center border-b border-line bg-white";
 
-export const portalNavActiveClass = "bg-[#0A2540] text-white";
+export const portalNavActiveClass = "bg-navy text-white";
 
 export const portalNavInactiveClass =
-  "text-[#475569] hover:text-[#0A2540] hover:bg-[#0A2540]/[0.04]";
+  "text-ink-muted hover:bg-surface-2 hover:text-navy";
 
-export const portalTabActiveClass =
-  "text-[#0A2540] border-b-[2px] border-[#0A2540]";
+export const portalTabActiveClass = "border-b-2 border-navy text-navy";
 
 export const portalTabInactiveClass =
-  "text-[#64748B] hover:text-[#0A2540] border-b-[2px] border-transparent hover:border-[#CBD5E1]";
+  "border-b-2 border-transparent text-ink-subtle hover:border-line hover:text-navy";
 
 /* ── Pills & badges ──────────────────────────────────────────── */
 
 export const portalPillClass =
-  "inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-white px-2.5 py-1 text-[12px] font-medium text-[#0A2540]";
+  "inline-flex items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 py-1 text-xs font-medium text-navy";
 
 export const portalLivePillClass =
-  "inline-flex items-center gap-2 rounded-full border border-[#E2E8F0] bg-white px-3 py-1.5 text-[12px] font-medium text-[#0A2540] shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)]";
+  "inline-flex items-center gap-2 rounded-lg border border-line bg-white px-3 py-1.5 text-xs font-medium text-navy";
 
 export const portalChipClass =
-  "inline-flex items-center gap-1.5 rounded-full bg-[#0A2540]/[0.05] px-2.5 py-0.5 text-[12px] font-medium text-[#334155]";
+  "inline-flex items-center gap-1.5 rounded-lg bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-ink";
 
 /* ── Modals ──────────────────────────────────────────────────── */
 
 export const portalModalShellClass =
-  "overflow-hidden bg-white border border-[#E6EAF0] rounded-2xl shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_24px_64px_-16px_rgba(2,18,39,0.4)]";
+  "overflow-hidden rounded-lg border border-line bg-white shadow-[0_12px_32px_-12px_rgba(6,21,39,0.25)]";
 
 export const portalModalTitleClass =
-  "text-[18px] font-semibold tracking-[-0.02em] text-[#0A2540] font-sans";
+  "font-serif text-xl font-medium tracking-tight text-navy-900";
 
-export const portalModalDescClass =
-  "text-[14px] text-[#64748B] leading-6 font-sans";
+export const portalModalDescClass = "text-sm leading-6 text-ink-muted";
 
 /* ── Utilities ─────────────────────────────────────────────── */
 
 export const portalNumsClass = "tabular-nums [font-feature-settings:'tnum']";
 
 export const portalIconTileClass =
-  "size-10 rounded-xl bg-[#0A2540]/[0.05] text-[#0A2540] flex items-center justify-center ring-1 ring-inset ring-[#0A2540]/[0.08] [&_svg]:size-5";
+  "flex size-10 items-center justify-center rounded-lg bg-surface-2 text-navy ring-1 ring-inset ring-line [&_svg]:size-5";
 
 /* ── Page interiors (section header + content) ───────────────── */
 
-export const portalCanvasClass = "bg-white text-[#0F172A] font-sans";
+export const portalCanvasClass = "bg-white font-sans text-ink";
 
 export const portalPageHeaderClass =
   "flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between";
@@ -183,41 +179,39 @@ export const portalPageHeaderTitleClass = portalTitleClass;
 export const portalPageHeaderSubtitleClass = cn(portalSubtitleClass, "mt-1 max-w-2xl");
 
 export const portalToolbarClass =
-  "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-[#E6EAF0] bg-white p-3 shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)]";
+  "flex flex-col gap-3 rounded-lg border border-line bg-white p-3 sm:flex-row sm:items-center sm:justify-between";
 
 export const portalTableWrapClass =
-  "w-full overflow-x-auto rounded-2xl border border-[#E6EAF0] bg-white shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)]";
+  "w-full overflow-x-auto rounded-lg border border-line bg-white";
 
-export const portalTableClass = "w-full text-left border-collapse font-sans";
+export const portalTableClass = "w-full border-collapse text-left font-sans";
 
 export const portalThClass =
-  "sticky top-0 z-[1] h-11 px-4 text-[12px] font-medium text-[#64748B] bg-[#F7F8FA] border-b border-[#E6EAF0] font-sans";
+  "sticky top-0 z-[1] h-11 border-b border-line bg-surface-2 px-4 text-sm font-medium text-ink-subtle";
 
 export const portalTdClass =
-  "h-12 px-4 py-3 text-[14px] text-[#0F172A] border-b border-[#EEF1F5] align-middle tabular-nums";
+  "h-12 border-b border-line px-4 py-3 align-middle text-sm text-ink tabular-nums";
 
-export const portalTrClass = "transition-colors duration-150 motion-reduce:transition-none hover:bg-[#F7F8FA] [&:last-child>td]:border-b-0";
+export const portalTrClass =
+  "transition-colors duration-150 hover:bg-surface-2 motion-reduce:transition-none [&:last-child>td]:border-b-0";
 
 export const portalEmptyClass =
-  "mx-auto my-4 flex max-w-md flex-col items-center gap-2 rounded-2xl border border-dashed border-[#D5DCE6] bg-white px-6 py-14 text-center text-[14px] leading-6 text-[#64748B] font-sans [&_svg]:mb-2 [&_svg]:size-10 [&_svg]:rounded-xl [&_svg]:bg-[#0A2540]/[0.05] [&_svg]:p-2.5 [&_svg]:text-[#0A2540]";
+  "mx-auto my-4 flex max-w-md flex-col items-center gap-2 rounded-lg border border-dashed border-line bg-white px-6 py-14 text-center text-sm leading-6 text-ink-muted";
 
-export const portalStatStripClass =
-  "grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4";
+export const portalStatStripClass = "grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4";
 
-export const portalStatItemClass = "min-w-0 rounded-2xl border border-[#E6EAF0] bg-white p-4 md:p-5 shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)]";
+export const portalStatItemClass =
+  "min-w-0 rounded-lg border border-line bg-white p-4 md:p-5";
 
 export const portalStatValueClass =
-  "text-[28px] md:text-[32px] font-semibold tracking-[-0.03em] tabular-nums text-[#0A2540] leading-none font-sans";
+  "font-serif text-[28px] font-medium tabular-nums leading-none tracking-tight text-navy-900 md:text-[32px]";
 
-export const portalStatLabelClass =
-  "mt-2 text-[13px] font-medium text-[#64748B] font-sans";
-
-/* ── Dashboard building blocks ───────────────────────────────── */
+export const portalStatLabelClass = "mt-2 text-sm font-medium text-ink-subtle";
 
 export const portalSectionHeaderClass =
-  "flex items-end justify-between gap-4 border-b border-[#EEF1F5] pb-3";
+  "flex items-end justify-between gap-4 border-b border-line pb-3";
 
 export const portalQuickTileClass =
-  "group relative flex min-h-[112px] flex-col justify-between gap-4 rounded-2xl border border-[#E6EAF0] bg-white p-4 md:p-5 text-left shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)] transition-[border-color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.2,0,0,1)] hover:-translate-y-0.5 hover:border-[#CBD5E1] hover:shadow-[0_0_0_1px_rgba(10,37,64,0.05),0_4px_8px_-2px_rgba(10,37,64,0.06),0_16px_32px_-12px_rgba(10,37,64,0.18)] active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540] focus-visible:ring-offset-2";
+  "group relative flex min-h-[112px] flex-col justify-between gap-4 rounded-lg border border-line bg-white p-4 text-left transition-colors duration-150 hover:bg-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy md:p-5";
 
 export const portalIconSize = { sm: 16, md: 18, lg: 20 } as const;

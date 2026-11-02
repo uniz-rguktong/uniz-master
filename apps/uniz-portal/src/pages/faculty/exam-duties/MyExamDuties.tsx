@@ -66,26 +66,26 @@ export default function MyExamDuties() {
     >
       {error ? <DisabledState reason={error} /> : null}
       {smsNote ? (
-        <p className="text-xs text-slate-500">
+ <p className="text-xs text-slate-500">
           {smsNote}. You will get app notifications.
         </p>
       ) : null}
       <div className="space-y-2">
         {duties.length === 0 ? (
-          <p className="text-sm text-slate-500">No exam duties assigned.</p>
+ <p className="text-sm text-slate-500">No exam duties assigned.</p>
         ) : null}
         {duties.map((d) => (
-          <div key={d.id} className="rounded-xl border p-3 text-sm">
+ <div key={d.id} className="rounded-xl border p-3 text-sm">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span>
                 <b>{d.examName}</b> {fmtDate(d.date)} {d.time || ""}, hall{" "}
                 {d.room} ({d.role})
               </span>
               {d.swapStatus === "pending" ? (
-                <span className="text-amber-600">Swap pending</span>
+ <span className="text-amber-600">Swap pending</span>
               ) : (
                 <button
-                  className="rounded border px-2 py-1"
+ className="rounded border px-2 py-1"
                   onClick={() => setSwapFor(swapFor === d.id ? null : d.id)}
                 >
                   Request swap
@@ -95,7 +95,7 @@ export default function MyExamDuties() {
             {swapFor === d.id ? (
               <div className="mt-2 flex flex-wrap gap-2">
                 <input
-                  className="rounded border px-2 py-1"
+ className="rounded border px-2 py-1"
                   placeholder="Swap with (username)"
                   value={form.toUsername}
                   onChange={(e) =>
@@ -103,13 +103,13 @@ export default function MyExamDuties() {
                   }
                 />
                 <input
-                  className="flex-1 rounded border px-2 py-1"
+ className="flex-1 rounded border px-2 py-1"
                   placeholder="Reason"
                   value={form.reason}
                   onChange={(e) => setForm({ ...form, reason: e.target.value })}
                 />
                 <button
-                  className="rounded bg-slate-900 px-3 py-1 text-white"
+ className="rounded bg-slate-900 px-3 py-1 text-white"
                   onClick={submitSwap}
                 >
                   Send
