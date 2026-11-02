@@ -1,11 +1,14 @@
 ---
 title: "Platform health API"
-description: "GET /api/v1/system/health and /live — aggregate probes, Redis cache, optional services."
+description: "GET /api/v1/health, /api/v1/system/health and /live — aggregate probes, Redis cache, optional services."
 ---
 
 ## Live probe (no upstream fan-out)
 
+`GET /api/v1/health` and `GET /api/v1/system/health/live` both return `{ "status": "ok" }` from the gateway without calling any service.
+
 ```bash
+curl -s https://api-uniz.rguktong.in/api/v1/health
 curl -s https://api-uniz.rguktong.in/api/v1/system/health/live
 ```
 

@@ -262,7 +262,7 @@ curl --request POST \
 
 ## Get a specific student profile (admin)
 
-`GET /admin/student/:username`
+`GET /profile/admin/student/:username`
 
 Returns the full profile of any student by their roll number. Only accessible to administrators and directors.
 
@@ -276,7 +276,7 @@ Returns the full profile of any student by their roll number. Only accessible to
 
 ```bash
 curl --request GET \
-  --url https://api-uniz.rguktong.in/api/v1/admin/student/O210008 \
+  --url https://api-uniz.rguktong.in/api/v1/profile/admin/student/O210008 \
   --header 'Authorization: Bearer <token>'
 ```
 

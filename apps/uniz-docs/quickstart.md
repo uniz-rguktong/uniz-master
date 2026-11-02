@@ -23,6 +23,17 @@ Students: **Student Portal** sign-in. Faculty and staff: **Admin Portal** sign-i
 
 Use your university ID and password. OTP flows are available for password reset where enabled.
 
+## API in one minute
+
+```bash
+curl -s https://api-uniz.rguktong.in/api/v1/health
+curl -s -X POST https://api-uniz.rguktong.in/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"O210008","password":"..."}'
+```
+
+Send the returned token as `Authorization: Bearer <token>`. Every endpoint, with auth, rate limits and error codes: [Endpoint reference](/api/reference).
+
 ## Operators
 
 Deploying or changing the system? Start at [Search index](/search-index) and [System overview](/system/overview).
