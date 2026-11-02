@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
+import type { FeedItem } from "../../types/api";
 
 export function Events({
   events,
   images,
 }: {
-  events: readonly any[];
+  events: readonly FeedItem[];
   images: readonly string[];
 }) {
   const displayEvents = events.slice(0, 3);

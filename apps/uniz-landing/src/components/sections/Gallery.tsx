@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import clsx from "clsx";
 
@@ -53,55 +53,57 @@ const ImageCard: React.FC<ImageCardProps> = ({
   );
 };
 
+function cardSizeForWidth(width: number) {
+  if (width >= 1280) return 420;
+  if (width >= 1024) return 380;
+  if (width >= 640) return 320;
+  return 260;
+}
+
 export function Gallery({ images }: { images: readonly string[] }) {
-  const [cardSize, setCardSize] = useState(400);
-  const [imageList, setImageList] = useState<GalleryImage[]>([]);
+  const [cardSize, setCardSize] = useState(() =>
+    typeof window === "undefined" ? 400 : cardSizeForWidth(window.innerWidth),
+  );
+  const imagesKey = images.join("\0");
+  const [imageList, setImageList] = useState<GalleryImage[]>(() =>
+    images.map((src, idx) => ({ imgSrc: src, tempId: idx })),
+  );
+  const [seenKey, setSeenKey] = useState(imagesKey);
+  if (seenKey !== imagesKey) {
+    setSeenKey(imagesKey);
+    setImageList(images.map((src, idx) => ({ imgSrc: src, tempId: idx })));
+  }
 
-  useEffect(() => {
-    if (images.length > 0) {
-      setImageList(
-        images.map((src, idx) => ({
-          imgSrc: src,
-          tempId: idx,
-        }))
-      );
-    }
-  }, [images]);
-
-  const handleMove = (steps: number) => {
-    const newList = [...imageList];
-    if (steps > 0) {
-      for (let i = steps; i > 0; i--) {
-        const item = newList.shift();
-        if (!item) return;
-        newList.push({ ...item, tempId: Math.random() });
+  const handleMove = useCallback((steps: number) => {
+    setImageList((current) => {
+      if (current.length === 0) return current;
+      const newList = [...current];
+      if (steps > 0) {
+        for (let i = steps; i > 0; i--) {
+          const item = newList.shift();
+          if (!item) return current;
+          newList.push({ ...item, tempId: Math.random() });
+        }
+      } else {
+        for (let i = steps; i < 0; i++) {
+          const item = newList.pop();
+          if (!item) return current;
+          newList.unshift({ ...item, tempId: Math.random() });
+        }
       }
-    } else {
-      for (let i = steps; i < 0; i++) {
-        const item = newList.pop();
-        if (!item) return;
-        newList.unshift({ ...item, tempId: Math.random() });
-      }
-    }
-    setImageList(newList);
-  };
+      return newList;
+    });
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       handleMove(1);
     }, 5000);
     return () => clearInterval(interval);
-  }, [imageList]);
+  }, [handleMove]);
 
   useEffect(() => {
-    const updateSize = () => {
-      const width = window.innerWidth;
-      if (width >= 1280) setCardSize(420);
-      else if (width >= 1024) setCardSize(380);
-      else if (width >= 640) setCardSize(320);
-      else setCardSize(260);
-    };
-    updateSize();
+    const updateSize = () => setCardSize(cardSizeForWidth(window.innerWidth));
     window.addEventListener("resize", updateSize);
     return () => window.removeEventListener("resize", updateSize);
   }, []);

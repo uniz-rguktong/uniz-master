@@ -1259,7 +1259,7 @@ requires-dist = [
     { name = "asyncpg", specifier = ">=0.31.0" },
     { name = "bcrypt", specifier = "==5.0.0" },
     { name = "cloudinary", specifier = ">=1.44.1" },
-    { name = "cryptography", specifier = ">=48.0.1" },
+    { name = "cryptography", specifier = ">=50.0.2" },
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "fastapi", specifier = ">=0.138.1" },
     { name = "fastapi-cache2", specifier = ">=0.2.2" },

@@ -341,7 +341,7 @@ export function Header() {
                       key={idx}
                       onClick={() => {
                         setIsSearchOpen(false);
-                        navigate(item.path, { state: (item as any).state });
+                        navigate(item.path);
                       }}
                       className="flex items-center justify-between w-full text-left px-4 py-3.5 hover:bg-slate-50 transition-colors group border-b border-slate-100 last:border-0"
                     >

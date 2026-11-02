@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
+import type { Stat } from "../../types/api";
 
-export function Stats({ stats }: { stats: readonly any[] }) {
+export function Stats({ stats }: { stats: readonly Stat[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

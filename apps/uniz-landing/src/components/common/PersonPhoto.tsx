@@ -1,14 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
-
-// Initials from a name like "Mr. Krishna ManamM.Tech" -> "KM".
-export function initials(name: string): string {
-  const words = (name ?? "")
-    .replace(/\b(mrs|mr|ms|dr|prof|smt|sri)\.?\s*/gi, " ")
-    .replace(/[^A-Za-z\s]/g, " ")
-    .split(/\s+/)
-    .filter(Boolean);
-  return (words.slice(0, 2).map((w) => w[0].toUpperCase()).join("") || "?");
-}
+import { useState, type ReactNode } from "react";
 
 // Renders the photo, or the fallback when the URL is missing or fails to load.
 export function PersonPhoto({
@@ -24,8 +14,8 @@ export function PersonPhoto({
   style?: React.CSSProperties;
   fallback: ReactNode;
 }) {
-  const [failed, setFailed] = useState(false);
-  useEffect(() => setFailed(false), [src]);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const failed = failedSrc === src;
   if (!src || failed) return <>{fallback}</>;
   return (
     <img
@@ -34,7 +24,7 @@ export function PersonPhoto({
       className={className}
       style={style}
       loading="lazy"
-      onError={() => setFailed(true)}
+      onError={() => setFailedSrc(src)}
     />
   );
 }

@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { FileText } from "lucide-react";
+import type { Notification } from "../../types/api";
 
-export function Media({ news }: { news: readonly any[] }) {
+export function Media({ news }: { news: readonly Notification[] }) {
   const base = news.slice(0, 5);
   const scrollItems = [...base, ...base, ...base];
 

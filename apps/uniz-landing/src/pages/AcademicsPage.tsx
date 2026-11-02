@@ -4,6 +4,7 @@ import { getAcademicPage } from "../types/api";
 import type { AcademicSection, AcademicPageType } from "../types/api";
 import { Download, ExternalLink, FileText, GraduationCap } from "lucide-react";
 import { PageHero } from "../components/layout/PageHero";
+import { usePageTitle } from "../lib/usePageTitle";
 
 // ── Page metadata ──────────────────────────────────────────────────
 const PAGE_META: Record<string, {
@@ -189,6 +190,8 @@ export function AcademicsPage() {
     pill: "text-slate-300", pillBg: "bg-slate-400/10", pillBorder: "border-slate-400/30",
     icon: <GraduationCap className="w-5 h-5" />,
   };
+
+  usePageTitle(`${meta.displayName} · RGUKT Ongole`);
 
   useEffect(() => {
     async function fetchPage() {

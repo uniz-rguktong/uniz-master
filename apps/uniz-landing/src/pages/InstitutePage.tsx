@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getInstituteInfo } from "../types/api";
 import type { InstituteData, InstitutePage as InstitutePageType } from "../types/api";
-import { PersonPhoto, initials } from "../components/common/PersonPhoto";
+import { PersonPhoto } from "../components/common/PersonPhoto";
+import { initials } from "../lib/initials";
+import { usePageTitle } from "../lib/usePageTitle";
 import { PageHero } from "../components/layout/PageHero";
 
 const PAGE_NAMES: Record<string, string> = {
@@ -299,6 +301,7 @@ export function InstitutePage() {
   const [loading, setLoading] = useState(true);
 
   const displayName = PAGE_NAMES[pageName?.toLowerCase() ?? ""] ?? (pageName?.replace(/([A-Z])/g, " $1").trim() ?? "");
+  usePageTitle(`${displayName || "Institute"} · RGUKT Ongole`);
 
   useEffect(() => {
     async function fetchData() {

@@ -1,12 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { AndroidIcon, AppleIcon } from "../MobileAppModal";
 import {
   ANDROID_APK_FILENAME,
   ANDROID_APK_URL,
-  AndroidIcon,
-  AppleIcon,
   openLandingIosModal,
-} from "../MobileAppModal";
+} from "../../lib/mobile-app";
 
 interface Announcement {
   text: string;

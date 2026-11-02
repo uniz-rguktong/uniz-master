@@ -3,7 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getDepartmentStaff } from "../types/api";
 import type { FacultyMember, DeptCode } from "../types/api";
 import { Mail, ArrowLeft, BookOpen, Briefcase, FlaskConical, Award, FileText } from "lucide-react";
-import { PersonPhoto, initials } from "../components/common/PersonPhoto";
+import { PersonPhoto } from "../components/common/PersonPhoto";
+import { initials } from "../lib/initials";
+import { usePageTitle } from "../lib/usePageTitle";
 
 const DEPT_NAMES: Record<string, string> = {
   CSE:         "Computer Science & Engineering",
@@ -67,6 +69,9 @@ export function FacultyProfilePage() {
 
   const code = deptCode?.toUpperCase() ?? "";
   const deptName = DEPT_NAMES[code] ?? code;
+  usePageTitle(
+    faculty ? `${faculty.name} · ${deptName}` : `${deptName} · RGUKT Ongole`,
+  );
 
   useEffect(() => {
     async function load() {

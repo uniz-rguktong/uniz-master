@@ -36,6 +36,7 @@ import {
   adminHubCardClass,
   adminLogoutButtonClass,
 } from "@/components/admin/admin-ui";
+import { cn } from "@/lib/utils";
 import { parseJwt } from "../../utils/security";
 import { resolveAdminPortalRole } from "../../utils/adminRole";
 import { enableOutingsAndOutpasses } from "@/config/featureFlags";
@@ -264,8 +265,8 @@ export default function Admin() {
 
   return (
     <AdminLayout className="pb-20">
-      <header className={adminHeaderClass}>
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
+      <header className={cn(adminHeaderClass, "h-auto min-h-[52px] py-2")}>
+        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <img
               src="/logo.png"
@@ -273,7 +274,7 @@ export default function Admin() {
               className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-white/25 shadow-sm"
             />
             <div>
-              <h1 className="text-base font-bold leading-none text-white font-sans uppercase tracking-[0.06em]">
+              <h1 className="max-w-[46vw] truncate text-base font-bold leading-none text-white font-sans uppercase tracking-[0.06em] sm:max-w-none">
                 {username}
               </h1>
               <div className="flex items-center gap-1.5 mt-1">
@@ -301,15 +302,16 @@ export default function Admin() {
             </button>
             <button
               onClick={handleLogout}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-portal-sm font-bold text-xs tracking-wider transition-colors font-button ${adminLogoutButtonClass} !w-auto !h-auto`}
+              className={`flex min-h-11 items-center gap-2 rounded-portal-sm px-3 py-2.5 text-xs font-bold tracking-wider transition-colors font-button sm:px-5 ${adminLogoutButtonClass} !w-auto !h-auto`}
             >
-              <LogOut className="w-4 h-4" /> LOGOUT
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">LOGOUT</span>
             </button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-10 space-y-12 w-full">
+      <div className="mx-auto w-full max-w-7xl space-y-12 px-4 py-8 sm:px-6 sm:py-10">
         {/* Priority Section */}
         {priorityActions.length > 0 && (
           <motion.div

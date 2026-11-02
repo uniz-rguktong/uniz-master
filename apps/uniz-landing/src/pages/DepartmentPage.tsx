@@ -3,7 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getDepartmentStaff } from "../types/api";
 import type { DepartmentData, FacultyMember, DeptCode } from "../types/api";
 import { Mail, Phone, Users, ChevronRight } from "lucide-react";
-import { PersonPhoto, initials } from "../components/common/PersonPhoto";
+import { PersonPhoto } from "../components/common/PersonPhoto";
+import { initials } from "../lib/initials";
+import { usePageTitle } from "../lib/usePageTitle";
 import { PageHero } from "../components/layout/PageHero";
 
 // ── Full department names ──────────────────────────────────────────
@@ -136,6 +138,7 @@ export function DepartmentPage() {
 
   const code     = deptCode?.toUpperCase() ?? "";
   const deptName = DEPT_NAMES[code] ?? `Department of ${code}`;
+  usePageTitle(`${deptName} · RGUKT Ongole`);
 
   useEffect(() => {
     async function fetchData() {

@@ -12,7 +12,7 @@
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn src/index.ts",
     "vercel-build": "prisma generate",
-    "postinstall": "if [ -f prisma/schema.prisma ]; then npx prisma generate; fi",
+    "postinstall": "prisma generate",
     "seed": "ts-node prisma/seed.ts",
     "safe-seed": "ts-node prisma/safe_seed.ts",
     "sample:registration-pdf": "ts-node scripts/generate-registration-pdf-sample.ts",
@@ -55,13 +55,13 @@
     "@types/node": "^20.19.43",
     "@types/pdfkit": "^0.17.7",
     "@types/supertest": "^7.2.1",
-    "@vitest/coverage-v8": "^3.2.7",
+    "@vitest/coverage-v8": "^4.1.12",
     "prisma": "^6.19.3",
     "supertest": "^7.3.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.7"
+    "vitest": "^4.1.12"
   },
   "overrides": {
     "ioredis": "5.4.1",

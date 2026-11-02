@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getNotifications } from "../types/api";
-import type { Notification } from "../types/api";
+import type { Notification, NotificationType } from "../types/api";
+import { usePageTitle } from "../lib/usePageTitle";
 import {
   Newspaper,
   FileText,
@@ -15,24 +16,24 @@ export function NotificationsPage() {
   const { type } = useParams<{ type: string }>();
   const currentTab = (type === "tenders" || type === "careers") ? type : "news";
 
-  const [itemsData, setItemsData] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [visibleLimit, setVisibleLimit] = useState(10);
+  const [snapshot, setSnapshot] = useState<{ tab: string; items: Notification[] } | null>(null);
+  const [limits, setLimits] = useState<Record<string, number>>({});
+  const visibleLimit = limits[currentTab] ?? 10;
+  const loading = !snapshot || snapshot.tab !== currentTab;
+  const itemsData = snapshot?.tab === currentTab ? snapshot.items : [];
 
-  // Reset limit when changing pages
-  useEffect(() => {
-    setVisibleLimit(10);
-  }, [currentTab]);
+  const headingText = currentTab === "news" ? "News and updates" : currentTab === "tenders" ? "Tenders" : "Careers";
+  usePageTitle(`${headingText} · RGUKT Ongole`);
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const apiType = currentTab === "news" ? "news_updates" : currentTab;
-      const data = await getNotifications(apiType as any);
-      setItemsData(data);
-      setLoading(false);
-    }
-    fetchData();
+    let cancelled = false;
+    const apiType: NotificationType = currentTab === "news" ? "news_updates" : currentTab;
+    getNotifications(apiType).then((data) => {
+      if (!cancelled) setSnapshot({ tab: currentTab, items: data });
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [currentTab]);
 
   if (loading) {
@@ -56,8 +57,8 @@ export function NotificationsPage() {
     let d = new Date(dateStr);
     if (!isNaN(d.getTime())) return d;
 
-    const cleaned = dateStr.replace(/[\(\)]/g, '').trim();
-    const parts = cleaned.match(/(\d{1,2})[\.\-\/]([a-zA-Z]+|\d{1,2})[\.\-\/](\d{4})/);
+    const cleaned = dateStr.replace(/[()]/g, "").trim();
+    const parts = cleaned.match(/(\d{1,2})[./-]([a-zA-Z]+|\d{1,2})[./-](\d{4})/);
 
     if (parts) {
       const day = parseInt(parts[1], 10);
@@ -192,7 +193,12 @@ export function NotificationsPage() {
         {hasMore && (
           <div className="p-5 border-t border-line flex justify-center bg-surface-2">
             <button
-              onClick={() => setVisibleLimit(prev => prev + 10)}
+              onClick={() =>
+                setLimits((prev) => ({
+                  ...prev,
+                  [currentTab]: (prev[currentTab] ?? 10) + 10,
+                }))
+              }
               className="min-h-[44px] px-6 rounded-md bg-navy text-white text-[14px] font-semibold shadow-[0_8px_20px_-10px_rgba(10,37,64,0.6)] hover:bg-navy-950 transition-colors duration-150"
             >
               View Next {Math.min(10, allItems.length - visibleLimit)} Updates
@@ -203,7 +209,6 @@ export function NotificationsPage() {
     );
   };
 
-  const headingText = currentTab === "news" ? "News and updates" : currentTab === "tenders" ? "Tenders" : "Careers";
   const heroDescription =
     currentTab === "news"
       ? "Official news and notices published by RGUKT Ongole."

@@ -81,7 +81,11 @@ export default function AdminShell({
   navSpacing = "default",
   showHeaderMenuToggle: _showHeaderMenuToggle = false,
 }: AdminShellProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(
+    () =>
+      typeof window === "undefined" ||
+      window.matchMedia("(min-width: 1024px)").matches,
+  );
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
@@ -174,21 +178,27 @@ export default function AdminShell({
     ? adminSidebarOpenWidth
     : adminSidebarClosedWidth;
 
-  const isOverlayMobile = sidebarVariant === "overlay-mobile";
+  const isOverlayMobile =
+    sidebarVariant === "overlay-mobile" || sidebarVariant === "default";
+  const closeIfNarrow = () => {
+    if (window.matchMedia("(max-width: 1023px)").matches) {
+      setIsSidebarOpen(false);
+    }
+  };
 
   return (
     <div className={cn(adminPageClass, "h-screen flex-col")}>
       <header
         className={cn(
           adminHeaderClass,
-          "justify-between",
+          "z-[80] justify-between",
         )}
       >
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="inline-flex h-8 w-8 items-center justify-center text-white/80 hover:text-white md:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center text-white/80 hover:text-white lg:hidden"
             aria-label="Toggle sidebar"
           >
             <Menu size={18} />
@@ -199,13 +209,13 @@ export default function AdminShell({
               alt="UniZ — RGUKT Ongole"
               className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-white/25 shadow-sm"
             />
-            <span className="text-[15px] font-bold uppercase tracking-[1.5px]">Exam Cell</span>
+            <span className="truncate text-[15px] font-bold uppercase tracking-[1.5px]">Exam Cell</span>
           </a>
           {headerLeft}
         </div>
         <div className="ml-auto flex items-center gap-3">
-          <div className="hidden text-right sm:block">
-            <p className="text-[13px] font-bold uppercase leading-none tracking-[0.4px] text-white">
+          <div className="hidden min-w-0 max-w-[42vw] text-right sm:block">
+            <p className="truncate text-[13px] font-bold uppercase leading-none tracking-[0.4px] text-white">
               {profileName || username}
             </p>
             <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.5px] text-white/70">
@@ -226,18 +236,22 @@ export default function AdminShell({
           </button>
         </div>
       </header>
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 min-w-0 flex-1">
+      {isOverlayMobile && isSidebarOpen && (
+        <button
+          type="button"
+          className="fixed inset-0 z-[60] bg-[#021227]/45 lg:hidden"
+          aria-label="Close navigation"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
       <aside
         className={cn(
           adminSidebarClass,
-          isOverlayMobile
-            ? cn(
-                "flex fixed md:sticky top-0 z-[70]",
-                isSidebarOpen
-                  ? "translate-x-0 w-72"
-                  : "-translate-x-full md:translate-x-0 w-72 md:w-20",
-              )
-            : cn("hidden md:flex sticky top-0", sidebarWidth),
+          "max-lg:fixed max-lg:bottom-0 max-lg:left-0 max-lg:top-[52px] max-lg:z-[70] max-lg:h-[calc(100dvh-52px)] max-lg:w-72 max-lg:transition-transform",
+          isSidebarOpen ? "max-lg:translate-x-0" : "max-lg:-translate-x-full",
+          "lg:sticky lg:top-0 lg:flex lg:h-auto lg:translate-x-0",
+          sidebarWidth,
         )}
       >
         <button
@@ -308,7 +322,10 @@ export default function AdminShell({
                   return (
                     <button
                       key={item.id}
-                      onClick={() => onTabChange(item.id)}
+                      onClick={() => {
+                        onTabChange(item.id);
+                        closeIfNarrow();
+                      }}
                       title={!isSidebarOpen ? item.label : ""}
                       className={cn(
                         "group relative flex w-full items-center rounded-[2px] py-2.5 text-left uppercase tracking-[0.5px] transition-colors duration-150",
@@ -449,7 +466,7 @@ export default function AdminShell({
           initialPhoto={profilePhoto}
         />
 
-        <div className={cn("w-full px-6 md:px-10 flex-1", contentClassName)}>
+        <div className={cn("w-full min-w-0 flex-1 px-3 py-4 sm:px-4 md:px-8 lg:px-10", contentClassName)}>
           {children}
         </div>
 

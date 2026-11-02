@@ -65,17 +65,10 @@ const Carousel = React.forwardRef<
       },
       plugins,
     )
-    const [canScrollPrev, setCanScrollPrev] = React.useState(false)
-    const [canScrollNext, setCanScrollNext] = React.useState(false)
+    const [, setScrollTick] = React.useState(0)
 
-    const onSelect = React.useCallback((api: CarouselApi) => {
-      if (!api) {
-        return
-      }
-
-      setCanScrollPrev(api.canScrollPrev())
-      setCanScrollNext(api.canScrollNext())
-    }, [])
+    const canScrollPrev = api?.canScrollPrev() ?? false
+    const canScrollNext = api?.canScrollNext() ?? false
 
     const scrollPrev = React.useCallback(() => {
       api?.scrollPrev()
@@ -111,14 +104,15 @@ const Carousel = React.forwardRef<
         return
       }
 
-      onSelect(api)
+      const onSelect = () => setScrollTick((tick) => tick + 1)
       api.on("reInit", onSelect)
       api.on("select", onSelect)
 
       return () => {
-        api?.off("select", onSelect)
+        api.off("select", onSelect)
+        api.off("reInit", onSelect)
       }
-    }, [api, onSelect])
+    }, [api])
 
     return (
       <CarouselContext.Provider
