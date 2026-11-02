@@ -33,6 +33,7 @@
             "pages": [
               "system/overview",
               "system/topology",
+              "system/foundation",
               "system/request-flow",
               "system/data-stores",
               "system/security"
