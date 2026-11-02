@@ -18,6 +18,7 @@
 - Faculty Guide
   - [Grades](faculty/grades)
   - [Attendance](faculty/attendance)
+  - [Leave and duties](faculty/leave-duties)
 
 - API Reference
   - [Endpoint reference](api/reference)

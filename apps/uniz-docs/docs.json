@@ -96,7 +96,8 @@
             "group": "Faculty Guide",
             "pages": [
               "faculty/grades",
-              "faculty/attendance"
+              "faculty/attendance",
+              "faculty/leave-duties"
             ]
           }
         ]
