@@ -1,7 +1,7 @@
 import express from "express";
 import helmet from "helmet";
 import compression from "compression";
-import { uploadsDir } from "./utils/storage.util";
+import { readFromR2, storageDriver, uploadsDir } from "./utils/storage.util";
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
 import profileRoutes from "./routes/profile.routes";
 import cmsRoutes from "./routes/cms.routes";
@@ -31,7 +31,7 @@ export function createApp(): express.Application {
     "/img",
     express.static(uploadsDir(), {
       index: false,
-      fallthrough: false,
+      fallthrough: storageDriver() === "r2",
       immutable: true,
       maxAge: "365d",
       setHeaders: (res) => {
@@ -40,6 +40,21 @@ export function createApp(): express.Application {
       },
     }),
   );
+
+  // With STORAGE_DRIVER=r2, files not on local disk are served from R2.
+  app.get("/img/*", async (req, res) => {
+    try {
+      const key = decodeURIComponent(req.path.replace(/^\/img\//, ""));
+      const obj = await readFromR2(key);
+      if (!obj) return res.status(404).end();
+      res.setHeader("Content-Type", obj.contentType || "image/webp");
+      res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+      return res.send(obj.body);
+    } catch {
+      return res.status(404).end();
+    }
+  });
 
   app.use("/api/queue", queueRoutes);
   app.use("/", profileRoutes);
