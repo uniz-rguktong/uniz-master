@@ -63,11 +63,11 @@ export function MobileAppModal() {
               className="h-7 w-7 rounded-xs bg-white p-0.5 object-contain"
             />
             <div>
-              <h3 className="text-[15px] font-bold tracking-[0.02em] text-white">
+              <h3 className="text-[15px] font-medium text-white">
                 Download iOS App
               </h3>
               <p className="text-[11px] text-white/75">
-                RGUKT Ongole · Examination Cell Mobile App
+                RGUKT Ongole · uniZ app
               </p>
             </div>
           </div>
@@ -83,7 +83,7 @@ export function MobileAppModal() {
 
         <div className="space-y-4 p-5">
           <div className="rounded-xs border border-slate-200 bg-surface p-4">
-            <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
+            <p className="text-[11px] font-medium text-slate-500">
               Option 1 · Direct iOS Profile
             </p>
             <p className="mt-1 text-[13px] text-slate-600">
@@ -93,7 +93,7 @@ export function MobileAppModal() {
             <a
               href={IOS_PROFILE_URL}
               download={IOS_PROFILE_FILENAME}
-              className="mt-3 inline-flex h-9 w-full items-center justify-center gap-2 rounded-xs bg-navy px-4 text-xs font-bold uppercase tracking-[1px] text-white transition-colors hover:bg-navy-950"
+              className="mt-3 inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-navy px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-navy-950"
             >
               <AppleIcon className="w-3.5 h-3.5" />
               Download iOS App Profile (.mobileconfig)
@@ -101,12 +101,12 @@ export function MobileAppModal() {
           </div>
 
           <div className="rounded-xs border border-slate-200 bg-white p-4">
-            <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
+            <p className="text-[11px] font-medium text-slate-500">
               Option 2 · Safari Home Screen
             </p>
             <ol className="mt-2.5 space-y-2 text-[13px] text-slate-700">
               <li className="flex items-center gap-2">
-                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-navy text-[11px] font-bold text-white">
+                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-navy text-[11px] font-medium text-white">
                   1
                 </span>
                 <span>
@@ -116,7 +116,7 @@ export function MobileAppModal() {
                 </span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-navy text-[11px] font-bold text-white">
+                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-navy text-[11px] font-medium text-white">
                   2
                 </span>
                 <span>
@@ -129,7 +129,7 @@ export function MobileAppModal() {
             <button
               type="button"
               onClick={copyPortalUrl}
-              className="mt-3 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-xs border border-slate-200 bg-surface px-3 text-xs font-bold text-navy hover:bg-slate-100"
+              className="mt-3 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-xs border border-slate-200 bg-surface px-3 text-xs font-medium text-navy hover:bg-slate-100"
             >
               {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {copied ? "Copied uniz.rguktong.in" : "Copy Safari Portal Link"}
@@ -141,7 +141,7 @@ export function MobileAppModal() {
             <a
               href={ANDROID_APK_URL}
               download={ANDROID_APK_FILENAME}
-              className="inline-flex items-center gap-1 font-bold text-navy underline underline-offset-2"
+              className="inline-flex items-center gap-1 font-medium text-navy underline underline-offset-2"
             >
               <Download className="h-3.5 w-3.5" />
               Download Android App (.apk)

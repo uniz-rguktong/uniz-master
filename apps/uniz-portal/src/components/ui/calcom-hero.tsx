@@ -562,18 +562,18 @@ export const CalcomHero = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative w-full bg-white font-sans overflow-hidden selection:bg-navy-100">
+ <div className="relative w-full bg-white font-sans overflow-hidden selection:bg-navy-100">
       {/* ── High-End Mesh Gradient Backdrop ── */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <motion.div
           animate={{ x: [0, 50, 0], y: [0, -30, 0], scale: [1, 1.1, 1] }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-[10%] -right-[5%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-blue-50/40 via-blue-100/10 to-transparent blur-[120px] opacity-70"
+ className="absolute -top-[10%] -right-[5%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-blue-50/40 via-blue-100/10 to-transparent blur-[120px] opacity-70"
         />
         <motion.div
           animate={{ x: [0, -40, 0], y: [0, 60, 0], scale: [1, 1.2, 1] }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-gradient-to-tr from-navy-100/50 via-navy-100/20 to-transparent blur-[140px] opacity-60"
+ className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-gradient-to-tr from-navy-100/50 via-navy-100/20 to-transparent blur-[140px] opacity-60"
         />
         <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay pointer-events-none portal-grain" />
       </div>
@@ -604,7 +604,7 @@ export const CalcomHero = () => {
               width: p.s,
               height: p.s,
             }}
-            className="text-navy-600"
+ className="text-navy-600"
           >
             <svg
               fill="none"
@@ -659,26 +659,26 @@ export const CalcomHero = () => {
         ))}
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-6 pt-24 pb-20 md:pt-32 md:pb-28">
+ <div className="max-w-[1280px] mx-auto px-6 pt-24 pb-20 md:pt-32 md:pb-28">
         {/* ── Hero copy ── */}
-        <div className="flex flex-col items-center text-center mb-16 md:mb-20">
+ <div className="flex flex-col items-center text-center mb-16 md:mb-20">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
-            className="inline-flex items-center gap-2.5 rounded-full border border-navy-200 bg-navy-50/80 px-4 py-1.5 mb-6 shadow-sm"
+ className="inline-flex items-center gap-2.5 rounded-full border border-navy-200 bg-navy-50/80 px-4 py-1.5 mb-6 shadow-sm"
           >
             <img
               src="/logo.png"
               alt="UniZ"
-              className="h-5 w-5 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/15"
+ className="h-5 w-5 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/15"
             />
-            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#0A2540]">
+ <span className="text-[11px] font-medium text-[#0A2540]">
               RGUKT Ongole · UniZ Campus &amp; Examination Portal
             </span>
           </motion.div>
 
-          <motion.h1 className="text-[clamp(2.6rem,6.5vw,5.25rem)] font-semibold text-navy-950 leading-[1.02] tracking-[-0.04em] mb-6 max-w-5xl">
+ <motion.h1 className="text-[clamp(2.6rem,6.5vw,5.25rem)] font-semibold text-navy-950 leading-[1.02] tracking-[-0.04em] mb-6 max-w-5xl">
             {UNIZ_TAGLINE.line1.split(" ").map((word, i) => (
               <motion.span
                 key={i}
@@ -697,7 +697,7 @@ export const CalcomHero = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 + i * 0.05, duration: 0.5 }}
-                className="inline-block mr-[0.2em] text-navy-400 font-light"
+ className="inline-block mr-[0.2em] text-navy-400 font-light"
               >
                 {word}
               </motion.span>
@@ -708,7 +708,7 @@ export const CalcomHero = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="text-[15px] md:text-[17px] text-navy-500 leading-relaxed mb-10 max-w-xl"
+ className="text-[15px] md:text-[17px] text-navy-500 leading-relaxed mb-10 max-w-xl"
           >
             An integrated governance system for students, faculty, and admin —
             bringing campus data to life in real-time.
@@ -723,7 +723,7 @@ export const CalcomHero = () => {
             <button
               type="button"
               onClick={() => navigate("/student/signin")}
-              className="inline-flex h-12 items-center gap-2.5 rounded-[4px] bg-[#0A2540] px-7 text-[14px] font-bold uppercase tracking-[0.08em] text-white shadow-[0_16px_32px_-12px_rgba(10,37,64,0.45)] transition-all hover:bg-[#061B33] active:scale-[0.99]"
+ className="inline-flex h-12 items-center gap-2.5 rounded-lg bg-[#0A2540] px-7 text-[14px] font-medium text-white shadow-[0_16px_32px_-12px_rgba(10,37,64,0.45)] transition-all hover:bg-[#061B33] "
             >
               <span>Student &amp; Staff Login</span>
               <ArrowRight size={16} strokeWidth={2.4} />
@@ -732,7 +732,7 @@ export const CalcomHero = () => {
             <a
               href={ANDROID_APK_URL}
               download={ANDROID_APK_FILENAME}
-              className="inline-flex h-12 items-center gap-2.5 rounded-[4px] border border-[#0A2540] bg-white px-5 text-[13.5px] font-bold uppercase tracking-[0.06em] text-[#0A2540] no-underline shadow-sm transition-colors hover:bg-navy-50"
+ className="inline-flex h-12 items-center gap-2.5 rounded-lg border border-[#0A2540] bg-white px-5 text-[13.5px] font-medium text-[#0A2540] no-underline shadow-sm transition-colors hover:bg-navy-50"
             >
               <AndroidIcon size={17} />
               <span>Download Android App</span>
@@ -741,7 +741,7 @@ export const CalcomHero = () => {
             <button
               type="button"
               onClick={openIosDownloadModal}
-              className="inline-flex h-12 items-center gap-2.5 rounded-[4px] border border-[#0A2540] bg-white px-5 text-[13.5px] font-bold uppercase tracking-[0.06em] text-[#0A2540] shadow-sm transition-colors hover:bg-navy-50"
+ className="inline-flex h-12 items-center gap-2.5 rounded-lg border border-[#0A2540] bg-white px-5 text-[13.5px] font-medium text-[#0A2540] shadow-sm transition-colors hover:bg-navy-50"
             >
               <AppleIcon size={17} />
               <span>Download iOS App</span>
@@ -752,11 +752,11 @@ export const CalcomHero = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.05 }}
-            className="mt-5 flex flex-wrap items-center justify-center gap-4 text-[13px] font-semibold text-navy-600"
+ className="mt-5 flex flex-wrap items-center justify-center gap-4 text-[13px] font-semibold text-navy-600"
           >
             <Link
               to="/developers"
-              className="inline-flex items-center gap-1.5 rounded-full border border-navy-200 bg-navy-50/70 px-4 py-1.5 text-[12.5px] font-bold text-[#0A2540] hover:bg-navy-100/80 transition-colors"
+ className="inline-flex items-center gap-1.5 rounded-full border border-navy-200 bg-navy-50/70 px-4 py-1.5 text-[12.5px] font-medium text-[#0A2540] hover:bg-navy-100/80 transition-colors"
             >
               <Code2 size={14} />
               <span>Meet the Developers (Software Development Cell)</span>
@@ -791,9 +791,9 @@ export const CalcomHero = () => {
                   delay: i * 0.4,
                 },
               }}
-              className="group flex flex-col rounded-[2px] border border-navy-100/60 bg-white/60 overflow-hidden transition-all duration-500 cursor-pointer"
+ className="group flex flex-col rounded-lg border border-navy-100/60 bg-white/60 overflow-hidden transition-all duration-500 cursor-pointer"
             >
-              <div className="w-full bg-navy-50/40 border-b border-navy-100/40 p-4 group-hover:bg-transparent transition-colors duration-500 overflow-hidden">
+ <div className="w-full bg-navy-50/40 border-b border-navy-100/40 p-4 group-hover:bg-transparent transition-colors duration-500 overflow-hidden">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -804,17 +804,17 @@ export const CalcomHero = () => {
 
               <div className="flex flex-col gap-2 p-6 pt-5">
                 <div
-                  className={`inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full border text-[9.5px] font-semibold tracking-[0.14em] transition-colors duration-500 ${f.accent}`}
+ className={`inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full border text-[9.5px] font-semibold transition-colors duration-500 ${f.accent}`}
                 >
                   <span
-                    className={`w-1.5 h-1.5 rounded-full ${f.dot} animate-pulse`}
+ className={`w-1.5 h-1.5 rounded-full ${f.dot} animate-pulse`}
                   />
                   {f.tag}
                 </div>
-                <h3 className="text-[15px] font-semibold text-navy-950 tracking-tight leading-snug">
+ <h3 className="text-[15px] font-semibold text-navy-950 tracking-tight leading-snug">
                   {f.title}
                 </h3>
-                <p className="text-[12.5px] font-medium text-navy-500/80 leading-relaxed group-hover:text-navy-600 transition-colors">
+ <p className="text-[12.5px] font-medium text-navy-500/80 leading-relaxed group-hover:text-navy-600 transition-colors">
                   {f.desc}
                 </p>
               </div>

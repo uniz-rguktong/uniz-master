@@ -52,7 +52,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative">
           {icon && (
-            <div className="pointer-events-none absolute left-3 top-1/2 flex -translate-y-1/2 items-center text-[#5A7A94] transition-colors group-focus-within:text-[#0A2540]">
+ <div className="pointer-events-none absolute left-3 top-1/2 flex -translate-y-1/2 items-center text-[#5A7A94] transition-colors group-focus-within:text-[#0A2540]">
               {icon}
             </div>
           )}
@@ -79,7 +79,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               type="button"
               aria-label={isPasswordVisible ? "Hide password" : "Show password"}
               onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-              className="absolute right-0.5 top-1/2 flex h-11 min-h-[44px] w-11 min-w-[44px] -translate-y-1/2 items-center justify-center text-navy-400 hover:text-navy-700 focus:outline-none transition-colors"
+ className="absolute right-0.5 top-1/2 flex h-11 min-h-[44px] w-11 min-w-[44px] -translate-y-1/2 items-center justify-center text-navy-400 hover:text-navy-700 focus:outline-none transition-colors"
             >
               {isPasswordVisible ? (
                 <EyeOff className="h-4 w-4" />
@@ -90,7 +90,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {error && (
-          <p className="text-[11px] text-rose-600 font-medium mt-1">{error}</p>
+ <p className="text-[11px] text-rose-600 font-medium mt-1">{error}</p>
         )}
       </div>
     );

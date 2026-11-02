@@ -68,12 +68,12 @@ export default function Clubs({ staff = false }: { staff?: boolean }) {
       title="Clubs"
       description="Student clubs, members and upcoming events. Events also show in the Information Centre."
     >
-      {error && <p className="text-sm text-red-600">{error}</p>}
+ {error && <p className="text-sm text-red-600">{error}</p>}
       {events.length > 0 && (
         <div className={cardCls}>
-          <p className="font-medium">Upcoming events</p>
+ <p className="font-medium">Upcoming events</p>
           {events.map((e) => (
-            <p key={e.id} className="text-slate-600">
+ <p key={e.id} className="text-slate-600">
               {day(e.startsAt)} . {name(e.clubId)} . {e.title}{" "}
               {e.venue ? `. ${e.venue}` : ""}
             </p>
@@ -138,10 +138,10 @@ export default function Clubs({ staff = false }: { staff?: boolean }) {
         <div key={c.id} className={`${cardCls} space-y-2`}>
           <div className="flex flex-wrap justify-between gap-2">
             <span>
-              <span className="font-medium text-slate-900">{c.name}</span> .{" "}
+ <span className="font-medium text-slate-900">{c.name}</span> .{" "}
               {c.category} {c.active ? "" : ". inactive"}
               {c.description && (
-                <span className="block text-slate-600">{c.description}</span>
+ <span className="block text-slate-600">{c.description}</span>
               )}
             </span>
             <span className="flex gap-2">
@@ -158,12 +158,12 @@ export default function Clubs({ staff = false }: { staff?: boolean }) {
               )}
               {!staff && c.myStatus && (
                 <>
-                  <span className="self-center text-slate-600">
+ <span className="self-center text-slate-600">
                     {c.myStatus}
                   </span>
                   <button
                     type="button"
-                    className="rounded-md border px-2"
+ className="rounded-md border px-2"
                     onClick={() =>
                       run(() => f(`/${c.id}/leave`, post()), "Left")
                     }
@@ -175,7 +175,7 @@ export default function Clubs({ staff = false }: { staff?: boolean }) {
               {staff && (
                 <button
                   type="button"
-                  className="rounded-md border px-2"
+ className="rounded-md border px-2"
                   onClick={() =>
                     run(
                       () =>
@@ -193,7 +193,7 @@ export default function Clubs({ staff = false }: { staff?: boolean }) {
               {(staff || c.coordinator) && (
                 <button
                   type="button"
-                  className="rounded-md border px-2"
+ className="rounded-md border px-2"
                   onClick={() => openMembers(c.id)}
                 >
                   Members
@@ -211,7 +211,7 @@ export default function Clubs({ staff = false }: { staff?: boolean }) {
                   <button
                     key={s}
                     type="button"
-                    className="rounded-md border px-2"
+ className="rounded-md border px-2"
                     onClick={() =>
                       run(
                         () =>

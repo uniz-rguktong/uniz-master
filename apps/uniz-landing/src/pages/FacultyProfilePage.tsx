@@ -6,6 +6,7 @@ import { Mail, ArrowLeft, BookOpen, Briefcase, FlaskConical, Award, FileText } f
 import { PersonPhoto } from "../components/common/PersonPhoto";
 import { initials } from "../lib/initials";
 import { usePageTitle } from "../lib/usePageTitle";
+import { CampusBoot } from "../components/CampusBoot";
 
 const DEPT_NAMES: Record<string, string> = {
   CSE:         "Computer Science & Engineering",
@@ -87,12 +88,7 @@ export function FacultyProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] w-full items-center justify-center bg-white">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-navy-900 border-t-transparent" />
-          <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">Loading Profile...</p>
-        </div>
-      </div>
+      <CampusBoot label="Loading profile" className="min-h-[50vh]" />
     );
   }
 
@@ -101,7 +97,7 @@ export function FacultyProfilePage() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-slate-500 text-lg font-semibold">Profile not found.</p>
-          <button onClick={() => navigate(-1)} className="mt-4 text-navy text-sm font-bold hover:underline">
+          <button onClick={() => navigate(-1)} className="mt-4 text-navy text-sm font-medium hover:underline">
             Go Back
           </button>
         </div>
@@ -127,7 +123,7 @@ export function FacultyProfilePage() {
             <ArrowLeft className="w-4 h-4" />
             Back to {deptName}
           </button>
-          <span className="hidden sm:inline-block px-3 py-1 text-[10px] font-bold tracking-[0.2em] text-navy bg-navy/5 border border-navy/10 rounded-full">
+          <span className="hidden sm:inline-block px-3 py-1 text-[10px] font-medium text-navy bg-navy/5 border border-navy/10 rounded-full">
             RGUKT Ongole · {code}
           </span>
         </div>
@@ -143,7 +139,7 @@ export function FacultyProfilePage() {
               name={faculty.name}
               className="w-full max-w-[200px] h-auto object-contain rounded-xl"
               fallback={
-                <div className="w-full aspect-square max-w-[200px] rounded-xl bg-navy-900 flex items-center justify-center text-white text-6xl font-extrabold shadow-sm">
+                <div className="w-full aspect-square max-w-[200px] rounded-xl bg-navy-900 flex items-center justify-center text-white text-6xl font-medium shadow-sm">
                 {initials(faculty.name)}
               </div>
               }
@@ -152,7 +148,7 @@ export function FacultyProfilePage() {
 
           {/* Info */}
           <div className="flex-1 pt-2">
-            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-2 tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-medium text-slate-900 leading-tight mb-2 tracking-tight">
               {faculty.name}
             </h1>
             {role && (
@@ -166,7 +162,7 @@ export function FacultyProfilePage() {
                     <FlaskConical className="w-4 h-4 text-slate-500" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold tracking-widest text-ink-subtle mb-0.5">Specialization</p>
+                    <p className="text-xs font-medium tracking-normal text-ink-subtle mb-0.5">Specialization</p>
                     <p className="text-slate-700 text-sm leading-relaxed">{specialization}</p>
                   </div>
                 </div>
@@ -178,7 +174,7 @@ export function FacultyProfilePage() {
                     <Briefcase className="w-4 h-4 text-slate-500" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold tracking-widest text-ink-subtle mb-0.5">Experience</p>
+                    <p className="text-xs font-medium tracking-normal text-ink-subtle mb-0.5">Experience</p>
                     <p className="text-slate-700 text-sm">{experience} {experience.toLowerCase().includes('year') ? '' : 'years overall experience'}</p>
                   </div>
                 </div>
@@ -189,7 +185,7 @@ export function FacultyProfilePage() {
                   <Mail className="w-4 h-4 text-navy" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold tracking-widest text-ink-subtle mb-0.5">Contact</p>
+                  <p className="text-xs font-medium tracking-normal text-ink-subtle mb-0.5">Contact</p>
                   <a href={`mailto:${faculty.email}`} className="text-navy text-sm font-semibold hover:underline">
                     {faculty.email}
                   </a>
@@ -202,13 +198,13 @@ export function FacultyProfilePage() {
         {/* ── Bio Sections ── */}
         {entries.length > 0 && (
           <div className="border-t border-slate-100 pt-12">
-            <h2 className="text-xl font-extrabold text-slate-900 mb-8 tracking-tight">
+            <h2 className="text-xl font-medium text-slate-900 mb-8 tracking-tight">
               Detailed Profile
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
               {entries.map(({ key, items }) => (
                 <div key={key}>
-                  <h3 className="flex items-center gap-2 text-[11px] font-extrabold tracking-widest text-navy-900 mb-3 border-b border-slate-100 pb-2">
+                  <h3 className="flex items-center gap-2 text-[11px] font-medium tracking-normal text-navy-900 mb-3 border-b border-slate-100 pb-2">
                     <span className="text-navy/60">
                       {SECTION_ICONS[key] ?? <FileText className="w-4 h-4" />}
                     </span>
@@ -223,7 +219,7 @@ export function FacultyProfilePage() {
                         const cleanItem = item.replace(/^[0-9]+\.\s*/, "");
                         return (
                           <li key={i} className="flex items-start gap-2.5 text-sm text-slate-700 leading-relaxed">
-                            <span className="text-navy/40 font-bold mt-0.5 flex-shrink-0">•</span>
+                            <span className="text-navy/40 font-medium mt-0.5 flex-shrink-0">•</span>
                             <span>{cleanItem}</span>
                           </li>
                         );

@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Menu, X, ArrowRight, ExternalLink, Download, Smartphone } from "lucide-react";
 import { useIsAuth } from "../hooks/is_authenticated";
 import { UNIZ_APK_PATH, openIosDownloadModal } from "../constants/downloads";
+
+const NAV_LINKS = [
+  { label: "Academic services", hash: "#academic-services" },
+  { label: "Circulars", hash: "#campus-updates" },
+  { label: "Mobile access", hash: "#mobile-apps" },
+];
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -13,6 +19,19 @@ export default function Navbar() {
   const isAuth = isAuthenticated.is_authenticated;
   const dashboardPath = isAuthenticated.type === "admin" ? "/admin" : "/student";
 
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
   const handleAnchorClick = (hash: string) => {
     setMobileMenuOpen(false);
     if (location.pathname !== "/") {
@@ -20,233 +39,186 @@ export default function Navbar() {
       return;
     }
     const el = document.querySelector(hash);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
+  const goPortal = () => navigate(isAuth ? dashboardPath : "/student/signin");
+
   return (
-    <header className="sticky top-0 z-50 w-full font-sans shadow-[0_1px_3px_rgba(6,21,39,0.12)]">
-      {/* Tier 1: Harvard/MIT-style Slim Institutional Utility Bar */}
-      <div className="bg-[#061527] text-white/80 border-b border-white/10">
-        <div className="mx-auto flex h-8 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 text-[11.5px] tracking-[0.03em]">
-          <div className="flex items-center gap-2 truncate">
-            <span className="font-semibold text-white/95 tracking-[0.04em]">
-              RGUKT ONGOLE
-            </span>
-            <span className="hidden sm:inline text-white/30">·</span>
-            <span className="hidden sm:inline text-white/75">
-              Rajiv Gandhi University of Knowledge Technologies, Andhra Pradesh
+ <header className="sticky top-0 z-50 w-full border-b border-line bg-white">
+ <div className="border-b border-white/10 bg-navy-850 text-white/80">
+ <div className="mx-auto flex h-8 w-full max-w-[90rem] items-center justify-between px-5 text-[11.5px] tracking-[0.03em] sm:px-8 lg:px-12">
+          <div className="flex min-w-0 items-center gap-2 truncate">
+ <span className="font-semibold text-white/95">RGUKT ANDHRA PRADESH</span>
+ <span className="hidden text-white/30 sm:inline">·</span>
+ <span className="hidden text-white/75 sm:inline">
+              Catering to the Educational Needs of Gifted Rural Youth
             </span>
           </div>
-
-          <div className="flex items-center gap-3 sm:gap-5 shrink-0">
+          <div className="flex shrink-0 items-center gap-4">
             <a
               href="https://rguktong.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center gap-1 text-white/75 hover:text-white transition-colors"
+ className="hidden items-center gap-1 text-white/80 transition-colors duration-150 hover:text-white md:inline-flex"
             >
-              Main University Site
-              <ExternalLink className="w-3 h-3 opacity-70" />
+              Main site
+              <ExternalLink className="h-3 w-3 opacity-70" />
             </a>
-            <span className="hidden md:inline text-white/20">|</span>
             <a
               href={UNIZ_APK_PATH}
               download="uniz-android.apk"
-              className="inline-flex items-center gap-1 text-white/80 hover:text-white transition-colors"
-              title="Download Official UniZ Android App (.apk)"
+ className="inline-flex items-center gap-1 text-white/85 transition-colors duration-150 hover:text-white"
             >
-              <Download className="w-3 h-3 opacity-80" />
-              <span>Android App</span>
+              <Download className="h-3 w-3 opacity-80" />
+              Android App
             </a>
             <button
               type="button"
               onClick={() => openIosDownloadModal()}
-              className="inline-flex items-center gap-1 text-white/80 hover:text-white transition-colors cursor-pointer"
-              title="Install Official UniZ iOS App"
+ className="inline-flex cursor-pointer items-center gap-1 text-white/85 transition-colors duration-150 hover:text-white"
             >
-              <Smartphone className="w-3 h-3 opacity-80" />
-              <span>iOS App</span>
+              <Smartphone className="h-3 w-3 opacity-80" />
+              iOS App
             </button>
-            <span className="hidden sm:inline text-white/20">|</span>
             <Link
               to="/developers"
-              className="hidden sm:inline text-white/80 hover:text-white transition-colors"
+ className="hidden text-white/85 transition-colors duration-150 hover:text-white sm:inline"
             >
               Software Development Cell
             </Link>
-            <span className="hidden sm:inline text-white/20">|</span>
-            <Link
-              to="/admin/signin"
-              className="text-white/85 hover:text-white font-medium transition-colors"
-            >
-              Faculty &amp; Staff
-            </Link>
           </div>
         </div>
       </div>
 
-      {/* Tier 2: Primary Institutional Masthead */}
-      <div className="bg-[#0A2540] text-white border-b border-[#163A5C]">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link
-            to="/"
-            className="flex items-center gap-3.5 text-white no-underline group"
-          >
-            <img
-              src="/logo.png"
-              alt="RGUKT Ongole UniZ Seal"
-              width={40}
-              height={40}
-              className="h-10 w-10 rounded-full object-cover shrink-0 border border-white/25 bg-[#061527]"
-              decoding="async"
-            />
-            <div className="flex flex-col">
-              <div className="flex items-baseline gap-2.5">
-                <span className="text-[21px] font-bold tracking-[0.03em] text-white leading-none">
-                  uniZ
-                </span>
-                <span className="hidden sm:inline text-white/30 font-light">|</span>
-                <span className="hidden sm:inline text-[13px] font-medium tracking-[0.02em] text-white/90 leading-none">
-                  Academic &amp; Examination Portal
-                </span>
-              </div>
-              <span className="text-[10.5px] tracking-[0.08em] uppercase text-white/65 mt-1 leading-none">
-                Office of the Controller of Examinations · Ongole Campus
-              </span>
-            </div>
-          </Link>
+ <div className="mx-auto flex h-[68px] w-full max-w-[90rem] items-center justify-between gap-6 px-5 sm:px-8 lg:px-12">
+        <Link to="/" className="group flex shrink-0 items-center gap-3">
+          <img
+            src="/rgukt-logo.png"
+            alt="RGUKT Ongole"
+            className="h-10 w-10 object-contain md:h-11 md:w-11"
+          />
+          <div className="hidden flex-col justify-center sm:flex">
+ <span className="font-serif text-[1.35rem] font-semibold leading-none tracking-tight text-navy-900 md:text-[1.5rem]">
+              uniZ
+            </span>
+ <span className="mt-1 text-[11px] font-medium text-ink-muted md:text-xs">
+              Ongole campus portal
+            </span>
+          </div>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <nav
-            aria-label="Primary Institutional Navigation"
-            className="hidden lg:flex items-center gap-7"
+        <nav aria-label="Primary" className="hidden flex-1 items-center justify-center gap-1 lg:flex">
+          {NAV_LINKS.map((item) => (
+            <button
+              key={item.hash}
+              type="button"
+              onClick={() => handleAnchorClick(item.hash)}
+ className="inline-flex h-10 cursor-pointer items-center rounded-md px-3.5 text-[15px] font-medium text-navy-900 transition-colors duration-150 hover:bg-surface-2 hover:text-navy"
+            >
+              {item.label}
+            </button>
+          ))}
+          <Link
+            to="/developers"
+ className={`inline-flex h-10 items-center rounded-md px-3.5 text-[15px] font-medium transition-colors duration-150 hover:bg-surface-2 ${
+ location.pathname === "/developers"
+ ? "bg-surface-2 text-navy"
+ : "text-navy-900 hover:text-navy"
+ }`}
           >
+            Developers
+          </Link>
+        </nav>
+
+        <div className="flex items-center gap-1.5 sm:gap-2.5">
+          <Link
+            to="/admin/signin"
+ className="hidden h-10 items-center rounded-md px-3 text-[14px] font-medium text-navy-900 transition-colors duration-150 hover:bg-surface-2 hover:text-navy xl:inline-flex"
+          >
+            Faculty & staff
+          </Link>
+          <button
+            type="button"
+            onClick={goPortal}
+ className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-lg bg-brand-red px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-[#C81A20]"
+          >
+            <span>{isAuth ? "Open portal" : "Sign in"}</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(true)}
+            aria-label="Open menu"
+ className="inline-flex h-10 items-center gap-2 rounded-md px-2 text-navy-900 transition-colors duration-150 hover:bg-surface-2 lg:hidden"
+          >
+            <Menu className="h-5 w-5 stroke-[1.75]" />
+          </button>
+        </div>
+      </div>
+
+      {mobileMenuOpen && (
+ <div className="fixed inset-0 z-[100] overflow-y-auto bg-navy-950 text-white">
+ <div className="mx-auto flex max-w-[90rem] items-center justify-between border-b border-white/10 px-5 py-5 sm:px-8 lg:px-12">
+ <span className="font-serif text-xl font-semibold tracking-tight">uniZ</span>
             <button
               type="button"
-              onClick={() => handleAnchorClick("#academic-services")}
-              className="text-[13.5px] font-medium text-white/85 hover:text-white transition-colors cursor-pointer"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close menu"
+ className="flex h-10 w-10 items-center justify-center text-white/80 hover:text-white"
             >
-              Academic Services
+              <X className="h-5 w-5" />
             </button>
+          </div>
+ <nav className="mx-auto flex max-w-[90rem] flex-col gap-1 px-5 py-10 sm:px-8 lg:px-12">
             <button
               type="button"
-              onClick={() => handleAnchorClick("#campus-updates")}
-              className="text-[13.5px] font-medium text-white/85 hover:text-white transition-colors cursor-pointer"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                navigate("/");
+              }}
+ className="py-3 text-left font-serif text-3xl text-white"
             >
-              Circulars &amp; Notices
+              Home
             </button>
-            <button
-              type="button"
-              onClick={() => handleAnchorClick("#mobile-apps")}
-              className="text-[13.5px] font-medium text-white/85 hover:text-white transition-colors cursor-pointer"
-            >
-              Mobile Access
-            </button>
+            {NAV_LINKS.map((item) => (
+              <button
+                key={item.hash}
+                type="button"
+                onClick={() => handleAnchorClick(item.hash)}
+ className="py-3 text-left text-[17px] text-white/85 hover:text-white"
+              >
+                {item.label}
+              </button>
+            ))}
             <Link
               to="/developers"
-              className={`text-[13.5px] font-medium transition-colors ${
-                location.pathname === "/developers"
-                  ? "text-white underline underline-offset-8 decoration-2"
-                  : "text-white/85 hover:text-white"
-              }`}
+              onClick={() => setMobileMenuOpen(false)}
+ className="py-3 text-[17px] text-white/85 hover:text-white"
             >
               Developers
             </Link>
-
-            <div className="h-5 w-px bg-white/15" />
-
+            <Link
+              to="/admin/signin"
+              onClick={() => setMobileMenuOpen(false)}
+ className="py-3 text-[17px] text-white/85 hover:text-white"
+            >
+              Faculty & staff
+            </Link>
             <button
               type="button"
-              onClick={() => navigate(isAuth ? dashboardPath : "/student/signin")}
-              className="inline-flex items-center gap-2 h-9 px-4 rounded-[2px] bg-white text-[#0A2540] hover:bg-[#F1F5F9] text-[13px] font-bold tracking-[0.03em] transition-colors cursor-pointer shadow-xs"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                goPortal();
+              }}
+ className="mt-6 inline-flex h-11 w-fit items-center gap-2 rounded-lg bg-brand-red px-5 text-sm font-medium text-white"
             >
-              <span>{isAuth ? "Open Portal" : "Sign In to Portal"}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              {isAuth ? "Open portal" : "Sign in"}
+              <ArrowRight className="h-4 w-4" />
             </button>
           </nav>
-
-          {/* Mobile Compact Actions */}
-          <div className="flex lg:hidden items-center gap-2.5">
-            <button
-              type="button"
-              onClick={() => navigate(isAuth ? dashboardPath : "/student/signin")}
-              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[2px] bg-white text-[#0A2540] text-[12px] font-bold tracking-[0.03em]"
-            >
-              <span>{isAuth ? "Portal" : "Sign In"}</span>
-              <ArrowRight className="w-3 h-3" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
-              aria-label="Toggle institutional navigation menu"
-              className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] border border-white/20 text-white hover:bg-white/10"
-            >
-              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-            </button>
-          </div>
         </div>
-
-        {/* Mobile Dropdown Sheet */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden bg-[#061527] border-t border-white/15 px-4 py-4 space-y-3">
-            <div className="grid grid-cols-1 gap-1 border-b border-white/10 pb-3">
-              <button
-                type="button"
-                onClick={() => handleAnchorClick("#academic-services")}
-                className="text-left py-2 px-2 text-[14px] font-medium text-white/90 hover:bg-white/5 rounded-[2px]"
-              >
-                Academic Services Directory
-              </button>
-              <button
-                type="button"
-                onClick={() => handleAnchorClick("#campus-updates")}
-                className="text-left py-2 px-2 text-[14px] font-medium text-white/90 hover:bg-white/5 rounded-[2px]"
-              >
-                Official Circulars &amp; Notices
-              </button>
-              <Link
-                to="/developers"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-2 px-2 text-[14px] font-medium text-white/90 hover:bg-white/5 rounded-[2px]"
-              >
-                Software Development Cell (Developers)
-              </Link>
-              <Link
-                to="/admin/signin"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-2 px-2 text-[14px] font-medium text-white/90 hover:bg-white/5 rounded-[2px]"
-              >
-                Faculty &amp; Administration Sign In
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 pt-1">
-              <a
-                href={UNIZ_APK_PATH}
-                download="uniz-android.apk"
-                onClick={() => setMobileMenuOpen(false)}
-                className="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-[2px] border border-white/25 bg-white/5 text-white text-[12px] font-semibold"
-              >
-                <Download className="w-3.5 h-3.5" />
-                Android App (.apk)
-              </a>
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  openIosDownloadModal();
-                }}
-                className="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-[2px] border border-white/25 bg-white/5 text-white text-[12px] font-semibold"
-              >
-                <Smartphone className="w-3.5 h-3.5" />
-                iOS App
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </header>
   );
 }

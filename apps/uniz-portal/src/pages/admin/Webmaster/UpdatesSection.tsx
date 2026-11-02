@@ -227,7 +227,7 @@ export default function UpdatesSection() {
             <button
               onClick={fetchUpdates}
               disabled={loading}
-              className={cn(adminGhostButtonClass, "w-11 px-0")}
+ className={cn(adminGhostButtonClass, "w-11 px-0")}
               title="Refresh Stream"
             >
               <Loader2 size={16} className={loading ? "animate-spin" : ""} />
@@ -245,22 +245,22 @@ export default function UpdatesSection() {
       {/* Content Sections */}
       <div className={cn(adminCardClass, "overflow-hidden")}>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+ <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-navy-200/70">
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400">
+ <th className="px-8 py-4 text-[10px] font-semibold text-navy-400">
                   Broadcast Content
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400">
+ <th className="px-8 py-4 text-[10px] font-semibold text-navy-400">
                   Resource Link
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400">
+ <th className="px-8 py-4 text-[10px] font-semibold text-navy-400">
                   Visibility
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400">
+ <th className="px-8 py-4 text-[10px] font-semibold text-navy-400">
                   Distribution Date
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-navy-400 text-right">
+ <th className="px-8 py-4 text-[10px] font-semibold text-navy-400 text-right">
                   Actions
                 </th>
               </tr>
@@ -271,31 +271,31 @@ export default function UpdatesSection() {
                   .fill(0)
                   .map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td className="px-8 py-5">
+ <td className="px-8 py-5">
                         <div className="flex items-center gap-3.5">
-                          <div className="w-10 h-10 rounded-xl bg-navy-100" />
+ <div className="w-10 h-10 rounded-xl bg-navy-100" />
                           <div className="space-y-2">
-                            <div className="h-4 w-32 bg-navy-100 rounded-lg" />
-                            <div className="h-2 w-48 bg-navy-50 rounded" />
+ <div className="h-4 w-32 bg-navy-100 rounded-lg" />
+ <div className="h-2 w-48 bg-navy-50 rounded" />
                           </div>
                         </div>
                       </td>
-                      <td className="px-8 py-5">
-                        <div className="h-4 w-20 bg-navy-50 rounded" />
+ <td className="px-8 py-5">
+ <div className="h-4 w-20 bg-navy-50 rounded" />
                       </td>
-                      <td className="px-8 py-5">
-                        <div className="h-6 w-16 bg-navy-100 rounded-full" />
+ <td className="px-8 py-5">
+ <div className="h-6 w-16 bg-navy-100 rounded-full" />
                       </td>
-                      <td className="px-8 py-5">
+ <td className="px-8 py-5">
                         <div className="space-y-2">
-                          <div className="h-4 w-24 bg-navy-100 rounded-lg" />
-                          <div className="h-2 w-16 bg-navy-50 rounded" />
+ <div className="h-4 w-24 bg-navy-100 rounded-lg" />
+ <div className="h-2 w-16 bg-navy-50 rounded" />
                         </div>
                       </td>
-                      <td className="px-8 py-5">
+ <td className="px-8 py-5">
                         <div className="flex justify-end gap-2">
-                          <div className="h-9 w-9 bg-navy-50 rounded-xl border border-navy-200/70" />
-                          <div className="h-9 w-9 bg-navy-50 rounded-xl border border-navy-200/70" />
+ <div className="h-9 w-9 bg-navy-50 rounded-xl border border-navy-200/70" />
+ <div className="h-9 w-9 bg-navy-50 rounded-xl border border-navy-200/70" />
                         </div>
                       </td>
                     </tr>
@@ -304,20 +304,20 @@ export default function UpdatesSection() {
                 updates.map((update, idx) => (
                   <tr
                     key={update._id || update.id || idx}
-                    className="hover:bg-navy-50/60 transition-colors group"
+ className="hover:bg-navy-50/60 transition-colors group"
                   >
-                    <td className="px-8 py-5">
+ <td className="px-8 py-5">
                       <div className="flex items-center gap-3.5">
                         <div
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${update.isVisible ? "bg-navy-900 text-white" : "bg-navy-100 text-navy-400"}`}
+ className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${update.isVisible ? "bg-navy-900 text-white" : "bg-navy-100 text-navy-400"}`}
                         >
                           <Bell size={16} />
                         </div>
                         <div className="flex flex-col min-w-0">
-                          <p className="font-semibold text-navy-900 tracking-tight leading-tight mb-0.5 max-w-[300px] truncate">
+ <p className="font-semibold text-navy-900 tracking-tight leading-tight mb-0.5 max-w-[300px] truncate">
                             {update.title}
                           </p>
-                          <p className="text-[12px] text-navy-400 truncate max-w-[400px]">
+ <p className="text-[12px] text-navy-400 truncate max-w-[400px]">
                             {update.description ||
                               update.content ||
                               "No description provided."}
@@ -325,37 +325,37 @@ export default function UpdatesSection() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-5">
+ <td className="px-8 py-5">
                       {update.link ? (
                         <a
                           href={update.link}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-navy-600 hover:text-navy-900 transition-colors"
+ className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-navy-600 hover:text-navy-900 transition-colors"
                         >
                           Visit Link
                           <ExternalLink size={12} />
                         </a>
                       ) : (
-                        <span className="text-[12px] text-navy-300">None</span>
+ <span className="text-[12px] text-navy-300">None</span>
                       )}
                     </td>
-                    <td className="px-8 py-5">
+ <td className="px-8 py-5">
                       {update.isVisible ? (
-                        <div className="inline-flex items-center gap-1.5 text-navy-700 bg-navy-50 px-2.5 py-1 rounded-full border border-navy-200 w-fit">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          <span className="text-[11px] font-medium">Live</span>
+ <div className="inline-flex items-center gap-1.5 text-navy-700 bg-navy-50 px-2.5 py-1 rounded-full border border-navy-200 w-fit">
+ <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+ <span className="text-[11px] font-medium">Live</span>
                         </div>
                       ) : (
-                        <div className="inline-flex items-center gap-1.5 text-navy-400 bg-navy-50 px-2.5 py-1 rounded-full border border-navy-200 w-fit">
-                          <span className="w-1.5 h-1.5 rounded-full bg-navy-300" />
-                          <span className="text-[11px] font-medium">Draft</span>
+ <div className="inline-flex items-center gap-1.5 text-navy-400 bg-navy-50 px-2.5 py-1 rounded-full border border-navy-200 w-fit">
+ <span className="w-1.5 h-1.5 rounded-full bg-navy-300" />
+ <span className="text-[11px] font-medium">Draft</span>
                         </div>
                       )}
                     </td>
-                    <td className="px-8 py-5">
+ <td className="px-8 py-5">
                       <div className="flex flex-col">
-                        <p className="text-[13px] font-medium tracking-tight text-navy-700 tabular-nums">
+ <p className="text-[13px] font-medium tracking-tight text-navy-700 tabular-nums">
                           {update.createdAt
                             ? new Date(update.createdAt).toLocaleDateString(
                                 "en-GB",
@@ -367,23 +367,23 @@ export default function UpdatesSection() {
                               )
                             : "Today"}
                         </p>
-                        <p className="text-[10px] font-medium text-navy-400 tracking-[0.12em] mt-0.5">
+ <p className="text-[10px] font-medium text-navy-400 mt-0.5">
                           Publication
                         </p>
                       </div>
                     </td>
-                    <td className="px-8 py-5">
+ <td className="px-8 py-5">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleEditClick(update)}
-                          className="h-9 w-9 flex items-center justify-center bg-white text-navy-400 rounded-xl hover:text-navy-900 hover:border-navy-300 border border-navy-200 transition-all active:scale-95"
+ className="h-9 w-9 flex items-center justify-center bg-white text-navy-400 rounded-xl hover:text-navy-900 hover:border-navy-300 border border-navy-200 transition-all "
                         >
                           <Edit3 size={14} />
                         </button>
                         <button
                           onClick={() => deleteUpdate(update._id || update.id)}
                           disabled={actionLoading === (update._id || update.id)}
-                          className="h-9 w-9 flex items-center justify-center bg-white text-navy-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-navy-200 transition-all active:scale-95"
+ className="h-9 w-9 flex items-center justify-center bg-white text-navy-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-navy-200 transition-all "
                         >
                           <Trash2 size={14} />
                         </button>
@@ -393,12 +393,12 @@ export default function UpdatesSection() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="py-20 text-center">
+ <td colSpan={5} className="py-20 text-center">
                     <div className="flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 flex items-center justify-center bg-navy-50 rounded-[2px] border border-navy-200/70 text-navy-300">
+ <div className="w-16 h-16 flex items-center justify-center bg-navy-50 rounded-lg border border-navy-200/70 text-navy-300">
                         <Bell size={32} strokeWidth={1.5} />
                       </div>
-                      <p className="text-[14px] font-medium text-navy-500 tracking-tight">
+ <p className="text-[14px] font-medium text-navy-500 tracking-tight">
                         No active broadcasts found.
                       </p>
                       <button
@@ -431,7 +431,7 @@ export default function UpdatesSection() {
           }
         }}
       >
-        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-navy-200 rounded-[2px] shadow-xl">
+ <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-navy-200 rounded-lg shadow-xl">
           <div className="relative">
             {/* Close Button */}
             <button
@@ -445,23 +445,23 @@ export default function UpdatesSection() {
                   isVisible: true,
                 });
               }}
-              className="absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10"
+ className="absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
 
-            <AlertDialogHeader className="p-8 pb-3 flex flex-col items-start text-left gap-1.5">
-              <AlertDialogTitle className="text-[20px] font-semibold text-navy-900 tracking-[-0.01em]">
+ <AlertDialogHeader className="p-8 pb-3 flex flex-col items-start text-left gap-1.5">
+ <AlertDialogTitle className="text-[20px] font-semibold text-navy-900 tracking-[-0.01em]">
                 {editingUpdate ? "Edit Broadcast" : "New Broadcast"}
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-[13px] text-navy-500 leading-relaxed">
+ <AlertDialogDescription className="text-[13px] text-navy-500 leading-relaxed">
                 {editingUpdate
                   ? "Update institutional news for the student dashboard."
                   : "Publish vital news and resources to all students."}
               </AlertDialogDescription>
             </AlertDialogHeader>
 
-            <form onSubmit={handleSaveUpdate} className="px-8 pb-8 space-y-6">
+ <form onSubmit={handleSaveUpdate} className="px-8 pb-8 space-y-6">
               <div className="space-y-5">
                 {/* Title */}
                 <div className="space-y-2">
@@ -511,8 +511,8 @@ export default function UpdatesSection() {
 
                 {/* Link Preview Hint */}
                 {newUpdate.link && (
-                  <div className="p-3.5 bg-navy-50 rounded-xl border border-navy-200/70">
-                    <p className="text-[12px] font-medium text-navy-500 leading-relaxed">
+ <div className="p-3.5 bg-navy-50 rounded-xl border border-navy-200/70">
+ <p className="text-[12px] font-medium text-navy-500 leading-relaxed">
                       Students will be redirected to this link when they click
                       the broadcast.
                     </p>

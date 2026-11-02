@@ -116,30 +116,30 @@ export default function RequestComp({ type }: RequestCompProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-10 pb-32">
+ <div className="max-w-7xl mx-auto px-4 md:px-10 pb-32">
       {/* Header Section */}
       <div className="mb-10 mt-2 md:mt-0">
         <button
           onClick={() => navigateTo("/student")}
-          className="text-navy-400 hover:text-navy-900 font-bold text-[11px] tracking-[0.14em] flex items-center gap-2 mb-10 transition-all group"
+ className="text-navy-400 hover:text-navy-900 font-medium text-[11px] flex items-center gap-2 mb-10 transition-all group"
         >
           <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
           Protocol Terminal
         </button>
 
         <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-6">
-          <div className="text-center md:text-left">
-            <p className="text-navy-400 font-medium text-[11px] mb-2 tracking-[0.14em] leading-none">
+ <div className="text-center md:text-left">
+ <p className="text-navy-400 font-medium text-[11px] mb-2 leading-none">
               Institutional Exit terminal
             </p>
-            <h1 className="text-2xl md:text-3xl font-semibold text-navy-900 tracking-tight leading-none mb-3">
+ <h1 className="text-2xl md:text-3xl font-semibold text-navy-900 tracking-tight leading-none mb-3">
               Request {type === "outing" ? "Outing" : "Outpass"}
             </h1>
-            <p className="text-navy-400 font-medium text-[13px] opacity-80">
+ <p className="text-navy-400 font-medium text-[13px] opacity-80">
               Campus Leave Authorization Protocol
             </p>
           </div>
-          <div className="text-navy-900 flex-shrink-0 hidden md:block">
+ <div className="text-navy-900 flex-shrink-0 hidden md:block">
             {type === "outpass" ? (
               <Calendar className="w-10 h-10" />
             ) : (
@@ -152,16 +152,16 @@ export default function RequestComp({ type }: RequestCompProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Main Form Area */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-xl p-6 md:p-8 border border-navy-100 shadow-sm">
+ <div className="bg-white rounded-xl p-6 md:p-8 border border-navy-100 shadow-sm">
             <div className="space-y-8">
               <div className="space-y-3">
-                <label className="text-[10px] font-bold tracking-[0.14em] text-navy-400 ml-1">
+ <label className="text-[10px] font-medium text-navy-400 ml-1">
                   Reason for {type}
                 </label>
                 <textarea
                   onChange={handleInputChange(setReason)}
                   placeholder="Clearly explain the purpose of your request..."
-                  className="w-full bg-navy-50 border border-navy-50 rounded-xl p-6 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none min-h-[160px] font-semibold text-base text-navy-800 placeholder:text-navy-300 placeholder:font-normal resize-none transition-all"
+ className="w-full bg-navy-50 border border-navy-50 rounded-xl p-6 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none min-h-[160px] font-semibold text-base text-navy-800 placeholder:text-navy-300 placeholder:font-normal resize-none transition-all"
                 />
               </div>
 
@@ -169,46 +169,46 @@ export default function RequestComp({ type }: RequestCompProps) {
                 {type === "outpass" ? (
                   <>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold tracking-[0.14em] text-navy-400 ml-1">
+ <label className="text-[10px] font-medium text-navy-400 ml-1">
                         Departure Date
                       </label>
                       <Input
                         type="date"
                         onchangeFunction={handleInputChange(setFromDate)}
-                        className="w-full bg-navy-50 p-4 md:p-5 rounded-xl border border-navy-50 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-base text-navy-800 transition-all cursor-pointer"
+ className="w-full bg-navy-50 p-4 md:p-5 rounded-xl border border-navy-50 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-base text-navy-800 transition-all cursor-pointer"
                       />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold tracking-[0.14em] text-navy-400 ml-1">
+ <label className="text-[10px] font-medium text-navy-400 ml-1">
                         Expected Return
                       </label>
                       <Input
                         type="date"
                         onchangeFunction={handleInputChange(setToDate)}
-                        className="w-full bg-navy-50 p-4 md:p-5 rounded-xl border border-navy-50 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-base text-navy-800 transition-all cursor-pointer"
+ className="w-full bg-navy-50 p-4 md:p-5 rounded-xl border border-navy-50 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-base text-navy-800 transition-all cursor-pointer"
                       />
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold tracking-[0.14em] text-navy-400 ml-1">
+ <label className="text-[10px] font-medium text-navy-400 ml-1">
                         Exit Time
                       </label>
                       <Input
                         type="time"
                         onchangeFunction={handleInputChange(setFromTime)}
-                        className="w-full bg-navy-50 p-4 md:p-5 rounded-xl border border-navy-50 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-base text-navy-800 transition-all cursor-pointer"
+ className="w-full bg-navy-50 p-4 md:p-5 rounded-xl border border-navy-50 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-base text-navy-800 transition-all cursor-pointer"
                       />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold tracking-[0.14em] text-navy-400 ml-1">
+ <label className="text-[10px] font-medium text-navy-400 ml-1">
                         Return Window
                       </label>
                       <Input
                         type="time"
                         onchangeFunction={handleInputChange(setToTime)}
-                        className="w-full bg-navy-50 p-4 md:p-5 rounded-xl border border-navy-50 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-base text-navy-800 transition-all cursor-pointer"
+ className="w-full bg-navy-50 p-4 md:p-5 rounded-xl border border-navy-50 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-base text-navy-800 transition-all cursor-pointer"
                       />
                     </div>
                   </>
@@ -220,27 +220,27 @@ export default function RequestComp({ type }: RequestCompProps) {
 
         {/* Sidebar Info & Action */}
         <div className="space-y-6">
-          <div className="bg-white rounded-xl p-8 border border-navy-100 shadow-sm">
+ <div className="bg-white rounded-xl p-8 border border-navy-100 shadow-sm">
             <div className="flex gap-4 items-start mb-6">
-              <div className="text-navy-900 flex-shrink-0">
+ <div className="text-navy-900 flex-shrink-0">
                 <AlertCircle className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <p className="font-semibold text-navy-900 text-sm tracking-tight">
+ <p className="font-semibold text-navy-900 text-sm tracking-tight">
                   Authorization Note
                 </p>
-                <p className="text-navy-500 font-medium text-xs leading-relaxed">
+ <p className="text-navy-500 font-medium text-xs leading-relaxed">
                   Terminal requests are vetted by faculty. All fields are
                   mandatory for successful processing.
                 </p>
               </div>
             </div>
 
-            <div className="p-5 bg-navy-50 rounded-xl border border-navy-50">
-              <p className="text-[10px] font-bold text-navy-300 tracking-[0.14em] mb-1.5">
+ <div className="p-5 bg-navy-50 rounded-xl border border-navy-50">
+ <p className="text-[10px] font-medium text-navy-300 mb-1.5">
                 Receipt Channel
               </p>
-              <p className="text-[13px] font-semibold text-navy-600 truncate">
+ <p className="text-[13px] font-semibold text-navy-600 truncate">
                 {Student?.email}
               </p>
             </div>
@@ -250,7 +250,7 @@ export default function RequestComp({ type }: RequestCompProps) {
             <button
               onClick={sendDataToBackend}
               disabled={isLoading}
-              className="w-full h-[58px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-base transition-all active:scale-[0.98] shadow-lg shadow-navy-100 flex items-center justify-center gap-3"
+ className="w-full h-[58px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-medium text-base transition-all shadow-lg shadow-navy-100 flex items-center justify-center gap-3"
             >
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -268,7 +268,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                   `/student/${type === "outing" ? "outpass" : "outing"}/request${type === "outing" ? "outpass" : "outing"}`,
                 )
               }
-              className="w-full h-[54px] border border-navy-100 text-navy-400 font-bold text-sm rounded-xl hover:bg-navy-50 hover:text-navy-900 transition-all flex items-center justify-center gap-2"
+ className="w-full h-[54px] border border-navy-100 text-navy-400 font-medium text-sm rounded-xl hover:bg-navy-50 hover:text-navy-900 transition-all flex items-center justify-center gap-2"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               Switch to {type === "outing" ? "Outpass" : "Outing"}

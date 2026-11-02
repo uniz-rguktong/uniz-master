@@ -30,16 +30,16 @@ export default function MyFeedbackResults() {
     >
       {error ? <DisabledState reason={error} /> : null}
       {forms.length === 0 && !error ? (
-        <p className="text-sm text-slate-500">No feedback forms for you yet.</p>
+ <p className="text-sm text-slate-500">No feedback forms for you yet.</p>
       ) : null}
       {forms.map((f) => (
-        <div key={f.id} className="rounded-xl border p-3 text-sm">
+ <div key={f.id} className="rounded-xl border p-3 text-sm">
           <div className="flex items-center justify-between gap-2">
             <span>
               <b>{f.title}</b>, {f.responses} responses
             </span>
             <button
-              className="rounded border px-2 py-1"
+ className="rounded border px-2 py-1"
               onClick={() => setOpen(open === f.id ? null : f.id)}
             >
               Results

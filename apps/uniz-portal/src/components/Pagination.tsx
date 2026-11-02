@@ -11,13 +11,13 @@ interface PaginationProps {
 }
 
 const navBtnClass =
-  "inline-flex items-center justify-center gap-1.5 h-9 min-w-[2.25rem] px-2.5 rounded-[2px] border border-[#EEEEEE] bg-white text-[12px] font-semibold text-[#5A7A94] transition-colors hover:border-[#9bb0c4] hover:bg-[#FAFAFA] hover:text-[#0A2540] disabled:opacity-35 disabled:pointer-events-none disabled:hover:bg-white disabled:hover:border-[#EEEEEE]";
+  "inline-flex items-center justify-center gap-1.5 h-9 min-w-[2.25rem] px-2.5 rounded-lg border border-[#EEEEEE] bg-white text-[12px] font-semibold text-[#5A7A94] transition-colors hover:border-[#9bb0c4] hover:bg-[#FAFAFA] hover:text-[#0A2540] disabled:opacity-35 disabled:pointer-events-none disabled:hover:bg-white disabled:hover:border-[#EEEEEE]";
 
 const pageBtnClass = (active: boolean) =>
   cn(
-    "inline-flex items-center justify-center h-9 min-w-[2.25rem] px-2 rounded-[2px] text-[12px] font-semibold tabular-nums transition-colors font-form",
+    "inline-flex items-center justify-center h-9 min-w-[2.25rem] px-2 rounded-lg text-[12px] font-semibold tabular-nums transition-colors font-form",
     active
-      ? "bg-[#34495e] text-white border border-[#34495e]"
+      ? "bg-navy-900 text-white border border-navy-900"
       : "bg-white text-[#5A7A94] border border-[#EEEEEE] hover:border-[#9bb0c4] hover:bg-[#FAFAFA] hover:text-[#0A2540]",
   );
 
@@ -47,13 +47,13 @@ export function Pagination({
         className,
       )}
     >
-      <p className="text-[12px] font-medium text-navy-500 tabular-nums">
+ <p className="text-[12px] font-medium text-navy-500 tabular-nums">
         Page{" "}
-        <span className="text-navy-900 font-semibold">{currentPage}</span>
+ <span className="text-navy-900 font-semibold">{currentPage}</span>
         {" of "}
-        <span className="text-navy-900 font-semibold">{totalPages}</span>
+ <span className="text-navy-900 font-semibold">{totalPages}</span>
         {rangeStart != null && rangeEnd != null && totalItems != null && (
-          <span className="text-navy-400">
+ <span className="text-navy-400">
             {" · "}
             {rangeStart.toLocaleString()}–{rangeEnd.toLocaleString()} of{" "}
             {totalItems.toLocaleString()}
@@ -76,7 +76,7 @@ export function Pagination({
           <span className="hidden sm:inline">Prev</span>
         </button>
 
-        <div className="flex items-center gap-1 px-0.5">
+ <div className="flex items-center gap-1 px-0.5">
           {Array.from({ length: totalPages }, (_, i) => i + 1)
             .filter(
               (p) =>
@@ -85,7 +85,7 @@ export function Pagination({
             .map((p, i, arr) => (
               <div key={p} className="flex items-center gap-1">
                 {i > 0 && arr[i - 1] !== p - 1 && (
-                  <span className="w-6 text-center text-[11px] font-semibold text-navy-300 select-none">
+ <span className="w-6 text-center text-[11px] font-semibold text-navy-300 select-none">
                     …
                   </span>
                 )}

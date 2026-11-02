@@ -33,7 +33,7 @@ export default function AlumniDirectory({
   return (
     <div className={embedded ? "space-y-3" : "mx-auto max-w-4xl space-y-3 p-6"}>
       {!embedded && (
-        <h1 className="text-2xl font-semibold text-slate-900">
+ <h1 className="text-2xl font-semibold text-slate-900">
           RGUKT Ongole Alumni
         </h1>
       )}
@@ -43,25 +43,25 @@ export default function AlumniDirectory({
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />
-      {msg && <p className="text-sm text-slate-500">{msg}</p>}
+ {msg && <p className="text-sm text-slate-500">{msg}</p>}
       {!msg && rows.length === 0 && (
-        <p className="text-sm text-slate-500">No alumni listed yet.</p>
+ <p className="text-sm text-slate-500">No alumni listed yet.</p>
       )}
       <div className="grid gap-2 md:grid-cols-2">
         {rows.map((a) => (
           <div key={a.id} className={cardCls}>
-            <p className="font-medium text-slate-900">{a.name}</p>
-            <p className="text-slate-600">
+ <p className="font-medium text-slate-900">{a.name}</p>
+ <p className="text-slate-600">
               {[a.jobTitle, a.company].filter(Boolean).join(" at ")}{" "}
               {a.location ? `. ${a.location}` : ""}
             </p>
-            <p className="text-slate-500">
+ <p className="text-slate-500">
               {a.branch} . {a.batch}{" "}
               {a.graduationYear ? `. ${a.graduationYear}` : ""}
             </p>
             {a.linkedinUrl && (
               <a
-                className="text-blue-700 underline"
+ className="text-blue-700 underline"
                 href={a.linkedinUrl}
                 target="_blank"
                 rel="noreferrer"

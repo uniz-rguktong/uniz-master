@@ -294,13 +294,13 @@ export default function StudentBulkSection() {
               Download Template
             </button>
           </div>
-          <p className="text-[12px] text-navy-500">
+ <p className="text-[12px] text-navy-500">
             Use the template columns for student ID, name, email, branch, year,
             section, and batch. Branch may be N/A until allocation is finalized.
           </p>
 
           <div className="w-full space-y-6">
-            <div className={cn(adminCardClass, "overflow-hidden border-dashed border-navy-300 bg-navy-50/40 p-6")}>
+ <div className={cn(adminCardClass, "overflow-hidden border-dashed border-navy-300 bg-navy-50/40 p-6")}>
               <FileUploader
                 onFileSelect={(f) => {
                   setFile(f);
@@ -359,7 +359,7 @@ export default function StudentBulkSection() {
                   )}
                 </select>
                 <ChevronDown
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
+ className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                   size={14}
                 />
               </div>
@@ -381,7 +381,7 @@ export default function StudentBulkSection() {
                   ))}
                 </select>
                 <ChevronDown
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
+ className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                   size={14}
                 />
               </div>
@@ -408,7 +408,7 @@ export default function StudentBulkSection() {
                   ))}
                 </select>
                 <ChevronDown
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
+ className="absolute right-4 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                   size={14}
                 />
               </div>
@@ -417,7 +417,7 @@ export default function StudentBulkSection() {
 
           {/* New Attribute Schema Checkbox Area */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between px-1">
+ <div className="flex items-center justify-between px-1">
               <label className={adminLabelClass}>
                 Attribute Schema Selector
               </label>
@@ -426,44 +426,44 @@ export default function StudentBulkSection() {
                   onClick={() =>
                     setSelectedFields(Object.values(FIELD_GROUPS).flat())
                   }
-                  className="text-[11px] font-semibold text-navy-700 hover:text-navy-900 transition-colors"
+ className="text-[11px] font-semibold text-navy-700 hover:text-navy-900 transition-colors"
                 >
                   Select All
                 </button>
                 <button
                   onClick={() => setSelectedFields(["username", "name"])}
-                  className="text-[11px] font-semibold text-navy-400 hover:text-navy-600 transition-colors"
+ className="text-[11px] font-semibold text-navy-400 hover:text-navy-600 transition-colors"
                 >
                   Reset
                 </button>
               </div>
             </div>
 
-            <div className={cn(adminCardClass, "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-navy-50/40 p-6")}>
+ <div className={cn(adminCardClass, "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-navy-50/40 p-6")}>
               {Object.entries(FIELD_GROUPS).map(([group, fields]) => (
                 <div key={group} className="space-y-3">
-                  <h4 className="text-[10px] font-semibold text-navy-400 tracking-[0.14em] px-2 border-l-2 border-navy-300">
+ <h4 className="text-[10px] font-semibold text-navy-400 px-2 border-l-2 border-navy-300">
                     {group}
                   </h4>
                   <div className="flex flex-col gap-1.5">
                     {fields.map((field) => (
                       <label
                         key={field}
-                        className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all border group ${
-                          selectedFields.includes(field)
-                            ? "bg-white border-navy-300 shadow-[0_1px_2px_rgba(10,10,10,0.04)]"
-                            : "bg-transparent border-transparent hover:bg-white/60"
-                        }`}
+ className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all border group ${
+ selectedFields.includes(field)
+ ? "bg-white border-navy-300 shadow-[0_1px_2px_rgba(10,10,10,0.04)]"
+ : "bg-transparent border-transparent hover:bg-white/60"
+ }`}
                       >
                         <div
-                          className={`w-4 h-4 rounded-md border flex items-center justify-center transition-all ${
-                            selectedFields.includes(field)
-                              ? "bg-navy-900 border-navy-900"
-                              : "border-navy-300 bg-white group-hover:border-navy-400"
-                          }`}
+ className={`w-4 h-4 rounded-md border flex items-center justify-center transition-all ${
+ selectedFields.includes(field)
+ ? "bg-navy-900 border-navy-900"
+ : "border-navy-300 bg-white group-hover:border-navy-400"
+ }`}
                         >
                           {selectedFields.includes(field) && (
-                            <div className="w-1.5 h-1.5 bg-white rounded-full" />
+ <div className="w-1.5 h-1.5 bg-white rounded-full" />
                           )}
                         </div>
                         <input
@@ -481,11 +481,11 @@ export default function StudentBulkSection() {
                           }}
                         />
                         <span
-                          className={`text-[12px] font-medium capitalize tracking-tight ${
-                            selectedFields.includes(field)
-                              ? "text-navy-900"
-                              : "text-navy-500"
-                          }`}
+ className={`text-[12px] font-medium capitalize tracking-tight ${
+ selectedFields.includes(field)
+ ? "text-navy-900"
+ : "text-navy-500"
+ }`}
                         >
                           {field.replace(/([A-Z])/g, " $1").trim()}
                         </span>
@@ -510,7 +510,7 @@ export default function StudentBulkSection() {
               )}
               Download the data
             </button>
-            <p className="text-center text-navy-300 text-[10px] font-medium tracking-[0.24em]">
+ <p className="text-center text-navy-300 text-[10px] font-medium ">
               Encrypted data streams active • Protocol 04-X
             </p>
           </div>

@@ -30,18 +30,18 @@ function ContactCard({ name, mobile }: Contact) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
-      className="group flex items-center justify-between p-6 bg-white border border-navy-100 rounded-[2px] hover:border-navy-900 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)]"
+ className="group flex items-center justify-between p-6 bg-white border border-navy-100 rounded-lg hover:border-navy-900 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)]"
     >
       <div className="flex flex-col items-start gap-1.5">
-        <span className="text-navy-900 font-bold text-xl tracking-tight">{name}</span>
-        <div className="flex items-center gap-2.5 text-navy-400 font-mono text-sm bg-navy-50 px-3 py-1 rounded-full border border-navy-100">
-          <Phone className="w-3.5 h-3.5 text-navy-300" />
+ <span className="text-navy-900 font-medium text-xl tracking-tight">{name}</span>
+ <div className="flex items-center gap-2.5 text-navy-400 font-mono text-sm bg-navy-50 px-3 py-1 rounded-full border border-navy-100">
+ <Phone className="w-3.5 h-3.5 text-navy-300" />
           <span>{mobile}</span>
         </div>
       </div>
       <button
         onClick={handleCopy}
-        className="relative p-4 rounded-[2px] bg-navy-50 text-navy-400 group-hover:bg-navy-900 group-hover:text-white transition-all duration-300 active:scale-90"
+ className="relative p-4 rounded-lg bg-navy-50 text-navy-400 group-hover:bg-navy-900 group-hover:text-white transition-all duration-300"
         title="Copy number"
       >
         <AnimatePresence mode="wait">
@@ -53,7 +53,7 @@ function ContactCard({ name, mobile }: Contact) {
               exit={{ scale: 0.5, opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              <Check className="w-5 h-5 text-emerald-400 group-hover:text-emerald-400" />
+ <Check className="w-5 h-5 text-emerald-400 group-hover:text-emerald-400" />
             </motion.div>
           ) : (
             <motion.div
@@ -74,22 +74,22 @@ function ContactCard({ name, mobile }: Contact) {
 
 export default function ContactUs() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center py-24 px-6">
+ <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center py-24 px-6">
       <div className="max-w-xl w-full">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-20"
+ className="text-center mb-20"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-navy-100 shadow-sm rounded-full mb-8">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            <span className="text-navy-600 text-[10px] font-bold tracking-[0.14em]">Contact Channels</span>
+ <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-navy-100 shadow-sm rounded-full mb-8">
+ <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+ <span className="text-navy-600 text-[10px] font-medium">Contact Channels</span>
           </div>
-          <h1 className="text-7xl font-semibold text-navy-900 mb-6 tracking-tighter leading-none">
-            Get in <span className="text-navy-300">Touch</span>
+ <h1 className="text-7xl font-semibold text-navy-900 mb-6 tracking-tighter leading-none">
+ Get in <span className="text-navy-300">Touch</span>
           </h1>
-          <p className="text-navy-400 text-xl font-medium max-w-md mx-auto leading-relaxed">
+ <p className="text-navy-400 text-xl font-medium max-w-md mx-auto leading-relaxed">
             Reach out to our coordinators for immediate assistance.
           </p>
         </motion.div>
@@ -115,14 +115,14 @@ export default function ContactUs() {
           transition={{ delay: 0.6 }}
           className="flex flex-col items-center gap-10"
         >
-          <div className="h-px w-20 bg-gradient-to-r from-transparent via-navy-200 to-transparent" />
+ <div className="h-px w-20 bg-gradient-to-r from-transparent via-navy-200 to-transparent" />
           <Link to="/">
             <Button
               variant="outline"
-              className="h-16 px-12 rounded-full border-navy-200 bg-white text-navy-500 hover:text-navy-900 hover:border-navy-900 transition-all duration-500 group"
+ className="h-16 px-12 rounded-full border-navy-200 bg-white text-navy-500 hover:text-navy-900 hover:border-navy-900 transition-all duration-500 group"
             >
               <ArrowLeft className="w-5 h-5 mr-3 group-hover:-translate-x-1 transition-transform" />
-              <span className="font-bold tracking-[0.14em] text-xs">Return to Home</span>
+ <span className="font-medium text-xs">Return to Home</span>
             </Button>
           </Link>
         </motion.div>

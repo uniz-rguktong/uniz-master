@@ -112,13 +112,13 @@ export default function PlacementAdmin() {
       title="Placements"
       description="Companies, drives with eligibility, applicant status and offers."
     >
-      {error && <p className="text-sm text-red-600">{error}</p>}
+ {error && <p className="text-sm text-red-600">{error}</p>}
       {stats && (
         <div className={cardCls}>
           {stats.placedStudents} students placed . {stats.offers} offers . avg{" "}
           {stats.avgCtcLpa} LPA . max {stats.maxCtcLpa} LPA
           {Object.keys(stats.byCompany || {}).length > 0 && (
-            <p className="text-slate-600">
+ <p className="text-slate-600">
               {Object.entries(stats.byCompany)
                 .map(([k, v]) => `${k}: ${v}`)
                 .join(" . ")}
@@ -231,7 +231,7 @@ export default function PlacementAdmin() {
             <span className="flex gap-2">
               <button
                 type="button"
-                className="rounded-md border px-2 py-1"
+ className="rounded-md border px-2 py-1"
                 onClick={() => openApps(dr.id)}
               >
                 Applicants
@@ -239,7 +239,7 @@ export default function PlacementAdmin() {
               {dr.status === "open" && (
                 <button
                   type="button"
-                  className="rounded-md border px-2 py-1"
+ className="rounded-md border px-2 py-1"
                   onClick={() =>
                     run(
                       () => f(`/drives/${dr.id}/close`, post()),
@@ -260,7 +260,7 @@ export default function PlacementAdmin() {
               <span>
                 {a.username} .{" "}
                 <a
-                  className="text-blue-700 underline"
+ className="text-blue-700 underline"
                   href={a.resumeUrl}
                   target="_blank"
                   rel="noreferrer"

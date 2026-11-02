@@ -66,7 +66,7 @@ function FacultyCard({ faculty, onOpen }: { faculty: FacultyMember; onOpen: () =
               className="w-full h-full object-contain" style={{ maxHeight: "150px" }}
               fallback={
                 <div className="w-full h-full flex items-center justify-center">
-            <div className="w-16 h-16 rounded-full bg-navy text-white ring-4 ring-white flex items-center justify-center text-2xl font-bold">
+            <div className="w-16 h-16 rounded-full bg-navy text-white ring-4 ring-white flex items-center justify-center text-2xl font-medium">
               {initials(faculty.name)}
             </div>
           </div>
@@ -80,7 +80,7 @@ function FacultyCard({ faculty, onOpen }: { faculty: FacultyMember; onOpen: () =
       <div className="flex-1 px-5 py-4 flex flex-col justify-between min-w-0 min-h-[130px]">
         <div>
           {/* Name */}
-          <h3 className="font-bold text-ink text-base leading-snug mb-0.5 group-hover:text-navy transition-colors">
+          <h3 className="font-medium text-ink text-base leading-snug mb-0.5 group-hover:text-navy transition-colors">
             {faculty.name}
           </h3>
 
@@ -156,8 +156,8 @@ export function DepartmentPage() {
     return (
       <div className="min-h-[60vh] w-full bg-surface cursor-wait" aria-busy="true">
         <div className="bg-navy-950 h-56 sm:h-64 flex items-end">
-          <p className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-16 text-white/70 font-semibold tracking-widest text-sm animate-pulse motion-reduce:animate-none">
-            Loading {deptName}...
+          <p className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-16 text-sm font-medium text-white/70">
+            Loading {deptName}
           </p>
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">

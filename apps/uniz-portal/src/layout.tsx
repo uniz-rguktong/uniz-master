@@ -4,6 +4,7 @@ import React, { Suspense } from "react";
 import { useAdminDesktopViewport } from "./hooks/useAdminDesktopViewport";
 import { useLocation } from "react-router-dom";
 import { usePortalTheme } from "./hooks/usePortalTheme";
+import { CampusBoot } from "./components/CampusBoot";
 
 const Navbar = React.lazy(() => import("./components/Navbar"));
 
@@ -23,13 +24,14 @@ export function Layout({ children }: LayoutProps) {
 
   const shouldHideNavbar =
     location.pathname.startsWith("/student") ||
+    location.pathname.startsWith("/faculty") ||
     location.pathname.startsWith("/admin") ||
     ["/studyspace", "/campushub"].includes(location.pathname);
 
   if (shouldHideNavbar) {
     return (
       <div
-        className={`min-h-screen bg-white overflow-x-hidden${location.pathname.includes("/admin") ? " min-w-[1280px]" : ""}`}
+ className={`campus-canvas min-h-screen bg-surface overflow-x-hidden${location.pathname.includes("/admin") ? " min-w-[1280px]" : ""}`}
       >
         {children}
       </div>
@@ -41,7 +43,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div
-      className={`min-h-screen flex flex-col ${isHomePage ? "bg-white" : "bg-white portal-page-shell"} text-navy-900 selection:bg-[#D4E8F5] selection:text-[#0B2A47]`}
+ className={`campus-canvas min-h-screen flex flex-col ${isHomePage ? "bg-white" : "bg-white portal-page-shell"} text-ink`}
     >
       <Suspense fallback={<LoadingAnim />}>
         <Navbar />
@@ -55,13 +57,4 @@ export function Layout({ children }: LayoutProps) {
   );
 }
 
-const LoadingAnim = () => {
-  return (
-    <div className="flex items-center justify-center h-screen bg-white">
-      <div className="relative flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-[#D4E8F5] rounded-full"></div>
-        <div className="absolute w-12 h-12 border-4 border-[#0B2A47] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    </div>
-  );
-};
+const LoadingAnim = () => <CampusBoot />;

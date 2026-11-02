@@ -12,6 +12,7 @@ import { ExploreCampus } from "../components/sections/ExploreCampus";
 import { Stats } from "../components/sections/Stats";
 import { DirectorMessage } from "../components/sections/DirectorMessage";
 import { Gallery } from "../components/sections/Gallery";
+import { CampusBoot } from "../components/CampusBoot";
 
 export function HomePage() {
   const [homeData, setHomeData] = useState<HomeData | null>(null);
@@ -50,12 +51,7 @@ export function HomePage() {
 
   if (loading || !homeData || !notificationsData) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-white">
-        <div className="flex flex-col items-center gap-5">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-navy border-t-transparent" />
-          <p className="text-sm text-ink-muted">Loading campus</p>
-        </div>
-      </div>
+      <CampusBoot />
     );
   }
 

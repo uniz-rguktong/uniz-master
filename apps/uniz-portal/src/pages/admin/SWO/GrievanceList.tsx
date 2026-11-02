@@ -170,14 +170,14 @@ export default function GrievanceList() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-navy-900 font-bold text-[10px] tracking-[0.14em] mb-3 bg-navy-50 w-fit px-3 py-1 rounded-full border border-navy-100/50">
+ <div className="flex items-center gap-2 text-navy-900 font-medium text-[10px] mb-3 bg-navy-50 w-fit px-3 py-1 rounded-full border border-navy-100/50">
             <ShieldCheck size={12} />
             Resolution Control
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-navy-900 leading-none">
+ <h1 className="text-3xl font-medium tracking-tight text-navy-900 leading-none">
             Student Grievances
           </h1>
-          <p className="text-navy-500 font-medium text-[15px] mt-4">
+ <p className="text-navy-500 font-medium text-[15px] mt-4">
             Official dashboard for monitoring and addressing institutional
             feedback.
           </p>
@@ -186,7 +186,7 @@ export default function GrievanceList() {
         <div className="flex items-center gap-3">
           <button
             onClick={fetchGrievances}
-            className="px-5 py-2.5 bg-white border border-navy-200 text-navy-600 rounded-xl font-bold text-xs tracking-[0.14em] hover:bg-navy-50 transition-all shadow-sm flex items-center gap-2"
+ className="px-5 py-2.5 bg-white border border-navy-200 text-navy-600 rounded-xl font-medium text-xs hover:bg-navy-50 transition-all shadow-sm flex items-center gap-2"
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
             Sync Records
@@ -195,7 +195,7 @@ export default function GrievanceList() {
           <button
             onClick={handleDeleteAll}
             disabled={grievances.length === 0}
-            className="px-5 py-2.5 bg-red-50 border border-red-100 text-red-600 rounded-xl font-bold text-xs tracking-[0.14em] hover:bg-red-200 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+ className="px-5 py-2.5 bg-red-50 border border-red-100 text-red-600 rounded-xl font-medium text-xs hover:bg-red-200 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Trash2 size={14} />
             Clear all
@@ -205,54 +205,54 @@ export default function GrievanceList() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-[2px] border border-navy-100 shadow-sm flex flex-col justify-between group hover:border-navy-100 transition-all duration-300">
+ <div className="bg-white p-6 rounded-lg border border-navy-100 shadow-sm flex flex-col justify-between group hover:border-navy-100 transition-all duration-300">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-navy-50 text-navy-900 rounded-[2px] group-hover:scale-110 transition-transform">
+ <div className="p-3 bg-navy-50 text-navy-900 rounded-lg group-hover:scale-110 transition-transform">
               <MessageSquare size={20} />
             </div>
-            <span className="text-navy-900 font-semibold text-2xl">
+ <span className="text-navy-900 font-semibold text-2xl">
               {grievances.length}
             </span>
           </div>
-          <p className="text-navy-400 font-semibold text-[10px] tracking-[0.14em]">
+ <p className="text-navy-400 font-semibold text-[10px] ">
             Total Reports
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-[2px] border border-navy-100 shadow-sm flex flex-col justify-between group hover:border-amber-200 transition-all duration-300">
+ <div className="bg-white p-6 rounded-lg border border-navy-100 shadow-sm flex flex-col justify-between group hover:border-amber-200 transition-all duration-300">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-amber-50 text-amber-600 rounded-[2px] group-hover:scale-110 transition-transform">
+ <div className="p-3 bg-amber-50 text-amber-600 rounded-lg group-hover:scale-110 transition-transform">
               <Clock size={20} />
             </div>
-            <span className="text-amber-600 font-semibold text-2xl">
+ <span className="text-amber-600 font-semibold text-2xl">
               {grievances.filter((g) => g.status === "Pending").length}
             </span>
           </div>
-          <p className="text-navy-400 font-semibold text-[10px] tracking-[0.14em]">
+ <p className="text-navy-400 font-semibold text-[10px] ">
             Active Tickets
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-[2px] border border-navy-100 shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-all duration-300">
+ <div className="bg-white p-6 rounded-lg border border-navy-100 shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-all duration-300">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-emerald-50 text-emerald-600 rounded-[2px] group-hover:scale-110 transition-transform">
+ <div className="p-3 bg-emerald-50 text-emerald-600 rounded-lg group-hover:scale-110 transition-transform">
               <CheckCircle2 size={20} />
             </div>
-            <span className="text-emerald-600 font-semibold text-2xl">
+ <span className="text-emerald-600 font-semibold text-2xl">
               {grievances.filter((g) => g.status === "Resolved").length}
             </span>
           </div>
-          <p className="text-navy-400 font-semibold text-[10px] tracking-[0.14em]">
+ <p className="text-navy-400 font-semibold text-[10px] ">
             Resolved Actions
           </p>
         </div>
       </div>
 
       {/* Filters & Search */}
-      <div className="bg-white p-4 rounded-[2px] border border-navy-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+ <div className="bg-white p-4 rounded-lg border border-navy-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
         <div className="relative flex-1 w-full">
           <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-navy-400"
+ className="absolute left-4 top-1/2 -translate-y-1/2 text-navy-400"
             size={18}
           />
           <input
@@ -260,22 +260,22 @@ export default function GrievanceList() {
             placeholder="Search by name, ID, email, or description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-navy-50 border border-transparent rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:bg-white focus:border-navy-100 focus:ring-4 focus:ring-navy-900 transition-all outline-none"
+ className="w-full bg-navy-50 border border-transparent rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:bg-white focus:border-navy-100 focus:ring-4 focus:ring-navy-900 transition-all outline-none"
           />
         </div>
 
         <div className="flex items-center gap-2 w-full md:w-auto overflow-hidden">
-          <Filter className="text-navy-400 shrink-0" size={18} />
-          <div className="flex gap-1 overflow-x-auto no-scrollbar py-1">
+ <Filter className="text-navy-400 shrink-0" size={18} />
+ <div className="flex gap-1 overflow-x-auto no-scrollbar py-1">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setFilterCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-[11px] font-bold tracking-wider whitespace-nowrap transition-all ${
-                  filterCategory === cat
-                    ? "bg-navy-900 text-white shadow-md"
-                    : "bg-navy-50 text-navy-500 hover:bg-navy-100"
-                }`}
+ className={`px-4 py-2 rounded-xl text-[11px] font-medium tracking-wider whitespace-nowrap transition-all ${
+ filterCategory === cat
+ ? "bg-navy-900 text-white shadow-md"
+ : "bg-navy-50 text-navy-500 hover:bg-navy-100"
+ }`}
               >
                 {cat}
               </button>
@@ -285,32 +285,32 @@ export default function GrievanceList() {
       </div>
 
       {/* Content Table/List */}
-      <div className="bg-white rounded-[2px] border border-navy-100 shadow-xl shadow-navy-200/50 overflow-hidden min-h-[400px]">
+ <div className="bg-white rounded-lg border border-navy-100 shadow-xl shadow-navy-200/50 overflow-hidden min-h-[400px]">
         {loading ? (
-          <div className="flex flex-col items-center justify-center h-[400px] text-navy-300 gap-4">
+ <div className="flex flex-col items-center justify-center h-[400px] text-navy-300 gap-4">
             <RefreshCw className="animate-spin" size={32} />
-            <p className="font-bold tracking-[0.3em] text-[10px]">
+ <p className="font-medium text-[10px]">
               Accessing Database...
             </p>
           </div>
         ) : filteredGrievances.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+ <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-navy-50/50 border-b border-navy-100">
-                  <th className="px-8 py-5 text-[10px] font-semibold text-navy-400 tracking-[0.14em]">
+ <tr className="bg-navy-50/50 border-b border-navy-100">
+ <th className="px-8 py-5 text-[10px] font-semibold text-navy-400 ">
                     Student Context
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-semibold text-navy-400 tracking-[0.14em]">
+ <th className="px-6 py-5 text-[10px] font-semibold text-navy-400 ">
                     Classification
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-semibold text-navy-400 tracking-[0.14em]">
+ <th className="px-6 py-5 text-[10px] font-semibold text-navy-400 ">
                     Statement
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-semibold text-navy-400 tracking-[0.14em]">
+ <th className="px-6 py-5 text-[10px] font-semibold text-navy-400 ">
                     Temporal Log
                   </th>
-                  <th className="px-8 py-5 text-[10px] font-semibold text-navy-400 tracking-[0.14em] text-right">
+ <th className="px-8 py-5 text-[10px] font-semibold text-navy-400 text-right">
                     Action
                   </th>
                 </tr>
@@ -319,12 +319,12 @@ export default function GrievanceList() {
                 {filteredGrievances.map((g) => (
                   <tr
                     key={g.id}
-                    className="group hover:bg-navy-50/30 transition-colors"
+ className="group hover:bg-navy-50/30 transition-colors"
                   >
-                    <td className="px-8 py-6">
+ <td className="px-8 py-6">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm ${g.isAnonymous ? "bg-navy-100 text-navy-400" : "bg-navy-900 text-white"}`}
+ className={`w-10 h-10 rounded-xl flex items-center justify-center font-medium text-xs ring-2 ring-white shadow-sm ${g.isAnonymous ? "bg-navy-100 text-navy-400" : "bg-navy-900 text-white"}`}
                         >
                           {g.isAnonymous
                             ? "??"
@@ -332,13 +332,13 @@ export default function GrievanceList() {
                         </div>
                         <div>
                           <p
-                            className={`text-[14px] font-bold tracking-tight leading-none ${g.isAnonymous ? "text-navy-400" : "text-navy-900"}`}
+ className={`text-[14px] font-medium tracking-tight leading-none ${g.isAnonymous ? "text-navy-400" : "text-navy-900"}`}
                           >
                             {g.isAnonymous
                               ? "Anonymous"
                               : studentDisplayName(g)}
                           </p>
-                          <p className="text-[10px] font-bold text-navy-400 tracking-[0.14em] mt-1.5 flex items-center gap-1">
+ <p className="text-[10px] font-medium text-navy-400 mt-1.5 flex items-center gap-1">
                             {g.isAnonymous ? (
                               <>
                                 <ShieldCheck size={10} />
@@ -352,40 +352,40 @@ export default function GrievanceList() {
                             )}
                           </p>
                           {!g.isAnonymous && g.studentEmail && (
-                            <p className="text-[10px] font-medium text-navy-500 mt-1">
+ <p className="text-[10px] font-medium text-navy-500 mt-1">
                               {g.studentEmail}
                             </p>
                           )}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-6">
-                      <span className="px-3 py-1 bg-navy-100 text-navy-600 rounded-lg font-bold text-[10px] tracking-[0.14em] whitespace-nowrap">
+ <td className="px-6 py-6">
+ <span className="px-3 py-1 bg-navy-100 text-navy-600 rounded-lg font-medium text-[10px] whitespace-nowrap">
                         {g.category}
                       </span>
                       <span
-                        className={`ml-2 px-2 py-1 rounded-lg font-bold text-[9px] tracking-[0.12em] ${
-                          g.status === "Resolved"
-                            ? "bg-emerald-50 text-emerald-700"
-                            : g.status === "In Progress"
-                              ? "bg-navy-100 text-navy-700"
-                              : "bg-amber-50 text-amber-700"
-                        }`}
+ className={`ml-2 px-2 py-1 rounded-lg font-medium text-[9px] ${
+ g.status === "Resolved"
+ ? "bg-emerald-50 text-emerald-700"
+ : g.status === "In Progress"
+ ? "bg-navy-100 text-navy-700"
+ : "bg-amber-50 text-amber-700"
+ }`}
                       >
                         {g.status}
                       </span>
                     </td>
-                    <td className="px-6 py-6 max-w-xs">
-                      <p className="text-[13px] text-navy-600 leading-relaxed line-clamp-2 italic">
+ <td className="px-6 py-6 max-w-xs">
+ <p className="text-[13px] text-navy-600 leading-relaxed line-clamp-2 italic">
                         "{g.description}"
                       </p>
                     </td>
-                    <td className="px-6 py-6">
+ <td className="px-6 py-6">
                       <div className="flex flex-col">
-                        <span className="text-[13px] font-bold text-navy-700 leading-none">
+ <span className="text-[13px] font-medium text-navy-700 leading-none">
                           {new Date(g.createdAt).toLocaleDateString()}
                         </span>
-                        <span className="text-[10px] font-bold text-navy-400 mt-1 tracking-tighter">
+ <span className="text-[10px] font-medium text-navy-400 mt-1 tracking-tighter">
                           {new Date(g.createdAt).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -393,14 +393,14 @@ export default function GrievanceList() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-8 py-6 text-right">
+ <td className="px-8 py-6 text-right">
                       <div className="flex items-center justify-end gap-2">
                         {g.status !== "Resolved" && (
                           <button
                             type="button"
                             onClick={() => handleResolve(g.id)}
                             disabled={resolvingId === g.id}
-                            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 text-white text-[10px] font-bold tracking-[0.12em] hover:bg-emerald-700 transition-all active:scale-95 disabled:opacity-60"
+ className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 text-white text-[10px] font-medium hover:bg-emerald-700 transition-all disabled:opacity-60"
                           >
                             <CheckCircle2 size={14} />
                             {resolvingId === g.id ? "..." : "Resolve"}
@@ -409,7 +409,7 @@ export default function GrievanceList() {
                         <button
                           type="button"
                           onClick={() => handleDelete(g.id)}
-                          className="p-2.5 rounded-xl bg-white border border-red-100 text-red-400 hover:text-red-700 hover:border-red-300 hover:bg-red-50 hover:shadow-lg transition-all active:scale-95 group/del"
+ className="p-2.5 rounded-xl bg-white border border-red-100 text-red-400 hover:text-red-700 hover:border-red-300 hover:bg-red-50 hover:shadow-lg transition-all group/del"
                         >
                           <Trash2
                             size={18}
@@ -424,14 +424,14 @@ export default function GrievanceList() {
             </table>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-[400px] text-center p-10">
-            <div className="w-20 h-20 bg-navy-50 rounded-full flex items-center justify-center mb-6 text-navy-200">
+ <div className="flex flex-col items-center justify-center h-[400px] text-center p-10">
+ <div className="w-20 h-20 bg-navy-50 rounded-full flex items-center justify-center mb-6 text-navy-200">
               <AlertCircle size={40} />
             </div>
-            <h3 className="text-lg font-bold text-navy-900 mb-2">
+ <h3 className="text-lg font-medium text-navy-900 mb-2">
               Null Set: No Grievances Found
             </h3>
-            <p className="text-navy-400 text-sm max-w-sm">
+ <p className="text-navy-400 text-sm max-w-sm">
               Your search parameters did not yield any records from the
               database. Try adjusting your filters.
             </p>

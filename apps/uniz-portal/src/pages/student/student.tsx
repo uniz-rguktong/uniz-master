@@ -99,28 +99,28 @@ function FieldTable({
 
 function ProfileSkeleton() {
   return (
-    <div className="font-sans text-navy-900 relative">
-      <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2">
+ <div className="font-sans text-navy-900 relative">
+ <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2">
         {/* Avatar + name skeleton */}
         <div className="flex flex-col items-center justify-center mb-8 animate-pulse">
           <div className="mt-4">
             {/* Avatar ring */}
             <div
-              className="relative p-[4px] rounded-full mb-4 mx-auto w-fit"
+ className="relative p-[4px] rounded-full mb-4 mx-auto w-fit"
               style={{ background: "#e2e8f0" }}
             >
-              <div className="bg-navy-100 p-[3px] rounded-full">
-                <div className="w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-navy-200 rounded-full" />
+ <div className="bg-navy-100 p-[3px] rounded-full">
+ <div className="w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-navy-200 rounded-full" />
               </div>
             </div>
             {/* Name */}
             <div className="flex flex-col items-center gap-3">
-              <div className="h-7 w-44 bg-navy-200 rounded-xl" />
-              <div className="h-4 w-56 bg-navy-100 rounded-lg" />
+ <div className="h-7 w-44 bg-navy-200 rounded-xl" />
+ <div className="h-4 w-56 bg-navy-100 rounded-lg" />
               <div className="flex items-center gap-2 mt-1">
-                <div className="h-5 w-20 bg-navy-100 rounded" />
-                <div className="w-1 h-1 rounded-full bg-navy-200" />
-                <div className="h-5 w-24 bg-navy-100 rounded" />
+ <div className="h-5 w-20 bg-navy-100 rounded" />
+ <div className="w-1 h-1 rounded-full bg-navy-200" />
+ <div className="h-5 w-24 bg-navy-100 rounded" />
               </div>
             </div>
           </div>
@@ -132,7 +132,7 @@ function ProfileSkeleton() {
             {[72, 80, 64, 56].map((w, i) => (
               <div key={i} className="pb-3">
                 <div
-                  className={`h-3 bg-navy-100 rounded-full`}
+ className={`h-3 bg-navy-100 rounded-full`}
                   style={{ width: w }}
                 />
               </div>
@@ -147,13 +147,13 @@ function ProfileSkeleton() {
             .map((_, i) => (
               <div
                 key={i}
-                className="bg-white rounded-[2px] border border-navy-100 p-5 shadow-sm"
+ className="bg-white rounded-lg border border-navy-100 p-5 shadow-sm"
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-4 h-4 bg-navy-100 rounded-full" />
-                  <div className="h-2.5 w-20 bg-navy-100 rounded-full" />
+ <div className="w-4 h-4 bg-navy-100 rounded-full" />
+ <div className="h-2.5 w-20 bg-navy-100 rounded-full" />
                 </div>
-                <div className="h-5 w-28 bg-navy-200 rounded-lg" />
+ <div className="h-5 w-28 bg-navy-200 rounded-lg" />
               </div>
             ))}
         </div>
@@ -497,35 +497,35 @@ export default function StudentProfilePage() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="portal-banner-gradient rounded-portal-lg p-6 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-[#021227]"
+ className="portal-banner-gradient rounded-portal-lg p-6 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-[#021227]"
       >
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-white/10 rounded-portal-sm text-white/80">
+ <div className="p-3 bg-white/10 rounded-portal-sm text-white/80">
             <Calendar size={24} />
           </div>
           <div>
-            <p className="text-[10px] font-bold tracking-[0.14em] text-white/60 font-sans">
+ <p className="text-[10px] font-medium text-white/60 font-sans">
               Upcoming Examination
             </p>
-            <h3 className="text-lg font-bold leading-tight pt-1 font-sans">
+ <h3 className="text-lg font-medium leading-tight pt-1 font-sans">
               {upcoming.subjectName}
             </h3>
-            <p className="text-xs text-white/70 font-medium font-form">
+ <p className="text-xs text-white/70 font-medium font-form">
               {upcoming.examName} •{" "}
               {new Date(upcoming.date).toLocaleDateString("en-GB")}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="flex-1 md:flex-none px-5 py-3 bg-white/10 rounded-portal-sm text-center border border-white/10">
-            <p className="text-[9px] font-bold tracking-[0.14em] text-white/60 mb-0.5">
+ <div className="flex-1 md:flex-none px-5 py-3 bg-white/10 rounded-portal-sm text-center border border-white/10">
+ <p className="text-[9px] font-medium text-white/60 mb-0.5">
               Hall
             </p>
-            <p className="text-xl font-semibold">{upcoming.room}</p>
+ <p className="text-xl font-semibold">{upcoming.room}</p>
           </div>
           <button
             onClick={() => setActiveTab("seating")}
-            className="flex-1 md:flex-none px-6 py-4 bg-white/15 hover:bg-white/25 rounded-portal-sm font-bold text-xs tracking-[0.14em] transition-colors font-button"
+ className="flex-1 md:flex-none px-6 py-4 bg-white/15 hover:bg-white/25 rounded-portal-sm font-medium text-xs transition-colors font-button"
           >
             View Full Plan
           </button>
@@ -540,8 +540,8 @@ export default function StudentProfilePage() {
 
   if (hasToken && !user?._id && profileError) {
     return (
-      <div className="font-sans text-navy-900 relative">
-        <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-12 pb-20">
+ <div className="font-sans text-navy-900 relative">
+ <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-12 pb-20">
           <InlineError
             title="Profile unavailable"
             message={profileError}
@@ -633,17 +633,17 @@ export default function StudentProfilePage() {
   ];
 
   return (
-    <div className="font-sans text-navy-900 relative overflow-x-hidden">
+ <div className="font-sans text-navy-900 relative overflow-x-hidden">
       <div className="mx-auto max-w-6xl relative z-10 pt-1 overflow-x-hidden">
         <DashboardOverview user={user} />
 
-        <div className="mb-4 flex items-end justify-between border-b border-[#EEF1F5] pb-3">
-          <h2 className="text-[16px] font-semibold tracking-[-0.01em] text-[#0A2540]">Your profile</h2>
+        <div className="mb-4 flex items-end justify-between border-b border-[#E2E8F0] pb-3">
+ <h2 className="text-[16px] font-semibold tracking-[-0.01em] text-[#0A2540]">Your profile</h2>
         </div>
         {/* Profile Header */}
-        <div className="flex flex-col items-center justify-center relative mb-8 overflow-hidden rounded-2xl border border-[#E6EAF0] bg-white px-4 pb-6 shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)] md:pb-8">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[radial-gradient(120%_140%_at_0%_0%,#163A5C_0%,#0A2540_45%,#021227_100%)] md:h-24" aria-hidden="true">
-            <div className="absolute inset-x-0 bottom-0 h-px bg-white/10" />
+ <div className="flex flex-col items-center justify-center relative mb-8 overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white px-4 pb-6 shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)] md:pb-8">
+ <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[radial-gradient(120%_140%_at_0%_0%,#163A5C_0%,#0A2540_45%,#021227_100%)] md:h-24" aria-hidden="true">
+ <div className="absolute inset-x-0 bottom-0 h-px bg-white/10" />
           </div>
           {/* Actions - Top Right Absolute Position (Desktop Only) */}
           <div className="hidden md:flex absolute top-4 right-4 gap-2 shrink-0 z-20">
@@ -677,10 +677,10 @@ export default function StudentProfilePage() {
             {/* Avatar with upload state */}
             <div className="relative">
               <div
-                className="relative p-[4px] md:p-[5px] rounded-full mb-4 bg-white shadow-[0_8px_24px_-12px_rgba(2,18,39,0.5)]"
+ className="relative p-[4px] md:p-[5px] rounded-full mb-4 bg-white shadow-[0_8px_24px_-12px_rgba(2,18,39,0.5)]"
               >
-                <div className="relative bg-navy-50 p-[3px] rounded-full">
-                  <div className="relative w-[88px] h-[88px] md:w-[104px] md:h-[104px] bg-[#0A2540] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
+ <div className="relative bg-navy-50 p-[3px] rounded-full">
+ <div className="relative w-[88px] h-[88px] md:w-[104px] md:h-[104px] bg-[#0A2540] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
                     {/* Profile image or initial */}
                     {user?.profile_url ? (
                       <img
@@ -689,11 +689,11 @@ export default function StudentProfilePage() {
                         className="w-full h-full object-cover"
                       />
                     ) : user?.name ? (
-                      <span className="text-4xl md:text-5xl font-semibold tracking-tight leading-none">
+ <span className="text-4xl md:text-5xl font-semibold tracking-tight leading-none">
                         {user?.name?.[0]?.toUpperCase() || "S"}
                       </span>
                     ) : (
-                      <span className="text-4xl md:text-5xl font-semibold tracking-tight leading-none">
+ <span className="text-4xl md:text-5xl font-semibold tracking-tight leading-none">
                         S
                       </span>
                     )}
@@ -706,10 +706,10 @@ export default function StudentProfilePage() {
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.2 }}
-                          className="absolute inset-0 rounded-full flex items-center justify-center bg-[#021227]/55"
+ className="absolute inset-0 rounded-full flex items-center justify-center bg-[#021227]/55"
                         >
                           <Loader2
-                            className="w-9 h-9 text-white animate-spin"
+ className="w-9 h-9 text-white animate-spin"
                             strokeWidth={2}
                           />
                         </motion.div>
@@ -723,7 +723,7 @@ export default function StudentProfilePage() {
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploadingImage}
                   aria-label="Update profile photo"
-                  className="absolute -bottom-1 -right-1 w-11 h-11 bg-white border border-[#E6EAF0] rounded-full flex items-center justify-center text-[#0A2540] hover:bg-[#F7F8FA] transition-[background-color,transform] duration-150 z-20 cursor-pointer shadow-[0_4px_12px_-4px_rgba(10,37,64,0.3)] active:scale-95 motion-reduce:transition-none disabled:opacity-50 disabled:cursor-not-allowed"
+ className="absolute -bottom-1 -right-1 w-11 h-11 bg-white border border-[#E2E8F0] rounded-full flex items-center justify-center text-[#0A2540] hover:bg-[#F8FAFC] transition-[background-color,transform] duration-150 z-20 cursor-pointer shadow-[0_4px_12px_-4px_rgba(10,37,64,0.3)] motion-reduce:transition-none disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Update Profile Photo"
                 >
                   <Camera
@@ -742,8 +742,8 @@ export default function StudentProfilePage() {
               </div>
             </div>
 
-            <div className="flex flex-col items-center gap-2.5 w-full max-w-xl px-3 mb-1.5 mt-1">
-              <h2 className="text-xl sm:text-2xl font-semibold tracking-[-0.025em] text-[#0A2540] leading-snug text-center w-full text-balance [overflow-wrap:anywhere]">
+ <div className="flex flex-col items-center gap-2.5 w-full max-w-xl px-3 mb-1.5 mt-1">
+ <h2 className="text-xl sm:text-2xl font-semibold tracking-[-0.025em] text-[#0A2540] leading-snug text-center w-full text-balance [overflow-wrap:anywhere]">
                 {user?.name}
               </h2>
               {!isEditing && (
@@ -758,10 +758,10 @@ export default function StudentProfilePage() {
                 </button>
               )}
             </div>
-            <p className="text-[#64748B] font-normal text-[14px] text-center relative mb-3.5 flex items-center justify-center gap-1">
+ <p className="text-[#64748B] font-normal text-[14px] text-center relative mb-3.5 flex items-center justify-center gap-1">
               {user?.email || user?.username + "@rguktong.ac.in"}
               <BadgeCheck
-                className="w-[15px] h-[15px] text-[#0A2540]"
+ className="w-[15px] h-[15px] text-[#0A2540]"
                 fill="#0A2540"
                 fillOpacity={0.15}
                 strokeWidth={2.5}
@@ -769,18 +769,18 @@ export default function StudentProfilePage() {
             </p>
 
             {/* Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] md:text-xs font-medium text-navy-500 mt-1">
-              <span className="text-[#0A2540] font-medium tabular-nums text-[12px] px-2.5 py-1 bg-[#0A2540]/[0.05] rounded-full">
+ <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] md:text-xs font-medium text-navy-500 mt-1">
+ <span className="text-[#0A2540] font-medium tabular-nums text-[12px] px-2.5 py-1 bg-[#0A2540]/[0.05] rounded-full">
                 {user?.username}
               </span>
-              <span className="w-1 h-1 rounded-full bg-navy-300"></span>
-              <span className="text-[12px] font-medium text-[#475569]">
+ <span className="w-1 h-1 rounded-full bg-navy-300"></span>
+ <span className="text-[12px] font-medium text-[#475569]">
                 {user?.branch} • {user?.year}
               </span>
               {user?.has_pending_requests && (
                 <>
-                  <span className="w-1 h-1 rounded-full bg-navy-300"></span>
-                  <span className="text-amber-600 px-2 py-1 bg-amber-50 border border-amber-100 rounded text-[10px] font-bold tracking-wider flex items-center gap-1.5 animate-pulse">
+ <span className="w-1 h-1 rounded-full bg-navy-300"></span>
+ <span className="text-amber-600 px-2 py-1 bg-amber-50 border border-amber-100 rounded text-[10px] font-medium tracking-wider flex items-center gap-1.5 animate-pulse">
                     <Clock className="w-3 h-3" /> Pending action
                   </span>
                 </>
@@ -816,7 +816,7 @@ export default function StudentProfilePage() {
                     Save Changes
                   </button>
                 </div>
-                <p className="text-[10px] font-bold text-red-500 text-center tracking-wider">
+ <p className="text-[10px] font-medium text-red-500 text-center tracking-wider">
                   Update the details below and click save changes
                 </p>
               </div>
@@ -851,7 +851,7 @@ export default function StudentProfilePage() {
                   {activeTab === tab && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#0A2540] rounded-t-full"
+ className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#0A2540] rounded-t-full"
                     />
                   )}
                 </button>
@@ -914,8 +914,8 @@ export default function StudentProfilePage() {
 
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-6 w-1.5 bg-navy-900 rounded-full" />
-                    <h3 className="text-[17px] font-semibold tracking-tight text-navy-900">
+ <div className="h-6 w-1.5 bg-navy-900 rounded-full" />
+ <h3 className="text-[17px] font-semibold tracking-tight text-navy-900">
                       Current semester subjects
                     </h3>
                   </div>
@@ -937,7 +937,7 @@ export default function StudentProfilePage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 border-b border-navy-100 pb-2">
-                    <h3 className="text-[17px] font-semibold tracking-tight text-navy-900">
+ <h3 className="text-[17px] font-semibold tracking-tight text-navy-900">
                       Father's Details
                     </h3>
                   </div>
@@ -978,7 +978,7 @@ export default function StudentProfilePage() {
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 border-b border-navy-100 pb-2">
-                    <h3 className="text-[17px] font-semibold tracking-tight text-navy-900">
+ <h3 className="text-[17px] font-semibold tracking-tight text-navy-900">
                       Mother's Details
                     </h3>
                   </div>
@@ -1026,17 +1026,17 @@ export default function StudentProfilePage() {
                   <button
                     onClick={() => setRequestType("outing")}
                     disabled={user.has_pending_requests}
-                    className="group relative overflow-hidden bg-white hover:bg-navy-900 rounded-portal-lg p-6 transition-colors duration-150 border border-navy-200 hover:border-navy-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-whisper h-[120px] md:h-auto"
+ className="group relative overflow-hidden bg-white hover:bg-navy-900 rounded-portal-lg p-6 transition-colors duration-150 border border-navy-200 hover:border-navy-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-whisper h-[120px] md:h-auto"
                   >
                     <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
-                      <div className="text-navy-900 group-hover:text-white transition-colors duration-300">
+ <div className="text-navy-900 group-hover:text-white transition-colors duration-300">
                         <Clock size={22} />
                       </div>
                       <div>
-                        <h3 className="text-[16px] font-bold text-navy-900 group-hover:text-white mb-1 transition-colors leading-none">
+ <h3 className="text-[16px] font-medium text-navy-900 group-hover:text-white mb-1 transition-colors leading-none">
                           Request Outing
                         </h3>
-                        <p className="font-medium text-[12px] text-navy-400 group-hover:text-navy-500 transition-colors">
+ <p className="font-medium text-[12px] text-navy-400 group-hover:text-navy-500 transition-colors">
                           Short duration leaves
                         </p>
                       </div>
@@ -1045,17 +1045,17 @@ export default function StudentProfilePage() {
                   <button
                     onClick={() => setRequestType("outpass")}
                     disabled={user.has_pending_requests}
-                    className="group relative overflow-hidden bg-white hover:bg-navy-900 rounded-portal-lg p-6 transition-colors duration-150 border border-navy-200 hover:border-navy-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-whisper h-[120px] md:h-auto"
+ className="group relative overflow-hidden bg-white hover:bg-navy-900 rounded-portal-lg p-6 transition-colors duration-150 border border-navy-200 hover:border-navy-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-whisper h-[120px] md:h-auto"
                   >
                     <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
-                      <div className="text-navy-900 group-hover:text-white transition-colors duration-300">
+ <div className="text-navy-900 group-hover:text-white transition-colors duration-300">
                         <Calendar size={22} />
                       </div>
                       <div>
-                        <h3 className="text-[16px] font-bold text-navy-900 group-hover:text-white mb-1 transition-colors leading-none">
+ <h3 className="text-[16px] font-medium text-navy-900 group-hover:text-white mb-1 transition-colors leading-none">
                           Request Outpass
                         </h3>
-                        <p className="font-medium text-[12px] text-navy-400 group-hover:text-navy-500 transition-colors">
+ <p className="font-medium text-[12px] text-navy-400 group-hover:text-navy-500 transition-colors">
                           Overnight/Multi-day leaves
                         </p>
                       </div>
@@ -1064,17 +1064,17 @@ export default function StudentProfilePage() {
                 </div>
 
                 <div>
-                  <div className="text-navy-900">
+ <div className="text-navy-900">
                     <HistoryIcon size={18} />
                   </div>
-                  <h3 className="text-[17px] font-semibold text-navy-900 tracking-tight">
+ <h3 className="text-[17px] font-semibold text-navy-900 tracking-tight">
                     Request History Audit
                   </h3>
                 </div>
 
                 <div className="space-y-3">
                   {isHistoryLoading ? (
-                    <div className="text-center py-10 text-navy-300 text-[10px] font-bold tracking-[0.14em] animate-pulse">
+ <div className="text-center py-10 text-navy-300 text-[10px] font-medium animate-pulse">
                       Fetching Records...
                     </div>
                   ) : history.length > 0 ? (
@@ -1094,14 +1094,14 @@ export default function StudentProfilePage() {
                       />
                     </>
                   ) : (
-                    <div className="text-center py-10 bg-navy-50/50 rounded-xl border border-navy-100">
-                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 border border-navy-100 shadow-sm">
-                        <HistoryIcon className="w-5 h-5 text-navy-200" />
+ <div className="text-center py-10 bg-navy-50/50 rounded-xl border border-navy-100">
+ <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 border border-navy-100 shadow-sm">
+ <HistoryIcon className="w-5 h-5 text-navy-200" />
                       </div>
-                      <p className="text-navy-900 font-semibold text-sm tracking-wider">
+ <p className="text-navy-900 font-semibold text-sm tracking-wider">
                         No history found
                       </p>
-                      <p className="text-navy-400 text-xs mt-1 font-medium">
+ <p className="text-navy-400 text-xs mt-1 font-medium">
                         Your past requests will appear here
                       </p>
                     </div>
@@ -1115,15 +1115,15 @@ export default function StudentProfilePage() {
         {/* Modals placed inside main content area to avoid z-index issues */}
         <AnimatePresence>
           {requestType && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0A2540]/80 p-4">
+ <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0A2540]/80 p-4">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-white rounded-xl p-6 md:p-10 max-w-lg w-full shadow-2xl overflow-hidden relative"
+ className="bg-white rounded-xl p-6 md:p-10 max-w-lg w-full shadow-2xl overflow-hidden relative"
               >
                 <div className="flex items-center gap-5 mb-8">
-                  <div className="text-cyan-900">
+ <div className="text-cyan-900">
                     {requestType === "outpass" ? (
                       <Calendar className="w-8 h-8" />
                     ) : (
@@ -1131,10 +1131,10 @@ export default function StudentProfilePage() {
                     )}
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold capitalize tracking-tight text-navy-900">
+ <h2 className="text-xl font-semibold capitalize tracking-tight text-navy-900">
                       New {requestType} Snapshot
                     </h2>
-                    <p className="text-[13px] font-medium text-navy-400">
+ <p className="text-[13px] font-medium text-navy-400">
                       Submit your leave authorization details
                     </p>
                   </div>
@@ -1142,11 +1142,11 @@ export default function StudentProfilePage() {
 
                 <form onSubmit={handleRequestSubmit} className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold tracking-[0.14em] text-navy-400 ml-1">
+ <label className="text-xs font-medium text-navy-400 ml-1">
                       Reason
                     </label>
                     <textarea
-                      className="w-full bg-[#FAFAFA] p-4 rounded-portal-sm border border-navy-200 focus:border-navy-700 focus:ring-1 focus:ring-navy-900/15 focus:outline-none min-h-[120px] font-bold text-[15px] text-navy-900 font-form placeholder:text-navy-300 placeholder:font-normal resize-none transition-colors"
+ className="w-full bg-[#FAFAFA] p-4 rounded-portal-sm border border-navy-200 focus:border-navy-700 focus:ring-1 focus:ring-navy-900/15 focus:outline-none min-h-[120px] font-medium text-[15px] text-navy-900 font-form placeholder:text-navy-300 placeholder:font-normal resize-none transition-colors"
                       placeholder="Please explain why you need to leave..."
                       value={requestForm.reason}
                       onChange={(e) =>
@@ -1161,12 +1161,12 @@ export default function StudentProfilePage() {
                   </div>
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-xs font-bold tracking-[0.14em] text-navy-400 ml-1">
+ <label className="text-xs font-medium text-navy-400 ml-1">
                         From
                       </label>
                       <input
                         type={requestType === "outpass" ? "date" : "time"}
-                        className="w-full bg-navy-50 p-4 rounded-xl border border-navy-100 focus:border-navy-100 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-lg text-navy-900 transition-all"
+ className="w-full bg-navy-50 p-4 rounded-xl border border-navy-100 focus:border-navy-100 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-lg text-navy-900 transition-all"
                         value={requestForm.from}
                         onChange={(e) =>
                           setRequestForm({
@@ -1178,12 +1178,12 @@ export default function StudentProfilePage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-bold tracking-[0.14em] text-navy-400 ml-1">
+ <label className="text-xs font-medium text-navy-400 ml-1">
                         To
                       </label>
                       <input
                         type={requestType === "outpass" ? "date" : "time"}
-                        className="w-full bg-navy-50 p-4 rounded-xl border border-navy-100 focus:border-navy-100 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-lg text-navy-900 transition-all"
+ className="w-full bg-navy-50 p-4 rounded-xl border border-navy-100 focus:border-navy-100 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-lg text-navy-900 transition-all"
                         value={requestForm.to}
                         onChange={(e) =>
                           setRequestForm({ ...requestForm, to: e.target.value })
@@ -1196,14 +1196,14 @@ export default function StudentProfilePage() {
                     <button
                       type="button"
                       onClick={() => setRequestType(null)}
-                      className="flex-1 h-[52px] font-bold text-sm text-navy-400 hover:text-navy-600 transition-all"
+ className="flex-1 h-[52px] font-medium text-sm text-navy-400 hover:text-navy-600 transition-all"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={requestLoading}
-                      className="flex-[2] h-[52px] bg-navy-900 hover:bg-navy-800 text-white rounded-portal-sm font-bold text-sm transition-colors font-button active:opacity-95"
+ className="flex-[2] h-[52px] bg-navy-900 hover:bg-navy-800 text-white rounded-portal-sm font-medium text-sm transition-colors font-button active:opacity-95"
                     >
                       {requestLoading ? (
                         <Loader2 className="w-5 h-5 animate-spin mx-auto" />

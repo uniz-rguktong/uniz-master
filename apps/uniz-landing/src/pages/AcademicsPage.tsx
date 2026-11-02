@@ -5,6 +5,7 @@ import type { AcademicSection, AcademicPageType } from "../types/api";
 import { Download, ExternalLink, FileText, GraduationCap } from "lucide-react";
 import { PageHero } from "../components/layout/PageHero";
 import { usePageTitle } from "../lib/usePageTitle";
+import { CampusBoot } from "../components/CampusBoot";
 
 // ── Page metadata ──────────────────────────────────────────────────
 const PAGE_META: Record<string, {
@@ -79,7 +80,7 @@ function CalendarLayout({ sections }: { sections: AcademicSection[] }) {
           {/* Year header */}
           <div className="flex items-center gap-3 px-7 py-5 border-b border-slate-100 bg-slate-50">
             <div className="w-2 h-2 rounded-full bg-navy" />
-            <h2 className="text-lg font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-lg font-medium text-slate-900 tracking-tight">
               {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
             </h2>
           </div>
@@ -109,7 +110,7 @@ function CurriculaLayout({ sections }: { sections: AcademicSection[] }) {
         >
           {/* Dept header */}
           <div className="px-6 pt-6 pb-4 border-b border-slate-100">
-            <h2 className="text-[15px] font-extrabold text-slate-900 leading-snug">
+            <h2 className="text-[15px] font-medium text-slate-900 leading-snug">
               {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
             </h2>
           </div>
@@ -134,7 +135,7 @@ function GenericLayout({ sections }: { sections: AcademicSection[] }) {
     <div className="space-y-6">
       {meaningful.map((section, idx) => (
         <div key={idx} className="bg-white rounded-2xl border border-slate-100 border-l-4 border-l-[#0A2540] shadow-sm p-7 md:p-9">
-          <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-5 tracking-tight">
+          <h2 className="text-xl md:text-2xl font-medium text-slate-900 mb-5 tracking-tight">
             {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
           </h2>
           <div className="flex flex-col gap-2">
@@ -207,12 +208,7 @@ export function AcademicsPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-navy-900 border-t-transparent" />
-          <p className="text-sm text-ink-muted">Loading {meta.displayName}</p>
-        </div>
-      </div>
+      <CampusBoot label={`Loading ${meta.displayName}`} className="min-h-[50vh]" />
     );
   }
 

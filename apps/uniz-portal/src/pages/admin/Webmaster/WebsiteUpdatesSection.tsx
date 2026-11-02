@@ -355,15 +355,15 @@ export default function WebsiteUpdatesSection() {
       {[1, 2, 3].map((i) => (
         <div key={i} className={cn(adminCardClass, "p-6 space-y-3")}>
           <Skeleton className="h-3 w-28" />
-          <Skeleton className="h-10 w-full rounded-xl" />
+ <Skeleton className="h-10 w-full rounded-xl" />
         </div>
       ))}
     </div>
   );
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] bg-[#fafafa] overflow-hidden">
-      <div className="px-6 md:px-8 pt-6 pb-4 shrink-0">
+ <div className="flex flex-col h-[calc(100vh-140px)] bg-[#fafafa] overflow-hidden">
+ <div className="px-6 md:px-8 pt-6 pb-4 shrink-0">
         <SectionHeader
           icon={<Globe size={18} />}
           eyebrow="Campus"
@@ -380,7 +380,7 @@ export default function WebsiteUpdatesSection() {
           )}
         >
           <div className="p-4 space-y-1 overflow-y-auto custom-sidebar-scroll flex-1">
-            <p className={cn(adminLabelClass, "px-2 mb-2")}>Sections</p>
+ <p className={cn(adminLabelClass, "px-2 mb-2")}>Sections</p>
             {SECTIONS.map((section) => {
               const Icon = section.icon;
               const isActive = activeSectionId === section.id;
@@ -404,7 +404,7 @@ export default function WebsiteUpdatesSection() {
                     )}
                   />
                   <div className="min-w-0">
-                    <p className="text-[13px] font-semibold tracking-tight">
+ <p className="text-[13px] font-semibold tracking-tight">
                       {section.label}
                     </p>
                     <p
@@ -423,21 +423,21 @@ export default function WebsiteUpdatesSection() {
 
           {activeSection.pages && (
             <div className="border-t border-navy-100 p-4 space-y-3 max-h-[45%] flex flex-col">
-              <p className={cn(adminLabelClass, "px-1")}>
+ <p className={cn(adminLabelClass, "px-1")}>
                 {activeSectionId === "departments" ? "Department" : "Page"}
               </p>
               {activeSection.pages.length > 6 && (
                 <div className="relative">
                   <Search
                     size={14}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-400"
+ className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-400"
                   />
                   <input
                     type="text"
                     value={pageSearch}
                     onChange={(e) => setPageSearch(e.target.value)}
                     placeholder="Filter…"
-                    className={cn(adminInputClass, "pl-9 h-9 text-[12px]")}
+ className={cn(adminInputClass, "pl-9 h-9 text-[12px]")}
                   />
                 </div>
               )}
@@ -458,7 +458,7 @@ export default function WebsiteUpdatesSection() {
                   </button>
                 ))}
                 {filteredPages.length === 0 && (
-                  <p className="text-[11px] text-navy-400 px-2 py-4 text-center">
+ <p className="text-[11px] text-navy-400 px-2 py-4 text-center">
                     No matches
                   </p>
                 )}
@@ -467,8 +467,8 @@ export default function WebsiteUpdatesSection() {
           )}
         </aside>
 
-        <main className="flex-1 flex flex-col min-w-0 bg-[#fafafa]">
-          <header className="shrink-0 sticky top-0 z-20 flex items-center justify-between gap-4 px-5 py-3.5 bg-white/90 border-b border-navy-200/70">
+ <main className="flex-1 flex flex-col min-w-0 bg-[#fafafa]">
+ <header className="shrink-0 sticky top-0 z-20 flex items-center justify-between gap-4 px-5 py-3.5 bg-white/90 border-b border-navy-200/70">
             <div className="flex items-center gap-3 min-w-0">
               <button
                 type="button"
@@ -482,21 +482,21 @@ export default function WebsiteUpdatesSection() {
                 <LayoutGrid size={16} />
               </button>
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold text-navy-400 tracking-wide">
+ <p className="text-[10px] font-semibold text-navy-400 tracking-wide">
                   Workspace
                 </p>
-                <p className="text-sm font-semibold text-navy-900 truncate">
+ <p className="text-sm font-semibold text-navy-900 truncate">
                   {breadcrumb}
                 </p>
               </div>
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0B2A47]/5 text-[#0B2A47] border border-[#0B2A47]/10 text-[10px] font-semibold tracking-wide">
+ <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0A2540]/5 text-[#0A2540] border border-[#0A2540]/10 text-[10px] font-semibold tracking-wide">
                 <Sparkles size={10} /> Live editor
               </span>
             </div>
             <button
               type="button"
               onClick={fetchData}
-              className={cn(adminGhostButtonClass, "w-10 px-0")}
+ className={cn(adminGhostButtonClass, "w-10 px-0")}
               title="Refresh"
             >
               <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
@@ -504,7 +504,7 @@ export default function WebsiteUpdatesSection() {
           </header>
 
           <div className="flex-1 overflow-y-auto custom-sidebar-scroll">
-            <div className={cn("mx-auto px-5 py-8", "max-w-5xl")}>
+ <div className={cn("mx-auto px-5 py-8", "max-w-5xl")}>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`${activeSectionId}-${activePage ?? "root"}-${contentVersion}`}
@@ -516,16 +516,16 @@ export default function WebsiteUpdatesSection() {
                   {loading ? (
                     <SkeletonLoader />
                   ) : !data ? (
-                    <div className="py-16 text-center">
-                      <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-[2px] flex items-center justify-center mx-auto mb-4 border border-amber-100">
+ <div className="py-16 text-center">
+ <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center mx-auto mb-4 border border-amber-100">
                         <AlertTriangle size={24} />
                       </div>
-                      <h4 className="text-lg font-semibold text-navy-900 mb-1.5">
+ <h4 className="text-lg font-semibold text-navy-900 mb-1.5">
                         Could not load content
                       </h4>
-                      <p className="text-sm text-navy-500 max-w-sm mx-auto leading-relaxed">
+ <p className="text-sm text-navy-500 max-w-sm mx-auto leading-relaxed">
                         Ensure the gateway and landing CMS are running. API:{" "}
-                        <code className="text-xs bg-navy-100 px-1 py-0.5 rounded">
+ <code className="text-xs bg-navy-100 px-1 py-0.5 rounded">
                           {LANDING_API_URL}
                         </code>
                       </p>

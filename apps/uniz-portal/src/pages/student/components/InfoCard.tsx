@@ -26,19 +26,19 @@ export const InfoCard = memo(
         )}
       >
         <div className="flex items-center gap-2 mb-2.5">
-          <span className="text-navy-700">{icon}</span>
+ <span className="text-navy-700">{icon}</span>
           <span className={cn(portalLabelClass, "!mb-0")}>{label}</span>
         </div>
 
         {isLoading ? (
-          <div className="h-6 w-3/4 animate-pulse rounded-portal-lg bg-navy-50" />
+ <div className="h-6 w-3/4 animate-pulse rounded-portal-lg bg-navy-50" />
         ) : isEditing && editable ? (
           type === "select" ? (
             <select
               name={name}
               value={value}
               onChange={handleChange}
-              className={cn(portalInputClass, "font-semibold")}
+ className={cn(portalInputClass, "font-semibold")}
             >
               <option value="">Select {label}</option>
               {(options || []).map((opt: any) => (
@@ -53,17 +53,17 @@ export const InfoCard = memo(
               name={name}
               value={value}
               onChange={handleChange}
-              className={cn(portalInputClass, "font-semibold")}
+ className={cn(portalInputClass, "font-semibold")}
               autoComplete="off"
               placeholder={`Enter ${label.toLowerCase()}`}
             />
           )
         ) : (
-          <p className="truncate px-0.5 text-[15px] font-semibold leading-tight tracking-normal text-navy-900">
+ <p className="truncate px-0.5 text-[15px] font-semibold leading-tight tracking-normal text-navy-900">
             {value ? (
               value
             ) : (
-              <span className="text-sm font-medium italic text-navy-300">
+ <span className="text-sm font-medium italic text-navy-300">
                 No data
               </span>
             )}

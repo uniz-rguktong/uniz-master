@@ -42,15 +42,15 @@ function AnalyticsCard({
   return (
     <Card
       className={cn(
-        "p-6 w-full bg-white border border-navy-200/70 shadow-[0_1px_2px_rgba(10,10,10,0.03)] rounded-[2px]",
+        "p-6 w-full bg-white border border-navy-200/70 shadow-[0_1px_2px_rgba(10,10,10,0.03)] rounded-lg",
         className,
       )}
     >
       <div className="mb-5">
-        <h3 className="text-[15px] font-semibold text-navy-900 tracking-[-0.01em]">
+ <h3 className="text-[15px] font-semibold text-navy-900 tracking-[-0.01em]">
           {title}
         </h3>
-        <p className="text-[11px] font-medium text-navy-400 tracking-[0.12em] mt-0.5">
+ <p className="text-[11px] font-medium text-navy-400 mt-0.5">
           {subtitle}
         </p>
       </div>
@@ -170,7 +170,7 @@ export default function InstitutionAnalytics() {
       {
         label: "On campus",
         value: onCampus,
-        color: "#0B2A47",
+        color: "#0A2540",
       },
       {
         label: "Off campus",
@@ -217,9 +217,9 @@ export default function InstitutionAnalytics() {
           <KPICardSkeleton />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="h-64 rounded-[2px] bg-navy-50 animate-pulse" />
-          <div className="h-64 rounded-[2px] bg-navy-50 animate-pulse" />
-          <div className="h-64 rounded-[2px] bg-navy-50 animate-pulse" />
+ <div className="h-64 rounded-lg bg-navy-50 animate-pulse" />
+ <div className="h-64 rounded-lg bg-navy-50 animate-pulse" />
+ <div className="h-64 rounded-lg bg-navy-50 animate-pulse" />
         </div>
       </div>
     );
@@ -230,10 +230,10 @@ export default function InstitutionAnalytics() {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-[11px] font-semibold text-navy-400 tracking-[0.14em] uppercase">
+ <p className="text-[11px] font-semibold text-navy-400 ">
           Institution
         </p>
-        <h2 className="text-lg font-semibold text-navy-900 tracking-tight mt-1">
+ <h2 className="text-lg font-semibold text-navy-900 tracking-tight mt-1">
           Campus & academic snapshot
         </h2>
       </div>
@@ -273,7 +273,7 @@ export default function InstitutionAnalytics() {
         <AnalyticsCard title="Students by branch" subtitle="Top programmes">
           <div className="space-y-3">
             {branches.length === 0 ? (
-              <p className="text-sm text-navy-400">No branch data yet.</p>
+ <p className="text-sm text-navy-400">No branch data yet.</p>
             ) : (
               branches.map((row, i) => {
                 const count = Number(row.count) || 0;
@@ -285,21 +285,21 @@ export default function InstitutionAnalytics() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.04 }}
                   >
-                    <div className="flex items-center justify-between text-[12px] mb-1.5">
-                      <span className="font-medium text-navy-700">
+ <div className="flex items-center justify-between text-[12px] mb-1.5">
+ <span className="font-medium text-navy-700">
                         {formatDisplayText(row.branch)}
                       </span>
-                      <span className="tabular-nums font-semibold text-navy-900">
+ <span className="tabular-nums font-semibold text-navy-900">
                         {count.toLocaleString()}
                       </span>
                     </div>
-                    <div className="h-1.5 rounded-full bg-navy-100 overflow-hidden">
+ <div className="h-1.5 rounded-full bg-navy-100 overflow-hidden">
                       <div
-                        className="h-full rounded-full transition-all duration-700"
+ className="h-full rounded-full transition-all duration-700"
                         style={{
                           width: `${pct}%`,
                           background:
-                            "linear-gradient(90deg, #0B2A47 0%, #0F3B63 100%)",
+                            "linear-gradient(90deg, #0A2540 0%, #0F3B63 100%)",
                         }}
                       />
                     </div>
@@ -318,25 +318,25 @@ export default function InstitutionAnalytics() {
               strokeWidth={22}
               animationDuration={1}
               centerContent={
-                <div className="text-center">
-                  <p className="text-[10px] text-navy-400 tracking-[0.1em] mb-0.5">
+ <div className="text-center">
+ <p className="text-[10px] text-navy-400 mb-0.5">
                     On campus
                   </p>
-                  <p className="text-2xl font-semibold text-navy-900 tabular-nums">
+ <p className="text-2xl font-semibold text-navy-900 tabular-nums">
                     {campusPct}%
                   </p>
                 </div>
               }
             />
-            <div className="flex gap-6 text-[12px]">
+ <div className="flex gap-6 text-[12px]">
               {campusData.map((d) => (
                 <div key={d.label} className="flex items-center gap-2">
                   <span
-                    className="w-2 h-2 rounded-full"
+ className="w-2 h-2 rounded-full"
                     style={{ background: d.color }}
                   />
-                  <span className="text-navy-600">{d.label}</span>
-                  <span className="font-semibold text-navy-900 tabular-nums">
+ <span className="text-navy-600">{d.label}</span>
+ <span className="font-semibold text-navy-900 tabular-nums">
                     {d.value.toLocaleString()}
                   </span>
                 </div>
@@ -348,24 +348,24 @@ export default function InstitutionAnalytics() {
         <AnalyticsCard title="Grievance pipeline" subtitle="By category">
           <div className="space-y-2.5">
             {grievanceByCategory.length === 0 ? (
-              <p className="text-sm text-navy-400">No grievances recorded.</p>
+ <p className="text-sm text-navy-400">No grievances recorded.</p>
             ) : (
               grievanceByCategory.map((g) => (
                 <div
                   key={g.category}
-                  className="flex items-center justify-between gap-3 py-2 border-b border-navy-50 last:border-0"
+ className="flex items-center justify-between gap-3 py-2 border-b border-navy-50 last:border-0"
                 >
-                  <span className="text-[13px] font-medium text-navy-700">
+ <span className="text-[13px] font-medium text-navy-700">
                     {g.category}
                   </span>
                   <div className="flex items-center gap-2 shrink-0">
                     {g.pending > 0 && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
+ <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
                         {g.pending} open
                       </span>
                     )}
                     {g.resolved > 0 && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+ <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
                         {g.resolved} done
                       </span>
                     )}

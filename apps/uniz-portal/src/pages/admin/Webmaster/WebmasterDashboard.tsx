@@ -224,23 +224,23 @@ export default function WebmasterDashboard() {
 
   const renderComingSoon = (title: string) => (
     <div
-      className={`flex flex-col items-center justify-center py-24 text-center ${adminCardClass} animate-in fade-in zoom-in duration-500`}
+ className={`flex flex-col items-center justify-center py-24 text-center ${adminCardClass} animate-in fade-in zoom-in duration-500`}
     >
-      <div className="w-20 h-20 bg-navy-50 rounded-[2px] flex items-center justify-center mb-6 border border-navy-100 shadow-sm relative overflow-hidden group">
-        <div className="absolute inset-0 bg-navy-950/5 group-hover:scale-110 transition-transform duration-500" />
-        <Activity className="w-8 h-8 text-navy-200 group-hover:text-navy-950 transition-colors" />
+ <div className="w-20 h-20 bg-navy-50 rounded-lg flex items-center justify-center mb-6 border border-navy-100 shadow-sm relative overflow-hidden group">
+ <div className="absolute inset-0 bg-navy-950/5 group-hover:scale-110 transition-transform duration-500" />
+ <Activity className="w-8 h-8 text-navy-200 group-hover:text-navy-950 transition-colors" />
       </div>
-      <h3 className="text-2xl font-semibold text-navy-900 tracking-tight leading-none mb-4">
+ <h3 className="text-2xl font-semibold text-navy-900 tracking-tight leading-none mb-4">
         {title} System Initialization
       </h3>
-      <p className="text-navy-400 font-bold max-w-sm mx-auto leading-relaxed text-sm tracking-[0.14em] opacity-60">
+ <p className="text-navy-400 font-medium max-w-sm mx-auto leading-relaxed text-sm opacity-60">
         Automated {title.toLowerCase()} workflows are currently in deployment.
         <br />
         Please coordinate via manual channels for urgent actions.
       </p>
-      <div className="mt-8 flex items-center gap-2 px-4 py-2 bg-navy-50 rounded-full border border-navy-100">
-        <span className="w-2 h-2 rounded-full bg-navy-950 animate-pulse" />
-        <span className="text-[10px] font-semibold text-navy-400 tracking-[0.14em]">
+ <div className="mt-8 flex items-center gap-2 px-4 py-2 bg-navy-50 rounded-full border border-navy-100">
+ <span className="w-2 h-2 rounded-full bg-navy-950 animate-pulse" />
+ <span className="text-[10px] font-semibold text-navy-400 ">
           Mirroring Student Experience Platform
         </span>
       </div>

@@ -218,7 +218,7 @@ export default function StudentEditModal({
           <X size={20} />
         </button>
 
-        <AlertDialogHeader className="p-8 pb-4 flex flex-col items-start text-left gap-1.5 shrink-0">
+ <AlertDialogHeader className="p-8 pb-4 flex flex-col items-start text-left gap-1.5 shrink-0">
           <AlertDialogTitle className={adminModalTitleClass}>
             {isEdit ? "Edit student" : "Add student"}
           </AlertDialogTitle>
@@ -229,7 +229,7 @@ export default function StudentEditModal({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="px-8 pb-4 shrink-0">
+ <div className="px-8 pb-4 shrink-0">
           <div className={adminSegmentWrapClass}>
             {(
               [
@@ -256,7 +256,7 @@ export default function StudentEditModal({
 
         <form
           onSubmit={handleSubmit}
-          className="flex-1 overflow-y-auto px-8 pb-8 space-y-6 custom-sidebar-scroll"
+ className="flex-1 overflow-y-auto px-8 pb-8 space-y-6 custom-sidebar-scroll"
         >
           {activeSection === "primary" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -393,7 +393,7 @@ function Toggle({
   danger?: boolean;
 }) {
   return (
-    <label className="flex items-center gap-2.5 cursor-pointer text-[13px] font-medium text-navy-700">
+ <label className="flex items-center gap-2.5 cursor-pointer text-[13px] font-medium text-navy-700">
       <button
         type="button"
         role="switch"

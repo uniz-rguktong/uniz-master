@@ -1,10 +1,10 @@
 const ECE = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-navy-900">
+ <div className="container mx-auto px-4 py-8">
+ <h1 className="text-3xl font-medium text-navy-900">
         Electronics and Communication Engineering
       </h1>
-      <p className="mt-4 text-navy-600">
+ <p className="mt-4 text-navy-600">
         Department of Electronics and Communication Engineering.
       </p>
     </div>

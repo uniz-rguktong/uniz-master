@@ -76,8 +76,8 @@ export function HeroAndTitle({
                   src={img}
                   alt={`Campus ${idx + 1}`}
                   className={`relative z-10 w-full h-full object-contain ${
-                    img.includes("swatch.png") ? "scale-x-[1.15]" : ""
-                  }`}
+ img.includes("swatch.png") ? "scale-x-[1.15]" : ""
+ }`}
                   loading={idx === 0 ? "eager" : "lazy"}
                 />
               </>
@@ -86,8 +86,8 @@ export function HeroAndTitle({
                 src={img}
                 alt={`Campus ${idx + 1}`}
                 className={`w-full h-full object-cover ${
-                  img.includes("VRD.png") ? "object-[center_15%]" : "object-center"
-                }`}
+ img.includes("VRD.png") ? "object-[center_15%]" : "object-center"
+ }`}
                 loading={idx === 0 ? "eager" : "lazy"}
               />
             )}
@@ -184,8 +184,8 @@ export function HeroAndTitle({
                     onClick={() => goTo(idx)}
                     aria-label={`Go to slide ${idx + 1}`}
                     className={`h-1 rounded-full transition-[width,background-color] duration-150 ${
-                      idx === current ? "w-7 bg-brand-red" : "w-1.5 bg-white/40"
-                    }`}
+ idx === current ? "w-7 bg-brand-red" : "w-1.5 bg-white/40"
+ }`}
                   />
                 ))}
               </div>

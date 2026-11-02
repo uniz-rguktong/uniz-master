@@ -64,7 +64,7 @@ export function Footer() {
               className="w-12 h-12 rounded-lg bg-white p-1.5 object-contain shadow-sm ring-1 ring-white/20"
             />
             <div className="flex flex-col leading-none">
-              <span className="font-serif text-2xl font-bold text-white tracking-tight">
+              <span className="font-serif text-2xl font-medium text-white tracking-tight">
                 RGUKT
               </span>
               <span className="mt-1 text-xs text-white/50">

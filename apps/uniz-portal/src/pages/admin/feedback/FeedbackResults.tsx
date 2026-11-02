@@ -13,19 +13,19 @@ export default function FeedbackResults({ formId }: { formId: string }) {
       .catch((e) => setError(e.message));
   }, [formId]);
 
-  if (error) return <p className="text-sm text-rose-600">{error}</p>;
-  if (!data) return <p className="text-sm text-slate-500">Loading...</p>;
+ if (error) return <p className="text-sm text-rose-600">{error}</p>;
+ if (!data) return <p className="text-sm text-slate-500">Loading...</p>;
   if (data.hidden) {
     return (
-      <p className="text-sm text-slate-500">
+ <p className="text-sm text-slate-500">
         {data.responses} responses so far. Results show once there are{" "}
         {data.minResponses} or more.
       </p>
     );
   }
   return (
-    <div className="space-y-2 text-sm">
-      <p className="text-slate-500">{data.responses} responses</p>
+ <div className="space-y-2 text-sm">
+ <p className="text-slate-500">{data.responses} responses</p>
       {data.questions.map((q: any) => (
         <div
           key={q.question}
@@ -36,7 +36,7 @@ export default function FeedbackResults({ formId }: { formId: string }) {
         </div>
       ))}
       {data.comments?.length ? (
-        <ul className="list-disc space-y-1 pl-5 text-slate-600">
+ <ul className="list-disc space-y-1 pl-5 text-slate-600">
           {data.comments.map((c: string, i: number) => (
             <li key={i}>{c}</li>
           ))}

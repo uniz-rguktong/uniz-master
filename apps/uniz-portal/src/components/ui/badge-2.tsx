@@ -130,38 +130,38 @@ const badgeVariants = cva(
       {
         variant: "primary",
         appearance: "ghost",
-        className: "text-primary",
+ className: "text-primary",
       },
       {
         variant: "secondary",
         appearance: "ghost",
-        className: "text-secondary-foreground",
+ className: "text-secondary-foreground",
       },
       {
         variant: "success",
         appearance: "ghost",
-        className: "text-[var(--color-success-accent,var(--color-green-500))]",
+ className: "text-[var(--color-success-accent,var(--color-green-500))]",
       },
       {
         variant: "warning",
         appearance: "ghost",
-        className: "text-[var(--color-warning-accent,var(--color-yellow-500))]",
+ className: "text-[var(--color-warning-accent,var(--color-yellow-500))]",
       },
       {
         variant: "info",
         appearance: "ghost",
-        className: "text-[var(--color-info-accent,var(--color-violet-500))]",
+ className: "text-[var(--color-info-accent,var(--color-violet-500))]",
       },
       {
         variant: "destructive",
         appearance: "ghost",
-        className: "text-destructive",
+ className: "text-destructive",
       },
 
-      { size: "lg", appearance: "ghost", className: "px-0" },
-      { size: "md", appearance: "ghost", className: "px-0" },
-      { size: "sm", appearance: "ghost", className: "px-0" },
-      { size: "xs", appearance: "ghost", className: "px-0" },
+ { size: "lg", appearance: "ghost", className: "px-0" },
+ { size: "md", appearance: "ghost", className: "px-0" },
+ { size: "sm", appearance: "ghost", className: "px-0" },
+ { size: "xs", appearance: "ghost", className: "px-0" },
     ],
     defaultVariants: {
       variant: "primary",

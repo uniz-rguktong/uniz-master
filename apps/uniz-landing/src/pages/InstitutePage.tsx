@@ -6,6 +6,7 @@ import { PersonPhoto } from "../components/common/PersonPhoto";
 import { initials } from "../lib/initials";
 import { usePageTitle } from "../lib/usePageTitle";
 import { PageHero } from "../components/layout/PageHero";
+import { CampusBoot } from "../components/CampusBoot";
 
 const PAGE_NAMES: Record<string, string> = {
   aboutrgukt: "About RGUKT",
@@ -64,7 +65,7 @@ function AboutRguktPage({ data }: { data: InstituteData }) {
                 className={`bg-white rounded-2xl shadow-sm border border-slate-100 border-l-4 ${meta.accent} p-8 md:p-10`}
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  <h2 className="text-2xl md:text-3xl font-medium text-slate-900 tracking-tight">
                     {section.title}
                   </h2>
                 </div>
@@ -110,17 +111,17 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
               name={chair.name}
               className="w-36 h-36 rounded-full object-cover object-top border-4 border-white/30 shadow-lg"
               fallback={
-                <div className="w-36 h-36 rounded-full bg-navy/30 border-4 border-white/20 flex items-center justify-center text-white text-5xl font-extrabold">
+                <div className="w-36 h-36 rounded-full bg-navy/30 border-4 border-white/20 flex items-center justify-center text-white text-5xl font-medium">
                   {initials(chair.name)}
                 </div>
               }
             />
             </div>
             <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">
-              <span className="inline-block mb-3 px-3 py-1 text-[11px] font-bold tracking-widest text-navy bg-navy/8 border border-navy/20 rounded-full w-fit">
+              <span className="inline-block mb-3 px-3 py-1 text-[11px] font-medium tracking-normal text-navy bg-navy/8 border border-navy/20 rounded-full w-fit">
                 Chairman · Member-Convener
               </span>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">{chair.name}</h2>
+              <h2 className="text-2xl md:text-3xl font-medium text-slate-900 mb-2">{chair.name}</h2>
               <div className="space-y-1">
                 {chair.text.map((line, i) => (
                   <p key={i} className="text-slate-600 text-[15px] leading-relaxed">{line}</p>
@@ -133,7 +134,7 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
         {/* ── Section heading ── */}
         {members.length > 0 && (
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Council Members</h2>
+            <h2 className="text-3xl sm:text-4xl font-medium text-slate-900 tracking-tight">Council Members</h2>
             <div className="mt-3 mx-auto w-16 h-1 bg-navy rounded-full" />
           </div>
         )}
@@ -150,9 +151,9 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
                 <PersonPhoto
               src={member.photo}
               name={member.name}
-              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-full object-contain group- transition-transform duration-500"
               fallback={
-                <div className="w-24 h-24 rounded-full bg-navy-900 flex items-center justify-center text-white text-4xl font-extrabold shadow-lg">
+                <div className="w-24 h-24 rounded-full bg-navy-900 flex items-center justify-center text-white text-4xl font-medium shadow-lg">
                     {initials(member.name)}
                   </div>
               }
@@ -163,7 +164,7 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
 
               {/* Info */}
               <div className="p-5">
-                <h3 className="text-[17px] font-bold text-slate-900 leading-snug mb-2 group-hover:text-navy transition-colors">
+                <h3 className="text-[17px] font-medium text-slate-900 leading-snug mb-2 group-hover:text-navy transition-colors">
                   {member.name}
                 </h3>
                 <div className="space-y-0.5">
@@ -207,7 +208,7 @@ function GenericInstitutePage({ data, displayName }: { data: InstituteData; disp
                 className="bg-white rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-[#0A2540] p-8 md:p-10"
               >
                 {section.title.trim() && (
-                  <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-5 tracking-tight">
+                  <h2 className="text-xl md:text-2xl font-medium text-slate-900 mb-5 tracking-tight">
                     {section.title.trim()}
                   </h2>
                 )}
@@ -226,7 +227,7 @@ function GenericInstitutePage({ data, displayName }: { data: InstituteData; disp
         {/* ── Profiles (RTI / SC/ST style contact cards) ── */}
         {profiles.length > 0 && (
           <div className="mt-12">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-8 tracking-tight">Key Personnel</h2>
+            <h2 className="text-2xl md:text-3xl font-medium text-slate-900 mb-8 tracking-tight">Key Personnel</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {profiles.map((profile, idx) => (
                 <div
@@ -238,9 +239,9 @@ function GenericInstitutePage({ data, displayName }: { data: InstituteData; disp
                     <PersonPhoto
               src={profile.photo}
               name={profile.name}
-              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-full object-contain group- transition-transform duration-500"
               fallback={
-                <div className="w-24 h-24 rounded-full bg-navy-900 flex items-center justify-center text-white text-4xl font-extrabold shadow-lg">
+                <div className="w-24 h-24 rounded-full bg-navy-900 flex items-center justify-center text-white text-4xl font-medium shadow-lg">
                         {initials(profile.name)}
                       </div>
               }
@@ -249,7 +250,7 @@ function GenericInstitutePage({ data, displayName }: { data: InstituteData; disp
 
                   {/* Info */}
                   <div className="p-5 border-t border-slate-100">
-                    <h3 className="text-[15px] font-bold text-slate-900 mb-1 group-hover:text-navy transition-colors">
+                    <h3 className="text-[15px] font-medium text-slate-900 mb-1 group-hover:text-navy transition-colors">
                       {profile.name}
                     </h3>
                     <div className="space-y-1 mt-2">
@@ -278,7 +279,7 @@ function GenericInstitutePage({ data, displayName }: { data: InstituteData; disp
         {/* ── Office Address block (for RTI / SC/ST) ── */}
         {(data?.sections ?? []).filter(s => s.title.toLowerCase().includes("address")).map((s, i) => (
           <div key={i} className="mt-10 bg-navy-900/5 border border-navy-900/10 rounded-2xl p-7">
-            <h3 className="text-lg font-bold text-navy-900 mb-3">Office Address</h3>
+            <h3 className="text-lg font-medium text-navy-900 mb-3">Office Address</h3>
             <address className="not-italic text-slate-600 text-[15px] leading-relaxed space-y-1">
               {s.content.filter(c => c.trim()).map((line, idx) => (
                 <p key={idx}>{line.trim()}</p>
@@ -317,12 +318,7 @@ export function InstitutePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-navy-900 border-t-transparent"></div>
-          <p className="text-sm text-ink-muted">Loading {displayName}</p>
-        </div>
-      </div>
+      <CampusBoot label={`Loading ${displayName}`} className="min-h-[50vh]" />
     );
   }
 
@@ -330,7 +326,7 @@ export function InstitutePage() {
     return (
       <div className="min-h-screen bg-slate-50 py-12">
         <div className="container mx-auto px-4 max-w-5xl">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">{displayName}</h1>
+          <h1 className="text-4xl font-medium text-slate-900 mb-4">{displayName}</h1>
           <p className="text-slate-500 text-lg">Detailed information is not available for this section.</p>
         </div>
       </div>

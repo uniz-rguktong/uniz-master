@@ -176,7 +176,7 @@ function OtpInput({
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
-            className="w-11 h-14 sm:w-12 text-center text-xl font-semibold tabular-nums rounded-xl border border-[#E2E8F0] bg-white text-[#0A2540] font-form shadow-[0_1px_2px_rgba(10,37,64,0.04)] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/[0.08] transition-[border-color,box-shadow] duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+ className="w-11 h-14 sm:w-12 text-center text-xl font-semibold tabular-nums rounded-xl border border-[#E2E8F0] bg-white text-[#0A2540] font-form shadow-[0_1px_2px_rgba(10,37,64,0.04)] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/[0.08] transition-[border-color,box-shadow] duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.25 }}
@@ -224,28 +224,28 @@ function PasswordStrength({ password }: { password: string }) {
       animate={{ opacity: 1, height: "auto" }}
       transition={{ duration: 0.3 }}
     >
-      <div className="h-1.5 w-full bg-navy-100 rounded-full overflow-hidden">
+ <div className="h-1.5 w-full bg-navy-100 rounded-full overflow-hidden">
         <motion.div
-          className={`h-full rounded-full ${color}`}
+ className={`h-full rounded-full ${color}`}
           initial={{ width: 0 }}
           animate={{ width }}
           transition={{ duration: 0.4, ease: "easeOut" }}
         />
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-[10px] font-bold tracking-wider text-navy-400">
+ <span className="text-[10px] font-medium tracking-wider text-navy-400">
           Password strength
         </span>
         <span
-          className={`text-[10px] font-semibold tracking-wider ${
-            score <= 1
-              ? "text-red-500"
-              : score <= 2
-                ? "text-orange-500"
-                : score <= 3
-                  ? "text-amber-500"
-                  : "text-emerald-600"
-          }`}
+ className={`text-[10px] font-semibold tracking-wider ${
+ score <= 1
+ ? "text-red-500"
+ : score <= 2
+ ? "text-orange-500"
+ : score <= 3
+ ? "text-amber-500"
+ : "text-emerald-600"
+ }`}
         >
           {label}
         </span>
@@ -357,7 +357,7 @@ function TurnstileWidget({
 }) {
   if (!turnstileEnabled()) {
     return import.meta.env.DEV ? (
-      <p className="text-center text-[11px] text-amber-600 font-medium py-1">
+ <p className="text-center text-[11px] text-amber-600 font-medium py-1">
         Turnstile not configured (no site key)
       </p>
     ) : null;
@@ -421,10 +421,10 @@ function CaptchaStatus({
   if (status === "error") {
     return (
       <div
-        className="rounded-xl border border-amber-100 bg-amber-50/80 px-3 py-2.5 text-center"
+ className="rounded-xl border border-amber-100 bg-amber-50/80 px-3 py-2.5 text-center"
         role="alert"
       >
-        <p className="text-[11px] font-medium text-amber-800">
+ <p className="text-[11px] font-medium text-amber-800">
           Security check could not load. Refresh the page or check your
           connection.
         </p>
@@ -435,11 +435,11 @@ function CaptchaStatus({
   if (hasToken || status === "ready") {
     return (
       <div
-        className="flex items-center justify-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/80 px-3 py-2.5"
+ className="flex items-center justify-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/80 px-3 py-2.5"
         role="status"
       >
-        <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-        <p className="text-[11px] font-medium text-emerald-700">
+ <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+ <p className="text-[11px] font-medium text-emerald-700">
           Security check complete
         </p>
       </div>
@@ -885,7 +885,7 @@ export default function Signin({ type }: SigninProps) {
         : "New Password";
 
   return (
-    <div className="min-h-screen bg-white">
+ <div className="min-h-screen bg-white">
       <LoginScreen
         isLogin={step === "signin"}
         onBack={() => navigate("/")}
@@ -905,7 +905,7 @@ export default function Signin({ type }: SigninProps) {
                   type === "student" ? "University ID" : "Institutional ID"
                 }
                 labelClassName={loginLabelClass}
-                icon={<User className="w-4 h-4 text-[#5A7A94]" />}
+ icon={<User className="w-4 h-4 text-[#5A7A94]" />}
                 value={username}
                 onChange={(e) =>
                   setUsername(
@@ -927,7 +927,7 @@ export default function Signin({ type }: SigninProps) {
                   aria-label="Password"
                   labelClassName={loginLabelClass}
                   type="password"
-                  icon={<Lock className="w-4 h-4 text-[#5A7A94]" />}
+ icon={<Lock className="w-4 h-4 text-[#5A7A94]" />}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
@@ -936,7 +936,7 @@ export default function Signin({ type }: SigninProps) {
                 />
                 <div className="flex items-center justify-between pt-0.5">
                   {type === "student" ? (
-                    <span className="text-[12.5px] text-[#64748B]">
+ <span className="text-[12.5px] text-[#64748B]">
                       Forgot your password? Contact your admin.
                     </span>
                   ) : (
@@ -1048,7 +1048,7 @@ export default function Signin({ type }: SigninProps) {
                       : "Send code"}
                 </span>
               </Button>
-              <div className="text-center pt-1">
+ <div className="text-center pt-1">
                 <button
                   type="button"
                   className={cn(portalGhostButtonClass, "w-full sm:w-auto")}
@@ -1077,8 +1077,8 @@ export default function Signin({ type }: SigninProps) {
                     <span className="relative z-10">Verify code</span>
                   </Button>
 
-                  <div className="rounded-xl border border-[#E6EAF0] bg-[#F7F8FA] p-4 space-y-3">
-                    <p className="text-[12px] font-medium text-navy-700 text-center leading-relaxed font-form">
+ <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 space-y-3">
+ <p className="text-[12px] font-medium text-navy-700 text-center leading-relaxed font-form">
                       Didn&apos;t get a push notification? Send the code to your
                       registered college email instead.
                     </p>
@@ -1103,9 +1103,9 @@ export default function Signin({ type }: SigninProps) {
                   transition={{ duration: 0.5, ease: "easeOut" }}
                 >
                   {/* OTP Verified badge */}
-                  <div className="flex items-center justify-center gap-2 py-2">
+ <div className="flex items-center justify-center gap-2 py-2">
                     <motion.div
-                      className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200"
+ className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{
@@ -1114,8 +1114,8 @@ export default function Signin({ type }: SigninProps) {
                         damping: 20,
                       }}
                     >
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      <span className="text-[11px] font-semibold text-emerald-700 tracking-[0.14em]">
+ <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+ <span className="text-[11px] font-semibold text-emerald-700 ">
                         OTP Verified
                       </span>
                     </motion.div>

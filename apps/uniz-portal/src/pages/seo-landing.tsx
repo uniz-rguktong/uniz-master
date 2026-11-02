@@ -75,40 +75,40 @@ export default function SEOLanding() {
   pageData = pageData || defaultVal;
 
   return (
-    <div className="min-h-screen bg-navy-50 relative selection:bg-navy-100 selection:text-navy-900 pb-20">
+ <div className="min-h-screen bg-navy-50 relative selection:bg-navy-100 selection:text-navy-900 pb-20">
       <SEO title={`${pageData.title} | UniZ`} description={pageData.subtitle} />
 
       {/* Header Navigation */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-navy-100 flex items-center justify-between px-6 z-50">
+ <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-navy-100 flex items-center justify-between px-6 z-50">
         <Link
           to="/"
-          className="flex items-center gap-2.5 text-navy-900 no-underline"
+ className="flex items-center gap-2.5 text-navy-900 no-underline"
         >
           <img
             src="/logo.png"
             alt="UniZ"
-            className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/20 shadow-sm"
+ className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/20 shadow-sm"
           />
-          <span className="uniz-logo-wordmark text-2xl text-navy-900">
+ <span className="uniz-logo-wordmark text-2xl text-navy-900">
             uniZ.
           </span>
         </Link>
-        <nav className="hidden md:flex gap-6 text-sm font-semibold text-navy-500">
+ <nav className="hidden md:flex gap-6 text-sm font-semibold text-navy-500">
           <Link
             to="/college-team-collaboration"
-            className="hover:text-navy-900"
+ className="hover:text-navy-900"
           >
             Features
           </Link>
-          <Link to="/academic-task-tracker" className="hover:text-navy-900">
+ <Link to="/academic-task-tracker" className="hover:text-navy-900">
             Docs
           </Link>
-          <Link to="/blog" className="hover:text-navy-900">
+ <Link to="/blog" className="hover:text-navy-900">
             Blog
           </Link>
           <Link
             to="/student-project-management"
-            className="hover:text-navy-900"
+ className="hover:text-navy-900"
           >
             Pricing
           </Link>
@@ -116,7 +116,7 @@ export default function SEOLanding() {
         <div className="flex gap-3">
           <Link
             to="/signin"
-            className="px-4 py-2 bg-navy-900 text-white rounded-lg font-bold text-sm hover:bg-navy-800 transition-colors"
+ className="px-4 py-2 bg-navy-900 text-white rounded-lg font-medium text-sm hover:bg-navy-800 transition-colors"
           >
             Open WorkSpace
           </Link>
@@ -124,18 +124,18 @@ export default function SEOLanding() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-6 pt-32">
+ <main className="max-w-4xl mx-auto px-6 pt-32">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-sm font-bold text-navy-400 hover:text-navy-900 mb-8 transition-colors"
+ className="flex items-center gap-2 text-sm font-medium text-navy-400 hover:text-navy-900 mb-8 transition-colors"
         >
           <ArrowLeft size={16} /> Back
         </button>
 
-        <h1 className="text-4xl md:text-6xl font-semibold text-navy-900 tracking-tight leading-tight mb-6">
+ <h1 className="text-4xl md:text-6xl font-semibold text-navy-900 tracking-tight leading-tight mb-6">
           {pageData.title}
         </h1>
-        <p className="text-xl text-navy-500 font-medium leading-relaxed mb-12">
+ <p className="text-xl text-navy-500 font-medium leading-relaxed mb-12">
           {pageData.subtitle}
         </p>
 
@@ -152,38 +152,38 @@ export default function SEOLanding() {
             academic enhancements speak for themselves.
           </p>
 
-          <div className="my-10 bg-white p-8 rounded-[2px] border border-navy-100 shadow-sm">
-            <h3 className="text-xl font-bold mt-0 flex items-center gap-2 text-navy-900">
-              <CheckCircle2 className="text-emerald-500" /> Comparison with
+ <div className="my-10 bg-white p-8 rounded-lg border border-navy-100 shadow-sm">
+ <h3 className="text-xl font-medium mt-0 flex items-center gap-2 text-navy-900">
+ <CheckCircle2 className="text-emerald-500" /> Comparison with
               Alternatives
             </h3>
             <div className="overflow-x-auto mt-6">
-              <table className="w-full text-left">
+ <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-navy-100 text-navy-400 font-bold text-xs tracking-wider">
-                    <th className="py-3">Feature</th>
-                    <th className="py-3">Traditional Tools</th>
-                    <th className="py-3 text-navy-900">UniZ</th>
+ <tr className="border-b border-navy-100 text-navy-400 font-medium text-xs tracking-wider">
+ <th className="py-3">Feature</th>
+ <th className="py-3">Traditional Tools</th>
+ <th className="py-3 text-navy-900">UniZ</th>
                   </tr>
                 </thead>
-                <tbody className="text-sm font-medium">
+ <tbody className="text-sm font-medium">
                   <tr className="border-b border-navy-50">
-                    <td className="py-4 text-navy-700">
+ <td className="py-4 text-navy-700">
                       Academic Task Tracker Integration
                     </td>
-                    <td className="py-4 text-navy-400">
+ <td className="py-4 text-navy-400">
                       Manual / Disconnected
                     </td>
-                    <td className="py-4 text-emerald-600 font-bold">
+ <td className="py-4 text-emerald-600 font-medium">
                       Native Real-time
                     </td>
                   </tr>
                   <tr className="border-b border-navy-50">
-                    <td className="py-4 text-navy-700">
+ <td className="py-4 text-navy-700">
                       College Team Collaboration
                     </td>
-                    <td className="py-4 text-navy-400">Third Party Chat</td>
-                    <td className="py-4 text-emerald-600 font-bold">
+ <td className="py-4 text-navy-400">Third Party Chat</td>
+ <td className="py-4 text-emerald-600 font-medium">
                       Unified Campus Hub
                     </td>
                   </tr>
@@ -197,7 +197,7 @@ export default function SEOLanding() {
             You can always navigate to our{" "}
             <Link
               to="/student-project-management"
-              className="text-navy-900 font-bold"
+ className="text-navy-900 font-medium"
             >
               student collaboration platform
             </Link>{" "}
@@ -205,7 +205,7 @@ export default function SEOLanding() {
             ecosystems. Likewise, checking our comprehensive{" "}
             <Link
               to="/academic-task-tracker"
-              className="text-navy-900 font-bold"
+ className="text-navy-900 font-medium"
             >
               academic productivity tool
             </Link>{" "}
@@ -223,17 +223,17 @@ export default function SEOLanding() {
         </div>
 
         {/* CTA Block */}
-        <div className="mt-16 bg-navy-900 text-white rounded-[2px] p-10 text-center">
-          <h2 className="text-3xl font-semibold mb-4">
+ <div className="mt-16 bg-navy-900 text-white rounded-lg p-10 text-center">
+ <h2 className="text-3xl font-semibold mb-4">
             Ready to accelerate your academic journey?
           </h2>
-          <p className="text-navy-200 mb-8 text-lg font-medium max-w-xl mx-auto">
+ <p className="text-navy-200 mb-8 text-lg font-medium max-w-xl mx-auto">
             Experience the best real-time college team collaboration tool
             exclusively tailored for students and faculty.
           </p>
           <Link
             to="/signin"
-            className="inline-block bg-white text-navy-900 px-8 py-4 rounded-xl font-bold hover:bg-navy-50 transition-colors"
+ className="inline-block bg-white text-navy-900 px-8 py-4 rounded-xl font-medium hover:bg-navy-50 transition-colors"
           >
             Create Free Student Account
           </Link>
@@ -241,23 +241,23 @@ export default function SEOLanding() {
       </main>
 
       {/* Footer */}
-      <footer className="max-w-4xl mx-auto px-6 mt-32 pt-10 border-t border-navy-200 grid grid-cols-1 md:grid-cols-3 gap-8">
+ <footer className="max-w-4xl mx-auto px-6 mt-32 pt-10 border-t border-navy-200 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
-          <h4 className="uniz-logo-wordmark text-xl mb-4">uniZ.</h4>
-          <p className="text-sm text-navy-400 font-medium">
+ <h4 className="uniz-logo-wordmark text-xl mb-4">uniZ.</h4>
+ <p className="text-sm text-navy-400 font-medium">
             The next generation unified learning workspace built specifically
             for engineering and college students.
           </p>
         </div>
         <div>
-          <h4 className="font-bold mb-4 text-sm tracking-[0.14em] text-navy-900">
+ <h4 className="font-medium mb-4 text-sm text-navy-900">
             Platforms
           </h4>
-          <ul className="space-y-3 text-sm font-medium text-navy-500">
+ <ul className="space-y-3 text-sm font-medium text-navy-500">
             <li>
               <Link
                 to="/student-project-management"
-                className="hover:text-navy-900"
+ className="hover:text-navy-900"
               >
                 UniZ Student Workspace
               </Link>
@@ -265,27 +265,27 @@ export default function SEOLanding() {
             <li>
               <Link
                 to="/college-team-collaboration"
-                className="hover:text-navy-900"
+ className="hover:text-navy-900"
               >
                 Team Collaboration for Colleges
               </Link>
             </li>
             <li>
-              <Link to="/academic-task-tracker" className="hover:text-navy-900">
+ <Link to="/academic-task-tracker" className="hover:text-navy-900">
                 Academic Task Tracker
               </Link>
             </li>
           </ul>
         </div>
         <div>
-          <h4 className="font-bold mb-4 text-sm tracking-[0.14em] text-navy-900">
+ <h4 className="font-medium mb-4 text-sm text-navy-900">
             Resources
           </h4>
-          <ul className="space-y-3 text-sm font-medium text-navy-500">
+ <ul className="space-y-3 text-sm font-medium text-navy-500">
             <li>
               <Link
                 to="/blog/best-tools-for-student-collaboration-in-india"
-                className="hover:text-navy-900"
+ className="hover:text-navy-900"
               >
                 Best Collaboration Tools
               </Link>
@@ -293,7 +293,7 @@ export default function SEOLanding() {
             <li>
               <Link
                 to="/blog/notion-alternative-for-engineering-students"
-                className="hover:text-navy-900"
+ className="hover:text-navy-900"
               >
                 Notion Alternatives
               </Link>
@@ -301,7 +301,7 @@ export default function SEOLanding() {
             <li>
               <Link
                 to="/blog/academic-productivity-system-guide"
-                className="hover:text-navy-900"
+ className="hover:text-navy-900"
               >
                 Productivity System Guide
               </Link>

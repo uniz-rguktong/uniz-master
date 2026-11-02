@@ -16,22 +16,22 @@ export function TurnstileLoadingPlaceholder({
     >
       {/* Shimmer sweep */}
       <div
-        className="pointer-events-none absolute inset-0 overflow-hidden rounded-md"
+ className="pointer-events-none absolute inset-0 overflow-hidden rounded-md"
         aria-hidden
       >
-        <div className="cf-turnstile-shimmer absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/70 to-transparent" />
+ <div className="cf-turnstile-shimmer absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/70 to-transparent" />
       </div>
 
       <div className="relative flex min-w-0 items-center gap-2.5 sm:gap-3">
         {/* Orbiting ring + cloud mark */}
         <div className="relative flex h-8 w-8 shrink-0 items-center justify-center sm:h-9 sm:w-9">
           <div
-            className="cf-turnstile-ring absolute inset-0 rounded-full border-2 border-transparent border-t-[#F6821F] border-r-[#F6821F]/25"
+ className="cf-turnstile-ring absolute inset-0 rounded-full border-2 border-transparent border-t-[#F6821F] border-r-[#F6821F]/25"
             aria-hidden
           />
           <svg
             viewBox="0 0 48 32"
-            className="cf-turnstile-cloud relative h-4 w-7 text-[#F6821F] sm:h-5 sm:w-8"
+ className="cf-turnstile-cloud relative h-4 w-7 text-[#F6821F] sm:h-5 sm:w-8"
             fill="currentColor"
             aria-hidden
           >
@@ -40,12 +40,12 @@ export function TurnstileLoadingPlaceholder({
         </div>
 
         <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="truncate text-[10px] font-semibold tracking-tight text-navy-700 sm:text-[11px]">
+ <span className="truncate text-[10px] font-semibold tracking-tight text-navy-700 sm:text-[11px]">
             Verifying you&apos;re human
           </span>
-          <span className="truncate text-[9px] font-medium text-navy-400 sm:text-[10px]">
+ <span className="truncate text-[9px] font-medium text-navy-400 sm:text-[10px]">
             Protected by{" "}
-            <span className="text-[#F6821F]">Cloudflare</span>
+ <span className="text-[#F6821F]">Cloudflare</span>
           </span>
         </div>
       </div>

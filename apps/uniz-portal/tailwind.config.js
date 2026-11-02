@@ -5,28 +5,30 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Inter"', "system-ui", "-apple-system", '"Segoe UI"', "sans-serif"],
-        body: ['"Inter"', "system-ui", "-apple-system", '"Segoe UI"', "sans-serif"],
-        button: ['"Inter"', "system-ui", "-apple-system", '"Segoe UI"', "sans-serif"],
-        form: ['"Inter"', "system-ui", "-apple-system", '"Segoe UI"', "sans-serif"],
+        sans: ['"Cabin Condensed"', "-apple-system", "system-ui", "sans-serif"],
+        body: ['"Cabin Condensed"', "-apple-system", "system-ui", "sans-serif"],
+        button: ['"Cabin Condensed"', "-apple-system", "system-ui", "sans-serif"],
+        form: ['"Cabin Condensed"', "-apple-system", "system-ui", "sans-serif"],
         condensed: ['"Cabin Condensed"', '"Cabin"', "sans-serif"],
+        serif: ['"Cabin Condensed"', "Georgia", "serif"],
+        campus: ['"Cabin Condensed"', "-apple-system", "system-ui", "sans-serif"],
         mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
       },
 
       fontSize: {
         h1: [
           "44px",
-          { lineHeight: "48px", letterSpacing: "-0.035em", fontWeight: "600" },
+          { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "500" },
         ],
         h2: [
           "32px",
-          { lineHeight: "40px", letterSpacing: "-0.03em", fontWeight: "600" },
+          { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "500" },
         ],
         h3: [
           "24px",
-          { lineHeight: "32px", letterSpacing: "-0.02em", fontWeight: "600" },
+          { lineHeight: "32px", letterSpacing: "-0.02em", fontWeight: "500" },
         ],
-        h4: ["18px", { lineHeight: "26px", letterSpacing: "-0.015em", fontWeight: "600" }],
+        h4: ["18px", { lineHeight: "26px", letterSpacing: "-0.015em", fontWeight: "500" }],
 
         base: ["16px", { lineHeight: "24px", fontWeight: "400" }],
         small: ["14px", { lineHeight: "20px", fontWeight: "400" }],
@@ -62,7 +64,7 @@ module.exports = {
           border: "var(--portal-navy-border, #EEEEEE)",
           accent: "#EA2027",
           footer: "#EEEEEE",
-          cta: "#34495e",
+          cta: "#0A2540",
           link: "#061B33",
         },
 
@@ -111,17 +113,33 @@ module.exports = {
         },
 
         navy: {
-          900: "var(--navy-900)",
-          800: "var(--navy-800)",
-          700: "var(--navy-700)",
-          600: "var(--navy-600)",
-          500: "var(--navy-500)",
-          400: "var(--navy-400)",
-          300: "var(--navy-300)",
-          200: "var(--navy-200)",
-          100: "var(--navy-100)",
-          50: "var(--navy-50)",
-          950: "var(--navy-950, #021227)",
+          DEFAULT: "#0A2540",
+          950: "#021227",
+          900: "#061B33",
+          850: "#061527",
+          800: "#0A2540",
+          750: "#0B2A47",
+          700: "#0D3154",
+          600: "#113255",
+          500: "#163A5C",
+          400: "#5A7A94",
+          300: "#9BB0C4",
+          200: "#D8E0EA",
+          100: "#FAFAFA",
+          50: "#FFFFFF",
+        },
+
+        /* Copied from apps/uniz-landing (rguktong.in) */
+        "brand-red": "#EA2027",
+        ink: {
+          DEFAULT: "#0F172A",
+          muted: "#475569",
+          subtle: "#64748B",
+        },
+        line: "#E2E8F0",
+        surface: {
+          DEFAULT: "#FAFAFA",
+          2: "#F8FAFC",
         },
 
         slate: {
@@ -165,19 +183,22 @@ module.exports = {
       },
 
       borderRadius: {
+        xl: "12px",
+        "2xl": "12px",
+        "3xl": "12px",
         "portal-sm": "8px",
-        "portal-lg": "12px",
-        "portal-xl": "14px",
-        "portal-2xl": "16px",
+        "portal-lg": "8px",
+        "portal-xl": "8px",
+        "portal-2xl": "12px",
       },
 
       spacing: {
         portal: "32px",
-        header: "60px",
+        header: "68px",
       },
 
       height: {
-        header: "60px",
+        header: "68px",
       },
 
       transitionTimingFunction: {

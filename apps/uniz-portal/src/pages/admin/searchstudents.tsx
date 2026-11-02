@@ -62,10 +62,10 @@ interface StudentProps {
 
 const Detail = ({ label, value }: { label: string; value?: any }) => (
   <div className="group">
-    <label className="text-[10px] font-bold text-navy-400 tracking-wider mb-1 block group-hover:text-navy-500 transition-colors">
+ <label className="text-[10px] font-medium text-navy-400 tracking-wider mb-1 block group-hover:text-navy-500 transition-colors">
       {label}
     </label>
-    <p className="text-sm font-semibold text-navy-700">{value || "-"}</p>
+ <p className="text-sm font-semibold text-navy-700">{value || "-"}</p>
   </div>
 );
 
@@ -78,12 +78,12 @@ const Section = ({
   title: string;
   children: React.ReactNode;
 }) => (
-  <div className="bg-white rounded-[2px] border border-navy-200 overflow-hidden shadow-sm">
-    <div className="px-6 py-4 border-b border-navy-100 bg-navy-50/50 flex items-center gap-3">
-      <div className="p-2 bg-white rounded-lg shadow-sm">
-        <Icon className="w-4 h-4 text-navy-600" />
+ <div className="bg-white rounded-lg border border-navy-200 overflow-hidden shadow-sm">
+ <div className="px-6 py-4 border-b border-navy-100 bg-navy-50/50 flex items-center gap-3">
+ <div className="p-2 bg-white rounded-lg shadow-sm">
+ <Icon className="w-4 h-4 text-navy-600" />
       </div>
-      <h3 className="font-bold text-navy-900 text-sm">{title}</h3>
+ <h3 className="font-medium text-navy-900 text-sm">{title}</h3>
     </div>
     <div className="p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -232,13 +232,13 @@ export default function SearchStudents() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10 space-y-8">
+ <div className="max-w-7xl mx-auto px-6 py-10 space-y-8">
       {/* Header & Search */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigate("/admin")}
-            className="inline-flex items-center text-sm font-medium text-navy-500 hover:text-navy-800 transition-colors"
+ className="inline-flex items-center text-sm font-medium text-navy-500 hover:text-navy-800 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Admin
           </button>
@@ -246,7 +246,7 @@ export default function SearchStudents() {
             {selectedStudent && (
               <button
                 onClick={() => setSelectedStudent(null)}
-                className="p-2 bg-white border border-navy-200 rounded-lg shadow-sm hover:bg-navy-50 transition-all font-semibold text-xs "
+ className="p-2 bg-white border border-navy-200 rounded-lg shadow-sm hover:bg-navy-50 transition-all font-semibold text-xs"
               >
                 Close Profile
               </button>
@@ -254,7 +254,7 @@ export default function SearchStudents() {
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={cn(
-                "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all border shadow-sm",
+                "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border shadow-sm",
                 showFilters
                   ? "bg-navy-900 text-white border-navy-900"
                   : "bg-white text-navy-600 border-navy-200 hover:bg-navy-50",
@@ -265,13 +265,13 @@ export default function SearchStudents() {
           </div>
         </div>
 
-        <div className="bg-white p-8 rounded-[2px] border border-navy-200 shadow-sm space-y-6">
+ <div className="bg-white p-8 rounded-lg border border-navy-200 shadow-sm space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <h1 className="text-3xl font-semibold text-navy-900 tracking-tight">
+ <h1 className="text-3xl font-semibold text-navy-900 tracking-tight">
                 Search Directory
               </h1>
-              <p className="text-navy-500 text-sm font-medium italic">
+ <p className="text-navy-500 text-sm font-medium italic">
                 Find students, view academic performance and request history.
               </p>
             </div>
@@ -280,8 +280,8 @@ export default function SearchStudents() {
                 placeholder="Search by ID or Name..."
                 value={query}
                 onchangeFunction={(e: any) => setQuery(e.target.value)}
-                icon={<Search className="w-5 h-5 text-navy-400" />}
-                className="h-14 bg-navy-50 border-transparent focus:bg-white focus:border-navy-300 transition-all rounded-[2px]"
+ icon={<Search className="w-5 h-5 text-navy-400" />}
+ className="h-14 bg-navy-50 border-transparent focus:bg-white focus:border-navy-300 transition-all rounded-lg"
               />
 
               <AnimatePresence>
@@ -290,16 +290,16 @@ export default function SearchStudents() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute left-0 right-0 top-full mt-2 bg-white border border-navy-200 rounded-[2px] shadow-2xl z-50 overflow-hidden divide-y divide-navy-100"
+ className="absolute left-0 right-0 top-full mt-2 bg-white border border-navy-200 rounded-lg shadow-2xl z-50 overflow-hidden divide-y divide-navy-100"
                   >
                     {suggestions.map((s) => (
                       <button
                         key={s.id}
                         onClick={() => handleSelectStudent(s)}
-                        className="w-full px-6 py-4 flex items-center justify-between hover:bg-navy-50 transition-all group"
+ className="w-full px-6 py-4 flex items-center justify-between hover:bg-navy-50 transition-all group"
                       >
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-navy-100 rounded-xl flex items-center justify-center text-navy-500 font-bold overflow-hidden ring-2 ring-navy-50">
+ <div className="w-10 h-10 bg-navy-100 rounded-xl flex items-center justify-center text-navy-500 font-medium overflow-hidden ring-2 ring-navy-50">
                             {s.profile_url ? (
                               <img
                                 src={s.profile_url}
@@ -309,16 +309,16 @@ export default function SearchStudents() {
                               s.name[0]
                             )}
                           </div>
-                          <div className="text-left">
-                            <p className="text-sm font-bold text-navy-900 group-hover:text-[#061B33] transition-colors">
+ <div className="text-left">
+ <p className="text-sm font-medium text-navy-900 group-hover:text-[#061B33] transition-colors">
                               {s.name}
                             </p>
-                            <p className="text-xs font-semibold text-navy-400 tracking-[0.14em]">
+ <p className="text-xs font-semibold text-navy-400 ">
                               {s.username} • {s.branch} {s.year}
                             </p>
                           </div>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-navy-300 group-hover:text-[#061B33] group-hover:translate-x-1 transition-all" />
+ <ChevronRight className="w-4 h-4 text-navy-300 group-hover:text-[#061B33] group-hover:translate-x-1 transition-all" />
                       </button>
                     ))}
                   </motion.div>
@@ -337,13 +337,13 @@ export default function SearchStudents() {
               >
                 <div className="pt-6 border-t border-navy-100 grid grid-cols-2 lg:grid-cols-5 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold text-navy-400 tracking-[0.14em] px-1">
+ <label className="text-[10px] font-semibold text-navy-400 px-1">
                       Branch
                     </label>
                     <select
                       value={branch}
                       onChange={(e) => setBranch(e.target.value)}
-                      className="w-full h-11 px-4 rounded-xl border border-navy-200 bg-white text-sm font-bold shadow-sm outline-none focus:ring-4 focus:ring-navy-900/5 transition-all appearance-none cursor-pointer"
+ className="w-full h-11 px-4 rounded-xl border border-navy-200 bg-white text-sm font-medium shadow-sm outline-none focus:ring-4 focus:ring-navy-900/5 transition-all appearance-none cursor-pointer"
                     >
                       <option value="">All Branches</option>
                       {["CSE", "ECE", "EEE", "CIVIL", "MECH"].map((b) => (
@@ -354,13 +354,13 @@ export default function SearchStudents() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold text-navy-400 tracking-[0.14em] px-1">
+ <label className="text-[10px] font-semibold text-navy-400 px-1">
                       Year
                     </label>
                     <select
                       value={year}
                       onChange={(e) => setYear(e.target.value)}
-                      className="w-full h-11 px-4 rounded-xl border border-navy-200 bg-white text-sm font-bold shadow-sm outline-none focus:ring-4 focus:ring-navy-900/5 transition-all appearance-none cursor-pointer"
+ className="w-full h-11 px-4 rounded-xl border border-navy-200 bg-white text-sm font-medium shadow-sm outline-none focus:ring-4 focus:ring-navy-900/5 transition-all appearance-none cursor-pointer"
                     >
                       <option value="">All Years</option>
                       {["E1", "E2", "E3", "E4"].map((y) => (
@@ -371,7 +371,7 @@ export default function SearchStudents() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold text-navy-400 tracking-[0.14em] px-1">
+ <label className="text-[10px] font-semibold text-navy-400 px-1">
                       Type Filter
                     </label>
                     <div className="flex gap-2">
@@ -429,7 +429,7 @@ export default function SearchStudents() {
                         setIsSuspended(undefined);
                         setQuery("");
                       }}
-                      className="w-full h-11 text-xs font-semibold text-navy-400 hover:text-navy-900 tracking-[0.14em] transition-all"
+ className="w-full h-11 text-xs font-semibold text-navy-400 hover:text-navy-900 transition-all"
                     >
                       Reset All Application Filters
                     </button>
@@ -445,19 +445,19 @@ export default function SearchStudents() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-4 bg-red-50 border border-red-100 rounded-[2px] flex items-center gap-3 text-red-600 shadow-sm"
+ className="p-4 bg-red-50 border border-red-100 rounded-lg flex items-center gap-3 text-red-600 shadow-sm"
         >
           <AlertCircle className="w-5 h-5" />
-          <p className="text-sm font-bold tracking-wider">{error}</p>
+ <p className="text-sm font-medium tracking-wider">{error}</p>
         </motion.div>
       )}
 
       {/* Main Content Area */}
       <div className="space-y-8">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <div className="w-12 h-12 border-4 border-navy-200 border-t-navy-900 rounded-full animate-spin" />
-            <p className="text-navy-400 font-bold text-sm animate-pulse">
+ <div className="flex flex-col items-center justify-center py-20 gap-4">
+ <div className="w-12 h-12 border-4 border-navy-200 border-t-navy-900 rounded-full animate-spin" />
+ <p className="text-navy-400 font-medium text-sm animate-pulse">
               Scanning database...
             </p>
           </div>
@@ -468,10 +468,10 @@ export default function SearchStudents() {
                 <button
                   key={student.id}
                   onClick={() => handleSelectStudent(student)}
-                  className="text-left bg-white p-6 rounded-[2px] border border-navy-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group"
+ className="text-left bg-white p-6 rounded-lg border border-navy-200 shadow-sm hover:shadow-xl transition-all group"
                 >
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-14 h-14 bg-navy-900 rounded-[2px] flex items-center justify-center text-white text-xl font-semibold overflow-hidden shadow-lg">
+ <div className="w-14 h-14 bg-navy-900 rounded-lg flex items-center justify-center text-white text-xl font-semibold overflow-hidden shadow-lg">
                       {student.profile_url ? (
                         <img
                           src={student.profile_url}
@@ -482,33 +482,33 @@ export default function SearchStudents() {
                       )}
                     </div>
                     <div>
-                      <h4 className="font-bold text-navy-900 text-lg leading-tight group-hover:text-[#061B33] transition-colors">
+ <h4 className="font-medium text-navy-900 text-lg leading-tight group-hover:text-[#061B33] transition-colors">
                         {student.name}
                       </h4>
-                      <p className="text-xs font-bold text-navy-400 tracking-[0.14em]">
+ <p className="text-xs font-medium text-navy-400 ">
                         {student.username}
                       </p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-3 bg-navy-50 rounded-[2px] relative">
-                      <p className="text-[10px] font-bold text-navy-400 mb-1">
+ <div className="p-3 bg-navy-50 rounded-lg relative">
+ <p className="text-[10px] font-medium text-navy-400 mb-1">
                         Branch
                       </p>
-                      <p className="text-sm font-bold text-navy-700">
+ <p className="text-sm font-medium text-navy-700">
                         {student.branch}
                       </p>
                       {student.is_suspended && (
-                        <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-red-600 text-white text-[8px] font-semibold rounded shadow-lg ring-2 ring-white">
+ <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-red-600 text-white text-[8px] font-semibold rounded shadow-lg ring-2 ring-white">
                           Suspended
                         </span>
                       )}
                     </div>
-                    <div className="p-3 bg-navy-50 rounded-[2px]">
-                      <p className="text-[10px] font-bold text-navy-400 mb-1">
+ <div className="p-3 bg-navy-50 rounded-lg">
+ <p className="text-[10px] font-medium text-navy-400 mb-1">
                         Year
                       </p>
-                      <p className="text-sm font-bold text-navy-700">
+ <p className="text-sm font-medium text-navy-700">
                         {student.year}
                       </p>
                     </div>
@@ -529,25 +529,25 @@ export default function SearchStudents() {
             className="space-y-8"
           >
             {/* Student Header Card */}
-            <div className="bg-white rounded-[2px] p-8 md:p-12 relative overflow-hidden border-4 border-[#0A2540] shadow-2xl transition-all">
+ <div className="bg-white rounded-lg p-8 md:p-12 relative overflow-hidden border-4 border-[#0A2540] shadow-2xl transition-all">
               <div className="relative flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
                 <div className="flex flex-col md:flex-row items-center gap-8">
                   <div className="relative">
-                    <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-[2px] p-1 shadow-xl ring-4 ring-black/5 group overflow-hidden">
+ <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-lg p-1 shadow-xl ring-4 ring-black/5 group overflow-hidden">
                       {selectedStudent.profile_url ? (
                         <img
                           src={selectedStudent.profile_url}
-                          className="w-full h-full object-cover rounded-[2px]"
+ className="w-full h-full object-cover rounded-lg"
                         />
                       ) : (
-                        <div className="w-full h-full bg-navy-100 flex items-center justify-center text-navy-900 text-4xl font-semibold rounded-[2px]">
+ <div className="w-full h-full bg-navy-100 flex items-center justify-center text-navy-900 text-4xl font-semibold rounded-lg">
                           {selectedStudent.name[0]}
                         </div>
                       )}
                     </div>
                     <div
                       className={cn(
-                        "absolute -bottom-2 -right-2 px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-[0.14em] shadow-lg border-2 border-[#0A2540] bg-white text-[#061B33]",
+                        "absolute -bottom-2 -right-2 px-4 py-1.5 rounded-full text-[10px] font-semibold shadow-lg border-2 border-[#0A2540] bg-white text-[#061B33]",
                         selectedStudent.is_suspended &&
                           "bg-red-600 border-red-900 text-white",
                       )}
@@ -560,18 +560,18 @@ export default function SearchStudents() {
                     </div>
                   </div>
 
-                  <div className="text-center md:text-left space-y-4">
+ <div className="text-center md:text-left space-y-4">
                     <div>
-                      <h2 className="text-4xl font-semibold text-[#061B33] tracking-tighter ">
+ <h2 className="text-4xl font-semibold text-[#061B33] tracking-tighter">
                         {selectedStudent.name}
                       </h2>
-                      <p className="text-navy-400 font-bold tracking-[0.14em] text-xs mt-2">
+ <p className="text-navy-400 font-medium text-xs mt-2">
                         {selectedStudent.username} • {selectedStudent.branch}{" "}
                         {selectedStudent.year}
                       </p>
                     </div>
                     <div className="flex flex-wrap justify-center md:justify-start gap-2">
-                      <span className="px-4 py-2 bg-navy-50 rounded-xl text-[#061B33] text-xs font-semibold border border-navy-200 flex items-center gap-2">
+ <span className="px-4 py-2 bg-navy-50 rounded-xl text-[#061B33] text-xs font-semibold border border-navy-200 flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5" /> ROOM{" "}
                         {selectedStudent.roomno || "N/A"}
                       </span>
@@ -592,7 +592,7 @@ export default function SearchStudents() {
                 </div>
 
                 {/* Integrated QR Code */}
-                <div className="p-4 bg-navy-50 rounded-[2px] border-2 border-dashed border-navy-300">
+ <div className="p-4 bg-navy-50 rounded-lg border-2 border-dashed border-navy-300">
                   <QRCode
                     value={JSON.stringify({
                       id: selectedStudent.id,
@@ -605,7 +605,7 @@ export default function SearchStudents() {
                     size={120}
                     fgColor="#000000"
                   />
-                  <p className="text-[10px] text-center font-semibold text-navy-400 mt-2 tracking-[0.14em] ">
+ <p className="text-[10px] text-center font-semibold text-navy-400 mt-2 ">
                     Scan Identity
                   </p>
                 </div>
@@ -661,13 +661,13 @@ export default function SearchStudents() {
                     selectedStudent.grades.map((g, i) => (
                       <div
                         key={i}
-                        className="p-4 bg-navy-50 rounded-[2px] flex justify-between items-center group hover:bg-white border border-transparent hover:border-navy-200 transition-all"
+ className="p-4 bg-navy-50 rounded-lg flex justify-between items-center group hover:bg-white border border-transparent hover:border-navy-200 transition-all"
                       >
                         <div>
-                          <p className="text-sm font-bold text-navy-900">
+ <p className="text-sm font-medium text-navy-900">
                             {g.subject}
                           </p>
-                          <p className="text-[10px] font-bold text-navy-400 ">
+ <p className="text-[10px] font-medium text-navy-400">
                             {g.semester}
                           </p>
                         </div>
@@ -684,7 +684,7 @@ export default function SearchStudents() {
                       </div>
                     ))
                   ) : (
-                    <p className="text-navy-400 font-bold italic py-4">
+ <p className="text-navy-400 font-medium italic py-4">
                       No academic records found
                     </p>
                   )}
@@ -694,13 +694,13 @@ export default function SearchStudents() {
                     selectedStudent.attendance.map((a, i) => (
                       <div
                         key={i}
-                        className="p-4 bg-navy-50 rounded-[2px] space-y-2 border border-transparent hover:border-navy-200 hover:bg-white transition-all"
+ className="p-4 bg-navy-50 rounded-lg space-y-2 border border-transparent hover:border-navy-200 hover:bg-white transition-all"
                       >
                         <div className="flex justify-between items-center">
-                          <p className="text-sm font-bold text-navy-900">
+ <p className="text-sm font-medium text-navy-900">
                             {a.subject}
                           </p>
-                          <span className="text-[#061B33] font-semibold text-xs">
+ <span className="text-[#061B33] font-semibold text-xs">
                             {(
                               (a.attendedClasses / a.totalClasses) *
                               100
@@ -708,21 +708,21 @@ export default function SearchStudents() {
                             %
                           </span>
                         </div>
-                        <div className="w-full h-1.5 bg-navy-200 rounded-full overflow-hidden">
+ <div className="w-full h-1.5 bg-navy-200 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-[#0A2540] rounded-full"
+ className="h-full bg-[#0A2540] rounded-full"
                             style={{
                               width: `${(a.attendedClasses / a.totalClasses) * 100}%`,
                             }}
                           />
                         </div>
-                        <p className="text-[10px] font-semibold text-navy-400 tracking-[0.14em]">
+ <p className="text-[10px] font-semibold text-navy-400 ">
                           {a.attendedClasses} / {a.totalClasses} Lectures
                         </p>
                       </div>
                     ))
                   ) : (
-                    <p className="text-navy-400 font-bold italic py-4">
+ <p className="text-navy-400 font-medium italic py-4">
                       No attendance records found
                     </p>
                   )}
@@ -743,7 +743,7 @@ export default function SearchStudents() {
 
                   if (uniqueSemesters.length === 0) {
                     return (
-                      <p className="text-navy-400 font-bold italic py-2 col-span-full">
+ <p className="text-navy-400 font-medium italic py-2 col-span-full">
                         No report data generated yet.
                       </p>
                     );
@@ -755,13 +755,13 @@ export default function SearchStudents() {
                     .map((sem: any) => (
                       <div
                         key={sem}
-                        className="p-4 bg-navy-900 border border-navy-800 rounded-[2px] flex flex-col gap-3 shadow-lg"
+ className="p-4 bg-navy-900 border border-navy-800 rounded-lg flex flex-col gap-3 shadow-lg"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="text-white font-semibold text-sm tracking-tighter">
+ <span className="text-white font-semibold text-sm tracking-tighter">
                             {sem} Report
                           </span>
-                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+ <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
                         </div>
                         <div className="flex gap-2">
                           <button
@@ -772,7 +772,7 @@ export default function SearchStudents() {
                                 { studentId: selectedStudent.username },
                               )
                             }
-                            className="flex-1 bg-white text-[#061B33] py-2 rounded-xl font-bold text-[10px] flex items-center justify-center gap-1.5 hover:bg-navy-100 transition-all"
+ className="flex-1 bg-white text-[#061B33] py-2 rounded-xl font-medium text-[10px] flex items-center justify-center gap-1.5 hover:bg-navy-100 transition-all"
                           >
                             <GraduationCap size={12} /> Grade
                           </button>
@@ -784,7 +784,7 @@ export default function SearchStudents() {
                                 { studentId: selectedStudent.username },
                               )
                             }
-                            className="flex-1 bg-white/10 text-white py-2 rounded-xl font-bold text-[10px] flex items-center justify-center gap-1.5 hover:bg-white/20 transition-all border border-white/10"
+ className="flex-1 bg-white/10 text-white py-2 rounded-xl font-medium text-[10px] flex items-center justify-center gap-1.5 hover:bg-white/20 transition-all border border-white/10"
                           >
                             <BookOpen size={12} /> Attendance
                           </button>
@@ -796,17 +796,17 @@ export default function SearchStudents() {
 
               {/* History Section */}
               <div className="space-y-6">
-                <div className="flex items-center gap-3 px-4">
-                  <History className="w-5 h-5 text-[#061B33]" />
-                  <h3 className="font-semibold text-[#061B33] tracking-[0.14em] text-lg">
+ <div className="flex items-center gap-3 px-4">
+ <History className="w-5 h-5 text-[#061B33]" />
+ <h3 className="font-semibold text-[#061B33] text-lg">
                     Request History
                   </h3>
                 </div>
 
                 {isHistoryLoading ? (
-                  <div className="flex flex-col items-center justify-center py-20 gap-4">
-                    <div className="w-8 h-8 border-3 border-navy-200 border-t-black rounded-full animate-spin" />
-                    <p className="text-navy-400 font-bold text-xs tracking-[0.14em]">
+ <div className="flex flex-col items-center justify-center py-20 gap-4">
+ <div className="w-8 h-8 border-3 border-navy-200 border-t-black rounded-full animate-spin" />
+ <p className="text-navy-400 font-medium text-xs ">
                       Compiling history...
                     </p>
                   </div>
@@ -816,12 +816,12 @@ export default function SearchStudents() {
                       {history.map((req, i) => (
                         <div
                           key={i}
-                          className="bg-white p-6 rounded-[2px] border-2 border-navy-100 shadow-sm hover:border-[#0A2540] transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group"
+ className="bg-white p-6 rounded-lg border-2 border-navy-100 shadow-sm hover:border-[#0A2540] transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group"
                         >
                           <div className="flex items-center gap-6">
                             <div
                               className={cn(
-                                "w-12 h-12 rounded-[2px] flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform",
+                                "w-12 h-12 rounded-lg flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform",
                                 req.is_approved
                                   ? "bg-[#0A2540] text-white"
                                   : req.is_rejected
@@ -833,7 +833,7 @@ export default function SearchStudents() {
                             </div>
                             <div>
                               <div className="flex items-center gap-3 mb-1">
-                                <span className="text-[10px] font-semibold tracking-[0.14em] text-navy-400">
+ <span className="text-[10px] font-semibold text-navy-400">
                                   {req.type}
                                 </span>
                                 <span
@@ -846,7 +846,7 @@ export default function SearchStudents() {
                                         : "bg-[#0A2540] animate-pulse",
                                   )}
                                 />
-                                <span className="text-xs font-semibold tracking-[0.14em]">
+ <span className="text-xs font-semibold ">
                                   {req.is_approved
                                     ? "Granted"
                                     : req.is_rejected
@@ -854,19 +854,19 @@ export default function SearchStudents() {
                                       : "Pending"}
                                 </span>
                               </div>
-                              <p className="font-bold text-[#061B33] text-lg">
+ <p className="font-medium text-[#061B33] text-lg">
                                 "{req.reason}"
                               </p>
-                              <p className="text-xs font-semibold text-navy-400 mt-1 tracking-[0.14em]">
+ <p className="text-xs font-semibold text-navy-400 mt-1 ">
                                 {new Date(req.requested_time).toLocaleString()}
                               </p>
                             </div>
                           </div>
-                          <div className="w-full md:w-auto p-4 bg-navy-50 rounded-[2px] border border-navy-100 flex flex-col items-end gap-1">
-                            <p className="text-[10px] font-semibold text-navy-400 tracking-[0.14em]">
+ <div className="w-full md:w-auto p-4 bg-navy-50 rounded-lg border border-navy-100 flex flex-col items-end gap-1">
+ <p className="text-[10px] font-semibold text-navy-400 ">
                               Gateway Status
                             </p>
-                            <p className="text-sm font-semibold text-[#061B33] tracking-tighter">
+ <p className="text-sm font-semibold text-[#061B33] tracking-tighter">
                               {req.current_level?.replace("_", " ") ||
                                 "Finalized"}
                             </p>
@@ -887,15 +887,15 @@ export default function SearchStudents() {
                     />
                   </div>
                 ) : (
-                  <div className="bg-navy-50 border-4 border-navy-100 border-dashed rounded-[2px] py-20 flex flex-col items-center justify-center text-center gap-4">
-                    <div className="w-16 h-16 bg-white rounded-[2px] shadow-sm flex items-center justify-center text-navy-300">
+ <div className="bg-navy-50 border-4 border-navy-100 border-dashed rounded-lg py-20 flex flex-col items-center justify-center text-center gap-4">
+ <div className="w-16 h-16 bg-white rounded-lg shadow-sm flex items-center justify-center text-navy-300">
                       <History className="w-8 h-8" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-[#061B33] font-semibold text-lg tracking-[0.14em]">
+ <p className="text-[#061B33] font-semibold text-lg ">
                         No Request History
                       </p>
-                      <p className="text-navy-400 text-sm font-medium italic">
+ <p className="text-navy-400 text-sm font-medium italic">
                         Empty historical record for this student identifier.
                       </p>
                     </div>
@@ -905,15 +905,15 @@ export default function SearchStudents() {
             </div>
           </motion.div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-center gap-6">
-            <div className="w-24 h-24 bg-navy-50 rounded-full flex items-center justify-center text-navy-200">
+ <div className="flex flex-col items-center justify-center py-20 text-center gap-6">
+ <div className="w-24 h-24 bg-navy-50 rounded-full flex items-center justify-center text-navy-200">
               <Search className="w-12 h-12" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-navy-900 tracking-[0.14em]">
+ <h3 className="text-xl font-semibold text-navy-900 ">
                 Ready to search
               </h3>
-              <p className="text-navy-400 max-w-sm font-medium italic">
+ <p className="text-navy-400 max-w-sm font-medium italic">
                 Use the search bar above to look up specific students or use the
                 filters for advanced discovery.
               </p>

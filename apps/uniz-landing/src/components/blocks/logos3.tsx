@@ -78,7 +78,7 @@ const Logos3 = ({
   return (
     <section className={`py-24 bg-white ${className}`}>
       <div className="container mx-auto px-4 flex flex-col items-center text-center">
-        <h2 className="mb-12 text-3xl font-extrabold text-slate-900 lg:text-4xl">
+        <h2 className="mb-12 text-3xl font-medium text-slate-900 lg:text-4xl">
           {heading}
         </h2>
       </div>

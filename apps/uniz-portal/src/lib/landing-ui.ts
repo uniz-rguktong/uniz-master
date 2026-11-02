@@ -1,43 +1,43 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Marketing / landing design tokens — white editorial canvas.
- * Distinct from portal navy; used on / and SEO pages only.
+ * Public design system copied from rguktong.in (`apps/uniz-landing`).
+ * Cabin Condensed, navy #0A2540, red #EA2027, line #E2E8F0, 150ms ease.
+ * Authenticated app surfaces stay on portal-ui / student-ui.
  */
 
-export const landingPageClass = "min-h-screen bg-white text-navy-900 antialiased";
+export const landingPageClass =
+  "campus-canvas flex min-h-screen w-full flex-col bg-white text-ink antialiased";
 
-export const landingSectionYClass = "py-16 md:py-24";
+export const landingContainerClass =
+  "mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12";
 
-export const landingContainerClass = "max-w-[1280px] mx-auto px-4 sm:px-6";
+export const landingSectionYClass = "section-editorial";
 
-export const landingCardClass =
-  "rounded-portal-2xl border border-navy-100/80 bg-white/70 overflow-hidden transition-all duration-300";
-
-export const landingCardHoverClass =
-  "hover:border-navy-200 hover:bg-white hover:shadow-whisper-landing";
-
-export const landingEyebrowClass =
-  "inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.14em] uppercase text-navy-400";
+export const landingEyebrowClass = "text-sm text-ink-muted";
 
 export const landingDisplayClass =
-  "text-[clamp(1.85rem,4.5vw,3.25rem)] md:text-[clamp(2.25rem,5vw,3.75rem)] font-semibold text-navy-950 tracking-[-0.04em] leading-[1.02]";
+  "font-serif font-medium tracking-tight leading-[1.06] text-white [text-wrap:balance]";
 
-export const landingDisplayMutedClass = "text-navy-400 font-light";
+export const landingHeadingClass =
+  "font-serif text-3xl font-medium tracking-tight text-navy-900 leading-tight sm:text-4xl md:text-5xl";
 
 export const landingLeadClass =
-  "text-[15px] md:text-[17px] text-navy-500 font-medium leading-relaxed max-w-xl";
+  "text-base leading-relaxed text-ink-muted sm:text-lg";
 
-export const landingPillClass =
-  "inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[9.5px] font-semibold tracking-[0.14em]";
+export const landingCardClass =
+  "rounded-lg border border-line bg-white";
 
 export const landingCtaClass =
-  "inline-flex items-center justify-center gap-2 min-h-12 px-8 rounded-portal-xl bg-navy-950 text-white text-[14px] font-bold shadow-whisper-landing hover:bg-black transition-all";
+  "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-white px-5 text-sm font-medium text-navy-900 transition-colors duration-150 hover:bg-navy-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
-export const landingDividerClass =
-  "h-px w-full bg-gradient-to-r from-transparent via-navy-200/80 to-transparent";
+export const landingCtaDarkClass =
+  "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-navy-900 px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-navy-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy";
 
-export const landingFeatureGridClass =
-  "grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4";
+export const landingCtaRedClass =
+  "inline-flex h-10 items-center justify-center gap-1.5 rounded-lg bg-brand-red px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-[#C81A20] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy";
 
-export const landingStackClass = cn(landingContainerClass, "space-y-4 md:space-y-6");
+export const landingGhostClass =
+  "inline-flex h-11 items-center justify-center rounded-lg border border-white/30 bg-transparent px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-white/10";
+
+export const landingStackClass = cn(landingContainerClass, "space-y-8");

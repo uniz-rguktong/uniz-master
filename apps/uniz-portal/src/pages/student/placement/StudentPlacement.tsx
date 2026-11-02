@@ -50,7 +50,7 @@ export default function StudentPlacement() {
       title="Placements"
       description="Open drives you can apply to. Add a public link to your resume (Drive or similar) before applying."
     >
-      {error && <p className="text-sm text-red-600">{error}</p>}
+ {error && <p className="text-sm text-red-600">{error}</p>}
       <input
         className={`${inputCls} w-full`}
         placeholder="Resume link (https://...)"
@@ -79,7 +79,7 @@ export default function StudentPlacement() {
               </button>
               <button
                 type="button"
-                className="rounded-md border px-3 py-1.5"
+ className="rounded-md border px-3 py-1.5"
                 onClick={() =>
                   act(
                     `/offers/${o.id}/respond`,
@@ -95,20 +95,20 @@ export default function StudentPlacement() {
         </div>
       ))}
       {drives.length === 0 && (
-        <p className="text-sm text-slate-500">No open drives right now.</p>
+ <p className="text-sm text-slate-500">No open drives right now.</p>
       )}
       {drives.map((d) => (
         <div key={d.id} className={`${cardCls} space-y-1`}>
-          <p className="font-medium text-slate-900">
+ <p className="font-medium text-slate-900">
             {d.company} . {d.title} ({d.jobRole})
           </p>
-          <p className="text-slate-600">
+ <p className="text-slate-600">
             {d.ctcLpa ? `${d.ctcLpa} LPA . ` : ""}
             {d.location} . apply by {day(d.deadline)} . min CGPA {d.minCgpa}
           </p>
-          {d.description && <p className="text-slate-600">{d.description}</p>}
+ {d.description && <p className="text-slate-600">{d.description}</p>}
           {applied.has(d.id) ? (
-            <p className="text-green-700">
+ <p className="text-green-700">
               Applied . {String(applied.get(d.id))}
             </p>
           ) : d.eligible ? (
@@ -128,7 +128,7 @@ export default function StudentPlacement() {
               Apply
             </button>
           ) : (
-            <p className="text-slate-500">
+ <p className="text-slate-500">
               Not eligible: {(d.reasons || []).join(", ")}
             </p>
           )}

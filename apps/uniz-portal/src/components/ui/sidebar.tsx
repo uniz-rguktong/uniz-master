@@ -130,7 +130,7 @@ export const MobileSidebar = ({
             className="h-8 w-8 object-contain"
             alt="Ongole Logo"
           />
-          <span className="text-xl font-extrabold tracking-tighter text-[#061B33]">
+ <span className="text-xl font-medium tracking-tighter text-[#061B33]">
             Ongole
           </span>
         </div>
@@ -138,12 +138,12 @@ export const MobileSidebar = ({
         <div className="flex justify-end z-[60]">
           {open ? (
             <ChevronLeft
-              className="text-[#061B33] h-6 w-6"
+ className="text-[#061B33] h-6 w-6"
               onClick={() => setOpen(false)}
             />
           ) : (
             <Menu
-              className="text-[#061B33] h-6 w-6"
+ className="text-[#061B33] h-6 w-6"
               onClick={() => setOpen(true)}
             />
           )}
@@ -223,7 +223,7 @@ export const SidebarLink = ({
           ease: [0.4, 0, 0.2, 1], // material design easing curve
         }}
         className={cn(
-          "text-sm font-bold tracking-tight whitespace-nowrap overflow-hidden",
+          "text-sm font-medium tracking-tight whitespace-nowrap overflow-hidden",
           isActive
             ? "text-white"
             : "text-navy-600 group-hover/sidebar:text-[#061B33]",

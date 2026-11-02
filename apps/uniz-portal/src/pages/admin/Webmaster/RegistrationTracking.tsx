@@ -218,20 +218,20 @@ export default function RegistrationTracking({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className={cn(adminCardClass, "p-5")}>
           <p className={adminLabelClass}>Eligible</p>
-          <p className="text-2xl font-semibold text-navy-900 mt-1">
+ <p className="text-2xl font-semibold text-navy-900 mt-1">
             {summary.eligible.toLocaleString()}
           </p>
         </div>
-        <div className={cn(adminCardClass, "p-5 border-emerald-100 bg-emerald-50/30")}>
-          <p className={cn(adminLabelClass, "text-emerald-700")}>Registered</p>
-          <p className="text-2xl font-semibold text-emerald-800 mt-1 flex items-center gap-2">
+ <div className={cn(adminCardClass, "p-5 border-emerald-100 bg-emerald-50/30")}>
+ <p className={cn(adminLabelClass, "text-emerald-700")}>Registered</p>
+ <p className="text-2xl font-semibold text-emerald-800 mt-1 flex items-center gap-2">
             <CheckCircle2 size={22} />
             {summary.registered.toLocaleString()}
           </p>
         </div>
-        <div className={cn(adminCardClass, "p-5 border-amber-100 bg-amber-50/30")}>
-          <p className={cn(adminLabelClass, "text-amber-700")}>Pending</p>
-          <p className="text-2xl font-semibold text-amber-800 mt-1 flex items-center gap-2">
+ <div className={cn(adminCardClass, "p-5 border-amber-100 bg-amber-50/30")}>
+ <p className={cn(adminLabelClass, "text-amber-700")}>Pending</p>
+ <p className="text-2xl font-semibold text-amber-800 mt-1 flex items-center gap-2">
             <UserX size={22} />
             {summary.pending.toLocaleString()}
           </p>
@@ -239,13 +239,13 @@ export default function RegistrationTracking({
       </div>
 
       <div className={cn(adminCardClass, "p-4")}>
-        <div className="flex items-center justify-between text-sm font-medium text-navy-600 mb-2">
+ <div className="flex items-center justify-between text-sm font-medium text-navy-600 mb-2">
           <span>Completion</span>
           <span>{progressPct}%</span>
         </div>
-        <div className="h-2 rounded-full bg-navy-100 overflow-hidden">
+ <div className="h-2 rounded-full bg-navy-100 overflow-hidden">
           <div
-            className="h-full bg-emerald-500 transition-all duration-500"
+ className="h-full bg-emerald-500 transition-all duration-500"
             style={{ width: `${progressPct}%` }}
           />
         </div>
@@ -255,7 +255,7 @@ export default function RegistrationTracking({
       <div className={cn(adminCardClass, "p-5 space-y-4")}>
         <div className="relative">
           <Search
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400"
+ className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400"
             size={16}
           />
           <input
@@ -268,7 +268,7 @@ export default function RegistrationTracking({
           {loading && (
             <Loader2
               size={14}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-navy-400"
+ className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-navy-400"
             />
           )}
         </div>
@@ -334,7 +334,7 @@ export default function RegistrationTracking({
                 </select>
                 <ChevronDown
                   size={12}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
+ className="absolute right-2.5 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
                 />
               </div>
             </div>
@@ -345,31 +345,31 @@ export default function RegistrationTracking({
       {/* Table */}
       <div className={cn(adminCardClass, "overflow-hidden p-0")}>
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-[12px] min-w-[720px]">
+ <table className="w-full border-collapse text-[12px] min-w-[720px]">
             <thead>
-              <tr className="bg-navy-50 border-b border-navy-200 text-[10px] font-semibold tracking-wide text-navy-500">
-                <th className="px-4 py-3 text-left">#</th>
-                <th className="px-4 py-3 text-left">Student ID</th>
-                <th className="px-4 py-3 text-left">Name</th>
-                <th className="px-4 py-3 text-left">Branch</th>
-                <th className="px-4 py-3 text-left">Year</th>
-                <th className="px-4 py-3 text-left">Sec</th>
-                <th className="px-4 py-3 text-left">Status</th>
-                <th className="px-4 py-3 text-left">Subjects</th>
-                <th className="px-4 py-3 text-left">Submitted</th>
+ <tr className="bg-navy-50 border-b border-navy-200 text-[10px] font-semibold tracking-wide text-navy-500">
+ <th className="px-4 py-3 text-left">#</th>
+ <th className="px-4 py-3 text-left">Student ID</th>
+ <th className="px-4 py-3 text-left">Name</th>
+ <th className="px-4 py-3 text-left">Branch</th>
+ <th className="px-4 py-3 text-left">Year</th>
+ <th className="px-4 py-3 text-left">Sec</th>
+ <th className="px-4 py-3 text-left">Status</th>
+ <th className="px-4 py-3 text-left">Subjects</th>
+ <th className="px-4 py-3 text-left">Submitted</th>
               </tr>
             </thead>
             <tbody>
               {loading && rows.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-16 text-center text-navy-400">
+ <td colSpan={9} className="px-4 py-16 text-center text-navy-400">
                     <Loader2 className="animate-spin mx-auto mb-2" size={24} />
                     Loading…
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-16 text-center text-navy-500">
+ <td colSpan={9} className="px-4 py-16 text-center text-navy-500">
                     No students match these filters
                   </td>
                 </tr>
@@ -382,24 +382,24 @@ export default function RegistrationTracking({
                       !row.registered && "bg-amber-50/40",
                     )}
                   >
-                    <td className="px-4 py-3 text-navy-400 tabular-nums">
+ <td className="px-4 py-3 text-navy-400 tabular-nums">
                       {(pagination.page - 1) * 25 + idx + 1}
                     </td>
-                    <td className="px-4 py-3 font-semibold text-navy-900">
+ <td className="px-4 py-3 font-semibold text-navy-900">
                       {row.username}
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-navy-800">{row.name || "—"}</div>
+ <td className="px-4 py-3">
+ <div className="font-medium text-navy-800">{row.name || "—"}</div>
                       {row.email && (
-                        <div className="text-[11px] text-navy-400 truncate max-w-[200px]">
+ <div className="text-[11px] text-navy-400 truncate max-w-[200px]">
                           {row.email}
                         </div>
                       )}
                     </td>
-                    <td className="px-4 py-3">{row.branch}</td>
-                    <td className="px-4 py-3">{row.year}</td>
-                    <td className="px-4 py-3">{row.section || "—"}</td>
-                    <td className="px-4 py-3">
+ <td className="px-4 py-3">{row.branch}</td>
+ <td className="px-4 py-3">{row.year}</td>
+ <td className="px-4 py-3">{row.section || "—"}</td>
+ <td className="px-4 py-3">
                       {row.registered ? (
                         <span
                           className={cn(
@@ -422,10 +422,10 @@ export default function RegistrationTracking({
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3 tabular-nums">
+ <td className="px-4 py-3 tabular-nums">
                       {row.registered ? row.subjectCount : "—"}
                     </td>
-                    <td className="px-4 py-3 text-navy-500 whitespace-nowrap">
+ <td className="px-4 py-3 text-navy-500 whitespace-nowrap">
                       {fmtDate(row.submittedAt)}
                     </td>
                   </tr>

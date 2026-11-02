@@ -82,7 +82,7 @@ export const studentInfoGridClass =
   "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4";
 
 export const studentTabBarClass =
-  "flex gap-6 md:gap-8 min-w-max border-b border-[#E6EAF0] overflow-x-auto no-scrollbar";
+  "flex gap-6 md:gap-8 min-w-max border-b border-[#E2E8F0] overflow-x-auto no-scrollbar";
 
 export const studentTabButtonActiveClass = cn(
   "min-h-11 pb-3 text-[14px] font-semibold capitalize tracking-[-0.005em] transition-colors duration-150 relative font-sans",

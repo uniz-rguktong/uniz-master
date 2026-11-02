@@ -100,11 +100,11 @@ export default function DirectPublishModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-[#0A2540]/40">
+ <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-[#0A2540]/40">
       <div className={cn(adminModalShellClass, "w-full max-w-md p-8 space-y-6")}>
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-[10px] font-semibold tracking-[0.14em] text-navy-400 uppercase">
+ <p className="text-[10px] font-semibold text-navy-400 ">
               Webadmin only
             </p>
             <h2 className={adminModalTitleClass}>Publish to students</h2>
@@ -113,14 +113,14 @@ export default function DirectPublishModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-navy-400 hover:bg-navy-100 hover:text-navy-700"
+ className="p-2 rounded-xl text-navy-400 hover:bg-navy-100 hover:text-navy-700"
             aria-label="Close"
           >
             <X size={18} />
           </button>
         </div>
 
-        <div className="rounded-[2px] bg-amber-50 border border-amber-100 px-4 py-3 text-sm text-amber-900">
+ <div className="rounded-lg bg-amber-50 border border-amber-100 px-4 py-3 text-sm text-amber-900">
           Skips Dean and HOD approval and opens course registration for all
           students immediately. A verification code is sent to your registered
           email before this action runs.
@@ -145,8 +145,8 @@ export default function DirectPublishModal({
         ) : (
           <div className="space-y-4">
             {maskedEmail && (
-              <p className="text-xs text-navy-500">
-                Code sent to <span className="font-semibold">{maskedEmail}</span>
+ <p className="text-xs text-navy-500">
+ Code sent to <span className="font-semibold">{maskedEmail}</span>
               </p>
             )}
             <div className="space-y-2">
@@ -158,7 +158,7 @@ export default function DirectPublishModal({
                 onChange={(e) =>
                   setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
                 }
-                className={cn(adminInputClass, "text-center text-lg tracking-[0.3em]")}
+ className={cn(adminInputClass, "text-center text-lg tracking-[0.3em]")}
                 placeholder="000000"
                 autoComplete="one-time-code"
               />
@@ -167,7 +167,7 @@ export default function DirectPublishModal({
               type="button"
               disabled={loading || resendIn > 0}
               onClick={() => sendCode(true)}
-              className={cn(adminGhostButtonClass, "w-full justify-center text-xs")}
+ className={cn(adminGhostButtonClass, "w-full justify-center text-xs")}
             >
               {resendIn > 0
                 ? `Resend code in ${resendIn}s`
@@ -189,7 +189,7 @@ export default function DirectPublishModal({
           </div>
         )}
 
-        <p className="flex items-center gap-2 text-[10px] text-navy-400">
+ <p className="flex items-center gap-2 text-[10px] text-navy-400">
           <ShieldCheck size={12} />
           Rate limited: 2 codes per minute, 10 per hour
         </p>

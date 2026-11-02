@@ -10,12 +10,12 @@ import {
 } from "@/lib/portal-ui";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-semibold tracking-tight ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy-900/20 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy disabled:pointer-events-none disabled:opacity-40",
   {
     variants: {
       variant: {
         default:
-          "rounded-portal-xl bg-primary text-primary-foreground shadow-whisper-navy hover:bg-navy-800",
+          "bg-navy text-white hover:bg-navy-950",
         destructive:
           "rounded-portal-xl bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:

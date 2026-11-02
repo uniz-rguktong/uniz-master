@@ -144,11 +144,11 @@ export default function AdminShell({
     if (!enableNavSearch) return null;
 
     return (
-      <div className="space-y-3 px-5 py-4">
+ <div className="space-y-3 px-5 py-4">
         <div className="group relative">
           <Search
             className={cn(
-              "absolute top-1/2 -translate-y-1/2 text-white/50 transition-colors group-focus-within:text-white",
+              "absolute top-1/2 -translate-y-1/2 text-ink-subtle transition-colors group-focus-within:text-navy",
               isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2",
             )}
             size={16}
@@ -159,12 +159,12 @@ export default function AdminShell({
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={isSidebarOpen ? "Search operations..." : ""}
             className={cn(
-              "w-full min-h-10 rounded-[1px] border border-[#d9d9d9] bg-white text-[13px] font-medium text-[#0A2540] placeholder:text-[#5A7A94] focus:outline-none focus:ring-1 focus:ring-[#0A2540]/20",
+              "w-full min-h-10 rounded-lg border border-line bg-white text-sm font-medium text-navy-900 placeholder:text-ink-subtle focus:outline-none focus:ring-2 focus:ring-navy/20",
               isSidebarOpen ? "pl-10 pr-8" : "px-0 text-center",
             )}
           />
           {isSidebarOpen && (
-            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-[1px] border border-[#E8E8E8] bg-[#FAFAFA] px-1.5 py-0.5 text-[9px] font-bold text-[#5A7A94]">
+ <div className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md border border-line bg-surface px-1.5 py-0.5 text-xs text-ink-subtle">
               /
             </div>
           )}
@@ -198,27 +198,29 @@ export default function AdminShell({
           <button
             type="button"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="inline-flex h-11 w-11 items-center justify-center text-white/80 hover:text-white lg:hidden"
+ className="inline-flex h-10 w-10 items-center justify-center rounded-md text-navy-900 hover:bg-surface-2 lg:hidden"
             aria-label="Toggle sidebar"
           >
             <Menu size={18} />
           </button>
-          <a href="/" className="flex items-center gap-2.5 text-white no-underline">
+ <a href="/" className="flex items-center gap-3 text-navy-900 no-underline">
             <img
-              src="/logo.png"
-              alt="UniZ — RGUKT Ongole"
-              className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-white/25 shadow-sm"
+              src="/rgukt-logo.png"
+              alt="RGUKT Ongole"
+              className="h-10 w-10 shrink-0 object-contain"
             />
-            <span className="truncate text-[15px] font-bold uppercase tracking-[1.5px]">Exam Cell</span>
+ <span className="truncate font-serif text-[1.35rem] font-semibold leading-none tracking-tight">
+              uniZ
+            </span>
           </a>
           {headerLeft}
         </div>
         <div className="ml-auto flex items-center gap-3">
-          <div className="hidden min-w-0 max-w-[42vw] text-right sm:block">
-            <p className="truncate text-[13px] font-bold uppercase leading-none tracking-[0.4px] text-white">
+ <div className="hidden min-w-0 max-w-[42vw] text-right sm:block">
+ <p className="truncate text-sm font-medium leading-none text-navy-900">
               {profileName || username}
             </p>
-            <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.5px] text-white/70">
+ <p className="mt-1 text-xs text-ink-muted">
               {headerSubtitle || profileEmail || `${username}@rguktong.ac.in`}
             </p>
           </div>
@@ -240,7 +242,7 @@ export default function AdminShell({
       {isOverlayMobile && isSidebarOpen && (
         <button
           type="button"
-          className="fixed inset-0 z-[60] bg-[#021227]/45 lg:hidden"
+ className="fixed inset-0 z-[60] bg-[#021227]/45 lg:hidden"
           aria-label="Close navigation"
           onClick={() => setIsSidebarOpen(false)}
         />
@@ -248,7 +250,7 @@ export default function AdminShell({
       <aside
         className={cn(
           adminSidebarClass,
-          "max-lg:fixed max-lg:bottom-0 max-lg:left-0 max-lg:top-[52px] max-lg:z-[70] max-lg:h-[calc(100dvh-52px)] max-lg:w-72 max-lg:transition-transform",
+          "max-lg:fixed max-lg:bottom-0 max-lg:left-0 max-lg:top-[68px] max-lg:z-[70] max-lg:h-[calc(100dvh-68px)] max-lg:w-72 max-lg:transition-transform",
           isSidebarOpen ? "max-lg:translate-x-0" : "max-lg:-translate-x-full",
           "lg:sticky lg:top-0 lg:flex lg:h-auto lg:translate-x-0",
           sidebarWidth,
@@ -298,11 +300,11 @@ export default function AdminShell({
           )}
         >
           {filteredGroups.length === 0 && searchQuery ? (
-            <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/10">
-                <Search size={20} className="text-[#5A7A94]" />
+ <div className="flex flex-col items-center justify-center py-10 text-center">
+ <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/10">
+ <Search size={20} className="text-[#5A7A94]" />
               </div>
-              <p className="px-4 text-[11px] font-bold uppercase tracking-[0.14em] text-[#5A7A94]">
+ <p className="px-4 text-[11px] font-medium text-[#5A7A94]">
                 No operations found
               </p>
             </div>
@@ -328,7 +330,7 @@ export default function AdminShell({
                       }}
                       title={!isSidebarOpen ? item.label : ""}
                       className={cn(
-                        "group relative flex w-full items-center rounded-[2px] py-2.5 text-left uppercase tracking-[0.5px] transition-colors duration-150",
+                        "group relative flex w-full items-center rounded-lg py-2.5 text-left text-sm font-medium transition-colors duration-150",
                         isSidebarOpen
                           ? "space-x-3 px-3"
                           : "justify-center px-0",
@@ -338,7 +340,7 @@ export default function AdminShell({
                       {isActive && (
                         <motion.div
                           layoutId="adminActiveTabGlow"
-                          className="absolute inset-0 rounded-[2px] bg-white shadow-sm"
+ className="absolute inset-0 rounded-lg bg-surface-2"
                           initial={false}
                           transition={{ type: "spring", stiffness: 420, damping: 38 }}
                         />
@@ -358,8 +360,8 @@ export default function AdminShell({
                       {isSidebarOpen && (
                         <span
                           className={cn(
-                            "relative z-10 whitespace-nowrap text-[12px] font-bold leading-none",
-                            isActive ? "font-bold" : "font-semibold",
+                            "relative z-10 whitespace-nowrap text-sm font-medium leading-none",
+                            isActive ? "font-medium" : "font-semibold",
                           )}
                         >
                           {item.label}
@@ -386,14 +388,14 @@ export default function AdminShell({
             <div
               onClick={() => openProfile(avatarBtnRef)}
               className={cn(
-                "group flex cursor-pointer items-center rounded-[2px] py-1.5 transition-colors hover:bg-white",
+                "group flex cursor-pointer items-center rounded-lg py-1.5 transition-colors hover:bg-white",
                 isSidebarOpen ? "justify-start px-2" : "justify-center",
               )}
             >
               <div className="flex min-w-0 items-center gap-3">
                 <button
                   ref={avatarBtnRef}
-                  className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-[1px] border border-[#d9d9d9] bg-white"
+ className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#d9d9d9] bg-white"
                 >
                   {profilePhoto ? (
                     <img
@@ -402,18 +404,18 @@ export default function AdminShell({
                       alt=""
                     />
                   ) : (
-                    <span className="text-[11px] font-bold text-[#0A2540]">
+ <span className="text-[11px] font-medium text-[#0A2540]">
                       {initial}
                     </span>
                   )}
                 </button>
                 {isSidebarOpen && (
                   <div className="min-w-0">
-                    <p className="truncate text-[13px] font-bold leading-tight text-[#0A2540]">
+ <p className="truncate text-[13px] font-medium leading-tight text-[#0A2540]">
                       {profileName || username}
                     </p>
                     {roleLabel && (
-                      <p className="mt-0.5 truncate text-[9px] font-bold uppercase tracking-wider text-[#5A7A94]">
+ <p className="mt-0.5 truncate text-[9px] font-medium text-[#5A7A94]">
                         {roleLabel}
                       </p>
                     )}
@@ -424,16 +426,12 @@ export default function AdminShell({
           )}
 
           {isSidebarOpen && (
-            <div className="space-y-2 px-2 pt-2">
-              <div className="rounded-[2px] border border-[#d9d9d9] bg-white p-3.5 text-[#0A2540]">
-                <p className="font-sans text-[10px] font-bold uppercase tracking-[0.12em] text-[#5A7A94]">
-                  Platform
-                </p>
-                <p className="mt-1 font-sans text-[13px] font-bold uppercase tracking-[1px] leading-tight">
-                  Exam Cell Console
-                </p>
-                <p className="mt-1.5 font-form text-[10px] font-medium leading-relaxed text-[#5A7A94]">
-                  RGUKT Ongole · Examination Cell
+ <div className="space-y-2 px-2 pt-2">
+ <div className="rounded-lg border border-line bg-surface p-3.5 text-navy-900">
+ <p className="text-sm text-ink-muted">Portal</p>
+ <p className="mt-1 font-serif text-lg font-medium leading-tight">uniZ</p>
+ <p className="mt-1 text-sm leading-relaxed text-ink-muted">
+                  RGUKT Ongole campus
                 </p>
               </div>
             </div>
@@ -466,12 +464,12 @@ export default function AdminShell({
           initialPhoto={profilePhoto}
         />
 
-        <div className={cn("w-full min-w-0 flex-1 px-3 py-4 sm:px-4 md:px-8 lg:px-10", contentClassName)}>
+ <div className={cn("w-full min-w-0 flex-1 px-3 py-4 sm:px-4 md:px-8 lg:px-10", contentClassName)}>
           {children}
         </div>
 
         {mobileNavItems && mobileNavItems.length > 0 && (
-          <div className="sticky bottom-0 z-50 flex h-16 items-center justify-around border-t border-[#EEEEEE] bg-white px-2 shadow-examcell md:hidden">
+ <div className="sticky bottom-0 z-50 flex h-16 items-center justify-around border-t border-line bg-white px-2 md:hidden">
             {mobileNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -486,7 +484,7 @@ export default function AdminShell({
                 >
                   <div
                     className={cn(
-                      "rounded-[2px] p-1.5 transition-all",
+                      "rounded-md p-1.5 transition-colors duration-150",
                       isActive && "bg-[#FAFAFA]",
                     )}
                   >
@@ -494,7 +492,7 @@ export default function AdminShell({
                   </div>
                   <span
                     className={cn(
-                      "text-[9px] font-bold uppercase tracking-wider",
+                      "text-[11px] font-medium",
                       isActive ? "opacity-100" : "opacity-60",
                     )}
                   >
