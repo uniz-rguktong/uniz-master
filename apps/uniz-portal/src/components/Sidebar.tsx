@@ -60,6 +60,7 @@ const Registration = lazy(() => import("../pages/student/Registration"));
 const Grievance = lazy(() => import("../pages/student/Grievance"));
 const MyLibrary = lazy(() => import("../pages/library/MyLibrary"));
 const StudentPlacement = lazy(() => import("../pages/student/placement/StudentPlacement"));
+const AlumniHome = lazy(() => import("../pages/alumni/AlumniHome"));
 const StudentFees = lazy(() => import("../pages/student/fees/StudentFees"));
 const StudentFeedback = lazy(
   () => import("../pages/student/feedback/StudentFeedback"),
@@ -85,6 +86,7 @@ interface MainContent {
     | "grievance"
     | "feedback"
     | "fees"
+    | "alumni"
     | "placement"
     | "library"
     | "notifications"
@@ -237,6 +239,19 @@ export default function Sidebar({ content }: MainContent) {
           },
         ]
       : []),
+    ...(isModuleEnabled("ALUMNI")
+      ? [
+          {
+            id: "alumni",
+            label: "Alumni",
+            href: "/student/alumni",
+            content: "alumni" as const,
+            icon: GraduationCap,
+            activeColor: "text-navy-900",
+            hoverColor: "hover:text-navy-700",
+          },
+        ]
+      : []),
     ...(isModuleEnabled("FEES")
       ? [
           {
@@ -297,6 +312,7 @@ export default function Sidebar({ content }: MainContent) {
     grievance: <Grievance />,
     feedback: <StudentFeedback />,
     fees: <StudentFees />,
+    "alumni": <AlumniHome />,
     "placement": <StudentPlacement />,
     library: <MyLibrary kind="student" />,
     notifications: <NotificationCenter portal="student" />,

@@ -388,3 +388,6 @@ export const LIBRARY_REMIND = `${BASE_URL}/library/remind`;
 
 // Placement
 export const PLACEMENT = `${BASE_URL}/placement`;
+
+// Alumni
+export const ALUMNI = `${BASE_URL}/alumni`;

@@ -400,3 +400,41 @@ model Offer {
   @@index([username])
   @@index([companyId])
 }
+
+model AlumniProfile {
+  id             String    @id @default(uuid()) @db.Uuid
+  username       String    @unique
+  studentId      String
+  name           String    @default("")
+  email          String    @default("")
+  branch         String    @default("")
+  batch          String    @default("")
+  graduationYear Int?
+  company        String    @default("")
+  jobTitle       String    @default("")
+  location       String    @default("")
+  linkedinUrl    String    @default("")
+  bio            String    @default("")
+  visible        Boolean   @default(false)
+  verifiedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([visible])
+}
+
+model AlumniJob {
+  id          String    @id @default(uuid()) @db.Uuid
+  postedBy    String
+  company     String
+  title       String
+  location    String    @default("")
+  kind        String    @default("full-time")
+  applyUrl    String
+  description String    @default("")
+  deadline    DateTime?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  @@index([active])
+}

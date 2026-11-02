@@ -38,6 +38,7 @@ import SystemLogsSection from "./SystemLogsSection";
 import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
 import FeedbackAdmin from "../feedback/FeedbackAdmin";
 import FeesAdmin from "../fees/FeesAdmin";
+import AlumniAdmin from "../../alumni/AlumniAdmin";
 import PlacementAdmin from "../placement/PlacementAdmin";
 import LibraryAdmin from "../library/LibraryAdmin";
 import { isModuleEnabled } from "@/lib/flags";
@@ -76,6 +77,7 @@ export default function WebmasterDashboard() {
               "exam_duties",
               "feedback",
               "fees",
+              "alumni",
               "placement",
               "library",
             ]
@@ -157,6 +159,9 @@ export default function WebmasterDashboard() {
         ...(role === "webadmin" && isModuleEnabled("PLACEMENT")
           ? [{ id: "placement", label: "Placements", icon: Briefcase }]
           : []),
+        ...(role === "webadmin" && isModuleEnabled("ALUMNI")
+          ? [{ id: "alumni", label: "Alumni", icon: GraduationCap }]
+          : []),
         ...(role === "webadmin" && isModuleEnabled("FEES")
           ? [{ id: "fees", label: "Fees", icon: Wallet }]
           : []),
@@ -227,6 +232,8 @@ export default function WebmasterDashboard() {
         return <FeedbackAdmin />;
       case "fees":
         return <FeesAdmin />;
+      case "alumni":
+        return <AlumniAdmin />;
       case "placement":
         return <PlacementAdmin />;
       case "library":
