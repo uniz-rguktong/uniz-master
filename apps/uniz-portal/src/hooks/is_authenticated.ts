@@ -162,7 +162,11 @@ export function useIsAuth() {
         initPushNotifications(decoded.username, NOTIFICATION_SERVICE_URL);
       }
 
-      if (authRedirectOnlyPaths.includes(location.pathname)) {
+      const keepHomeSection =
+        location.pathname === "/" &&
+        (location.hash === "#campus-updates" ||
+          location.hash === "#academic-services");
+      if (!keepHomeSection && authRedirectOnlyPaths.includes(location.pathname)) {
         navigate("/admin");
       }
     } else if (studentToken) {
@@ -194,7 +198,11 @@ export function useIsAuth() {
         initPushNotifications(decoded.username, NOTIFICATION_SERVICE_URL);
       }
 
-      if (authRedirectOnlyPaths.includes(location.pathname)) {
+      const keepHomeSection =
+        location.pathname === "/" &&
+        (location.hash === "#campus-updates" ||
+          location.hash === "#academic-services");
+      if (!keepHomeSection && authRedirectOnlyPaths.includes(location.pathname)) {
         navigate("/student");
       }
     } else if (facultyToken) {
@@ -209,7 +217,11 @@ export function useIsAuth() {
       if (!currentIsAuth.is_authenticated) {
         setAuthFn({ is_authenticated: true, type: "faculty" });
       }
-      if (authRedirectOnlyPaths.includes(location.pathname)) {
+      const keepHomeSection =
+        location.pathname === "/" &&
+        (location.hash === "#campus-updates" ||
+          location.hash === "#academic-services");
+      if (!keepHomeSection && authRedirectOnlyPaths.includes(location.pathname)) {
         navigate("/faculty");
       }
     } else if (
@@ -224,7 +236,7 @@ export function useIsAuth() {
     // Auth state changes (setAuth calls) are idempotent; re-running on every
     // one of them from 15+ components causes an explosion of redundant checks.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
+  }, [location.pathname, location.hash]);
 
   return isAuth;
 }

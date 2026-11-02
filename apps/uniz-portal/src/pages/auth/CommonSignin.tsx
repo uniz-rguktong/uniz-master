@@ -644,10 +644,10 @@ export default function Signin({ type }: SigninProps) {
           .toLowerCase();
         // Backward-compat shim: converge legacy "webmaster" tokens onto the
         // canonical "webadmin" (see resolveAdminPortalRole).
-        localStorage.setItem(
-          "admin_role",
-          rawAdminRole === "webmaster" ? "webadmin" : rawAdminRole,
-        );
+        const adminRole =
+          rawAdminRole === "webmaster" ? "webadmin" : rawAdminRole;
+        localStorage.setItem("admin_role", adminRole);
+        localStorage.setItem("role", adminRole);
         if (jwtDept) {
           localStorage.setItem("department", jwtDept);
         }
