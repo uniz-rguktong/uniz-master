@@ -40,6 +40,7 @@ import SystemLogsSection from "./SystemLogsSection";
 import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
 import FeedbackAdmin from "../feedback/FeedbackAdmin";
 import FeesAdmin from "../fees/FeesAdmin";
+import AdmissionsAdmin from "../admissions/AdmissionsAdmin";
 import ConsultancyAdmin from "../consultancy/ConsultancyAdmin";
 import ClubsAdmin from "../../clubs/ClubsAdmin";
 import InfoAdmin from "../../info/InfoAdmin";
@@ -82,6 +83,7 @@ export default function WebmasterDashboard() {
               "exam_duties",
               "feedback",
               "fees",
+              "admissions",
               "consultancy",
               "clubs",
               "info",
@@ -179,6 +181,9 @@ export default function WebmasterDashboard() {
         ...(role === "webadmin" && isModuleEnabled("CLUBS")
           ? [{ id: "consultancy", label: "Consultancy", icon: Handshake }]
           : []),
+        ...(role === "webadmin" && isModuleEnabled("ADMISSIONS")
+          ? [{ id: "admissions", label: "Admissions", icon: ClipboardList }]
+          : []),
         ...(role === "webadmin" && isModuleEnabled("FEES")
           ? [{ id: "fees", label: "Fees", icon: Wallet }]
           : []),
@@ -249,6 +254,8 @@ export default function WebmasterDashboard() {
         return <FeedbackAdmin />;
       case "fees":
         return <FeesAdmin />;
+      case "admissions":
+        return <AdmissionsAdmin />;
       case "consultancy":
         return <ConsultancyAdmin />;
       case "clubs":

@@ -397,3 +397,6 @@ export const INFOCENTRE = `${BASE_URL}/infocentre`;
 
 // Clubs and consultancy
 export const CLUBS = `${BASE_URL}/clubs`;
+
+// Admissions
+export const ADMISSIONS = `${BASE_URL}/admissions`;
