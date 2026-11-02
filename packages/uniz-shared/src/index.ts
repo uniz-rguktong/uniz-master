@@ -45,7 +45,6 @@ export {
   type VerifySignatureInput,
   type WebhookResult,
   ComingSoonProvider,
-  RazorpayTestProvider,
   getPaymentProvider,
   PAYMENTS_DISABLED_REASON,
 } from "./payments/provider";

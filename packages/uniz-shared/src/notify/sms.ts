@@ -12,6 +12,7 @@ export type SmsResult =
   | { disabled: true; reason: string }
   | { disabled: false; sent: boolean; providerId?: string; error?: string };
 
+/** Provider adapter (AWS SNS planned). Injected so this package has no SDK dependency. */
 export type SmsTransport = (msg: SmsMessage, cfg: { provider: string; apiKey: string; senderId?: string }) => Promise<{ id?: string }>;
 
 const PHONE = /^\+?\d{10,15}$/;
@@ -23,7 +24,7 @@ export class SmsSender {
 
   constructor(env: Env = process.env, private readonly transport?: SmsTransport) {
     this.apiKey = env.SMS_API_KEY || undefined;
-    this.provider = env.SMS_PROVIDER || "msg91";
+    this.provider = env.SMS_PROVIDER || "sns";
     this.senderId = env.SMS_SENDER_ID || undefined;
   }
 
