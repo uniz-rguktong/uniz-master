@@ -451,6 +451,16 @@ export default function App() {
             }
           />
           <Route
+            path="/student/feedback"
+            element={
+              <MaintenanceGuard>
+                <PageTransition>
+                  <Sidebar content="feedback" />
+                </PageTransition>
+              </MaintenanceGuard>
+            }
+          />
+          <Route
             path="/student/grievance"
             element={
               <MaintenanceGuard>

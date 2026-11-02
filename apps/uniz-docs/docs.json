@@ -78,6 +78,7 @@
             "pages": [
               "students/login",
               "students/academics",
+              "students/feedback",
               "students/profile",
               "students/outpass"
             ]

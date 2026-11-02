@@ -6,6 +6,7 @@ import { useLogout } from "../hooks/useLogout";
 import { useStudentData } from "../hooks/student_info";
 import { useState, useEffect, lazy, Suspense, useRef, type ReactElement } from "react";
 import { enableOutingsAndOutpasses } from "@/config/featureFlags";
+import { isModuleEnabled } from "@/lib/flags";
 import {
   Clock,
   CalendarDays,
@@ -20,6 +21,7 @@ import {
   HelpCircle,
   ClipboardCheck,
   Menu,
+  MessageSquare,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -53,6 +55,9 @@ const GradeHub = lazy(() => import("../pages/promotions/GradeHub"));
 const CurrentSemester = lazy(() => import("../pages/student/CurrentSemester"));
 const Registration = lazy(() => import("../pages/student/Registration"));
 const Grievance = lazy(() => import("../pages/student/Grievance"));
+const StudentFeedback = lazy(
+  () => import("../pages/student/feedback/StudentFeedback"),
+);
 const SeatingArrangement = lazy(
   () => import("../pages/student/components/SeatingArrangement"),
 );
@@ -72,6 +77,7 @@ interface MainContent {
     | "requestOutpass"
     | "attendance"
     | "grievance"
+    | "feedback"
     | "notifications"
     | "currentSemester"
     | "registration"
@@ -196,6 +202,19 @@ export default function Sidebar({ content }: MainContent) {
       hoverColor: "hover:text-navy-600",
     },
 
+    ...(isModuleEnabled("FEEDBACK")
+      ? [
+          {
+            id: "feedback",
+            label: "Feedback",
+            href: "/student/feedback",
+            content: "feedback" as const,
+            icon: MessageSquare,
+            activeColor: "text-navy-900",
+            hoverColor: "hover:text-navy-700",
+          },
+        ]
+      : []),
     {
       id: "grievance",
       label: "Grievance",
@@ -228,6 +247,7 @@ export default function Sidebar({ content }: MainContent) {
     registration: <Registration />,
     attendance: <Attendance />,
     grievance: <Grievance />,
+    feedback: <StudentFeedback />,
     notifications: <NotificationCenter portal="student" />,
     seating: <SeatingArrangement />,
     help: <HelpSupport />,

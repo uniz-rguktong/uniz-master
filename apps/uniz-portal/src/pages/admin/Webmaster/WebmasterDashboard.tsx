@@ -33,6 +33,7 @@ import PushNotificationSection from "./PushNotificationSection";
 import StudentBulkSection from "./StudentBulkSection";
 import SystemLogsSection from "./SystemLogsSection";
 import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
+import FeedbackAdmin from "../feedback/FeedbackAdmin";
 import { isModuleEnabled } from "@/lib/flags";
 import {
   enableOutingsAndOutpasses,
@@ -67,6 +68,7 @@ export default function WebmasterDashboard() {
               "faculty_mgmt",
               "system_logs",
               "exam_duties",
+              "feedback",
             ]
           : []),
         "banners",
@@ -139,6 +141,10 @@ export default function WebmasterDashboard() {
         isModuleEnabled("EXAM_DUTIES")
           ? [{ id: "exam_duties", label: "Exam Duties", icon: ClipboardList }]
           : []),
+        ...((role === "webadmin" || role === "coe") &&
+        isModuleEnabled("FEEDBACK")
+          ? [{ id: "feedback", label: "Course Feedback", icon: ClipboardList }]
+          : []),
       ],
     },
     {
@@ -199,6 +205,8 @@ export default function WebmasterDashboard() {
         return <StudentBulkSection />;
       case "exam_duties":
         return <ExamDutiesAdmin />;
+      case "feedback":
+        return <FeedbackAdmin />;
       case "attendance":
         return <UploadSection type="attendance" />;
       case "grades":

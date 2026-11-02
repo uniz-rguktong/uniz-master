@@ -351,3 +351,13 @@ export const EXAM_DUTY_SWAP = (id: string) => `${BASE_URL}/examduty/${id}/swap`;
 export const EXAM_DUTY_SWAPS = `${BASE_URL}/examduty/swaps`;
 export const EXAM_DUTY_DECIDE = (id: string) =>
   `${BASE_URL}/examduty/${id}/swap/decide`;
+export const FEEDBACK_STATUS = `${BASE_URL}/feedback/status`;
+export const FEEDBACK_FORMS = `${BASE_URL}/feedback/forms`;
+export const FEEDBACK_CLOSE = (id: string) =>
+  `${BASE_URL}/feedback/forms/${id}/close`;
+export const FEEDBACK_OPEN = `${BASE_URL}/feedback/open`;
+export const FEEDBACK_SUBMIT = (id: string) =>
+  `${BASE_URL}/feedback/forms/${id}/submit`;
+export const FEEDBACK_RESULTS = (id: string) =>
+  `${BASE_URL}/feedback/forms/${id}/results`;
+export const FEEDBACK_MINE = `${BASE_URL}/feedback/mine`;

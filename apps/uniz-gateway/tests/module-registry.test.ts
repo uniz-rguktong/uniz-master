@@ -10,6 +10,7 @@ describe("module registry", () => {
       activeModuleRoutes({
         FEATURE_FACULTY: "false",
         FEATURE_EXAM_DUTIES: "false",
+        FEATURE_FEEDBACK: "false",
       }),
     ).toEqual([]);
   });
@@ -34,5 +35,13 @@ describe("module registry", () => {
       activeModuleRoutes({ FEATURE_OUTPASS: "true" }).map((r) => r.prefix),
     ).not.toContain("/api/v1/outpass-x");
     MODULE_ROUTES.length = before;
+  });
+  it("lists feedback under FEATURE_FEEDBACK", () => {
+    expect(activeModuleRoutes({}).map((r) => r.prefix)).toContain(
+      "/api/v1/feedback",
+    );
+    expect(
+      activeModuleRoutes({ FEATURE_FEEDBACK: "false" }).map((r) => r.prefix),
+    ).not.toContain("/api/v1/feedback");
   });
 });

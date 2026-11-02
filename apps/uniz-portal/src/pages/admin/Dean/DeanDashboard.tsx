@@ -27,6 +27,7 @@ import WebmasterOverview from "../Webmaster/WebmasterOverview";
 import SemesterApproval from "./SemesterApproval";
 import LeaveApprovals from "../../faculty/leave/LeaveApprovals";
 import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
+import FeedbackAdmin from "../feedback/FeedbackAdmin";
 import { isModuleEnabled } from "@/lib/flags";
 import BannersSection from "../Webmaster/BannersSection";
 import UpdatesSection from "../Webmaster/UpdatesSection";
@@ -73,6 +74,7 @@ export default function DeanDashboard() {
             "security",
             "leave_review",
             "exam_duties",
+            "feedback",
           ] as const),
     [isHod],
   );
@@ -129,6 +131,7 @@ export default function DeanDashboard() {
         { id: "semester_registration", label: "Semester Registration", icon: CalendarClock },
         { id: "semester_review", label: "Semester Approvals", icon: CalendarClock },
         ...(isModuleEnabled("EXAM_DUTIES") ? [{ id: "exam_duties", label: "Exam Duties", icon: ClipboardCheck }] : []),
+        ...(isModuleEnabled("FEEDBACK") ? [{ id: "feedback", label: "Course Feedback", icon: ClipboardCheck }] : []),
       ],
     },
     {
@@ -161,6 +164,8 @@ export default function DeanDashboard() {
         return <LeaveApprovals />;
       case "exam_duties":
         return <ExamDutiesAdmin />;
+      case "feedback":
+        return <FeedbackAdmin />;
       case "student_bulk":
         return <StudentBulkSection />;
       case "subjects":

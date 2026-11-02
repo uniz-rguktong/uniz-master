@@ -242,3 +242,43 @@ model ExamDuty {
   @@index([facultyUsername, date])
   @@index([semesterId, examName])
 }
+
+/// Anonymous course/faculty feedback form for one subject in one semester.
+/// facultyUsername is FacultyProfile.username in the user DB (text link).
+model FeedbackForm {
+  id              String   @id @default(uuid()) @db.Uuid
+  semesterId      String
+  subjectId       String
+  facultyUsername String?
+  title           String
+  questions       Json
+  closesAt        DateTime
+  status          String   @default("open")
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([semesterId, subjectId, facultyUsername])
+  @@index([semesterId])
+  @@index([facultyUsername])
+}
+
+/// One anonymous answer set. No student id is stored here.
+model FeedbackResponse {
+  id        String   @id @default(uuid()) @db.Uuid
+  formId    String   @db.Uuid
+  ratings   Json
+  comment   String?
+  createdAt DateTime @default(now()) @db.Date
+
+  @@index([formId])
+}
+
+/// One-way hash of (form, student) so a student can answer only once.
+/// Kept apart from FeedbackResponse so answers cannot be traced back.
+model FeedbackReceipt {
+  formId    String @db.Uuid
+  voterHash String
+
+  @@id([formId, voterHash])
+}

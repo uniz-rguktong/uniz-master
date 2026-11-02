@@ -6,6 +6,7 @@
 - Student Guide
   - [Login](students/login)
   - [Academics](students/academics)
+  - [Course feedback](students/feedback)
   - [Outpass](students/outpass)
   - [Profile](students/profile)
 
