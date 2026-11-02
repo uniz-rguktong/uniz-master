@@ -400,3 +400,6 @@ export const CLUBS = `${BASE_URL}/clubs`;
 
 // Admissions
 export const ADMISSIONS = `${BASE_URL}/admissions`;
+
+// Establishment
+export const ESTABLISHMENT = `${BASE_URL}/establishment`;

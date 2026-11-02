@@ -562,3 +562,38 @@ model ApplicationDocument {
 
   @@index([applicationId])
 }
+
+model StaffRecord {
+  id             String         @id @default(uuid()) @db.Uuid
+  personType     String
+  personId       String
+  employeeId     String         @default("")
+  designation    String         @default("")
+  department     String         @default("")
+  cadre          String         @default("")
+  employmentType String         @default("regular")
+  joinedOn       DateTime?
+  status         String         @default("active")
+  notes          String         @default("")
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  events         ServiceEvent[]
+
+  @@unique([personType, personId])
+  @@index([department])
+}
+
+model ServiceEvent {
+  id        String      @id @default(uuid()) @db.Uuid
+  staffId   String      @db.Uuid
+  staff     StaffRecord @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  kind      String
+  date      DateTime
+  fromValue String      @default("")
+  toValue   String      @default("")
+  details   String      @default("")
+  createdBy String
+  createdAt DateTime    @default(now())
+
+  @@index([staffId, date])
+}

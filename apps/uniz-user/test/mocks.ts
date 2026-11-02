@@ -63,6 +63,8 @@ const bag = vi.hoisted(() => {
     bookCopy: model(),
     loan: model(),
     libraryFine: model(),
+    staffRecord: model(),
+    serviceEvent: model(),
     admissionCycle: model(),
     application: model(),
     applicationDocument: model(),
