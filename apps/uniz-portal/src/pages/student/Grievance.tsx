@@ -2,6 +2,8 @@ import { useState } from "react";
 import { toast } from "@/utils/toast-ref";
 import { Send } from "lucide-react";
 import { BASE_URL } from "../../api/endpoints";
+import { Link } from "react-router-dom";
+import { isModuleEnabled } from "@/lib/flags";
 
 export default function Grievance() {
   const [category, setCategory] = useState("Hostel");
@@ -73,6 +75,15 @@ export default function Grievance() {
           <h1 className="text-xl md:text-2xl font-semibold tracking-[-0.02em] text-navy-900 leading-none">
             Grievance Redressal System
           </h1>
+          {isModuleEnabled("FEEDBACK") ? (
+            <p className="text-navy-500 text-[12px] mt-1">
+              Feedback on a course or faculty?{" "}
+              <Link to="/student/feedback" className="underline">
+                Give it anonymously here
+              </Link>
+              .
+            </p>
+          ) : null}
         </div>
 
         {/* Main Content */}

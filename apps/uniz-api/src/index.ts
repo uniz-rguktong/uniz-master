@@ -25,7 +25,7 @@ const USER_SERVICES = new Set([
 function resolveUpstream(service: string): express.Application | null {
   const s = service.toLowerCase();
   if (s === "auth") return authApp;
-  if (s === "academics" || s === "examduty") return academicsApp;
+  if (s === "academics" || s === "examduty" || s === "feedback") return academicsApp;
   if (USER_SERVICES.has(s)) return userApp;
   return null;
 }
