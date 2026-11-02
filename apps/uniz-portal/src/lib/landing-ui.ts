@@ -31,9 +31,6 @@ export const landingCardClass =
 export const landingCtaClass =
   "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-white px-5 text-sm font-medium text-navy-900 transition-colors duration-150 hover:bg-navy-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
-export const landingCtaDarkClass =
-  "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-navy-900 px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-navy-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy";
-
 export const landingCtaRedClass =
   "inline-flex h-10 items-center justify-center gap-1.5 rounded-lg bg-brand-red px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-[#C81A20] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy";
 

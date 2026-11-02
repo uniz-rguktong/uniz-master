@@ -2,14 +2,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, ArrowUpRight, Download, Smartphone } from "lucide-react";
 import CampusUpdatesFeed from "../components/CampusUpdatesFeed";
 import SiteLegalFooter from "../components/SiteLegalFooter";
-import { DEVELOPER_TESTIMONIALS } from "../constants/developerTestimonials";
 import { UNIZ_APK_PATH, openIosDownloadModal } from "../constants/downloads";
 import { useIsAuth } from "../hooks/is_authenticated";
 import {
   landingCardClass,
   landingContainerClass,
   landingCtaClass,
-  landingCtaDarkClass,
   landingEyebrowClass,
   landingGhostClass,
   landingHeadingClass,
@@ -215,53 +213,6 @@ export default function Home() {
             </Link>
           </div>
           <CampusUpdatesFeed variant="landing" />
-        </div>
-      </section>
-
- <section className="bg-white section-editorial">
-        <div className={landingContainerClass}>
-          <div className="mb-10 flex flex-col gap-6 sm:mb-14 sm:flex-row sm:items-end sm:justify-between">
-            <div className="max-w-2xl">
-              <p className={landingEyebrowClass}>Software Development Cell</p>
-              <h2 className={`mt-3 ${landingHeadingClass}`}>Built on campus</h2>
-              <p className={`mt-5 ${landingLeadClass}`}>
-                UniZ is maintained in-house for examinations, registration, attendance, and residence.
-              </p>
-            </div>
-            <Link to="/developers" className={landingCtaDarkClass}>
-              View the directory
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {DEVELOPER_TESTIMONIALS.map((dev) => (
-              <div key={dev.name} className="flex items-center gap-4">
-                <img
-                  src={dev.src}
-                  alt={dev.name}
-                  width={64}
-                  height={64}
-                  loading="lazy"
- className="h-16 w-16 shrink-0 rounded-lg object-cover"
-                />
-                <div className="min-w-0">
- <h3 className="truncate font-serif text-lg font-medium text-navy-900">{dev.name}</h3>
- <p className="truncate text-sm text-ink-muted">{dev.designation}</p>
-                  {dev.linkedin && (
-                    <a
-                      href={dev.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
- className="editorial-link mt-1 inline-flex text-sm"
-                    >
-                      Profile
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
