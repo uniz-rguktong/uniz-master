@@ -203,17 +203,134 @@ async function seed() {
       );
     }
 
-    // --- SEEDING STUDENTS (minimal set for local portal testing) ---
+    // --- SEEDING STAFF ROLES USED BY THE PORTAL SHELLS ---
+    // Fictional local accounts only. Password is password123 for every row.
+    console.log("- Seeding faculty, hostel, library, and exam roles...");
+    const extraStaff: Array<{
+      id: string;
+      username: string;
+      role: string;
+      desc: string;
+      kind: "Admin" | "Faculty";
+      extra: Record<string, string>;
+    }> = [
+      {
+        id: "faculty-cse-id",
+        username: "faculty_cse",
+        role: "faculty",
+        desc: "CSE faculty (fictional)",
+        kind: "Faculty",
+        extra: {
+          name: "Dr Meera Demo",
+          email: "faculty_cse@example.test",
+          dept: "CSE",
+          designation: "Assistant Professor",
+        },
+      },
+      {
+        id: "coe-id",
+        username: "coe",
+        role: "coe",
+        desc: "Controller of Examinations (fictional)",
+        kind: "Admin",
+        extra: { name: "CoE Demo", email: "coe@example.test" },
+      },
+      {
+        id: "librarian-id",
+        username: "librarian",
+        role: "librarian",
+        desc: "Library desk (fictional)",
+        kind: "Admin",
+        extra: { name: "Librarian Demo", email: "librarian@example.test" },
+      },
+      {
+        id: "security-id",
+        username: "security",
+        role: "security",
+        desc: "Main gate security (fictional)",
+        kind: "Admin",
+        extra: { name: "Security Demo", email: "security@example.test" },
+      },
+      {
+        id: "warden-male-id",
+        username: "warden_male",
+        role: "warden_male",
+        desc: "Boys hostel warden (fictional)",
+        kind: "Admin",
+        extra: { name: "Warden Demo", email: "warden_male@example.test" },
+      },
+      {
+        id: "warden-female-id",
+        username: "warden_female",
+        role: "warden_female",
+        desc: "Girls hostel warden (fictional)",
+        kind: "Admin",
+        extra: { name: "Warden Demo", email: "warden_female@example.test" },
+      },
+      {
+        id: "caretaker-male-id",
+        username: "caretaker_male",
+        role: "caretaker_male",
+        desc: "Boys hostel caretaker (fictional)",
+        kind: "Admin",
+        extra: { name: "Caretaker Demo", email: "caretaker_male@example.test" },
+      },
+      {
+        id: "caretaker-female-id",
+        username: "caretaker_female",
+        role: "caretaker_female",
+        desc: "Girls hostel caretaker (fictional)",
+        kind: "Admin",
+        extra: {
+          name: "Caretaker Demo",
+          email: "caretaker_female@example.test",
+        },
+      },
+      {
+        id: "ao-id",
+        username: "ao",
+        role: "ao",
+        desc: "Administrative officer (fictional)",
+        kind: "Admin",
+        extra: { name: "AO Demo", email: "ao@example.test" },
+      },
+    ];
+    for (const row of extraStaff) {
+      await upsertUser(
+        row.id,
+        row.username,
+        row.role,
+        row.desc,
+        row.kind,
+        row.extra,
+      );
+    }
+
+    // --- SEEDING STUDENTS (fictional local fixtures, not campus records) ---
     console.log("- Seeding sample students...");
     await upsertUser(
-      "o210008-id",
-      "O210008",
+      "d210001-id",
+      "D210001",
       "student",
-      "Sample E4 CSE Student",
+      "Fictional E4 CSE student with demo academic rows",
       "Student",
       {
-        name: "Desu SreeCharan",
-        email: "o210008@rguktong.ac.in",
+        name: "Asha Demo",
+        email: "d210001@example.test",
+        branch: "CSE",
+        year: "E4",
+        semester: "Sem-1",
+      },
+    );
+    await upsertUser(
+      "d210002-id",
+      "D210002",
+      "student",
+      "Fictional E4 CSE student with an empty academic record",
+      "Student",
+      {
+        name: "Nila Demo",
+        email: "d210002@example.test",
         branch: "CSE",
         year: "E4",
         semester: "Sem-1",
