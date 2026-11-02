@@ -365,6 +365,27 @@ describe("uniz-gateway", () => {
     expect(lastProxy().req.headers["x-uniz-service"]).toBe("cms");
   });
 
+  it("proxies a service root that has no extra path", async () => {
+    await request(port, "GET", "/api/v1/clubs", {
+      authorization: "Bearer student",
+    });
+    expect(lastProxy().req.url).toBe("/");
+    expect(lastProxy().req.headers["x-uniz-service"]).toBe("clubs");
+    expect(lastProxy().opts.target).toBe("http://user.test:3002");
+
+    state.proxyWeb.mockClear();
+    await request(port, "POST", "/api/v1/clubs");
+    expect(lastProxy().req.url).toBe("/");
+    expect(lastProxy().req.headers["x-uniz-service"]).toBe("clubs");
+
+    state.proxyWeb.mockClear();
+    await request(port, "GET", "/api/v1/clubs/events", {
+      authorization: "Bearer student",
+    });
+    expect(lastProxy().req.url).toBe("/events");
+    expect(lastProxy().opts.target).toBe("http://user.test:3002");
+  });
+
   it("rejects unknown services and parked outpass routes", async () => {
     const missing = await request(port, "GET", "/api/v1/unknown/x");
     expect(missing.status).toBe(404);
