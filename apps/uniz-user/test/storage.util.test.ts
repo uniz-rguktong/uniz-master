@@ -5,6 +5,8 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
   compressToWebp,
   isStorageConfigured,
+  readFromR2,
+  storageDriver,
   saveImage,
   uploadsDir,
 } from "../src/utils/storage.util";
@@ -68,5 +70,22 @@ describe("storage.util", () => {
     expect(url).toContain("/profiles/ok.webp?v=");
     const stored = await readFile(path.join(dir, "profiles/ok.webp"));
     expect(stored.toString()).toBe("ok");
+  });
+
+  it("defaults to the disk driver and skips R2 reads", async () => {
+    expect(storageDriver()).toBe("disk");
+    expect(await readFromR2("profiles/x.webp")).toBeNull();
+  });
+
+  it("reports r2 as unconfigured when its env names are missing", () => {
+    const prev = process.env.STORAGE_DRIVER;
+    process.env.STORAGE_DRIVER = "r2";
+    try {
+      expect(storageDriver()).toBe("r2");
+      expect(isStorageConfigured()).toBe(false);
+    } finally {
+      if (prev === undefined) delete process.env.STORAGE_DRIVER;
+      else process.env.STORAGE_DRIVER = prev;
+    }
   });
 });
