@@ -334,6 +334,8 @@ export default function App() {
               </MaintenanceGuard>
             }
           />
+          {/* Outpass/outing routes are disabled on purpose until the campus is
+              ready for outpass. See config/featureFlags.ts before restoring. */}
           {/*
           <Route
             path="/student/outpass"
@@ -542,6 +544,8 @@ export default function App() {
               </PageTransition>
             }
           />
+          {/* Outpass/outing routes are disabled on purpose until the campus is
+              ready for outpass. See config/featureFlags.ts before restoring. */}
           {/*
           <Route
             path="/admin/approveouting"
@@ -612,6 +616,14 @@ export default function App() {
           />
 
           {/* Faculty Routes */}
+          <Route
+            path="/faculty/signin"
+            element={
+              <PageTransition>
+                <Signin type="faculty" />
+              </PageTransition>
+            }
+          />
           <Route
             path="/faculty"
             element={
