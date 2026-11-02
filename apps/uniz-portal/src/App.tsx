@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect, type ReactElement } from "react";
-import { Route, Routes, Link, useNavigate, Navigate } from "react-router-dom";
+import { Route, Routes, Link, useNavigate, Navigate, useLocation } from "react-router-dom";
 import "./App.css";
 import "./index.css";
 import { PageTransition } from "./components/Transition";
@@ -25,6 +25,7 @@ const InfoCentre = lazy(() => import("./pages/info/InfoCentre"));
 const AdmissionsApply = lazy(() => import("./pages/admissions/AdmissionsApply"));
 const Developers = lazy(() => import("./pages/Developers"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const IosInstallPage = lazy(() => import("./pages/IosInstallPage"));
 const NotificationDeepLink = lazy(() => import("./pages/NotificationDeepLink"));
 const AdminNotificationsPage = lazy(
   () => import("./pages/admin/AdminNotificationsPage"),
@@ -191,6 +192,19 @@ const AuthRedirect = () => {
   return <Navigate to="/" replace />;
 };
 
+function PublicHome() {
+  const { hash } = useLocation();
+  const authed = Boolean(
+    localStorage.getItem("admin_token") ||
+      localStorage.getItem("student_token") ||
+      localStorage.getItem("faculty_token"),
+  );
+  const stayOnHome =
+    hash === "#campus-updates" || hash === "#academic-services";
+  if (authed && !stayOnHome) return <AuthRedirect />;
+  return <Home />;
+}
+
 import { InstallPWA } from "./components/InstallPWA";
 import { DownloadAppBanner, IosInstallModal } from "./components/DownloadAppBanner";
 import { usePushNavigation } from "./hooks/usePushNavigation";
@@ -216,13 +230,7 @@ export default function App() {
             path="/"
             element={
               <MaintenanceGuard>
-                {localStorage.getItem("admin_token") ||
-                localStorage.getItem("student_token") ||
-                localStorage.getItem("faculty_token") ? (
-                  <AuthRedirect />
-                ) : (
-                  <Home />
-                )}
+                <PublicHome />
               </MaintenanceGuard>
             }
           />
@@ -271,6 +279,22 @@ export default function App() {
             element={
               <PageTransition>
                 <PrivacyPolicy />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/ios"
+            element={
+              <PageTransition>
+                <IosInstallPage />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/ios-install"
+            element={
+              <PageTransition>
+                <IosInstallPage />
               </PageTransition>
             }
           />

@@ -22,6 +22,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { formatDisplayText } from "@/utils/displayText";
 import { cn } from "../../../utils/cn";
 import { useAdminDashboardStats } from "../../../hooks/useAdminDashboardStats";
+import { parseJwt } from "../../../utils/security";
+import { resolveAdminPortalRole } from "../../../utils/adminRole";
 
 import { useRecoilState } from "recoil";
 import { systemUserAnalyticsAtom } from "../../../store/atoms";
@@ -31,9 +33,10 @@ export default function SystemUserAnalytics() {
   const [cachedData, setCachedData] = useRecoilState(systemUserAnalyticsAtom);
   const [loading, setLoading] = useState(!cachedData.fetched);
   const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
-  const role = (localStorage.getItem("role") || "webadmin")
-    .toLowerCase()
-    .replace(/"/g, "");
+  const adminToken = localStorage.getItem("admin_token");
+  const role = resolveAdminPortalRole(
+    adminToken ? parseJwt(adminToken) : null,
+  );
   const { data: academicStats, loading: statsLoading } =
     useAdminDashboardStats(role);
 

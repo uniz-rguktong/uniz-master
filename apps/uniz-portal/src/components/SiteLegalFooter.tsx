@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUp, Download, MapPin, Smartphone } from "lucide-react";
 import { UNIZ_APK_PATH, openIosDownloadModal } from "../constants/downloads";
+import { enableOutingsAndOutpasses } from "../config/featureFlags";
 
 const columns = [
   {
@@ -16,10 +17,12 @@ const columns = [
   {
     title: "Services",
     links: [
-      { n: "Results & transcripts", to: "/student/signin" },
-      { n: "Course registration", to: "/student/signin" },
-      { n: "Attendance", to: "/student/signin" },
-      { n: "Hostel outpass", to: "/student/signin" },
+      { n: "Results & transcripts", to: "/student/gradehub" },
+      { n: "Course registration", to: "/student/registration" },
+      { n: "Attendance", to: "/student/attendance" },
+      ...(enableOutingsAndOutpasses
+        ? [{ n: "Hostel outpass", to: "/student/outpass" }]
+        : []),
     ],
   },
   {

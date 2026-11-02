@@ -107,7 +107,11 @@ export default function FacultyDashboard() {
   const { logout } = useLogout();
 
   const [activeTab, setActiveTab] = useState<ActiveTab>("dashboard");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(
+    () =>
+      typeof window === "undefined" ||
+      window.matchMedia("(min-width: 768px)").matches,
+  );
   const [profile, setProfile] = useState<FacultyProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
 
@@ -203,18 +207,35 @@ export default function FacultyDashboard() {
     }
   };
 
+  const closeSidebarOnPhone = () => {
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      setIsSidebarOpen(false);
+    }
+  };
+
   return (
  <div className="campus-canvas flex min-h-screen bg-surface text-ink">
+      {isSidebarOpen && (
+        <button
+          type="button"
+          className="fixed inset-0 z-[60] bg-[#021227]/45 md:hidden"
+          aria-label="Close navigation"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
       <aside
- className={`sticky top-0 z-50 hidden h-screen flex-col border-r border-line bg-white text-navy-900 transition-all duration-150 md:flex ${
- isSidebarOpen ? "w-56" : "w-20"
+ className={`sticky top-0 z-[70] h-screen flex-col border-r border-line bg-white text-navy-900 transition-all duration-150 max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:w-72 md:flex ${
+ isSidebarOpen ? "flex w-72 md:w-56" : "hidden md:flex md:w-20"
  }`}
       >
         <nav className="mt-4 flex-1 space-y-1 overflow-y-auto p-3">
           {navItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id as ActiveTab)}
+              onClick={() => {
+                setActiveTab(item.id as ActiveTab);
+                closeSidebarOnPhone();
+              }}
  className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors duration-150 ${
  activeTab === item.id
  ? "bg-surface-2 text-navy-900"
@@ -246,7 +267,7 @@ export default function FacultyDashboard() {
  <header className="sticky top-0 z-40 flex h-[68px] items-center justify-between border-b border-line bg-white px-4 text-navy-900 md:px-6">
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              onClick={() => setIsSidebarOpen((open) => !open)}
  className="inline-flex h-10 w-10 items-center justify-center rounded-md text-navy-900 hover:bg-surface-2"
               aria-label="Toggle sidebar"
             >

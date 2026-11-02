@@ -28,6 +28,8 @@ import WebmasterOverview from "./WebmasterOverview";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
+import { parseJwt } from "../../../utils/security";
+import { resolveAdminPortalRole } from "../../../utils/adminRole";
 import StudentDetails from "./StudentDetails";
 import FacultyManagement from "./FacultyManagement";
 import UploadSection from "./UploadSection";
@@ -62,9 +64,9 @@ export default function WebmasterDashboard() {
     "",
   );
 
-  const role = (localStorage.getItem("role") || "webadmin")
-    .toLowerCase()
-    .replace(/"/g, "");
+  const adminToken = localStorage.getItem("admin_token");
+  const decoded = adminToken ? parseJwt(adminToken) : null;
+  const role = resolveAdminPortalRole(decoded, username);
 
   const allowedTabs = useMemo(
     () =>
