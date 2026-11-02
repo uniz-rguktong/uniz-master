@@ -461,6 +461,16 @@ export default function App() {
             }
           />
           <Route
+            path="/student/placement"
+            element={
+              <MaintenanceGuard>
+                <PageTransition>
+                  <Sidebar content="placement" />
+                </PageTransition>
+              </MaintenanceGuard>
+            }
+          />
+          <Route
             path="/student/fees"
             element={
               <MaintenanceGuard>

@@ -15,6 +15,7 @@ import {
   ClipboardList,
   Wallet,
   Library,
+  Briefcase,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { adminCardClass } from "@/components/admin/admin-ui";
@@ -37,6 +38,7 @@ import SystemLogsSection from "./SystemLogsSection";
 import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
 import FeedbackAdmin from "../feedback/FeedbackAdmin";
 import FeesAdmin from "../fees/FeesAdmin";
+import PlacementAdmin from "../placement/PlacementAdmin";
 import LibraryAdmin from "../library/LibraryAdmin";
 import { isModuleEnabled } from "@/lib/flags";
 import {
@@ -74,6 +76,7 @@ export default function WebmasterDashboard() {
               "exam_duties",
               "feedback",
               "fees",
+              "placement",
               "library",
             ]
           : []),
@@ -151,6 +154,9 @@ export default function WebmasterDashboard() {
         isModuleEnabled("FEEDBACK")
           ? [{ id: "feedback", label: "Course Feedback", icon: ClipboardList }]
           : []),
+        ...(role === "webadmin" && isModuleEnabled("PLACEMENT")
+          ? [{ id: "placement", label: "Placements", icon: Briefcase }]
+          : []),
         ...(role === "webadmin" && isModuleEnabled("FEES")
           ? [{ id: "fees", label: "Fees", icon: Wallet }]
           : []),
@@ -221,6 +227,8 @@ export default function WebmasterDashboard() {
         return <FeedbackAdmin />;
       case "fees":
         return <FeesAdmin />;
+      case "placement":
+        return <PlacementAdmin />;
       case "library":
         return <LibraryAdmin />;
       case "attendance":

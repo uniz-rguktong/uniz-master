@@ -14,6 +14,7 @@ import {
   CalendarClock,
   ClipboardCheck,
   Wallet,
+  Briefcase,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -30,6 +31,7 @@ import LeaveApprovals from "../../faculty/leave/LeaveApprovals";
 import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
 import FeedbackAdmin from "../feedback/FeedbackAdmin";
 import FeesAdmin from "../fees/FeesAdmin";
+import PlacementAdmin from "../placement/PlacementAdmin";
 import { isModuleEnabled } from "@/lib/flags";
 import BannersSection from "../Webmaster/BannersSection";
 import UpdatesSection from "../Webmaster/UpdatesSection";
@@ -78,6 +80,7 @@ export default function DeanDashboard() {
             "exam_duties",
             "feedback",
             "fees",
+            "placement",
           ] as const),
     [isHod],
   );
@@ -95,7 +98,9 @@ export default function DeanDashboard() {
     ? [
         {
           group: null,
-          items: [{ id: "dashboard", label: "Overview", icon: LayoutDashboard }],
+          items: [
+            { id: "dashboard", label: "Overview", icon: LayoutDashboard },
+          ],
         },
         {
           group: "Students",
@@ -109,54 +114,101 @@ export default function DeanDashboard() {
               label: "Semester Approvals",
               icon: CalendarClock,
             },
-            ...(isModuleEnabled("FACULTY") ? [{ id: "leave_review", label: "Leave & Duties", icon: ClipboardCheck }] : []),
+            ...(isModuleEnabled("FACULTY")
+              ? [
+                  {
+                    id: "leave_review",
+                    label: "Leave & Duties",
+                    icon: ClipboardCheck,
+                  },
+                ]
+              : []),
           ],
         },
       ]
     : [
-    {
-      group: null,
-      items: [{ id: "dashboard", label: "Overview", icon: LayoutDashboard }],
-    },
-    {
-      group: "Students",
-      items: [
-        { id: "student", label: "Student Details", icon: Users },
-        { id: "student_bulk", label: "Student Bulk Ops", icon: Users },
-      ],
-    },
-    {
-      group: "Academic",
-      items: [
-        { id: "attendance", label: "Attendance Upload", icon: Layout },
-        { id: "grades", label: "Grades Upload", icon: GraduationCap },
-        { id: "subjects", label: "Manage Subjects", icon: BookOpen },
-        { id: "semester_registration", label: "Semester Registration", icon: CalendarClock },
-        { id: "semester_review", label: "Semester Approvals", icon: CalendarClock },
-        ...(isModuleEnabled("EXAM_DUTIES") ? [{ id: "exam_duties", label: "Exam Duties", icon: ClipboardCheck }] : []),
-        ...(isModuleEnabled("FEEDBACK") ? [{ id: "feedback", label: "Course Feedback", icon: ClipboardCheck }] : []),
-        ...(isModuleEnabled("FEES") ? [{ id: "fees", label: "Fees", icon: Wallet }] : []),
-      ],
-    },
-    {
-      group: "Campus",
-      items: [
-        { id: "banners", label: "Home Banners", icon: Layout },
-        { id: "updates", label: "Campus Updates", icon: Bell },
-        { id: "website_updates", label: "Website Updates", icon: Globe },
-        { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
-      ],
-    },
-    {
-      group: "Management",
-      items: [
-        { id: "faculty_mgmt", label: "Faculty Management", icon: Users },
-        ...(isModuleEnabled("FACULTY") ? [{ id: "leave_review", label: "Leave & Duties", icon: ClipboardCheck }] : []),
-        { id: "system_logs", label: "System & Logs", icon: Activity },
-        { id: "security", label: "Security", icon: Lock },
-      ],
-    },
-  ];
+        {
+          group: null,
+          items: [
+            { id: "dashboard", label: "Overview", icon: LayoutDashboard },
+          ],
+        },
+        {
+          group: "Students",
+          items: [
+            { id: "student", label: "Student Details", icon: Users },
+            { id: "student_bulk", label: "Student Bulk Ops", icon: Users },
+          ],
+        },
+        {
+          group: "Academic",
+          items: [
+            { id: "attendance", label: "Attendance Upload", icon: Layout },
+            { id: "grades", label: "Grades Upload", icon: GraduationCap },
+            { id: "subjects", label: "Manage Subjects", icon: BookOpen },
+            {
+              id: "semester_registration",
+              label: "Semester Registration",
+              icon: CalendarClock,
+            },
+            {
+              id: "semester_review",
+              label: "Semester Approvals",
+              icon: CalendarClock,
+            },
+            ...(isModuleEnabled("EXAM_DUTIES")
+              ? [
+                  {
+                    id: "exam_duties",
+                    label: "Exam Duties",
+                    icon: ClipboardCheck,
+                  },
+                ]
+              : []),
+            ...(isModuleEnabled("FEEDBACK")
+              ? [
+                  {
+                    id: "feedback",
+                    label: "Course Feedback",
+                    icon: ClipboardCheck,
+                  },
+                ]
+              : []),
+            ...(isModuleEnabled("PLACEMENT")
+              ? [{ id: "placement", label: "Placements", icon: Briefcase }]
+              : []),
+            ...(isModuleEnabled("FEES")
+              ? [{ id: "fees", label: "Fees", icon: Wallet }]
+              : []),
+          ],
+        },
+        {
+          group: "Campus",
+          items: [
+            { id: "banners", label: "Home Banners", icon: Layout },
+            { id: "updates", label: "Campus Updates", icon: Bell },
+            { id: "website_updates", label: "Website Updates", icon: Globe },
+            { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
+          ],
+        },
+        {
+          group: "Management",
+          items: [
+            { id: "faculty_mgmt", label: "Faculty Management", icon: Users },
+            ...(isModuleEnabled("FACULTY")
+              ? [
+                  {
+                    id: "leave_review",
+                    label: "Leave & Duties",
+                    icon: ClipboardCheck,
+                  },
+                ]
+              : []),
+            { id: "system_logs", label: "System & Logs", icon: Activity },
+            { id: "security", label: "Security", icon: Lock },
+          ],
+        },
+      ];
 
   const { logout } = useLogout();
 
@@ -172,6 +224,8 @@ export default function DeanDashboard() {
         return <FeedbackAdmin />;
       case "fees":
         return <FeesAdmin />;
+      case "placement":
+        return <PlacementAdmin />;
       case "student_bulk":
         return <StudentBulkSection />;
       case "subjects":
