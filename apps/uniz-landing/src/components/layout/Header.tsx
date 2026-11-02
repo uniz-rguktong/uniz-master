@@ -105,7 +105,7 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md supports-[backdrop-filter]:bg-white/80 border-b border-line shadow-[0_1px_2px_rgba(6,21,39,0.04)]">
+      <header className="sticky top-0 z-50 w-full bg-white border-b border-line">
         {/* Tier 1: Harvard/MIT-style Slim Institutional Utility Bar */}
         <div className="bg-navy-850 text-white/80 border-b border-white/10">
           <div className="w-full max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 flex h-8 items-center justify-between text-[11.5px] tracking-[0.03em]">
@@ -162,8 +162,8 @@ export function Header() {
               <span className="font-serif text-[1.35rem] md:text-[1.5rem] font-semibold text-navy-900 tracking-tight leading-none">
                 RGUKT
               </span>
-              <span className="mt-1 text-[10px] md:text-[11px] font-medium text-navy tracking-[0.14em] uppercase">
-                Ongole Campus
+              <span className="mt-1 text-[11px] md:text-xs font-medium text-ink-muted">
+                Ongole campus
               </span>
             </div>
           </Link>
@@ -215,7 +215,7 @@ export function Header() {
               href="https://uniz.rguktong.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 h-10 px-4 bg-brand-red hover:bg-[#C81A20] text-white text-[14px] font-semibold rounded-md shadow-[0_6px_16px_-8px_rgba(234,32,39,0.6)] transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+              className="hidden sm:inline-flex items-center gap-1.5 h-10 px-4 bg-brand-red hover:bg-[#C81A20] text-white text-sm font-medium rounded-lg transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
             >
               <span>UniZ Portal</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -273,7 +273,7 @@ export function Header() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
               {MENU_SECTIONS.map((section) => (
                 <div key={section.title}>
-                  <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-white/60 mb-5">
+                  <p className="text-xs font-medium text-white/55 mb-5">
                     {section.title}
                   </p>
                   <ul className="flex flex-col gap-0.5">
@@ -349,7 +349,7 @@ export function Header() {
                         <span className="block text-slate-900 font-medium group-hover:text-navy transition-colors">
                           {item.title}
                         </span>
-                        <span className="block text-xs tracking-wider uppercase text-ink-subtle mt-0.5">
+                        <span className="block text-xs text-ink-subtle mt-0.5">
                           {item.category}
                         </span>
                       </div>

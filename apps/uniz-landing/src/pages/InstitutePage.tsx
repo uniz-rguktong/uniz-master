@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getInstituteInfo } from "../types/api";
 import type { InstituteData, InstitutePage as InstitutePageType } from "../types/api";
 import { PersonPhoto, initials } from "../components/common/PersonPhoto";
+import { PageHero } from "../components/layout/PageHero";
 
 const PAGE_NAMES: Record<string, string> = {
   aboutrgukt: "About RGUKT",
@@ -29,43 +30,24 @@ function AboutRguktPage({ data }: { data: InstituteData }) {
 
   return (
     <div className="min-h-screen bg-slate-50">
-
-      {/* ── Hero Banner ── */}
-      <div className="relative bg-navy-900 overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 10% 80%, #1d4ed8 0%, transparent 50%)" }}
-        />
-        {/* Faint grid pattern */}
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
-        />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] text-amber-400 bg-amber-400/10 border border-amber-400/30 rounded-full">
-            Rajiv Gandhi University of Knowledge Technologies
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-6">
-            About RGUKT
-          </h1>
-          <p className="max-w-2xl mx-auto text-slate-300 text-lg leading-relaxed">
-            Established to provide world-class education to the gifted rural youth of Andhra Pradesh — a bold, unique experiment in residential, technology-driven higher education.
-          </p>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-50 to-transparent" />
-      </div>
+      <PageHero
+        eyebrow="Rajiv Gandhi University of Knowledge Technologies"
+        title="About RGUKT"
+        description="Residential, technology-driven higher education for gifted rural youth of Andhra Pradesh."
+      />
 
       {/* ── Key Stats Bar ── */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative -mt-8 mb-16 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="relative mb-16 grid grid-cols-2 md:grid-cols-4 gap-4 pt-10">
           {[
-            { value: "2008", label: "Year Founded" },
-            { value: "6 Yrs", label: "Integrated Program" },
-            { value: "Top 1%", label: "Rural Students" },
-            { value: "4 Campuses", label: "Across AP" },
+            { value: "2008", label: "Year founded" },
+            { value: "6 years", label: "Integrated program" },
+            { value: "Residential", label: "Campus model" },
+            { value: "4", label: "AP campuses" },
           ].map((stat) => (
-            <div key={stat.label} className="bg-white rounded-2xl shadow-md border border-slate-100 px-6 py-5 text-center">
-              <div className="text-2xl font-extrabold text-navy-900">{stat.value}</div>
-              <div className="text-xs font-semibold text-slate-500 tracking-widest mt-1">{stat.label}</div>
+            <div key={stat.label} className="bg-white rounded-xl border border-line px-6 py-5 text-left">
+              <div className="text-2xl font-medium text-navy-900 tabular-nums">{stat.value}</div>
+              <div className="text-sm text-ink-muted mt-1">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -109,33 +91,18 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <PageHero
+        eyebrow="Rajiv Gandhi University of Knowledge Technologies"
+        title="Governing Council"
+        description="Strategic direction and policy oversight for RGUKT from academics, administrators, and industry representatives."
+      />
 
-      {/* ── Hero Banner ── */}
-      <div className="relative bg-navy-900 overflow-hidden">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #0A2540 0%, transparent 60%), radial-gradient(circle at 80% 50%, #4f46e5 0%, transparent 60%)" }}
-        />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] text-navy bg-navy/10 border border-navy/30 rounded-full">
-            Rajiv Gandhi University of Knowledge Technologies
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
-            Governing Council
-          </h1>
-          <p className="mt-5 max-w-2xl mx-auto text-slate-300 text-lg leading-relaxed">
-            The Governing Council is the apex body that provides strategic direction and policy oversight to RGUKT, comprising distinguished academics, administrators, and industry experts.
-          </p>
-        </div>
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-slate-50 to-transparent" />
-      </div>
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-8">
 
         {/* ── Chairperson Spotlight ── */}
         {chair && (
           <div className="relative -mt-10 mb-16 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden flex flex-col md:flex-row">
-            <div className="md:w-64 flex-shrink-0 bg-gradient-to-br from-navy-900 to-[#1e1b6e] flex items-center justify-center p-8">
+            <div className="md:w-64 flex-shrink-0 bg-navy-900 flex items-center justify-center p-8">
               <PersonPhoto
               src={chair.photo}
               name={chair.name}
@@ -215,18 +182,7 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
 //  Generic Institute Page — upgraded premium render
 //  Handles: Campus Life, Education System, RTI Info, SC/ST Cell
 // ────────────────────────────────────────────────────────────
-function GenericInstitutePage({ data, displayName, pageName }: { data: InstituteData; displayName: string; pageName?: string }) {
-
-  // Page-specific hero accent colour
-  const PAGE_ACCENT: Record<string, { pill: string; pillBg: string; pillBorder: string }> = {
-    campuslife: { pill: "text-sky-300",   pillBg: "bg-sky-400/10",    pillBorder: "border-sky-400/30" },
-    edusys:     { pill: "text-violet-300",pillBg: "bg-violet-400/10", pillBorder: "border-violet-400/30" },
-    rtiinfo:    { pill: "text-amber-300", pillBg: "bg-amber-400/10",  pillBorder: "border-amber-400/30" },
-    scst:       { pill: "text-emerald-300",pillBg:"bg-emerald-400/10",pillBorder:"border-emerald-400/30" },
-  };
-  const accent = PAGE_ACCENT[pageName?.toLowerCase() ?? ""] ?? {
-    pill: "text-slate-300", pillBg: "bg-slate-400/10", pillBorder: "border-slate-400/30"
-  };
+function GenericInstitutePage({ data, displayName }: { data: InstituteData; displayName: string; pageName?: string }) {
 
   // Only show sections that have content and are not the address block (shown separately)
   const meaningfulSections = (data?.sections ?? []).filter(
@@ -236,28 +192,9 @@ function GenericInstitutePage({ data, displayName, pageName }: { data: Institute
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <PageHero eyebrow="RGUKT Ongole campus" title={displayName} />
 
-      {/* ── Hero Banner ── */}
-      <div className="relative bg-navy-900 overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: "radial-gradient(ellipse at 30% 60%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 80% 20%, #1e3a8a 0%, transparent 55%)" }}
-        />
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
-        />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <span className={`inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] ${accent.pill} ${accent.pillBg} border ${accent.pillBorder} rounded-full`}>
-            RGUKT Ongole Campus
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
-            {displayName}
-          </h1>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-50 to-transparent" />
-      </div>
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-8">
 
         {/* ── Text Sections ── */}
         {meaningfulSections.length > 0 && (
@@ -380,7 +317,7 @@ export function InstitutePage() {
       <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-navy-900 border-t-transparent"></div>
-          <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">Loading {displayName}...</p>
+          <p className="text-sm text-ink-muted">Loading {displayName}</p>
         </div>
       </div>
     );

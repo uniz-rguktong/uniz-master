@@ -112,14 +112,12 @@ export function Gallery({ images }: { images: readonly string[] }) {
     <section id="photo-gallery" className="section-editorial bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 mb-12 sm:mb-16">
         <div className="max-w-2xl">
-          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-navy mb-4">
-            Campus Gallery
-          </p>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-navy-900 leading-tight">
-            Life @ campus
+          <p className="text-sm text-ink-muted mb-3">Campus gallery</p>
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-navy-900 leading-tight">
+            Campus photos
           </h2>
           <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed">
-            A visual journey through campus life, events, and achievements.
+            Events, facilities, and student life at RGUKT Ongole.
           </p>
         </div>
       </div>

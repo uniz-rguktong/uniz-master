@@ -49,14 +49,12 @@ export function Stats({ stats }: { stats: readonly any[] }) {
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-20 sm:py-24 lg:py-28">
         <div className="max-w-2xl mb-14 sm:mb-20">
-          <p className="text-[11px] font-medium tracking-[0.22em] uppercase text-white/60 mb-4">
-            By the numbers
-          </p>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white leading-tight">
-            Our academic footprint
+          <p className="text-sm text-white/60 mb-3">By the numbers</p>
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-white leading-tight">
+            Student enrollment
           </h2>
           <p className="mt-5 text-base sm:text-lg text-white/60 leading-relaxed max-w-xl">
-            The scale of academic excellence and student success across RGUKT Ongole.
+            Headcount by program and department on the Ongole campus (from campus records).
           </p>
         </div>
 
@@ -77,7 +75,7 @@ export function Stats({ stats }: { stats: readonly any[] }) {
                   </span>
                   <span className="font-serif text-2xl text-white/80 leading-none">+</span>
                 </div>
-                <p className="mt-4 text-[11px] sm:text-xs font-medium tracking-[0.14em] uppercase text-white/50 leading-relaxed">
+                <p className="mt-4 text-xs sm:text-sm text-white/55 leading-relaxed">
                   {stat.label}
                 </p>
               </div>

@@ -1,5 +1,15 @@
+import { apiData } from "../data/apiData";
+
 // Same-origin in prod (rguktong.in/api → landing backend via ingress). Override for local dev.
 const BASE_URL = import.meta.env.VITE_LANDING_API_URL ?? "";
+
+const institutePages = apiData.institute as unknown as Record<string, InstituteData>;
+const departmentPages = apiData.departments as unknown as Record<string, DepartmentData>;
+const academicPages = apiData.academics as unknown as Record<string, AcademicSection[]>;
+const notificationPages = apiData.notifications as unknown as Record<
+  NotificationType,
+  Notification[]
+>;
 
 async function fetchJson<T>(endpoint: string): Promise<T | null> {
     try {
@@ -36,9 +46,19 @@ export interface HomeData {
     explore_campus?: any[];
 }
 
+function homeFromSnapshot(): HomeData {
+    const home = apiData.home;
+    return {
+        announcements: home.announcements.map((a) => ({ ...a })),
+        stats: home.stats.map((s) => ({ ...s })),
+        images: [...home.images],
+    };
+}
+
 export async function getHomeData(): Promise<HomeData> {
     const data = await fetchJson<HomeData>("/api/home/");
-    return data || { announcements: [], stats: [], images: [] };
+    if (data) return data;
+    return homeFromSnapshot();
 }
 
 // ─── NOTIFICATIONS ───────────────────────────────────────────────
@@ -61,7 +81,8 @@ export async function getNotifications(
     type: NotificationType = "news_updates"
 ): Promise<Notification[]> {
     const data = await fetchJson<Notification[]>(`/api/notifications/?type=${type}`);
-    return data || [];
+    if (data) return data;
+    return notificationPages[type] ?? [];
 }
 
 // ─── INSTITUTE ───────────────────────────────────────────────────
@@ -94,7 +115,9 @@ export interface InstituteData {
 export async function getInstituteInfo(
     page: InstitutePage
 ): Promise<InstituteData | null> {
-    return await fetchJson<InstituteData>(`/api/institute/${page}`);
+    const data = await fetchJson<InstituteData>(`/api/institute/${page}`);
+    if (data) return data;
+    return institutePages[page] ?? null;
 }
 
 // ─── ACADEMICS ───────────────────────────────────────────────────
@@ -119,7 +142,8 @@ export async function getAcademicPage(
     page: AcademicPageType
 ): Promise<AcademicSection[]> {
     const data = await fetchJson<AcademicSection[]>(`/api/academics/${page}`);
-    return data || [];
+    if (data) return data;
+    return academicPages[page] ?? [];
 }
 
 // ─── DEPARTMENTS ─────────────────────────────────────────────────
@@ -157,5 +181,7 @@ export interface DepartmentData {
 export async function getDepartmentStaff(
     deptCode: DeptCode
 ): Promise<DepartmentData | null> {
-    return await fetchJson<DepartmentData>(`/api/departments/${deptCode}`);
+    const data = await fetchJson<DepartmentData>(`/api/departments/${deptCode}`);
+    if (data) return data;
+    return departmentPages[deptCode] ?? null;
 }

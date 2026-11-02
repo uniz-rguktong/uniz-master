@@ -3,6 +3,7 @@ import { getHomeData, getNotifications } from "../types/api";
 import type { HomeData } from "../types/api";
 
 import { HeroAndTitle } from "../components/sections/HeroAndTitle";
+import { UniZPortalStrip } from "../components/sections/UniZPortalStrip";
 import { Leadership } from "../components/sections/Leadership";
 import { Media } from "../components/sections/Media";
 import { Logos3 } from "../components/blocks/logos3";
@@ -45,9 +46,7 @@ export function HomePage() {
       <div className="flex h-screen w-full items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-5">
           <div className="h-10 w-10 animate-spin rounded-full border-2 border-navy border-t-transparent" />
-          <p className="text-slate-500 font-medium tracking-[0.16em] text-xs uppercase">
-            Loading campus
-          </p>
+          <p className="text-sm text-ink-muted">Loading campus</p>
         </div>
       </div>
     );
@@ -102,6 +101,8 @@ export function HomePage() {
         images={heroImages}
         announcements={homeData.announcements || []}
       />
+
+      <UniZPortalStrip />
 
       <Leadership />
 
