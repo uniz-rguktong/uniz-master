@@ -27,7 +27,26 @@ const SECTION_TO_PATH: Record<string, string> = {
   status_update: "student-status",
   exam_seating: "exam-seating",
   roles: "roles",
+  exam_duties: "exam-duties",
+  feedback: "feedback",
+  placement: "placement",
+  alumni: "alumni",
+  info: "info",
+  clubs: "clubs",
+  consultancy: "consultancy",
+  admissions: "admissions",
+  establishment: "establishment",
+  fees: "fees",
+  library: "library",
+  leave_review: "leave-review",
 };
+
+function segmentForTab(tabId: string): string | undefined {
+  if (Object.prototype.hasOwnProperty.call(SECTION_TO_PATH, tabId)) {
+    return SECTION_TO_PATH[tabId];
+  }
+  return tabId.replace(/_/g, "-");
+}
 
 const PATH_TO_SECTIONS: Record<string, string[]> = {};
 for (const [tab, path] of Object.entries(SECTION_TO_PATH)) {
@@ -40,7 +59,7 @@ const PATHS_BY_LENGTH = Object.keys(PATH_TO_SECTIONS).sort(
 );
 
 export function getAdminSectionPath(tabId: string): string {
-  const segment = SECTION_TO_PATH[tabId];
+  const segment = segmentForTab(tabId);
   if (segment === undefined || segment === "") return "/admin";
   return `/admin/${segment}`;
 }
@@ -63,6 +82,11 @@ export function resolveAdminSectionTab(
       if (match) return match;
     }
     return candidates[0] ?? null;
+  }
+
+  if (allowedTabs?.length) {
+    const slugMatch = allowedTabs.find((tab) => segmentForTab(tab) === rest);
+    if (slugMatch) return slugMatch;
   }
   return null;
 }
