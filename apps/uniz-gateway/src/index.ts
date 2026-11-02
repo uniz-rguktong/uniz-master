@@ -452,8 +452,9 @@ app.all("/api/v1/cms/*path", (req: any, res: any) => {
   proxy.web(req, res, { target: cmsTarget, changeOrigin: true });
 });
 
-// 5. Warp-Speed Proxy Engine (Express 5 / path-to-regexp v6+ wildcard syntax)
-app.all("/api/v1/:service/*path", async (req: any, res: any) => {
+// 5. Warp-Speed Proxy Engine (Express 5 / path-to-regexp v6+ wildcard syntax).
+// {*path} is optional: /api/v1/clubs has no extra segment, and *path alone 404s it.
+app.all("/api/v1/:service{/*path}", async (req: any, res: any) => {
   const service = (req.params.service as string).toLowerCase();
   const target = serviceMap[service];
 
