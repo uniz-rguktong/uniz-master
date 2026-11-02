@@ -34,6 +34,9 @@ const fallback = deploySha ? deploySha.slice(0, 7) : "";
 const hardcoded = {
   "uniz-gateway": process.env.GATEWAY_NGINX_TAG || "593480a",
   "uniz-landing": process.env.LANDING_TAG || "1a6cf28",
+  // Only built when apps/uniz-cron changes, so the deploy SHA tag usually
+  // does not exist in GHCR. Keep the storage cleanup CronJob on a real tag.
+  "uniz-cron-service": process.env.CRON_TAG || "latest",
 };
 const seen = new Set();
 const images = [];
