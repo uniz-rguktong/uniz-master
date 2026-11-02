@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Linkedin, Instagram, Youtube, ArrowUp, MapPin } from "lucide-react";
 
@@ -42,6 +43,14 @@ const columns = [
 ];
 
 export function Footer() {
+  const [showTop, setShowTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 640);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <footer className="relative w-full overflow-hidden bg-navy-850 text-white">
       <div className="h-0.5 w-full bg-brand-red" aria-hidden="true" />
@@ -150,13 +159,16 @@ export function Footer() {
         </p>
       </div>
 
-      <button
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        aria-label="Scroll to top"
-        className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 w-11 h-11 rounded-lg bg-navy text-white border border-white/15 hover:bg-brand-red flex items-center justify-center transition-colors duration-150"
-      >
-        <ArrowUp className="w-5 h-5" />
-      </button>
+      {showTop && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Scroll to top"
+          className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 w-11 h-11 rounded-lg bg-navy text-white border border-white/15 hover:bg-brand-red flex items-center justify-center transition-colors duration-150"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
     </footer>
   );
 }
