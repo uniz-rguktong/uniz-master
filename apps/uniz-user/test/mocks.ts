@@ -51,6 +51,9 @@ const bag = vi.hoisted(() => {
   const prismaMock = {
     studentProfile: model(),
     facultyProfile: model(),
+    leaveRequest: model(),
+    leaveBalance: model(),
+    dutyAssignment: model(),
     adminProfile: model(),
     grievance: model(),
     banner: model(),
