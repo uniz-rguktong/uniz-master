@@ -79,6 +79,7 @@
               "students/login",
               "students/academics",
               "students/feedback",
+              "students/fees",
               "students/profile",
               "students/outpass"
             ]

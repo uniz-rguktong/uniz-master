@@ -20,6 +20,7 @@ const USER_SERVICES = new Set([
   "user",
   "leave",
   "duty",
+  "fees",
 ]);
 
 function resolveUpstream(service: string): express.Application | null {

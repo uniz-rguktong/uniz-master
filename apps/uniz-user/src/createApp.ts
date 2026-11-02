@@ -9,6 +9,7 @@ import queueRoutes from "./routes/queue.routes";
 import filesRoutes from "./routes/files.routes";
 import grievanceRoutes from "./routes/grievance.routes";
 import { leaveRouter, dutyRouter } from "./routes/leave.routes";
+import { feesRouter } from "./routes/fees.routes";
 import { processNextStudentBatch } from "./services/bulk-worker.service";
 import { redis } from "./utils/redis.util";
 
@@ -61,13 +62,14 @@ export function createApp(): express.Application {
   // collide with the "/" mounted routers below.
   app.use((req, _res, next) => {
     const svc = String(req.headers["x-uniz-service"] || "").toLowerCase();
-    if ((svc === "leave" || svc === "duty") && !req.url.startsWith(`/${svc}/`)) {
+    if ((svc === "leave" || svc === "duty" || svc === "fees") && !req.url.startsWith(`/${svc}/`)) {
       req.url = `/${svc}${req.url.startsWith("/") ? "" : "/"}${req.url}`;
     }
     next();
   });
   app.use("/leave", leaveRouter);
   app.use("/duty", dutyRouter);
+  app.use("/fees", feesRouter);
 
   app.use("/api/queue", queueRoutes);
   app.use("/", profileRoutes);

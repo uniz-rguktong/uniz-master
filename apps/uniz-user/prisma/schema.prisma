@@ -217,3 +217,59 @@ model DutyAssignment {
   @@index([facultyId, date])
   @@index([department, date])
 }
+
+/// Fee structure for a cohort (batch/branch/year filters, empty = all).
+model FeeStructure {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String
+  academicYear String
+  batch        String   @default("")
+  branch       String   @default("")
+  year         String   @default("")
+  items        Json
+  amountPaise  Int
+  dueDate      DateTime @db.Date
+  active       Boolean  @default(true)
+  createdBy    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([academicYear])
+}
+
+/// One invoice per student per structure. studentId = StudentProfile.id (text, no FK).
+model FeeInvoice {
+  id          String   @id @default(uuid()) @db.Uuid
+  studentId   String
+  username    String
+  structureId String   @db.Uuid
+  title       String
+  amountPaise Int
+  paidPaise   Int      @default(0)
+  status      String   @default("due")
+  dueDate     DateTime @db.Date
+  issuedBy    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([username, structureId])
+  @@index([status])
+  @@index([structureId])
+}
+
+/// Payment against an invoice. Only offline receipts for now; online is coming soon.
+model Payment {
+  id          String   @id @default(uuid()) @db.Uuid
+  invoiceId   String   @db.Uuid
+  username    String
+  amountPaise Int
+  method      String
+  reference   String
+  status      String   @default("success")
+  recordedBy  String
+  createdAt   DateTime @default(now())
+
+  @@unique([method, reference])
+  @@index([invoiceId])
+  @@index([username])
+}
