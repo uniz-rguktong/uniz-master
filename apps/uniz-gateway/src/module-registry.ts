@@ -29,12 +29,34 @@ export const MODULE_ROUTES: ModuleRoute[] = [
   {
     flag: "FEATURE_FEEDBACK",
     prefix: "/api/v1/feedback",
-    roles: ["student", "faculty", "teacher", "hod", "coe", "dean", "director", "webadmin"],
+    roles: [
+      "student",
+      "faculty",
+      "teacher",
+      "hod",
+      "coe",
+      "dean",
+      "director",
+      "webadmin",
+    ],
   },
   {
     flag: "FEATURE_FEES",
     prefix: "/api/v1/fees",
     roles: ["student", "webadmin", "director", "dean"],
+  },
+  {
+    flag: "FEATURE_LIBRARY",
+    prefix: "/api/v1/library",
+    roles: [
+      "student",
+      "faculty",
+      "teacher",
+      "hod",
+      "librarian",
+      "webadmin",
+      "director",
+    ],
   },
 ];
 

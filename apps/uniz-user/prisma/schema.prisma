@@ -273,3 +273,66 @@ model Payment {
   @@index([invoiceId])
   @@index([username])
 }
+
+/// Library catalogue title. Copies carry the barcode.
+model Book {
+  id        String   @id @default(uuid()) @db.Uuid
+  isbn      String   @default("")
+  title     String
+  author    String   @default("")
+  publisher String   @default("")
+  year      String   @default("")
+  category  String   @default("")
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isbn])
+  @@index([title])
+}
+
+model BookCopy {
+  id        String   @id @default(uuid()) @db.Uuid
+  bookId    String   @db.Uuid
+  barcode   String   @unique
+  shelf     String   @default("")
+  status    String   @default("available")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([bookId])
+}
+
+/// Borrower is a StudentProfile or FacultyProfile username (text, no FK).
+model Loan {
+  id               String    @id @default(uuid()) @db.Uuid
+  copyId           String    @db.Uuid
+  bookId           String    @db.Uuid
+  borrowerUsername String
+  borrowerType     String
+  issuedAt         DateTime  @default(now())
+  dueDate          DateTime
+  returnedAt       DateTime?
+  issuedBy         String
+  returnedTo       String?
+  remindedAt       DateTime?
+
+  @@index([borrowerUsername])
+  @@index([copyId])
+  @@index([returnedAt, dueDate])
+}
+
+/// Overdue fine. Shown only; paying online is coming soon.
+model LibraryFine {
+  id          String   @id @default(uuid()) @db.Uuid
+  loanId      String   @unique @db.Uuid
+  username    String
+  amountPaise Int
+  status      String   @default("unpaid")
+  note        String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([username])
+  @@index([status])
+}

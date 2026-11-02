@@ -23,6 +23,7 @@ import {
   Menu,
   MessageSquare,
   Wallet,
+  BookOpen,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -56,6 +57,7 @@ const GradeHub = lazy(() => import("../pages/promotions/GradeHub"));
 const CurrentSemester = lazy(() => import("../pages/student/CurrentSemester"));
 const Registration = lazy(() => import("../pages/student/Registration"));
 const Grievance = lazy(() => import("../pages/student/Grievance"));
+const MyLibrary = lazy(() => import("../pages/library/MyLibrary"));
 const StudentFees = lazy(() => import("../pages/student/fees/StudentFees"));
 const StudentFeedback = lazy(
   () => import("../pages/student/feedback/StudentFeedback"),
@@ -81,6 +83,7 @@ interface MainContent {
     | "grievance"
     | "feedback"
     | "fees"
+    | "library"
     | "notifications"
     | "currentSemester"
     | "registration"
@@ -205,6 +208,19 @@ export default function Sidebar({ content }: MainContent) {
       hoverColor: "hover:text-navy-600",
     },
 
+    ...(isModuleEnabled("LIBRARY")
+      ? [
+          {
+            id: "library",
+            label: "Library",
+            href: "/student/library",
+            content: "library" as const,
+            icon: BookOpen,
+            activeColor: "text-navy-900",
+            hoverColor: "hover:text-navy-700",
+          },
+        ]
+      : []),
     ...(isModuleEnabled("FEES")
       ? [
           {
@@ -265,6 +281,7 @@ export default function Sidebar({ content }: MainContent) {
     grievance: <Grievance />,
     feedback: <StudentFeedback />,
     fees: <StudentFees />,
+    library: <MyLibrary kind="student" />,
     notifications: <NotificationCenter portal="student" />,
     seating: <SeatingArrangement />,
     help: <HelpSupport />,

@@ -12,6 +12,7 @@ describe("module registry", () => {
         FEATURE_EXAM_DUTIES: "false",
         FEATURE_FEEDBACK: "false",
         FEATURE_FEES: "false",
+        FEATURE_LIBRARY: "false",
       }),
     ).toEqual([]);
   });
@@ -53,5 +54,14 @@ describe("module registry", () => {
     expect(
       activeModuleRoutes({ FEATURE_FEES: "false" }).map((r) => r.prefix),
     ).not.toContain("/api/v1/fees");
+  });
+
+  it("lists library under FEATURE_LIBRARY", () => {
+    expect(activeModuleRoutes({}).map((r) => r.prefix)).toContain(
+      "/api/v1/library",
+    );
+    expect(
+      activeModuleRoutes({ FEATURE_LIBRARY: "false" }).map((r) => r.prefix),
+    ).not.toContain("/api/v1/library");
   });
 });

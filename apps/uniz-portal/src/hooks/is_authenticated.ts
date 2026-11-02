@@ -142,6 +142,7 @@ export function useIsAuth() {
         "caretaker_male",
         "caretaker_female",
         "coe",
+        "librarian",
       ];
 
       const roleToVerify = resolveAdminPortalRole(decoded);

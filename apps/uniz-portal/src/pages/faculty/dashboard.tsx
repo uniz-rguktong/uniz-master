@@ -32,7 +32,8 @@ import MyLeave from "./leave/MyLeave";
 import LeaveApprovals from "./leave/LeaveApprovals";
 import MyExamDuties from "./exam-duties/MyExamDuties";
 import MyFeedbackResults from "../admin/feedback/MyFeedbackResults";
-import { CalendarDays, ClipboardCheck } from "lucide-react";
+import { CalendarDays, ClipboardCheck, Library } from "lucide-react";
+import MyLibrary from "../library/MyLibrary";
 import {
   BASE_URL,
   FACULTY_INFO,
@@ -46,7 +47,7 @@ import {
 /* ────────────────────────────────────────────────
    Types
 ────────────────────────────────────────────────── */
-type ActiveTab = "dashboard" | "profile" | "students" | "password" | "leave" | "leave_review" | "exam_duties" | "feedback";
+type ActiveTab = "dashboard" | "profile" | "students" | "password" | "leave" | "leave_review" | "exam_duties" | "feedback" | "library";
 
 interface FacultyProfile {
   id: string;
@@ -155,6 +156,9 @@ export default function FacultyDashboard() {
     ...(isModuleEnabled("FEEDBACK")
       ? [{ id: "feedback", label: "My Feedback", icon: ClipboardCheck }]
       : []),
+    ...(isModuleEnabled("LIBRARY")
+      ? [{ id: "library", label: "Library", icon: Library }]
+      : []),
     { id: "password", label: "Change Password", icon: Lock },
   ];
 
@@ -185,6 +189,8 @@ export default function FacultyDashboard() {
         return <MyExamDuties />;
       case "feedback":
         return <MyFeedbackResults />;
+      case "library":
+        return <MyLibrary kind="staff" />;
       default:
         return (
           <OverviewSection
