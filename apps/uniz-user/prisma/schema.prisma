@@ -162,3 +162,58 @@ model Grievance {
   @@index([status])
   @@index([createdAt])
 }
+
+/// Faculty leave (apply, HOD then Dean approval). facultyId = FacultyProfile.id (no FK, legacy id column is TEXT).
+model LeaveRequest {
+  id         String         @id @default(uuid()) @db.Uuid
+  facultyId  String
+  username   String
+  department String
+  leaveType  String
+  fromDate   DateTime       @db.Date
+  toDate     DateTime       @db.Date
+  days       Int
+  reason     String
+  status     String         @default("pending_hod")
+  hodBy      String?
+  hodAt      DateTime?
+  hodNote    String?
+  deanBy     String?
+  deanAt     DateTime?
+  deanNote   String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@index([facultyId])
+  @@index([status, department])
+}
+
+model LeaveBalance {
+  id        String         @id @default(uuid()) @db.Uuid
+  facultyId String
+  year      Int
+  leaveType String
+  total     Int
+  used      Int            @default(0)
+  updatedAt DateTime       @updatedAt
+
+  @@unique([facultyId, year, leaveType])
+}
+
+model DutyAssignment {
+  id         String         @id @default(uuid()) @db.Uuid
+  facultyId  String
+  department String
+  dutyType   String
+  title      String
+  date       DateTime       @db.Date
+  startTime  String?
+  endTime    String?
+  location   String?
+  notes      String?
+  assignedBy String
+  createdAt  DateTime       @default(now())
+
+  @@index([facultyId, date])
+  @@index([department, date])
+}
