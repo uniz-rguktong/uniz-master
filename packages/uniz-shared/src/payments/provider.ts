@@ -9,7 +9,13 @@ export interface CreateOrderInput {
 
 export type CreateOrderResult =
   | { disabled: true; reason: string }
-  | { disabled: false; orderId: string; amountPaise: number; currency: string; keyId: string };
+  | {
+      disabled: false;
+      orderId: string;
+      amountPaise: number;
+      currency: string;
+      keyId: string;
+    };
 
 export interface VerifySignatureInput {
   orderId: string;

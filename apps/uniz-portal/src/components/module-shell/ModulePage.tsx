@@ -10,13 +10,21 @@ interface ModulePageProps {
   children?: ReactNode;
 }
 
-export function ModulePage({ title, description, disabledReason, actions, children }: ModulePageProps) {
+export function ModulePage({
+  title,
+  description,
+  disabledReason,
+  actions,
+  children,
+}: ModulePageProps) {
   return (
     <section className="space-y-6 p-4 md:p-6">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold text-slate-900">{title}</h1>
-          {description ? <p className="mt-1 text-sm text-slate-500">{description}</p> : null}
+          {description ? (
+            <p className="mt-1 text-sm text-slate-500">{description}</p>
+          ) : null}
         </div>
         {actions}
       </header>

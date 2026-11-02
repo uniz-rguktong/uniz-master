@@ -12,6 +12,8 @@ export interface ModuleRoute {
 
 export const MODULE_ROUTES: ModuleRoute[] = [];
 
-export function activeModuleRoutes(env: Record<string, string | undefined> = process.env): ModuleRoute[] {
+export function activeModuleRoutes(
+  env: Record<string, string | undefined> = process.env,
+): ModuleRoute[] {
   return MODULE_ROUTES.filter((r) => isFeatureEnabled(r.flag, env));
 }
