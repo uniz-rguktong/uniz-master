@@ -216,3 +216,29 @@ model SeatingArrangement {
   @@index([semesterId])
   @@index([batch])
 }
+
+/// Invigilation duty for one hall (SeatingArrangement room) in one exam slot.
+/// semesterId/examName/room/date match SeatingArrangement rows; facultyUsername
+/// is FacultyProfile.username in the user DB (text link, separate database).
+model ExamDuty {
+  id              String    @id @default(uuid()) @db.Uuid
+  semesterId      String
+  examName        String
+  room            String
+  date            DateTime  @db.Date
+  time            String?
+  studentCount    Int       @default(0)
+  facultyUsername String
+  role            String    @default("invigilator")
+  swapTo          String?
+  swapReason      String?
+  swapStatus      String?
+  swapDecidedBy   String?
+  createdBy       String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([semesterId, examName, room, date, facultyUsername])
+  @@index([facultyUsername, date])
+  @@index([semesterId, examName])
+}

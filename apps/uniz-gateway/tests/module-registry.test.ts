@@ -6,7 +6,21 @@ describe("module registry", () => {
     const prefixes = activeModuleRoutes({}).map((r) => r.prefix);
     expect(prefixes).toContain("/api/v1/leave");
     expect(prefixes).toContain("/api/v1/duty");
-    expect(activeModuleRoutes({ FEATURE_FACULTY: "false" })).toEqual([]);
+    expect(
+      activeModuleRoutes({
+        FEATURE_FACULTY: "false",
+        FEATURE_EXAM_DUTIES: "false",
+      }),
+    ).toEqual([]);
+  });
+
+  it("lists examduty under FEATURE_EXAM_DUTIES", () => {
+    expect(activeModuleRoutes({}).map((r) => r.prefix)).toContain(
+      "/api/v1/examduty",
+    );
+    expect(
+      activeModuleRoutes({ FEATURE_EXAM_DUTIES: "false" }).map((r) => r.prefix),
+    ).not.toContain("/api/v1/examduty");
   });
 
   it("keeps outpass parked", () => {

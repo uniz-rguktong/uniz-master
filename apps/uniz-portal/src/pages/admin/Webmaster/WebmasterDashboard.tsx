@@ -12,6 +12,7 @@ import {
   BookOpen,
   Globe,
   CalendarClock,
+  ClipboardList,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { adminCardClass } from "@/components/admin/admin-ui";
@@ -31,6 +32,8 @@ import WebsiteUpdatesSection from "./WebsiteUpdatesSection";
 import PushNotificationSection from "./PushNotificationSection";
 import StudentBulkSection from "./StudentBulkSection";
 import SystemLogsSection from "./SystemLogsSection";
+import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
+import { isModuleEnabled } from "@/lib/flags";
 import {
   enableOutingsAndOutpasses,
   filterOutpassOutingTabs,
@@ -63,6 +66,7 @@ export default function WebmasterDashboard() {
               "semester_registration",
               "faculty_mgmt",
               "system_logs",
+              "exam_duties",
             ]
           : []),
         "banners",
@@ -131,6 +135,10 @@ export default function WebmasterDashboard() {
               },
             ]
           : []),
+        ...((role === "webadmin" || role === "coe") &&
+        isModuleEnabled("EXAM_DUTIES")
+          ? [{ id: "exam_duties", label: "Exam Duties", icon: ClipboardList }]
+          : []),
       ],
     },
     {
@@ -189,6 +197,8 @@ export default function WebmasterDashboard() {
         return <StudentDetails />;
       case "student_bulk":
         return <StudentBulkSection />;
+      case "exam_duties":
+        return <ExamDutiesAdmin />;
       case "attendance":
         return <UploadSection type="attendance" />;
       case "grades":

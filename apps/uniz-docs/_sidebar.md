@@ -19,6 +19,7 @@
   - [Grades](faculty/grades)
   - [Attendance](faculty/attendance)
   - [Leave and duties](faculty/leave-duties)
+  - [Exam duties](faculty/exam-duties)
 
 - API Reference
   - [Endpoint reference](api/reference)

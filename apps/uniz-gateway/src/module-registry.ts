@@ -21,6 +21,11 @@ export const MODULE_ROUTES: ModuleRoute[] = [
     prefix: "/api/v1/duty",
     roles: ["faculty", "teacher", "hod", "dean", "director", "webadmin"],
   },
+  {
+    flag: "FEATURE_EXAM_DUTIES",
+    prefix: "/api/v1/examduty",
+    roles: ["coe", "dean", "director", "webadmin", "faculty", "teacher", "hod"],
+  },
 ];
 
 export function activeModuleRoutes(

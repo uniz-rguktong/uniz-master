@@ -6,6 +6,7 @@ import { attributionMiddleware } from "./middlewares/attribution.middleware";
 import academicRoutes from "./routes/academic.routes";
 import queueRoutes from "./routes/queue.routes";
 import analyticsRoutes from "./routes/analytics.routes";
+import examDutyRoutes from "./routes/examduty.routes";
 import { authMiddleware } from "./middlewares/auth.middleware";
 import { startRegistrationPdfWorker } from "./workers/registration-pdf.queue";
 import { processNextBatch } from "./services/upload.service";
@@ -26,6 +27,17 @@ export function createApp(): express.Application {
   app.get("/health", (_req, res) => {
     res.status(200).json({ status: "ok", service: "uniz-academics-service" });
   });
+
+  // Gateway strips /api/v1/examduty; put the prefix back so it never
+  // collides with the "/" mounted academic routes.
+  app.use((req, _res, next) => {
+    const svc = String(req.headers["x-uniz-service"] || "").toLowerCase();
+    if (svc === "examduty" && !req.url.startsWith("/examduty/")) {
+      req.url = `/examduty${req.url.startsWith("/") ? "" : "/"}${req.url}`;
+    }
+    next();
+  });
+  app.use("/examduty", examDutyRoutes);
 
   app.use("/api/queue", queueRoutes);
   app.use("/analytics", authMiddleware, analyticsRoutes);

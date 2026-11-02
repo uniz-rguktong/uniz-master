@@ -26,6 +26,7 @@ import FacultyManagement from "../Webmaster/FacultyManagement";
 import WebmasterOverview from "../Webmaster/WebmasterOverview";
 import SemesterApproval from "./SemesterApproval";
 import LeaveApprovals from "../../faculty/leave/LeaveApprovals";
+import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
 import { isModuleEnabled } from "@/lib/flags";
 import BannersSection from "../Webmaster/BannersSection";
 import UpdatesSection from "../Webmaster/UpdatesSection";
@@ -71,6 +72,7 @@ export default function DeanDashboard() {
             "push_alerts",
             "security",
             "leave_review",
+            "exam_duties",
           ] as const),
     [isHod],
   );
@@ -126,6 +128,7 @@ export default function DeanDashboard() {
         { id: "subjects", label: "Manage Subjects", icon: BookOpen },
         { id: "semester_registration", label: "Semester Registration", icon: CalendarClock },
         { id: "semester_review", label: "Semester Approvals", icon: CalendarClock },
+        ...(isModuleEnabled("EXAM_DUTIES") ? [{ id: "exam_duties", label: "Exam Duties", icon: ClipboardCheck }] : []),
       ],
     },
     {
@@ -156,6 +159,8 @@ export default function DeanDashboard() {
         return <StudentDetails />;
       case "leave_review":
         return <LeaveApprovals />;
+      case "exam_duties":
+        return <ExamDutiesAdmin />;
       case "student_bulk":
         return <StudentBulkSection />;
       case "subjects":

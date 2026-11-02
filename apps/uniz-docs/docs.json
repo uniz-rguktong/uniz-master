@@ -97,7 +97,8 @@
             "pages": [
               "faculty/grades",
               "faculty/attendance",
-              "faculty/leave-duties"
+              "faculty/leave-duties",
+              "faculty/exam-duties"
             ]
           }
         ]

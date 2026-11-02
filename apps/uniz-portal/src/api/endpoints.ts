@@ -340,3 +340,14 @@ export const DUTY_MINE = `${BASE_URL}/duty/mine`;
 export const DUTY_ROSTER = `${BASE_URL}/duty/roster`;
 export const DUTY_ASSIGN = `${BASE_URL}/duty/assign`;
 export const DUTY_DELETE = (id: string) => `${BASE_URL}/duty/${id}`;
+export const EXAM_DUTY_STATUS = `${BASE_URL}/examduty/status`;
+export const EXAM_DUTY_HALLS = (semesterId: string, examName: string) =>
+  `${BASE_URL}/examduty/halls?semesterId=${encodeURIComponent(semesterId)}&examName=${encodeURIComponent(examName)}`;
+export const EXAM_DUTY_GENERATE = `${BASE_URL}/examduty/generate`;
+export const EXAM_DUTY_ROSTER = (semesterId: string, examName: string) =>
+  `${BASE_URL}/examduty/roster?semesterId=${encodeURIComponent(semesterId)}&examName=${encodeURIComponent(examName)}`;
+export const EXAM_DUTY_MINE = `${BASE_URL}/examduty/mine`;
+export const EXAM_DUTY_SWAP = (id: string) => `${BASE_URL}/examduty/${id}/swap`;
+export const EXAM_DUTY_SWAPS = `${BASE_URL}/examduty/swaps`;
+export const EXAM_DUTY_DECIDE = (id: string) =>
+  `${BASE_URL}/examduty/${id}/swap/decide`;
