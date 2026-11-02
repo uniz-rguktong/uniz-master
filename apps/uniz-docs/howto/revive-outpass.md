@@ -17,9 +17,10 @@ flowchart TD
 
 1. **Gateway flag** — ConfigMap `uniz-config`: `ENABLE_OUTPASS_OUTING=true`, restart `uniz-gateway-api`
 2. **Scale** — `kubectl scale deploy/uniz-outpass-service --replicas=1` (re-add HPA only if you intend always-on)
-3. **Portal flag** — GitHub secret / Pages env `VITE_ENABLE_OUTPASS_OUTING=true`, redeploy Pages
-4. **Migrate** — confirm DB schema for outpass service is current
-5. **Smoke** — `post-deploy-smoke.sh` expectations must be updated (today expects **503**)
+3. **Portal routes**: uncomment the outpass/outing routes in `apps/uniz-portal/src/App.tsx` and set `OUTPASS_OUTING_ROUTES_MOUNTED = true` in `src/config/featureFlags.ts`
+4. **Portal flag** — GitHub secret / Pages env `VITE_ENABLE_OUTPASS_OUTING=true`, redeploy Pages
+5. **Migrate** — confirm DB schema for outpass service is current
+6. **Smoke** — `post-deploy-smoke.sh` expectations must be updated (today expects **503**)
 
 ## Disable again
 

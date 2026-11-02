@@ -53,6 +53,9 @@ export function useIsAuth() {
       if (location.pathname.startsWith("/student")) {
         return signInWithReturn("student", location.pathname + location.search);
       }
+      if (location.pathname.startsWith("/faculty")) {
+        return "/faculty/signin";
+      }
       if (location.pathname.startsWith("/notifications")) {
         return signInWithReturn("student", location.pathname + location.search);
       }
@@ -77,6 +80,7 @@ export function useIsAuth() {
       "/admin/signin",
       "/admin/signin/",
       "/admin/signin#",
+      "/faculty/signin",
       "/notifications",
     ];
 
@@ -88,6 +92,7 @@ export function useIsAuth() {
       "/admin/signin",
       "/admin/signin/",
       "/admin/signin#",
+      "/faculty/signin",
     ];
 
     const logoutAndRedirect = (reason: string) => {
@@ -191,15 +196,20 @@ export function useIsAuth() {
       if (authRedirectOnlyPaths.includes(location.pathname)) {
         navigate("/student");
       }
-    } else if (
-      facultyToken &&
-      location.pathname === "/student/resetpassword"
-    ) {
+    } else if (facultyToken) {
       if (!isTokenValid(facultyToken)) {
         return logoutAndRedirect("Session expired or invalid");
       }
+      const decoded = parseJwt(facultyToken);
+      const role = (decoded?.role || "").toLowerCase();
+      if (!["faculty", "teacher", "hod"].includes(role)) {
+        return logoutAndRedirect("Access violation: Invalid Role");
+      }
       if (!currentIsAuth.is_authenticated) {
         setAuthFn({ is_authenticated: true, type: "faculty" });
+      }
+      if (authRedirectOnlyPaths.includes(location.pathname)) {
+        navigate("/faculty");
       }
     } else if (
       !isNotFoundRouteActive() &&
