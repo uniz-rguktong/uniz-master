@@ -14,6 +14,8 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: ghcr-pull
           containers:
             - name: storage-cleaner
               image: uniz-cron-service:local
