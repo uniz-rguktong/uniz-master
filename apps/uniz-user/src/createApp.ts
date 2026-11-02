@@ -10,6 +10,7 @@ import filesRoutes from "./routes/files.routes";
 import grievanceRoutes from "./routes/grievance.routes";
 import { leaveRouter, dutyRouter } from "./routes/leave.routes";
 import { feesRouter } from "./routes/fees.routes";
+import { establishmentRouter } from "./routes/establishment.routes";
 import { admissionsRouter } from "./routes/admissions.routes";
 import { clubsRouter } from "./routes/clubs.routes";
 import { infocentreRouter } from "./routes/infocentre.routes";
@@ -68,7 +69,7 @@ export function createApp(): express.Application {
   // collide with the "/" mounted routers below.
   app.use((req, _res, next) => {
     const svc = String(req.headers["x-uniz-service"] || "").toLowerCase();
-    if ((svc === "leave" || svc === "duty" || svc === "fees" || svc === "library" || svc === "placement" || svc === "alumni" || svc === "infocentre" || svc === "clubs" || svc === "admissions") && !req.url.startsWith(`/${svc}/`)) {
+    if ((svc === "leave" || svc === "duty" || svc === "fees" || svc === "library" || svc === "placement" || svc === "alumni" || svc === "infocentre" || svc === "clubs" || svc === "admissions" || svc === "establishment") && !req.url.startsWith(`/${svc}/`)) {
       req.url = `/${svc}${req.url.startsWith("/") ? "" : "/"}${req.url}`;
     }
     next();
@@ -76,6 +77,7 @@ export function createApp(): express.Application {
   app.use("/leave", leaveRouter);
   app.use("/duty", dutyRouter);
   app.use("/fees", feesRouter);
+  app.use("/establishment", establishmentRouter);
   app.use("/admissions", admissionsRouter);
   app.use("/clubs", clubsRouter);
   app.use("/infocentre", infocentreRouter);
