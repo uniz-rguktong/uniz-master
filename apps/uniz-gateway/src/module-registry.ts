@@ -68,6 +68,11 @@ export const MODULE_ROUTES: ModuleRoute[] = [
     prefix: "/api/v1/alumni",
     roles: ["student", "webadmin", "director", "dean"],
   },
+  {
+    flag: "FEATURE_INFO_CENTRE",
+    prefix: "/api/v1/infocentre",
+    roles: ["student", "faculty", "webadmin", "director", "dean"],
+  },
 ];
 
 export function activeModuleRoutes(

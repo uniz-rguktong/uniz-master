@@ -15,6 +15,7 @@ import {
   ClipboardCheck,
   Wallet,
   Briefcase,
+  Info,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -32,6 +33,7 @@ import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
 import FeedbackAdmin from "../feedback/FeedbackAdmin";
 import FeesAdmin from "../fees/FeesAdmin";
 import PlacementAdmin from "../placement/PlacementAdmin";
+import InfoAdmin from "../../info/InfoAdmin";
 import AlumniAdmin from "../../alumni/AlumniAdmin";
 import { isModuleEnabled } from "@/lib/flags";
 import BannersSection from "../Webmaster/BannersSection";
@@ -82,6 +84,7 @@ export default function DeanDashboard() {
             "feedback",
             "fees",
             "placement",
+            "info",
             "alumni",
           ] as const),
     [isHod],
@@ -179,6 +182,9 @@ export default function DeanDashboard() {
             ...(isModuleEnabled("ALUMNI")
               ? [{ id: "alumni", label: "Alumni", icon: GraduationCap }]
               : []),
+            ...(isModuleEnabled("INFO_CENTRE")
+              ? [{ id: "info", label: "Info Centre", icon: Info }]
+              : []),
             ...(isModuleEnabled("PLACEMENT")
               ? [{ id: "placement", label: "Placements", icon: Briefcase }]
               : []),
@@ -231,6 +237,8 @@ export default function DeanDashboard() {
         return <FeesAdmin />;
       case "placement":
         return <PlacementAdmin />;
+      case "info":
+        return <InfoAdmin />;
       case "alumni":
         return <AlumniAdmin />;
       case "student_bulk":
