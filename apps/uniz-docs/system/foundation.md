@@ -9,4 +9,4 @@ Shared pieces every new module uses. No module logic lives here.
 - UI: `<ModulePage>` and `<DisabledState reason="...">` in `apps/uniz-portal/src/components/module-shell`.
 - Gateway: `apps/uniz-gateway/src/module-registry.ts` holds module route stubs filtered by flag. Empty until module PRs land.
 
-Keys (names only, all optional): FEATURE_<MODULE>, SMS_PROVIDER, SMS_API_KEY, SMS_SENDER_ID (pending AWS SNS).
+Keys (names only, all optional): `FEATURE_<MODULE>`, SMS_PROVIDER, SMS_API_KEY, SMS_SENDER_ID (pending AWS SNS).
