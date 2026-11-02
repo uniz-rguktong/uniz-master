@@ -372,3 +372,16 @@ export const FEES_MINE = `${BASE_URL}/fees/mine`;
 export const FEES_PAY = (id: string) => `${BASE_URL}/fees/invoices/${id}/pay`;
 export const FEES_RECORD = (id: string) =>
   `${BASE_URL}/fees/invoices/${id}/record`;
+
+// Library
+export const LIBRARY_STATUS = `${BASE_URL}/library/status`;
+export const LIBRARY_BOOKS = `${BASE_URL}/library/books`;
+export const LIBRARY_IMPORT = `${BASE_URL}/library/import`;
+export const LIBRARY_ISSUE = `${BASE_URL}/library/issue`;
+export const LIBRARY_RETURN = `${BASE_URL}/library/return`;
+export const LIBRARY_LOANS = `${BASE_URL}/library/loans`;
+export const LIBRARY_MINE = `${BASE_URL}/library/mine`;
+export const LIBRARY_FINES = `${BASE_URL}/library/fines`;
+export const LIBRARY_SETTLE = (id: string) =>
+  `${BASE_URL}/library/fines/${id}/settle`;
+export const LIBRARY_REMIND = `${BASE_URL}/library/remind`;

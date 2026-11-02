@@ -14,6 +14,7 @@ import {
   CalendarClock,
   ClipboardList,
   Wallet,
+  Library,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { adminCardClass } from "@/components/admin/admin-ui";
@@ -36,6 +37,7 @@ import SystemLogsSection from "./SystemLogsSection";
 import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
 import FeedbackAdmin from "../feedback/FeedbackAdmin";
 import FeesAdmin from "../fees/FeesAdmin";
+import LibraryAdmin from "../library/LibraryAdmin";
 import { isModuleEnabled } from "@/lib/flags";
 import {
   enableOutingsAndOutpasses,
@@ -72,6 +74,7 @@ export default function WebmasterDashboard() {
               "exam_duties",
               "feedback",
               "fees",
+              "library",
             ]
           : []),
         "banners",
@@ -151,6 +154,9 @@ export default function WebmasterDashboard() {
         ...(role === "webadmin" && isModuleEnabled("FEES")
           ? [{ id: "fees", label: "Fees", icon: Wallet }]
           : []),
+        ...(role === "webadmin" && isModuleEnabled("LIBRARY")
+          ? [{ id: "library", label: "Library", icon: Library }]
+          : []),
       ],
     },
     {
@@ -215,6 +221,8 @@ export default function WebmasterDashboard() {
         return <FeedbackAdmin />;
       case "fees":
         return <FeesAdmin />;
+      case "library":
+        return <LibraryAdmin />;
       case "attendance":
         return <UploadSection type="attendance" />;
       case "grades":

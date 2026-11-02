@@ -8,6 +8,7 @@
   - [Academics](students/academics)
   - [Course feedback](students/feedback)
   - [Fees](students/fees)
+  - [Library](students/library)
   - [Outpass](students/outpass)
   - [Profile](students/profile)
 

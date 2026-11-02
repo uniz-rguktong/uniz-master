@@ -451,6 +451,16 @@ export default function App() {
             }
           />
           <Route
+            path="/student/library"
+            element={
+              <MaintenanceGuard>
+                <PageTransition>
+                  <Sidebar content="library" />
+                </PageTransition>
+              </MaintenanceGuard>
+            }
+          />
+          <Route
             path="/student/fees"
             element={
               <MaintenanceGuard>

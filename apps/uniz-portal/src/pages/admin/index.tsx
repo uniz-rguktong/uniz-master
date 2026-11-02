@@ -29,6 +29,7 @@ import CaretakerDashboard from "./Caretaker/CaretakerDashboard";
 import WardenDashboard from "./Warden/WardenDashboard";
 import SecurityPortal from "./SecurityPortal";
 import DirectorDashboard from "./Director/DirectorDashboard";
+import LibrarianDashboard from "./library/LibrarianDashboard";
 import AdminLayout from "./layout";
 import {
   adminHeaderClass,
@@ -110,6 +111,10 @@ export default function Admin() {
 
   if (role === "security") {
     return <SecurityPortal />;
+  }
+
+  if (role === "librarian") {
+    return <LibrarianDashboard />;
   }
 
   const { logout } = useLogout();

@@ -47,6 +47,7 @@ const bag = vi.hoisted(() => {
     count: vi.fn(),
     groupBy: vi.fn(),
     createMany: vi.fn(),
+    updateMany: vi.fn(),
   });
 
   const prismaMock = {
@@ -58,6 +59,10 @@ const bag = vi.hoisted(() => {
     feeStructure: model(),
     feeInvoice: model(),
     payment: model(),
+    book: model(),
+    bookCopy: model(),
+    loan: model(),
+    libraryFine: model(),
     adminProfile: model(),
     grievance: model(),
     banner: model(),
