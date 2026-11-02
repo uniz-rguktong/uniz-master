@@ -65,7 +65,7 @@ curl --request GET \
 
 ## Update your faculty profile
 
-`PUT /faculty/me/update`
+`PUT /profile/faculty/me/update`
 
 Updates the authenticated faculty member's own profile. All fields are optional.
 
@@ -85,7 +85,7 @@ Updates the authenticated faculty member's own profile. All fields are optional.
 
 ```bash
 curl --request PUT \
-  --url https://api-uniz.rguktong.in/api/v1/faculty/me/update \
+  --url https://api-uniz.rguktong.in/api/v1/profile/faculty/me/update \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -105,7 +105,7 @@ curl --request PUT \
 
 ## Get a faculty member (admin)
 
-`GET /admin/faculty/:username`
+`GET /profile/admin/faculty/:username`
 
 Returns the full profile of any faculty member. Only accessible to administrators.
 
@@ -119,7 +119,7 @@ Returns the full profile of any faculty member. Only accessible to administrator
 
 ```bash
 curl --request GET \
-  --url https://api-uniz.rguktong.in/api/v1/admin/faculty/faculty_cse_01 \
+  --url https://api-uniz.rguktong.in/api/v1/profile/admin/faculty/faculty_cse_01 \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -143,7 +143,7 @@ curl --request GET \
 
 ## Update a faculty member (admin)
 
-`PUT /admin/faculty/:username`
+`PUT /profile/admin/faculty/:username`
 
 Updates any faculty member's profile. Only accessible to administrators.
 
@@ -169,7 +169,7 @@ Updates any faculty member's profile. Only accessible to administrators.
 
 ```bash
 curl --request PUT \
-  --url https://api-uniz.rguktong.in/api/v1/admin/faculty/faculty_cse_01 \
+  --url https://api-uniz.rguktong.in/api/v1/profile/admin/faculty/faculty_cse_01 \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -190,7 +190,7 @@ curl --request PUT \
 
 ## Delete a faculty member (admin)
 
-`DELETE /admin/faculty/:username`
+`DELETE /profile/admin/faculty/:username`
 
 Permanently removes a faculty member's account.
 
@@ -209,7 +209,7 @@ This action is irreversible. The faculty member will lose access to the system
 
 ```bash
 curl --request DELETE \
-  --url https://api-uniz.rguktong.in/api/v1/admin/faculty/faculty_cse_01 \
+  --url https://api-uniz.rguktong.in/api/v1/profile/admin/faculty/faculty_cse_01 \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -225,7 +225,7 @@ curl --request DELETE \
 
 ## Search faculty members
 
-`POST /faculty/search`
+`POST /profile/faculty/search`
 
 Searches faculty members with optional filters. Returns matching results.
 
@@ -249,7 +249,7 @@ Searches faculty members with optional filters. Returns matching results.
 
 ```bash
 curl --request POST \
-  --url https://api-uniz.rguktong.in/api/v1/faculty/search \
+  --url https://api-uniz.rguktong.in/api/v1/profile/faculty/search \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -285,7 +285,7 @@ curl --request POST \
 
 ## Bulk create faculty (admin)
 
-`POST /admin/faculty/bulk-create`
+`POST /profile/admin/faculty/bulk-create`
 
 Creates multiple faculty accounts in a single request. Each object in the array must include the required fields.
 
@@ -311,7 +311,7 @@ The request body is an array of faculty objects.
 
 ```bash
 curl --request POST \
-  --url https://api-uniz.rguktong.in/api/v1/admin/faculty/bulk-create \
+  --url https://api-uniz.rguktong.in/api/v1/profile/admin/faculty/bulk-create \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '[

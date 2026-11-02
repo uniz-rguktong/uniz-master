@@ -20,6 +20,7 @@
   - [Attendance](faculty/attendance)
 
 - API Reference
+  - [Endpoint reference](api/reference)
   - [Auth Login](api/auth/login)
   - [Auth OTP](api/auth/otp)
   - [Grades](api/academics/grades)

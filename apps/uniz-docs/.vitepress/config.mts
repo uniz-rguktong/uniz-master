@@ -10,7 +10,7 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: 'Documentation', link: '/' },
-      { text: 'API Reference', link: '/api/platform/gateway' },
+      { text: 'API Reference', link: '/api/reference' },
       {
         text: 'GitHub',
         link: 'https://github.com/uniz-rguktong/uniz-master',
@@ -102,6 +102,7 @@ export default defineConfig({
         {
           text: 'API Reference',
           items: [
+            { text: 'Endpoint reference', link: '/api/reference' },
             { text: 'Gateway map', link: '/api/platform/gateway' },
             { text: 'Health', link: '/api/platform/health' },
             { text: 'Auth login', link: '/api/auth/login' },

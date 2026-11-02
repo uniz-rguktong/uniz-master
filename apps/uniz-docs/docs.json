@@ -106,6 +106,7 @@
           {
             "group": "Platform",
             "pages": [
+              "api/reference",
               "api/platform/gateway",
               "api/platform/health"
             ]
