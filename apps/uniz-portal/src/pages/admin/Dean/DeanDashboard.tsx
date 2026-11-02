@@ -12,6 +12,7 @@ import {
   GraduationCap,
   Globe,
   CalendarClock,
+  ClipboardCheck,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -24,6 +25,8 @@ import SystemLogsSection from "../Webmaster/SystemLogsSection";
 import FacultyManagement from "../Webmaster/FacultyManagement";
 import WebmasterOverview from "../Webmaster/WebmasterOverview";
 import SemesterApproval from "./SemesterApproval";
+import LeaveApprovals from "../../faculty/leave/LeaveApprovals";
+import { isModuleEnabled } from "@/lib/flags";
 import BannersSection from "../Webmaster/BannersSection";
 import UpdatesSection from "../Webmaster/UpdatesSection";
 import WebsiteUpdatesSection from "../Webmaster/WebsiteUpdatesSection";
@@ -50,7 +53,7 @@ export default function DeanDashboard() {
   const allowedTabs = useMemo(
     () =>
       isHod
-        ? (["dashboard", "student", "semester_review"] as const)
+        ? (["dashboard", "student", "semester_review", "leave_review"] as const)
         : ([
             "dashboard",
             "student",
@@ -67,6 +70,7 @@ export default function DeanDashboard() {
             "website_updates",
             "push_alerts",
             "security",
+            "leave_review",
           ] as const),
     [isHod],
   );
@@ -98,6 +102,7 @@ export default function DeanDashboard() {
               label: "Semester Approvals",
               icon: CalendarClock,
             },
+            ...(isModuleEnabled("FACULTY") ? [{ id: "leave_review", label: "Leave & Duties", icon: ClipboardCheck }] : []),
           ],
         },
       ]
@@ -136,6 +141,7 @@ export default function DeanDashboard() {
       group: "Management",
       items: [
         { id: "faculty_mgmt", label: "Faculty Management", icon: Users },
+        ...(isModuleEnabled("FACULTY") ? [{ id: "leave_review", label: "Leave & Duties", icon: ClipboardCheck }] : []),
         { id: "system_logs", label: "System & Logs", icon: Activity },
         { id: "security", label: "Security", icon: Lock },
       ],
@@ -148,6 +154,8 @@ export default function DeanDashboard() {
     switch (activeTab) {
       case "student":
         return <StudentDetails />;
+      case "leave_review":
+        return <LeaveApprovals />;
       case "student_bulk":
         return <StudentBulkSection />;
       case "subjects":

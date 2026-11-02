@@ -327,3 +327,16 @@ export function getAnalyticsHeaders(): Record<string, string> {
   if (token) headers.Authorization = `Bearer ${token}`;
   return headers;
 }
+
+// Faculty leave and duties
+export const LEAVE_STATUS = `${BASE_URL}/leave/status`;
+export const LEAVE_APPLY = `${BASE_URL}/leave/apply`;
+export const LEAVE_MINE = `${BASE_URL}/leave/mine`;
+export const LEAVE_BALANCE = `${BASE_URL}/leave/balance`;
+export const LEAVE_PENDING = `${BASE_URL}/leave/pending`;
+export const LEAVE_DECIDE = (id: string) => `${BASE_URL}/leave/${id}/decide`;
+export const LEAVE_CANCEL = (id: string) => `${BASE_URL}/leave/${id}/cancel`;
+export const DUTY_MINE = `${BASE_URL}/duty/mine`;
+export const DUTY_ROSTER = `${BASE_URL}/duty/roster`;
+export const DUTY_ASSIGN = `${BASE_URL}/duty/assign`;
+export const DUTY_DELETE = (id: string) => `${BASE_URL}/duty/${id}`;
