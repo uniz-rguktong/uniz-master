@@ -7,6 +7,7 @@
   - [Login](students/login)
   - [Academics](students/academics)
   - [Course feedback](students/feedback)
+  - [Fees](students/fees)
   - [Outpass](students/outpass)
   - [Profile](students/profile)
 

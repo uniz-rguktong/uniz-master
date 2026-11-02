@@ -361,3 +361,14 @@ export const FEEDBACK_SUBMIT = (id: string) =>
 export const FEEDBACK_RESULTS = (id: string) =>
   `${BASE_URL}/feedback/forms/${id}/results`;
 export const FEEDBACK_MINE = `${BASE_URL}/feedback/mine`;
+
+// Fees (online payments coming soon)
+export const FEES_STATUS = `${BASE_URL}/fees/status`;
+export const FEES_STRUCTURES = `${BASE_URL}/fees/structures`;
+export const FEES_ISSUE = (id: string) =>
+  `${BASE_URL}/fees/structures/${id}/issue`;
+export const FEES_INVOICES = `${BASE_URL}/fees/invoices`;
+export const FEES_MINE = `${BASE_URL}/fees/mine`;
+export const FEES_PAY = (id: string) => `${BASE_URL}/fees/invoices/${id}/pay`;
+export const FEES_RECORD = (id: string) =>
+  `${BASE_URL}/fees/invoices/${id}/record`;

@@ -11,6 +11,7 @@ describe("module registry", () => {
         FEATURE_FACULTY: "false",
         FEATURE_EXAM_DUTIES: "false",
         FEATURE_FEEDBACK: "false",
+        FEATURE_FEES: "false",
       }),
     ).toEqual([]);
   });
@@ -43,5 +44,14 @@ describe("module registry", () => {
     expect(
       activeModuleRoutes({ FEATURE_FEEDBACK: "false" }).map((r) => r.prefix),
     ).not.toContain("/api/v1/feedback");
+  });
+
+  it("lists fees under FEATURE_FEES", () => {
+    expect(activeModuleRoutes({}).map((r) => r.prefix)).toContain(
+      "/api/v1/fees",
+    );
+    expect(
+      activeModuleRoutes({ FEATURE_FEES: "false" }).map((r) => r.prefix),
+    ).not.toContain("/api/v1/fees");
   });
 });

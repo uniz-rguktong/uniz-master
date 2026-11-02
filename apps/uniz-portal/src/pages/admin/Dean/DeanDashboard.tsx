@@ -13,6 +13,7 @@ import {
   Globe,
   CalendarClock,
   ClipboardCheck,
+  Wallet,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -28,6 +29,7 @@ import SemesterApproval from "./SemesterApproval";
 import LeaveApprovals from "../../faculty/leave/LeaveApprovals";
 import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
 import FeedbackAdmin from "../feedback/FeedbackAdmin";
+import FeesAdmin from "../fees/FeesAdmin";
 import { isModuleEnabled } from "@/lib/flags";
 import BannersSection from "../Webmaster/BannersSection";
 import UpdatesSection from "../Webmaster/UpdatesSection";
@@ -75,6 +77,7 @@ export default function DeanDashboard() {
             "leave_review",
             "exam_duties",
             "feedback",
+            "fees",
           ] as const),
     [isHod],
   );
@@ -132,6 +135,7 @@ export default function DeanDashboard() {
         { id: "semester_review", label: "Semester Approvals", icon: CalendarClock },
         ...(isModuleEnabled("EXAM_DUTIES") ? [{ id: "exam_duties", label: "Exam Duties", icon: ClipboardCheck }] : []),
         ...(isModuleEnabled("FEEDBACK") ? [{ id: "feedback", label: "Course Feedback", icon: ClipboardCheck }] : []),
+        ...(isModuleEnabled("FEES") ? [{ id: "fees", label: "Fees", icon: Wallet }] : []),
       ],
     },
     {
@@ -166,6 +170,8 @@ export default function DeanDashboard() {
         return <ExamDutiesAdmin />;
       case "feedback":
         return <FeedbackAdmin />;
+      case "fees":
+        return <FeesAdmin />;
       case "student_bulk":
         return <StudentBulkSection />;
       case "subjects":

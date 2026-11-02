@@ -160,6 +160,7 @@ const serviceMap: Record<string, string> = {
   grievance: process.env.USER_SERVICE_URL || UNIFIED_API,
   leave: process.env.USER_SERVICE_URL || UNIFIED_API,
   duty: process.env.USER_SERVICE_URL || UNIFIED_API,
+  fees: process.env.USER_SERVICE_URL || UNIFIED_API,
   examduty: process.env.ACADEMICS_SERVICE_URL || UNIFIED_API,
   feedback: process.env.ACADEMICS_SERVICE_URL || UNIFIED_API,
   docs:
@@ -179,6 +180,7 @@ const UNIFIED_SERVICE_KEYS = new Set([
   "academics",
   "leave",
   "duty",
+  "fees",
   "examduty",
   "feedback",
 ]);

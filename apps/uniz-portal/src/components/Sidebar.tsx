@@ -22,6 +22,7 @@ import {
   ClipboardCheck,
   Menu,
   MessageSquare,
+  Wallet,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -55,6 +56,7 @@ const GradeHub = lazy(() => import("../pages/promotions/GradeHub"));
 const CurrentSemester = lazy(() => import("../pages/student/CurrentSemester"));
 const Registration = lazy(() => import("../pages/student/Registration"));
 const Grievance = lazy(() => import("../pages/student/Grievance"));
+const StudentFees = lazy(() => import("../pages/student/fees/StudentFees"));
 const StudentFeedback = lazy(
   () => import("../pages/student/feedback/StudentFeedback"),
 );
@@ -78,6 +80,7 @@ interface MainContent {
     | "attendance"
     | "grievance"
     | "feedback"
+    | "fees"
     | "notifications"
     | "currentSemester"
     | "registration"
@@ -202,6 +205,19 @@ export default function Sidebar({ content }: MainContent) {
       hoverColor: "hover:text-navy-600",
     },
 
+    ...(isModuleEnabled("FEES")
+      ? [
+          {
+            id: "fees",
+            label: "Fees",
+            href: "/student/fees",
+            content: "fees" as const,
+            icon: Wallet,
+            activeColor: "text-navy-900",
+            hoverColor: "hover:text-navy-700",
+          },
+        ]
+      : []),
     ...(isModuleEnabled("FEEDBACK")
       ? [
           {
@@ -248,6 +264,7 @@ export default function Sidebar({ content }: MainContent) {
     attendance: <Attendance />,
     grievance: <Grievance />,
     feedback: <StudentFeedback />,
+    fees: <StudentFees />,
     notifications: <NotificationCenter portal="student" />,
     seating: <SeatingArrangement />,
     help: <HelpSupport />,
