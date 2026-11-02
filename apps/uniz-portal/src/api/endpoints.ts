@@ -385,3 +385,6 @@ export const LIBRARY_FINES = `${BASE_URL}/library/fines`;
 export const LIBRARY_SETTLE = (id: string) =>
   `${BASE_URL}/library/fines/${id}/settle`;
 export const LIBRARY_REMIND = `${BASE_URL}/library/remind`;
+
+// Placement
+export const PLACEMENT = `${BASE_URL}/placement`;

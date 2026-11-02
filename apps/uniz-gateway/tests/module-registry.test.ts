@@ -13,6 +13,7 @@ describe("module registry", () => {
         FEATURE_FEEDBACK: "false",
         FEATURE_FEES: "false",
         FEATURE_LIBRARY: "false",
+        FEATURE_PLACEMENT: "false",
       }),
     ).toEqual([]);
   });
@@ -63,5 +64,14 @@ describe("module registry", () => {
     expect(
       activeModuleRoutes({ FEATURE_LIBRARY: "false" }).map((r) => r.prefix),
     ).not.toContain("/api/v1/library");
+  });
+
+  it("lists placement under FEATURE_PLACEMENT", () => {
+    expect(activeModuleRoutes({}).map((r) => r.prefix)).toContain(
+      "/api/v1/placement",
+    );
+    expect(
+      activeModuleRoutes({ FEATURE_PLACEMENT: "false" }).map((r) => r.prefix),
+    ).not.toContain("/api/v1/placement");
   });
 });

@@ -24,6 +24,7 @@ import {
   MessageSquare,
   Wallet,
   BookOpen,
+  Briefcase,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -58,6 +59,7 @@ const CurrentSemester = lazy(() => import("../pages/student/CurrentSemester"));
 const Registration = lazy(() => import("../pages/student/Registration"));
 const Grievance = lazy(() => import("../pages/student/Grievance"));
 const MyLibrary = lazy(() => import("../pages/library/MyLibrary"));
+const StudentPlacement = lazy(() => import("../pages/student/placement/StudentPlacement"));
 const StudentFees = lazy(() => import("../pages/student/fees/StudentFees"));
 const StudentFeedback = lazy(
   () => import("../pages/student/feedback/StudentFeedback"),
@@ -83,6 +85,7 @@ interface MainContent {
     | "grievance"
     | "feedback"
     | "fees"
+    | "placement"
     | "library"
     | "notifications"
     | "currentSemester"
@@ -221,6 +224,19 @@ export default function Sidebar({ content }: MainContent) {
           },
         ]
       : []),
+    ...(isModuleEnabled("PLACEMENT")
+      ? [
+          {
+            id: "placement",
+            label: "Placements",
+            href: "/student/placement",
+            content: "placement" as const,
+            icon: Briefcase,
+            activeColor: "text-navy-900",
+            hoverColor: "hover:text-navy-700",
+          },
+        ]
+      : []),
     ...(isModuleEnabled("FEES")
       ? [
           {
@@ -281,6 +297,7 @@ export default function Sidebar({ content }: MainContent) {
     grievance: <Grievance />,
     feedback: <StudentFeedback />,
     fees: <StudentFees />,
+    "placement": <StudentPlacement />,
     library: <MyLibrary kind="student" />,
     notifications: <NotificationCenter portal="student" />,
     seating: <SeatingArrangement />,

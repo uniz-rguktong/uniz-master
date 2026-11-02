@@ -10,6 +10,7 @@ import filesRoutes from "./routes/files.routes";
 import grievanceRoutes from "./routes/grievance.routes";
 import { leaveRouter, dutyRouter } from "./routes/leave.routes";
 import { feesRouter } from "./routes/fees.routes";
+import { placementRouter } from "./routes/placement.routes";
 import { libraryRouter } from "./routes/library.routes";
 import { processNextStudentBatch } from "./services/bulk-worker.service";
 import { redis } from "./utils/redis.util";
@@ -63,7 +64,7 @@ export function createApp(): express.Application {
   // collide with the "/" mounted routers below.
   app.use((req, _res, next) => {
     const svc = String(req.headers["x-uniz-service"] || "").toLowerCase();
-    if ((svc === "leave" || svc === "duty" || svc === "fees" || svc === "library") && !req.url.startsWith(`/${svc}/`)) {
+    if ((svc === "leave" || svc === "duty" || svc === "fees" || svc === "library" || svc === "placement") && !req.url.startsWith(`/${svc}/`)) {
       req.url = `/${svc}${req.url.startsWith("/") ? "" : "/"}${req.url}`;
     }
     next();
@@ -71,6 +72,7 @@ export function createApp(): express.Application {
   app.use("/leave", leaveRouter);
   app.use("/duty", dutyRouter);
   app.use("/fees", feesRouter);
+  app.use("/placement", placementRouter);
   app.use("/library", libraryRouter);
 
   app.use("/api/queue", queueRoutes);

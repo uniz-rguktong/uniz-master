@@ -336,3 +336,67 @@ model LibraryFine {
   @@index([username])
   @@index([status])
 }
+
+model Company {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique
+  website   String   @default("")
+  contact   String   @default("")
+  notes     String   @default("")
+  createdBy String
+  createdAt DateTime @default(now())
+}
+
+/// Branches and batches are comma separated; empty means all.
+model PlacementDrive {
+  id          String   @id @default(uuid()) @db.Uuid
+  companyId   String   @db.Uuid
+  title       String
+  jobRole     String
+  ctcLpa      Float    @default(0)
+  location    String   @default("")
+  description String   @default("")
+  branches    String   @default("")
+  batches     String   @default("")
+  minCgpa     Float    @default(0)
+  maxBacklogs Int      @default(99)
+  deadline    DateTime
+  status      String   @default("open")
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status, deadline])
+  @@index([companyId])
+}
+
+/// studentId = StudentProfile.id (text, no FK).
+model DriveApplication {
+  id        String   @id @default(uuid()) @db.Uuid
+  driveId   String   @db.Uuid
+  studentId String
+  username  String
+  resumeUrl String   @default("")
+  status    String   @default("applied")
+  note      String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([driveId, username])
+  @@index([username])
+}
+
+model Offer {
+  id            String   @id @default(uuid()) @db.Uuid
+  applicationId String   @unique @db.Uuid
+  driveId       String   @db.Uuid
+  companyId     String   @db.Uuid
+  username      String
+  ctcLpa        Float    @default(0)
+  status        String   @default("offered")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([username])
+  @@index([companyId])
+}

@@ -21,6 +21,7 @@ const USER_SERVICES = new Set([
   "leave",
   "duty",
   "fees",
+  "placement",
   "library",
 ]);
 

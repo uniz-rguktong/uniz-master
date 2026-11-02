@@ -9,6 +9,7 @@
   - [Course feedback](students/feedback)
   - [Fees](students/fees)
   - [Library](students/library)
+  - [Placements](students/placement)
   - [Outpass](students/outpass)
   - [Profile](students/profile)
 
