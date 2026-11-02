@@ -58,6 +58,7 @@ export function HomePage() {
   const heroImages = [
     "/carousel/VRD.png.webp",
     "/carousel/all.jpg.webp",
+    "/carousel/Sports.png.webp",
     "/carousel/Cul.png.webp",
     "https://rguktong.ac.in/svgs/carosel/1%20ind.jpeg",
     "https://rguktong.ac.in/svgs/carosel/WS22.jpeg",
