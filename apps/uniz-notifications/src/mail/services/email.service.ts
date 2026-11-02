@@ -1,4 +1,3 @@
-import nodemailer from "nodemailer";
 import * as sesv2 from "@aws-sdk/client-sesv2";
 import {
   generateResultPdf,
@@ -12,119 +11,72 @@ import {
   isActionableGrievanceDescription,
 } from "@uniz/shared";
 
-const emailUser = process.env.EMAIL_USER;
-const emailPass = process.env.EMAIL_PASS;
-
 // Bulk result/attendance emails are suppressed per policy (only OTP-on-demand
 // uses email). When disabled we must NOT generate the per-student PDF — that was
 // pure wasted CPU (one discarded PDF per student on every publish).
 const RESULT_EMAILS_ENABLED = process.env.ENABLE_RESULT_EMAILS === "true";
 
-// --- PROVIDER SELECTION ---
-const isProduction = process.env.DOCKER_ENV === "true";
-const forceGmail = process.env.FORCE_GMAIL === "true";
+// --- AWS SES (only mail provider) ---
+const REQUIRED_SES_ENV = ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"] as const;
 
-let sesTransporter: ReturnType<typeof nodemailer.createTransport> | null =
-  null;
+let sesClient: sesv2.SESv2Client | null = null;
 
-if (isProduction && !forceGmail) {
-  try {
-    const accessKeyId =
-      process.env.PROD_AWS_ACCESS_KEY_NEWONE_AFTER_LEAK ||
-      process.env.AWS_ACCESS_KEY_ID;
-    const secretAccessKey =
-      process.env.PROD_AWS_ACCESS_KEY_SECRET_NEWONE_AFTER_LEAK ||
-      process.env.AWS_SECRET_ACCESS_KEY;
-    const region = process.env.AWS_REGION || "ap-south-1";
-
-    if (!accessKeyId || !secretAccessKey) {
-      throw new Error("AWS Credentials missing for SES production.");
-    }
-
-    const sesClient = new sesv2.SESv2Client({
-      region,
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-      },
-    });
-
-    sesTransporter = nodemailer.createTransport({
-      SES: {
-        sesClient,
-        SendEmailCommand: sesv2.SendEmailCommand,
-      },
-    } as any);
-
-    console.log(
-      `[MAIL-SES] Production SES v3 Transporter Initialized with key prefix: ${accessKeyId.substring(0, 5)}...`,
-    );
-  } catch (error) {
-    console.error(`[MAIL-SES] initialization failed: ${error}`);
+const getSesClient = (): sesv2.SESv2Client => {
+  if (sesClient) return sesClient;
+  const missing = REQUIRED_SES_ENV.filter((name) => !process.env[name]);
+  if (missing.length > 0) {
+    throw new Error(`[MAIL-SES] missing required env var(s): ${missing.join(", ")}`);
   }
-}
-
-// --- GMAIL SETUP (Local / Fallback) ---
-const localGmailTransporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER || "noreplycampusschield@gmail.com",
-    pass: (process.env.EMAIL_PASS || "acix rfbi kujh xwtj").replace(/\s/g, ""),
-  },
-});
-
-const getTransporter = () => {
-  if (sesTransporter) return sesTransporter;
-  return localGmailTransporter;
+  sesClient = new sesv2.SESv2Client({
+    region: process.env.AWS_REGION || "ap-south-1",
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+    },
+  });
+  return sesClient;
 };
 
-console.log(`[MAIL] Transporter Initialized.`);
-console.log(`[MAIL] Active Provider: ${sesTransporter ? "AWS SES" : "Gmail"}`);
+const missingAtStartup = REQUIRED_SES_ENV.filter((name) => !process.env[name]);
+if (missingAtStartup.length > 0) {
+  console.error(
+    `[MAIL-SES] missing required env var(s): ${missingAtStartup.join(", ")}. Emails will fail.`,
+  );
+} else {
+  console.log(`[MAIL] Active Provider: AWS SES`);
+}
 
-// --- RESEND SETUP ---
-// --- EMAIL DELIVERY SETUP ---
-// Unified email sender using the Gmail Pool (Google Workspace / Organizational)
 const sendEmailUnified = async (options: {
   from: string;
   to: string;
   subject: string;
   html: string;
-  attachments?: any[];
 }): Promise<boolean> => {
-  const provider = sesTransporter ? "SES" : "GMAIL";
   try {
-    const info = await getTransporter().sendMail({
-      ...options,
-      headers: {
-        "X-Entity-Ref-ID": `uniz-${Date.now()}`,
-        "X-Priority": "1 (Highest)",
-        "X-Mailer": "UniZ-Mail-Engine",
-      },
-    });
+    const result = await getSesClient().send(
+      new sesv2.SendEmailCommand({
+        FromEmailAddress: options.from,
+        Destination: { ToAddresses: [options.to] },
+        Content: {
+          Simple: {
+            Subject: { Data: options.subject, Charset: "UTF-8" },
+            Body: { Html: { Data: options.html, Charset: "UTF-8" } },
+          },
+        },
+      }),
+    );
 
     console.log(
-      `[MAIL-SUCCESS] [${provider}] ID=${info.messageId}, To=${options.to}, Subject="${options.subject}"`,
+      `[MAIL-SUCCESS] [SES] ID=${result.MessageId}, To=${options.to}, Subject="${options.subject}"`,
     );
     return true;
   } catch (err: any) {
-    // Classification of errors for robustness during surges
-    if (err.message?.includes("Throttling") || err.code === "Throttling") {
-      console.error(
-        `[MAIL-CRITICAL] [${provider}] SES Rate Limit Exceeded. Surge protection active.`,
-      );
-    } else if (
-      err.message?.includes("Blacklisted") ||
-      err.name === "MessageRejected"
-    ) {
-      console.error(
-        `[MAIL-BOUNCE] [${provider}] Recipient ${options.to} rejected/bounced. Flagging for review.`,
-      );
-      // TODO: Implement DB flag for invalid email if we add a persistence layer here
+    if (err.message?.includes("Throttling") || err.name === "TooManyRequestsException") {
+      console.error(`[MAIL-CRITICAL] [SES] Rate limit exceeded.`);
+    } else if (err.name === "MessageRejected") {
+      console.error(`[MAIL-BOUNCE] [SES] Recipient ${options.to} rejected.`);
     } else {
-      console.error(
-        `[MAIL-ERROR] [${provider}] Delivery failed for ${options.to}:`,
-        err.message,
-      );
+      console.error(`[MAIL-ERROR] [SES] Delivery failed for ${options.to}:`, err.message);
     }
     return false;
   }
