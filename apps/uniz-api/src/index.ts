@@ -18,6 +18,8 @@ const USER_SERVICES = new Set([
   "files",
   "grievance",
   "user",
+  "leave",
+  "duty",
 ]);
 
 function resolveUpstream(service: string): express.Application | null {

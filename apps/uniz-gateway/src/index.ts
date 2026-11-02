@@ -158,6 +158,8 @@ const serviceMap: Record<string, string> = {
     process.env.OUTPASS_SERVICE_URL ||
     "http://uniz-outpass-service.default.svc.cluster.local:3003",
   grievance: process.env.USER_SERVICE_URL || UNIFIED_API,
+  leave: process.env.USER_SERVICE_URL || UNIFIED_API,
+  duty: process.env.USER_SERVICE_URL || UNIFIED_API,
   docs:
     process.env.DOCS_SERVICE_URL ||
     (process.env.NODE_ENV === "production"
@@ -173,6 +175,8 @@ const UNIFIED_SERVICE_KEYS = new Set([
   "files",
   "grievance",
   "academics",
+  "leave",
+  "duty",
 ]);
 
 function stampUnizService(req: any, service: string) {

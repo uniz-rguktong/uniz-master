@@ -27,6 +27,10 @@ import {
   Menu,
 } from "lucide-react";
 import { useLogout } from "../../hooks/useLogout";
+import { isModuleEnabled } from "@/lib/flags";
+import MyLeave from "./leave/MyLeave";
+import LeaveApprovals from "./leave/LeaveApprovals";
+import { CalendarDays, ClipboardCheck } from "lucide-react";
 import {
   BASE_URL,
   FACULTY_INFO,
@@ -40,7 +44,7 @@ import {
 /* ────────────────────────────────────────────────
    Types
 ────────────────────────────────────────────────── */
-type ActiveTab = "dashboard" | "profile" | "students" | "password";
+type ActiveTab = "dashboard" | "profile" | "students" | "password" | "leave" | "leave_review";
 
 interface FacultyProfile {
   id: string;
@@ -137,6 +141,12 @@ export default function FacultyDashboard() {
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
     { id: "profile", label: "My Profile", icon: User },
     { id: "students", label: "Branch Students", icon: Users },
+    ...(isModuleEnabled("FACULTY")
+      ? [
+          { id: "leave", label: "Leave & Duties", icon: CalendarDays },
+          ...(isHOD ? [{ id: "leave_review", label: "Leave Approvals", icon: ClipboardCheck }] : []),
+        ]
+      : []),
     { id: "password", label: "Change Password", icon: Lock },
   ];
 
@@ -159,6 +169,10 @@ export default function FacultyDashboard() {
         );
       case "password":
         return <PasswordSection />;
+      case "leave":
+        return <MyLeave />;
+      case "leave_review":
+        return <LeaveApprovals />;
       default:
         return (
           <OverviewSection
