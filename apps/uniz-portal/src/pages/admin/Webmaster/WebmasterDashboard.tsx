@@ -16,6 +16,7 @@ import {
   Wallet,
   Library,
   Briefcase,
+  Info,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { adminCardClass } from "@/components/admin/admin-ui";
@@ -38,6 +39,7 @@ import SystemLogsSection from "./SystemLogsSection";
 import ExamDutiesAdmin from "../exam-duties/ExamDutiesAdmin";
 import FeedbackAdmin from "../feedback/FeedbackAdmin";
 import FeesAdmin from "../fees/FeesAdmin";
+import InfoAdmin from "../../info/InfoAdmin";
 import AlumniAdmin from "../../alumni/AlumniAdmin";
 import PlacementAdmin from "../placement/PlacementAdmin";
 import LibraryAdmin from "../library/LibraryAdmin";
@@ -77,6 +79,7 @@ export default function WebmasterDashboard() {
               "exam_duties",
               "feedback",
               "fees",
+              "info",
               "alumni",
               "placement",
               "library",
@@ -162,6 +165,9 @@ export default function WebmasterDashboard() {
         ...(role === "webadmin" && isModuleEnabled("ALUMNI")
           ? [{ id: "alumni", label: "Alumni", icon: GraduationCap }]
           : []),
+        ...(role === "webadmin" && isModuleEnabled("INFO_CENTRE")
+          ? [{ id: "info", label: "Info Centre", icon: Info }]
+          : []),
         ...(role === "webadmin" && isModuleEnabled("FEES")
           ? [{ id: "fees", label: "Fees", icon: Wallet }]
           : []),
@@ -232,6 +238,8 @@ export default function WebmasterDashboard() {
         return <FeedbackAdmin />;
       case "fees":
         return <FeesAdmin />;
+      case "info":
+        return <InfoAdmin />;
       case "alumni":
         return <AlumniAdmin />;
       case "placement":

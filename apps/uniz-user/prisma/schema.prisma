@@ -438,3 +438,20 @@ model AlumniJob {
 
   @@index([active])
 }
+
+model InfoItem {
+  id          String   @id @default(uuid()) @db.Uuid
+  category    String
+  title       String
+  summary     String   @default("")
+  url         String   @default("")
+  tags        String   @default("")
+  eventDate   DateTime?
+  pinned      Boolean  @default(false)
+  isVisible   Boolean  @default(true)
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+}

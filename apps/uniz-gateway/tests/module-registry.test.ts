@@ -15,6 +15,7 @@ describe("module registry", () => {
         FEATURE_LIBRARY: "false",
         FEATURE_PLACEMENT: "false",
         FEATURE_ALUMNI: "false",
+        FEATURE_INFO_CENTRE: "false",
       }),
     ).toEqual([]);
   });
@@ -83,5 +84,14 @@ describe("module registry", () => {
     expect(
       activeModuleRoutes({ FEATURE_ALUMNI: "false" }).map((r) => r.prefix),
     ).not.toContain("/api/v1/alumni");
+  });
+
+  it("lists infocentre under FEATURE_INFO_CENTRE", () => {
+    expect(activeModuleRoutes({}).map((r) => r.prefix)).toContain(
+      "/api/v1/infocentre",
+    );
+    expect(
+      activeModuleRoutes({ FEATURE_INFO_CENTRE: "false" }).map((r) => r.prefix),
+    ).not.toContain("/api/v1/infocentre");
   });
 });

@@ -391,3 +391,6 @@ export const PLACEMENT = `${BASE_URL}/placement`;
 
 // Alumni
 export const ALUMNI = `${BASE_URL}/alumni`;
+
+// Information centre
+export const INFOCENTRE = `${BASE_URL}/infocentre`;

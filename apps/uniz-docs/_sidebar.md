@@ -11,6 +11,7 @@
   - [Library](students/library)
   - [Placements](students/placement)
   - [Alumni](students/alumni)
+  - [Information Centre](students/information-centre)
   - [Outpass](students/outpass)
   - [Profile](students/profile)
 
