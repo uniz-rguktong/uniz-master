@@ -3,7 +3,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { leaveRouter, dutyRouter } from "../src/routes/leave.routes";
-import { prismaMock } from "./mocks";
+import { prismaMock, redisMock } from "./mocks";
 
 let server: http.Server;
 let base = "";
@@ -203,5 +203,12 @@ describe("duty routes", () => {
     });
     prismaMock.dutyAssignment.delete.mockResolvedValue({});
     expect((await call("DELETE", `/duty/${ID}`, HOD)).status).toBe(200);
+  });
+});
+
+describe("rate limit", () => {
+  it("returns 429 past the per-user limit", async () => {
+    redisMock.incr.mockResolvedValue(121);
+    expect((await call("GET", "/duty/mine", FAC)).status).toBe(429);
   });
 });
