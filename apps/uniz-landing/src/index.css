@@ -311,7 +311,7 @@ html {
 }
 
 .bg-white:hover .aspect-square img {
-  transform: scale(1.03);
+  transform: none;
 }
 
 .aspect-square {

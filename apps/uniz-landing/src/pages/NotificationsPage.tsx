@@ -9,6 +9,7 @@ import {
   ArrowRightCircle,
   ChevronRight
 } from "lucide-react";
+import { PageHero } from "../components/layout/PageHero";
 
 export function NotificationsPage() {
   const { type } = useParams<{ type: string }>();
@@ -202,39 +203,24 @@ export function NotificationsPage() {
     );
   };
 
-  const headingText = currentTab === "news" ? "News & Updates" : currentTab === "tenders" ? "Tenders" : "Career Opportunities";
+  const headingText = currentTab === "news" ? "News and updates" : currentTab === "tenders" ? "Tenders" : "Careers";
+  const heroDescription =
+    currentTab === "news"
+      ? "Official news and notices published by RGUKT Ongole."
+      : currentTab === "tenders"
+        ? "Active tender notices from RGUKT Ongole."
+        : "Career openings and recruitment notices.";
 
   return (
     <div className="min-h-screen bg-surface font-sans">
-      {/* ── Hero Banner ── */}
-      <div className="relative bg-navy-950 overflow-hidden">
-        <div className="absolute inset-x-0 top-0 h-1 bg-brand-red z-10" />
-        <div
-          className="absolute inset-0 opacity-80"
-          style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #0A2540 0%, transparent 55%), radial-gradient(ellipse at 10% 80%, #163A5C 0%, transparent 50%)" }}
-        />
-        {/* Faint grid pattern */}
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
-        />
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 sm:pt-24 sm:pb-28">
-          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 mb-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/85 bg-white/10 border border-white/15 rounded-full">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-red" aria-hidden="true" />
-            Rajiv Gandhi University of Knowledge Technologies
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.05] mb-5">
-            {headingText}
-          </h1>
-          <p className="max-w-2xl border-l-2 border-brand-red pl-4 text-white/75 text-lg leading-relaxed">
-            Stay informed with the latest {headingText}
-          </p>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-surface to-transparent" />
-      </div>
+      <PageHero
+        eyebrow="RGUKT Ongole · Notifications"
+        title={headingText}
+        description={heroDescription}
+      />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-16 relative z-20">
-        {/* ── Content ── */}
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-8 relative z-20">
+        <div>
           {renderList(itemsData, `No active ${headingText.toLowerCase()} available at this time.`, currentTab)}
         </div>
       </div>
