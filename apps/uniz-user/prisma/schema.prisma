@@ -455,3 +455,59 @@ model InfoItem {
 
   @@index([category])
 }
+
+model Club {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String   @unique
+  category     String   @default("technical")
+  description  String   @default("")
+  coordinators String   @default("")
+  active       Boolean  @default(true)
+  createdBy    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ClubMember {
+  id        String   @id @default(uuid()) @db.Uuid
+  clubId    String   @db.Uuid
+  username  String
+  role      String   @default("member")
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+
+  @@unique([clubId, username])
+  @@index([username])
+}
+
+model ClubEvent {
+  id          String   @id @default(uuid()) @db.Uuid
+  clubId      String   @db.Uuid
+  title       String
+  description String   @default("")
+  venue       String   @default("")
+  startsAt    DateTime
+  infoItemId  String?
+  createdBy   String
+  createdAt   DateTime @default(now())
+
+  @@index([clubId])
+}
+
+model ConsultancyProject {
+  id         String    @id @default(uuid()) @db.Uuid
+  title      String
+  client     String
+  faculty    String    @default("")
+  department String    @default("")
+  valueInr   Float     @default(0)
+  status     String    @default("proposed")
+  startDate  DateTime?
+  endDate    DateTime?
+  notes      String    @default("")
+  createdBy  String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([status])
+}
