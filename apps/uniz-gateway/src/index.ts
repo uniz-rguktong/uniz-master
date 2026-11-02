@@ -160,6 +160,7 @@ const serviceMap: Record<string, string> = {
   grievance: process.env.USER_SERVICE_URL || UNIFIED_API,
   leave: process.env.USER_SERVICE_URL || UNIFIED_API,
   duty: process.env.USER_SERVICE_URL || UNIFIED_API,
+  examduty: process.env.ACADEMICS_SERVICE_URL || UNIFIED_API,
   docs:
     process.env.DOCS_SERVICE_URL ||
     (process.env.NODE_ENV === "production"
@@ -177,6 +178,7 @@ const UNIFIED_SERVICE_KEYS = new Set([
   "academics",
   "leave",
   "duty",
+  "examduty",
 ]);
 
 function stampUnizService(req: any, service: string) {

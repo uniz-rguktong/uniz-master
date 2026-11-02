@@ -30,6 +30,7 @@ import { useLogout } from "../../hooks/useLogout";
 import { isModuleEnabled } from "@/lib/flags";
 import MyLeave from "./leave/MyLeave";
 import LeaveApprovals from "./leave/LeaveApprovals";
+import MyExamDuties from "./exam-duties/MyExamDuties";
 import { CalendarDays, ClipboardCheck } from "lucide-react";
 import {
   BASE_URL,
@@ -44,7 +45,7 @@ import {
 /* ────────────────────────────────────────────────
    Types
 ────────────────────────────────────────────────── */
-type ActiveTab = "dashboard" | "profile" | "students" | "password" | "leave" | "leave_review";
+type ActiveTab = "dashboard" | "profile" | "students" | "password" | "leave" | "leave_review" | "exam_duties";
 
 interface FacultyProfile {
   id: string;
@@ -147,6 +148,9 @@ export default function FacultyDashboard() {
           ...(isHOD ? [{ id: "leave_review", label: "Leave Approvals", icon: ClipboardCheck }] : []),
         ]
       : []),
+    ...(isModuleEnabled("EXAM_DUTIES")
+      ? [{ id: "exam_duties", label: "Exam Duties", icon: ClipboardCheck }]
+      : []),
     { id: "password", label: "Change Password", icon: Lock },
   ];
 
@@ -173,6 +177,8 @@ export default function FacultyDashboard() {
         return <MyLeave />;
       case "leave_review":
         return <LeaveApprovals />;
+      case "exam_duties":
+        return <MyExamDuties />;
       default:
         return (
           <OverviewSection
