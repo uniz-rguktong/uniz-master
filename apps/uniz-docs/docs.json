@@ -82,6 +82,7 @@
               "students/fees",
               "students/library",
               "students/placement",
+              "students/alumni",
               "students/profile",
               "students/outpass"
             ]

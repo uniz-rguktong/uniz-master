@@ -14,6 +14,7 @@ describe("module registry", () => {
         FEATURE_FEES: "false",
         FEATURE_LIBRARY: "false",
         FEATURE_PLACEMENT: "false",
+        FEATURE_ALUMNI: "false",
       }),
     ).toEqual([]);
   });
@@ -73,5 +74,14 @@ describe("module registry", () => {
     expect(
       activeModuleRoutes({ FEATURE_PLACEMENT: "false" }).map((r) => r.prefix),
     ).not.toContain("/api/v1/placement");
+  });
+
+  it("lists alumni under FEATURE_ALUMNI", () => {
+    expect(activeModuleRoutes({}).map((r) => r.prefix)).toContain(
+      "/api/v1/alumni",
+    );
+    expect(
+      activeModuleRoutes({ FEATURE_ALUMNI: "false" }).map((r) => r.prefix),
+    ).not.toContain("/api/v1/alumni");
   });
 });

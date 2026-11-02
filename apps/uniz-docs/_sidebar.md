@@ -10,6 +10,7 @@
   - [Fees](students/fees)
   - [Library](students/library)
   - [Placements](students/placement)
+  - [Alumni](students/alumni)
   - [Outpass](students/outpass)
   - [Profile](students/profile)
 
