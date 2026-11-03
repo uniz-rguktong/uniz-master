@@ -74,7 +74,7 @@ function ContactCard({ name, mobile }: Contact) {
 
 export default function ContactUs() {
   return (
- <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center py-24 px-6">
+ <div className="min-h-screen bg-surface flex flex-col items-center py-24 px-6">
       <div className="max-w-xl w-full">
         {/* Header Section */}
         <motion.div

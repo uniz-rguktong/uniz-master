@@ -39,7 +39,7 @@ export default function CurrentSemesterAdmin() {
     return (
       <div className="flex h-[60vh] items-center justify-center">
         <div className="flex flex-col items-center gap-4">
- <div className="w-10 h-10 border-4 border-[#0A2540] border-t-transparent rounded-full animate-spin"></div>
+ <div className="w-10 h-10 border-4 border-navy border-t-transparent rounded-full animate-spin"></div>
  <p className="text-navy-400 font-medium text-xs ">
             Syncing Academic Data...
           </p>
@@ -72,7 +72,7 @@ export default function CurrentSemesterAdmin() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-navy-100 pb-10">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
- <div className="bg-[#0A2540] text-white px-2 py-0.5 rounded text-[10px] font-semibold tracking-tighter">
+ <div className="bg-navy text-white px-2 py-0.5 rounded text-[10px] font-semibold tracking-tighter">
               Active Session
             </div>
             <div

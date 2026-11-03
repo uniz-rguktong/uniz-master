@@ -36,7 +36,7 @@ export function LiveEditorChrome({
  <div className="px-6 py-7 md:px-9 md:py-8 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
- <p className="text-[11px] font-semibold text-[#0A2540]/70 mb-2">
+ <p className="text-[11px] font-semibold text-navy/70 mb-2">
               RGUKT Ongole · {sectionLabel}
             </p>
  <h2 className="text-2xl md:text-[1.75rem] font-medium text-slate-900 tracking-tight">
@@ -47,7 +47,7 @@ export function LiveEditorChrome({
             </p>
           </div>
           <div className="flex items-center gap-2">
- <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0A2540]/5 text-[#0A2540] border border-[#0A2540]/10 text-[11px] font-semibold">
+ <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-navy/5 text-navy border border-navy/10 text-[11px] font-semibold">
               <Sparkles size={12} />
               Live editor
             </span>
@@ -64,14 +64,14 @@ export function LiveEditorChrome({
       </div>
       {liveUrl && (
  <div className="px-6 py-3 md:px-9 bg-slate-50/80 border-b border-slate-100 flex items-center gap-2 text-[11px] text-slate-500">
- <ExternalLink size={12} className="text-[#0A2540]/60 shrink-0" />
+ <ExternalLink size={12} className="text-navy/60 shrink-0" />
           <span>
             Edits publish to{" "}
             <a
               href={liveUrl}
               target="_blank"
               rel="noreferrer"
- className="font-semibold text-[#0A2540] hover:underline"
+ className="font-semibold text-navy hover:underline"
             >
               {liveUrl.replace("https://", "")}
             </a>

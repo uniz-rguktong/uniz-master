@@ -21,8 +21,9 @@
     font-feature-settings: "tnum", "cv11";
   }
 
-  :focus-visible {
-    outline-color: #0a2540;
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid theme("colors.navy.DEFAULT");
+    outline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -127,8 +128,8 @@
   .login-field:-webkit-autofill:hover,
   .login-field:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
-    -webkit-text-fill-color: #0a2540 !important;
-    caret-color: #0a2540;
+    -webkit-text-fill-color: theme("colors.navy.DEFAULT") !important;
+    caret-color: theme("colors.navy.DEFAULT");
     transition: background-color 9999s ease-out 0s;
   }
 
@@ -138,7 +139,7 @@
 
   /* HarvardKey-inspired institutional login form */
   .examcell-login-form label {
-    color: #0a2540;
+    color: theme("colors.navy.DEFAULT");
   }
 
   /* Local stand-in for the old grainy-gradients noise texture. */
@@ -152,7 +153,7 @@
     font-family: "Cabin Condensed", "Cabin", system-ui, sans-serif;
     font-weight: 700;
     letter-spacing: 0.04em;
-    color: var(--portal-navy, #0a2540);
+    color: var(--portal-navy, theme("colors.navy.DEFAULT"));
   }
 
   .uniz-primary-btn {
@@ -161,8 +162,8 @@
     border-radius: 8px;
     letter-spacing: 0;
     text-transform: none;
-    background: #0a2540;
-    @apply hover:bg-[#061b33] focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2;
+    background: theme("colors.navy.DEFAULT");
+    @apply hover:bg-navy-900 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2;
     @apply disabled:cursor-not-allowed disabled:opacity-40;
   }
 
@@ -179,7 +180,7 @@
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
     width: 100%;
     transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-    --component-active-color: #0a2540;
+    --component-active-color: theme("colors.navy.DEFAULT");
   }
 
   .menu__item {
@@ -230,7 +231,7 @@
     position: absolute;
     bottom: 0;
     height: 2px;
-    background-color: #0a2540;
+    background-color: theme("colors.navy.DEFAULT");
     border-radius: 1px;
     transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
     width: 0;
@@ -440,31 +441,31 @@
 }
 
 :root {
-  --uniz-maroon: #0a2540;
-  --uniz-maroon-light: #0d3154;
-  --examcell-accent: #ea2027;
+  --uniz-maroon: theme("colors.navy.DEFAULT");
+  --uniz-maroon-light: theme("colors.navy.700");
+  --examcell-accent: theme("colors.brand-red");
 
   /* Portal navy — ExamCell institutional */
-  --portal-navy: #0a2540;
-  --portal-navy-mid: #0d3154;
-  --portal-navy-deep: #021227;
-  --portal-navy-soft: #163a5c;
-  --portal-navy-muted: #5a7a94;
-  --portal-navy-tint: #fafafa;
-  --portal-navy-border: #e2e8f0;
+  --portal-navy: theme("colors.navy.DEFAULT");
+  --portal-navy-mid: theme("colors.navy.700");
+  --portal-navy-deep: theme("colors.navy.950");
+  --portal-navy-soft: theme("colors.navy.500");
+  --portal-navy-muted: theme("colors.navy.400");
+  --portal-navy-tint: theme("colors.surface.DEFAULT");
+  --portal-navy-border: theme("colors.line");
 
-  --navy-950: #021227;
-  --navy-900: #061b33;
-  --navy-850: #061527;
-  --navy-800: #0a2540;
-  --navy-750: #0b2a47;
-  --navy-700: #0d3154;
-  --navy-600: #113255;
-  --navy-500: #163a5c;
-  --navy-400: #5a7a94;
-  --navy-300: #9bb0c4;
-  --navy-200: #d8e0ea;
-  --navy-100: #fafafa;
+  --navy-950: theme("colors.navy.950");
+  --navy-900: theme("colors.navy.900");
+  --navy-850: theme("colors.navy.850");
+  --navy-800: theme("colors.navy.DEFAULT");
+  --navy-750: theme("colors.navy.750");
+  --navy-700: theme("colors.navy.700");
+  --navy-600: theme("colors.navy.600");
+  --navy-500: theme("colors.navy.500");
+  --navy-400: theme("colors.navy.400");
+  --navy-300: theme("colors.navy.300");
+  --navy-200: theme("colors.navy.200");
+  --navy-100: theme("colors.surface.DEFAULT");
   --navy-50: #ffffff;
 
   /* Layout rhythm */
@@ -480,21 +481,21 @@
   --radius-portal-2xl: 12px;
 
   --white: #ffffff;
-  --bg-page: #fafafa;
+  --bg-page: theme("colors.surface.DEFAULT");
   --card-bg: #ffffff;
   --text-primary: #222222;
   --text-secondary: #4f4f4f;
-  --accent-hover: #0d3154;
-  --accent-red: #ea2027;
+  --accent-hover: theme("colors.navy.700");
+  --accent-red: theme("colors.brand-red");
 
-  --muted-foreground: #5a7a94;
+  --muted-foreground: theme("colors.navy.400");
   --card: #ffffff;
-  --border: #e2e8f0;
-  --secondary: #fafafa;
-  --accent-foreground: #0a2540;
+  --border: theme("colors.line");
+  --secondary: theme("colors.surface.DEFAULT");
+  --accent-foreground: theme("colors.navy.DEFAULT");
 
   --background: var(--white);
-  --primary: #0a2540;
+  --primary: theme("colors.navy.DEFAULT");
   --component-inactive-color: var(--muted-foreground);
   --component-bg: var(--card);
   --component-shadow: var(--border);
@@ -511,42 +512,42 @@
   --OPEN-SANS: "Cabin Condensed", system-ui, sans-serif;
   --NUNITO: "Cabin Condensed", system-ui, sans-serif;
   --CABIN: "Cabin Condensed", system-ui, sans-serif;
-  --examcell-cta: #0a2540;
-  --footer-bg: #061527;
+  --examcell-cta: theme("colors.navy.DEFAULT");
+  --footer-bg: theme("colors.navy.850");
   --header-height: 68px;
 }
 
 /* ── Portal theme (student / admin / auth — ExamCell institutional) ─ */
 .portal-theme {
-  --portal-navy: #0a2540;
-  --portal-navy-mid: #0d3154;
-  --portal-navy-deep: #021227;
-  --portal-navy-soft: #163a5c;
-  --portal-navy-muted: #5a7a94;
-  --portal-navy-tint: #fafafa;
-  --portal-navy-border: #e2e8f0;
+  --portal-navy: theme("colors.navy.DEFAULT");
+  --portal-navy-mid: theme("colors.navy.700");
+  --portal-navy-deep: theme("colors.navy.950");
+  --portal-navy-soft: theme("colors.navy.500");
+  --portal-navy-muted: theme("colors.navy.400");
+  --portal-navy-tint: theme("colors.surface.DEFAULT");
+  --portal-navy-border: theme("colors.line");
 
-  --navy-950: #021227;
-  --navy-900: #061b33;
-  --navy-850: #061527;
-  --navy-800: #0a2540;
-  --navy-750: #0b2a47;
-  --navy-700: #0d3154;
-  --navy-600: #113255;
-  --navy-500: #163a5c;
-  --navy-400: #5a7a94;
-  --navy-300: #9bb0c4;
-  --navy-200: #d8e0ea;
-  --navy-100: #fafafa;
+  --navy-950: theme("colors.navy.950");
+  --navy-900: theme("colors.navy.900");
+  --navy-850: theme("colors.navy.850");
+  --navy-800: theme("colors.navy.DEFAULT");
+  --navy-750: theme("colors.navy.750");
+  --navy-700: theme("colors.navy.700");
+  --navy-600: theme("colors.navy.600");
+  --navy-500: theme("colors.navy.500");
+  --navy-400: theme("colors.navy.400");
+  --navy-300: theme("colors.navy.300");
+  --navy-200: theme("colors.navy.200");
+  --navy-100: theme("colors.surface.DEFAULT");
   --navy-50: #ffffff;
 
-  --bg-page: #fafafa;
+  --bg-page: theme("colors.surface.DEFAULT");
   --card-bg: #ffffff;
-  --primary: #0a2540;
-  --accent-foreground: #0a2540;
-  --component-active-color: #0a2540;
-  --component-active-color-default: #0a2540;
-  --border: #e2e8f0;
+  --primary: theme("colors.navy.DEFAULT");
+  --accent-foreground: theme("colors.navy.DEFAULT");
+  --component-active-color: theme("colors.navy.DEFAULT");
+  --component-active-color-default: theme("colors.navy.DEFAULT");
+  --border: theme("colors.line");
 }
 
 .portal-theme,
@@ -559,24 +560,24 @@
 }
 
 .portal-theme body {
-  background-color: #fafafa;
-  color: #0f172a;
+  background-color: theme("colors.surface.DEFAULT");
+  color: theme("colors.ink.DEFAULT");
 }
 
 .portal-theme .bg-premium-gradient,
 .portal-theme .portal-page-shell {
-  background: #f8fafc !important;
+  background: theme("colors.surface.2") !important;
 }
 
 .portal-theme .uniz-primary-btn {
-  background-color: #0a2540;
+  background-color: theme("colors.navy.DEFAULT");
   color: #ffffff;
   border-radius: 8px;
   letter-spacing: 0;
 }
 
 .portal-theme .uniz-primary-btn:hover:not(:disabled) {
-  background-color: #061b33;
+  background-color: theme("colors.navy.900");
 }
 
 .portal-theme .uniz-primary-btn:focus {
@@ -595,7 +596,7 @@
 .portal-theme .portal-banner-gradient,
 .portal-theme .portal-header-chrome,
 .portal-header-chrome {
-  background: #0a2540 !important;
+  background: theme("colors.navy.DEFAULT") !important;
 }
 
 /*
@@ -609,7 +610,7 @@
 
 .campus-canvas {
   letter-spacing: normal;
-  color: #0f172a;
+  color: theme("colors.ink.DEFAULT");
   background-color: #ffffff;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
@@ -617,17 +618,17 @@
 }
 
 .campus-canvas ::selection {
-  background-color: #0a2540;
+  background-color: theme("colors.navy.DEFAULT");
   color: #ffffff;
 }
 
 .campus-canvas :where(a, button, input, select, textarea, [tabindex]):focus-visible {
-  outline: 2px solid #0a2540;
+  outline: 2px solid theme("colors.navy.DEFAULT");
   outline-offset: 2px;
 }
 
 .editorial-link {
-  color: #0a2540;
+  color: theme("colors.navy.DEFAULT");
   text-decoration: underline;
   text-underline-offset: 0.22em;
   text-decoration-thickness: 1px;
@@ -636,7 +637,7 @@
 }
 
 .editorial-link:hover {
-  color: #061b33;
+  color: theme("colors.navy.900");
   text-decoration-thickness: 2px;
 }
 

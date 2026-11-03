@@ -130,7 +130,7 @@ export default function DashboardOverview({ user }: { user: any }) {
                   <Icon strokeWidth={1.75} aria-hidden="true" />
                 </span>
                 {s.accent && (
- <span className="rounded-full bg-[#EA2027]/[0.08] px-2 py-0.5 text-[12px] font-medium text-[#C81A20]">
+ <span className="rounded-full bg-brand-red/[0.08] px-2 py-0.5 text-[12px] font-medium text-[#C81A20]">
                     Below 75%
                   </span>
                 )}
@@ -146,7 +146,7 @@ export default function DashboardOverview({ user }: { user: any }) {
         <div className={portalSectionHeaderClass}>
           <div>
  <h2 className={cn(portalSectionTitleClass, "text-[16px]")}>Quick actions</h2>
- <p className="mt-1 text-[13px] text-[#64748B]">Jump to what you need most.</p>
+ <p className="mt-1 text-[13px] text-ink-subtle">Jump to what you need most.</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3 xl:grid-cols-5">
@@ -166,12 +166,12 @@ export default function DashboardOverview({ user }: { user: any }) {
                   <ArrowUpRight
                     size={16}
                     aria-hidden="true"
- className="text-[#94A3B8] transition-[color,transform] duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#0A2540] motion-reduce:transition-none"
+ className="text-[#94A3B8] transition-[color,transform] duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-navy motion-reduce:transition-none"
                   />
                 </div>
                 <div>
- <p className="text-[14px] font-semibold tracking-[-0.01em] text-[#0A2540]">{t.label}</p>
- <p className="mt-0.5 text-[12px] leading-5 text-[#64748B]">{t.hint}</p>
+ <p className="text-[14px] font-semibold tracking-[-0.01em] text-navy">{t.label}</p>
+ <p className="mt-0.5 text-[12px] leading-5 text-ink-subtle">{t.hint}</p>
                 </div>
               </button>
             );

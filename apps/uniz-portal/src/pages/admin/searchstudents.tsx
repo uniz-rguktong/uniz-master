@@ -227,7 +227,7 @@ export default function SearchStudents() {
           : Number(avg) >= 7
             ? "Pass"
             : "Good",
-      color: hasFail ? "text-white bg-[#0A2540]" : "text-navy-900 bg-navy-100",
+      color: hasFail ? "text-white bg-navy" : "text-navy-900 bg-navy-100",
     };
   };
 
@@ -310,7 +310,7 @@ export default function SearchStudents() {
                             )}
                           </div>
  <div className="text-left">
- <p className="text-sm font-medium text-navy-900 group-hover:text-[#061B33] transition-colors">
+ <p className="text-sm font-medium text-navy-900 group-hover:text-navy-900 transition-colors">
                               {s.name}
                             </p>
  <p className="text-xs font-semibold text-navy-400 ">
@@ -318,7 +318,7 @@ export default function SearchStudents() {
                             </p>
                           </div>
                         </div>
- <ChevronRight className="w-4 h-4 text-navy-300 group-hover:text-[#061B33] group-hover:translate-x-1 transition-all" />
+ <ChevronRight className="w-4 h-4 text-navy-300 group-hover:text-navy-900 group-hover:translate-x-1 transition-all" />
                       </button>
                     ))}
                   </motion.div>
@@ -395,7 +395,7 @@ export default function SearchStudents() {
                         className={cn(
                           "flex-1 h-11 rounded-xl text-[10px] font-semibold border shadow-sm transition-all",
                           isOutside
-                            ? "bg-[#0A2540] border-[#0A2540] text-white"
+                            ? "bg-navy border-navy text-white"
                             : "bg-white border-navy-200 text-navy-600",
                         )}
                       >
@@ -482,7 +482,7 @@ export default function SearchStudents() {
                       )}
                     </div>
                     <div>
- <h4 className="font-medium text-navy-900 text-lg leading-tight group-hover:text-[#061B33] transition-colors">
+ <h4 className="font-medium text-navy-900 text-lg leading-tight group-hover:text-navy-900 transition-colors">
                         {student.name}
                       </h4>
  <p className="text-xs font-medium text-navy-400 ">
@@ -529,7 +529,7 @@ export default function SearchStudents() {
             className="space-y-8"
           >
             {/* Student Header Card */}
- <div className="bg-white rounded-lg p-8 md:p-12 relative overflow-hidden border-4 border-[#0A2540] shadow-2xl transition-all">
+ <div className="bg-white rounded-lg p-8 md:p-12 relative overflow-hidden border-4 border-navy shadow-2xl transition-all">
               <div className="relative flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
                 <div className="flex flex-col md:flex-row items-center gap-8">
                   <div className="relative">
@@ -547,7 +547,7 @@ export default function SearchStudents() {
                     </div>
                     <div
                       className={cn(
-                        "absolute -bottom-2 -right-2 px-4 py-1.5 rounded-full text-[10px] font-semibold shadow-lg border-2 border-[#0A2540] bg-white text-[#061B33]",
+                        "absolute -bottom-2 -right-2 px-4 py-1.5 rounded-full text-[10px] font-semibold shadow-lg border-2 border-navy bg-white text-navy-900",
                         selectedStudent.is_suspended &&
                           "bg-red-600 border-red-900 text-white",
                       )}
@@ -562,7 +562,7 @@ export default function SearchStudents() {
 
  <div className="text-center md:text-left space-y-4">
                     <div>
- <h2 className="text-4xl font-semibold text-[#061B33] tracking-tighter">
+ <h2 className="text-4xl font-semibold text-navy-900 tracking-tighter">
                         {selectedStudent.name}
                       </h2>
  <p className="text-navy-400 font-medium text-xs mt-2">
@@ -571,14 +571,14 @@ export default function SearchStudents() {
                       </p>
                     </div>
                     <div className="flex flex-wrap justify-center md:justify-start gap-2">
- <span className="px-4 py-2 bg-navy-50 rounded-xl text-[#061B33] text-xs font-semibold border border-navy-200 flex items-center gap-2">
+ <span className="px-4 py-2 bg-navy-50 rounded-xl text-navy-900 text-xs font-semibold border border-navy-200 flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5" /> ROOM{" "}
                         {selectedStudent.roomno || "N/A"}
                       </span>
                       {getAcademicStatus() && (
                         <span
                           className={cn(
-                            "px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 border-2 border-[#0A2540]",
+                            "px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 border-2 border-navy",
                             getAcademicStatus()?.color,
                           )}
                         >
@@ -675,8 +675,8 @@ export default function SearchStudents() {
                           className={cn(
                             "w-10 h-10 rounded-xl flex items-center justify-center font-semibold",
                             g.grade < 5
-                              ? "bg-[#0A2540] text-white"
-                              : "bg-white text-[#061B33] border border-navy-200 shadow-sm",
+                              ? "bg-navy text-white"
+                              : "bg-white text-navy-900 border border-navy-200 shadow-sm",
                           )}
                         >
                           {g.grade}
@@ -700,7 +700,7 @@ export default function SearchStudents() {
  <p className="text-sm font-medium text-navy-900">
                             {a.subject}
                           </p>
- <span className="text-[#061B33] font-semibold text-xs">
+ <span className="text-navy-900 font-semibold text-xs">
                             {(
                               (a.attendedClasses / a.totalClasses) *
                               100
@@ -710,7 +710,7 @@ export default function SearchStudents() {
                         </div>
  <div className="w-full h-1.5 bg-navy-200 rounded-full overflow-hidden">
                           <div
- className="h-full bg-[#0A2540] rounded-full"
+ className="h-full bg-navy rounded-full"
                             style={{
                               width: `${(a.attendedClasses / a.totalClasses) * 100}%`,
                             }}
@@ -772,7 +772,7 @@ export default function SearchStudents() {
                                 { studentId: selectedStudent.username },
                               )
                             }
- className="flex-1 bg-white text-[#061B33] py-2 rounded-xl font-medium text-[10px] flex items-center justify-center gap-1.5 hover:bg-navy-100 transition-all"
+ className="flex-1 bg-white text-navy-900 py-2 rounded-xl font-medium text-[10px] flex items-center justify-center gap-1.5 hover:bg-navy-100 transition-all"
                           >
                             <GraduationCap size={12} /> Grade
                           </button>
@@ -797,8 +797,8 @@ export default function SearchStudents() {
               {/* History Section */}
               <div className="space-y-6">
  <div className="flex items-center gap-3 px-4">
- <History className="w-5 h-5 text-[#061B33]" />
- <h3 className="font-semibold text-[#061B33] text-lg">
+ <History className="w-5 h-5 text-navy-900" />
+ <h3 className="font-semibold text-navy-900 text-lg">
                     Request History
                   </h3>
                 </div>
@@ -816,17 +816,17 @@ export default function SearchStudents() {
                       {history.map((req, i) => (
                         <div
                           key={i}
- className="bg-white p-6 rounded-lg border-2 border-navy-100 shadow-sm hover:border-[#0A2540] transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group"
+ className="bg-white p-6 rounded-lg border-2 border-navy-100 shadow-sm hover:border-navy transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group"
                         >
                           <div className="flex items-center gap-6">
                             <div
                               className={cn(
                                 "w-12 h-12 rounded-lg flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform",
                                 req.is_approved
-                                  ? "bg-[#0A2540] text-white"
+                                  ? "bg-navy text-white"
                                   : req.is_rejected
                                     ? "bg-navy-400 text-white"
-                                    : "bg-white border-4 border-[#0A2540] text-[#061B33]",
+                                    : "bg-white border-4 border-navy text-navy-900",
                               )}
                             >
                               <History className="w-6 h-6" />
@@ -840,10 +840,10 @@ export default function SearchStudents() {
                                   className={cn(
                                     "w-1.5 h-1.5 rounded-full",
                                     req.is_approved
-                                      ? "bg-[#0A2540]"
+                                      ? "bg-navy"
                                       : req.is_rejected
                                         ? "bg-navy-400"
-                                        : "bg-[#0A2540] animate-pulse",
+                                        : "bg-navy animate-pulse",
                                   )}
                                 />
  <span className="text-xs font-semibold ">
@@ -854,7 +854,7 @@ export default function SearchStudents() {
                                       : "Pending"}
                                 </span>
                               </div>
- <p className="font-medium text-[#061B33] text-lg">
+ <p className="font-medium text-navy-900 text-lg">
                                 "{req.reason}"
                               </p>
  <p className="text-xs font-semibold text-navy-400 mt-1 ">
@@ -866,7 +866,7 @@ export default function SearchStudents() {
  <p className="text-[10px] font-semibold text-navy-400 ">
                               Gateway Status
                             </p>
- <p className="text-sm font-semibold text-[#061B33] tracking-tighter">
+ <p className="text-sm font-semibold text-navy-900 tracking-tighter">
                               {req.current_level?.replace("_", " ") ||
                                 "Finalized"}
                             </p>
@@ -892,7 +892,7 @@ export default function SearchStudents() {
                       <History className="w-8 h-8" />
                     </div>
                     <div className="space-y-1">
- <p className="text-[#061B33] font-semibold text-lg ">
+ <p className="text-navy-900 font-semibold text-lg ">
                         No Request History
                       </p>
  <p className="text-navy-400 text-sm font-medium italic">

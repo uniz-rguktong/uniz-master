@@ -124,7 +124,7 @@ export default function GlobeFeature({
         >
           <Link
             to="/developers"
- className="group relative inline-flex w-fit items-center gap-2.5 overflow-hidden rounded-lg bg-[#0A2540] px-6 py-3 text-[13.5px] font-medium text-white shadow-[0_20px_40px_-12px_rgba(10,37,64,0.35)] transition-all duration-300 hover:bg-[#061B33] "
+ className="group relative inline-flex w-fit items-center gap-2.5 overflow-hidden rounded-lg bg-navy px-6 py-3 text-[13.5px] font-medium text-white shadow-[0_20px_40px_-12px_rgba(10,37,64,0.35)] transition-all duration-300 hover:bg-navy-900 "
           >
  <Code2 size={15} className="relative text-white" />
             <span className="relative">Meet the Developers</span>
@@ -138,9 +138,9 @@ export default function GlobeFeature({
             href="https://github.com/uniz-rguktong"
             target="_blank"
             rel="noopener noreferrer"
- className="group relative inline-flex w-fit items-center gap-2.5 overflow-hidden rounded-lg border border-[#0A2540] bg-white px-6 py-3 text-[13.5px] font-medium text-[#0A2540] shadow-sm transition-all duration-300 hover:bg-navy-50 "
+ className="group relative inline-flex w-fit items-center gap-2.5 overflow-hidden rounded-lg border border-navy bg-white px-6 py-3 text-[13.5px] font-medium text-navy shadow-sm transition-all duration-300 hover:bg-navy-50 "
           >
- <Github size={15} className="relative text-[#0A2540]" />
+ <Github size={15} className="relative text-navy" />
             <span className="relative">Explore on GitHub</span>
             <ArrowUpRight
               size={14}

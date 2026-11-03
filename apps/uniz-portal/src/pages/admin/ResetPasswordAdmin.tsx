@@ -316,7 +316,7 @@ export default function Resetpassword() {
                   <button
                     onClick={sendDataToBackend}
                     disabled={isLoading}
- className="w-full h-[46px] bg-navy-900 hover:bg-[#0A2540] text-white rounded-xl font-medium text-sm transition-all shadow-sm"
+ className="w-full h-[46px] bg-navy-900 hover:bg-navy text-white rounded-xl font-medium text-sm transition-all shadow-sm"
                   >
                     {isLoading ? "Processing..." : "Update Credentials"}
                   </button>

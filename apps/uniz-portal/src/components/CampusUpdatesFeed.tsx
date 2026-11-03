@@ -47,7 +47,7 @@ export default function CampusUpdatesFeed({
         </span>
       </div>
 
-      <div className="divide-y divide-[#E2E8F0]">
+      <div className="divide-y divide-line">
         {list.slice(0, 6).map((item, index) => {
           const body = item.content || item.description || "";
           const href = item.link || "/student/signin";

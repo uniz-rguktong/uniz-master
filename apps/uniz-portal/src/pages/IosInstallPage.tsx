@@ -14,24 +14,24 @@ export default function IosInstallPage() {
   const navigate = useNavigate();
 
   return (
- <div className="portal-theme flex min-h-screen flex-col bg-white font-sans text-[#061B33]">
+ <div className="portal-theme flex min-h-screen flex-col bg-white font-sans text-navy-900">
       <Navbar />
 
  <main className="mx-auto w-full max-w-4xl flex-1 px-6 pt-[76px] pb-16">
         <button
           type="button"
           onClick={() => navigate("/")}
- className="mb-6 inline-flex items-center gap-1.5 text-[13px] font-medium text-[#34495E] hover:text-[#0A2540]"
+ className="mb-6 inline-flex items-center gap-1.5 text-[13px] font-medium text-[#34495E] hover:text-navy"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to portal
         </button>
 
         <div className="border-b border-[#E4E4E4] pb-5">
- <p className="text-[12px] font-medium text-[#5A7A94]">
+ <p className="text-[12px] font-medium text-navy-400">
             RGUKT Ongole · uniZ
           </p>
- <h1 className="mt-1 text-[24px] font-medium text-[#061B33]">
+ <h1 className="mt-1 text-[24px] font-medium text-navy-900">
             Mobile Application Downloads (Android &amp; iOS)
           </h1>
  <p className="mt-1.5 text-[14px] text-[#3d4f63]">
@@ -44,14 +44,14 @@ export default function IosInstallPage() {
  <section className="flex flex-col justify-between rounded-lg border border-[#D8E0E8] bg-white p-6">
             <div>
               <div className="flex items-center gap-3 border-b border-[#EEEEEE] pb-4">
- <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0A2540] text-white">
+ <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy text-white">
                   <AndroidLogo className="h-5 w-5" />
                 </div>
                 <div>
- <h2 className="text-[17px] font-medium text-[#061B33]">
+ <h2 className="text-[17px] font-medium text-navy-900">
                     Android Application (.APK)
                   </h2>
- <p className="text-[12px] text-[#5A7A94]">
+ <p className="text-[12px] text-navy-400">
                     Signed Release Package · in.rguktong.uniz
                   </p>
                 </div>
@@ -59,13 +59,13 @@ export default function IosInstallPage() {
 
  <ol className="mt-4 space-y-2.5 text-[13px] text-[#3d4f63]">
                 <li className="flex gap-2.5">
- <span className="font-medium text-[#0A2540]">1.</span>
+ <span className="font-medium text-navy">1.</span>
                   <span>
- Download <strong className="text-[#061B33]">uniZ.apk</strong> directly to your Android phone.
+ Download <strong className="text-navy-900">uniZ.apk</strong> directly to your Android phone.
                   </span>
                 </li>
                 <li className="flex gap-2.5">
- <span className="font-medium text-[#0A2540]">2.</span>
+ <span className="font-medium text-navy">2.</span>
                   <span>
                     Open the downloaded file and confirm installation to launch uniZ.
                   </span>
@@ -77,7 +77,7 @@ export default function IosInstallPage() {
               <a
                 href={ANDROID_APK_URL}
                 download={ANDROID_APK_FILENAME}
- className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-[#0A2540] px-5 text-[13px] font-medium text-white transition-colors hover:bg-[#021227]"
+ className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-navy px-5 text-[13px] font-medium text-white transition-colors hover:bg-navy-950"
               >
                 <Download className="h-4 w-4" />
                 Download Android App
@@ -89,14 +89,14 @@ export default function IosInstallPage() {
  <section className="flex flex-col justify-between rounded-lg border border-[#D8E0E8] bg-white p-6">
             <div>
               <div className="flex items-center gap-3 border-b border-[#EEEEEE] pb-4">
- <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0A2540] text-white">
+ <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy text-white">
                   <AppleLogo className="h-5 w-5" />
                 </div>
                 <div>
- <h2 className="text-[17px] font-medium text-[#061B33]">
+ <h2 className="text-[17px] font-medium text-navy-900">
                     iOS Application (iPhone &amp; iPad)
                   </h2>
- <p className="text-[12px] text-[#5A7A94]">
+ <p className="text-[12px] text-navy-400">
                     iOS Configuration Profile &amp; Safari Web App
                   </p>
                 </div>
@@ -104,20 +104,20 @@ export default function IosInstallPage() {
 
  <ol className="mt-4 space-y-2.5 text-[13px] text-[#3d4f63]">
                 <li className="flex gap-2.5">
- <span className="font-medium text-[#0A2540]">1.</span>
+ <span className="font-medium text-navy">1.</span>
                   <span>
                     Download the iOS configuration profile below and approve it in{" "}
- <strong className="text-[#061B33]">Settings → Profile Downloaded</strong>.
+ <strong className="text-navy-900">Settings → Profile Downloaded</strong>.
                   </span>
                 </li>
                 <li className="flex gap-2.5">
- <span className="font-medium text-[#0A2540]">2.</span>
+ <span className="font-medium text-navy">2.</span>
                   <span>
                     Or in Safari, tap{" "}
- <Share className="mx-0.5 inline h-3.5 w-3.5 text-[#0A2540]" />{" "}
- <strong className="text-[#061B33]">Share</strong> →{" "}
- <PlusSquare className="mx-0.5 inline h-3.5 w-3.5 text-[#0A2540]" />{" "}
- <strong className="text-[#061B33]">Add to Home Screen</strong>.
+ <Share className="mx-0.5 inline h-3.5 w-3.5 text-navy" />{" "}
+ <strong className="text-navy-900">Share</strong> →{" "}
+ <PlusSquare className="mx-0.5 inline h-3.5 w-3.5 text-navy" />{" "}
+ <strong className="text-navy-900">Add to Home Screen</strong>.
                   </span>
                 </li>
               </ol>
@@ -127,7 +127,7 @@ export default function IosInstallPage() {
               <a
                 href={IOS_PROFILE_URL}
                 download={IOS_PROFILE_FILENAME}
- className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-[#0A2540] bg-white px-5 text-[13px] font-medium text-[#0A2540] transition-colors hover:bg-[#0A2540] hover:text-white"
+ className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-navy bg-white px-5 text-[13px] font-medium text-navy transition-colors hover:bg-navy hover:text-white"
               >
                 <AppleLogo className="h-4 w-4" />
                 Download iOS App

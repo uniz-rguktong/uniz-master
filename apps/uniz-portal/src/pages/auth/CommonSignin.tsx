@@ -176,7 +176,7 @@ function OtpInput({
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
- className="w-11 h-14 sm:w-12 text-center text-xl font-semibold tabular-nums rounded-xl border border-[#E2E8F0] bg-white text-[#0A2540] font-form shadow-[0_1px_2px_rgba(10,37,64,0.04)] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/[0.08] transition-[border-color,box-shadow] duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+ className="w-11 h-14 sm:w-12 text-center text-xl font-semibold tabular-nums rounded-xl border border-line bg-white text-navy font-form shadow-[0_1px_2px_rgba(10,37,64,0.04)] focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/[0.08] transition-[border-color,box-shadow] duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.25 }}
@@ -270,7 +270,7 @@ const loginBtnClass = cn(
 
 const loginSecondaryBtnClass = cn(
   portalSecondaryButtonClass,
-  "w-full !min-h-9 !text-[12px] !tracking-[0.04em] border-[#0A2540] bg-white text-[#0A2540] hover:bg-[#0A2540] hover:text-white",
+  "w-full !min-h-9 !text-[12px] !tracking-[0.04em] border-navy bg-white text-navy hover:bg-navy hover:text-white",
 );
 
 const loginLinkBtnClass = examcellLoginLinkClass;
@@ -905,7 +905,7 @@ export default function Signin({ type }: SigninProps) {
                   type === "student" ? "University ID" : "Institutional ID"
                 }
                 labelClassName={loginLabelClass}
- icon={<User className="w-4 h-4 text-[#5A7A94]" />}
+ icon={<User className="w-4 h-4 text-navy-400" />}
                 value={username}
                 onChange={(e) =>
                   setUsername(
@@ -927,7 +927,7 @@ export default function Signin({ type }: SigninProps) {
                   aria-label="Password"
                   labelClassName={loginLabelClass}
                   type="password"
- icon={<Lock className="w-4 h-4 text-[#5A7A94]" />}
+ icon={<Lock className="w-4 h-4 text-navy-400" />}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
@@ -936,7 +936,7 @@ export default function Signin({ type }: SigninProps) {
                 />
                 <div className="flex items-center justify-between pt-0.5">
                   {type === "student" ? (
- <span className="text-[12.5px] text-[#64748B]">
+ <span className="text-[12.5px] text-ink-subtle">
                       Forgot your password? Contact your admin.
                     </span>
                   ) : (
@@ -1077,7 +1077,7 @@ export default function Signin({ type }: SigninProps) {
                     <span className="relative z-10">Verify code</span>
                   </Button>
 
- <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 space-y-3">
+ <div className="rounded-xl border border-line bg-surface-2 p-4 space-y-3">
  <p className="text-[12px] font-medium text-navy-700 text-center leading-relaxed font-form">
                       Didn&apos;t get a push notification? Send the code to your
                       registered college email instead.

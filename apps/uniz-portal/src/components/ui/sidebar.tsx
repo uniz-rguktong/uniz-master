@@ -130,7 +130,7 @@ export const MobileSidebar = ({
             className="h-8 w-8 object-contain"
             alt="Ongole Logo"
           />
- <span className="text-xl font-medium tracking-tighter text-[#061B33]">
+ <span className="text-xl font-medium tracking-tighter text-navy-900">
             Ongole
           </span>
         </div>
@@ -138,12 +138,12 @@ export const MobileSidebar = ({
         <div className="flex justify-end z-[60]">
           {open ? (
             <ChevronLeft
- className="text-[#061B33] h-6 w-6"
+ className="text-navy-900 h-6 w-6"
               onClick={() => setOpen(false)}
             />
           ) : (
             <Menu
- className="text-[#061B33] h-6 w-6"
+ className="text-navy-900 h-6 w-6"
               onClick={() => setOpen(true)}
             />
           )}
@@ -205,7 +205,7 @@ export const SidebarLink = ({
         "justify-start gap-2",
         isActive
           ? "bg-navy-900 text-white shadow-md hover:bg-navy-800"
-          : "text-navy-700 hover:bg-navy-100 hover:text-[#061B33]",
+          : "text-navy-700 hover:bg-navy-100 hover:text-navy-900",
         className,
       )}
       {...props}
@@ -226,7 +226,7 @@ export const SidebarLink = ({
           "text-sm font-medium tracking-tight whitespace-nowrap overflow-hidden",
           isActive
             ? "text-white"
-            : "text-navy-600 group-hover/sidebar:text-[#061B33]",
+            : "text-navy-600 group-hover/sidebar:text-navy-900",
         )}
       >
         {link.label}

@@ -545,7 +545,7 @@ export default function CourseRegistration({
                 return (
                   <div key={id} className="relative">
                     {group.items.length === 2 && idx === 0 && (
- <span className="hidden md:flex absolute top-1/2 -right-3 z-10 -translate-y-1/2 w-6 h-6 rounded-full border border-navy-200 bg-[#fafafa] text-[9px] font-medium text-navy-400 items-center justify-center">
+ <span className="hidden md:flex absolute top-1/2 -right-3 z-10 -translate-y-1/2 w-6 h-6 rounded-full border border-navy-200 bg-surface text-[9px] font-medium text-navy-400 items-center justify-center">
                         or
                       </span>
                     )}

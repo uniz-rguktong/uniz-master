@@ -30,7 +30,7 @@ function Wordmark({
     <p
       className={cn(
         "uniz-logo-wordmark shrink-0 leading-none",
-        inverted ? "text-white" : "text-[#0A2540]",
+        inverted ? "text-white" : "text-navy",
         compact
           ? large
             ? "text-[1.1rem]"
@@ -56,7 +56,7 @@ function CampusLabel({
     <p
       className={cn(
         "font-medium font-sans",
-        inverted ? "text-white/70" : "text-[#5A7A94]",
+        inverted ? "text-white/70" : "text-navy-400",
         large ? "mt-1 text-[9px]" : "mt-0.5 text-[8px]",
       )}
     >
@@ -119,7 +119,7 @@ export function UnizLogo({
         <img
           src={RGUKT_CREST_URL}
           alt="UniZ"
- className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/15 shadow-sm"
+ className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-navy/15 shadow-sm"
         />
       </div>
     );
@@ -130,7 +130,7 @@ export function UnizLogo({
       <img
         src={RGUKT_CREST_URL}
         alt="UniZ"
- className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/15 shadow-sm"
+ className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-navy/15 shadow-sm"
       />
       <div className="min-w-0">
         <Wordmark large={large} inverted={onNavy} />

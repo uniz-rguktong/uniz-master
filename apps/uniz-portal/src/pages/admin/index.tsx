@@ -59,7 +59,7 @@ const QuickActionButton = ({
     <div className="absolute top-0 right-0 p-4 opacity-[0.04] group-hover:opacity-[0.07] transition-opacity">
  <Icon className="w-24 h-24 text-navy-900" />
     </div>
- <div className="p-3 rounded-portal-sm bg-[#FAFAFA] text-navy-700 mb-4 group-hover:bg-navy-900 group-hover:text-white transition-colors duration-150 border border-navy-200">
+ <div className="p-3 rounded-portal-sm bg-surface text-navy-700 mb-4 group-hover:bg-navy-900 group-hover:text-white transition-colors duration-150 border border-navy-200">
       <Icon className="w-6 h-6" />
     </div>
     <div className="relative z-10">
@@ -289,14 +289,14 @@ export default function Admin() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate("/admin/profile")}
- className="p-2.5 rounded-portal-sm hover:bg-[#FAFAFA] text-navy-400 hover:text-navy-900 transition-colors"
+ className="p-2.5 rounded-portal-sm hover:bg-surface text-navy-400 hover:text-navy-900 transition-colors"
               title="My Profile"
             >
               <UserCircle className="w-5 h-5" />
             </button>
             <button
               onClick={() => navigate("/admin/settings")}
- className="p-2.5 rounded-portal-sm hover:bg-[#FAFAFA] text-navy-400 hover:text-navy-900 transition-colors"
+ className="p-2.5 rounded-portal-sm hover:bg-surface text-navy-400 hover:text-navy-900 transition-colors"
             >
               <Settings className="w-5 h-5" />
             </button>

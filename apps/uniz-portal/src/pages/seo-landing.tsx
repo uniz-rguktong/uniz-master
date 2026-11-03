@@ -87,7 +87,7 @@ export default function SEOLanding() {
           <img
             src="/logo.png"
             alt="UniZ"
- className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/20 shadow-sm"
+ className="h-8 w-8 shrink-0 rounded-full bg-white object-contain ring-1 ring-navy/20 shadow-sm"
           />
  <span className="uniz-logo-wordmark text-2xl text-navy-900">
             uniZ.

@@ -12,7 +12,7 @@ export const examcellLoginInputClass =
   "w-full h-12 min-h-[44px] rounded-lg border border-line bg-white px-3.5 text-[15px] font-normal text-ink placeholder:text-ink-subtle shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-navy-300 focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/10 transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)]";
 
 export const examcellLoginLinkClass =
-  "inline-block text-[12.5px] font-semibold text-[#0A2540] hover:underline underline-offset-4 bg-transparent border-0 cursor-pointer p-0 mt-1 font-form";
+  "inline-block text-[12.5px] font-semibold text-navy hover:underline underline-offset-4 bg-transparent border-0 cursor-pointer p-0 mt-1 font-form";
 
 export const examcellLoginButtonClass =
   "w-full h-12 min-h-[44px] cursor-pointer rounded-lg border-0 bg-brand-red px-6 text-[15px] font-medium text-white transition-colors duration-150 hover:bg-[#C81A20] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-ink-subtle";
@@ -96,7 +96,7 @@ export const LoginScreen = ({
   return (
  <div className="campus-canvas flex min-h-screen w-full flex-col bg-surface text-ink">
       {/* Tier 1: Slim Institutional Utility Bar */}
- <div className="bg-[#061527] text-white/80 border-b border-white/10">
+ <div className="bg-navy-850 text-white/80 border-b border-white/10">
  <div className="mx-auto flex h-8 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 text-[11.5px] tracking-[0.03em]">
           <div className="flex items-center gap-2 truncate">
  <span className="font-semibold text-white/95">RGUKT ANDHRA PRADESH</span>
@@ -182,7 +182,7 @@ export const LoginScreen = ({
         <div className="relative mx-auto w-full max-w-[1040px]">
  <div className="grid grid-cols-1 overflow-hidden rounded-[12px] border border-line bg-white shadow-[0_12px_32px_-12px_rgba(6,21,39,0.18)] md:grid-cols-12">
             {/* Left Institutional Context Column (5 Cols) */}
- <div className="order-2 md:order-1 md:col-span-5 relative bg-[linear-gradient(160deg,#0A2540_0%,#021227_70%)] text-white before:absolute before:left-8 before:top-0 before:h-[3px] before:w-12 before:rounded-b-full before:bg-[#EA2027] p-6 sm:p-10 flex flex-col justify-between space-y-8 border-t md:border-t-0 md:border-r border-[#163A5C]">
+ <div className="order-2 md:order-1 md:col-span-5 relative bg-[linear-gradient(160deg,#0A2540_0%,#021227_70%)] text-white before:absolute before:left-8 before:top-0 before:h-[3px] before:w-12 before:rounded-b-full before:bg-brand-red p-6 sm:p-10 flex flex-col justify-between space-y-8 border-t md:border-t-0 md:border-r border-navy-500">
               <div className="space-y-5">
                 <div className="flex items-center gap-2.5 border-b border-white/15 pb-3.5">
                   <img
@@ -213,7 +213,7 @@ export const LoginScreen = ({
  <ul className="space-y-2.5 text-[13px] text-white/85">
                     {meta.bullets.map((item) => (
                       <li key={item} className="flex items-start gap-2">
- <span className="mt-[7px] size-1.5 shrink-0 rounded-full bg-[#EA2027]" aria-hidden="true" />
+ <span className="mt-[7px] size-1.5 shrink-0 rounded-full bg-brand-red" aria-hidden="true" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -255,10 +255,10 @@ export const LoginScreen = ({
                   <Link
                     to="/student/signin"
                     className={cn(
-                      "inline-flex flex-1 items-center justify-center whitespace-nowrap min-h-[44px] px-2.5 sm:px-3.5 rounded-lg text-[13px] sm:text-[14px] font-semibold transition-[background-color,color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540]",
+                      "inline-flex flex-1 items-center justify-center whitespace-nowrap min-h-[44px] px-2.5 sm:px-3.5 rounded-lg text-[13px] sm:text-[14px] font-semibold transition-[background-color,color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy",
                       role === "student"
-                        ? "bg-white text-[#0A2540] shadow-[0_1px_2px_rgba(10,37,64,0.08),0_0_0_1px_rgba(10,37,64,0.04)]"
-                        : "text-[#475569] hover:text-[#0A2540] hover:bg-white/60",
+                        ? "bg-white text-navy shadow-[0_1px_2px_rgba(10,37,64,0.08),0_0_0_1px_rgba(10,37,64,0.04)]"
+                        : "text-ink-muted hover:text-navy hover:bg-white/60",
                     )}
                   >
                     <span className="sm:hidden">Student</span>
@@ -267,10 +267,10 @@ export const LoginScreen = ({
                   <Link
                     to="/faculty/signin"
                     className={cn(
-                      "inline-flex flex-1 items-center justify-center whitespace-nowrap min-h-[44px] px-2.5 sm:px-3.5 rounded-lg text-[13px] sm:text-[14px] font-semibold transition-[background-color,color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540]",
+                      "inline-flex flex-1 items-center justify-center whitespace-nowrap min-h-[44px] px-2.5 sm:px-3.5 rounded-lg text-[13px] sm:text-[14px] font-semibold transition-[background-color,color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy",
                       role === "faculty"
-                        ? "bg-white text-[#0A2540] shadow-[0_1px_2px_rgba(10,37,64,0.08),0_0_0_1px_rgba(10,37,64,0.04)]"
-                        : "text-[#475569] hover:text-[#0A2540] hover:bg-white/60",
+                        ? "bg-white text-navy shadow-[0_1px_2px_rgba(10,37,64,0.08),0_0_0_1px_rgba(10,37,64,0.04)]"
+                        : "text-ink-muted hover:text-navy hover:bg-white/60",
                     )}
                   >
                     <span className="sm:hidden">Faculty</span>
@@ -279,10 +279,10 @@ export const LoginScreen = ({
                   <Link
                     to="/admin/signin"
                     className={cn(
-                      "inline-flex flex-1 items-center justify-center whitespace-nowrap min-h-[44px] px-2.5 sm:px-3.5 rounded-lg text-[13px] sm:text-[14px] font-semibold transition-[background-color,color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A2540]",
+                      "inline-flex flex-1 items-center justify-center whitespace-nowrap min-h-[44px] px-2.5 sm:px-3.5 rounded-lg text-[13px] sm:text-[14px] font-semibold transition-[background-color,color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy",
                       role === "admin"
-                        ? "bg-white text-[#0A2540] shadow-[0_1px_2px_rgba(10,37,64,0.08),0_0_0_1px_rgba(10,37,64,0.04)]"
-                        : "text-[#475569] hover:text-[#0A2540] hover:bg-white/60",
+                        ? "bg-white text-navy shadow-[0_1px_2px_rgba(10,37,64,0.08),0_0_0_1px_rgba(10,37,64,0.04)]"
+                        : "text-ink-muted hover:text-navy hover:bg-white/60",
                     )}
                   >
                     <span className="sm:hidden">Admin</span>
@@ -292,11 +292,11 @@ export const LoginScreen = ({
 
                 {/* Form Title & Subtitle */}
                 <div>
- <h1 className="text-[30px] sm:text-[38px] font-semibold leading-[1.08] tracking-[-0.035em] text-[#0A2540]">
+ <h1 className="text-[30px] sm:text-[38px] font-semibold leading-[1.08] tracking-[-0.035em] text-navy">
                     {title === "Login Portal" ? "University Sign In" : title}
                   </h1>
                   {(defaultSubtitle || subtitle) && (
- <p className="text-[15px] text-[#64748B] mt-2 leading-6">
+ <p className="text-[15px] text-ink-subtle mt-2 leading-6">
                       {subtitle || defaultSubtitle}
                     </p>
                   )}
@@ -311,12 +311,12 @@ export const LoginScreen = ({
               </div>
 
               {/* Institutional Help & Policy Note */}
- <div className="mt-8 pt-5 border-t border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[12px] text-[#64748B]">
+ <div className="mt-8 pt-5 border-t border-line flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[12px] text-ink-subtle">
                 <span>
                   Assistance:{" "}
                   <a
                     href="mailto:webadmin@rguktong.ac.in"
- className="font-semibold text-[#0A2540] hover:underline underline-offset-2"
+ className="font-semibold text-navy hover:underline underline-offset-2"
                   >
                     webadmin@rguktong.ac.in
                   </a>
@@ -324,7 +324,7 @@ export const LoginScreen = ({
                 <div className="flex items-center gap-3">
                   <Link
                     to="/developers"
- className="font-semibold text-[#0A2540] hover:underline underline-offset-2"
+ className="font-semibold text-navy hover:underline underline-offset-2"
                   >
                     Software Development Cell
                   </Link>
@@ -333,7 +333,7 @@ export const LoginScreen = ({
                     href="https://rguktong.in"
                     target="_blank"
                     rel="noopener noreferrer"
- className="inline-flex items-center gap-0.5 font-semibold text-[#0A2540] hover:underline underline-offset-2"
+ className="inline-flex items-center gap-0.5 font-semibold text-navy hover:underline underline-offset-2"
                   >
                     <span>rguktong.in</span>
                     <ExternalLink className="w-3 h-3" />
