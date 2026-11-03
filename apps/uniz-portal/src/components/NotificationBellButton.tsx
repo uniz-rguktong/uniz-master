@@ -36,14 +36,14 @@ export function NotificationBellButton({
         "relative flex shrink-0 items-center justify-center rounded-portal-sm border transition-colors",
         dim,
         active
-          ? "border-navy-300 bg-[#FAFAFA] text-navy-900"
-          : "border-navy-200 bg-white text-navy-500 hover:border-navy-300 hover:bg-[#FAFAFA] hover:text-navy-800",
+          ? "border-navy-300 bg-surface text-navy-900"
+          : "border-navy-200 bg-white text-navy-500 hover:border-navy-300 hover:bg-surface hover:text-navy-800",
         className,
       )}
     >
       <Bell size={icon} strokeWidth={2} />
       {unreadCount > 0 && (
- <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-portal-sm bg-[#EA2027] px-1 text-[9px] font-medium text-white ring-2 ring-white">
+ <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-portal-sm bg-brand-red px-1 text-[9px] font-medium text-white ring-2 ring-white">
           {unreadCount > 9 ? "9+" : unreadCount}
         </span>
       )}

@@ -671,9 +671,9 @@ export const CalcomHero = () => {
             <img
               src="/logo.png"
               alt="UniZ"
- className="h-5 w-5 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#0A2540]/15"
+ className="h-5 w-5 shrink-0 rounded-full bg-white object-contain ring-1 ring-navy/15"
             />
- <span className="text-[11px] font-medium text-[#0A2540]">
+ <span className="text-[11px] font-medium text-navy">
               RGUKT Ongole · UniZ Campus &amp; Examination Portal
             </span>
           </motion.div>
@@ -723,7 +723,7 @@ export const CalcomHero = () => {
             <button
               type="button"
               onClick={() => navigate("/student/signin")}
- className="inline-flex h-12 items-center gap-2.5 rounded-lg bg-[#0A2540] px-7 text-[14px] font-medium text-white shadow-[0_16px_32px_-12px_rgba(10,37,64,0.45)] transition-all hover:bg-[#061B33] "
+ className="inline-flex h-12 items-center gap-2.5 rounded-lg bg-navy px-7 text-[14px] font-medium text-white shadow-[0_16px_32px_-12px_rgba(10,37,64,0.45)] transition-all hover:bg-navy-900 "
             >
               <span>Student &amp; Staff Login</span>
               <ArrowRight size={16} strokeWidth={2.4} />
@@ -732,7 +732,7 @@ export const CalcomHero = () => {
             <a
               href={ANDROID_APK_URL}
               download={ANDROID_APK_FILENAME}
- className="inline-flex h-12 items-center gap-2.5 rounded-lg border border-[#0A2540] bg-white px-5 text-[13.5px] font-medium text-[#0A2540] no-underline shadow-sm transition-colors hover:bg-navy-50"
+ className="inline-flex h-12 items-center gap-2.5 rounded-lg border border-navy bg-white px-5 text-[13.5px] font-medium text-navy no-underline shadow-sm transition-colors hover:bg-navy-50"
             >
               <AndroidIcon size={17} />
               <span>Download Android App</span>
@@ -741,7 +741,7 @@ export const CalcomHero = () => {
             <button
               type="button"
               onClick={openIosDownloadModal}
- className="inline-flex h-12 items-center gap-2.5 rounded-lg border border-[#0A2540] bg-white px-5 text-[13.5px] font-medium text-[#0A2540] shadow-sm transition-colors hover:bg-navy-50"
+ className="inline-flex h-12 items-center gap-2.5 rounded-lg border border-navy bg-white px-5 text-[13.5px] font-medium text-navy shadow-sm transition-colors hover:bg-navy-50"
             >
               <AppleIcon size={17} />
               <span>Download iOS App</span>
@@ -756,7 +756,7 @@ export const CalcomHero = () => {
           >
             <Link
               to="/developers"
- className="inline-flex items-center gap-1.5 rounded-full border border-navy-200 bg-navy-50/70 px-4 py-1.5 text-[12.5px] font-medium text-[#0A2540] hover:bg-navy-100/80 transition-colors"
+ className="inline-flex items-center gap-1.5 rounded-full border border-navy-200 bg-navy-50/70 px-4 py-1.5 text-[12.5px] font-medium text-navy hover:bg-navy-100/80 transition-colors"
             >
               <Code2 size={14} />
               <span>Meet the Developers (Software Development Cell)</span>

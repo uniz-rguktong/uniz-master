@@ -153,7 +153,7 @@ export default function MyLeave() {
         />
         <button
           disabled={saving}
- className="rounded bg-[#0A2540] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+ className="rounded bg-navy px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           {saving ? "Sending..." : "Apply"}
         </button>

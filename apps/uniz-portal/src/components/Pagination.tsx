@@ -11,14 +11,14 @@ interface PaginationProps {
 }
 
 const navBtnClass =
-  "inline-flex items-center justify-center gap-1.5 h-9 min-w-[2.25rem] px-2.5 rounded-lg border border-[#EEEEEE] bg-white text-[12px] font-semibold text-[#5A7A94] transition-colors hover:border-[#9bb0c4] hover:bg-[#FAFAFA] hover:text-[#0A2540] disabled:opacity-35 disabled:pointer-events-none disabled:hover:bg-white disabled:hover:border-[#EEEEEE]";
+  "inline-flex items-center justify-center gap-1.5 h-9 min-w-[2.25rem] px-2.5 rounded-lg border border-[#EEEEEE] bg-white text-[12px] font-semibold text-navy-400 transition-colors hover:border-navy-300 hover:bg-surface hover:text-navy disabled:opacity-35 disabled:pointer-events-none disabled:hover:bg-white disabled:hover:border-[#EEEEEE]";
 
 const pageBtnClass = (active: boolean) =>
   cn(
     "inline-flex items-center justify-center h-9 min-w-[2.25rem] px-2 rounded-lg text-[12px] font-semibold tabular-nums transition-colors font-form",
     active
       ? "bg-navy-900 text-white border border-navy-900"
-      : "bg-white text-[#5A7A94] border border-[#EEEEEE] hover:border-[#9bb0c4] hover:bg-[#FAFAFA] hover:text-[#0A2540]",
+      : "bg-white text-navy-400 border border-[#EEEEEE] hover:border-navy-300 hover:bg-surface hover:text-navy",
   );
 
 export function Pagination({
@@ -43,7 +43,7 @@ export function Pagination({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-4 py-3.5 bg-[#FAFAFA] border-t border-[#EEEEEE]",
+        "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-4 py-3.5 bg-surface border-t border-[#EEEEEE]",
         className,
       )}
     >

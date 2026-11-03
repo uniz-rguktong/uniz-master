@@ -362,7 +362,7 @@ export default function WebsiteUpdatesSection() {
   );
 
   return (
- <div className="flex flex-col h-[calc(100vh-140px)] bg-[#fafafa] overflow-hidden">
+ <div className="flex flex-col h-[calc(100vh-140px)] bg-surface overflow-hidden">
  <div className="px-6 md:px-8 pt-6 pb-4 shrink-0">
         <SectionHeader
           icon={<Globe size={18} />}
@@ -467,7 +467,7 @@ export default function WebsiteUpdatesSection() {
           )}
         </aside>
 
- <main className="flex-1 flex flex-col min-w-0 bg-[#fafafa]">
+ <main className="flex-1 flex flex-col min-w-0 bg-surface">
  <header className="shrink-0 sticky top-0 z-20 flex items-center justify-between gap-4 px-5 py-3.5 bg-white/90 border-b border-navy-200/70">
             <div className="flex items-center gap-3 min-w-0">
               <button
@@ -489,7 +489,7 @@ export default function WebsiteUpdatesSection() {
                   {breadcrumb}
                 </p>
               </div>
- <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0A2540]/5 text-[#0A2540] border border-[#0A2540]/10 text-[10px] font-semibold tracking-wide">
+ <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-navy/5 text-navy border border-navy/10 text-[10px] font-semibold tracking-wide">
                 <Sparkles size={10} /> Live editor
               </span>
             </div>

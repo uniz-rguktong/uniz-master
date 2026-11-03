@@ -44,7 +44,7 @@ export function Modal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
       <div
- className="fixed inset-0 bg-[#021227]/40 transition-opacity"
+ className="fixed inset-0 bg-navy-950/40 transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />

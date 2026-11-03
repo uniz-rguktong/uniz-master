@@ -100,7 +100,7 @@ export default function DirectPublishModal({
   };
 
   return (
- <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-[#0A2540]/40">
+ <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-navy/40">
       <div className={cn(adminModalShellClass, "w-full max-w-md p-8 space-y-6")}>
         <div className="flex items-start justify-between gap-4">
           <div>

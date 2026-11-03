@@ -372,7 +372,7 @@ export default function UnifiedAcademicManager() {
           </button>
           <button
             onClick={() => setShowNewSemModal(true)}
- className="h-12 px-8 bg-navy-900 text-white rounded-xl font-semibold text-[10px] hover:bg-[#0A2540] transition-all flex items-center gap-3 shadow-lg shadow-navy-100/50"
+ className="h-12 px-8 bg-navy-900 text-white rounded-xl font-semibold text-[10px] hover:bg-navy transition-all flex items-center gap-3 shadow-lg shadow-navy-100/50"
           >
             <Zap size={14} /> New Rollout
           </button>
@@ -492,7 +492,7 @@ export default function UnifiedAcademicManager() {
                 </p>
                 <button
                   onClick={() => setShowNewSemModal(true)}
- className="px-10 py-5 bg-navy-900 text-white rounded-xl font-semibold text-[10px] hover:bg-[#0A2540] transition-all shadow-none"
+ className="px-10 py-5 bg-navy-900 text-white rounded-xl font-semibold text-[10px] hover:bg-navy transition-all shadow-none"
                 >
                   Initiate New Rollout
                 </button>

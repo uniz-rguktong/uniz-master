@@ -69,17 +69,17 @@ export function IosInstallModal() {
 
   return (
     <div
- className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#061B33]/60 p-4 font-sans"
+ className="fixed inset-0 z-[10000] flex items-center justify-center bg-navy-900/60 p-4 font-sans"
       role="dialog"
       aria-modal="true"
       aria-labelledby="ios-install-title"
       onClick={() => setOpen(false)}
     >
       <div
- className="w-full max-w-md overflow-hidden rounded-lg border border-[#0A2540] bg-white text-[#061B33] shadow-md"
+ className="w-full max-w-md overflow-hidden rounded-lg border border-navy bg-white text-navy-900 shadow-md"
         onClick={(e) => e.stopPropagation()}
       >
- <div className="flex items-center justify-between bg-[#0A2540] px-5 py-3.5 text-white">
+ <div className="flex items-center justify-between bg-navy px-5 py-3.5 text-white">
           <div className="flex items-center gap-2.5">
             <img
               src={RGUKT_CREST_URL}
@@ -110,7 +110,7 @@ export function IosInstallModal() {
 
         <div className="space-y-4 p-5">
           {!isSafari && isIosDeviceUa(navigator.userAgent) && (
- <div className="rounded-lg border border-[#D8E0E8] bg-[#F8FAFC] p-3 text-xs text-[#0A2540]">
+ <div className="rounded-lg border border-[#D8E0E8] bg-surface-2 p-3 text-xs text-navy">
  <p className="font-medium">Open in Safari on iPhone / iPad</p>
  <p className="mt-0.5 text-[#3d4f63]">
                 Apple requires Safari to install iOS WebClip profiles or Home Screen apps.
@@ -118,18 +118,18 @@ export function IosInstallModal() {
             </div>
           )}
 
- <div className="rounded-lg border border-[#E4E4E4] bg-[#FAFAFA] p-4">
- <p className="text-[11px] font-medium text-[#5A7A94]">
+ <div className="rounded-lg border border-[#E4E4E4] bg-surface p-4">
+ <p className="text-[11px] font-medium text-navy-400">
               Option 1 · Direct iOS Profile
             </p>
  <p className="mt-1 text-[13px] text-[#3d4f63]">
               Install the uniZ iOS profile, then approve it in{" "}
- <strong className="text-[#061B33]">Settings → Profile Downloaded</strong>.
+ <strong className="text-navy-900">Settings → Profile Downloaded</strong>.
             </p>
             <a
               href={IOS_PROFILE_URL}
               download={IOS_PROFILE_FILENAME}
- className="mt-3 inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-[#0A2540] px-4 text-[12px] font-medium text-white transition-colors hover:bg-[#021227]"
+ className="mt-3 inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-navy px-4 text-[12px] font-medium text-white transition-colors hover:bg-navy-950"
             >
               <AppleLogo className="h-3.5 w-3.5" />
               Download iOS App Profile (.mobileconfig)
@@ -137,26 +137,26 @@ export function IosInstallModal() {
           </div>
 
  <div className="rounded-lg border border-[#E4E4E4] bg-white p-4">
- <p className="text-[11px] font-medium text-[#5A7A94]">
+ <p className="text-[11px] font-medium text-navy-400">
               Option 2 · Safari Instant Install
             </p>
- <ol className="mt-2.5 space-y-2 text-[13px] text-[#061B33]">
+ <ol className="mt-2.5 space-y-2 text-[13px] text-navy-900">
               <li className="flex items-center gap-2.5">
- <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-lg bg-[#0A2540] text-[11px] font-medium text-white">
+ <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-lg bg-navy text-[11px] font-medium text-white">
                   1
                 </span>
                 <span>
- Tap <Share className="mx-0.5 inline h-3.5 w-3.5 text-[#0A2540]" />{" "}
+ Tap <Share className="mx-0.5 inline h-3.5 w-3.5 text-navy" />{" "}
                   <strong>Share</strong> in the Safari toolbar.
                 </span>
               </li>
               <li className="flex items-center gap-2.5">
- <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-lg bg-[#0A2540] text-[11px] font-medium text-white">
+ <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-lg bg-navy text-[11px] font-medium text-white">
                   2
                 </span>
                 <span>
                   Select{" "}
- <PlusSquare className="mx-0.5 inline h-3.5 w-3.5 text-[#0A2540]" />{" "}
+ <PlusSquare className="mx-0.5 inline h-3.5 w-3.5 text-navy" />{" "}
                   <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.
                 </span>
               </li>
@@ -164,7 +164,7 @@ export function IosInstallModal() {
             <button
               type="button"
               onClick={copyLink}
- className="mt-3 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-lg border border-[#D8E0E8] bg-[#FAFAFA] px-3 text-[12px] font-medium text-[#0A2540] transition-colors hover:bg-[#EEEEEE]"
+ className="mt-3 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-lg border border-[#D8E0E8] bg-surface px-3 text-[12px] font-medium text-navy transition-colors hover:bg-[#EEEEEE]"
             >
               {copied ? (
                 <>
@@ -180,12 +180,12 @@ export function IosInstallModal() {
             </button>
           </div>
 
- <div className="flex items-center justify-between border-t border-[#E4E4E4] pt-3 text-[12px] text-[#5A7A94]">
+ <div className="flex items-center justify-between border-t border-[#E4E4E4] pt-3 text-[12px] text-navy-400">
             <span>Using an Android device?</span>
             <a
               href={ANDROID_APK_URL}
               download={ANDROID_APK_FILENAME}
- className="inline-flex items-center gap-1.5 font-medium text-[#0A2540] underline underline-offset-2 hover:text-[#021227]"
+ className="inline-flex items-center gap-1.5 font-medium text-navy underline underline-offset-2 hover:text-navy-950"
             >
               <Download className="h-3.5 w-3.5" />
               Download Android App (.apk)
@@ -231,7 +231,7 @@ export function DownloadAppBanner() {
 
   return (
     <div
- className="fixed inset-x-0 bottom-0 z-[190] border-t border-[#0A2540] bg-[#0A2540] text-white shadow-md md:hidden"
+ className="fixed inset-x-0 bottom-0 z-[190] border-t border-navy bg-navy text-white shadow-md md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       role="region"
       aria-label="Download uniZ Mobile App"
@@ -254,7 +254,7 @@ export function DownloadAppBanner() {
           <a
             href={ANDROID_APK_URL}
             download={ANDROID_APK_FILENAME}
- className="shrink-0 rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-[#0A2540] transition-colors hover:bg-[#EEEEEE]"
+ className="shrink-0 rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-navy transition-colors hover:bg-[#EEEEEE]"
           >
             Download APK
           </a>
@@ -262,7 +262,7 @@ export function DownloadAppBanner() {
           <button
             type="button"
             onClick={openIosDownloadModal}
- className="shrink-0 rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-[#0A2540] transition-colors hover:bg-[#EEEEEE]"
+ className="shrink-0 rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-navy transition-colors hover:bg-[#EEEEEE]"
           >
             Install iOS
           </button>

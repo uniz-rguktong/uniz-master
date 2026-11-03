@@ -497,7 +497,7 @@ export default function StudentProfilePage() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
- className="portal-banner-gradient rounded-portal-lg p-6 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-[#021227]"
+ className="portal-banner-gradient rounded-portal-lg p-6 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-navy-950"
       >
         <div className="flex items-center gap-4">
  <div className="p-3 bg-white/10 rounded-portal-sm text-white/80">
@@ -637,11 +637,11 @@ export default function StudentProfilePage() {
       <div className="mx-auto max-w-6xl relative z-10 pt-1 overflow-x-hidden">
         <DashboardOverview user={user} />
 
-        <div className="mb-4 flex items-end justify-between border-b border-[#E2E8F0] pb-3">
- <h2 className="text-[16px] font-semibold tracking-[-0.01em] text-[#0A2540]">Your profile</h2>
+        <div className="mb-4 flex items-end justify-between border-b border-line pb-3">
+ <h2 className="text-[16px] font-semibold tracking-[-0.01em] text-navy">Your profile</h2>
         </div>
         {/* Profile Header */}
- <div className="flex flex-col items-center justify-center relative mb-8 overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white px-4 pb-6 shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)] md:pb-8">
+ <div className="flex flex-col items-center justify-center relative mb-8 overflow-hidden rounded-2xl border border-line bg-white px-4 pb-6 shadow-[0_0_0_1px_rgba(10,37,64,0.04),0_1px_2px_rgba(10,37,64,0.04),0_2px_6px_-2px_rgba(10,37,64,0.06)] md:pb-8">
  <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[radial-gradient(120%_140%_at_0%_0%,#163A5C_0%,#0A2540_45%,#021227_100%)] md:h-24" aria-hidden="true">
  <div className="absolute inset-x-0 bottom-0 h-px bg-white/10" />
           </div>
@@ -680,7 +680,7 @@ export default function StudentProfilePage() {
  className="relative p-[4px] md:p-[5px] rounded-full mb-4 bg-white shadow-[0_8px_24px_-12px_rgba(2,18,39,0.5)]"
               >
  <div className="relative bg-navy-50 p-[3px] rounded-full">
- <div className="relative w-[88px] h-[88px] md:w-[104px] md:h-[104px] bg-[#0A2540] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
+ <div className="relative w-[88px] h-[88px] md:w-[104px] md:h-[104px] bg-navy rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
                     {/* Profile image or initial */}
                     {user?.profile_url ? (
                       <img
@@ -706,7 +706,7 @@ export default function StudentProfilePage() {
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.2 }}
- className="absolute inset-0 rounded-full flex items-center justify-center bg-[#021227]/55"
+ className="absolute inset-0 rounded-full flex items-center justify-center bg-navy-950/55"
                         >
                           <Loader2
  className="w-9 h-9 text-white animate-spin"
@@ -723,7 +723,7 @@ export default function StudentProfilePage() {
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploadingImage}
                   aria-label="Update profile photo"
- className="absolute -bottom-1 -right-1 w-11 h-11 bg-white border border-[#E2E8F0] rounded-full flex items-center justify-center text-[#0A2540] hover:bg-[#F8FAFC] transition-[background-color,transform] duration-150 z-20 cursor-pointer shadow-[0_4px_12px_-4px_rgba(10,37,64,0.3)] motion-reduce:transition-none disabled:opacity-50 disabled:cursor-not-allowed"
+ className="absolute -bottom-1 -right-1 w-11 h-11 bg-white border border-line rounded-full flex items-center justify-center text-navy hover:bg-surface-2 transition-[background-color,transform] duration-150 z-20 cursor-pointer shadow-[0_4px_12px_-4px_rgba(10,37,64,0.3)] motion-reduce:transition-none disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Update Profile Photo"
                 >
                   <Camera
@@ -743,7 +743,7 @@ export default function StudentProfilePage() {
             </div>
 
  <div className="flex flex-col items-center gap-2.5 w-full max-w-xl px-3 mb-1.5 mt-1">
- <h2 className="text-xl sm:text-2xl font-semibold tracking-[-0.025em] text-[#0A2540] leading-snug text-center w-full text-balance [overflow-wrap:anywhere]">
+ <h2 className="text-xl sm:text-2xl font-semibold tracking-[-0.025em] text-navy leading-snug text-center w-full text-balance [overflow-wrap:anywhere]">
                 {user?.name}
               </h2>
               {!isEditing && (
@@ -758,10 +758,10 @@ export default function StudentProfilePage() {
                 </button>
               )}
             </div>
- <p className="text-[#64748B] font-normal text-[14px] text-center relative mb-3.5 flex items-center justify-center gap-1">
+ <p className="text-ink-subtle font-normal text-[14px] text-center relative mb-3.5 flex items-center justify-center gap-1">
               {user?.email || user?.username + "@rguktong.ac.in"}
               <BadgeCheck
- className="w-[15px] h-[15px] text-[#0A2540]"
+ className="w-[15px] h-[15px] text-navy"
                 fill="#0A2540"
                 fillOpacity={0.15}
                 strokeWidth={2.5}
@@ -770,11 +770,11 @@ export default function StudentProfilePage() {
 
             {/* Badges */}
  <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] md:text-xs font-medium text-navy-500 mt-1">
- <span className="text-[#0A2540] font-medium tabular-nums text-[12px] px-2.5 py-1 bg-[#0A2540]/[0.05] rounded-full">
+ <span className="text-navy font-medium tabular-nums text-[12px] px-2.5 py-1 bg-navy/[0.05] rounded-full">
                 {user?.username}
               </span>
  <span className="w-1 h-1 rounded-full bg-navy-300"></span>
- <span className="text-[12px] font-medium text-[#475569]">
+ <span className="text-[12px] font-medium text-ink-muted">
                 {user?.branch} • {user?.year}
               </span>
               {user?.has_pending_requests && (
@@ -851,7 +851,7 @@ export default function StudentProfilePage() {
                   {activeTab === tab && (
                     <motion.div
                       layoutId="activeTab"
- className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#0A2540] rounded-t-full"
+ className="absolute bottom-0 left-0 right-0 h-[2px] bg-navy rounded-t-full"
                     />
                   )}
                 </button>
@@ -1115,7 +1115,7 @@ export default function StudentProfilePage() {
         {/* Modals placed inside main content area to avoid z-index issues */}
         <AnimatePresence>
           {requestType && (
- <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0A2540]/80 p-4">
+ <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy/80 p-4">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -1146,7 +1146,7 @@ export default function StudentProfilePage() {
                       Reason
                     </label>
                     <textarea
- className="w-full bg-[#FAFAFA] p-4 rounded-portal-sm border border-navy-200 focus:border-navy-700 focus:ring-1 focus:ring-navy-900/15 focus:outline-none min-h-[120px] font-medium text-[15px] text-navy-900 font-form placeholder:text-navy-300 placeholder:font-normal resize-none transition-colors"
+ className="w-full bg-surface p-4 rounded-portal-sm border border-navy-200 focus:border-navy-700 focus:ring-1 focus:ring-navy-900/15 focus:outline-none min-h-[120px] font-medium text-[15px] text-navy-900 font-form placeholder:text-navy-300 placeholder:font-normal resize-none transition-colors"
                       placeholder="Please explain why you need to leave..."
                       value={requestForm.reason}
                       onChange={(e) =>

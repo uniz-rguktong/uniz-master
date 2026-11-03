@@ -220,7 +220,7 @@ export default function AddStudents() {
         <div
           className={`
  border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200
- ${error ? "border-[#0A2540] border-2 bg-navy-50" : "border-navy-300 hover:border-[#0A2540] hover:bg-navy-50"}
+ ${error ? "border-navy border-2 bg-navy-50" : "border-navy-300 hover:border-navy hover:bg-navy-50"}
  `}
         >
           <input
@@ -234,7 +234,7 @@ export default function AddStudents() {
             htmlFor="fileInput"
             className="cursor-pointer flex flex-col items-center gap-4"
           >
- <div className="w-16 h-16 bg-[#0A2540] text-white rounded-full flex items-center justify-center">
+ <div className="w-16 h-16 bg-navy text-white rounded-full flex items-center justify-center">
               <Upload className="w-8 h-8" />
             </div>
             <div>
@@ -329,7 +329,7 @@ export default function AddStudents() {
                 onClick={handleUpload}
                 isLoading={uploading}
                 disabled={uploading}
- className="bg-[#0A2540] hover:bg-navy-800 rounded-none border-2 border-[#0A2540]"
+ className="bg-navy hover:bg-navy-800 rounded-none border-2 border-navy"
               >
                 <Upload className="w-4 h-4 mr-2" /> Confirm & Upload
               </Button>
@@ -347,7 +347,7 @@ export default function AddStudents() {
                 Upload Status
               </span>
               <span
- className={`text-xs font-semibold px-2 py-1 rounded-full ${progress.status === "completed" ? "bg-[#0A2540] text-white" : "bg-navy-200 text-navy-700"}`}
+ className={`text-xs font-semibold px-2 py-1 rounded-full ${progress.status === "completed" ? "bg-navy text-white" : "bg-navy-200 text-navy-700"}`}
               >
                 {progress.status === "completed" ? "Completed" : "Processing"}
               </span>
@@ -361,7 +361,7 @@ export default function AddStudents() {
                 </span>
               </div>
             ) : (
- <div className="flex items-center gap-3 text-[#061B33] mb-2 font-semibold ">
+ <div className="flex items-center gap-3 text-navy-900 mb-2 font-semibold ">
                 <Loader2 className="w-5 h-5 animate-spin" />
  <span className="text-sm font-medium">Uploading data...</span>
               </div>
@@ -369,7 +369,7 @@ export default function AddStudents() {
 
  <div className="w-full bg-navy-100 rounded-full h-2 overflow-hidden">
               <div
- className={`h-full rounded-full transition-all duration-500 ${progress.status === "completed" ? "bg-[#0A2540]" : "bg-navy-400"}`}
+ className={`h-full rounded-full transition-all duration-500 ${progress.status === "completed" ? "bg-navy" : "bg-navy-400"}`}
                 style={{ width: `${progress.percentage}%` }}
               />
             </div>

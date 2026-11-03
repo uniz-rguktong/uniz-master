@@ -176,7 +176,7 @@ export default function LeaveApprovals() {
           value={duty.location}
           onChange={(e) => setDuty({ ...duty, location: e.target.value })}
         />
- <button className="rounded bg-[#0A2540] px-4 py-2 text-sm font-medium text-white">
+ <button className="rounded bg-navy px-4 py-2 text-sm font-medium text-white">
           Assign duty
         </button>
       </form>

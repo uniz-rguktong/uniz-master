@@ -361,14 +361,14 @@ export default function Sidebar({ content }: MainContent) {
   };
 
   return (
- <div className="flex min-h-screen flex-col bg-white font-sans text-[#0A2540]">
+ <div className="flex min-h-screen flex-col bg-white font-sans text-navy">
       <AnimatePresence>
         {!enableOutingsAndOutpasses && showNotice && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
- className="relative z-[100] flex items-center justify-between bg-[#0A2540] px-6 py-2.5 text-white"
+ className="relative z-[100] flex items-center justify-between bg-navy px-6 py-2.5 text-white"
           >
  <div className="flex-1 text-center text-[11px] font-sans font-medium tracking-tight md:text-[13px]">
               Outpass and outing feature has been currently disabled by the
@@ -436,7 +436,7 @@ export default function Sidebar({ content }: MainContent) {
         {drawerOpen && (
           <button
             type="button"
- className="fixed inset-0 z-40 bg-[#021227]/50 backdrop-blur-[2px] md:hidden"
+ className="fixed inset-0 z-40 bg-navy-950/50 backdrop-blur-[2px] md:hidden"
             aria-label="Close menu"
             onClick={() => setDrawerOpen(false)}
           />
@@ -448,7 +448,7 @@ export default function Sidebar({ content }: MainContent) {
           )}
         >
  <nav className="flex-1 space-y-0.5 overflow-y-auto py-5" aria-label="Student">
- <p className="px-6 pb-3 text-[12px] font-medium text-[#64748B]">Navigation</p>
+ <p className="px-6 pb-3 text-[12px] font-medium text-ink-subtle">Navigation</p>
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = content === item.content;
@@ -460,18 +460,18 @@ export default function Sidebar({ content }: MainContent) {
                   aria-current={active ? "page" : undefined}
                   className={cn(portalSidebarItemClass, active && portalSidebarItemActiveClass)}
                 >
- <Icon size={18} strokeWidth={active ? 2 : 1.75} className={active ? "text-[#0A2540]" : "text-[#94A3B8] transition-colors duration-150 group-hover:text-[#0A2540]"} />
+ <Icon size={18} strokeWidth={active ? 2 : 1.75} className={active ? "text-navy" : "text-[#94A3B8] transition-colors duration-150 group-hover:text-navy"} />
                   <span>{item.label}</span>
                 </button>
               );
             })}
           </nav>
-          <div className="mx-3 mb-3 grid grid-cols-2 gap-2 border-t border-[#E2E8F0] pt-4">
+          <div className="mx-3 mb-3 grid grid-cols-2 gap-2 border-t border-line pt-4">
             <a
               href={ANDROID_APK_URL}
               download={ANDROID_APK_FILENAME}
               title="Download Android App (.apk)"
- className="flex h-10 items-center justify-center gap-1.5 rounded-md border border-[#E2E8F0] bg-[#F8FAFC] px-2 text-[11px] font-medium text-[#0A2540] transition-colors duration-150 hover:border-[#0A2540] hover:bg-[#0A2540] hover:text-white"
+ className="flex h-10 items-center justify-center gap-1.5 rounded-md border border-line bg-surface-2 px-2 text-[11px] font-medium text-navy transition-colors duration-150 hover:border-navy hover:bg-navy hover:text-white"
             >
               <AndroidLogo className="h-3.5 w-3.5 shrink-0" />
               <span>Android</span>
@@ -480,7 +480,7 @@ export default function Sidebar({ content }: MainContent) {
               type="button"
               onClick={openIosDownloadModal}
               title="Download iOS App"
- className="flex h-10 items-center justify-center gap-1.5 rounded-md border border-[#E2E8F0] bg-[#F8FAFC] px-2 text-[11px] font-medium text-[#0A2540] transition-colors duration-150 hover:border-[#0A2540] hover:bg-[#0A2540] hover:text-white"
+ className="flex h-10 items-center justify-center gap-1.5 rounded-md border border-line bg-surface-2 px-2 text-[11px] font-medium text-navy transition-colors duration-150 hover:border-navy hover:bg-navy hover:text-white"
             >
               <AppleLogo className="h-3.5 w-3.5 shrink-0" />
               <span>iOS App</span>
@@ -492,7 +492,7 @@ export default function Sidebar({ content }: MainContent) {
           </button>
         </aside>
 
- <div className="flex min-w-0 flex-1 flex-col bg-[#F8FAFC]">
+ <div className="flex min-w-0 flex-1 flex-col bg-surface-2">
           <main ref={mainRef} className="flex-1 pb-20 md:pb-0">
  <div className="mx-auto min-h-full w-full max-w-[1200px] px-4 py-6 md:px-10 md:py-10">
               {content !== "dashboard" && (
@@ -500,7 +500,7 @@ export default function Sidebar({ content }: MainContent) {
                   <button
                     onClick={() => navigate("/student")}
                     aria-label="Back to dashboard"
- className="-ml-2 flex h-11 items-center gap-1 rounded-xl px-2 font-sans text-[13px] font-medium text-[#64748B] transition-colors hover:bg-[#0A2540]/[0.04] hover:text-[#0A2540]"
+ className="-ml-2 flex h-11 items-center gap-1 rounded-xl px-2 font-sans text-[13px] font-medium text-ink-subtle transition-colors hover:bg-navy/[0.04] hover:text-navy"
                   >
                     <ChevronLeft size={18} strokeWidth={2} />
                     Dashboard
@@ -518,7 +518,7 @@ export default function Sidebar({ content }: MainContent) {
 
       <nav
         aria-label="Student quick links"
- className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-[#E2E8F0] bg-white/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl backdrop-saturate-150 md:hidden"
+ className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-white/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl backdrop-saturate-150 md:hidden"
       >
         {navItems
           .filter((n) => ["dashboard", "registration", "gradehub", "attendance"].includes(n.content))
@@ -532,12 +532,12 @@ export default function Sidebar({ content }: MainContent) {
                 onClick={() => go(item.href)}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0A2540]",
-                  active ? "text-[#0A2540] font-semibold" : "text-[#64748B]",
+                  "relative flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-navy",
+                  active ? "text-navy font-semibold" : "text-ink-subtle",
                 )}
               >
- {active && <span className="absolute top-0 h-[3px] w-8 rounded-b-full bg-[#EA2027]" aria-hidden="true" />}
- <span className={cn("flex h-8 w-14 items-center justify-center rounded-full transition-colors duration-150", active && "bg-[#0A2540]/[0.07]")}>
+ {active && <span className="absolute top-0 h-[3px] w-8 rounded-b-full bg-brand-red" aria-hidden="true" />}
+ <span className={cn("flex h-8 w-14 items-center justify-center rounded-full transition-colors duration-150", active && "bg-navy/[0.07]")}>
                   <Icon size={20} strokeWidth={active ? 2.25 : 1.75} />
                 </span>
                 {item.label}
@@ -551,10 +551,10 @@ export default function Sidebar({ content }: MainContent) {
           aria-expanded={drawerOpen}
           className={cn(
             "flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-semibold",
-            drawerOpen ? "text-[#0A2540]" : "text-[#64748B]",
+            drawerOpen ? "text-navy" : "text-ink-subtle",
           )}
         >
- <span className={cn("flex h-8 w-12 items-center justify-center rounded-full", drawerOpen && "bg-[#0A2540]/[0.08]")}>
+ <span className={cn("flex h-8 w-12 items-center justify-center rounded-full", drawerOpen && "bg-navy/[0.08]")}>
             <Menu size={20} />
           </span>
           Menu

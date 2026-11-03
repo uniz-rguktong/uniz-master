@@ -242,7 +242,7 @@ export default function AdminShell({
       {isOverlayMobile && isSidebarOpen && (
         <button
           type="button"
- className="fixed inset-0 z-[60] bg-[#021227]/45 lg:hidden"
+ className="fixed inset-0 z-[60] bg-navy-950/45 lg:hidden"
           aria-label="Close navigation"
           onClick={() => setIsSidebarOpen(false)}
         />
@@ -302,9 +302,9 @@ export default function AdminShell({
           {filteredGroups.length === 0 && searchQuery ? (
  <div className="flex flex-col items-center justify-center py-10 text-center">
  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/10">
- <Search size={20} className="text-[#5A7A94]" />
+ <Search size={20} className="text-navy-400" />
               </div>
- <p className="px-4 text-[11px] font-medium text-[#5A7A94]">
+ <p className="px-4 text-[11px] font-medium text-navy-400">
                 No operations found
               </p>
             </div>
@@ -334,7 +334,7 @@ export default function AdminShell({
                         isSidebarOpen
                           ? "space-x-3 px-3"
                           : "justify-center px-0",
-                        isActive ? "text-[#0A2540]" : adminNavInactiveClass,
+                        isActive ? "text-navy" : adminNavInactiveClass,
                       )}
                     >
                       {isActive && (
@@ -404,18 +404,18 @@ export default function AdminShell({
                       alt=""
                     />
                   ) : (
- <span className="text-[11px] font-medium text-[#0A2540]">
+ <span className="text-[11px] font-medium text-navy">
                       {initial}
                     </span>
                   )}
                 </button>
                 {isSidebarOpen && (
                   <div className="min-w-0">
- <p className="truncate text-[13px] font-medium leading-tight text-[#0A2540]">
+ <p className="truncate text-[13px] font-medium leading-tight text-navy">
                       {profileName || username}
                     </p>
                     {roleLabel && (
- <p className="mt-0.5 truncate text-[9px] font-medium text-[#5A7A94]">
+ <p className="mt-0.5 truncate text-[9px] font-medium text-navy-400">
                         {roleLabel}
                       </p>
                     )}
@@ -479,13 +479,13 @@ export default function AdminShell({
                   onClick={() => onTabChange(item.id)}
                   className={cn(
                     "flex h-full flex-1 flex-col items-center justify-center gap-1 transition-all",
-                    isActive ? "text-[#0A2540]" : "text-[#5A7A94]",
+                    isActive ? "text-navy" : "text-navy-400",
                   )}
                 >
                   <div
                     className={cn(
                       "rounded-md p-1.5 transition-colors duration-150",
-                      isActive && "bg-[#FAFAFA]",
+                      isActive && "bg-surface",
                     )}
                   >
                     <Icon size={isActive ? 20 : 18} />

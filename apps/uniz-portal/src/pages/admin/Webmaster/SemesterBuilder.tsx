@@ -579,7 +579,7 @@ function ActionBtn({
 }) {
   const tones: Record<string, string> = {
     primary: "bg-navy-900 text-white hover:bg-navy-800",
-    dark: "bg-navy-900 text-white hover:bg-[#0A2540]",
+    dark: "bg-navy-900 text-white hover:bg-navy",
     ghost: "bg-navy-100 text-navy-700 hover:bg-navy-200",
   };
   return (

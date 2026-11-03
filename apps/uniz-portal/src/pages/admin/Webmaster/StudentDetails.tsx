@@ -1701,7 +1701,7 @@ export default function StudentDetails() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 32, stiffness: 320 }}
- className="fixed right-0 top-0 z-[101] h-full w-full max-w-2xl bg-[#fafafa] shadow-2xl overflow-y-auto custom-sidebar-scroll"
+ className="fixed right-0 top-0 z-[101] h-full w-full max-w-2xl bg-surface shadow-2xl overflow-y-auto custom-sidebar-scroll"
             >
  <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b border-navy-200/70">
                 <div>

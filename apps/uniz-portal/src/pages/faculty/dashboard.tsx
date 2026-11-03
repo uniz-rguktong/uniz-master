@@ -218,7 +218,7 @@ export default function FacultyDashboard() {
       {isSidebarOpen && (
         <button
           type="button"
-          className="fixed inset-0 z-[60] bg-[#021227]/45 md:hidden"
+          className="fixed inset-0 z-[60] bg-navy-950/45 md:hidden"
           aria-label="Close navigation"
           onClick={() => setIsSidebarOpen(false)}
         />
@@ -244,7 +244,7 @@ export default function FacultyDashboard() {
             >
               <item.icon
                 size={18}
- className={`shrink-0 ${activeTab === item.id ? "text-[#0A2540]" : "text-[#5A7A94]"}`}
+ className={`shrink-0 ${activeTab === item.id ? "text-navy" : "text-navy-400"}`}
               />
               {isSidebarOpen && (
  <span className="text-[13px] font-medium">{item.label}</span>
@@ -381,7 +381,7 @@ function OverviewSection({
               onClick={() => setActiveTab(item.id as ActiveTab)}
  className="group relative flex flex-col items-start rounded-lg border border-line bg-white p-6 text-left transition-colors duration-150 hover:bg-surface-2"
             >
- <div className="p-3 rounded-xl bg-navy-50 group-hover:bg-[#0A2540] group-hover:text-white transition-colors duration-300 mb-4">
+ <div className="p-3 rounded-xl bg-navy-50 group-hover:bg-navy group-hover:text-white transition-colors duration-300 mb-4">
                 <item.icon className="w-5 h-5" />
               </div>
  <h3 className="text-base font-medium text-navy-900">
@@ -531,7 +531,7 @@ function ProfileSection({
         {!isEditing ? (
           <button
             onClick={() => setIsEditing(true)}
- className="flex items-center gap-2 px-5 py-2.5 bg-[#0A2540] text-white rounded-xl text-sm font-medium hover:bg-navy-800 transition-all shadow-sm"
+ className="flex items-center gap-2 px-5 py-2.5 bg-navy text-white rounded-xl text-sm font-medium hover:bg-navy-800 transition-all shadow-sm"
           >
             <Pencil className="w-4 h-4" /> Edit Profile
           </button>
@@ -546,7 +546,7 @@ function ProfileSection({
             <button
               onClick={handleSave}
               disabled={saving}
- className="flex items-center gap-2 px-5 py-2.5 bg-[#0A2540] text-white rounded-xl text-sm font-medium hover:bg-navy-800 transition-all disabled:opacity-50"
+ className="flex items-center gap-2 px-5 py-2.5 bg-navy text-white rounded-xl text-sm font-medium hover:bg-navy-800 transition-all disabled:opacity-50"
             >
               {saving ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -621,7 +621,7 @@ function ProfileSection({
               <input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
- className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+ className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-navy transition-all"
               />
             ) : (
  <p className="font-semibold text-navy-900 text-base">
@@ -641,7 +641,7 @@ function ProfileSection({
                 onChange={(e) =>
                   setForm({ ...form, designation: e.target.value })
                 }
- className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+ className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-navy transition-all"
               />
             ) : (
  <p className="font-semibold text-navy-900 text-base">
@@ -661,7 +661,7 @@ function ProfileSection({
                 value={form.contact}
                 onChange={(e) => setForm({ ...form, contact: e.target.value })}
                 placeholder="Your phone number"
- className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+ className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-navy transition-all"
               />
             ) : (
  <p className="font-semibold text-navy-900 text-base">
@@ -683,7 +683,7 @@ function ProfileSection({
                   setForm({ ...form, profileUrl: e.target.value })
                 }
                 placeholder="https://example.com/photo.jpg"
- className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+ className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-navy transition-all"
               />
             ) : (
  <p className="font-semibold text-navy-900 text-base truncate">
@@ -737,7 +737,7 @@ function ProfileSection({
                     }}
                     placeholder={`Enter ${key} (one per line)`}
                     rows={4}
- className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-medium text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all text-sm leading-relaxed"
+ className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-medium text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-navy transition-all text-sm leading-relaxed"
                   />
                 ) : values.length > 0 ? (
                   <ul className="space-y-2">
@@ -921,7 +921,7 @@ function StudentsSection({
               placeholder="Enter Student ID (e.g. O210329)"
               value={studentId}
               onChange={(e) => setStudentId(e.target.value.toUpperCase())}
- className="w-full h-12 pl-12 pr-5 bg-white border border-navy-200 rounded-lg focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] outline-none transition-all font-semibold text-navy-900 text-sm shadow-sm"
+ className="w-full h-12 pl-12 pr-5 bg-white border border-navy-200 rounded-lg focus:ring-4 focus:ring-black/5 focus:border-navy outline-none transition-all font-semibold text-navy-900 text-sm shadow-sm"
             />
           </div>
           <button
@@ -947,7 +947,7 @@ function StudentsSection({
             <select
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
- className="bg-white border border-navy-200 pl-10 pr-8 h-12 rounded-lg font-medium text-[11px] text-navy-600 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] shadow-sm min-w-[160px] appearance-none cursor-pointer"
+ className="bg-white border border-navy-200 pl-10 pr-8 h-12 rounded-lg font-medium text-[11px] text-navy-600 outline-none focus:ring-4 focus:ring-black/5 focus:border-navy shadow-sm min-w-[160px] appearance-none cursor-pointer"
             >
               {departments.map((d) => (
                 <option key={d} value={d}>
@@ -960,7 +960,7 @@ function StudentsSection({
             <select
               value={year}
               onChange={(e) => setYear(e.target.value)}
- className="bg-white border border-navy-200 pl-4 pr-8 h-12 rounded-lg font-medium text-[11px] text-navy-600 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] shadow-sm min-w-[140px] appearance-none cursor-pointer"
+ className="bg-white border border-navy-200 pl-4 pr-8 h-12 rounded-lg font-medium text-[11px] text-navy-600 outline-none focus:ring-4 focus:ring-black/5 focus:border-navy shadow-sm min-w-[140px] appearance-none cursor-pointer"
             >
               <option value="">All Batches</option>
               {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
@@ -998,13 +998,13 @@ function StudentsSection({
               onClick={() => fetchFullDetails(std.username)}
  className={`group flex items-center justify-between p-4 px-6 bg-white border rounded-lg cursor-pointer transition-all hover:shadow-lg ${
  selectedStudent?.username === std.username
- ? "border-[#0A2540] ring-4 ring-black/5 shadow-xl"
+ ? "border-navy ring-4 ring-black/5 shadow-xl"
  : "border-navy-100 hover:border-navy-200"
  }`}
             >
               <div className="flex items-center gap-4">
                 <div
- className={`w-11 h-11 rounded-lg flex items-center justify-center transition-colors font-medium ${selectedStudent?.username === std.username ? "bg-[#0A2540] text-white" : "bg-navy-50 text-navy-400 group-hover:bg-[#0A2540] group-hover:text-white"}`}
+ className={`w-11 h-11 rounded-lg flex items-center justify-center transition-colors font-medium ${selectedStudent?.username === std.username ? "bg-navy text-white" : "bg-navy-50 text-navy-400 group-hover:bg-navy group-hover:text-white"}`}
                 >
                   {std.name?.[0] || "S"}
                 </div>
@@ -1013,7 +1013,7 @@ function StudentsSection({
                     {std.name}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
- <span className="text-[9px] font-medium text-[#061B33] bg-navy-100 px-2 py-0.5 rounded-md">
+ <span className="text-[9px] font-medium text-navy-900 bg-navy-100 px-2 py-0.5 rounded-md">
                       {std.username}
                     </span>
  <span className="w-1 h-1 rounded-full bg-navy-200" />
@@ -1033,7 +1033,7 @@ function StudentsSection({
               </div>
               <ChevronRight
                 size={16}
- className={`text-navy-300 transition-transform ${selectedStudent?.username === std.username ? "rotate-90 text-[#061B33]" : ""}`}
+ className={`text-navy-300 transition-transform ${selectedStudent?.username === std.username ? "rotate-90 text-navy-900" : ""}`}
               />
             </div>
           ))}
@@ -1070,7 +1070,7 @@ function StudentsSection({
                 </div>
               ) : (
  <div className="bg-white rounded-lg border border-navy-100 shadow-xl overflow-hidden">
- <div className="bg-[#0A2540] p-8 text-white relative">
+ <div className="bg-navy p-8 text-white relative">
                     <button
                       onClick={() => setSelectedStudent(null)}
  className="absolute top-5 right-5 p-2 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white"
@@ -1320,7 +1320,7 @@ function PasswordSection() {
         {(["current", "otp", "new"] as PwdStep[]).map((s, i) => (
           <div key={s} className="flex items-center gap-3">
             <div
- className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all ${step === s ? "bg-[#0A2540] text-white" : i < ["current", "otp", "new"].indexOf(step) ? "bg-navy-200 text-navy-500" : "border-2 border-navy-200 text-navy-300"}`}
+ className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all ${step === s ? "bg-navy text-white" : i < ["current", "otp", "new"].indexOf(step) ? "bg-navy-200 text-navy-500" : "border-2 border-navy-200 text-navy-300"}`}
             >
               {i + 1}
             </div>
@@ -1364,7 +1364,7 @@ function PasswordSection() {
                 <button
                   onClick={requestOtp}
                   disabled={loading || !username}
- className="w-full h-12 bg-[#0A2540] text-white rounded-xl font-medium text-sm hover:bg-navy-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+ className="w-full h-12 bg-navy text-white rounded-xl font-medium text-sm hover:bg-navy-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Send OTP to my Device
@@ -1378,14 +1378,14 @@ function PasswordSection() {
                     placeholder="Current password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
- className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+ className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-navy transition-all"
                   />
                   <input
                     type="password"
                     placeholder="New password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
- className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+ className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-navy transition-all"
                   />
                   {newPassword && (
                     <div className="flex items-center gap-3">
@@ -1405,7 +1405,7 @@ function PasswordSection() {
                   <button
                     onClick={changeDirectly}
                     disabled={loading || !currentPassword || !newPassword}
- className="w-full h-12 bg-navy-900 text-white rounded-xl font-medium text-sm hover:bg-[#0A2540] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+ className="w-full h-12 bg-navy-900 text-white rounded-xl font-medium text-sm hover:bg-navy transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                     Change Password
@@ -1438,7 +1438,7 @@ function PasswordSection() {
                   placeholder="• • • • • •"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
- className="w-full px-4 py-4 bg-navy-50 border border-navy-200 rounded-xl font-medium text-2xl text-center text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all "
+ className="w-full px-4 py-4 bg-navy-50 border border-navy-200 rounded-xl font-medium text-2xl text-center text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-navy transition-all "
                 />
               </div>
               <div className="flex gap-3 pt-2">
@@ -1451,7 +1451,7 @@ function PasswordSection() {
                 <button
                   onClick={verifyOtp}
                   disabled={loading || otp.length !== 6}
- className="flex-[2] h-12 bg-[#0A2540] text-white rounded-xl font-medium text-sm hover:bg-navy-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+ className="flex-[2] h-12 bg-navy text-white rounded-xl font-medium text-sm hover:bg-navy-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Verify OTP
@@ -1491,7 +1491,7 @@ function PasswordSection() {
                     placeholder="Enter new password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
- className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+ className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-navy transition-all"
                   />
                   {newPassword && (
                     <div className="flex items-center gap-3 mt-2">
@@ -1518,7 +1518,7 @@ function PasswordSection() {
                     placeholder="Re-enter new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
- className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-[#0A2540] transition-all"
+ className="w-full px-4 py-3 bg-navy-50 border border-navy-200 rounded-xl font-semibold text-navy-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-navy transition-all"
                   />
                   {confirmPassword && (
                     <p
@@ -1536,7 +1536,7 @@ function PasswordSection() {
                 disabled={
                   loading || !newPassword || newPassword !== confirmPassword
                 }
- className="w-full h-12 bg-[#0A2540] text-white rounded-xl font-medium text-sm hover:bg-navy-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+ className="w-full h-12 bg-navy text-white rounded-xl font-medium text-sm hover:bg-navy-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                 Update Password

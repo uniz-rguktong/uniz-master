@@ -54,16 +54,16 @@ export default function DevelopersPage() {
  <section className="w-full border-b border-line bg-surface section-editorial">
  <div className="mx-auto max-w-7xl space-y-8 px-5 sm:px-8 lg:px-12">
           {/* Breadcrumb */}
- <div className="flex items-center justify-between gap-4 border-b border-[#E2E8F0] pb-3.5 text-[12.5px]">
- <div className="flex items-center gap-2 text-[#475569]">
+ <div className="flex items-center justify-between gap-4 border-b border-line pb-3.5 text-[12.5px]">
+ <div className="flex items-center gap-2 text-ink-muted">
               <Link
                 to="/"
- className="font-semibold text-[#0A2540] hover:underline underline-offset-4"
+ className="font-semibold text-navy hover:underline underline-offset-4"
               >
                 Portal Home
               </Link>
               <span>/</span>
- <span className="font-semibold text-[#0F172A]">
+ <span className="font-semibold text-ink">
                 Software Development Cell
               </span>
             </div>
@@ -145,8 +145,8 @@ export default function DevelopersPage() {
  <section className="w-full border-b border-line bg-white section-editorial">
  <div className="mx-auto max-w-7xl space-y-10 px-5 sm:px-8 lg:px-12">
           <div className="space-y-1.5 max-w-3xl">
- <div className="flex items-center gap-2 text-[#475569]">
- <Cpu className="w-4 h-4 text-[#0A2540]" />
+ <div className="flex items-center gap-2 text-ink-muted">
+ <Cpu className="w-4 h-4 text-navy" />
  <span className="text-[11px] font-medium">
                 Production Infrastructure Specifications
               </span>
@@ -154,7 +154,7 @@ export default function DevelopersPage() {
  <h2 className="mt-3 font-serif text-3xl font-medium tracking-tight text-navy-900 sm:text-4xl">
               System architecture
             </h2>
- <p className="text-[14.5px] text-[#475569] leading-relaxed">
+ <p className="text-[14.5px] text-ink-muted leading-relaxed">
               Designed for zero-downtime examination result publication and daily
               campus operations across all PUC and B.Tech academic cohorts.
             </p>
@@ -164,8 +164,8 @@ export default function DevelopersPage() {
             {ARCHITECTURE_SPECS.map((item, idx) => {
               const Icon = item.icon;
               const borderClasses = [
-                idx >= 2 ? "md:border-t md:border-[#D8E0EA]" : "",
-                idx % 2 === 1 ? "md:border-l md:border-[#D8E0EA]" : "",
+                idx >= 2 ? "md:border-t md:border-navy-200" : "",
+                idx % 2 === 1 ? "md:border-l md:border-navy-200" : "",
               ]
                 .filter(Boolean)
                 .join(" ");
@@ -175,11 +175,11 @@ export default function DevelopersPage() {
                   key={item.code}
                   className={`p-6 sm:p-7 space-y-3 ${borderClasses}`}
                 >
-                  <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2.5">
- <span className="text-[11px] font-medium text-[#64748B]">
+                  <div className="flex items-center justify-between border-b border-line pb-2.5">
+ <span className="text-[11px] font-medium text-ink-subtle">
                       {item.code} · {item.spec}
                     </span>
- <Icon className="w-4 h-4 text-[#0A2540]" />
+ <Icon className="w-4 h-4 text-navy" />
                   </div>
  <h3 className="font-serif text-xl font-medium text-navy-900">
                     {item.title}

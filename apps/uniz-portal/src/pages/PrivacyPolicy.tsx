@@ -41,7 +41,7 @@ const sections = [
 
 export default function PrivacyPolicy() {
   return (
- <div className="min-h-screen bg-[#fafafa] font-sans">
+ <div className="min-h-screen bg-surface font-sans">
       <SEO
         title="Privacy Policy — uniZ"
         description={`Privacy policy for the uniZ campus platform at ${UNIZ_CAMPUS_LABEL}.`}

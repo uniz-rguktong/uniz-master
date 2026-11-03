@@ -273,7 +273,7 @@ export default function DeanOverview({ username }: { username: string }) {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
- className="absolute inset-0 rounded-full flex items-center justify-center bg-[#0A2540]/55"
+ className="absolute inset-0 rounded-full flex items-center justify-center bg-navy/55"
                     >
  <Loader2 className="w-9 h-9 text-white animate-spin" />
                     </motion.div>
@@ -380,7 +380,7 @@ export default function DeanOverview({ username }: { username: string }) {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
- className="flex-1 py-3.5 rounded-lg bg-navy-900 text-white text-[11px] font-semibold flex items-center justify-center gap-2 hover:bg-[#0A2540] transition-all disabled:opacity-50"
+ className="flex-1 py-3.5 rounded-lg bg-navy-900 text-white text-[11px] font-semibold flex items-center justify-center gap-2 hover:bg-navy transition-all disabled:opacity-50"
                 >
                   {isSaving ? (
                     <Loader2 size={16} className="animate-spin" />

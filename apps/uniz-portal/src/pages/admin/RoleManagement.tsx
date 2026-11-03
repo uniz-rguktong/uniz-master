@@ -536,7 +536,7 @@ export default function RoleManagement() {
                       <Button
                         onclickFunction={updateRolePermissions}
                         value="Save Changes"
- className="bg-navy-900 hover:bg-[#0A2540]"
+ className="bg-navy-900 hover:bg-navy"
                       />
                     </div>
                   </div>

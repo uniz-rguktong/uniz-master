@@ -209,7 +209,7 @@ export default function Attendance() {
  <div className="h-4 w-48 bg-navy-200 rounded mb-2" />
  <div className="h-7 w-64 bg-navy-200 rounded" />
           </div>
- <div className="bg-white p-6 rounded-2xl border border-[#E2E8F0] shadow animate-pulse motion-reduce:animate-none">
+ <div className="bg-white p-6 rounded-2xl border border-line shadow animate-pulse motion-reduce:animate-none">
  <div className="h-5 w-48 bg-navy-200 rounded mb-6" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
  <div className="h-12 bg-navy-100 rounded-portal-sm" />
@@ -226,22 +226,22 @@ export default function Attendance() {
  <div className="font-sans text-navy-900">
  <div className="max-w-6xl mx-auto px-4 pb-10">
         <div className="flex flex-col gap-1 mb-8">
- <p className="text-[13px] font-medium text-[#64748B]">
+ <p className="text-[13px] font-medium text-ink-subtle">
             Academics
           </p>
- <h1 className="text-[28px] md:text-[32px] font-semibold tracking-[-0.03em] text-[#0A2540] leading-tight">
+ <h1 className="text-[28px] md:text-[32px] font-semibold tracking-[-0.03em] text-navy leading-tight">
             Attendance Tracking
           </h1>
         </div>
         {/* Selection Criteria */}
- <div className="mb-8 md:bg-white p-6 md:rounded-2xl md:border md:border-[#E2E8F0] md:shadow bg-transparent px-0 md:px-6">
+ <div className="mb-8 md:bg-white p-6 md:rounded-2xl md:border md:border-line md:shadow bg-transparent px-0 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
             <div className="relative group">
  <label className="text-[13px] font-medium text-[#334155] mb-2 block">
                 Academic Year
               </label>
               <div
- className="w-full min-h-11 flex items-center justify-between bg-white border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 cursor-pointer shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] transition-colors duration-150"
+ className="w-full min-h-11 flex items-center justify-between bg-white border border-line rounded-xl px-3.5 py-2.5 cursor-pointer shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] transition-colors duration-150"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
  <span className="font-medium text-[14px]">{selectedYear}</span>
@@ -291,7 +291,7 @@ export default function Attendance() {
                     setResultsFetched(false);
                     setAttendanceData(null);
                   }}
- className="w-full min-h-11 bg-white border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 font-medium text-[14px] appearance-none shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] focus:outline-none focus:border-[#0A2540] focus:ring-4 focus:ring-[#0A2540]/[0.08] transition-[border-color,box-shadow] duration-150 cursor-pointer"
+ className="w-full min-h-11 bg-white border border-line rounded-xl px-3.5 py-2.5 font-medium text-[14px] appearance-none shadow-[0_1px_2px_rgba(10,37,64,0.04)] hover:border-[#CBD5E1] focus:outline-none focus:border-navy focus:ring-4 focus:ring-navy/[0.08] transition-[border-color,box-shadow] duration-150 cursor-pointer"
                 >
                   {availableSemesters.map((semester) => (
                     <option key={semester} value={semester}>
@@ -396,7 +396,7 @@ export default function Attendance() {
                           },
                         );
                       }}
- className="min-h-11 px-4 bg-white hover:bg-[#F8FAFC] text-[#0A2540] rounded-xl font-semibold text-[13px] transition-colors duration-150 flex items-center gap-2 border border-[#E2E8F0] shadow-[0_1px_2px_rgba(10,37,64,0.04)] disabled:opacity-50"
+ className="min-h-11 px-4 bg-white hover:bg-surface-2 text-navy rounded-xl font-semibold text-[13px] transition-colors duration-150 flex items-center gap-2 border border-line shadow-[0_1px_2px_rgba(10,37,64,0.04)] disabled:opacity-50"
                       disabled={false}
                     >
                       <Download size={14} />
@@ -409,14 +409,14 @@ export default function Attendance() {
               {!attendanceData.attendance ||
               !Array.isArray(attendanceData.attendance) ||
               attendanceData.attendance.length === 0 ? (
- <div className="rounded-2xl border border-dashed border-[#E2E8F0] bg-white px-6 py-14 text-center">
- <div className="size-12 rounded-xl bg-[#0A2540]/[0.05] ring-1 ring-inset ring-[#0A2540]/[0.08] flex items-center justify-center mx-auto mb-5">
- <AlertCircle size={22} strokeWidth={1.75} className="text-[#0A2540]" />
+ <div className="rounded-2xl border border-dashed border-line bg-white px-6 py-14 text-center">
+ <div className="size-12 rounded-xl bg-navy/[0.05] ring-1 ring-inset ring-navy/[0.08] flex items-center justify-center mx-auto mb-5">
+ <AlertCircle size={22} strokeWidth={1.75} className="text-navy" />
                   </div>
- <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-[#0A2540] mb-1.5">
+ <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-navy mb-1.5">
                     Attendance not available yet
                   </h3>
- <p className="text-[14px] leading-6 text-[#64748B] max-w-sm mx-auto">
+ <p className="text-[14px] leading-6 text-ink-subtle max-w-sm mx-auto">
                     These records have not been updated yet. Please check back
                     shortly.
                   </p>
@@ -541,14 +541,14 @@ export default function Attendance() {
           !isLoading &&
           !resultsFetched &&
           !error && (
- <div className="rounded-2xl border border-dashed border-[#E2E8F0] bg-white px-6 py-14 text-center">
- <div className="size-12 rounded-xl bg-[#0A2540]/[0.05] ring-1 ring-inset ring-[#0A2540]/[0.08] flex items-center justify-center mx-auto mb-5">
- <CalendarCheck size={22} strokeWidth={1.75} className="text-[#0A2540]" />
+ <div className="rounded-2xl border border-dashed border-line bg-white px-6 py-14 text-center">
+ <div className="size-12 rounded-xl bg-navy/[0.05] ring-1 ring-inset ring-navy/[0.08] flex items-center justify-center mx-auto mb-5">
+ <CalendarCheck size={22} strokeWidth={1.75} className="text-navy" />
               </div>
- <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-[#0A2540] mb-1.5">
+ <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-navy mb-1.5">
                 Pick a semester
               </h3>
- <p className="text-[14px] leading-6 text-[#64748B] max-w-sm mx-auto">
+ <p className="text-[14px] leading-6 text-ink-subtle max-w-sm mx-auto">
                 Choose an academic year and semester above to see your
                 subject-wise attendance.
               </p>
