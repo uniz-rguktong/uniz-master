@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Cabin+Condensed:wght@400;500;600;700&display=swap");
+@import "@uniz/design-tokens/tokens.css";
 
 @tailwind base;
 @tailwind components;

@@ -39,6 +39,7 @@
     "@studio-freight/react-lenis": "^0.0.47",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@types/three": "^0.183.1",
+    "@uniz/design-tokens": "file:../../packages/uniz-design-tokens",
     "@vercel/analytics": "^1.6.1",
     "axios": "^1.21.0",
     "chart.js": "^4.6.1",

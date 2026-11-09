@@ -1,0 +1,11 @@
+{
+  "name": "@uniz/design-tokens",
+  "version": "1.0.0",
+  "private": true,
+  "description": "UniZ design system CSS variables and TypeScript token map (no component styles)",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.css": "./src/tokens.css"
+  },
+  "types": "./src/index.ts"
+}
