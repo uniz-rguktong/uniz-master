@@ -96,7 +96,7 @@ jobs:
           for f in $(ls packages/*/coverage/coverage-summary.json apps/*/coverage/coverage-summary.json 2>/dev/null); do
             node -e 'const t=require("./"+process.argv[1]).total;console.log(`| ${process.argv[1].split("/")[1]} | ${t.lines.pct}% | ${t.functions.pct}% | ${t.branches.pct}% |`)' "$f" >> "$GITHUB_STEP_SUMMARY"
           done
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: coverage
