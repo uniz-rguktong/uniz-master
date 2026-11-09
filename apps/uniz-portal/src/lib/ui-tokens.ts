@@ -7,6 +7,7 @@
  * Admin: import from admin-ui (extends portal-ui)
  */
 
+export { unizTokens, type UnizTokens } from "@uniz/design-tokens";
 export * from "@/lib/portal-ui";
 export * from "@/lib/student-ui";
 export * from "@/lib/landing-ui";

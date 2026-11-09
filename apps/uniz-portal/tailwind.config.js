@@ -213,6 +213,11 @@ module.exports = {
         "portal-lg": "8px",
         "portal-xl": "8px",
         "portal-2xl": "12px",
+        /* Semantic tokens (DESIGN.md) — opt-in; legacy radii unchanged */
+        control: "var(--uniz-radius-control)",
+        card: "var(--uniz-radius-card)",
+        sheet: "var(--uniz-radius-sheet)",
+        pill: "var(--uniz-radius-full)",
       },
 
       spacing: {
@@ -226,6 +231,7 @@ module.exports = {
 
       transitionTimingFunction: {
         calm: "cubic-bezier(0.2, 0, 0, 1)",
+        "ease-out": "var(--uniz-ease-out)",
         spring: "cubic-bezier(0.175, 0.885, 0.32, 1.275)",
         smooth: "cubic-bezier(0.4, 0, 0.2, 1)",
       },
@@ -233,6 +239,7 @@ module.exports = {
       transitionDuration: {
         150: "150ms",
         200: "200ms",
+        ui: "var(--uniz-duration-ui)",
         400: "400ms",
         500: "500ms",
       },

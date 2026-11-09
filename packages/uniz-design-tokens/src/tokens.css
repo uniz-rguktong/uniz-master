@@ -1,0 +1,113 @@
+/**
+ * UniZ design tokens — canonical CSS custom properties.
+ * Documented in /DESIGN.md. Import only; screens are not restyled here.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Accent (single) */
+  --uniz-accent: #ea2027;
+  --uniz-accent-foreground: #ffffff;
+
+  /* Typography (target stack; apps may still load legacy faces until migration PRs) */
+  --uniz-font-display: "Source Serif 4", "Georgia", serif;
+  --uniz-font-body: "IBM Plex Sans", "Cabin Condensed", system-ui, sans-serif;
+  --uniz-font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Type scale (rem) */
+  --uniz-text-micro: 0.75rem;
+  --uniz-text-small: 0.875rem;
+  --uniz-text-body: 1rem;
+  --uniz-text-lead: 1.125rem;
+  --uniz-text-h4: 1.125rem;
+  --uniz-text-h3: 1.5rem;
+  --uniz-text-h2: 2rem;
+  --uniz-text-h1: 2.75rem;
+
+  --uniz-leading-tight: 1.2;
+  --uniz-leading-body: 1.5;
+  --uniz-leading-relaxed: 1.65;
+
+  --uniz-weight-heading: 500;
+  --uniz-weight-body: 400;
+  --uniz-weight-strong: 600;
+
+  /* Spacing (4px base, 8px rhythm for layout) */
+  --uniz-space-1: 0.25rem;
+  --uniz-space-2: 0.5rem;
+  --uniz-space-3: 0.75rem;
+  --uniz-space-4: 1rem;
+  --uniz-space-5: 1.25rem;
+  --uniz-space-6: 1.5rem;
+  --uniz-space-8: 2rem;
+  --uniz-space-10: 2.5rem;
+  --uniz-space-12: 3rem;
+  --uniz-space-16: 4rem;
+
+  /* Radius by surface role */
+  --uniz-radius-control: 10px;
+  --uniz-radius-card: 14px;
+  --uniz-radius-sheet: 20px;
+  --uniz-radius-full: 9999px;
+
+  /* Motion */
+  --uniz-duration-ui: 200ms;
+  --uniz-ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  /* Elevation */
+  --uniz-shadow-1: 0 1px 2px rgb(6 27 51 / 0.06);
+  --uniz-shadow-2: 0 4px 12px -4px rgb(6 27 51 / 0.1);
+  --uniz-shadow-3: 0 12px 28px -8px rgb(6 27 51 / 0.14);
+
+  /* Light surfaces */
+  --uniz-bg-canvas: #fafafa;
+  --uniz-bg-elevated: #ffffff;
+  --uniz-bg-muted: #f4f4f5;
+  --uniz-border-default: #e2e8f0;
+  --uniz-text-primary: #0f172a;
+  --uniz-text-secondary: #475569;
+  --uniz-text-tertiary: #64748b;
+
+  /* Navy brand ramp (aligned with portal tailwind `navy`) */
+  --uniz-navy-950: #021227;
+  --uniz-navy-900: #061b33;
+  --uniz-navy-800: #0a2540;
+  --uniz-navy-700: #0d3154;
+  --uniz-navy-500: #163a5c;
+  --uniz-navy-400: #5a7a94;
+  --uniz-navy-200: #d8e0ea;
+
+  /* Semantic */
+  --uniz-status-success: #189b4b;
+  --uniz-status-warning: #f59e0b;
+  --uniz-status-error: var(--uniz-accent);
+
+  /* Minimum touch target */
+  --uniz-touch-min: 44px;
+}
+
+:root[data-uniz-theme="dark"],
+.dark[data-uniz-theme],
+.portal-theme.dark {
+  color-scheme: dark;
+
+  --uniz-bg-canvas: #021227;
+  --uniz-bg-elevated: #061b33;
+  --uniz-bg-muted: #0a2540;
+  --uniz-border-default: #163a5c;
+  --uniz-text-primary: #f8fafc;
+  --uniz-text-secondary: #cbd5e1;
+  --uniz-text-tertiary: #94a3b8;
+
+  --uniz-shadow-1: 0 1px 2px rgb(0 0 0 / 0.35);
+  --uniz-shadow-2: 0 4px 12px -4px rgb(0 0 0 / 0.45);
+  --uniz-shadow-3: 0 12px 28px -8px rgb(0 0 0 / 0.5);
+}
+
+/* Opt-in hook: future PRs attach semantic utilities without changing legacy radii */
+.uniz-token-preview {
+  border-radius: var(--uniz-radius-control);
+  transition-duration: var(--uniz-duration-ui);
+  transition-timing-function: var(--uniz-ease-out);
+}
