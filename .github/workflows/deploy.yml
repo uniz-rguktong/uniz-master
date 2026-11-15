@@ -107,29 +107,34 @@ jobs:
 
       - name: Compose commit / rebuild message
         id: msg
+        env:
+          # Pass via env so quotes in commit subjects cannot break bash parsing.
+          HEAD_COMMIT_MSG: ${{ github.event.head_commit.message }}
+          INPUT_COMMIT_MSG: ${{ github.event.inputs.commit_message }}
+          FORCE_REBUILD: ${{ github.event.inputs.force_rebuild }}
+          SERVICES: ${{ github.event.inputs.services }}
         run: |
-          BASE="${{ github.event.head_commit.message }}"
+          BASE="${HEAD_COMMIT_MSG}"
           if [ -z "$BASE" ]; then
-            BASE="${{ github.event.inputs.commit_message }}"
+            BASE="${INPUT_COMMIT_MSG}"
           fi
           if [ -z "$BASE" ]; then
             BASE="$(git log -1 --pretty=%B)"
           fi
-          if [ "${{ github.event.inputs.force_rebuild }}" = "true" ]; then
+          if [ "${FORCE_REBUILD}" = "true" ]; then
             BASE="[rebuild all] $BASE"
           fi
-          SERVICES="${{ github.event.inputs.services }}"
-          if [ -n "$SERVICES" ]; then
-            for tag in $SERVICES; do
+          if [ -n "${SERVICES}" ]; then
+            for tag in ${SERVICES}; do
               BASE="$BASE [rebuild $tag]"
             done
           fi
           {
             echo "COMMIT_MSG<<EOF"
-            echo "$BASE"
+            printf '%s\n' "$BASE"
             echo "EOF"
           } >> "$GITHUB_ENV"
-          echo "[Plan] Effective COMMIT_MSG: $(echo "$BASE" | head -1)"
+          echo "[Plan] Effective COMMIT_MSG: $(printf '%s\n' "$BASE" | head -1)"
 
       - name: Plan parallel image builds
         id: plan
