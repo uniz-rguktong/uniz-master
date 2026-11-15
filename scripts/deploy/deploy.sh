@@ -285,6 +285,11 @@ deploy_logic() {
       eval "export $line"
     done < /root/uniz-secrets.env
 
+    # Unescape %q vault values + rewrite PG host for pods (cni0), then apply Secret
+    if [ -f "scripts/deploy/sync-k8s-secret-from-vault.sh" ]; then
+      echo "[Vault] Syncing Kubernetes uniz-secrets (pod Postgres host)..."
+      bash scripts/deploy/sync-k8s-secret-from-vault.sh /root/uniz-secrets.env || true
+    fi
   fi
 
   # Sync Prisma schemas before rolling out services (idempotent on every deploy).
