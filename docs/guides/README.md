@@ -5,9 +5,12 @@ Campus user and trainer guide for portal UI features and actions by role.
 | Artifact | Path |
 | --- | --- |
 | Word document | `UniZ-UI-Guidance.docx` |
+| PDF | `UniZ-UI-Guidance.pdf` |
 | Markdown source | `UniZ-UI-Guidance.md` |
 | Generator | `generate_guide.py` |
 | Screenshots | `screenshots/` |
+
+Prepared by **SreeCharan Desu** (UniZ · RGUKT Ongole).
 
 Technical API and flow docs (not this guide):
 
