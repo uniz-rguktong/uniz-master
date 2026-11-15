@@ -1,14 +1,16 @@
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Monitor } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useIsAuth } from "../hooks/is_authenticated";
 import { usePWAInstall } from "../hooks/usePWAInstall";
 import { SEO } from "../components/SEO";
 import { HOME_SEO, homePageSchema } from "../lib/seo";
-import { UNIZ_CAMPUS_LABEL, UNIZ_TAGLINE } from "../constants/branding";
+import { UNIZ_CAMPUS_LABEL } from "../constants/branding";
 import { prefetchTurnstile } from "../utils/prefetchTurnstile";
+import { cn } from "@/lib/utils";
 
+/** Elaya B7 base curve */
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const AppleIcon = ({ size = 16 }: { size?: number }) => (
@@ -38,9 +40,163 @@ const getPlatform = () => {
   return { label: "Desktop", PlatformIcon: Monitor };
 };
 
+const BENEFITS = [
+  {
+    title: "Academics in one view",
+    body: "See semester subjects, seating, and results without hopping between portals.",
+  },
+  {
+    title: "Outpasses without the chase",
+    body: "Submit a request, track status, and get notified when staff act on it.",
+  },
+  {
+    title: "Campus updates that reach you",
+    body: "Registration windows and notices land where students already sign in.",
+  },
+] as const;
+
+const STEPS = [
+  {
+    step: "01",
+    title: "Sign in with campus credentials",
+    body: "Use your university ID or college email on the student portal.",
+  },
+  {
+    step: "02",
+    title: "Open the tools you need",
+    body: "Academics, outpasses, registration, and updates sit in one signed in home.",
+  },
+  {
+    step: "03",
+    title: "Stay current on campus",
+    body: "Push alerts and the notice feed keep you informed when something changes.",
+  },
+] as const;
+
+const TAGLINE_WORDS =
+  "Campus life stays clearer when academics and requests live in one place.".split(
+    " ",
+  );
+
+function TaglineReveal() {
+  const reduceMotion = useReducedMotion();
+  const refs = useRef<(HTMLSpanElement | null)[]>([]);
+  const [active, setActive] = useState(reduceMotion ? TAGLINE_WORDS.length : 0);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      setActive(TAGLINE_WORDS.length);
+      return;
+    }
+
+    const observers: IntersectionObserver[] = [];
+    refs.current.forEach((el, i) => {
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setActive((n) => Math.max(n, i + 1));
+            obs.disconnect();
+          }
+        },
+        { rootMargin: "0px 0px -35% 0px", threshold: 0 },
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, [reduceMotion]);
+
+  return (
+    <section className="bg-white px-6 py-16 sm:px-10 sm:py-24">
+      <p
+        className="mx-auto max-w-[680px] text-balance text-center text-3xl font-semibold leading-9 sm:text-4xl sm:leading-10 md:text-5xl md:leading-none"
+        aria-label={TAGLINE_WORDS.join(" ")}
+      >
+        {TAGLINE_WORDS.map((word, i) => (
+          <span
+            key={`${word}-${i}`}
+            ref={(el) => {
+              refs.current[i] = el;
+            }}
+            className={cn(
+              "inline-block mr-[0.3em] last:mr-0 transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              i < active ? "text-navy-900" : "text-navy-900/30",
+            )}
+          >
+            {word}
+          </span>
+        ))}
+      </p>
+    </section>
+  );
+}
+
+/** Quiet product preview — the hero visual, not a feature card grid */
+function PortalPreview() {
+  return (
+    <div
+      className="relative w-full overflow-hidden rounded-2xl border border-navy-200 bg-white shadow-[0_8px_24px_rgba(11,42,71,0.08)]"
+      aria-hidden
+    >
+      <div className="flex items-center gap-2 border-b border-navy-100 bg-navy-900 px-4 py-3">
+        <span className="uniz-logo-wordmark text-lg !text-white leading-none">
+          uniZ.
+        </span>
+        <span className="ml-auto text-xs font-medium text-white/70">
+          Student home
+        </span>
+      </div>
+      <div className="grid gap-3 p-4 sm:grid-cols-[140px_1fr]">
+        <div className="hidden space-y-2 rounded-lg bg-[#F5F7FA] p-3 sm:block">
+          {["Home", "Academics", "Outpass", "Updates"].map((item, i) => (
+            <div
+              key={item}
+              className={cn(
+                "rounded-md px-2 py-2 text-xs font-medium",
+                i === 0
+                  ? "bg-navy-900 text-white"
+                  : "text-navy-600",
+              )}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+        <div className="space-y-3">
+          <div className="rounded-lg border border-navy-100 bg-[#F5F7FA] p-4">
+            <p className="text-xs font-medium text-navy-500">This semester</p>
+            <p className="mt-1 text-lg font-semibold text-navy-900">
+              Subjects and seating
+            </p>
+            <div className="mt-3 h-2 w-3/4 rounded-full bg-navy-200/80" />
+            <div className="mt-2 h-2 w-1/2 rounded-full bg-navy-100" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-lg border border-navy-100 p-3">
+              <p className="text-xs font-medium text-navy-500">Outpass</p>
+              <p className="mt-1 text-sm font-semibold text-navy-900">
+                Request ready
+              </p>
+            </div>
+            <div className="rounded-lg border border-navy-100 p-3">
+              <p className="text-xs font-medium text-navy-500">Updates</p>
+              <p className="mt-1 text-sm font-semibold text-navy-900">
+                2 new notices
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const Home = () => {
   useIsAuth();
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
   const { install, isInstalled } = usePWAInstall();
   const platform = useMemo(() => getPlatform(), []);
 
@@ -48,7 +204,7 @@ const Home = () => {
     const result = await install();
     if (result === "ios") {
       window.alert(
-        "To install UniZ on iOS:\n\n1. Tap the Share icon (at bottom)\n2. Select 'Add to Home Screen'\n\nDirect native install is not supported by Apple yet.",
+        "To install UniZ on iOS:\n\n1. Tap the Share icon (at bottom)\n2. Select Add to Home Screen\n\nDirect native install is not supported by Apple yet.",
       );
     }
   };
@@ -68,21 +224,16 @@ const Home = () => {
     return () => window.removeEventListener("keydown", track);
   }, [navigate]);
 
-  useEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-    const prevHtml = html.style.overflow;
-    const prevBody = body.style.overflow;
-    html.style.overflow = "hidden";
-    body.style.overflow = "hidden";
-    return () => {
-      html.style.overflow = prevHtml;
-      body.style.overflow = prevBody;
-    };
-  }, []);
+  const fadeUp = reduceMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 24 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.5, ease },
+      };
 
   return (
-    <div className="relative flex h-[calc(100dvh-3.5rem)] w-full flex-col overflow-hidden bg-[#F5F7FA]">
+    <div className="min-h-screen bg-white font-[Manrope,system-ui,sans-serif] text-navy-900">
       <SEO
         title={HOME_SEO.title}
         description={HOME_SEO.description}
@@ -90,75 +241,153 @@ const Home = () => {
         schema={homePageSchema}
       />
 
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 w-1.5 bg-navy-900 sm:w-2"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_70%_at_50%_0%,rgba(11,42,71,0.06),transparent_55%)]"
-      />
+      {/* Hero — Layout A */}
+      <section className="relative overflow-hidden bg-[#F5F7FA] px-6 pb-16 pt-28 sm:px-10 sm:pb-24 sm:pt-32">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="max-w-[680px]">
+            <motion.p
+              {...fadeUp}
+              className="mb-4 text-sm font-medium text-navy-600"
+            >
+              {UNIZ_CAMPUS_LABEL} campus platform
+            </motion.p>
 
-      <main className="relative z-[1] flex min-h-0 flex-1 flex-col items-center justify-center px-6 sm:px-10">
-        <div className="flex w-full max-w-xl flex-col items-center text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease }}
-            className="mb-5 text-[13px] font-medium text-navy-700"
-          >
-            {UNIZ_CAMPUS_LABEL}
-          </motion.p>
+            <motion.h1
+              {...fadeUp}
+              transition={{ duration: 0.5, delay: 0.04, ease }}
+              className="uniz-logo-wordmark mb-6 text-6xl leading-none text-navy-900 sm:text-7xl md:text-8xl"
+            >
+              uniZ.
+            </motion.h1>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.04, ease }}
-            className="uniz-logo-wordmark mb-6 text-[clamp(3.75rem,16vw,7rem)] leading-none text-navy-900"
-          >
-            uniZ.
-          </motion.h1>
+            <motion.p
+              {...fadeUp}
+              transition={{ duration: 0.5, delay: 0.08, ease }}
+              className="mb-4 max-w-[680px] text-balance bg-gradient-to-r from-black to-[#666666] bg-clip-text text-3xl font-semibold leading-9 text-transparent sm:text-4xl sm:leading-10"
+            >
+              Campus tools for
+              <br />
+              RGUKT Ongole students
+            </motion.p>
+
+            <motion.p
+              {...fadeUp}
+              transition={{ duration: 0.5, delay: 0.12, ease }}
+              className="mb-8 max-w-[680px] text-pretty text-base font-medium leading-6 text-navy-600 sm:text-lg sm:leading-7"
+            >
+              Academics, semester registration, outpasses, and campus updates in
+              one signed in place.
+            </motion.p>
+
+            <motion.div
+              {...fadeUp}
+              transition={{ duration: 0.5, delay: 0.16, ease }}
+              className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"
+            >
+              <button
+                type="button"
+                onMouseEnter={prefetchTurnstile}
+                onFocus={prefetchTurnstile}
+                onClick={() => navigate("/student/signin")}
+                className="inline-flex h-11 items-center justify-center rounded-lg bg-navy-900 px-3 py-2 text-base font-semibold text-white transition-[color,background-color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-navy-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-900 active:scale-[0.98]"
+              >
+                Get started
+              </button>
+              <p className="text-sm font-medium text-navy-500 sm:pl-2">
+                Built for {UNIZ_CAMPUS_LABEL}
+              </p>
+            </motion.div>
+          </div>
 
           <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.45, delay: 0.12, ease }}
-            className="mb-6 h-px w-16 origin-center bg-navy-900"
-            aria-hidden
-          />
-
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.14, ease }}
-            className="max-w-md text-[18px] font-medium leading-snug tracking-[-0.02em] text-navy-900 sm:text-[20px]"
+            transition={{ duration: 0.6, delay: 0.12, ease }}
+            className="w-full"
           >
-            {UNIZ_TAGLINE.line1}
-            <br className="hidden sm:block" />{" "}
-            {UNIZ_TAGLINE.line2}
-          </motion.p>
+            <PortalPreview />
+          </motion.div>
+        </div>
+      </section>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.35, delay: 0.2 }}
-            className="mt-4 max-w-sm text-[14px] leading-relaxed text-navy-600 sm:text-[15px]"
-          >
-            Academics, semester registration, outpasses, and campus updates.
-          </motion.p>
+      {/* Benefits */}
+      <section className="border-t border-navy-100 bg-white px-6 py-16 sm:px-10 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="mb-12 max-w-[680px] text-balance text-3xl font-semibold leading-9 text-navy-900 sm:text-4xl sm:leading-10">
+            What you can do once you are in
+          </h2>
+          <div className="grid gap-8 sm:grid-cols-3 sm:gap-10">
+            {BENEFITS.map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={reduceMotion ? false : { opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.6, delay: i * 0.06, ease }}
+              >
+                <h3 className="mb-2 text-xl font-semibold leading-7 text-navy-900">
+                  {item.title}
+                </h3>
+                <p className="text-pretty text-base font-normal leading-6 text-navy-600">
+                  {item.body}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.26, ease }}
-            className="mt-10 flex w-full max-w-xs flex-col items-stretch gap-3 sm:max-w-none sm:w-auto sm:flex-row sm:items-center"
-          >
+      <TaglineReveal />
+
+      {/* How it works */}
+      <section className="border-t border-navy-100 bg-[#F5F7FA] px-6 py-16 sm:px-10 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="mb-12 max-w-[680px] text-balance text-3xl font-semibold leading-9 text-navy-900 sm:text-4xl sm:leading-10">
+            How it works
+          </h2>
+          <ol className="grid gap-8 sm:grid-cols-3 sm:gap-10">
+            {STEPS.map((item, i) => (
+              <motion.li
+                key={item.step}
+                initial={reduceMotion ? false : { opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.6, delay: i * 0.06, ease }}
+                className="list-none"
+              >
+                <p className="mb-3 text-sm font-semibold text-navy-400">
+                  {item.step}
+                </p>
+                <h3 className="mb-2 text-xl font-semibold leading-7 text-navy-900">
+                  {item.title}
+                </h3>
+                <p className="text-pretty text-base font-normal leading-6 text-navy-600">
+                  {item.body}
+                </p>
+              </motion.li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="bg-navy-900 px-6 py-16 sm:px-10 sm:py-24">
+        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
+          <div className="max-w-[680px]">
+            <h2 className="mb-3 text-balance text-3xl font-semibold leading-9 text-white sm:text-4xl sm:leading-10">
+              Ready for campus tools in one place?
+            </h2>
+            <p className="text-base font-medium leading-6 text-white/70">
+              Sign in with your {UNIZ_CAMPUS_LABEL} credentials.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
               type="button"
               onMouseEnter={prefetchTurnstile}
               onFocus={prefetchTurnstile}
               onClick={() => navigate("/student/signin")}
-              className="h-12 rounded-lg bg-navy-900 px-8 text-[14px] font-medium text-white transition-[color,background-color,transform] duration-150 hover:bg-navy-800 active:scale-[0.98]"
+              className="inline-flex h-11 items-center justify-center rounded-lg bg-white px-3 py-2 text-base font-semibold text-navy-900 transition-[color,background-color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-navy-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98]"
             >
               Get started
             </button>
@@ -166,31 +395,31 @@ const Home = () => {
               <button
                 type="button"
                 onClick={handleInstallClick}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-navy-300 bg-white px-6 text-[14px] font-medium text-navy-900 transition-[color,background-color,border-color,transform] duration-150 hover:border-navy-400 hover:bg-navy-50 active:scale-[0.98]"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-white/30 px-3 py-2 text-sm font-semibold text-white transition-[color,background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-white/50 hover:bg-white/10 active:scale-[0.98]"
               >
                 <platform.PlatformIcon size={16} />
-                Download
+                Install app
               </button>
             )}
-          </motion.div>
+          </div>
         </div>
-      </main>
+      </section>
 
-      <footer className="relative z-[1] shrink-0 border-t border-navy-200/80 bg-white/90 px-6 py-4 sm:px-10">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 text-[12px] sm:flex-row">
-          <p className="font-medium text-navy-700">
+      <footer className="border-t border-navy-100 bg-white px-6 py-8 sm:px-10">
+        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <p className="text-sm font-medium text-navy-600">
             © {new Date().getFullYear()} uniZ · {UNIZ_CAMPUS_LABEL}
           </p>
           <nav className="flex items-center gap-6">
             <Link
               to="/privacy"
-              className="font-medium text-navy-700 transition-colors hover:text-navy-900"
+              className="text-sm font-medium text-navy-700 transition-colors duration-300 hover:text-navy-900"
             >
               Privacy
             </Link>
             <Link
               to="/developers"
-              className="font-medium text-navy-700 transition-colors hover:text-navy-900"
+              className="text-sm font-medium text-navy-700 transition-colors duration-300 hover:text-navy-900"
             >
               Developers
             </Link>
