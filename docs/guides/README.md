@@ -1,31 +1,37 @@
-# UniZ UI Guidance
+# UniZ portal docs (guides)
 
-Campus user and trainer guide for portal UI features and actions by role.
+Single pack for campus trainers, UI polish agents, and Grok Bot.
 
 | Artifact | Path |
 | --- | --- |
-| Word document | `UniZ-UI-Guidance.docx` |
-| PDF | `UniZ-UI-Guidance.pdf` |
-| Markdown source | `UniZ-UI-Guidance.md` |
-| Generator | `generate_guide.py` |
+| Word guide | `UniZ-UI-Guidance.docx` |
+| PDF guide | `UniZ-UI-Guidance.pdf` |
+| Markdown guide | `UniZ-UI-Guidance.md` |
+| Screen-pass backlog | `UI-SCREEN-PASS.md` |
+| Cloud / Grok Bot notes | `UI-SCREEN-PASS.AGENTS.md` |
 | Screenshots | `screenshots/` |
+| Generator | `generate_guide.py` |
 
 Prepared by **SreeCharan Desu** (UniZ · RGUKT Ongole).
 
-Technical API and flow docs (not this guide):
+## Live
 
-- https://api-uniz.rguktong.in/docs
-- https://api-uniz.rguktong.in/docs/system/action-flows
+https://uniz.rguktong.in
 
-## Screenshots (public)
+## Cursor Cloud + Grok Bot
 
-Captured against a local Vite build of `apps/uniz-portal` (production `uniz.rguktong.in` may present a Cloudflare challenge). Last refresh: **15 November 2026** — Elaya Layout A home (`01-home.png` shows split hero + product preview). Authenticated role shots remain “Live screenshot pending test account.” Turnstile may be blank locally without `VITE_TURNSTILE_SITE_KEY`.
+Saved environment name (exact): **`UniZ portal`**  
+Branch: `polish/ui-screen-by-screen`  
+Details: `UI-SCREEN-PASS.AGENTS.md`
 
-## Regenerate
+## Regenerate DOCX / PDF
 
 ```bash
 pip install python-docx
 python3 docs/guides/generate_guide.py
 ```
 
-Inventory sources: `apps/uniz-portal/src/App.tsx`, role dashboards under `pages/admin/` and `pages/faculty/`, student `Sidebar.tsx`, and `apps/uniz-docs/`.
+Technical API docs (not this pack):
+
+- https://api-uniz.rguktong.in/docs
+- https://api-uniz.rguktong.in/docs/system/action-flows
