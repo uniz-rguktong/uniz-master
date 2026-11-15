@@ -1,8 +1,8 @@
 # UniZ | University Intelligence Engine
 
-[![Manual VPS Deployment](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml)
+[![VPS Automated Deployment](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml)
 
-**New here?** [Handover guide](docs/HANDOVER.md) · **Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Action flows:** [docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) · **Handover:** [Notion](https://app.notion.com/p/3a01ace6b28c819dbd07cf907944c082)
+**New here?** [Handover](docs/HANDOVER.md) · **Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Action flows:** [docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) · **Ops:** [docs/ops/INDEX.md](docs/ops/INDEX.md)
 
 ## Architecture
 
@@ -10,53 +10,57 @@
 
 ### What you are looking at
 
-UniZ is split into two layers. Cloudflare owns the public edge and the static frontends. The VPS owns APIs, **docs**, CMS, the databases, and **self-hosted image uploads**. The one off-box service is **AWS SES** for mail.
+UniZ runs on a **single VPS + Cloudflare free**:
 
-### What is a SPA?
+| Layer | Owns |
+|---|---|
+| **Cloudflare Pages** | Portal (`uniz.rguktong.in`) and Landing (`rguktong.in`) SPAs |
+| **VPS (k3s)** | APIs, VitePress docs, landing-api, Postgres, Redis, uploads, observability |
+| **Off-box** | AWS SES for mail only |
 
-**SPA** = Single Page Application. The browser downloads one HTML shell and JS once; navigation happens client-side. Portal and Landing are React SPAs on Cloudflare Pages. Live data comes from API hosts below.
+There is no always-on legacy monolith (`uniz-api` is gone). Public API traffic is **Traefik → `uniz-gateway-api` → microservices**.
 
-### Cloudflare
+### Request path
 
-Cloudflare terminates HTTPS, filters junk, and serves Portal (`uniz.rguktong.in`) and Landing (`rguktong.in`) from the edge. SPA data calls still go through Cloudflare DNS to the VPS.
+User loads Portal from Cloudflare Pages → SPA calls `api-uniz.rguktong.in` → Cloudflare → host nginx → Traefik → gateway-api → Auth / User / Academics / Notifications → Postgres (Redis / uploads / SES as needed).
 
-### Traefik
+### Always-on (earns its place)
 
-Ingress on the VPS K3s cluster. First process on the machine for `api-uniz.rguktong.in`, `/docs`, and `landing-api.rguktong.in`. Chooses which in-cluster service gets the request.
+`uniz-gateway-api` · `uniz-auth-service` · `uniz-user-service` · `uniz-academics-service` · `uniz-notification-service` · `uniz-redis` · `uniz-docs-service` · Netdata + Uptime Kuma (localhost / SSH tunnel)
 
-### gateway-api
+HPA scales gateway / auth / user / academics / notifications within one 4-vCPU / ~15Gi box. Spare CPU is HPA budget, not “pin idle at 90%.”
 
-Application router (not a load balancer). Path → Auth / User / Academics / Notifications. Also Redis GET cache, health aggregation, and feature gates (outpass parked).
+### Parked or folded
 
-### Docs API (VitePress)
+| Item | Status |
+|---|---|
+| Portal / Landing pods | Parked — production FE on Cloudflare Pages |
+| nginx `uniz-gateway` hop | Parked — Traefik → gateway-api |
+| Outpass | Parked / gated (`503`) |
+| Mail / files / always-on cron Deployments | Folded into notifications / user / CronJobs |
+| Legacy `uniz-api` | **Removed** |
 
-In-house docs are a **static VitePress site** on the VPS — not Cloudflare Pages.
+### Docs (VitePress)
+
+In-house docs are a static VitePress site on the VPS — not Cloudflare Pages.
 
 <img width="1985" height="792" alt="image" src="https://github.com/user-attachments/assets/245c2962-e6f9-40a5-aa49-8538b277e02f" />
 
 - App: `apps/uniz-docs`
 - Public: [https://api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs)
-- Includes architecture, API reference, role guides, and [action flows](https://api-uniz.rguktong.in/docs/system/action-flows)
+- Architecture, API reference, role guides, [action flows](https://api-uniz.rguktong.in/docs/system/action-flows)
 
 ### Backend services
 
-Auth issues JWT. User holds profiles, campus CMS notices, grievances, and file uploads. Academics is results and registration. Notifications owns inbox, web push, and email (mail folded in). Landing-backend is FastAPI for the public website CMS. Docs is VitePress under `/docs`.
+Auth issues JWT. User holds profiles, campus CMS, grievances, and file uploads. Academics is results and registration. Notifications owns inbox, web push, and email. Landing-backend (FastAPI) powers the public website CMS. Docs is VitePress under `/docs`.
 
 ### Self-hosted images and AWS SES
 
-Profile photos, banners, and website images are **self-hosted on the VPS**. Uploads go to the user-service `/files/image/upload` endpoint, which compresses to WebP with `sharp` and writes to a persistent volume; the file is served back through the gateway at `/api/v1/files/img/*` and cached by Cloudflare's CDN. User stores the resulting URL in Postgres. **AWS SES** sends OTP / reset / campus mail via Notifications (local can fall back to Gmail). (Excel/CSV bulk backups still use Cloudinary.)
+Uploads go to user-service `/files/image/upload` (WebP via `sharp`, persistent volume), served at `/api/v1/files/img/*` and cached by Cloudflare. **AWS SES** sends OTP / reset / campus mail via Notifications. (Excel/CSV bulk backups still use Cloudinary.)
 
-### Postgres and Redis
+### Postgres, Redis, host exposure
 
-Postgres is source of truth. Redis is short-lived: gateway cache, upload progress, BullMQ (OTP mail, push broadcasts, registration PDFs).
-
-### Request path in one sentence
-
-User loads Portal from Cloudflare Pages → SPA calls `api-uniz.rguktong.in` → Cloudflare → Traefik → gateway-api → owning service → Postgres (optionally Redis / self-hosted image volume / SES).
-
-### What we deliberately do not run always-on
-
-Portal/Landing pods, nginx gateway hop, outpass (gated), standalone mail/files/cron Deployments — folded or parked so one 4 vCPU VPS stays usable.
+Postgres is source of truth. Redis is short-lived (gateway cache, BullMQ). DB / admin Docker ports bind **loopback + k3s cni0 only** — not the public NIC. Observability UIs are SSH-tunnel only (`docs/ops/INDEX.md`).
 
 ### Role cheat sheet
 
@@ -69,11 +73,11 @@ Portal/Landing pods, nginx gateway hop, outpass (gated), standalone mail/files/c
 | SWO | SWODashboard | Grievance list / resolve / delete |
 | Faculty | `/faculty` | Profile, student search, password |
 
-Canonical layout: **[STRUCTURE.md](STRUCTURE.md)**.
+Canonical layout: **[STRUCTURE.md](STRUCTURE.md)** · Infra: **[infra/README.md](infra/README.md)** · Ops: **[docs/ops/INDEX.md](docs/ops/INDEX.md)**.
 
 ### Contributing & review flow
 
-Collaborators work on branches and open PRs to `main`. Every PR needs an approving review from a **code owner** and only a maintainer with push access can merge — see **[CONTRIBUTING.md](CONTRIBUTING.md)** and the full policy in **[docs/ops/github-governance.md](docs/ops/github-governance.md)**.
+Collaborators work on branches and open PRs to `main`. Every PR needs an approving review from a **code owner** and only a maintainer with push access can merge — see **[CONTRIBUTING.md](CONTRIBUTING.md)** and **[docs/ops/github-governance.md](docs/ops/github-governance.md)**.
 
 ---
 
