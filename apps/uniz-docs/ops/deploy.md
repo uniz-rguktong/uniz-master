@@ -30,6 +30,9 @@ flowchart LR
 | `scripts/ci/ci-build-*.sh` | Docker build → GHCR |
 | `scripts/ci/ci-remote-deploy.sh` | On-VPS pull + rollout + park replicas |
 | `scripts/deploy/deploy.sh` | Core deploy orchestration |
+| `scripts/deploy/sync-k8s-secret-from-vault.sh` | Unescape vault + rewrite PG host for pods (`10.42.0.1`) |
+| `scripts/deploy/prisma-migrate-deploy-all.sh` | Migrate via `127.0.0.1` on the VPS host |
+| `scripts/deploy/ensure-nginx-api-uniz.sh` | Persist `api-uniz` nginx → Traefik `:30620` |
 | `scripts/ops/post-deploy-smoke.sh` | HTTP smoke (portal, API, outpass 503) |
 
 ## What gets deployed

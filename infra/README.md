@@ -6,7 +6,9 @@ Clean single-node production topology (post-cleanup):
 - **VPS k3s:** host nginx → Traefik → `uniz-gateway-api` → microservices, Postgres, Redis, docs
 - **Observability:** Netdata + Uptime Kuma on `127.0.0.1` (SSH tunnel only)
 - **Deploy:** GitHub Actions → GHCR → self-hosted runner on the VPS
-- **Not running:** legacy `uniz-api` monolith; portal/landing/gateway pods parked at 0
+- **Not running:** legacy `uniz-api` monolith (deleted); portal/landing/gateway pods parked at 0
+- **Portal brand:** navy `#0B2A47` + white + black (`apps/uniz-portal`)
+- **Git remotes:** keep `main` + `backup/main-2026-11-15` only
 
 ## Layout
 

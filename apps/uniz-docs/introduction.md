@@ -9,9 +9,9 @@ UniZ is the university administration platform for RGUKT. Students, faculty, and
 
 | Layer | What users see | What operators run |
 |-------|----------------|--------------------|
-| Portal | `uniz.rguktong.in` | Cloudflare Pages |
+| Portal | `uniz.rguktong.in` (navy / white / black) | Cloudflare Pages |
 | Public site | `rguktong.in` | Cloudflare Pages + landing-api |
-| API | Transparent to users | `api-uniz.rguktong.in` on VPS |
+| API | Transparent to users | `api-uniz.rguktong.in` on VPS (gateway-api microservices) |
 
 ## Who this docs site is for
 

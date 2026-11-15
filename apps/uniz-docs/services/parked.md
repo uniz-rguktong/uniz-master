@@ -40,5 +40,6 @@ flowchart TB
 | mail | Parked | `apps/uniz-notifications/src/mail` |
 | files | Parked | `apps/uniz-user` `files.routes` |
 | cron Deployment | Parked | `cron-job.yaml` / storage cleanup CronJob |
+| legacy `uniz-api` monolith | **Removed** | Traffic is microservices via gateway-api only |
 
 CI enforces zeros in `scripts/ci/ci-remote-deploy.sh`.
