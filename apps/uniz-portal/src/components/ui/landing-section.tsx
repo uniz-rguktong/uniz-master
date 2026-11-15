@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import type { ReactNode, ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -8,33 +7,22 @@ import {
   landingSectionYClass,
 } from "@/lib/landing-ui";
 
-/** Frosted card shell — matches calcom-hero feature cards */
+/** Quiet card shell for marketing sections */
 export const landingCardClass =
-  "rounded-2xl border border-zinc-100/60 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-500";
+  "rounded-xl border border-navy-200/80 bg-white overflow-hidden transition-[border-color,box-shadow] duration-150";
 
 export const landingCardHoverClass =
-  "hover:border-zinc-200 hover:bg-white hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)]";
+  "hover:border-navy-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]";
 
 export function LandingMeshBackdrop({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "pointer-events-none fixed inset-0 -z-10 overflow-hidden",
+        "pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-white",
         className,
       )}
-    >
-      <motion.div
-        animate={{ x: [0, 50, 0], y: [0, -30, 0], scale: [1, 1.1, 1] }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -top-[10%] -right-[5%] h-[60%] w-[60%] rounded-full bg-gradient-to-br from-blue-50/40 via-blue-100/10 to-transparent blur-[120px] opacity-70"
-      />
-      <motion.div
-        animate={{ x: [0, -40, 0], y: [0, 60, 0], scale: [1, 1.2, 1] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[40%] -left-[10%] h-[50%] w-[50%] rounded-full bg-gradient-to-tr from-zinc-100/50 via-zinc-100/20 to-transparent blur-[140px] opacity-60"
-      />
-      <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-    </div>
+      aria-hidden
+    />
   );
 }
 
@@ -57,7 +45,7 @@ export function LandingSection({
 export function LandingDivider() {
   return (
     <div className="max-w-[1280px] mx-auto px-6">
-      <div className="h-px w-full bg-gradient-to-r from-transparent via-zinc-200/80 to-transparent" />
+      <div className="h-px w-full bg-navy-200/80" />
     </div>
   );
 }
@@ -87,22 +75,21 @@ export function LandingSectionHeader({
     >
       <div
         className={cn(
-          "flex items-center gap-2.5 mb-4",
+          "flex items-center gap-2 mb-4",
           align === "center" && "justify-center",
         )}
       >
-        <div className="w-1.5 h-1.5 rounded-full bg-zinc-950 animate-pulse" />
         <span className={landingEyebrowClass}>{eyebrow}</span>
       </div>
       <h2
         className={cn(
-          "text-[clamp(1.85rem,4.5vw,3.25rem)] md:text-[clamp(2.25rem,5vw,3.75rem)] font-semibold text-zinc-950 tracking-[-0.05em] leading-[1.02] max-w-4xl",
+          "text-[clamp(1.85rem,4.5vw,3.25rem)] md:text-[clamp(2.25rem,5vw,3.75rem)] font-semibold text-navy-900 tracking-[-0.03em] leading-[1.05] max-w-4xl",
           align === "center" && "max-w-5xl",
         )}
       >
         {title}
         {titleMuted && (
-          <span className="text-zinc-400 font-light"> {titleMuted}</span>
+          <span className="text-navy-400 font-normal"> {titleMuted}</span>
         )}
       </h2>
       {description && (
@@ -142,17 +129,12 @@ export function LandingPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[9.5px] font-semibold tracking-[0.14em] ",
+        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[11px] font-medium",
         PILL_ACCENTS[accent],
         className,
       )}
     >
-      <span
-        className={cn(
-          "w-1.5 h-1.5 rounded-full animate-pulse",
-          PILL_DOTS[accent],
-        )}
-      />
+      <span className={cn("w-1.5 h-1.5 rounded-full", PILL_DOTS[accent])} />
       {label}
     </span>
   );
@@ -191,13 +173,12 @@ export function LandingCTA({
     <button
       type="button"
       className={cn(
-        "group relative inline-flex h-12 items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-zinc-950 px-8 text-[14px] font-bold text-white shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] transition-all duration-300 hover:bg-black",
+        "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-navy-900 px-7 text-[14px] font-medium text-white hover:bg-navy-800 active:scale-[0.98] transition-[color,background-color,transform] duration-150",
         className,
       )}
       {...props}
     >
-      <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
-      <span className="relative flex items-center gap-2.5">{children}</span>
+      {children}
     </button>
   );
 }
