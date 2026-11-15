@@ -40,15 +40,17 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div
-      className={`flex flex-col ${isHomePage ? "h-dvh overflow-hidden bg-white pt-14" : "min-h-screen bg-white portal-page-shell"} text-navy-900 selection:bg-navy-100 selection:text-navy-900`}
+      className={`flex flex-col ${isHomePage ? "h-dvh overflow-hidden bg-[#F5F7FA] pt-14" : "min-h-screen bg-white portal-page-shell"} text-navy-900 selection:bg-navy-100 selection:text-navy-900`}
     >
       <Suspense fallback={<LoadingAnim />}>
         <Navbar />
       </Suspense>
       <main
-        className={`flex-grow flex flex-col min-h-0 ${isHomePage ? "" : "max-w-[1600px] w-full mx-auto p-4 sm:p-6 md:p-10"} animate-in fade-in duration-500`}
+        className={`flex min-h-0 flex-1 flex-col ${isHomePage ? "" : "max-w-[1600px] w-full mx-auto p-4 sm:p-6 md:p-10"} animate-in fade-in duration-500`}
       >
-        <div className="flex-grow h-full w-full min-h-0">{children}</div>
+        <div className="flex h-full min-h-0 w-full flex-1 flex-col">
+          {children}
+        </div>
       </main>
     </div>
   );

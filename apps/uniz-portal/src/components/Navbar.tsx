@@ -4,6 +4,7 @@ import { useStudentData } from "../hooks/student_info";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LogOut, User as UserIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { prefetchTurnstile } from "../utils/prefetchTurnstile";
 
 function formatNavDisplayName(name?: string | null): string {
  if (!name?.trim()) {
@@ -63,6 +64,8 @@ export default function Navbar() {
  {!isAuthenticated ? (
  <button
  type="button"
+ onMouseEnter={prefetchTurnstile}
+ onFocus={prefetchTurnstile}
  onClick={() => navigate("/student/signin")}
  className={cn(
  "px-5 py-2 rounded-lg text-[13px] font-medium transition-[color,background-color,transform] duration-150 active:scale-[0.98]",

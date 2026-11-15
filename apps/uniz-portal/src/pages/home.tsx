@@ -7,6 +7,9 @@ import { usePWAInstall } from "../hooks/usePWAInstall";
 import { SEO } from "../components/SEO";
 import { HOME_SEO, homePageSchema } from "../lib/seo";
 import { UNIZ_CAMPUS_LABEL, UNIZ_TAGLINE } from "../constants/branding";
+import { prefetchTurnstile } from "../utils/prefetchTurnstile";
+
+const ease = [0.22, 1, 0.36, 1] as const;
 
 const AppleIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -51,6 +54,10 @@ const Home = () => {
   };
 
   useEffect(() => {
+    prefetchTurnstile();
+  }, []);
+
+  useEffect(() => {
     let keys = "";
     const track = (e: KeyboardEvent) => {
       keys += e.key.toLowerCase();
@@ -62,17 +69,20 @@ const Home = () => {
   }, [navigate]);
 
   useEffect(() => {
-    const prev = document.documentElement.style.overflow;
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtml = html.style.overflow;
+    const prevBody = body.style.overflow;
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
     return () => {
-      document.documentElement.style.overflow = prev;
-      document.body.style.overflow = "";
+      html.style.overflow = prevHtml;
+      body.style.overflow = prevBody;
     };
   }, []);
 
   return (
-    <div className="h-full w-full flex flex-col overflow-hidden bg-white relative">
+    <div className="relative flex h-[calc(100dvh-3.5rem)] w-full flex-col overflow-hidden bg-[#F5F7FA]">
       <SEO
         title={HOME_SEO.title}
         description={HOME_SEO.description}
@@ -80,85 +90,112 @@ const Home = () => {
         schema={homePageSchema}
       />
 
-      <div className="relative flex-1 flex flex-col items-center justify-center px-6 text-center">
-        <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="text-[13px] text-navy-500 mb-4"
-        >
-          {UNIZ_CAMPUS_LABEL}
-        </motion.p>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 left-0 w-1.5 bg-navy-900 sm:w-2"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_70%_at_50%_0%,rgba(11,42,71,0.06),transparent_55%)]"
+      />
 
-        <motion.h1
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-          className="uniz-logo-wordmark text-[clamp(3.25rem,14vw,6.5rem)] leading-none text-navy-900 mb-5"
-        >
-          uniZ.
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-[22rem] sm:max-w-md text-[18px] sm:text-[20px] font-medium text-navy-900 tracking-[-0.02em] leading-[1.35]"
-        >
-          {UNIZ_TAGLINE.line1} {UNIZ_TAGLINE.line2}
-        </motion.p>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.35, delay: 0.16 }}
-          className="mt-3 max-w-sm text-[14px] sm:text-[15px] text-navy-500 leading-relaxed"
-        >
-          Academics, semester registration, outpasses, and campus updates.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full max-w-xs sm:max-w-none sm:w-auto"
-        >
-          <button
-            type="button"
-            onClick={() => navigate("/student/signin")}
-            className="h-11 px-7 bg-navy-900 text-white text-[14px] font-medium rounded-lg hover:bg-navy-800 active:scale-[0.98] transition-[color,background-color,transform] duration-150"
+      <main className="relative z-[1] flex min-h-0 flex-1 flex-col items-center justify-center px-6 sm:px-10">
+        <div className="flex w-full max-w-xl flex-col items-center text-center">
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease }}
+            className="mb-5 text-[13px] font-medium text-navy-700"
           >
-            Get started
-          </button>
-          {!isInstalled && (
+            {UNIZ_CAMPUS_LABEL}
+          </motion.p>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.04, ease }}
+            className="uniz-logo-wordmark mb-6 text-[clamp(3.75rem,16vw,7rem)] leading-none text-navy-900"
+          >
+            uniZ.
+          </motion.h1>
+
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.45, delay: 0.12, ease }}
+            className="mb-6 h-px w-16 origin-center bg-navy-900"
+            aria-hidden
+          />
+
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.14, ease }}
+            className="max-w-md text-[18px] font-medium leading-snug tracking-[-0.02em] text-navy-900 sm:text-[20px]"
+          >
+            {UNIZ_TAGLINE.line1}
+            <br className="hidden sm:block" />{" "}
+            {UNIZ_TAGLINE.line2}
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.35, delay: 0.2 }}
+            className="mt-4 max-w-sm text-[14px] leading-relaxed text-navy-600 sm:text-[15px]"
+          >
+            Academics, semester registration, outpasses, and campus updates.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.26, ease }}
+            className="mt-10 flex w-full max-w-xs flex-col items-stretch gap-3 sm:max-w-none sm:w-auto sm:flex-row sm:items-center"
+          >
             <button
               type="button"
-              onClick={handleInstallClick}
-              className="h-11 px-5 inline-flex items-center justify-center gap-2 border border-navy-200/80 text-navy-800 text-[14px] font-medium rounded-lg hover:bg-navy-50 active:scale-[0.98] transition-[color,background-color,border-color,transform] duration-150"
+              onMouseEnter={prefetchTurnstile}
+              onFocus={prefetchTurnstile}
+              onClick={() => navigate("/student/signin")}
+              className="h-12 rounded-lg bg-navy-900 px-8 text-[14px] font-medium text-white transition-[color,background-color,transform] duration-150 hover:bg-navy-800 active:scale-[0.98]"
             >
-              <platform.PlatformIcon size={16} />
-              Download
+              Get started
             </button>
-          )}
-        </motion.div>
-      </div>
+            {!isInstalled && (
+              <button
+                type="button"
+                onClick={handleInstallClick}
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-navy-300 bg-white px-6 text-[14px] font-medium text-navy-900 transition-[color,background-color,border-color,transform] duration-150 hover:border-navy-400 hover:bg-navy-50 active:scale-[0.98]"
+              >
+                <platform.PlatformIcon size={16} />
+                Download
+              </button>
+            )}
+          </motion.div>
+        </div>
+      </main>
 
-      <footer className="relative shrink-0 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[12px] text-navy-400">
-        <p>© {new Date().getFullYear()} uniZ</p>
-        <nav className="flex items-center gap-5">
-          <Link
-            to="/privacy"
-            className="font-medium text-navy-500 hover:text-navy-900 transition-colors"
-          >
-            Privacy
-          </Link>
-          <Link
-            to="/developers"
-            className="font-medium text-navy-500 hover:text-navy-900 transition-colors"
-          >
-            Developers
-          </Link>
-        </nav>
+      <footer className="relative z-[1] shrink-0 border-t border-navy-200/80 bg-white/90 px-6 py-4 sm:px-10">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 text-[12px] sm:flex-row">
+          <p className="font-medium text-navy-700">
+            © {new Date().getFullYear()} uniZ · {UNIZ_CAMPUS_LABEL}
+          </p>
+          <nav className="flex items-center gap-6">
+            <Link
+              to="/privacy"
+              className="font-medium text-navy-700 transition-colors hover:text-navy-900"
+            >
+              Privacy
+            </Link>
+            <Link
+              to="/developers"
+              className="font-medium text-navy-700 transition-colors hover:text-navy-900"
+            >
+              Developers
+            </Link>
+          </nav>
+        </div>
       </footer>
     </div>
   );
