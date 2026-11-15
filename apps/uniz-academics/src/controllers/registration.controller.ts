@@ -2,7 +2,7 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import prisma from "../utils/prisma.util";
 import { ErrorCode } from "../shared/error-codes";
-import { resolveEffectiveRole } from "@uniz/shared";
+import { resolveEffectiveRole, API_ATTRIBUTION } from "@uniz/shared";
 import axios from "axios";
 import * as ExcelJS from "exceljs";
 import { redis } from "../utils/redis.util";
@@ -1952,7 +1952,7 @@ export const registerSubjects = async (
     if (!validation.ok) {
       return res.status(400).json({
         error: validation.error,
-        attribution: "SreeCharan",
+        attribution: API_ATTRIBUTION,
       });
     }
 

@@ -70,6 +70,7 @@ app.use("/", grievanceRoutes);
 // Startup self-healing: Check for stuck student jobs
 import { processNextStudentBatch } from "./services/bulk-worker.service";
 import { redis } from "./utils/redis.util";
+import { API_ATTRIBUTION } from "@uniz/shared";
 
 const startWorker = async () => {
   try {
@@ -96,7 +97,7 @@ app.use((req, res) => {
     status: "error",
     message: `Route ${req.method} ${req.url} not found`,
     timestamp: new Date().toISOString(),
-    attribution: "SreeCharan",
+    attribution: API_ATTRIBUTION,
   });
 });
 
