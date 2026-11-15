@@ -955,7 +955,7 @@ export const getAdminProfile = async (
     req.params.username ||
     user?.username ||
     ""
-  ).toUpperCase();
+  ).trim();
 
   // Check if role is any admin role
   const adminRoles = [
@@ -984,13 +984,20 @@ export const getAdminProfile = async (
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
   }
 
+  if (!targetUsername) {
+    return res.status(400).json({
+      code: ErrorCode.VALIDATION_ERROR,
+      message: "Username required",
+    });
+  }
+
   try {
     let profile;
-    const isInternal = user.id === "internal";
+    const lookup = targetUsername.toLowerCase();
 
-    // Check faculty table first
-    const faculty = await prisma.facultyProfile.findUnique({
-      where: { username: targetUsername.toLowerCase() },
+    // Check faculty table first (case-insensitive; stored lowercase)
+    const faculty = await prisma.facultyProfile.findFirst({
+      where: { username: { equals: lookup, mode: "insensitive" } },
     });
     if (faculty) {
       return res.json({
@@ -1033,13 +1040,15 @@ export const getAdminProfile = async (
       return "";
     };
 
-    const existingProfile = await prisma.adminProfile.findUnique({
-      where: { username: targetUsername },
+    // AdminProfile has a unique index on lower(username); exact findUnique
+    // with UPPERCASE misses seeded lowercase rows and then create() 500s.
+    const existingProfile = await prisma.adminProfile.findFirst({
+      where: { username: { equals: targetUsername, mode: "insensitive" } },
     });
 
     if (existingProfile) {
       if (!existingProfile.department) {
-        const inferred = inferDept(user.username);
+        const inferred = inferDept(existingProfile.username || user.username);
         if (inferred) {
           profile = await prisma.adminProfile.update({
             where: { id: existingProfile.id },
@@ -1052,16 +1061,34 @@ export const getAdminProfile = async (
         profile = existingProfile;
       }
     } else {
-      const inferred = inferDept(user.username);
-      profile = await prisma.adminProfile.create({
-        data: {
-          username: user.username,
-          role: user.role as string,
-          name: user.username.charAt(0).toUpperCase() + user.username.slice(1),
-          email: `${user.username}@rguktong.ac.in`,
-          department: inferred || "",
-        },
-      });
+      const canonicalUsername = lookup;
+      const inferred = inferDept(canonicalUsername);
+      const email = `${canonicalUsername}@rguktong.ac.in`;
+      try {
+        profile = await prisma.adminProfile.create({
+          data: {
+            username: canonicalUsername,
+            role: user.role as string,
+            name:
+              canonicalUsername.charAt(0).toUpperCase() +
+              canonicalUsername.slice(1),
+            email,
+            department: inferred || "",
+          },
+        });
+      } catch (createErr: any) {
+        // Race / case collision — re-fetch by lower(username)
+        if (createErr?.code === "P2002") {
+          profile = await prisma.adminProfile.findFirst({
+            where: {
+              username: { equals: canonicalUsername, mode: "insensitive" },
+            },
+          });
+          if (!profile) throw createErr;
+        } else {
+          throw createErr;
+        }
+      }
     }
     return res.json({
       success: true,

@@ -961,50 +961,16 @@ export default function Signin({ type }: SigninProps) {
                   <button
                     type="button"
                     className={loginLinkBtnClass}
-                    onClick={() => setStep("forgot")}
+                    onClick={() => {
+                      // Keep Turnstile mounted across sign-in → forgot (see shared
+                      // widget below). Only clear token if widget will remount.
+                      setStep("forgot");
+                    }}
                   >
                     Forgot password?
                   </button>
                 </div>
               </div>
-
-              {requiresCaptcha() && (step === "signin" || step === "forgot") && (
-                <TurnstileWidget
-                  turnstileRef={turnstileRef}
-                  captchaTokenRef={captchaTokenRef}
-                  onTokenChange={syncCaptchaToken}
-                  onStatusChange={setCaptchaStatus}
-                  status={captchaStatus}
-                />
-              )}
-
-              {requiresCaptcha() && (
-                <CaptchaStatus
-                  status={captchaStatus}
-                  hasToken={!!captchaToken}
-                  waitingOnSubmit={waitingForCaptcha}
-                />
-              )}
-
-              <Button
-                className={loginBtnClass}
-                size="lg"
-                isLoading={isLoading}
-                type="submit"
-                disabled={
-                  !username.trim() ||
-                  !password.trim() ||
-                  (requiresCaptcha() && !captchaReady)
-                }
-              >
-                <span className="relative z-10">
-                  {isLoading
-                    ? "Signing in…"
-                    : requiresCaptcha() && !captchaReady
-                      ? "Waiting for security check…"
-                      : "Continue"}
-                </span>
-              </Button>
             </div>
           )}
 
@@ -1038,15 +1004,53 @@ export default function Signin({ type }: SigninProps) {
                 }
                 className={loginInputWithIconClass}
               />
+            </div>
+          )}
 
-              {requiresCaptcha() && (
-                <CaptchaStatus
-                  status={captchaStatus}
-                  hasToken={!!captchaToken}
-                  waitingOnSubmit={waitingForCaptcha}
-                />
-              )}
+          {/* Turnstile must stay mounted on sign-in AND forgot — previously the
+              widget lived only inside the sign-in block, so Reset password was
+              stuck on “Waiting for security check…” with no widget to complete. */}
+          {(step === "signin" || step === "forgot") && requiresCaptcha() && (
+            <div className="space-y-3">
+              <TurnstileWidget
+                turnstileRef={turnstileRef}
+                captchaTokenRef={captchaTokenRef}
+                onTokenChange={syncCaptchaToken}
+                onStatusChange={setCaptchaStatus}
+                status={captchaStatus}
+              />
+              <CaptchaStatus
+                status={captchaStatus}
+                hasToken={!!captchaToken}
+                waitingOnSubmit={waitingForCaptcha}
+              />
+            </div>
+          )}
 
+          {step === "signin" && (
+            <Button
+              className={loginBtnClass}
+              size="lg"
+              isLoading={isLoading}
+              type="submit"
+              disabled={
+                !username.trim() ||
+                !password.trim() ||
+                (requiresCaptcha() && !captchaReady)
+              }
+            >
+              <span className="relative z-10">
+                {isLoading
+                  ? "Signing in…"
+                  : requiresCaptcha() && !captchaReady
+                    ? "Waiting for security check…"
+                    : "Continue"}
+              </span>
+            </Button>
+          )}
+
+          {step === "forgot" && (
+            <>
               <Button
                 className={loginBtnClass}
                 size="lg"
@@ -1074,7 +1078,7 @@ export default function Signin({ type }: SigninProps) {
                   Back to sign in
                 </button>
               </div>
-            </div>
+            </>
           )}
 
           {/* ─── Verify OTP / Reset Password Step ─────── */}
