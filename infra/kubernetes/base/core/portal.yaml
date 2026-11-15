@@ -5,8 +5,9 @@ metadata:
   labels:
     app: uniz-portal
 spec:
-  # Frontend on Cloudflare Pages. Keep image path for emergency rollback only.
-  # No HPA while replicas: 0.
+  # PARKED — production portal is Cloudflare Pages (uniz.rguktong.in).
+  # Ship frontends via: gh workflow run "Deploy Frontends to Cloudflare Pages"
+  # Keep this Deployment at 0 for emergency image rollback only. No HPA.
   replicas: 0
   selector:
     matchLabels:

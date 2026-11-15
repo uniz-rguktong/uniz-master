@@ -32,6 +32,20 @@ echo "API:        $API_URL"
 echo "LandingAPI: $LANDING_API_URL"
 echo
 
+# Optional vault key audit when run on the VPS with the remote helper present.
+if [[ "${UNIZ_SMOKE_VAULT_AUDIT:-1}" == "1" ]] && [[ -f /root/uniz-secrets.env ]]; then
+  ROOT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+  if [[ -f "$ROOT_DIR/scripts/ops/vps-vault-remote.sh" ]]; then
+    echo "[vault] auditing required keys..."
+    if ! bash "$ROOT_DIR/scripts/ops/vps-vault-remote.sh" audit; then
+      echo "FAIL vault audit"
+      FAIL=1
+    else
+      echo "OK  vault audit"
+    fi
+  fi
+fi
+
 check "portal home (Pages)" "$PORTAL_URL/"
 check "landing home (Pages)" "$LANDING_URL/"
 check "landing API" "$LANDING_API_URL/" "*"

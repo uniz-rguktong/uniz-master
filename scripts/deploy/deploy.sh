@@ -121,11 +121,16 @@ verify_deployment() {
       continue
     fi
     # Single-node VPS: HPA may want more replicas than the node can schedule.
-    local ready available
+    local ready available desired
     ready=$(kubectl get deployment "$dep" -o jsonpath='{.status.readyReplicas}' 2>/dev/null || echo 0)
     available=$(kubectl get deployment "$dep" -o jsonpath='{.status.availableReplicas}' 2>/dev/null || echo 0)
+    desired=$(kubectl get deployment "$dep" -o jsonpath='{.spec.replicas}' 2>/dev/null || echo 0)
     if [ "${ready:-0}" -ge 1 ] && [ "${available:-0}" -ge 1 ]; then
-      echo "[Verify] Rollout incomplete for $dep but ${ready} ready — accepting on constrained VPS."
+      if [ "${desired:-0}" -gt "${ready:-0}" ]; then
+        echo "[Verify] WARN: $dep desired=${desired} ready=${ready} — HPA/node capacity capped on single VPS; accepting ≥1 ready."
+      else
+        echo "[Verify] Rollout incomplete for $dep but ${ready} ready — accepting on constrained VPS."
+      fi
       kubectl get pods 2>/dev/null | grep "$dep" || true
       continue
     fi

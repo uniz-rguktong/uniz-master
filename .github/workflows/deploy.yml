@@ -19,6 +19,16 @@ on:
         description: "Commit message for rebuilding (optional)"
         required: false
         default: "manual-update"
+      force_rebuild:
+        description: "Rebuild all GHCR images ([rebuild all])"
+        required: false
+        type: boolean
+        default: false
+      services:
+        description: "Scoped rebuild tags (space-separated: gateway auth user academics …)"
+        required: false
+        type: string
+        default: ""
 
 jobs:
   ci:
@@ -95,6 +105,32 @@ jobs:
           fi
           echo "[VPS] Loaded deployed image manifest ($(wc -c < .uniz-k8s-image-tags.json) bytes)"
 
+      - name: Compose commit / rebuild message
+        id: msg
+        run: |
+          BASE="${{ github.event.head_commit.message }}"
+          if [ -z "$BASE" ]; then
+            BASE="${{ github.event.inputs.commit_message }}"
+          fi
+          if [ -z "$BASE" ]; then
+            BASE="$(git log -1 --pretty=%B)"
+          fi
+          if [ "${{ github.event.inputs.force_rebuild }}" = "true" ]; then
+            BASE="[rebuild all] $BASE"
+          fi
+          SERVICES="${{ github.event.inputs.services }}"
+          if [ -n "$SERVICES" ]; then
+            for tag in $SERVICES; do
+              BASE="$BASE [rebuild $tag]"
+            done
+          fi
+          {
+            echo "COMMIT_MSG<<EOF"
+            echo "$BASE"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
+          echo "[Plan] Effective COMMIT_MSG: $(echo "$BASE" | head -1)"
+
       - name: Plan parallel image builds
         id: plan
         env:
@@ -106,7 +142,8 @@ jobs:
           DEPLOY_BEFORE_SHA: ${{ github.event.before }}
           LAST_SUCCESSFUL_DEPLOY_SHA: ${{ env.LAST_SUCCESSFUL_DEPLOY_SHA }}
           K8S_IMAGE_MANIFEST: .uniz-k8s-image-tags.json
-          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          COMMIT_MSG: ${{ env.COMMIT_MSG }}
+          SERVICES: ${{ github.event.inputs.services }}
         run: bash scripts/ci/ci-plan-build-matrix.sh
 
   build-image:
@@ -164,6 +201,9 @@ jobs:
       - name: Deploy on VPS (local runner)
         id: vps_deploy
         env:
+          # Prefer existing /root/uniz-secrets.env on the VPS (see render-vps-secrets.sh).
+          # GH secrets remain available as a bootstrap/fallback for first-time or recovery.
+          UNIZ_USE_EXISTING_VAULT: "true"
           JWT_SECURITY_KEY: ${{ secrets.JWT_SECURITY_KEY }}
           INTERNAL_SECRET: ${{ secrets.INTERNAL_SECRET }}
           INTERNAL_BOT_SECRET: ${{ secrets.INTERNAL_BOT_SECRET }}
@@ -218,7 +258,16 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_BEFORE_SHA: ${{ github.event.before }}
           GITHUB_ACTOR: ${{ github.actor }}
+          SERVICES: ${{ github.event.inputs.services }}
+          FORCE_REBUILD: ${{ github.event.inputs.force_rebuild }}
         run: bash scripts/ci/ci-local-deploy.sh
+
+      - name: Post-deploy smoke (required)
+        if: success() && steps.vps_deploy.outcome == 'success'
+        run: |
+          PORTAL_URL="${PORTAL_URL:-https://uniz.rguktong.in}" \
+          API_URL="${API_URL:-https://api-uniz.rguktong.in/api/v1}" \
+          bash scripts/ops/post-deploy-smoke.sh
 
       - name: Fetch VPS image manifest after deploy
         if: success() && steps.vps_deploy.outcome == 'success'
