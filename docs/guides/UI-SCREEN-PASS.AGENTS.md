@@ -18,3 +18,12 @@ This folder’s `UI-SCREEN-PASS.md` is the backlog for branch **`polish/ui-scree
 ## Live
 
 https://uniz.rguktong.in
+
+## Cursor Cloud environment
+
+Committed at `.cursor/environment.json` + `.cursor/Dockerfile` (Node 22, `npm ci`, portal terminal on :5173).
+
+- Branch for UI work: `polish/ui-screen-by-screen`
+- Dashboard: https://cursor.com/dashboard?tab=cloud-agents
+- Point the environment’s environment.json location at this repo file if creating a saved Environment
+- Do not start UI polish until you (or GrokBot) explicitly ask for a screen

@@ -28,7 +28,11 @@ yarn-error.log*
 # IDEs and editors
 .idea/
 .vscode/
-.cursor/
+.cursor/*
+!.cursor/environment.json
+!.cursor/Dockerfile
+!.cursor/rules/
+!.cursor/rules/**
 *.swp
 *.swo
 .DS_Store
