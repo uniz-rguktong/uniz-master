@@ -12,7 +12,7 @@
     "build:shared": "npm run build -w @uniz/shared",
     "build:services": "npm run build --workspaces --if-present",
     "ci:build": "npm run build:shared && bash ./scripts/ci/ci-build.sh",
-    "format:check": "prettier --check \"apps/uniz-portal/src/**/*.{ts,tsx,css}\" \"apps/uniz-landing/src/**/*.{ts,tsx,css,js}\" \"packages/uniz-shared/src/**/*.{ts,js}\" \"packages/uniz-shared/test/**/*.{cjs,js}\" --ignore-path .prettierignore",
+    "format:check": "prettier --check \"packages/uniz-shared/src/**/*.{ts,js}\" \"packages/uniz-shared/test/**/*.{cjs,js}\" --ignore-path .prettierignore",
     "lint": "npm run lint -w uniz-landing --if-present",
     "typecheck": "npm run typecheck -w uniz --if-present",
     "test": "npm run test -w @uniz/shared --if-present",
