@@ -65,7 +65,7 @@ export default function Navbar() {
               type="button"
               onClick={() => navigate("/student/signin")}
               className={cn(
-                "px-5 py-2 rounded-xl text-[13px] font-semibold transition-colors active:scale-[0.98]",
+                "px-5 py-2 rounded-lg text-[13px] font-medium transition-[color,background-color,transform] duration-150 active:scale-[0.98]",
                 isHome
                   ? "bg-white text-navy-900 hover:bg-navy-50"
                   : "bg-navy-900 text-white hover:bg-navy-800",
