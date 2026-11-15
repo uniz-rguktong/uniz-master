@@ -1,0 +1,75 @@
+# Lightweight host/cluster metrics for a single-node VPS (free, self-hosted).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netdata
+  namespace: uniz-observability
+  labels:
+    app: netdata
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netdata
+  template:
+    metadata:
+      labels:
+        app: netdata
+    spec:
+      containers:
+        - name: netdata
+          image: netdata/netdata:v2.5.3
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 19999
+              name: http
+          env:
+            - name: NETDATA_CLAIM_TOKEN
+              value: ""
+            - name: DO_NOT_TRACK
+              value: "1"
+          securityContext:
+            capabilities:
+              add:
+                - SYS_PTRACE
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "768Mi"
+          volumeMounts:
+            - name: proc
+              mountPath: /host/proc
+              readOnly: true
+            - name: sys
+              mountPath: /host/sys
+              readOnly: true
+            - name: etc-os-release
+              mountPath: /host/etc/os-release
+              readOnly: true
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: etc-os-release
+          hostPath:
+            path: /etc/os-release
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netdata
+  namespace: uniz-observability
+spec:
+  selector:
+    app: netdata
+  ports:
+    - name: http
+      port: 19999
+      targetPort: 19999
+  type: ClusterIP

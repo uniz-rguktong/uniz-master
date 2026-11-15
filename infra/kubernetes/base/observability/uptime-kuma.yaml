@@ -1,0 +1,67 @@
+# External uptime probes + free Telegram/Discord webhook alerts.
+# hostPath suits the single-node VPS (local-path PVC can lag on first provision).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptime-kuma
+  namespace: uniz-observability
+  labels:
+    app: uptime-kuma
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptime-kuma
+  template:
+    metadata:
+      labels:
+        app: uptime-kuma
+    spec:
+      containers:
+        - name: uptime-kuma
+          image: louislam/uptime-kuma:1.23.16
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3001
+              name: http
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3001
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3001
+            initialDelaySeconds: 15
+            periodSeconds: 10
+      volumes:
+        - name: data
+          hostPath:
+            path: /var/lib/uniz/uptime-kuma
+            type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uptime-kuma
+  namespace: uniz-observability
+spec:
+  selector:
+    app: uptime-kuma
+  ports:
+    - name: http
+      port: 3001
+      targetPort: 3001
+  type: ClusterIP

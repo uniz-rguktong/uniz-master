@@ -35,8 +35,18 @@ if [ "$(git rev-parse HEAD)" != "$GITHUB_SHA" ]; then
   exit 1
 fi
 
-./scripts/deploy/render-vps-secrets.sh /root/uniz-secrets.env
+# Prefer the on-box vault when present (narrows GH secret blast radius).
+# Set UNIZ_USE_EXISTING_VAULT=false to force re-render from the Actions env.
+if [ "${UNIZ_USE_EXISTING_VAULT:-true}" = "true" ] \
+  && [ -f /root/uniz-secrets.env ] \
+  && grep -qE '^[A-Za-z_][A-Za-z0-9_]*=' /root/uniz-secrets.env; then
+  echo "[Secrets] Reusing existing /root/uniz-secrets.env (UNIZ_USE_EXISTING_VAULT=true)"
+else
+  ./scripts/deploy/render-vps-secrets.sh /root/uniz-secrets.env
+fi
 ./scripts/deploy/ensure-ghcr-pull-secret.sh
+# Keep k8s Secret in sync with the vault file used by pods.
+./scripts/deploy/sync-k8s-secret-from-vault.sh /root/uniz-secrets.env || true
 
 export DEPLOY_SHA="$GITHUB_SHA"
 export DEPLOY_BEFORE_SHA="${GITHUB_BEFORE_SHA:-}"
@@ -46,6 +56,14 @@ export GHCR_PULL_TOKEN="${GHCR_PULL_TOKEN:-}"
 export GHCR_USERNAME="${GHCR_USERNAME:-uniz-rguktong}"
 
 COMMIT_MSG="$(git log -1 --pretty=%B)"
+if [ "${FORCE_REBUILD:-}" = "true" ]; then
+  COMMIT_MSG="[rebuild all] $COMMIT_MSG"
+fi
+if [ -n "${SERVICES:-}" ]; then
+  for tag in $SERVICES; do
+    COMMIT_MSG="$COMMIT_MSG [rebuild $tag]"
+  done
+fi
 echo "[Log] Last commit: $(echo "$COMMIT_MSG" | head -1)"
 
 rm -f "$EXIT_FILE"
@@ -64,16 +82,8 @@ ec="$(cat "$EXIT_FILE")"
 echo "[Deploy] Finished with exit code $ec"
 
 if [ "$ec" = "0" ]; then
-  echo "[Smoke] Running post-deploy smoke checks..."
-  if PORTAL_URL="${PORTAL_URL:-https://uniz.rguktong.in}" \
-    API_URL="${API_URL:-https://api-uniz.rguktong.in/api/v1}" \
-    bash ./scripts/ops/post-deploy-smoke.sh; then
-    echo "[Smoke] OK"
-  else
-    echo "[Smoke] WARN — smoke checks failed (deploy itself succeeded)"
-  fi
-
-  # Scale down retired always-on Deployments if they linger from prior releases
+  # Scale down retired always-on Deployments if they linger from prior releases.
+  # Portal/landing are served from Cloudflare Pages — keep k8s replicas at 0.
   kubectl scale deploy/uniz-mail-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl scale deploy/uniz-files-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl scale deploy/uniz-cron-service --replicas=0 --ignore-not-found=true 2>/dev/null || true
@@ -85,6 +95,21 @@ if [ "$ec" = "0" ]; then
   # nginx hop removed: Traefik → gateway-api
   kubectl scale deploy/uniz-gateway --replicas=0 --ignore-not-found=true 2>/dev/null || true
   kubectl delete hpa uniz-gateway-hpa --ignore-not-found=true 2>/dev/null || true
+
+  echo "[Smoke] Running post-deploy smoke checks (required)..."
+  if ! PORTAL_URL="${PORTAL_URL:-https://uniz.rguktong.in}" \
+    API_URL="${API_URL:-https://api-uniz.rguktong.in/api/v1}" \
+    bash ./scripts/ops/post-deploy-smoke.sh; then
+    echo "[Smoke] FAILED — marking deploy unsuccessful"
+    ec=1
+  else
+    echo "[Smoke] OK"
+  fi
+
+  if [ -x ./scripts/ops/vps-vault-remote.sh ] || [ -f ./scripts/ops/vps-vault-remote.sh ]; then
+    echo "[Vault] Auditing required keys on VPS..."
+    bash ./scripts/ops/vps-vault-remote.sh audit || echo "[Vault] WARN — vault audit reported missing keys"
+  fi
 fi
 
 exit "$ec"

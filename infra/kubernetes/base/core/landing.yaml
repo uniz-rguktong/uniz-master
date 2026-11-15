@@ -5,7 +5,8 @@ metadata:
   labels:
     app: uniz-landing
 spec:
-  # Marketing site on Cloudflare Pages. Keep for emergency rollback only.
+  # PARKED — production landing is Cloudflare Pages (rguktong.in / www).
+  # Ship via Pages workflow. Keep replicas 0; no HPA.
   replicas: 0
   selector:
     matchLabels:

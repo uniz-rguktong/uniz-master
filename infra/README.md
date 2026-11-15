@@ -1,68 +1,49 @@
-# UniZ Infrastructure - Orchestration & Deployment
+# UniZ Infrastructure — VPS (k3s) + Cloudflare Pages
 
-![Docker](https://img.shields.io/badge/Docker-24.x-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Kubernetes](https://img.shields.io/badge/Kubernetes-1.28-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![Redis](https://img.shields.io/badge/Redis-7-DC382D?style=for-the-badge&logo=redis&logoColor=white)
-![Nginx](https://img.shields.io/badge/Nginx-1.25-009639?style=for-the-badge&logo=nginx&logoColor=white)
+Single-node production topology:
 
-> **UniZ ENTERPRISE INFRASTRUCTURE**
-> _Providing the foundation for high-availability microservices orchestration, automated scaling, and resilient data persistence._
+- **Cloudflare Pages (free):** `uniz.rguktong.in` (portal), `rguktong.in` (landing)
+- **VPS k3s:** Traefik → `uniz-gateway-api` → microservices, Postgres, Redis
+- **Deploy:** GitHub Actions → GHCR → self-hosted runner on the VPS
 
-## Architecture Overview
+## Layout
 
-The Infrastructure module manages the environmental state and deployment orchestration for the entire UniZ ecosystem. It centralizes Kubernetes manifests, Docker Compose configurations, and system-wide scripts used for initializing databases, managing gateway routing, and executing global health checks. This repository is designed to support both local development via Docker and production-grade scaling via Kubernetes.
+| Path | Role |
+|---|---|
+| `infra/kubernetes/base/core/` | Workloads, HPA, CronJobs |
+| `infra/kubernetes/base/shared/` | Ingress, issuers, config |
+| `infra/kubernetes/base/observability/` | Uptime Kuma + Netdata (optional apply) |
+| `infra/docker-compose*.yml` | Local / legacy compose |
+| `scripts/deploy/` | Deploy, secrets, CF Pages cutover |
+| `docs/ops/` | Runbooks (index, rollback, HPA, backups, CF) |
 
-## Service Map & Port Allocation
+## Local setup
 
-| Service          | internal Port | External Port | Role                           |
-| :--------------- | :------------ | :------------ | :----------------------------- |
-| **Gateway**      | 80            | 80 / 443      | Entry point & Load Balancer    |
-| **Auth**         | 3001          | 3001          | Identity Provider & JWT Issuer |
-| **User**         | 3002          | 3002          | Profile & RBAC Management      |
-| **Outpass**      | 3003          | 3003          | Workflow & Approval Engine     |
-| **Academics**    | 3004          | 3004          | Grades & Attendance Engine     |
-| **Files**        | 3005          | 3005          | Asset Storage & Retrieval      |
-| **Mail**         | 3006          | 3006          | SMTP Dispatch Hub              |
-| **Notification** | 3007          | 3007          | WebSocket & Event Dispatcher   |
-| **Cron**         | 3008          | 3008          | Scheduled Maintenance Worker   |
+```bash
+npm run setup
+npm run db:push   # if applicable
+npm run docker:up
+```
 
-## Global Infrastructure Control
+## Production deploy
 
-### Prerequisites
+```bash
+gh workflow run "VPS Automated Deployment" -f commit_message="ship"
+gh workflow run "Deploy Frontends to Cloudflare Pages" -f target=all
+bash scripts/ops/post-deploy-smoke.sh
+```
 
-- Docker & Docker Compose
-- Node.js 20+
+## Autoscaling (single node: 4 vCPU / ~15Gi)
 
-### Environmental Setup
+HPA is real but **capacity-capped by one machine**. Targets:
 
-1. **Initialize Project**:
-   ```bash
-   npm run setup
-   ```
-2. **Database Schema Sync**:
-   ```bash
-   npm run db:push
-   ```
-3. **Local Orchestration**:
-   ```bash
-   npm run docker:up
-   ```
+- gateway-api `1→3` @ 45% CPU (edge absorber)
+- auth `1→2` @ 50% CPU
+- user / academics `1→3` @ 70% CPU
+- notifications `1→2` @ 70% CPU
 
-### Production Operations
+Do not HPA Postgres/Redis on this box. Monthly drill: see [docs/ops/HPA_DRILL.md](../docs/ops/HPA_DRILL.md).
 
-The infrastructure follows a GitOps-ready pattern. Kubernetes manifests for the K3s cluster are located in the `k8s/` directory (if applicable) or managed via the centralized `docker-compose.prod.yml` for high-resource VPS deployments.
+## Ops index
 
-## Scaling Protocols
-
-The system is optimized for Horizontal Pod Autoscaling (HPA):
-
-- **CPU Scaling**: Services scale when reaching 70% CPU utilization.
-- **Replica Strategy**: Auth Service is pre-scaled to 4 replicas to match 4-vCPU hardware optimization for Bcrypt.
-- **Cache Layer**: Redis acts as the unified session and security cache across all nodes.
-
----
-
-<p align="center">
-  Corporate Technical Infrastructure - internal Use Only
-</p>
+See [docs/ops/INDEX.md](../docs/ops/INDEX.md).

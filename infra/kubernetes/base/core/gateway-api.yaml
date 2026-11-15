@@ -73,6 +73,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-gateway-api
+  # Single 4-vCPU VPS: keep gateway as the primary scale absorber.
   minReplicas: 1
   maxReplicas: 3
   metrics:

@@ -6,9 +6,87 @@ on:
     branches: [main]
 
 jobs:
+  format:
+    name: Format check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Scoped to shared until portal/landing are prettier-clean.
+      - name: Prettier check (shared)
+        run: npm run format:check
+
+  lint:
+    name: Lint frontends
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint landing (advisory until debt cleared)
+        run: npm run lint -w uniz-landing
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared package
+        run: npm run build:shared
+
+      - name: Typecheck portal (advisory until debt cleared)
+        run: npm run typecheck -w uniz
+
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared package
+        run: npm run build:shared
+
+      - name: Run unit tests
+        run: npm test
+
   build:
     name: Build monorepo
     runs-on: ubuntu-latest
+    needs: [format, test]
     steps:
       - uses: actions/checkout@v4
 
