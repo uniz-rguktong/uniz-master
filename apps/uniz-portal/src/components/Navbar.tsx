@@ -37,9 +37,9 @@ export default function Navbar() {
     (localStorage.getItem("student_token") && user);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-[100] bg-white/90 backdrop-blur-xl border-b border-zinc-100/80">
+    <header className="fixed top-0 inset-x-0 z-[100] bg-white/90 backdrop-blur-xl border-b border-navy-200/80">
       <div className="w-full max-w-7xl mx-auto flex items-center justify-between h-16 px-6">
-        <Link to="/" className="uniz-logo-wordmark text-2xl text-zinc-950 hover:opacity-80 transition-opacity">
+        <Link to="/" className="uniz-logo-wordmark text-2xl text-navy-900 hover:opacity-80 transition-opacity">
           uniZ.
         </Link>
 
@@ -47,7 +47,7 @@ export default function Navbar() {
           {!isAuthenticated ? (
             <button
               onClick={() => navigate("/student/signin")}
-              className="px-5 py-2 bg-zinc-950 text-white rounded-xl text-[13px] font-semibold hover:bg-zinc-800 transition-colors active:scale-[0.98]"
+              className="px-5 py-2 bg-navy-900 text-white rounded-xl text-[13px] font-semibold hover:bg-navy-800 transition-colors active:scale-[0.98]"
             >
               Get started
             </button>
