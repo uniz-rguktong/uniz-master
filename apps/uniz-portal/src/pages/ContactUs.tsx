@@ -82,9 +82,8 @@ export default function ContactUs() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-20"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-zinc-100 shadow-sm rounded-full mb-8">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            <span className="text-zinc-600 text-[10px] font-bold tracking-[0.14em]">Contact Channels</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-zinc-200 rounded-md mb-8">
+            <span className="text-zinc-600 text-[12px] font-medium">Contact</span>
           </div>
           <h1 className="text-7xl font-semibold text-zinc-900 mb-6 tracking-tighter leading-none">
             Get in <span className="text-zinc-300">Touch</span>
@@ -119,10 +118,10 @@ export default function ContactUs() {
           <Link to="/">
             <Button
               variant="outline"
-              className="h-16 px-12 rounded-full border-zinc-200 bg-white text-zinc-500 hover:text-zinc-900 hover:border-zinc-900 transition-all duration-500 group"
+              className="h-12 px-8 rounded-lg border-zinc-200 bg-white text-zinc-600 hover:text-zinc-900 hover:border-zinc-400 transition-[color,background-color,border-color] duration-150 group"
             >
-              <ArrowLeft className="w-5 h-5 mr-3 group-hover:-translate-x-1 transition-transform" />
-              <span className="font-bold tracking-[0.14em] text-xs">Return to Home</span>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              <span className="font-medium text-[13px]">Return to home</span>
             </Button>
           </Link>
         </motion.div>

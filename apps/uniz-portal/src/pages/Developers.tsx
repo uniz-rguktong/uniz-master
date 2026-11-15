@@ -40,7 +40,7 @@ export default function Developers() {
 
         <section className="pb-2 md:pb-6">
           <div className="mx-auto max-w-3xl px-2 pb-6 pt-4 text-center md:pb-8 md:pt-8">
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">
+            <p className="text-[12px] font-medium text-zinc-500">
               Open source
             </p>
             <h2 className="mt-2 text-[clamp(1.35rem,3vw,1.875rem)] font-semibold leading-snug tracking-tight text-zinc-950">
