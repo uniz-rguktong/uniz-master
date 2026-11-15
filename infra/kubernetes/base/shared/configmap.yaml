@@ -20,6 +20,8 @@ data:
   OUTPASS_SERVICE_URL: "http://uniz-outpass-service.default.svc.cluster.local:3003"
   # Files folded into user-service (/image/upload)
   FILES_SERVICE_URL: "http://uniz-user-service.default.svc.cluster.local:3002"
+  # Legacy alias used by a few callers — points at user (not the retired uniz-api monolith)
+  UNIZ_API_URL: "http://uniz-user-service.default.svc.cluster.local:3002"
   # Mail folded into notification/comms service (/send)
   MAIL_SERVICE_URL: "http://uniz-notification-service.default.svc.cluster.local:3007"
   NOTIFICATION_SERVICE_URL: "http://uniz-notification-service.default.svc.cluster.local:3007"

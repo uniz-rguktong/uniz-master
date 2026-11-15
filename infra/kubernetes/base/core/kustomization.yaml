@@ -10,11 +10,14 @@ resources:
   # Files folded into user-service (FILES_SERVICE_URL → user)
   # - files-service.yaml
   - gateway-api.yaml
+  # PARKED replicas:0 — nginx hop removed (Traefik → gateway-api). Keep for rollback.
   - gateway.yaml
   # Mail folded into notification/comms (MAIL_SERVICE_URL → notifications)
   # - mail-service.yaml
   - notification-service.yaml
+  # PARKED replicas:0 — outing off; Service retained for grievance URL DNS.
   - outpass-service.yaml
+  # PARKED replicas:0 — production FE on Cloudflare Pages.
   - portal.yaml
   - storage-cleanup-job.yaml
   - postgres-backup-job.yaml
@@ -23,4 +26,6 @@ resources:
   - redis.yaml
   - user-service.yaml
   - docs-service.yaml
+  # PARKED replicas:0 — production landing on Cloudflare Pages.
   - landing.yaml
+  # Legacy uniz-api monolith removed from cluster (traffic uses microservices).

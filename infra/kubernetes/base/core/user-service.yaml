@@ -51,11 +51,11 @@ spec:
                 name: uniz-secrets
           resources:
             limits:
-              cpu: "1000m"
-              memory: "1024Mi"
+              cpu: "800m"
+              memory: "768Mi"
             requests:
               cpu: "100m"
-              memory: "256Mi"
+              memory: "128Mi"
           readinessProbe:
             httpGet:
               path: /health
