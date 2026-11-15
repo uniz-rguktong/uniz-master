@@ -1,6 +1,6 @@
 ---
 title: "Login"
-description: "How to access the UniZ portal, manage your password, and install the app on your device."
+description: "How to access the UniZ portal (including Turnstile when enabled), manage your password, and install the app on your device."
 ---
 
 The UniZ portal is your central hub for academics, leave requests, and your student profile. Your login credentials are your RGUKT roll number and a password set by the administration.
@@ -16,7 +16,16 @@ Navigate to the UniZ student portal URL provided by your institution.
 - **Username** — your roll number (e.g., `O210008`) - **Password** — your
     current password
 
-  ### Tap Sign In
+  ### Complete Turnstile (when enabled)
+
+When `VITE_TURNSTILE_SITE_KEY` is set, student and admin sign-in show a
+    Cloudflare Turnstile check before **Continue** enables. The portal warms
+    the Turnstile script on app boot and on home / **Get started** hover or
+    focus via `apps/uniz-portal/src/utils/prefetchTurnstile.ts`, so the widget
+    is usually ready by the time you reach `/student/signin` or
+    `/admin/signin`. Env keys and trust boundaries: [Security model](/system/security).
+
+  ### Tap Continue / Sign In
 
 On success, you are redirected to your profile dashboard. The portal stores
     your session securely in the browser — you do not need to enter your

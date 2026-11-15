@@ -14,6 +14,10 @@ Technical API and flow docs (not this guide):
 - https://api-uniz.rguktong.in/docs
 - https://api-uniz.rguktong.in/docs/system/action-flows
 
+## Screenshots (public)
+
+Captured against a local Vite build of `apps/uniz-portal` (production `uniz.rguktong.in` may present a Cloudflare challenge). Last refresh: **15 November 2026** — Elaya Layout A home (`01-home.png` shows split hero + product preview). Authenticated role shots remain “Live screenshot pending test account.” Turnstile may be blank locally without `VITE_TURNSTILE_SITE_KEY`.
+
 ## Regenerate
 
 ```bash
