@@ -1,892 +1,1243 @@
-# UniZ UI guidance
+# UniZ UI Guidance
 
-Portal: https://uniz.rguktong.in  
-Technical docs: https://api-uniz.rguktong.in/docs  
-Action flows: https://api-uniz.rguktong.in/docs/system/action-flows
+**Institution.** RGUKT Ongole  
+**Document date.** 15 November 2026  
+**Audience.** Campus users and trainers  
+**Portal.** [https://uniz.rguktong.in](https://uniz.rguktong.in)  
+**Technical docs.** [https://api-uniz.rguktong.in/docs/](https://api-uniz.rguktong.in/docs/)  
+**Action flows.** [https://api-uniz.rguktong.in/docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows)  
+**Repo mirror.** `apps/uniz-docs/`
 
-Audience: campus users, trainers, UI walkthrough readers.  
-Tone: plain institutional guidance. No production secrets.
+---
 
-## Table of contents
+## How to use this guide
 
-- [About this guide](#about-this-guide)
-- [How to use this document](#how-to-use-this-document)
-- [Roles at a glance](#roles-at-a-glance)
-- [Shared chrome](#shared-chrome)
-- [Public and marketing surfaces](#public-and-marketing-surfaces)
-- [Authentication](#authentication)
-- [Student portal](#student-portal)
-  - [Student — profile and dashboard](#student-—-profile-and-dashboard)
-  - [Student — registration](#student-—-registration)
-  - [Student — current semester](#student-—-current-semester)
-  - [Student — results (GradeHub)](#student-—-results-(gradehub))
-  - [Student — attendance](#student-—-attendance)
-  - [Student — password (signed in)](#student-—-password-(signed-in))
-  - [Student — grievance](#student-—-grievance)
-  - [Student — help and support](#student-—-help-and-support)
-  - [Student — notifications](#student-—-notifications)
-  - [Student — outpass and outing (when enabled)](#student-—-outpass-and-outing-(when-enabled))
-- [Admin portal — common shell](#admin-portal-—-common-shell)
-  - [Webadmin and COE](#webadmin-and-coe)
-  - [Webadmin — student details and bulk ops](#webadmin-—-student-details-and-bulk-ops)
-  - [Webadmin — academics uploads and subjects](#webadmin-—-academics-uploads-and-subjects)
-  - [Webadmin — semester registration builder](#webadmin-—-semester-registration-builder)
-  - [Webadmin — campus CMS and push](#webadmin-—-campus-cms-and-push)
-  - [Webadmin — faculty, logs, and security](#webadmin-—-faculty-logs-and-security)
-- [Director](#director)
-- [Dean](#dean)
-- [HOD](#hod)
-- [SWO / DSW](#swo--dsw)
-- [Caretaker](#caretaker)
-- [Warden](#warden)
-- [Security](#security)
-- [Faculty portal](#faculty-portal)
-- [Cross-role workflows](#cross-role-workflows)
-- [Route map appendix](#route-map-appendix)
-- [Gaps and screenshot notes](#gaps-and-screenshot-notes)
+This document is a UI guidance inventory: every portal feature and every user-facing action, organized by role. It is not an architecture or API reference.
 
-## About this guide
+For each feature you will find: what it is, who can use it, how to open it (navigation + URL from `apps/uniz-portal/src/App.tsx` and admin section routes), every actionable control, and what happens when the control is used. Where a matching page exists under the institutional docs site, a link is included.
 
-This document is a UI walkthrough for UniZ campus users, trainers, and anyone learning the portal screens.
+> **Technical details.** For endpoints, storage, and deployment use [https://api-uniz.rguktong.in/docs/](https://api-uniz.rguktong.in/docs/) and especially [Action flows](https://api-uniz.rguktong.in/docs/system/action-flows). Prefer those pages over this guide for API behaviour.
 
-- **Product:** UniZ portal at https://uniz.rguktong.in
-- **Audience:** students, faculty, and administrative staff (all roles)
-- **Purpose:** describe every major feature and every UI action a user can take, organized by role
-- **Not covered here:** APIs, architecture, deployment, and internal service wiring
+**Screenshot policy.** Public pages in this revision were captured against a local Vite build of `apps/uniz-portal` (production capture is often blocked by Cloudflare challenge). Authenticated screens are described from React UI source and docs; those sections are marked *Live screenshot pending test account*. No production credentials were used or stored.
 
-For technical detail, always use the live documentation:
+**Feature flags.** Outing and outpass student/admin flows are gated by `VITE_ENABLE_OUTPASS_OUTING` (default off). Related routes may be commented out in `App.tsx` while the flag is off.
 
-- Docs home: https://api-uniz.rguktong.in/docs
-- Action flows (UI → gateway → service): https://api-uniz.rguktong.in/docs/system/action-flows
+---
 
-### Credentials policy
+## Role overview
 
-This guide does not include passwords, tokens, or production credentials. Features were inventoried from the portal route map, role sidebars, and the public role guides in `apps/uniz-docs`. Screens and actions may vary with your assigned role and with feature flags. If something is missing from your view, that is usually a permission or flag difference, not a broken install.
-
-### Production notes that affect the UI
-
-- **Outpass and outing** flows are feature-flagged off by default in production (`VITE_ENABLE_OUTPASS_OUTING`). Related student nav items and admin approval queues are hidden unless the flag is enabled. See https://api-uniz.rguktong.in/docs/students/outpass and https://api-uniz.rguktong.in/docs/howto/revive-outpass.
-- **Maintenance mode** can show an “Under maintenance” interstitial for non-admin visitors when enabled.
-- **UI may vary with permissions.** Role shells hide tabs your account cannot use.
-
-## How to use this document
-
-1. Find your role section (student, faculty, or the matching admin role).
-2. Use the navigation path listed for each feature.
-3. Follow the action tables: control → expected outcome.
-4. For deep technical behaviour, open the linked docs page under https://api-uniz.rguktong.in/docs.
-
-Shared chrome (logo, logout, privacy links, notifications) is described once and applies across signed-in surfaces unless a role shell says otherwise.
-
-## Roles at a glance
-
-| Role | Who it is for | Portal entry | Primary UI focus |
-| --- | --- | --- | --- |
-| Public visitor | Anyone | `/` | Home, privacy, developers, PWA install, SEO pages |
-| Student | Enrolled RGUKT students | `/student/signin` → `/student` | Profile, registration, grades, attendance, grievance, help |
-| Faculty | Teaching staff | Admin/faculty sign-in → `/faculty` | Overview, profile, branch students, password |
-| Webadmin / COE | Platform administrators | `/admin/signin` → `/admin` | Students, academics, semester builder, campus CMS, push, security |
-| Director | Institution director | `/admin` | Same academic/CMS breadth as webadmin (no semester-approvals tab) |
-| Dean | Dean of academics | `/admin` | Full academic/CMS + semester approvals |
-| HOD | Head of department | `/admin` | Department students + semester approvals |
-| SWO / DSW | Student welfare | `/admin` | Grievances (outing/outpass when flagged on) |
-| Caretaker (M/F) | Hostel caretakers | `/admin` | Status update; outing/outpass approvals when flagged on |
-| Warden (M/F) | Hostel wardens | `/admin` | Outing/outpass approvals when flagged on |
-| Security | Gate staff | `/admin` or `/admin/security` | Gate scan, log entry/exit, search directory |
-
-Role definitions and capability summaries: https://api-uniz.rguktong.in/docs/roles
-
-## Shared chrome
-
-### Public footer and legal links
-
-On the home page and related public pages you typically find:
-
-| Control | Where | Outcome |
+| Role | Audience | Primary UI |
 | --- | --- | --- |
-| Privacy | Footer link `/privacy` | Opens privacy policy |
-| Developers | Footer link `/developers` | Opens developers / team page |
-| Copyright line | Footer | Institutional notice only |
+| Public | Anyone without a session | Landing, legal, SEO, sign-in |
+| Student | Enrolled RGUKT students | Profile, academics, registration, grievance, notifications |
+| Faculty | Teaching staff | `/faculty` overview, profile, branch students, password |
+| HOD | Head of Department | Dean shell subset: students + semester approvals |
+| Caretaker (M/F) | Hostel caretakers | First-level outing/outpass approval, status update |
+| Warden (M/F) | Hostel wardens | Second-level outing/outpass approval |
+| SWO / DSW | Student Welfare | Grievances; outing/outpass when enabled |
+| Dean | Academic dean | Broad academic + campus admin shell |
+| Director | Institution director | Broad academic + campus admin shell (no semester approvals tab) |
+| Webadmin / COE | Platform / exam admin | Full webmaster shell including bulk ops & logs |
+| Security | Gate staff | Check-in/check-out terminal |
 
-Signed-in layouts may also expose privacy via site legal footer components where present.
+Source of truth for authorization semantics: [https://api-uniz.rguktong.in/docs/roles](https://api-uniz.rguktong.in/docs/roles).
 
-### PWA install
+## Role navigation matrix
 
-UniZ can be installed as a progressive web app.
-
-| Control | Where | Outcome |
+| Role | Entry | Primary navigation / actions |
 | --- | --- | --- |
-| Download / Install | Home (`/`) when not already installed | Triggers browser install prompt; on iOS shows Add to Home Screen instructions |
-| Install banner | Global `InstallPWA` overlay (mobile / after sign-in) | Install or dismiss; auto-hides after a short delay |
-| Dismiss (X) | Install banner | Hides the banner for the session |
+| Public | `/` | Get started; Download; Privacy; Developers; type `admin` for staff sign-in |
+| Student | `/student (Sidebar dock / mobile menu)` | My Profile; Registration; Results; Attendance; Password; Grievance; Help; Notifications; Logout. Outing/Outpass when flag on |
+| Faculty | `/faculty (in-page tabs)` | Overview; My Profile; Branch Students; Change Password; Sign out |
+| HOD | `/admin (DeanDashboard, HOD subset)` | Overview; Student Details; Semester Approvals |
+| Caretaker (M/F) | `/admin (CaretakerDashboard)` | Overview; Approve Outings/Outpasses (flag on); Status Update |
+| Warden (M/F) | `/admin (WardenDashboard)` | Overview; Approve Outings/Outpasses (flag on) |
+| SWO / DSW | `/admin (SWODashboard)` | Overview; Grievances; Security; Outing/Outpass request management when flag on |
+| Dean | `/admin (DeanDashboard)` | Overview; Student Details; Student Bulk Ops; Attendance; Grades; Subjects; Semester Registration; Semester Approvals; Campus (banners, updates, website, push); Faculty Management; System & Logs; Security |
+| Director | `/admin (DirectorDashboard)` | Same campus/academic breadth as Dean without Semester Approvals tab |
+| Webadmin / COE | `/admin (WebmasterDashboard)` | Overview; Student Details; Student Bulk Ops; Attendance; Grades; Subjects; Semester Registration; Campus tools; Faculty Management; System & Logs; Security |
+| Security | `/admin/security (SecurityPortal)` | Overview; Check-In / Check-Out; Search Directory; Activity Logs |
 
-### Notifications chrome
+Admin tab → URL mapping is defined in `apps/uniz-portal/src/utils/adminSectionRoutes.ts`. Backend approval chains: [https://api-uniz.rguktong.in/docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows).
 
-| Control | Where | Outcome |
-| --- | --- | --- |
-| Notification bell | Student shell header | Opens notification panel / centre |
-| Notification deep link | `/notifications` | Routes into the notification experience when authenticated |
-| Student notifications page | `/student/notifications` | Full inbox list |
-| Admin notifications page | `/admin/notifications` | Admin notification surface |
+---
 
-Technical inbox behaviour: https://api-uniz.rguktong.in/docs/api/comms/notifications and https://api-uniz.rguktong.in/docs/system/action-flows
+## Public surfaces
 
-### Logout
+### Home
 
-| Control | Where | Outcome |
-| --- | --- | --- |
-| Logout / Sign out | Student dock or overflow; admin shell; faculty sidebar | Clears session tokens and returns to public home / sign-in |
-| Confirm logout | Student confirm modal | Completes logout only after confirmation |
+**What it is.** Public landing for the UniZ campus portal (redesigned brand-first composition under the global Navbar). Shows campus label, uniZ wordmark, tagline, and CTAs. Signed-in users are redirected to their role home.
 
-### Auth redirect behaviour
+**Who.** Public (unauthenticated)
 
-If you already have a valid student, faculty, or admin session and open `/`, the portal redirects you to the matching dashboard (`/student`, `/faculty`, or `/admin`) instead of the marketing home.
+**Entry path.** Nav: direct visit · URL: `/`
 
-### 404 and maintenance
+**Actions.**
 
-| Screen | Path / trigger | Actions |
-| --- | --- | --- |
-| 404 | Unknown route | Go back; Return home |
-| Under maintenance | Maintenance flag for non-admin visitors | Go back |
+- **Navbar Get started** — Opens `/student/signin`. Hover/focus prefetches Cloudflare Turnstile.
+- **Hero Get started** — Same destination as navbar; also prefetches Turnstile on hover/focus.
+- **Download (platform-aware)** — Triggers PWA install when available; on iOS shows Add to Home Screen instructions. Hidden when already installed.
+- **Privacy footer link** — Opens `/privacy`.
+- **Developers footer link** — Opens `/developers`.
+- **Hidden keyboard sequence `admin`** — Navigates to `/admin/signin` (staff entry shortcut).
+- **Turnstile prefetch (background)** — App bootstrap (`main.tsx`) and home mount call `prefetchTurnstile()` when `VITE_TURNSTILE_SITE_KEY` is set.
 
-## Public and marketing surfaces
+**Docs.** [https://api-uniz.rguktong.in/docs/](https://api-uniz.rguktong.in/docs/)
 
-Base URL: https://uniz.rguktong.in
+![Screenshot: Home](screenshots/01-home.png)
 
-### Home (`/`)
+> Inventory from `layout.tsx` (Navbar), `pages/home.tsx`, `main.tsx`, and `utils/prefetchTurnstile.ts` on current main. Local screenshot captured against Vite.
 
-What it is: branded entry to UniZ with campus label, product name, short tagline, and primary CTAs.
+### Developers
 
-| Control | Outcome |
-| --- | --- |
-| Get started | Navigates to `/student/signin` |
-| Download | Starts PWA install (or iOS instructions) |
-| Privacy | Opens `/privacy` |
-| Developers | Opens `/developers` |
-| Hidden admin gesture | Typing the letters `admin` on the keyboard navigates to `/admin/signin` (undocumented convenience; not for students) |
+**What it is.** Public credits page for the student engineering team (Meet the Developers carousel) and contribution callout.
 
-### Privacy (`/privacy`)
+**Who.** Public
 
-Read-only policy sections such as overview, information collected, how information is used, push notifications, sharing, security and retention, your choices, and contact. Navigation is typically via section headings and the back/home links on the page chrome.
+**Entry path.** Nav: Home footer → Developers · URL: `/developers`
 
-### Developers (`/developers`)
+**Actions.**
 
-Shows the student development team and open-source contribution framing.
+- **Back to home** — Returns to `/`.
+- **Navbar Get started** — Opens student sign-in.
+- **Carousel previous / next** — Cycles contributor profiles.
+- **LinkedIn / external profile links** — Open contributor profiles when present.
+- **Team / contribution content** — Read-only presentation.
 
-| Control | Outcome |
-| --- | --- |
-| Back to home | Returns to `/` |
-| Contribution / globe section | Informational; may link outward to project presence |
+**Docs.** [https://api-uniz.rguktong.in/docs/introduction](https://api-uniz.rguktong.in/docs/introduction)
 
-### SEO / marketing routes
+![Screenshot: Developers](screenshots/03-developers.png)
 
-These routes render the SEO landing template and are public discovery pages, not signed-in tools:
+> Local screenshot from Vite. Production may differ if CDN cache lags.
 
-- `/student-project-management`
-- `/college-team-collaboration`
-- `/academic-task-tracker`
-- `/blog/*`
+### Privacy policy
 
-Primary CTA on these pages typically directs visitors toward signing in or learning more about UniZ.
+**What it is.** Institutional privacy notice covering account data, academic records, push tokens, and retention.
 
-### Cloudflare security check
+**Who.** Public
 
-On production you may briefly see a Cloudflare “Performing security verification” interstitial before the portal loads. Wait for it to finish; no UniZ credentials are entered on that screen.
+**Entry path.** Nav: Home footer → Privacy · URL: `/privacy`
 
-## Authentication
+**Actions.**
 
-Technical reference: https://api-uniz.rguktong.in/docs/students/login · https://api-uniz.rguktong.in/docs/api/auth/login · https://api-uniz.rguktong.in/docs/system/action-flows
+- **Back to home** — Returns to `/`.
+- **Navbar Get started** — Opens student sign-in.
+- **Policy sections (scroll)** — Read-only text blocks for overview, collection, use, push, sharing, security, choices, contact.
 
-### Student sign-in (`/student/signin`)
+![Screenshot: Privacy policy](screenshots/04-privacy.png)
 
-Also reached from `/login` and `/signin` (both redirect here).
+> Local screenshot from Vite.
 
-| Control / field | Outcome |
-| --- | --- |
-| Username | Roll number (for example `O210008`) |
-| Password | Current password |
-| Show/hide password | Toggles password visibility |
-| Sign in / submit | On success, stores student session and opens `/student` |
-| Forgot password | Switches to OTP reset flow |
-| Back to sign-in | Returns from forgot/OTP steps |
+### Notification deep link
 
-#### Forgot password (OTP)
+**What it is.** Bridge route used when a push notification is opened. Routes the user to the correct inbox or to sign-in.
 
-| Step | Control | Outcome |
-| --- | --- | --- |
-| Request code | Enter username → Send / request OTP | Code queued to registered email or push when available |
-| Verify | Enter 6-digit OTP → Verify | Unlocks password reset step |
-| Resend via email | Optional resend control | Requests email delivery if push path unavailable |
-| Set new password | New password + confirm → Update | Password updated; return to sign-in |
+**Who.** Public → then student or admin
 
-### Admin / staff sign-in (`/admin/signin`)
+**Entry path.** URL: `/notifications` (optional `?n=` highlight id)
 
-Same sign-in component with admin type. Faculty commonly enter here as well; the role in the login response determines whether you land in `/admin` or `/faculty`.
+**Actions.**
 
-| Control | Outcome |
-| --- | --- |
-| Username / password | Staff credentials issued by administration |
-| Sign in | On success, routes by role to the matching admin shell or faculty dashboard |
-| Forgot password | Same OTP reset pattern as student sign-in |
+- **Automatic redirect (admin token present)** — Goes to `/admin/notifications` with optional highlight.
+- **Automatic redirect (student token present)** — Goes to `/student/notifications` with optional highlight.
+- **No token** — Stores pending path and sends user to student sign-in with return URL.
 
-Admin overview: https://api-uniz.rguktong.in/docs/admin/overview
+**Docs.** [https://api-uniz.rguktong.in/docs/api/comms/notifications](https://api-uniz.rguktong.in/docs/api/comms/notifications)
 
-### Faculty session note
+### SEO marketing landings
 
-Faculty use staff credentials. After sign-in, faculty land on `/faculty`. Some faculty-token holders who are HODs are resolved into the HOD admin shell instead when their username/role pattern indicates HOD.
+**What it is.** Public marketing/SEO pages for project management, collaboration, task tracking, and blog-style paths.
+
+**Who.** Public
+
+**Entry path.** URLs: `/student-project-management`, `/college-team-collaboration`, `/academic-task-tracker`, `/blog/*`
+
+**Actions.**
+
+- **Back / home navigation** — Returns toward portal home.
+- **Primary CTA (Get started / sign in)** — Routes toward student authentication.
+- **Feature checklist content** — Read-only marketing copy keyed by pathname.
+
+> Live screenshot pending test capture on each SEO path.
+
+### StudySpace (promotional)
+
+**What it is.** Promotional surface for the StudySpace experiment. Route is currently commented out in `App.tsx`.
+
+**Who.** Public / student (when enabled)
+
+**Entry path.** Intended URL: `/studyspace` (not mounted while commented)
+
+**Actions.**
+
+- **External StudySpace links** — Open the hosted StudySpace experience in a new context.
+- **Back / portal navigation** — Return to student shell when mounted under Sidebar.
+
+> Route commented in App.tsx. Page component remains at `pages/promotions/StudySpace.tsx`.
+
+### CampusHub (promotional)
+
+**What it is.** Promotional surface for CampusHub. Route is currently commented out in `App.tsx`.
+
+**Who.** Public / student (when enabled)
+
+**Entry path.** Intended URL: `/campushub` (not mounted while commented)
+
+**Actions.**
+
+- **External CampusHub links** — Open the hosted CampusHub experience.
+- **Back / portal navigation** — Return to student shell when mounted under Sidebar.
+
+> Route commented in App.tsx. Page component remains at `pages/promotions/CampusHub.tsx`.
+
+### Student sign-in
+
+**What it is.** Credential entry for students, including Turnstile check and OTP password recovery. Turnstile may already be warming from home prefetch.
+
+**Who.** Student (public entry)
+
+**Entry path.** Nav: Home → Get started · URL: `/student/signin` · Aliases: `/login`, `/signin` → this route
+
+**Actions.**
+
+- **University ID or email** — Identifies the student account.
+- **Password + show/hide** — Enters credentials; visibility toggle reveals text.
+- **Forgot password?** — Switches to OTP request step.
+- **Cloudflare Turnstile** — Completes bot check before Continue enables.
+- **Continue / Sign in** — Authenticates; stores `student_token`; navigates to `/student`.
+- **Request OTP** — Sends one-time code to registered channel.
+- **OTP digits + Verify** — Confirms ownership of the account.
+- **Send via email (fallback)** — Requests email delivery of OTP when push is unavailable.
+- **New password + Set new password** — Writes new password hash; returns to sign-in.
+- **Back** — Returns toward home / previous step.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/students/login](https://api-uniz.rguktong.in/docs/students/login)
+
+![Screenshot: Student sign-in](screenshots/02-student-signin.png)
+
+> Local screenshot from Vite. Turnstile widget may be blank without a site key in local env.
+
+### Admin / staff sign-in
+
+**What it is.** Shared staff sign-in (Staff portal badge). Role in the login response decides admin vs faculty destination.
+
+**Who.** Admin roles, faculty, security, webadmin
+
+**Entry path.** URL: `/admin/signin` (also reachable via typing `admin` on the home page)
+
+**Actions.**
+
+- **Staff ID or email + password** — Staff credentials; show/hide password toggle.
+- **Forgot password / OTP flow** — Same reset steps as student sign-in.
+- **Turnstile + Continue** — Authenticates staff; faculty/teacher role stores `faculty_token` and opens `/faculty`; other admin roles store `admin_token` and open `/admin`.
+- **Back** — Returns toward home.
+- **Role mismatch guards** — Blocks students from admin portal and vice versa with an error toast.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/overview](https://api-uniz.rguktong.in/docs/admin/overview)
+
+![Screenshot: Admin / staff sign-in](screenshots/05-admin-signin.png)
+
+> No separate `/faculty/signin` route; faculty use admin sign-in. Local screenshot from Vite (Turnstile may be blank without site key).
+
+### Maintenance interstitial
+
+**What it is.** Shown when `VITE_MAINTENANCE_MODE=true` and no admin token is present.
+
+**Who.** All unauthenticated users
+
+**Entry path.** Any guarded route under MaintenanceGuard
+
+**Actions.**
+
+- **Go Back** — History back.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/ops/feature-flags](https://api-uniz.rguktong.in/docs/ops/feature-flags)
+
+### 404 error page
+
+**What it is.** Catch-all for unknown portal paths.
+
+**Who.** Any
+
+**Entry path.** URL: unmatched `*`
+
+**Actions.**
+
+- **Go Back** — History back.
+- **Return Home** — Navigates to `/`.
+
+### PWA install prompt
+
+**What it is.** Global overlay (`InstallPWA`) offering Add to Home Screen / install after load or login on mobile.
+
+**Who.** Any (mobile / non-standalone)
+
+**Entry path.** Global component mounted in `App.tsx`
+
+**Actions.**
+
+- **Install / Add to Home Screen** — Shows native install prompt or iOS share instructions.
+- **Dismiss (X)** — Hides the banner; auto-dismisses after a few seconds.
+
+---
 
 ## Student portal
 
-Entry after sign-in: `/student` (My Profile / dashboard).
+### Student shell (sidebar, dock, profile chrome)
 
-Student shell navigation (desktop dock and mobile menu) includes:
+**What it is.** Authenticated student chrome: desktop dock, mobile bottom menu, header profile, notifications, logout, optional outpass/outing banner.
 
-| Nav label | Path | Notes |
-| --- | --- | --- |
-| My Profile | `/student` | Default home |
-| Registration | `/student/registration` | Course registration / current subjects |
-| Results | `/student/gradehub` | Grades / GradeHub |
-| Attendance | `/student/attendance` | Attendance view |
-| Password | `/student/resetpassword` | Logged-in password change |
-| Grievance | `/student/grievance` | Submit grievance |
-| Help & Support | `/student/help` | FAQ and contact |
-| Outing / Outpass | `/student/outing`, `/student/outpass` | Only when outpass/outing flag is on |
-| Notifications | `/student/notifications` | Inbox |
-| Logout | Confirm modal | Ends session |
+**Who.** Student
 
-Also present in the shell: notification bell; pull-to-refresh on mobile; optional notice banner that can be dismissed.
+**Entry path.** Any `/student/*` route rendered through `Sidebar`
 
-Guides: https://api-uniz.rguktong.in/docs/students/profile · https://api-uniz.rguktong.in/docs/students/academics · https://api-uniz.rguktong.in/docs/students/outpass
+**Actions.**
 
-### Student — profile and dashboard
+- **Desktop dock items** — Navigate among My Profile, Registration, Results, Attendance, Password, Grievance, Help; optional Outing/Outpass when feature flag on.
+- **Logout (dock / header)** — Opens confirm modal; confirm ends session.
+- **Notification bell** — Opens `/student/notifications`.
+- **Mobile bottom menu: Home / Register / Academics / Grievance / Help** — Primary navigation; Academics expands Results, Attendance, Security (password).
+- **Mobile back chevron** — Returns to `/student` from nested pages.
+- **Dismiss outpass disabled banner** — Hides the administrative notice for the session view.
+- **Pull-to-refresh (touch)** — Reloads the page when pulled from top.
 
-**Path:** `/student`
+**Docs.** [https://api-uniz.rguktong.in/docs/students/profile](https://api-uniz.rguktong.in/docs/students/profile)
 
-What it is: central student record with personal, academic, family, seating, and (when enabled) permissions content, plus campus notices.
+> Live screenshot pending test account.
 
-### Profile header actions
+### Student dashboard / profile
 
-| Control | Outcome |
-| --- | --- |
-| Edit profile | Enters edit mode for allowed fields |
-| Cancel | Discards unsaved edits |
-| Save / Save changes | Submits only changed fields |
-| Camera / change photo | Opens file picker; uploads new profile photo |
-| Seating shortcut (when shown) | Switches to seating tab |
+**What it is.** Home profile for the signed-in student: personal details, academic snapshot, seating entry, and (when enabled) outing/outpass request forms.
 
-### Profile tabs
+**Who.** Student
 
-| Tab | What you see / can do |
-| --- | --- |
-| Personal | Name, contact, address, blood group, DOB, gender; campus presence indicators; seating summary widget when available; notices above |
-| Academic | Academic overview and academic record (grades context) |
-| Family | Parent/guardian names, occupations, phones (editable when in edit mode) |
-| Seating | Exam seating arrangement view |
-| Permissions | Outpass/outing request history and request forms when the feature flag is on |
+**Entry path.** Nav: My Profile / Home · URL: `/student`
 
-Editable by student (typical): phone, address, blood group, date of birth, gender, family contact fields. Not editable: roll number, year, branch, section, room, and other admin-owned academic fields.
+**Actions.**
 
-### Notices
+- **Edit profile** — Enables editable fields (contact/email and similar allowed fields).
+- **Save / Save Changes** — Persists profile updates.
+- **Cancel** — Exits edit mode without saving.
+- **Upload photo (avatar control)** — Uploads image then updates `profile_url`.
+- **Tab switches (personal / academic / etc.)** — Show corresponding profile panels.
+- **Seating arrangement entry** — Opens seating view within the student experience.
+- **Outing / Outpass request toggles (flag on)** — Open request forms with reason, dates/times, submit/cancel.
+- **Submit request (flag on)** — Creates outing or outpass request for approval chain.
 
-The notice board on the dashboard lists campus notices. Selecting a notice opens its content. Publishing and CMS of notices is an admin action (see Campus CMS sections).
+**Docs.** [https://api-uniz.rguktong.in/docs/students/profile](https://api-uniz.rguktong.in/docs/students/profile)
 
-### Analytics
+> Live screenshot pending test account. Nested components: InfoCard, AcademicRecord, StudentAnalytics, ProfileSemesterSubjects, SeatingArrangement.
 
-Student analytics UI may appear integrated into the personal view depending on build configuration. Treat it as read-only insight into academic progress when visible.
+### Outing requests
 
-Technical profile flows: https://api-uniz.rguktong.in/docs/system/action-flows (Student → Profile bootstrap / update / photo)
+**What it is.** List and create short-duration outing requests. Feature-flagged; routes commented when disabled.
 
-### Student — registration
+**Who.** Student
 
-**Path:** `/student/registration`
+**Entry path.** Nav: Outing Requests · URL: `/student/outing` · Request form: `/student/outing/requestouting`
 
-What it is: current-semester subject list and, when registration is open, elective selection and submission.
+**Actions.**
 
-| Control | Outcome |
-| --- | --- |
-| Subjects tab | Lists registered / current semester subjects |
-| Register tab | Shown only when registration is open and you are not already registered |
-| Select elective option | Toggles elective within group limits (mandatory subjects are pre-selected) |
-| Confirm / Register subjects | Submits selection; locks further re-registration (duplicate submit returns conflict) |
-| Download PDF | Downloads registration confirmation PDF when available |
-| Done / complete | Returns to the subjects view after successful registration |
+- **New request** — Opens request form.
+- **Reason, from/to times** — Describe the outing window.
+- **Submit Request** — Sends request into approval queue.
+- **Cancel / back** — Returns without submitting.
+- **Status chips on list** — Show Approved / Rejected / Pending / Expired.
 
-Window rules: registration only works when the semester status is open and the current time (Asia/Kolkata) is inside the configured start/end window.
+**Docs.** [https://api-uniz.rguktong.in/docs/students/outpass](https://api-uniz.rguktong.in/docs/students/outpass)
 
-Docs: https://api-uniz.rguktong.in/docs/admin/semester-registration · https://api-uniz.rguktong.in/docs/api/academics/registration
+> Disabled when `VITE_ENABLE_OUTPASS_OUTING` is not true. Routes currently commented in App.tsx.
 
-### Student — current semester
+### Outpass requests
 
-**Path:** `/student/current-semester`
+**What it is.** List and create multi-day outpass requests. Feature-flagged; routes commented when disabled.
 
-What it is: dedicated current-semester academic view (subjects/status for the active semester). Use it when you need semester context outside the registration page. Actions are primarily read-only browsing unless registration controls are surfaced through linked components.
+**Who.** Student
 
-### Student — results (GradeHub)
+**Entry path.** Nav: Outpass Requests · URL: `/student/outpass` · Request form: `/student/outpass/requestoutpass`
 
-**Path:** `/student/gradehub`
+**Actions.**
 
-What it is: published grade results by semester/subject.
+- **New request** — Opens outpass form.
+- **Reason, from/to dates** — Describe leave window.
+- **Submit Request** — Sends request into caretaker→warden→SWO→dean chain.
+- **Cancel / back** — Returns without submitting.
 
-| Control | Outcome |
-| --- | --- |
-| Semester / filter controls | Narrow which results are shown |
-| Subject rows | Display code, name, credits, grade |
-| Download / export controls (when present) | Save a local copy of results |
+**Docs.** [https://api-uniz.rguktong.in/docs/students/outpass](https://api-uniz.rguktong.in/docs/students/outpass)
 
-Blank grades usually mean results are not published yet. Letter grades follow the institutional scale (EX, A, B, C, D, F, AB, and related values).
+> Disabled when feature flag off. Routes currently commented in App.tsx.
 
-Docs: https://api-uniz.rguktong.in/docs/students/academics · https://api-uniz.rguktong.in/docs/api/academics/grades
+### Attendance
 
-### Student — attendance
+**What it is.** Subject-wise attendance view for the student.
 
-**Path:** `/student/attendance`
+**Who.** Student
 
-What it is: per-subject attendance with attended vs total classes and percentage.
+**Entry path.** Nav: Attendance · URL: `/student/attendance`
 
-| Control | Outcome |
-| --- | --- |
-| Subject list / filters | Browse attendance records |
-| Detail rows | Show attended, total, and percentage |
+**Actions.**
 
-Minimum attendance rules are institutional policy; contact faculty if you are near the threshold.
+- **Subject / semester filters (if present)** — Narrow the attendance table.
+- **Read-only percentages and logs** — No student write actions; disputes go through Grievance.
 
-Docs: https://api-uniz.rguktong.in/docs/students/academics · https://api-uniz.rguktong.in/docs/api/academics/attendance
+**Docs.** [https://api-uniz.rguktong.in/docs/students/academics](https://api-uniz.rguktong.in/docs/students/academics)
 
-### Student — password (signed in)
+> Live screenshot pending test account.
 
-**Path:** `/student/resetpassword`
+### Results (GradeHub)
 
-| Control | Outcome |
-| --- | --- |
-| Current password | Verifies identity |
-| New password / confirm | Must meet strength rules |
-| Update password | On success, signs you out so you can sign in with the new password |
+**What it is.** Published semester results with SGPA/CGPA and PDF export.
 
-Forgot-password from the sign-in page is a separate OTP flow (see Authentication).
+**Who.** Student
 
-### Student — grievance
+**Entry path.** Nav: Results · URL: `/student/gradehub`
 
-**Path:** `/student/grievance`
+**Actions.**
 
-| Control | Outcome |
-| --- | --- |
-| Category | Selects grievance type |
-| Description | Free-text details |
-| Submit anonymously | When checked, identity is protected in staff views |
-| Submit | Creates grievance for SWO / welfare handling |
+- **Semester dropdown** — Select which published semester to load.
+- **Fetch / view results** — Loads grades for the selected semester.
+- **Output PDF** — Downloads official results PDF.
+- **Output Remedial PDF** — Downloads remedial results PDF when applicable.
 
-Docs: https://api-uniz.rguktong.in/docs/system/action-flows (SWO / Grievance) · https://api-uniz.rguktong.in/docs/api/requests/grievances
+**Docs.** [https://api-uniz.rguktong.in/docs/students/academics](https://api-uniz.rguktong.in/docs/students/academics)
 
-### Student — help and support
+> Live screenshot pending test account. Grades appear only after administrative publish.
 
-**Path:** `/student/help`
+### Current semester
 
-| Control | Outcome |
-| --- | --- |
-| FAQ tab | Expand/collapse common questions (profile edits, PWA install, academics, etc.) |
-| Contact tab | Shows support contact guidance |
+**What it is.** Focused view of the active semester context for the student.
 
-### Student — notifications
+**Who.** Student
 
-**Path:** `/student/notifications` (and header bell / `/notifications` deep link)
+**Entry path.** URL: `/student/current-semester`
 
-| Control | Outcome |
-| --- | --- |
-| Open notification | Shows message detail / routes to related content when applicable |
-| Mark read / dismiss patterns | Clear unread state (exact controls depend on panel version) |
+**Actions.**
 
-Docs: https://api-uniz.rguktong.in/docs/api/comms/notifications
+- **Semester summary panels** — Read registered/current semester information.
+- **Cross-links to registration / results** — Navigate to related academic pages when shown.
 
-### Student — outpass and outing (when enabled)
+**Docs.** [https://api-uniz.rguktong.in/docs/students/academics](https://api-uniz.rguktong.in/docs/students/academics)
 
-**Paths:** `/student/outpass`, `/student/outing`, request subflows; also Permissions tab on profile.
+> Live screenshot pending test account.
 
-**Production default:** hidden. When the feature flag is on:
+### Course registration
 
-| Control | Outcome |
-| --- | --- |
-| Request outpass | Opens multi-day leave form (reason, from/to dates) |
-| Request outing | Opens same-day leave form (reason, from/to times) |
-| Submit | Creates request at caretaker level (outpass chain) |
-| History list | Shows pending / approved / rejected status |
+**What it is.** Enroll in core and elective subjects while the registration window is open; later view registered subjects and PDF.
 
-Only one pending request at a time is allowed.
+**Who.** Student
 
-Approval chain (outpass): Student → Caretaker → Warden → SWO → Dean/Director (final).
+**Entry path.** Nav: Registration · URL: `/student/registration`
 
-Docs: https://api-uniz.rguktong.in/docs/students/outpass · https://api-uniz.rguktong.in/docs/admin/approvals · https://api-uniz.rguktong.in/docs/system/action-flows
+**Actions.**
 
-## Admin portal — common shell
+- **My subjects tab** — Shows already registered subjects for the current semester.
+- **Register tab (when open)** — Opens CourseRegistration for elective selection.
+- **Select elective subject cards** — Toggle electives within group limits; cores are pre-selected.
+- **Confirm registration** — Submits selected subject IDs; locks further changes.
+- **Download PDF** — Downloads registration confirmation PDF from RegisteredSubjectsPanel.
+- **Done / complete** — Returns to subjects view after success.
 
-**Entry:** `/admin/signin` → `/admin` (role-specific dashboard). Admin section URLs commonly look like `/admin/<section>` via the admin section route hook.
+**Docs.** [https://api-uniz.rguktong.in/docs/api/academics/registration](https://api-uniz.rguktong.in/docs/api/academics/registration)
 
-### Shared AdminShell controls
-
-| Control | Outcome |
-| --- | --- |
-| Sidebar nav items | Switch active section/tab |
-| Collapse / expand sidebar | More content width |
-| Nav search (when enabled) | Filters sidebar items |
-| Avatar / profile | Opens profile popup (photo, name, email) |
-| Logout | Ends admin session |
-| Mobile menu | Same nav on small screens |
-
-### Legacy / direct admin routes still mapped
-
-These paths exist alongside the role shells (access still depends on role):
-
-| Path | Purpose |
-| --- | --- |
-| `/admin/addstudents` | Add / import students |
-| `/admin/addgrades` | Grades upload page |
-| `/admin/addattendance` | Attendance upload page |
-| `/admin/current-semester` | Current semester admin |
-| `/admin/settings` | Settings |
-| `/admin/profile` | Admin profile |
-| `/admin/curriculum` | Curriculum / subjects |
-| `/admin/roles` | Role management |
-| `/admin/banners` | Banner manager |
-| `/admin/updatestudentstatus` | Student status update |
-| `/admin/searchstudents` | Student search |
-| `/admin/security` | Security portal |
-| `/admin/addfaculty` | Add faculty |
-| `/admin/notifications` | Admin notifications |
-
-Overview: https://api-uniz.rguktong.in/docs/admin/overview
-
-### Webadmin and COE
-
-**Shell:** Webmaster dashboard (roles `webadmin`, `coe`).
-
-### Navigation groups and sections
-
-| Group | Section | What you do |
-| --- | --- | --- |
-| — | Overview | Dashboard KPIs / welcome |
-| Students | Student Details | Search, view, edit, add, delete, performance, password reset for students |
-| Students | Student Bulk Ops | Bulk CSV upload and cohort actions |
-| Academic | Attendance Upload | Download template, upload attendance sheet, monitor progress |
-| Academic | Grades Upload | Download template, upload grades, monitor progress |
-| Academic | Manage Subjects | Curriculum / subject CRUD |
-| Academic | Semester Registration | Semester builder, windows, tracking, publish |
-| Campus | Home Banners | Create/edit/hide spotlight banners |
-| Campus | Campus Updates | Create/edit campus updates |
-| Campus | Website Updates | Live-edit landing CMS content |
-| Campus | Push Alerts | View subscriptions; send broadcast |
-| Management | Faculty Management | Add/edit/delete faculty; download template |
-| Management | System & Logs | Operational logs / health oriented views |
-| Management | Security | Change own admin password |
-
-If role is SWO and somehow using overlapping tabs, welfare placeholders for grievances/outpass/outings may show “coming soon” in this shell — SWO’s primary working UI is the SWO dashboard described later.
-
-Docs: https://api-uniz.rguktong.in/docs/admin/academics · https://api-uniz.rguktong.in/docs/admin/semester-registration · https://api-uniz.rguktong.in/docs/system/action-flows
-
-### Webadmin — student details and bulk ops
-
-### Student Details
-
-| Control | Outcome |
-| --- | --- |
-| Search / filters | Narrow student list |
-| Add student | Creates a student record |
-| Inline edit cells (name, email, etc.) | Saves on blur when permitted |
-| Open / view student | Student dashboard / detail drawer |
-| Edit details modal | Full profile edit |
-| Performance | Opens academic performance modal |
-| Reset password | Admin-initiated password reset for that student |
-| Delete student | Requires typed confirmation |
-| Bulk delete | Deletes selected students after confirmation |
-
-### Student Bulk Ops
-
-| Control | Outcome |
-| --- | --- |
-| Download / prepare CSV | Template for import |
-| Bulk upload | Queues import job; progress polling |
-| Cohort actions | Apply a bulk action to a filtered cohort |
-
-UI may vary with permissions for destructive actions.
-
-### Webadmin — academics uploads and subjects
-
-### Attendance / Grades upload
-
-| Control | Outcome |
-| --- | --- |
-| Download template | Excel template for branch/year/semester/subject |
-| Choose file / upload | Starts processing job |
-| Progress indicator | Shows batch progress |
-| Errors / summary | Lists failures for correction |
-
-### Manage subjects / curriculum
-
-| Control | Outcome |
-| --- | --- |
-| Search subjects | Filter catalog |
-| Add subject | Creates subject |
-| Edit | Updates subject metadata |
-| Delete | Removes subject (with confirmation) |
-
-Docs: https://api-uniz.rguktong.in/docs/admin/academics · https://api-uniz.rguktong.in/docs/faculty/grades · https://api-uniz.rguktong.in/docs/faculty/attendance
-
-### Webadmin — semester registration builder
-
-**Nav:** Semester Registration
-
-| Control | Outcome |
-| --- | --- |
-| Create semester | Opens multi-step builder |
-| Save draft | Keeps semester editable as DRAFT |
-| Submit for review | Sends to dean review and locks casual edits |
-| Add / assign subjects | Builds branch allocations |
-| Add elective group | Defines group with selection limit |
-| Set registration opens/closes | IST window for students |
-| Open registration / advance status | Moves lifecycle toward REGISTRATION_OPEN |
-| Close registration / semester | Closes window |
-| Publish to students (OTP modal) | Requests email OTP, then publishes/opens after code entry |
-| Registration tracking | Per-student pending/registered lists with search |
-| Bulk PDF download | Queues and downloads registration PDFs |
-| Seating upload (related tools) | Template download + seating Excel upload |
-
-Lifecycle (simplified): DRAFT → DEAN_REVIEW → HOD_REVIEW → APPROVED → REGISTRATION_OPEN → REGISTRATION_CLOSED.
-
-Docs: https://api-uniz.rguktong.in/docs/admin/semester-registration · https://api-uniz.rguktong.in/docs/system/action-flows
-
-### Webadmin — campus CMS and push
-
-### Home banners
-
-| Control | Outcome |
-| --- | --- |
-| Add banner | Opens create modal |
-| Upload image | Attaches banner artwork |
-| Save | Creates or updates banner |
-| Active / Hidden | Visibility toggle |
-| Edit / delete | Maintain existing banners |
-
-### Campus updates
-
-| Control | Outcome |
-| --- | --- |
-| Create update | Opens editor |
-| Edit / delete | Maintain posts shown to students |
-
-### Website updates
-
-| Control | Outcome |
-| --- | --- |
-| Page search / sidebar | Select landing page content to edit |
-| Live editor fields | Change copy/images |
-| Upload image | Adds media |
-| Publish / save | Pushes CMS changes to the public landing site |
-
-### Push alerts
-
-| Control | Outcome |
-| --- | --- |
-| Browse subscriptions | Lists device subscriptions |
-| Send broadcast | Opens modal (target, title, body, optional image) |
-| Submit broadcast | Queues push to selected audience |
-
-### Webadmin — faculty, logs, and security
-
-### Faculty management
-
-| Control | Outcome |
-| --- | --- |
-| Search | Filter staff |
-| Add faculty | Create staff account |
-| Download template | Bulk template |
-| Edit / delete | Maintain records |
-
-### System and logs
-
-Read-oriented operational views for diagnosing platform activity. Prefer health endpoints and runbooks in live docs for incident response.
-
-### Security (password)
-
-| Control | Outcome |
-| --- | --- |
-| Current password | Verifies identity |
-| New password / confirm | Must meet length, number, and symbol rules |
-| Update | Changes admin password |
-
-## Director
-
-**Shell:** Director dashboard — nearly the same breadth as webadmin/COE for students, academics, campus CMS, faculty, logs, and security.
-
-Notable difference vs dean: **no Semester Approvals tab** in the director shell inventory (final institutional authority still appears in approval chains when outpass is enabled).
-
-Nav groups mirror webadmin: Overview; Student Details; Student Bulk Ops; Attendance/Grades upload; Manage Subjects; Semester Registration; Banners; Campus Updates; Website Updates; Push Alerts; Faculty Management; System & Logs; Security.
-
-Docs: https://api-uniz.rguktong.in/docs/admin/overview · https://api-uniz.rguktong.in/docs/admin/academics
-
-## Dean
-
-**Shell:** Dean dashboard.
-
-Includes webadmin-like academic and CMS tabs **plus** Semester Approvals.
-
-### Semester Approvals (dean)
-
-| Control | Outcome |
-| --- | --- |
-| Branch filter | Review allocations across departments |
-| Inspect subjects / electives / dates | Validate semester package |
-| Approve → HODs | Advances DEAN_REVIEW toward HOD_REVIEW |
-| Registration tracking embed | Monitor enrollment progress |
-
-Docs: https://api-uniz.rguktong.in/docs/admin/semester-registration · https://api-uniz.rguktong.in/docs/system/action-flows
-
-## HOD
-
-**Shell:** Slim dean shell for role `hod`.
-
-| Nav | Purpose |
-| --- | --- |
-| Overview | Dashboard |
-| Student Details | Department-scoped student list (read-focused) |
-| Semester Approvals | Approve own branch electives/allocations at HOD_REVIEW |
-
-### Semester Approvals (HOD)
-
-| Control | Outcome |
-| --- | --- |
-| Review pending package for own branch | Validates department electives/credits |
-| Approve (own branch) | Advances HOD review for that branch |
-
-Faculty accounts whose username looks like `hod_cse` may be resolved into this admin HOD experience.
-
-Docs: https://api-uniz.rguktong.in/docs/admin/semester-registration · https://api-uniz.rguktong.in/docs/roles
-
-## SWO / DSW
-
-**Shell:** SWO dashboard.
-
-| Nav | Purpose |
-| --- | --- |
-| Overview | Dashboard |
-| Grievances | Queue of student grievances |
-| Security | Own password change |
-| Outing / Outpass | Only when outpass/outing flag is on |
-
-### Grievances
-
-| Control | Outcome |
-| --- | --- |
-| Search / category filter | Narrow list |
-| Refresh | Reload queue |
-| Resolve | Marks resolved; verified students may get email update |
-| Delete / delete all | Removes records after confirmation |
-
-### Outing / outpass request management (when enabled)
-
-| Control | Outcome |
-| --- | --- |
-| Search | Filter requests |
-| Approve | Advances or completes approval per chain rules |
-| Reject | Prompts for reason; stops chain |
-| Forward | Sends to next level without approving |
-
-Docs: https://api-uniz.rguktong.in/docs/admin/approvals · https://api-uniz.rguktong.in/docs/system/action-flows
-
-## Caretaker
-
-**Shell:** Caretaker dashboard (`caretaker_male` / `caretaker_female`). Labelled M-Caretaker or F-Caretaker portal.
-
-| Nav | Purpose |
-| --- | --- |
-| Overview | Hostel-oriented KPIs / hub cards |
-| Approve Outings / Outpasses | Visible only when feature flag is on |
-| Status Update | Update student residential / presence-related status |
-
-### Approvals (when enabled)
-
-Same approve / reject / forward / search pattern as SWO, scoped to caretaker level in the chain.
-
-### Status update
-
-| Control | Outcome |
-| --- | --- |
-| Find student | Locate record |
-| Update status | Applies status change |
-
-Docs: https://api-uniz.rguktong.in/docs/admin/approvals
-
-## Warden
-
-**Shell:** Warden dashboard (`warden_male` / `warden_female` / `warden`). Labelled M-Warden or F-Warden portal.
-
-| Nav | Purpose |
-| --- | --- |
-| Overview | Residential KPIs / hub |
-| Approve Outings / Outpasses | When feature flag is on |
-
-Actions match the shared approval component: search, approve, reject (with reason), forward. Operates at warden level in the chain.
-
-Docs: https://api-uniz.rguktong.in/docs/admin/approvals
-
-## Security
-
-**Shell:** Security Portal (`/admin` for security role, also `/admin/security`).
-
-| Nav | Purpose |
-| --- | --- |
-| Overview / terminal | Gate metrics and scan box |
-| Search directory | Student search UI |
-| (Other tabs as labelled in shell) | Supporting gate operations |
-
-### Gate terminal actions
-
-| Control | Outcome |
-| --- | --- |
-| Scan / enter university ID | Searches student |
-| Initialize scan | Runs lookup |
-| Log Exit | Check-out / leave campus |
-| Log Entry | Check-in / return to campus |
-
-### Metrics shown
-
-Students outside; today’s check-ins; today’s check-outs; sync status.
-
-Docs: https://api-uniz.rguktong.in/docs/admin/security · https://api-uniz.rguktong.in/docs/system/action-flows
-
-## Faculty portal
-
-**Path:** `/faculty`
-
-### Sidebar
-
-| Nav | Purpose |
-| --- | --- |
-| Overview | Welcome cards and shortcuts into other tabs |
-| My Profile | View/edit faculty profile fields |
-| Branch Students | Search/filter students in department |
-| Change Password | OTP / password update flow for faculty |
-| Sign out | Ends session |
-
-### Overview
-
-| Control | Outcome |
-| --- | --- |
-| Shortcut cards / chevrons | Jump to profile, students, or password |
-
-### My Profile
-
-| Control | Outcome |
-| --- | --- |
-| Edit / pencil | Enable field edits |
-| Save | Persist profile changes |
-| Cancel | Discard edits |
-
-Typical fields: name, email, department, designation, contact, bio sections, photo when supported.
-
-### Branch Students
-
-| Control | Outcome |
-| --- | --- |
-| Search | Filter by id/name |
-| Filters | Narrow by year/branch attributes |
-| Open student | View student record (read-oriented for standard faculty; HOD may have broader admin tools via HOD shell) |
-
-### Change Password
-
-| Control | Outcome |
-| --- | --- |
-| Request OTP / verify / set password | Completes faculty password change with strength meter |
-
-Grade and attendance **upload** for many institutions is performed from admin academic upload pages (`/admin/addgrades`, `/admin/addattendance`, or webadmin upload tabs) rather than from the faculty sidebar. Faculty docs for upload workflows: https://api-uniz.rguktong.in/docs/faculty/grades · https://api-uniz.rguktong.in/docs/faculty/attendance
-
-## Cross-role workflows
-
-### Semester registration (end-to-end)
-
-1. Webadmin creates semester (draft) and subject/elective package.
-2. Dean reviews and approves → HODs.
-3. HOD approves department electives.
-4. Webadmin sets IST window and opens registration (OTP publish when required).
-5. Students register mandatory + electives and download PDF.
-6. Staff track completion; close registration; optional seating upload.
-
-Detail: https://api-uniz.rguktong.in/docs/admin/semester-registration · https://api-uniz.rguktong.in/docs/system/action-flows
-
-### Outpass (when enabled)
-
-1. Student submits from Permissions / Outpass.
-2. Caretaker → Warden → SWO → Dean/Director.
-3. Security verifies approved pass at gate (log exit/entry).
-
-Detail: https://api-uniz.rguktong.in/docs/admin/approvals · https://api-uniz.rguktong.in/docs/admin/security
+> Live screenshot pending test account. Nested: MySubjects, CourseRegistration, RegisteredSubjectsPanel.
 
 ### Grievance
 
-1. Student submits (optionally anonymous).
-2. SWO reviews, resolves, or deletes.
-3. Verified students may receive email on resolve.
+**What it is.** Submit an official campus grievance, optionally anonymously.
 
-Detail: https://api-uniz.rguktong.in/docs/system/action-flows
+**Who.** Student
 
-## Route map appendix
+**Entry path.** Nav: Grievance · URL: `/student/grievance`
 
-### Public
+**Actions.**
 
-| Route | Surface |
+- **Category / details fields** — Describe the issue.
+- **Submit Anonymously toggle** — Masks identity when enabled.
+- **Submit Official Grievance** — Creates grievance for SWO / admin queue.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/api/requests/grievances](https://api-uniz.rguktong.in/docs/api/requests/grievances)
+
+> Live screenshot pending test account.
+
+### Notifications inbox
+
+**What it is.** In-app notification center for the student portal.
+
+**Who.** Student
+
+**Entry path.** Nav: notification bell · URL: `/student/notifications`
+
+**Actions.**
+
+- **Open notification row** — Shows detail / marks read as implemented.
+- **Deep-link highlight (`?n=`)** — Focuses a specific notification from push.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/api/comms/notifications](https://api-uniz.rguktong.in/docs/api/comms/notifications)
+
+> Live screenshot pending test account.
+
+### Help & support
+
+**What it is.** FAQ accordion and contact guidance for the student portal.
+
+**Who.** Student
+
+**Entry path.** Nav: Help & Support · URL: `/student/help`
+
+**Actions.**
+
+- **FAQs tab** — Lists common questions.
+- **Expand / collapse FAQ row** — Shows answer text.
+- **Contact us tab** — Shows contact channels / mailto links.
+
+> Live screenshot pending test account.
+
+### Reset password (signed-in)
+
+**What it is.** Change password while authenticated.
+
+**Who.** Student
+
+**Entry path.** Nav: Password / Security · URL: `/student/resetpassword`
+
+**Actions.**
+
+- **Current / new password fields** — Enter replacement credentials.
+- **Reset / update password button** — Updates password for the student account.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/api/auth/password](https://api-uniz.rguktong.in/docs/api/auth/password)
+
+> Live screenshot pending test account.
+
+### Toaster demo
+
+**What it is.** Internal demo page for toast notifications.
+
+**Who.** Student / developers
+
+**Entry path.** URL: `/student/toast-demo`
+
+**Actions.**
+
+- **Demo toast triggers** — Fire sample toasts; not a production workflow.
+
+> Internal/demo route.
+
+---
+
+## Admin portal — shared chrome & legacy pages
+
+### Admin shell chrome
+
+**What it is.** Shared layout for role dashboards: collapsible sidebar, nav search, avatar profile popup, logout.
+
+**Who.** All admin portal roles using AdminShell
+
+**Entry path.** Any `/admin` section rendered by Webmaster/Dean/Director/SWO/Warden/Caretaker/Security shells
+
+**Actions.**
+
+- **Collapse / expand sidebar** — Toggles nav width.
+- **Search operations** — Filters sidebar nav labels.
+- **Nav item click** — Navigates to `/admin/<section>` via `useAdminSectionRoute`.
+- **Avatar → profile popup** — Opens ProfilePopup for quick profile view/edit.
+- **Logout** — Clears admin session.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/overview](https://api-uniz.rguktong.in/docs/admin/overview)
+
+> Live screenshot pending test account.
+
+### Admin notifications
+
+**What it is.** Staff notification inbox page.
+
+**Who.** Admin (authenticated)
+
+**Entry path.** URL: `/admin/notifications`
+
+**Actions.**
+
+- **Open / highlight notification** — Same pattern as student inbox with admin portal.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/api/comms/notifications](https://api-uniz.rguktong.in/docs/api/comms/notifications)
+
+> Live screenshot pending test account.
+
+### Legacy admin hub (fallback)
+
+**What it is.** Card hub used when role is not mapped to a specialized dashboard.
+
+**Who.** Unmapped admin roles
+
+**Entry path.** URL: `/admin`
+
+**Actions.**
+
+- **Quick action cards** — Navigate to approve outing/outpass, security, grades, attendance, curriculum, faculty, students, search, settings, roles, banners, etc., based on role gates.
+- **Logout** — Ends session.
+
+> Most production roles resolve to specialized dashboards (Webmaster, Dean, SWO, Warden, Caretaker, Director, Security).
+
+### Add students (legacy page)
+
+**What it is.** Standalone student import page.
+
+**Who.** Dean / webadmin paths
+
+**Entry path.** URL: `/admin/addstudents`
+
+**Actions.**
+
+- **CSV/XLSX uploader** — Import student rows.
+- **Submit upload** — Creates student accounts.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/overview](https://api-uniz.rguktong.in/docs/admin/overview)
+
+> Live screenshot pending test account. Prefer Student Bulk Ops in shell.
+
+### Search students (legacy)
+
+**What it is.** Directory search page reused by security search tab.
+
+**Who.** Admin / security
+
+**Entry path.** URL: `/admin/searchstudents`
+
+**Actions.**
+
+- **Search field + submit** — Returns matching students.
+- **Open result** — View student directory card.
+
+> Live screenshot pending test account.
+
+### Update student status
+
+**What it is.** Manually update presence/status flags for a student.
+
+**Who.** Caretaker (shell Status Update); also legacy URL for other admins with access
+
+**Entry path.** Nav: Status Update · URL: `/admin/student-status` · Legacy: `/admin/updatestudentstatus`
+
+**Actions.**
+
+- **Search student** — Locate target.
+- **Status controls + save** — Apply presence or status change.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/security](https://api-uniz.rguktong.in/docs/admin/security)
+
+> Live screenshot pending test account. Warden shell on current main does not expose this tab.
+
+### Settings
+
+**What it is.** Admin settings page.
+
+**Who.** Admin
+
+**Entry path.** URL: `/admin/settings`
+
+**Actions.**
+
+- **Settings form controls + save** — Persist portal settings as implemented.
+
+> Live screenshot pending test account.
+
+### Role management
+
+**What it is.** Assign or inspect administrative roles.
+
+**Who.** Webadmin-capable admins
+
+**Entry path.** URL: `/admin/roles`
+
+**Actions.**
+
+- **Role list / assign controls** — Update role bindings.
+- **Save** — Persist role changes.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/roles](https://api-uniz.rguktong.in/docs/roles)
+
+> Live screenshot pending test account.
+
+### Admin profile page
+
+**What it is.** Full-page admin profile (in addition to shell popup).
+
+**Who.** Admin
+
+**Entry path.** URL: `/admin/profile`
+
+**Actions.**
+
+- **Edit profile fields + save** — Update admin profile.
+- **Photo upload** — Change avatar.
+
+> Live screenshot pending test account.
+
+### Current semester admin
+
+**What it is.** Admin tool for current-semester configuration.
+
+**Who.** Academic admins
+
+**Entry path.** URL: `/admin/current-semester`
+
+**Actions.**
+
+- **Semester selectors + save** — Configure active semester context.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/semester-registration](https://api-uniz.rguktong.in/docs/admin/semester-registration)
+
+> Live screenshot pending test account.
+
+---
+
+## Admin portal — academic & campus sections
+
+### Overview
+
+**What it is.** Role overview with profile summary, institutional analytics widgets, and photo upload.
+
+**Who.** Webadmin, COE, Dean, Director (and SWO overview reuse)
+
+**Entry path.** Nav: Overview · URL: `/admin`
+
+**Actions.**
+
+- **Upload profile photo** — Uploads image and updates admin profile URL.
+- **Edit / Save profile fields** — Updates email, contact, designation, department.
+- **Cancel edit** — Discards draft field changes.
+- **Analytics panels (read)** — Show institutional counts where loaded.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/overview](https://api-uniz.rguktong.in/docs/admin/overview)
+
+> Live screenshot pending test account. Component: WebmasterOverview (+ analytics panels).
+
+### Student details
+
+**What it is.** Search and inspect individual student records; open performance and edit modals where permitted.
+
+**Who.** Webadmin, COE, Dean, HOD (students only), Director
+
+**Entry path.** Nav: Student Details · URL: `/admin/students`
+
+**Actions.**
+
+- **Search students** — Query by ID / name filters.
+- **Open student row** — Shows detail / performance modal.
+- **Edit student (modal)** — Update permitted demographic/status fields.
+- **Save / close modal** — Persist or discard changes.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/overview](https://api-uniz.rguktong.in/docs/admin/overview)
+
+> Live screenshot pending test account. Components: StudentDetails, StudentEditModal, StudentPerformanceModal.
+
+### Student bulk operations
+
+**What it is.** Bulk upload, export, and cohort-wide status actions.
+
+**Who.** Webadmin, COE, Dean, Director
+
+**Entry path.** Nav: Student Bulk Ops · URL: `/admin/students/bulk`
+
+**Actions.**
+
+- **Bulk Upload tab** — Select XLSX/CSV via FileUploader.
+- **Download Template** — Downloads Student_Upload_Template.xlsx.
+- **Start Uploading** — Begins bulk create and monitors progress.
+- **Batch Export tab + field checkboxes** — Choose export columns; Select all / essentials shortcuts.
+- **Download the data** — Exports filtered student fields.
+- **Actions tab → Mark IN campus** — Bulk set students present on campus.
+- **Actions → Mark OUT of campus** — Bulk set students off campus.
+- **Actions → Promote academic year** — Advance year cohort (e.g. E1→E2) with confirmation phrase.
+- **Actions → Clear pending flags** — Clear stale outpass/outing pending flags.
+- **Actions → Suspend / Unsuspend** — Bulk suspend or restore accounts with confirmation.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/overview](https://api-uniz.rguktong.in/docs/admin/overview)
+
+> Live screenshot pending test account.
+
+### Attendance upload
+
+**What it is.** Upload attendance records for academic logging.
+
+**Who.** Webadmin, COE, Dean, Director; also legacy `/admin/addattendance`
+
+**Entry path.** Nav: Attendance Upload · URL: `/admin/attendance` · Legacy: `/admin/addattendance`
+
+**Actions.**
+
+- **Choose file / FileUploader** — Select attendance CSV/XLSX.
+- **Upload / submit** — Imports attendance into Academics service.
+- **Progress / result messages** — Confirm success or show errors.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/academics](https://api-uniz.rguktong.in/docs/admin/academics)
+
+> Live screenshot pending test account. Component: UploadSection type=attendance.
+
+### Grades upload
+
+**What it is.** Upload grade sheets prior to publish.
+
+**Who.** Webadmin, COE, Dean, Director; also legacy `/admin/addgrades`
+
+**Entry path.** Nav: Grades Upload · URL: `/admin/grades` · Legacy: `/admin/addgrades`
+
+**Actions.**
+
+- **Choose file / FileUploader** — Select grades CSV/XLSX.
+- **Upload / submit** — Imports grades.
+- **Publish workflows (related semester tools)** — Students see grades only after publish.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/academics](https://api-uniz.rguktong.in/docs/admin/academics)
+
+> Live screenshot pending test account.
+
+### Manage subjects / curriculum
+
+**What it is.** Maintain subject catalog and curriculum mappings.
+
+**Who.** Webadmin, COE, Dean, Director; also `/admin/curriculum`
+
+**Entry path.** Nav: Manage Subjects · URL: `/admin/subjects` · Legacy: `/admin/curriculum`
+
+**Actions.**
+
+- **Add / edit subject fields** — Create or update subject records.
+- **Save / delete subject** — Persist catalog changes.
+- **Search / filter subjects** — Locate codes and titles.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/academics](https://api-uniz.rguktong.in/docs/admin/academics)
+
+> Live screenshot pending test account. Components: CurriculumManager / SubjectManagement.
+
+### Semester registration builder
+
+**What it is.** Create semesters, attach subjects/electives, publish to students, track registration, delete semesters.
+
+**Who.** Webadmin, COE, Dean, Director
+
+**Entry path.** Nav: Semester Registration · URL: `/admin/semester-registration`
+
+**Actions.**
+
+- **Create semester / open builder** — Starts SemesterBuilder flow.
+- **Add subjects from catalog** — Attach core/elective offerings.
+- **Manage semester** — Edit allocation details.
+- **Publish to Students** — Opens DirectPublishModal; makes registration visible.
+- **Track registration** — Opens RegistrationTracking for completion rates.
+- **Delete semester** — Irreversible remove after confirm.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/semester-registration](https://api-uniz.rguktong.in/docs/admin/semester-registration)
+
+> Live screenshot pending test account.
+
+### Semester approvals
+
+**What it is.** HOD/Dean review of semester subject allocations and electives before advance/publish.
+
+**Who.** Dean, HOD
+
+**Entry path.** Nav: Semester Approvals · URL: `/admin/semester-approvals`
+
+**Actions.**
+
+- **Select semester card** — Loads allocations and elective groups (HOD scoped to department).
+- **Approve / advance actions** — Moves semester through HOD_REVIEW / DEAN_REVIEW states.
+- **Registration tracking entry** — Inspect department registration progress.
+- **Back** — Returns to list.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/semester-registration](https://api-uniz.rguktong.in/docs/admin/semester-registration)
+
+> Live screenshot pending test account. Component: SemesterApproval.
+
+### Home banners
+
+**What it is.** Manage home-page banners shown on the public/student surfaces.
+
+**Who.** Webadmin, COE, Dean, Director; also `/admin/banners`
+
+**Entry path.** Nav: Home Banners · URL: `/admin/campus/banners`
+
+**Actions.**
+
+- **Add / upload banner image** — Creates a banner asset.
+- **Reorder / enable / disable** — Controls which banners display.
+- **Delete banner** — Removes banner.
+- **Save** — Persists banner configuration.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/overview](https://api-uniz.rguktong.in/docs/admin/overview)
+
+> Live screenshot pending test account.
+
+### Campus updates
+
+**What it is.** Publish campus notices/updates visible to students.
+
+**Who.** Webadmin, COE, Dean, Director
+
+**Entry path.** Nav: Campus Updates · URL: `/admin/campus/updates`
+
+**Actions.**
+
+- **Create update** — Compose title/body.
+- **Publish / delete update** — Push or remove notice.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/api/cms/notices](https://api-uniz.rguktong.in/docs/api/cms/notices)
+
+> Live screenshot pending test account.
+
+### Website updates / live editor
+
+**What it is.** Edit institutional website content blocks and publish changes.
+
+**Who.** Webadmin, COE, Dean, Director
+
+**Entry path.** Nav: Website Updates · URL: `/admin/campus/website`
+
+**Actions.**
+
+- **Open live editor** — Edit page content chrome.
+- **Save / publish website changes** — Writes CMS content for landing site.
+- **Tenders / department staff editors (subsections)** — Maintain related institutional listings.
+
+> Live screenshot pending test account. Components: WebsiteUpdatesSection, WebsiteLiveEditor.
+
+### Push alerts
+
+**What it is.** Send push notifications to subscribed devices.
+
+**Who.** Webadmin, COE, Dean, Director
+
+**Entry path.** Nav: Push Alerts · URL: `/admin/campus/push-alerts`
+
+**Actions.**
+
+- **Compose title/body** — Draft alert payload.
+- **Audience / send controls** — Dispatch push via notifications service.
+- **History list (if shown)** — Review prior sends.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/api/comms/notifications](https://api-uniz.rguktong.in/docs/api/comms/notifications)
+
+> Live screenshot pending test account.
+
+### Faculty management
+
+**What it is.** Create, search, update, suspend, and bulk-manage faculty accounts.
+
+**Who.** Webadmin, COE, Dean, Director; also `/admin/addfaculty`
+
+**Entry path.** Nav: Faculty Management · URL: `/admin/faculty`
+
+**Actions.**
+
+- **Search faculty** — Locate staff by username/name.
+- **Create faculty** — Add single faculty record.
+- **Edit / suspend faculty** — Update profile or suspend account.
+- **Bulk create / update / delete uploads** — Batch faculty CSV operations.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/faculty/grades](https://api-uniz.rguktong.in/docs/faculty/grades)
+
+> Live screenshot pending test account.
+
+### System & logs
+
+**What it is.** Operational health, upload analytics, and system user insights for platform admins.
+
+**Who.** Webadmin, COE, Dean, Director
+
+**Entry path.** Nav: System & Logs · URL: `/admin/system-logs`
+
+**Actions.**
+
+- **Refresh / inspect log panels** — Read service health and recent activity.
+- **Upload health analytics** — Inspect bulk upload job status.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/health](https://api-uniz.rguktong.in/docs/health)
+
+> Live screenshot pending test account.
+
+### Security (password / access section)
+
+**What it is.** Per-admin security controls inside AdminShell (password change and related access settings).
+
+**Who.** Most admin dashboards
+
+**Entry path.** Nav: Security · URL: `/admin/access-control`
+
+**Actions.**
+
+- **Change password fields + submit** — Updates admin password.
+- **Related security toggles** — As rendered by SecuritySection.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/api/auth/password](https://api-uniz.rguktong.in/docs/api/auth/password)
+
+> Live screenshot pending test account. Distinct from Security Portal gate terminal.
+
+---
+
+## Admin portal — approvals & welfare
+
+### Approve outings
+
+**What it is.** Process pending short outing requests: approve, reject with reason, or forward.
+
+**Who.** Caretaker, Warden (when outpass/outing flag enabled); SWO request management
+
+**Entry path.** Nav: Approve Outings · URL: `/admin/approve-outings` · Legacy hub: `/admin/approveouting`
+
+**Actions.**
+
+- **Search by ID / name / reason** — Filter pending queue.
+- **Approve** — Marks outing approved.
+- **Reject (prompt for reason)** — Rejects with message; stops chain.
+- **Forward** — Escalates to next approver and removes from current queue.
+- **Back** — Returns to previous view.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/approvals](https://api-uniz.rguktong.in/docs/admin/approvals)
+
+> Hidden when outpass/outing feature flag is off. Live screenshot pending test account.
+
+### Approve outpasses
+
+**What it is.** Process pending multi-day outpass requests through the residential approval chain.
+
+**Who.** Caretaker, Warden (flag on); higher roles as configured
+
+**Entry path.** Nav: Approve Outpasses · URL: `/admin/approve-outpasses` · Legacy: `/admin/approveoutpass`
+
+**Actions.**
+
+- **Search** — Filter pending outpasses.
+- **Approve** — Approves at current level or finalizes per role.
+- **Reject with reason** — Ends request with comment.
+- **Forward** — Sends to next level (caretaker→warden→SWO→dean).
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/approvals](https://api-uniz.rguktong.in/docs/admin/approvals)
+
+> Feature-flagged. Live screenshot pending test account.
+
+### SWO request management & grievances
+
+**What it is.** SWO operations for outing/outpass queues (when enabled) and grievance resolution.
+
+**Who.** SWO / DSW
+
+**Entry path.** Nav: Overview `/admin`; Grievances `/admin/grievances`; Outing/Outpass logs when flag on
+
+**Actions.**
+
+- **Grievance list open / respond controls** — Review and resolve student grievances.
+- **Outing/Outpass RequestManagement (flag on)** — Approve/reject/forward from SWO queue.
+- **Security section** — Password/access controls.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/approvals](https://api-uniz.rguktong.in/docs/admin/approvals)
+
+> Live screenshot pending test account. Outing/outpass nav filtered off when flag disabled.
+
+---
+
+## Admin portal — security gate
+
+### Security portal (gate terminal)
+
+**What it is.** Campus gate check-in/check-out terminal with directory search and activity summary.
+
+**Who.** Security
+
+**Entry path.** Role home `/admin` → SecurityPortal · also `/admin/security`
+
+**Actions.**
+
+- **Overview tab** — Shows access-control summary KPIs.
+- **Scan / search student ID form** — Looks up student for gate action.
+- **Check-In** — Records campus entry for approved movement.
+- **Check-Out** — Records campus exit.
+- **Search Directory tab** — Embeds SearchStudents directory.
+- **Activity Logs tab** — Shows recent gate activity list.
+- **Logout / shell nav** — Standard admin chrome.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/admin/security](https://api-uniz.rguktong.in/docs/admin/security)
+
+> Live screenshot pending test account.
+
+---
+
+## Faculty portal
+
+### Faculty portal overview
+
+**What it is.** Single-page faculty dashboard with sidebar tabs for overview, profile, branch students, and password.
+
+**Who.** Faculty; HOD sees HOD labeling
+
+**Entry path.** URL: `/faculty` (after admin sign-in with faculty/teacher role)
+
+**Actions.**
+
+- **Sidebar: Overview / My Profile / Branch Students / Change Password** — Switch active tab (in-page, not separate routes).
+- **Collapse sidebar / Menu** — Toggle sidebar width.
+- **Quick Access cards** — Jump to Profile, Students, or Password tabs.
+- **Sign Out** — Clears faculty session.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/faculty/grades](https://api-uniz.rguktong.in/docs/faculty/grades)
+
+> Live screenshot pending test account.
+
+### Faculty profile
+
+**What it is.** View and edit faculty profile fields and bio.
+
+**Who.** Faculty
+
+**Entry path.** Faculty portal → My Profile tab
+
+**Actions.**
+
+- **Edit Profile** — Enables editable name, contact, designation, profile URL, bio lists.
+- **Save** — PUT profile update.
+- **Cancel** — Exit edit mode.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/api/profile/faculty](https://api-uniz.rguktong.in/docs/api/profile/faculty)
+
+> Live screenshot pending test account. Username, email, department, system role are read-only.
+
+### Branch students
+
+**What it is.** Search and inspect students in the faculty department; HOD may see broader department tooling.
+
+**Who.** Faculty / HOD
+
+**Entry path.** Faculty portal → Branch Students tab
+
+**Actions.**
+
+- **Search / filter controls** — Filter students by ID, name, year.
+- **Open student card** — View student summary via admin view endpoint.
+- **Clear filters** — Reset search.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/faculty/attendance](https://api-uniz.rguktong.in/docs/faculty/attendance)
+
+> Live screenshot pending test account. Grade/attendance upload for faculty is primarily documented under admin academics flows and faculty docs; this portal focuses on profile + student directory.
+
+### Faculty change password
+
+**What it is.** OTP-assisted password change for faculty accounts.
+
+**Who.** Faculty
+
+**Entry path.** Faculty portal → Change Password tab
+
+**Actions.**
+
+- **Request OTP** — Sends OTP to registered channel.
+- **Verify OTP** — Unlocks new password fields.
+- **Set new password** — Commits password reset.
+- **Strength meter** — Visual feedback only.
+
+**Docs.** [https://api-uniz.rguktong.in/docs/api/auth/password](https://api-uniz.rguktong.in/docs/api/auth/password)
+
+> Live screenshot pending test account.
+
+---
+
+## Appendix A. Route map
+
+| Path | Surface |
 | --- | --- |
-| `/` | Home |
-| `/privacy` | Privacy |
+| `/` | Public home |
 | `/developers` | Developers |
-| `/notifications` | Notification deep link |
+| `/privacy` | Privacy |
+| `/notifications` | Push deep link |
 | `/student-project-management` | SEO landing |
 | `/college-team-collaboration` | SEO landing |
 | `/academic-task-tracker` | SEO landing |
-| `/blog/*` | SEO landing |
-
-### Auth
-
-| Route | Surface |
-| --- | --- |
-| `/login`, `/signin` | Redirect to student sign-in |
-| `/student/signin` | Student auth |
-| `/admin/signin` | Admin/staff auth |
-
-### Student
-
-| Route | Surface |
-| --- | --- |
-| `/student` | Profile dashboard |
+| `/blog/*` | SEO blog |
+| `/login, /signin` | Redirect → /student/signin |
+| `/student/signin` | Student sign-in |
+| `/admin/signin` | Admin/faculty sign-in |
+| `/student` | Student dashboard |
 | `/student/registration` | Registration |
-| `/student/current-semester` | Current semester |
 | `/student/gradehub` | Results |
 | `/student/attendance` | Attendance |
-| `/student/resetpassword` | Password |
+| `/student/current-semester` | Current semester |
 | `/student/grievance` | Grievance |
+| `/student/notifications` | Student inbox |
 | `/student/help` | Help |
-| `/student/notifications` | Notifications |
-| `/student/outing`, `/student/outpass` (+ request paths) | Flagged off by default |
-
-### Admin and faculty
-
-| Route | Surface |
-| --- | --- |
-| `/admin` and `/admin/*` | Role shell catch-all |
-| `/admin/security` | Security portal |
-| `/admin/addstudents`, `/admin/addfaculty`, `/admin/addgrades`, `/admin/addattendance` | Legacy academic/people pages |
-| `/admin/curriculum`, `/admin/banners`, `/admin/roles`, `/admin/settings`, `/admin/profile` | Management pages |
-| `/admin/searchstudents`, `/admin/updatestudentstatus`, `/admin/current-semester`, `/admin/notifications` | Supporting admin tools |
+| `/student/resetpassword` | Password |
+| `/student/outing*` | Outing (flagged / may be unmounted) |
+| `/student/outpass*` | Outpass (flagged / may be unmounted) |
+| `/studyspace, /campushub` | Promo pages (currently unmounted) |
 | `/faculty` | Faculty dashboard |
+| `/admin` | Role dashboard overview |
+| `/admin/students` | Student details |
+| `/admin/students/bulk` | Student bulk ops |
+| `/admin/attendance` | Attendance upload |
+| `/admin/grades` | Grades upload |
+| `/admin/subjects` | Subjects |
+| `/admin/semester-registration` | Semester builder |
+| `/admin/semester-approvals` | Semester approvals |
+| `/admin/campus/banners` | Banners |
+| `/admin/campus/updates` | Campus updates |
+| `/admin/campus/website` | Website updates |
+| `/admin/campus/push-alerts` | Push alerts |
+| `/admin/faculty` | Faculty management |
+| `/admin/system-logs` | System & logs |
+| `/admin/access-control` | Security section |
+| `/admin/grievances` | Grievances |
+| `/admin/approve-outings` | Approve outings |
+| `/admin/approve-outpasses` | Approve outpasses |
+| `/admin/student-status` | Status update |
+| `/admin/security` | Security portal page |
+| `/admin/notifications` | Admin inbox |
+| `/admin/addstudents, addgrades, addattendance, addfaculty` | Legacy standalone tools |
+| `/admin/settings, roles, banners, curriculum, profile, searchstudents, updatestudentstatus, current-semester` | Legacy/standalone admin pages |
 
-### Catch-all
+Admin shell tabs sync to paths via `apps/uniz-portal/src/utils/adminSectionRoutes.ts`.
 
-| Route | Surface |
+## Appendix B. Feature → docs URL map
+
+| Topic | Docs URL |
 | --- | --- |
-| `*` | 404 |
+| Roles overview | [https://api-uniz.rguktong.in/docs/roles](https://api-uniz.rguktong.in/docs/roles) |
+| Student login | [https://api-uniz.rguktong.in/docs/students/login](https://api-uniz.rguktong.in/docs/students/login) |
+| Student academics | [https://api-uniz.rguktong.in/docs/students/academics](https://api-uniz.rguktong.in/docs/students/academics) |
+| Student outpass | [https://api-uniz.rguktong.in/docs/students/outpass](https://api-uniz.rguktong.in/docs/students/outpass) |
+| Student profile | [https://api-uniz.rguktong.in/docs/students/profile](https://api-uniz.rguktong.in/docs/students/profile) |
+| Admin overview | [https://api-uniz.rguktong.in/docs/admin/overview](https://api-uniz.rguktong.in/docs/admin/overview) |
+| Admin approvals | [https://api-uniz.rguktong.in/docs/admin/approvals](https://api-uniz.rguktong.in/docs/admin/approvals) |
+| Admin academics | [https://api-uniz.rguktong.in/docs/admin/academics](https://api-uniz.rguktong.in/docs/admin/academics) |
+| Admin security | [https://api-uniz.rguktong.in/docs/admin/security](https://api-uniz.rguktong.in/docs/admin/security) |
+| Semester registration | [https://api-uniz.rguktong.in/docs/admin/semester-registration](https://api-uniz.rguktong.in/docs/admin/semester-registration) |
+| Faculty grades | [https://api-uniz.rguktong.in/docs/faculty/grades](https://api-uniz.rguktong.in/docs/faculty/grades) |
+| Faculty attendance | [https://api-uniz.rguktong.in/docs/faculty/attendance](https://api-uniz.rguktong.in/docs/faculty/attendance) |
+| Action flows | [https://api-uniz.rguktong.in/docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) |
+| Auth login API | [https://api-uniz.rguktong.in/docs/api/auth/login](https://api-uniz.rguktong.in/docs/api/auth/login) |
+| Password API | [https://api-uniz.rguktong.in/docs/api/auth/password](https://api-uniz.rguktong.in/docs/api/auth/password) |
+| OTP API | [https://api-uniz.rguktong.in/docs/api/auth/otp](https://api-uniz.rguktong.in/docs/api/auth/otp) |
+| Registration API | [https://api-uniz.rguktong.in/docs/api/academics/registration](https://api-uniz.rguktong.in/docs/api/academics/registration) |
+| Grades API | [https://api-uniz.rguktong.in/docs/api/academics/grades](https://api-uniz.rguktong.in/docs/api/academics/grades) |
+| Attendance API | [https://api-uniz.rguktong.in/docs/api/academics/attendance](https://api-uniz.rguktong.in/docs/api/academics/attendance) |
+| Grievances API | [https://api-uniz.rguktong.in/docs/api/requests/grievances](https://api-uniz.rguktong.in/docs/api/requests/grievances) |
+| Notifications API | [https://api-uniz.rguktong.in/docs/api/comms/notifications](https://api-uniz.rguktong.in/docs/api/comms/notifications) |
+| CMS notices | [https://api-uniz.rguktong.in/docs/api/cms/notices](https://api-uniz.rguktong.in/docs/api/cms/notices) |
 
-## Gaps and screenshot notes
+## Appendix C. Screenshot checklist
 
-- Production public-page screenshots were attempted against uniz.rguktong.in but headless capture stopped on Cloudflare security verification, so no live UI screenshots are embedded.
-- Authenticated student/admin/faculty screens were not captured: this guide intentionally uses no production credentials.
-- Outpass/outing UI is documented from code and docs but is off in default production builds.
-- Some admin sections show “coming soon” placeholders (for example certain SWO welfare tabs inside the webadmin shell). Prefer the dedicated SWO dashboard for grievances.
-- Exact button labels can differ slightly between desktop and mobile shells; behaviour matches the tables above.
-- For the latest behaviour, trust the live portal plus https://api-uniz.rguktong.in/docs over any printed copy of this file.
+| Section | Source |
+| --- | --- |
+| Home `/` | Local Vite screenshot embedded |
+| Student sign-in `/student/signin` | Local Vite screenshot embedded |
+| Developers `/developers` | Local Vite screenshot embedded |
+| Privacy `/privacy` | Local Vite screenshot embedded |
+| Admin sign-in `/admin/signin` | Local Vite screenshot embedded |
+| SEO landings, StudySpace, CampusHub | Code-derived (promos unmounted while commented) |
+| All student authenticated pages | Code-derived — live screenshot pending test account |
+| All admin / faculty authenticated pages | Code-derived — live screenshot pending test account |
 
+## Appendix D. Known gaps
+
+- Authenticated screens lack live screenshots (no production credentials used).
+- Production portal capture may fail behind Cloudflare challenge from this environment.
+- Outing/outpass UI is inventoried but routes are commented while `VITE_ENABLE_OUTPASS_OUTING` is off.
+- StudySpace and CampusHub pages exist in source but are not mounted in `App.tsx`.
+- Faculty grade/attendance upload UX is primarily covered in admin academics sections and faculty docs; the faculty portal UI focuses on profile and branch students.
