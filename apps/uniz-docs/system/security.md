@@ -25,7 +25,7 @@ flowchart TB
 |-----------|--------|
 | JWT (`JWT_SECURITY_KEY`) | Issued by auth; validated by services + gateway as needed |
 | Role claims | Student / faculty / admin / security / etc. — see [Roles](/roles) |
-| Turnstile | Login/abuse paths when `TURNSTILE_SECRET_KEY` / `VITE_TURNSTILE_SITE_KEY` set |
+| Turnstile | Login/abuse paths when `TURNSTILE_SECRET_KEY` / `VITE_TURNSTILE_SITE_KEY` set. Portal also prefetches the Turnstile script on boot and home CTA hover/focus (`apps/uniz-portal/src/utils/prefetchTurnstile.ts`) so `/student/signin` and `/admin/signin` load the widget faster — no extra secrets. |
 | Internal secret | `INTERNAL_SECRET` for `/internal/*` and mail send |
 
 ## Secrets management

@@ -9,12 +9,16 @@ description: "Edit portal or landing SPAs, local preview, production Pages deplo
 |------|------|
 | App | `apps/uniz-portal/` |
 | Routes | `src/App.tsx` |
+| Public home | `src/pages/home.tsx` — Elaya Layout A (Manrope, split hero + product preview, scrollable landing) |
+| Navbar | `src/components/Navbar.tsx` (floating on `/`) |
 | API client | `src/api/` |
 | Feature flags | `src/lib/featureFlags.ts` (or equivalent) |
 | SPA redirects | `public/_redirects` |
-| Brand palette | Dark navy `#0B2A47` + white + black — tokens in `src/index.css`, `tailwind.config.js`, `src/lib/portal-ui.ts` / `landing-ui.ts` |
+| Brand palette | Dark navy `#0B2A47` + white + black — tokens in `src/index.css`, `tailwind.config.js`, `src/lib/portal-ui.ts` / `landing-ui.ts`. Wordmark uses Pattaya where already applied. |
 
-Keep existing layouts; change color/CSS tokens rather than reinventing structure.
+Prefer CSS tokens and established portal-ui patterns for most screens. The public home was intentionally redesigned (Elaya Layout A); do not revert it to the old single-viewport centered layout when changing colors or copy.
+
+Campus trainer UI inventory (screenshots + actions by role) lives in the repo at `docs/guides/UniZ-UI-Guidance.docx` — not duplicated on this Mintlify site.
 
 ### Local
 

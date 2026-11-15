@@ -41,21 +41,23 @@ def feat(title, what, who, entry, actions, docs=None, screenshot=None, note=None
 PUBLIC = [
     feat(
         "Home",
-        "Public landing for the UniZ campus portal (redesigned brand-first composition under the global Navbar). Shows campus label, uniZ wordmark, tagline, and CTAs. Signed-in users are redirected to their role home.",
+        "Public Elaya Layout A landing (`pages/home.tsx`): brand-first Manrope page with floating Navbar, split hero (uniZ wordmark + “Campus tools for RGUKT Ongole students” + product preview), then scrollable benefits (“What you can do once you are in”), TaglineReveal, how-it-works steps, and a final navy CTA. Signed-in users are redirected to their role home.",
         "Public (unauthenticated)",
         "Nav: direct visit · URL: `/`",
         [
             ("Navbar Get started", "Opens `/student/signin`. Hover/focus prefetches Cloudflare Turnstile."),
-            ("Hero Get started", "Same destination as navbar; also prefetches Turnstile on hover/focus."),
-            ("Download (platform-aware)", "Triggers PWA install when available; on iOS shows Add to Home Screen instructions. Hidden when already installed."),
+            ("Hero Get started", "Same destination as navbar; also prefetches Turnstile on hover/focus. Secondary copy beside it: “Built for RGUKT Ongole” (not a control)."),
+            ("Final CTA Get started", "Bottom navy section CTA; same sign-in destination + Turnstile prefetch on hover/focus."),
+            ("Install app (final CTA only)", "Platform-aware PWA install in the bottom CTA when not already installed; on iOS shows Add to Home Screen instructions. Not in the hero or Navbar."),
             ("Privacy footer link", "Opens `/privacy`."),
             ("Developers footer link", "Opens `/developers`."),
             ("Hidden keyboard sequence `admin`", "Navigates to `/admin/signin` (staff entry shortcut)."),
-            ("Turnstile prefetch (background)", "App bootstrap (`main.tsx`) and home mount call `prefetchTurnstile()` when `VITE_TURNSTILE_SITE_KEY` is set."),
+            ("Benefits / TaglineReveal / How it works (scroll)", "Read-only below-fold sections — no controls; describe campus tools, animated tagline words, and three sign-in steps."),
+            ("Turnstile prefetch (background)", "App bootstrap (`main.tsx`) and home mount call `prefetchTurnstile()` when `VITE_TURNSTILE_SITE_KEY` is set; CTA hover/focus warms it further."),
         ],
         docs=f"{DOCS_BASE}/",
         screenshot="01-home.png",
-        note="Inventory from `layout.tsx` (Navbar), `pages/home.tsx`, `main.tsx`, and `utils/prefetchTurnstile.ts` on current main. Local screenshot captured against Vite.",
+        note="Inventory from `Navbar.tsx` (via layout), `pages/home.tsx` (Elaya Layout A + PortalPreview), `main.tsx`, and `utils/prefetchTurnstile.ts`. Local Vite screenshot at ~1440×900; Turnstile widget blank without site key.",
     ),
     feat(
         "Developers",
@@ -856,7 +858,7 @@ ROLE_NAV_MATRIX = [
     (
         "Public",
         "/",
-        "Get started; Download; Privacy; Developers; type `admin` for staff sign-in",
+        "Get started (navbar/hero/final CTA); Install app (final CTA); Privacy; Developers; type `admin` for staff sign-in",
     ),
     (
         "Student",
