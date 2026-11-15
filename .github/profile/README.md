@@ -21,12 +21,12 @@
 
 Production: **Cloudflare Pages** for portal/landing; **VPS** for `gateway-api` → microservices, Postgres (localhost/cni0 only), Redis, VitePress docs, SSH-tunnel observability. Legacy `uniz-api` monolith and the old `uniz-app` Android repo are gone — the TWA lives in `uniz-master/apps/uniz-android-twa`.
 
-Portal brand chrome: **dark navy `#0B2A47` + white + black**.
+Portal brand chrome: **dark navy `#0B2A47` + white + black**. Public home is Elaya Layout A (Manrope, split hero + product preview). Sign-in uses Cloudflare Turnstile when configured (script prefetched from home / Get started).
 
 ### Start here
 
 1. Clone [uniz-master](https://github.com/uniz-rguktong/uniz-master)
-2. Read [STRUCTURE.md](https://github.com/uniz-rguktong/uniz-master/blob/main/STRUCTURE.md) · [ops index](https://github.com/uniz-rguktong/uniz-master/blob/main/docs/ops/INDEX.md) · [live docs](https://api-uniz.rguktong.in/docs)
+2. Read [STRUCTURE.md](https://github.com/uniz-rguktong/uniz-master/blob/main/STRUCTURE.md) · [ops index](https://github.com/uniz-rguktong/uniz-master/blob/main/docs/ops/INDEX.md) · [live docs](https://api-uniz.rguktong.in/docs) · [UI guide (trainers)](https://github.com/uniz-rguktong/uniz-master/blob/main/docs/guides/UniZ-UI-Guidance.docx)
 3. Local setup: [CONTRIBUTING.md](https://github.com/uniz-rguktong/uniz-master/blob/main/CONTRIBUTING.md)
 
 ### Contribute
@@ -38,4 +38,5 @@ UniZ is built by students across RGUKT. Start with a [good first issue](https://
 - Portal: [uniz.rguktong.in](https://uniz.rguktong.in)
 - Landing: [rguktong.in](https://rguktong.in)
 - Docs: [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs)
+- UI guide: [docs/guides](https://github.com/uniz-rguktong/uniz-master/tree/main/docs/guides)
 - Security: [SECURITY.md](https://github.com/uniz-rguktong/.github/blob/main/SECURITY.md)
