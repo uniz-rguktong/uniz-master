@@ -456,7 +456,7 @@ function SemesterCard({
       transition={{ delay: index * 0.05, duration: 0.35 }}
       className={cn(adminCardClass, adminCardHoverClass, "group relative p-6 overflow-hidden")}
     >
-      <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-gradient-to-br from-zinc-50 to-transparent opacity-70 group-hover:scale-125 transition-transform duration-700" />
+      <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-gradient-to-br from-zinc-50 to-transparent opacity-70 transition-transform duration-700" />
 
       <div className="relative flex items-start justify-between gap-3 mb-5">
         <div className="min-w-0">
@@ -469,7 +469,7 @@ function SemesterCard({
           </p>
         </div>
         <span
-          className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-semibold tracking-[0.14em] border ${meta.tone}`}
+          className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[9px] font-semibold  border ${meta.tone}`}
         >
           <span className={`w-1.5 h-1.5 rounded-full ${meta.dot}`} />
           {meta.label}
@@ -478,7 +478,7 @@ function SemesterCard({
 
       <div className="relative grid grid-cols-2 gap-3 mb-6">
         <div className="rounded-2xl bg-zinc-50 px-4 py-3">
-          <p className="text-[9px] font-semibold tracking-[0.14em] text-zinc-400">
+          <p className="text-[9px] font-semibold text-zinc-400">
             Students registered
           </p>
           <p className="text-xl font-semibold text-zinc-900">
@@ -486,7 +486,7 @@ function SemesterCard({
           </p>
         </div>
         <div className="rounded-2xl bg-zinc-50 px-4 py-3">
-          <p className="text-[9px] font-semibold tracking-[0.14em] text-zinc-400">
+          <p className="text-[9px] font-semibold text-zinc-400">
             Reg. Window
           </p>
           <p className="text-sm font-semibold text-zinc-900">
@@ -557,7 +557,7 @@ function SemesterCard({
         <div className="flex-1" />
         <button
           onClick={() => onRemove(sem.id, sem.name)}
-          className="p-2.5 rounded-xl bg-zinc-50 text-zinc-400 hover:bg-rose-500 hover:text-white transition-all"
+          className="p-2.5 rounded-xl bg-zinc-50 text-zinc-400 hover:bg-rose-500 hover:text-white transition-[color,background-color,border-color,opacity,transform,box-shadow]"
           title="Delete semester"
         >
           <Trash2 size={15} />
@@ -586,7 +586,7 @@ function ActionBtn({
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95 ${tones[tone]}`}
+      className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95 ${tones[tone]}`}
     >
       {icon}
       {label}
@@ -749,7 +749,7 @@ function BuilderDrawer({
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ type: "spring", damping: 30, stiffness: 280 }}
-        className="relative w-full max-w-2xl h-full bg-zinc-50 shadow-2xl flex flex-col"
+        className="relative w-full max-w-2xl h-full bg-zinc-50 border border-navy-200/80 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header + stepper */}
@@ -781,7 +781,7 @@ function BuilderDrawer({
               <div key={s.id} className="flex items-center gap-1.5 flex-1">
                 <button
                   onClick={() => setStep(i)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-bold transition-all w-full justify-center ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-bold transition-[color,background-color,border-color,opacity,transform,box-shadow] w-full justify-center ${
                     i === step
                       ? "bg-zinc-900 text-white"
                       : i < step
@@ -874,7 +874,7 @@ function BuilderDrawer({
         <div className="px-7 py-4 bg-white border-t border-zinc-100 flex items-center gap-3">
           <button
             onClick={() => (step === 0 ? onClose() : setStep(step - 1))}
-            className="inline-flex items-center gap-1.5 px-5 py-3 rounded-xl bg-zinc-100 text-zinc-600 font-bold text-sm hover:bg-zinc-200 transition-all"
+            className="inline-flex items-center gap-1.5 px-5 py-3 rounded-xl bg-zinc-100 text-zinc-600 font-bold text-sm hover:bg-zinc-200 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
           >
             <ChevronLeft size={16} />
             {step === 0 ? "Cancel" : "Back"}
@@ -883,7 +883,7 @@ function BuilderDrawer({
           {step < STEPS.length - 1 ? (
             <button
               onClick={() => setStep(step + 1)}
-              className="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-zinc-900 text-white font-bold text-sm hover:bg-zinc-800 transition-all"
+              className="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-zinc-900 text-white font-bold text-sm hover:bg-zinc-800 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
             >
               Continue
               <ChevronRight size={16} />
@@ -893,14 +893,14 @@ function BuilderDrawer({
               <button
                 disabled={saving}
                 onClick={() => submit("draft")}
-                className="inline-flex items-center gap-1.5 px-5 py-3 rounded-xl bg-zinc-100 text-zinc-700 font-bold text-sm hover:bg-zinc-200 transition-all disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-5 py-3 rounded-xl bg-zinc-100 text-zinc-700 font-bold text-sm hover:bg-zinc-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] disabled:opacity-50"
               >
                 <Save size={15} /> Save Draft
               </button>
               <button
                 disabled={saving}
                 onClick={() => submit("submit")}
-                className="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-gradient-to-br from-navy-900 to-navy-800 text-white font-bold text-sm hover:shadow-lg transition-all disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-gradient-to-br from-navy-900 to-navy-800 text-white font-bold text-sm hover:border-navy-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] disabled:opacity-50"
               >
                 <Send size={15} /> Submit for Review
               </button>
@@ -982,7 +982,7 @@ function DetailsStep(p: any) {
       </div>
 
       <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 space-y-4">
-        <p className="text-xs font-semibold tracking-[0.14em] text-zinc-900 flex items-center gap-2">
+        <p className="text-xs font-semibold text-zinc-900 flex items-center gap-2">
           <Clock size={14} /> Registration Window
         </p>
         <div className="grid grid-cols-2 gap-4">
@@ -1008,7 +1008,7 @@ function DetailsStep(p: any) {
       </div>
 
       <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 space-y-4">
-        <p className="text-xs font-semibold tracking-[0.14em] text-zinc-900 flex items-center gap-2">
+        <p className="text-xs font-semibold text-zinc-900 flex items-center gap-2">
           <CalendarClock size={14} /> Semester Dates
         </p>
         <div className="grid grid-cols-2 gap-4">
@@ -1204,7 +1204,7 @@ function SubjectsStep({
       <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 space-y-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold tracking-[0.14em] text-zinc-900 inline-flex items-center gap-2">
+            <p className="text-xs font-semibold text-zinc-900 inline-flex items-center gap-2">
               <Library size={14} /> Pick from Subject Catalog
             </p>
             <p className="text-[11px] text-zinc-400 font-medium mt-1">
@@ -1212,7 +1212,7 @@ function SubjectsStep({
               {catalogSemester ? ` Filtered for ${catalogSemester}.` : ""}
             </p>
           </div>
-          <span className="shrink-0 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-semibold tracking-wider">
+          <span className="shrink-0 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-semibold">
             {subjects.length} on list
           </span>
         </div>
@@ -1263,7 +1263,7 @@ function SubjectsStep({
               key={t.id}
               type="button"
               onClick={() => setPickType(t.id)}
-              className={`text-left px-3 py-2 rounded-xl border transition-all ${
+              className={`text-left px-3 py-2 rounded-xl border transition-[color,background-color,border-color,opacity,transform,box-shadow] ${
                 pickType === t.id
                   ? "border-zinc-300 bg-zinc-100"
                   : "border-zinc-200/70 bg-zinc-50 hover:border-zinc-300"
@@ -1295,7 +1295,7 @@ function SubjectsStep({
 
         <div className="max-h-52 overflow-y-auto rounded-xl border border-zinc-100 bg-zinc-50/50 divide-y divide-zinc-100 scrollbar-hide">
           {catalogLoading ? (
-            <div className="py-10 text-center text-sm text-zinc-400 font-semibold animate-pulse">
+      <div className="py-10 text-center text-sm text-zinc-400 font-semibold">
               Loading catalog…
             </div>
           ) : visibleCatalog.length === 0 ? (
@@ -1329,7 +1329,7 @@ function SubjectsStep({
                         electiveGroupCode: pickIsElective ? pickGroup : "",
                       })
                     }
-                    className={`shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg text-[10px] font-semibold tracking-wider transition-all ${
+                    className={`shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg text-[10px] font-semibold  transition-[color,background-color,border-color,opacity,transform,box-shadow] ${
                       added
                         ? "bg-emerald-50 text-emerald-600 cursor-default"
                         : "bg-zinc-900 text-white hover:bg-zinc-800"
@@ -1355,7 +1355,7 @@ function SubjectsStep({
       {/* Term list */}
       {subjects.length > 0 && (
         <div className="space-y-2.5">
-          <p className="text-[10px] font-semibold tracking-[0.18em] text-zinc-400">
+          <p className="text-[10px] font-semibold text-zinc-400">
             This semester ({subjects.length})
           </p>
           {subjects.map((s: SubjectDraft) => (
@@ -1415,7 +1415,7 @@ function SubjectsStep({
           }}
           className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-zinc-50 transition-colors"
         >
-          <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-zinc-500">
+          <span className="inline-flex items-center gap-2 text-xs font-semibold text-zinc-500">
             <PenLine size={14} />
             New subject not in catalog?
           </span>
@@ -1526,7 +1526,7 @@ function SubjectsStep({
                       setDraft({ ...draft, subjectType: t.id });
                     }
                   }}
-                  className={`text-left px-3 py-2.5 rounded-xl border transition-all ${
+                  className={`text-left px-3 py-2.5 rounded-xl border transition-[color,background-color,border-color,opacity,transform,box-shadow] ${
                     draft.subjectType === t.id
                       ? "border-zinc-300 bg-zinc-100"
                       : "border-zinc-200/70 bg-white hover:border-zinc-300"
@@ -1565,7 +1565,7 @@ function SubjectsStep({
             )}
             <button
               onClick={addSubject}
-              className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-zinc-800 text-white font-bold text-sm hover:bg-zinc-900 transition-all"
+              className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-zinc-800 text-white font-bold text-sm hover:bg-zinc-900 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
             >
               <Plus size={16} /> Add Custom Subject
             </button>
@@ -1718,7 +1718,7 @@ function SubjectRow({
         </p>
       </div>
       <span
-        className={`shrink-0 px-2.5 py-1 rounded-lg text-[8px] font-semibold tracking-[0.14em] border ${typeMeta[s.subjectType] || typeMeta.CORE}`}
+        className={`shrink-0 px-2.5 py-1 rounded-lg text-[8px] font-semibold  border ${typeMeta[s.subjectType] || typeMeta.CORE}`}
       >
         {s.subjectType.replace("_", " ")}
       </span>
@@ -1726,7 +1726,7 @@ function SubjectRow({
         <button
           type="button"
           onClick={() => setEditing(true)}
-          className="p-2 rounded-lg text-zinc-300 hover:text-zinc-700 hover:bg-zinc-100 transition-all shrink-0"
+          className="p-2 rounded-lg text-zinc-300 hover:text-zinc-700 hover:bg-zinc-100 transition-[color,background-color,border-color,opacity,transform,box-shadow] shrink-0"
           title="Rename"
         >
           <PenLine size={15} />
@@ -1735,7 +1735,7 @@ function SubjectRow({
       <button
         type="button"
         onClick={onRemove}
-        className="p-2 rounded-lg text-zinc-300 hover:text-rose-500 hover:bg-rose-50 transition-all shrink-0"
+        className="p-2 rounded-lg text-zinc-300 hover:text-rose-500 hover:bg-rose-50 transition-[color,background-color,border-color,opacity,transform,box-shadow] shrink-0"
         title="Remove"
       >
         <Trash2 size={15} />
@@ -1757,7 +1757,7 @@ function ElectivesStep({ groups, setGroups, gDraft, setGDraft, addGroup }: any) 
       </div>
 
       <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 space-y-4">
-        <p className="text-xs font-semibold tracking-[0.14em] text-zinc-900">
+        <p className="text-xs font-semibold text-zinc-900">
           Add Elective Group
         </p>
         <div className="grid grid-cols-2 gap-3">
@@ -1816,7 +1816,7 @@ function ElectivesStep({ groups, setGroups, gDraft, setGDraft, addGroup }: any) 
         </div>
         <button
           onClick={addGroup}
-          className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-zinc-900 text-white font-bold text-sm hover:bg-zinc-800 transition-all"
+          className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-zinc-900 text-white font-bold text-sm hover:bg-zinc-800 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
         >
           <Plus size={16} /> Add Group
         </button>
@@ -1849,7 +1849,7 @@ function ElectivesStep({ groups, setGroups, gDraft, setGDraft, addGroup }: any) 
                 onClick={() =>
                   setGroups(groups.filter((x: GroupDraft) => x.key !== g.key))
                 }
-                className="p-2 rounded-lg text-zinc-300 hover:text-rose-500 hover:bg-rose-50 transition-all shrink-0"
+                className="p-2 rounded-lg text-zinc-300 hover:text-rose-500 hover:bg-rose-50 transition-[color,background-color,border-color,opacity,transform,box-shadow] shrink-0"
               >
                 <Trash2 size={15} />
               </button>
@@ -1880,7 +1880,7 @@ function ReviewStep({
   return (
     <div className="space-y-5">
       <div className="rounded-2xl bg-gradient-to-br from-navy-900 to-navy-800 text-white p-6">
-        <p className="text-[10px] font-semibold tracking-[0.14em] text-white/60 mb-1">
+        <p className="text-[10px] font-semibold text-white/60 mb-1">
           {program} {batch ? `· Batch ${batch}` : ""}{" "}
           {academicYear ? `· ${academicYear}` : ""}
         </p>
@@ -1899,7 +1899,7 @@ function ReviewStep({
 
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-2xl border border-zinc-200/70 bg-white p-4">
-          <p className="text-[9px] font-semibold tracking-[0.14em] text-zinc-400 mb-1">
+          <p className="text-[9px] font-semibold text-zinc-400 mb-1">
             Registration Opens
           </p>
           <p className="text-sm font-semibold text-zinc-800">
@@ -1907,7 +1907,7 @@ function ReviewStep({
           </p>
         </div>
         <div className="rounded-2xl border border-zinc-200/70 bg-white p-4">
-          <p className="text-[9px] font-semibold tracking-[0.14em] text-zinc-400 mb-1">
+          <p className="text-[9px] font-semibold text-zinc-400 mb-1">
             Registration Closes
           </p>
           <p className="text-sm font-semibold text-zinc-800">
@@ -1938,7 +1938,7 @@ function ReviewList({ title, items }: { title: string; items: SubjectDraft[] }) 
   if (items.length === 0) return null;
   return (
     <div className="rounded-2xl border border-zinc-200/70 bg-white p-4">
-      <p className="text-xs font-semibold tracking-[0.14em] text-zinc-500 mb-3">
+      <p className="text-xs font-semibold text-zinc-500 mb-3">
         {title}
       </p>
       <div className="space-y-1.5">

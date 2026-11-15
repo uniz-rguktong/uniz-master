@@ -179,7 +179,7 @@ export default function SystemUserAnalytics() {
       {academicStats && (
         <div className="space-y-4">
           <div>
-            <p className="text-[11px] font-semibold text-zinc-400 tracking-[0.14em] uppercase">
+            <p className="text-[11px] font-semibold text-zinc-400">
               Academic overview
             </p>
             <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
@@ -231,7 +231,7 @@ export default function SystemUserAnalytics() {
       <InstitutionAnalytics />
 
       <div>
-        <p className="text-[11px] font-semibold text-zinc-400 tracking-[0.14em] uppercase">
+        <p className="text-[11px] font-semibold text-zinc-400">
           Access & identity
         </p>
         <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
@@ -276,7 +276,7 @@ export default function SystemUserAnalytics() {
       </div>
 
       <div>
-        <p className="text-[11px] font-semibold text-zinc-400 tracking-[0.14em] uppercase">
+        <p className="text-[11px] font-semibold text-zinc-400">
           Operations
         </p>
         <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
@@ -293,7 +293,7 @@ export default function SystemUserAnalytics() {
               <h2 className="text-[15px] font-semibold text-zinc-900 tracking-[-0.01em]">
                 Accounts by role
               </h2>
-              <p className="text-[11px] font-medium text-zinc-400 tracking-[0.14em]">
+              <p className="text-[11px] font-medium text-zinc-400">
                 Students, faculty & admin
               </p>
             </div>
@@ -317,7 +317,7 @@ export default function SystemUserAnalytics() {
                       transition={{ duration: 0.2, ease: "circOut" }}
                       className="flex flex-col items-center justify-center text-center"
                     >
-                      <p className="text-zinc-400 text-[10px] font-medium tracking-[0.12em] mb-1 max-w-[120px] truncate">
+                      <p className="text-zinc-400 text-[10px] font-medium mb-1 max-w-[120px] truncate">
                         {displayLabel}
                       </p>
                       <p className="text-[32px] font-semibold text-zinc-900 leading-none tracking-[-0.03em] tabular-nums">
@@ -352,7 +352,7 @@ export default function SystemUserAnalytics() {
                 >
                   <div className="flex items-center space-x-2.5">
                     <div
-                      className="h-2 w-2 rounded-full group-hover:scale-125 transition-transform"
+                      className="h-2 w-2 rounded-full transition-transform"
                       style={{ backgroundColor: segment.color }}
                     />
                     <span className="text-[12.5px] font-medium text-zinc-600 capitalize tracking-tight">

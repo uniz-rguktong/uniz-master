@@ -213,7 +213,7 @@ export default function DeanReview() {
               <select
                 value={filterYear}
                 onChange={(e) => setFilterYear(e.target.value)}
-                className="font-semibold text-[10px] tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
+                className="font-semibold text-[10px] text-zinc-700 outline-none border-none bg-transparent"
               >
                 <option value="all">All Years</option>
                 {["E1", "E2", "E3", "E4"].map((y) => (
@@ -228,7 +228,7 @@ export default function DeanReview() {
               <select
                 value={filterBatch}
                 onChange={(e) => setFilterBatch(e.target.value)}
-                className="font-semibold text-[10px] tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
+                className="font-semibold text-[10px] text-zinc-700 outline-none border-none bg-transparent"
               >
                 <option value="all">All Batches</option>
                 {availableBatches.map((b) => (
@@ -244,7 +244,7 @@ export default function DeanReview() {
           {allocations.length > 0 && (
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-6 py-3 bg-white border border-zinc-200 rounded-2xl text-zinc-600 font-bold text-xs hover:bg-zinc-50 transition-all shadow-sm"
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-zinc-200 rounded-2xl text-zinc-600 font-bold text-xs hover:bg-zinc-50 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-sm"
             >
               <FileSpreadsheet size={16} />
               Export XLS
@@ -252,14 +252,14 @@ export default function DeanReview() {
           )}
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-zinc-900 text-white rounded-2xl font-bold text-xs hover:bg-zinc-800 transition-all shadow-xl"
+            className="flex items-center gap-2 px-6 py-3 bg-zinc-900 text-white rounded-2xl font-bold text-xs hover:bg-zinc-800 transition-[color,background-color,border-color,opacity,transform,box-shadow] border border-navy-200/60"
           >
             <Plus size={16} />
             Add Subject
           </button>
           <div className="flex items-center gap-3 px-6 py-3 bg-amber-50 rounded-2xl border border-amber-100">
             <AlertCircle className="text-amber-500" size={18} />
-            <p className="text-amber-700 text-xs font-semibold tracking-[0.14em]">
+            <p className="text-amber-700 text-xs font-semibold">
               {allocations.filter((a: any) => !a.isApproved).length} Pending
               Approvals
             </p>
@@ -276,16 +276,16 @@ export default function DeanReview() {
           {allocations.map((alloc) => (
             <div
               key={alloc.id}
-              className={`bg-white border-2 rounded-3xl p-8 transition-all ${
+              className={`bg-white border-2 rounded-3xl p-8 transition-[color,background-color,border-color,opacity,transform,box-shadow] ${
                 alloc.isApproved
                   ? "border-emerald-50 opacity-80"
-                  : "border-zinc-100 shadow-xl hover:border-zinc-100"
+                  : "border-zinc-100 border border-navy-200/60 hover:border-zinc-100"
               } group`}
             >
               <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-8">
                 <div className="flex items-center gap-6">
                   <div
-                    className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-[color,background-color,border-color,opacity,transform,box-shadow] ${
                       alloc.isApproved
                         ? "bg-emerald-50 text-emerald-600"
                         : "bg-zinc-50 text-zinc-900 group-hover:bg-zinc-900 group-hover:text-white"
@@ -295,11 +295,11 @@ export default function DeanReview() {
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                      <span className="text-[10px] font-semibold text-zinc-400">
                         {alloc.subject.code}
                       </span>
                       {alloc.isApproved && (
-                        <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md text-[8px] font-semibold tracking-[0.14em] flex items-center gap-1">
+                        <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md text-[8px] font-semibold flex items-center gap-1">
                           <Check size={8} strokeWidth={4} /> Approved
                         </span>
                       )}
@@ -315,14 +315,14 @@ export default function DeanReview() {
                     <>
                       <button
                         onClick={() => setEditing(alloc)}
-                        className="p-3.5 bg-zinc-50 text-zinc-400 rounded-2xl hover:bg-zinc-900 hover:text-white transition-all shadow-sm"
+                        className="p-3.5 bg-zinc-50 text-zinc-400 rounded-2xl hover:bg-zinc-900 hover:text-white transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-sm"
                         title="Edit Subject"
                       >
                         <Edit size={18} />
                       </button>
                       <button
                         onClick={() => handleDelete(alloc.id)}
-                        className="p-3.5 bg-red-50 text-red-400 rounded-2xl hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                        className="p-3.5 bg-red-50 text-red-400 rounded-2xl hover:bg-red-500 hover:text-white transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-sm"
                         title="Delete"
                       >
                         <Trash2 size={18} />
@@ -330,7 +330,7 @@ export default function DeanReview() {
                       <button
                         disabled={approving === alloc.id}
                         onClick={() => handleApprove(alloc.id)}
-                        className="bg-zinc-900 text-white px-8 py-3.5 rounded-2xl font-semibold tracking-[0.14em] text-[10px] flex items-center gap-2 hover:bg-black transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                        className="bg-zinc-900 text-white px-8 py-3.5 rounded-2xl font-semibold text-[10px] flex items-center gap-2 hover:bg-black transition-[color,background-color,border-color,opacity,transform,box-shadow] border border-navy-200/60 active:scale-95 disabled:opacity-50"
                       >
                         {approving === alloc.id ? (
                           <Spinner size="sm" className="brightness-200" />
@@ -351,7 +351,7 @@ export default function DeanReview() {
               {/* Subject Meta (Secondary info) */}
               <div className="mt-6 pt-6 border-t border-zinc-50 flex flex-wrap gap-8">
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
+                  <span className="text-[9px] font-semibold text-zinc-300">
                     Credits
                   </span>
                   <span className="font-bold text-zinc-600 text-xs">
@@ -359,7 +359,7 @@ export default function DeanReview() {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
+                  <span className="text-[9px] font-semibold text-zinc-300">
                     Semester
                   </span>
                   <span className="font-bold text-zinc-600 text-xs">
@@ -368,7 +368,7 @@ export default function DeanReview() {
                 </div>
                 {alloc.batch && (
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
+                    <span className="text-[9px] font-semibold text-zinc-300">
                       Batch
                     </span>
                     <span className="font-bold text-zinc-600 text-xs">
@@ -377,7 +377,7 @@ export default function DeanReview() {
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
+                  <span className="text-[9px] font-semibold text-zinc-300">
                     Year
                   </span>
                   <span className="font-bold text-zinc-600 text-xs text-zinc-900">
@@ -385,7 +385,7 @@ export default function DeanReview() {
                   </span>
                 </div>
                 {!alloc.isApproved && (
-                  <div className="ml-auto flex items-center gap-2 text-[10px] font-bold text-zinc-900 tracking-[0.14em]">
+                  <div className="ml-auto flex items-center gap-2 text-[10px] font-bold text-zinc-900">
                     Ready for Review <ArrowRight size={12} />
                   </div>
                 )}

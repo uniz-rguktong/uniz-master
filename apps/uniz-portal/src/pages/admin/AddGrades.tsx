@@ -106,7 +106,7 @@ export default function AddGrades() {
       {!file ? (
         <div
           className={`
-                border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200
+                border-2 border-dashed rounded-xl p-12 text-center transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-200
                 ${error ? "border-red-300 bg-red-50" : "border-zinc-300 hover:border-zinc-100 hover:bg-zinc-50"}
             `}
         >
@@ -145,7 +145,7 @@ export default function AddGrades() {
       ) : (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* File Info Bar */}
-          <div className="bg-zinc-900 text-white p-4 rounded-xl flex items-center justify-between shadow-lg">
+          <div className="bg-zinc-900 text-white p-4 rounded-xl flex items-center justify-between shadow-none">
             <div className="flex items-center gap-4">
               <div className="p-2 bg-zinc-800 rounded-lg">
                 <FileSpreadsheet className="w-6 h-6 text-green-400" />

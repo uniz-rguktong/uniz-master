@@ -93,10 +93,10 @@ export default function StudentDashboard({
               background: student.is_suspended ? "#f43f5e" : "#18181b",
             }}
           >
-            <div className="relative bg-zinc-50 p-[3px] rounded-full">
+            <div className="relative bg-zinc-50 p-[3px] rounded-md">
               <div
                 className={cn(
-                  "relative w-[110px] h-[110px] md:w-[130px] md:h-[130px] rounded-full flex justify-center items-center text-white text-[54px] font-medium overflow-hidden transition-all duration-500",
+                  "relative w-[110px] h-[110px] md:w-[130px] md:h-[130px] rounded-full flex justify-center items-center text-white text-[54px] font-medium overflow-hidden transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-500",
                   student.profile_url ? "bg-zinc-50" : "bg-zinc-900",
                 )}
               >
@@ -277,7 +277,7 @@ export default function StudentDashboard({
         {/* Motivation Quote */}
         <div className={cn(adminCardClass, "p-8 text-center flex flex-col justify-center")}>
           <p className={cn(adminLabelClass, "mb-3")}>Motivation</p>
-          <p className="text-[15px] font-medium text-zinc-600 italic leading-relaxed max-w-2xl mx-auto">
+          <p className="text-[15px] font-medium text-zinc-600 leading-relaxed max-w-2xl mx-auto">
             "{student.motivation || "—"}"
           </p>
         </div>

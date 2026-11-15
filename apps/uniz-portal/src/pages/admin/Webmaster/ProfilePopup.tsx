@@ -261,7 +261,7 @@ export default function ProfilePopup({
                 {/* Camera button */}
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0.5 right-0.5 w-7 h-7 bg-zinc-700 text-white rounded-full flex items-center justify-center border-2 border-white hover:bg-zinc-900 transition-all active:scale-90 shadow-none"
+                  className="absolute bottom-0.5 right-0.5 w-7 h-7 bg-zinc-700 text-white rounded-full flex items-center justify-center border-2 border-white hover:bg-zinc-900 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-90 shadow-none"
                 >
                   <Camera size={12} />
                 </button>
@@ -290,7 +290,7 @@ export default function ProfilePopup({
                   <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl border-2 border-zinc-100 text-zinc-900 text-[12px] font-semibold hover:bg-zinc-50 transition-all disabled:opacity-60 shadow-none"
+                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl border-2 border-zinc-100 text-zinc-900 text-[12px] font-semibold hover:bg-zinc-50 transition-[color,background-color,border-color,opacity,transform,box-shadow] disabled:opacity-60 shadow-none"
                   >
                     {isSaving ? (
                       <Spinner size="sm" className="scale-75" />
@@ -310,7 +310,7 @@ export default function ProfilePopup({
                         department: profile?.department || "",
                       });
                     }}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-zinc-200 text-zinc-500 text-[12px] font-semibold hover:bg-zinc-50 transition-all shadow-none"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-zinc-200 text-zinc-500 text-[12px] font-semibold hover:bg-zinc-50 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none"
                   >
                     <Ban size={12} />
                     Cancel
@@ -319,7 +319,7 @@ export default function ProfilePopup({
               ) : (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 px-6 py-2 rounded-xl border border-zinc-200 text-zinc-700 text-[13px] font-medium hover:bg-zinc-50 hover:border-zinc-300 transition-all shadow-none"
+                  className="flex items-center gap-2 px-6 py-2 rounded-xl border border-zinc-200 text-zinc-700 text-[13px] font-medium hover:bg-zinc-50 hover:border-zinc-300 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none"
                 >
                   <Pencil size={13} className="text-zinc-500" />
                   Edit Profile
@@ -435,7 +435,7 @@ function DetailRow({
         {icon}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[9.5px] font-bold text-zinc-400 tracking-[0.14em] leading-none mb-0.5">
+        <p className="text-[9.5px] font-bold text-zinc-400 leading-none mb-0.5">
           {label}
         </p>
         {editable && onChange ? (

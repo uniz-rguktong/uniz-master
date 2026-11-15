@@ -88,7 +88,7 @@ export default function SpreadsheetUploader({
       const result = await res.json();
       if (!result.success) throw new Error(result.msg || "Upload failed");
 
-      alert(`✅ ${result.msg}`);
+      alert(result.msg);
     } catch (err: any) {
       console.error("Upload error:", err);
       setError(err.message || "Failed to upload");
@@ -98,7 +98,7 @@ export default function SpreadsheetUploader({
   };
 
   return (
-    <div className="bg-white shadow-xl rounded-2xl p-6">
+    <div className="bg-white border border-navy-200/60 rounded-2xl p-6">
       <h2 className="text-xl font-bold mb-4">{title}</h2>
 
       <input
@@ -114,7 +114,7 @@ export default function SpreadsheetUploader({
         </p>
       )}
 
-      {error && <div className="text-red-600 font-medium mb-3">⚠️ {error}</div>}
+      {error && <div className="text-red-600 font-medium mb-3">{error}</div>}
 
       <button
         onClick={handleUpload}

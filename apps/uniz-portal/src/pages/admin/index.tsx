@@ -55,7 +55,7 @@ const QuickActionButton = ({
     onClick={onClick}
     className={`group relative flex flex-col items-start p-6 ${adminHubCardClass} text-left w-full overflow-hidden`}
   >
-    <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity transform group-hover:scale-110 duration-500">
+    <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity transform duration-500">
       <Icon className="w-24 h-24 text-zinc-950" />
     </div>
     <div className="p-3 rounded-xl bg-zinc-50 text-zinc-700 mb-4 group-hover:bg-zinc-950 group-hover:text-white transition-colors duration-300 border border-zinc-100/80">
@@ -273,8 +273,8 @@ export default function Admin() {
                 {username}
               </h1>
               <div className="flex items-center gap-1.5 mt-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <p className="text-xs font-bold text-zinc-400 tracking-[0.14em]">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <p className="text-xs font-bold text-zinc-400">
                   {role.replace("_", " ")} Dashboard
                 </p>
               </div>
@@ -297,7 +297,7 @@ export default function Admin() {
             </button>
             <button
               onClick={handleLogout}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wider transition-all ${adminLogoutButtonClass} !w-auto !h-auto hover:!bg-red-50`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs  transition-[color,background-color,border-color,opacity,transform,box-shadow] ${adminLogoutButtonClass} !w-auto !h-auto hover:!bg-red-50`}
             >
               <LogOut className="w-4 h-4" /> LOGOUT
             </button>
@@ -340,7 +340,7 @@ export default function Admin() {
               >
                 <div className="flex items-center gap-2 mb-6 ml-1 border-b border-zinc-100/80 pb-2">
                   <LayoutGrid className="w-4 h-4 text-zinc-400" />
-                  <h2 className="text-sm font-bold text-zinc-400 tracking-[0.14em]">
+                  <h2 className="text-sm font-bold text-zinc-400">
                     {section.title}
                   </h2>
                 </div>

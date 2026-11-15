@@ -181,7 +181,7 @@ export default function ApproveComp({ type }: ApproveProps) {
             <div
               key={request._id}
               className={cn(
-                "bg-white rounded-xl border border-zinc-200 p-6 flex flex-col shadow-sm transition-all hover:shadow-md",
+                "bg-white rounded-xl border border-zinc-200 p-6 flex flex-col shadow-sm transition-[color,background-color,border-color,opacity,transform,box-shadow] hover:shadow-md",
                 request.is_approved && "border-emerald-200 bg-emerald-50/10",
                 request.is_rejected && "border-red-200 bg-red-50/10",
               )}
@@ -204,7 +204,7 @@ export default function ApproveComp({ type }: ApproveProps) {
                 <div className="flex flex-col items-end gap-2">
                   <div
                     className={cn(
-                      "px-3 py-1 rounded-full text-xs font-bold tracking-wide border",
+                      "px-3 py-1 rounded-md text-xs font-bold tracking-wide border",
                       request.is_approved
                         ? "bg-emerald-100 text-emerald-800 border-emerald-200"
                         : request.is_rejected
@@ -231,7 +231,7 @@ export default function ApproveComp({ type }: ApproveProps) {
 
               <div className="space-y-5 flex-1">
                 <div className="bg-zinc-50 rounded-lg p-4 border border-zinc-100">
-                  <h4 className="text-xs font-semibold text-zinc-400 tracking-wider mb-2">
+                  <h4 className="text-xs font-semibold text-zinc-400 mb-2">
                     Reason
                   </h4>
                   <p className="text-zinc-700 text-sm leading-relaxed font-medium">

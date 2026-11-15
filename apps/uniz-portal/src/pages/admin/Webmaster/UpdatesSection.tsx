@@ -248,19 +248,19 @@ export default function UpdatesSection() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-zinc-200/70">
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
                   Broadcast Content
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
                   Resource Link
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
                   Visibility
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
                   Distribution Date
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400 text-right">
+                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400 text-right">
                   Actions
                 </th>
               </tr>
@@ -342,12 +342,12 @@ export default function UpdatesSection() {
                     </td>
                     <td className="px-8 py-5">
                       {update.isVisible ? (
-                        <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-full border border-zinc-200 w-fit">
+                        <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-md border border-zinc-200 w-fit">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           <span className="text-[11px] font-medium">Live</span>
                         </div>
                       ) : (
-                        <div className="inline-flex items-center gap-1.5 text-zinc-400 bg-zinc-50 px-2.5 py-1 rounded-full border border-zinc-200 w-fit">
+                        <div className="inline-flex items-center gap-1.5 text-zinc-400 bg-zinc-50 px-2.5 py-1 rounded-md border border-zinc-200 w-fit">
                           <span className="w-1.5 h-1.5 rounded-full bg-zinc-300" />
                           <span className="text-[11px] font-medium">Draft</span>
                         </div>
@@ -367,7 +367,7 @@ export default function UpdatesSection() {
                               )
                             : "Today"}
                         </p>
-                        <p className="text-[10px] font-medium text-zinc-400 tracking-[0.12em] mt-0.5">
+                        <p className="text-[10px] font-medium text-zinc-400 mt-0.5">
                           Publication
                         </p>
                       </div>
@@ -376,14 +376,14 @@ export default function UpdatesSection() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleEditClick(update)}
-                          className="h-9 w-9 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:text-zinc-900 hover:border-zinc-300 border border-zinc-200 transition-all active:scale-95"
+                          className="h-9 w-9 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:text-zinc-900 hover:border-zinc-300 border border-zinc-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95"
                         >
                           <Edit3 size={14} />
                         </button>
                         <button
                           onClick={() => deleteUpdate(update._id || update.id)}
                           disabled={actionLoading === (update._id || update.id)}
-                          className="h-9 w-9 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-zinc-200 transition-all active:scale-95"
+                          className="h-9 w-9 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-zinc-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -431,7 +431,7 @@ export default function UpdatesSection() {
           }
         }}
       >
-        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl shadow-xl">
+        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl border border-navy-200/60">
           <div className="relative">
             {/* Close Button */}
             <button
@@ -445,7 +445,7 @@ export default function UpdatesSection() {
                   isVisible: true,
                 });
               }}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
             >
               <X size={20} />
             </button>

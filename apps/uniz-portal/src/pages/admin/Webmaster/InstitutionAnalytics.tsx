@@ -50,7 +50,7 @@ function AnalyticsCard({
         <h3 className="text-[15px] font-semibold text-zinc-900 tracking-[-0.01em]">
           {title}
         </h3>
-        <p className="text-[11px] font-medium text-zinc-400 tracking-[0.12em] mt-0.5">
+        <p className="text-[11px] font-medium text-zinc-400 mt-0.5">
           {subtitle}
         </p>
       </div>
@@ -230,7 +230,7 @@ export default function InstitutionAnalytics() {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-[11px] font-semibold text-zinc-400 tracking-[0.14em] uppercase">
+        <p className="text-[11px] font-semibold text-zinc-400">
           Institution
         </p>
         <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
@@ -295,7 +295,7 @@ export default function InstitutionAnalytics() {
                     </div>
                     <div className="h-1.5 rounded-full bg-zinc-100 overflow-hidden">
                       <div
-                        className="h-full rounded-full transition-all duration-700"
+                        className="h-full rounded-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-700"
                         style={{
                           width: `${pct}%`,
                           background:
@@ -319,7 +319,7 @@ export default function InstitutionAnalytics() {
               animationDuration={1}
               centerContent={
                 <div className="text-center">
-                  <p className="text-[10px] text-zinc-400 tracking-[0.1em] mb-0.5">
+                  <p className="text-[10px] text-zinc-400 mb-0.5">
                     On campus
                   </p>
                   <p className="text-2xl font-semibold text-zinc-900 tabular-nums">
@@ -360,12 +360,12 @@ export default function InstitutionAnalytics() {
                   </span>
                   <div className="flex items-center gap-2 shrink-0">
                     {g.pending > 0 && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-100">
                         {g.pending} open
                       </span>
                     )}
                     {g.resolved > 0 && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100">
                         {g.resolved} done
                       </span>
                     )}

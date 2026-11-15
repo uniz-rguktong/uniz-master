@@ -245,7 +245,7 @@ export default function RegistrationTracking({
         </div>
         <div className="h-2 rounded-full bg-zinc-100 overflow-hidden">
           <div
-            className="h-full bg-emerald-500 transition-all duration-500"
+            className="h-full bg-emerald-500 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-500"
             style={{ width: `${progressPct}%` }}
           />
         </div>

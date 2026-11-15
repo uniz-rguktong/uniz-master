@@ -137,7 +137,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-zinc-900 font-bold text-[10px] tracking-[0.14em]">
+          <div className="flex items-center gap-2 text-zinc-900 font-bold text-[10px]">
             <TrendingUp size={14} />
             Live Queue
           </div>
@@ -159,7 +159,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
             placeholder="Search Student ID or Name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-4 bg-white border border-zinc-200 rounded-2xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-all font-medium text-zinc-900 shadow-sm"
+            className="w-full h-12 pl-12 pr-4 bg-white border border-zinc-200 rounded-2xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-[color,background-color,border-color,opacity,transform,box-shadow] font-medium text-zinc-900 shadow-sm"
           />
         </div>
       </div>
@@ -182,7 +182,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
           {filteredRequests.map((request) => (
             <div
               key={request._id}
-              className="bg-white rounded-3xl border border-zinc-100 p-8 shadow-sm hover:shadow-xl hover:translate-y-[-2px] transition-all group flex flex-col h-full"
+              className="bg-white rounded-3xl border border-zinc-100 p-8 shadow-sm hover:translate-y-[-2px] transition-[color,background-color,border-color,opacity,transform,box-shadow] group flex flex-col h-full"
             >
               {/* Card Top: Identity & Status */}
               <div className="flex items-start justify-between mb-8">
@@ -194,12 +194,12 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                     <h3 className="font-bold text-zinc-900 text-xl tracking-tight leading-none mb-2">
                       {request.username}
                     </h3>
-                    <p className="text-[12px] text-zinc-900 font-semibold tracking-[0.14em]">
+                    <p className="text-[12px] text-zinc-900 font-semibold">
                       {request.studentId || "No ID"}
                     </p>
                   </div>
                 </div>
-                <div className="bg-amber-50 text-amber-600 px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-[0.1em] border border-amber-100">
+                <div className="bg-amber-50 text-amber-600 px-4 py-1.5 rounded-md text-[10px] font-semibold border border-amber-100">
                   Pending
                 </div>
               </div>
@@ -210,7 +210,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
               <div className="flex-1 space-y-6">
                 {/* Reason Section */}
                 <div className="bg-zinc-50/50 rounded-2xl p-6 border border-zinc-100">
-                  <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] block mb-3">
+                  <span className="text-[10px] font-semibold text-zinc-400 block mb-3">
                     Reason
                   </span>
                   <p className="text-zinc-700 font-semibold text-[15px] leading-relaxed italic">
@@ -221,7 +221,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 {/* Time Grid */}
                 <div className="grid grid-cols-2 gap-6 pb-2">
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] block">
+                    <span className="text-[10px] font-semibold text-zinc-400 block">
                       From
                     </span>
                     <p
@@ -232,7 +232,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                     </p>
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] block">
+                    <span className="text-[10px] font-semibold text-zinc-400 block">
                       To
                     </span>
                     <p
@@ -246,7 +246,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
 
                 <div className="grid grid-cols-2 gap-6 pb-2">
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] block">
+                    <span className="text-[10px] font-semibold text-zinc-400 block">
                       Duration
                     </span>
                     <p className="text-zinc-900 font-bold text-[13px]">
@@ -254,7 +254,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                     </p>
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] block text-right">
+                    <span className="text-[10px] font-semibold text-zinc-400 block text-right">
                       Submitted
                     </span>
                     <p className="text-zinc-900 font-bold text-[13px] text-right truncate">
@@ -272,7 +272,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 <button
                   onClick={() => handleAction("approve", request._id)}
                   disabled={!!actionLoading}
-                  className="h-12 bg-[#1a1f2e] text-white rounded-2xl font-bold tracking-[0.14em] text-[10px] hover:bg-[#252c41] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-zinc-200"
+                  className="h-12 bg-[#1a1f2e] text-white rounded-2xl font-bold text-[10px] hover:bg-[#252c41] active:scale-95 transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center justify-center gap-2 shadow-none"
                 >
                   {actionLoading === request._id ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -284,7 +284,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 <button
                   onClick={() => handleAction("reject", request._id)}
                   disabled={!!actionLoading}
-                  className="h-12 bg-black text-white rounded-2xl font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="h-12 bg-black text-white rounded-2xl font-bold text-[10px] hover:bg-zinc-800 active:scale-95 transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center justify-center gap-2"
                 >
                   {actionLoading === request._id ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -296,7 +296,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 <button
                   onClick={() => handleAction("forward", request._id)}
                   disabled={!!actionLoading}
-                  className="h-12 bg-zinc-50 text-zinc-900 border border-zinc-100 rounded-2xl font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-100 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="h-12 bg-zinc-50 text-zinc-900 border border-zinc-100 rounded-2xl font-bold text-[10px] hover:bg-zinc-100 active:scale-95 transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center justify-center gap-2"
                 >
                   {actionLoading === request._id ? (
                     <Loader2 size={16} className="animate-spin" />

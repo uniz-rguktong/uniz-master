@@ -3,7 +3,7 @@ export default function StudentDashboardSkeleton() {
     <div className="space-y-6 pb-10 animate-pulse">
       {/* Hero Skeleton */}
       <div className="bg-white rounded-xl border border-zinc-100 p-10 flex flex-col items-center">
-        <div className="w-40 h-40 rounded-full bg-zinc-50 border border-zinc-100 mb-6" />
+        <div className="w-40 h-40 rounded-md bg-zinc-50 border border-zinc-100 mb-6" />
         <div className="h-10 w-64 bg-zinc-100 rounded-lg mb-4" />
         <div className="h-4 w-32 bg-zinc-50 rounded-lg mb-10" />
 

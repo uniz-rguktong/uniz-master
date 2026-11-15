@@ -206,7 +206,7 @@ export default function Settings() {
                     <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
                       <div
                         className={cn(
-                          "h-full transition-all duration-300",
+                          "h-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300",
                           passwordStrength.color,
                         )}
                         style={{

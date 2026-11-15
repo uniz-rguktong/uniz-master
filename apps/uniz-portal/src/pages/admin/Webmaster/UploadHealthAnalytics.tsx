@@ -146,8 +146,8 @@ export default function UploadHealthAnalytics({
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div className="space-y-1.5 px-2">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-bold text-emerald-600 tracking-[0.14em]">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span className="text-[10px] font-bold text-emerald-600">
                 Real-time Stream Active
               </span>
             </div>
@@ -161,15 +161,15 @@ export default function UploadHealthAnalytics({
 
           <div className="flex gap-4">
             <div className="bg-white px-5 py-3 rounded-2xl border border-zinc-100 shadow-sm flex flex-col items-end">
-              <span className="text-[9px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
+              <span className="text-[9px] font-bold text-zinc-400 mb-1">
                 Avg Success
               </span>
               <span className="text-xl font-semibold text-emerald-600 leading-none">
                 {(avgSuccess || 0).toFixed(1)}%
               </span>
             </div>
-            <div className="bg-zinc-950 px-5 py-3 rounded-2xl shadow-xl flex flex-col items-end">
-              <span className="text-[9px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
+            <div className="bg-zinc-950 px-5 py-3 rounded-2xl border border-navy-200/60 flex flex-col items-end">
+              <span className="text-[9px] font-bold text-zinc-400 mb-1">
                 Total Records
               </span>
               <span className="text-xl font-semibold text-white leading-none">
@@ -183,7 +183,7 @@ export default function UploadHealthAnalytics({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div
           className={cn(
-            "bg-white rounded-xl border border-zinc-100 p-10 shadow-sm transition-all duration-500 relative overflow-hidden",
+            "bg-white rounded-xl border border-zinc-100 p-10 shadow-sm transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-500 relative overflow-hidden",
             hideHeader ? "lg:col-span-3" : "lg:col-span-3",
           )}
         >
@@ -218,7 +218,7 @@ export default function UploadHealthAnalytics({
                   </div>
                 )}
               </div>
-              <div className="mt-4 flex items-center gap-6 text-[12px] font-bold text-zinc-400 tracking-wider">
+              <div className="mt-4 flex items-center gap-6 text-[12px] font-bold text-zinc-400">
                 <div className="flex items-center gap-2">
                   <span className="text-zinc-500">Total volume:</span>
                   <span className="text-zinc-900">{latest?.total || 0}</span>
@@ -240,7 +240,7 @@ export default function UploadHealthAnalytics({
               <select
                 value={range}
                 onChange={(e) => setRange(Number(e.target.value))}
-                className="appearance-none bg-zinc-50 border border-zinc-100 rounded-xl px-5 py-2.5 pr-10 text-[11px] font-semibold tracking-[0.14em] text-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500/10 cursor-pointer hover:bg-zinc-100 transition-all shadow-sm"
+                className="appearance-none bg-zinc-50 border border-zinc-100 rounded-xl px-5 py-2.5 pr-10 text-[11px] font-semibold text-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500/10 cursor-pointer hover:bg-zinc-100 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-sm"
               >
                 <option value={7}>Last 7 Days</option>
                 <option value={15}>Last 15 Days</option>

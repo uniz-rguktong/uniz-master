@@ -171,7 +171,7 @@ export default function AddStudents() {
               <button
                 key={y}
                 onClick={() => setYear(y)}
-                className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${
+                className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] ${
                   year === y
                     ? "bg-white text-zinc-900 shadow-sm"
                     : "text-zinc-500 hover:text-zinc-700"
@@ -219,7 +219,7 @@ export default function AddStudents() {
       {!rows.length ? (
         <div
           className={`
-                border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200
+                border-2 border-dashed rounded-xl p-12 text-center transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-200
                 ${error ? "border-black border-2 bg-zinc-50" : "border-zinc-300 hover:border-black hover:bg-zinc-50"}
             `}
         >
@@ -255,7 +255,7 @@ export default function AddStudents() {
       ) : (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* File Info Bar */}
-          <div className="bg-zinc-900 text-white p-4 rounded-xl flex items-center justify-between shadow-lg">
+          <div className="bg-zinc-900 text-white p-4 rounded-xl flex items-center justify-between shadow-none">
             <div className="flex items-center gap-4">
               <div className="p-2 bg-zinc-800 rounded-lg">
                 <FileSpreadsheet className="w-6 h-6 text-green-400" />
@@ -341,13 +341,13 @@ export default function AddStudents() {
       {/* Progress Display */}
       {progress && (
         <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-right-10 duration-500">
-          <div className="bg-white rounded-xl shadow-2xl p-6 border border-zinc-100 w-80">
+          <div className="bg-white rounded-xl border border-navy-200/80 p-6 border border-zinc-100 w-80">
             <div className="flex justify-between items-center mb-2">
               <span className="font-semibold text-zinc-900">
                 Upload Status
               </span>
               <span
-                className={`text-xs font-semibold tracking-[0.14em] px-2 py-1 rounded-full ${progress.status === "completed" ? "bg-black text-white" : "bg-zinc-200 text-zinc-700"}`}
+                className={`text-xs font-semibold  px-2 py-1 rounded-md ${progress.status === "completed" ? "bg-black text-white" : "bg-zinc-200 text-zinc-700"}`}
               >
                 {progress.status === "completed" ? "Completed" : "Processing"}
               </span>
@@ -361,7 +361,7 @@ export default function AddStudents() {
                 </span>
               </div>
             ) : (
-              <div className="flex items-center gap-3 text-black mb-2 font-semibold tracking-[0.14em]">
+              <div className="flex items-center gap-3 text-black mb-2 font-semibold">
                 <Loader2 className="w-5 h-5 animate-spin" />
                 <span className="text-sm font-medium">Uploading data...</span>
               </div>
@@ -369,7 +369,7 @@ export default function AddStudents() {
 
             <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all duration-500 ${progress.status === "completed" ? "bg-black" : "bg-zinc-400"}`}
+                className={`h-full rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-500 ${progress.status === "completed" ? "bg-black" : "bg-zinc-400"}`}
                 style={{ width: `${progress.percentage}%` }}
               />
             </div>

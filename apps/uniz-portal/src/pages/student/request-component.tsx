@@ -121,7 +121,7 @@ export default function RequestComp({ type }: RequestCompProps) {
       <div className="mb-10 mt-2 md:mt-0">
         <button
           onClick={() => navigateTo("/student")}
-          className="text-zinc-400 hover:text-zinc-900 font-bold text-[11px] tracking-[0.14em] flex items-center gap-2 mb-10 transition-all group"
+          className="text-zinc-400 hover:text-zinc-900 font-bold text-[11px] tracking-normal flex items-center gap-2 mb-10 transition-[color,background-color,border-color,opacity,transform] group"
         >
           <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
           Protocol Terminal
@@ -129,7 +129,7 @@ export default function RequestComp({ type }: RequestCompProps) {
 
         <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-6">
           <div className="text-center md:text-left">
-            <p className="text-zinc-400 font-medium text-[11px] mb-2 tracking-[0.14em] leading-none">
+            <p className="text-zinc-400 font-medium text-[11px] mb-2 tracking-normal leading-none">
               Institutional Exit terminal
             </p>
             <h1 className="text-2xl md:text-3xl font-semibold text-zinc-900 tracking-tight leading-none mb-3">
@@ -155,13 +155,13 @@ export default function RequestComp({ type }: RequestCompProps) {
           <div className="bg-white rounded-xl p-6 md:p-8 border border-zinc-100 shadow-sm">
             <div className="space-y-8">
               <div className="space-y-3">
-                <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
+                <label className="text-[10px] font-bold tracking-normal text-zinc-400 ml-1">
                   Reason for {type}
                 </label>
                 <textarea
                   onChange={handleInputChange(setReason)}
                   placeholder="Clearly explain the purpose of your request..."
-                  className="w-full bg-zinc-50 border border-zinc-50 rounded-xl p-6 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:outline-none min-h-[160px] font-semibold text-base text-zinc-800 placeholder:text-zinc-300 placeholder:font-normal resize-none transition-all"
+                  className="w-full bg-zinc-50 border border-zinc-50 rounded-xl p-6 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:outline-none min-h-[160px] font-semibold text-base text-zinc-800 placeholder:text-zinc-300 placeholder:font-normal resize-none transition-[color,background-color,border-color,opacity,transform]"
                 />
               </div>
 
@@ -169,46 +169,46 @@ export default function RequestComp({ type }: RequestCompProps) {
                 {type === "outpass" ? (
                   <>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
+                      <label className="text-[10px] font-bold tracking-normal text-zinc-400 ml-1">
                         Departure Date
                       </label>
                       <Input
                         type="date"
                         onchangeFunction={handleInputChange(setFromDate)}
-                        className="w-full bg-zinc-50 p-4 md:p-5 rounded-xl border border-zinc-50 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:outline-none font-semibold text-base text-zinc-800 transition-all cursor-pointer"
+                        className="w-full bg-zinc-50 p-4 md:p-5 rounded-xl border border-zinc-50 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:outline-none font-semibold text-base text-zinc-800 transition-[color,background-color,border-color,opacity,transform] cursor-pointer"
                       />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
+                      <label className="text-[10px] font-bold tracking-normal text-zinc-400 ml-1">
                         Expected Return
                       </label>
                       <Input
                         type="date"
                         onchangeFunction={handleInputChange(setToDate)}
-                        className="w-full bg-zinc-50 p-4 md:p-5 rounded-xl border border-zinc-50 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:outline-none font-semibold text-base text-zinc-800 transition-all cursor-pointer"
+                        className="w-full bg-zinc-50 p-4 md:p-5 rounded-xl border border-zinc-50 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:outline-none font-semibold text-base text-zinc-800 transition-[color,background-color,border-color,opacity,transform] cursor-pointer"
                       />
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
+                      <label className="text-[10px] font-bold tracking-normal text-zinc-400 ml-1">
                         Exit Time
                       </label>
                       <Input
                         type="time"
                         onchangeFunction={handleInputChange(setFromTime)}
-                        className="w-full bg-zinc-50 p-4 md:p-5 rounded-xl border border-zinc-50 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:outline-none font-semibold text-base text-zinc-800 transition-all cursor-pointer"
+                        className="w-full bg-zinc-50 p-4 md:p-5 rounded-xl border border-zinc-50 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:outline-none font-semibold text-base text-zinc-800 transition-[color,background-color,border-color,opacity,transform] cursor-pointer"
                       />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
+                      <label className="text-[10px] font-bold tracking-normal text-zinc-400 ml-1">
                         Return Window
                       </label>
                       <Input
                         type="time"
                         onchangeFunction={handleInputChange(setToTime)}
-                        className="w-full bg-zinc-50 p-4 md:p-5 rounded-xl border border-zinc-50 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:outline-none font-semibold text-base text-zinc-800 transition-all cursor-pointer"
+                        className="w-full bg-zinc-50 p-4 md:p-5 rounded-xl border border-zinc-50 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:outline-none font-semibold text-base text-zinc-800 transition-[color,background-color,border-color,opacity,transform] cursor-pointer"
                       />
                     </div>
                   </>
@@ -237,7 +237,7 @@ export default function RequestComp({ type }: RequestCompProps) {
             </div>
 
             <div className="p-5 bg-zinc-50 rounded-xl border border-zinc-50">
-              <p className="text-[10px] font-bold text-zinc-300 tracking-[0.14em] mb-1.5">
+              <p className="text-[10px] font-bold text-zinc-300 tracking-normal mb-1.5">
                 Receipt Channel
               </p>
               <p className="text-[13px] font-semibold text-zinc-600 truncate">
@@ -250,7 +250,7 @@ export default function RequestComp({ type }: RequestCompProps) {
             <button
               onClick={sendDataToBackend}
               disabled={isLoading}
-              className="w-full h-[58px] bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold text-base transition-all active:scale-[0.98] shadow-lg shadow-zinc-100 flex items-center justify-center gap-3"
+              className="w-full h-[58px] bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold text-base transition-[color,background-color,border-color,opacity,transform] active:scale-[0.98] shadow-sm flex items-center justify-center gap-3"
             >
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -268,7 +268,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                   `/student/${type === "outing" ? "outpass" : "outing"}/request${type === "outing" ? "outpass" : "outing"}`,
                 )
               }
-              className="w-full h-[54px] border border-zinc-100 text-zinc-400 font-bold text-sm rounded-xl hover:bg-zinc-50 hover:text-zinc-900 transition-all flex items-center justify-center gap-2"
+              className="w-full h-[54px] border border-zinc-100 text-zinc-400 font-bold text-sm rounded-xl hover:bg-zinc-50 hover:text-zinc-900 transition-[color,background-color,border-color,opacity,transform] flex items-center justify-center gap-2"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               Switch to {type === "outing" ? "Outpass" : "Outing"}
