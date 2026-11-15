@@ -339,18 +339,26 @@ async function ensureCaptchaToken(
   return true;
 }
 
-/** Visible compact Turnstile — faster on mobile than invisible (no background hang). */
+/** Turnstile — script prefetched at boot; placeholder until iframe ready. */
 function TurnstileWidget({
   turnstileRef,
   captchaTokenRef,
   onTokenChange,
   onStatusChange,
+  status,
 }: {
   turnstileRef: React.RefObject<any>;
   captchaTokenRef: React.MutableRefObject<string | null>;
   onTokenChange: (token: string | null) => void;
   onStatusChange: (status: "loading" | "ready" | "error") => void;
+  status: "loading" | "ready" | "error";
 }) {
+  const [iframeReady, setIframeReady] = useState(false);
+
+  useEffect(() => {
+    prefetchTurnstile();
+  }, []);
+
   if (!turnstileEnabled()) {
     return import.meta.env.DEV ? (
       <p className="text-center text-[11px] text-amber-600 font-medium py-1">
@@ -359,39 +367,67 @@ function TurnstileWidget({
     ) : null;
   }
 
+  const showPlaceholder =
+    !iframeReady && status !== "ready" && status !== "error";
+
   return (
-    <div className="flex min-h-[65px] items-center justify-center">
-      <Turnstile
-        ref={turnstileRef}
-        siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-        scriptOptions={{ async: true, defer: true, appendTo: "head" }}
-        options={{
-          theme: "light",
-          size: "normal",
-          action: "login",
-          retry: "auto",
-          "refresh-expired": "auto",
-        }}
-        onSuccess={(token) => {
-          captchaTokenRef.current = token;
-          onTokenChange(token);
-          onStatusChange("ready");
-        }}
-        onExpire={() => {
-          captchaTokenRef.current = null;
-          onTokenChange(null);
-          onStatusChange("loading");
-          turnstileRef.current?.reset();
-        }}
-        onError={() => {
-          captchaTokenRef.current = null;
-          onTokenChange(null);
-          onStatusChange("error");
-        }}
-        onLoad={() => {
-          onStatusChange("loading");
-        }}
-      />
+    <div className="relative flex min-h-[65px] w-full items-center justify-center">
+      {showPlaceholder && (
+        <div className="absolute inset-0 z-[1] flex items-center justify-center">
+          <TurnstileLoadingPlaceholder />
+        </div>
+      )}
+      <div
+        className={cn(
+          "flex w-full justify-center transition-opacity duration-150",
+          showPlaceholder ? "opacity-0" : "opacity-100",
+        )}
+      >
+        <Turnstile
+          ref={turnstileRef}
+          siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+          scriptOptions={{
+            id: "cf-turnstile-script",
+            async: true,
+            defer: true,
+            appendTo: "head",
+          }}
+          options={{
+            theme: "light",
+            size: "flexible",
+            action: "login",
+            retry: "auto",
+            retryInterval: 2000,
+            refreshExpired: "auto",
+            appearance: "always",
+            execution: "render",
+          }}
+          onLoadScript={() => onStatusChange("loading")}
+          onWidgetLoad={() => {
+            setIframeReady(true);
+            onStatusChange("loading");
+          }}
+          onBeforeInteractive={() => setIframeReady(true)}
+          onSuccess={(token) => {
+            captchaTokenRef.current = token;
+            onTokenChange(token);
+            setIframeReady(true);
+            onStatusChange("ready");
+          }}
+          onExpire={() => {
+            captchaTokenRef.current = null;
+            onTokenChange(null);
+            onStatusChange("loading");
+            turnstileRef.current?.reset();
+          }}
+          onError={() => {
+            captchaTokenRef.current = null;
+            onTokenChange(null);
+            setIframeReady(true);
+            onStatusChange("error");
+          }}
+        />
+      </div>
     </div>
   );
 }
