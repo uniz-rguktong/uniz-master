@@ -220,8 +220,8 @@ const STATUS_META: Record<
   },
   HOD_REVIEW: {
     label: "HOD Review",
-    tone: "bg-violet-50 text-violet-700 border-violet-200",
-    dot: "bg-violet-500",
+    tone: "bg-navy-50 text-navy-700 border-navy-200",
+    dot: "bg-navy-500",
   },
   APPROVED: {
     label: "Approved",
@@ -756,7 +756,7 @@ function BuilderDrawer({
         <div className="px-7 pt-6 pb-5 bg-white border-b border-zinc-100">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 text-white flex items-center justify-center">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-navy-900 to-navy-800 text-white flex items-center justify-center">
                 <GraduationCap size={20} />
               </div>
               <div>
@@ -900,7 +900,7 @@ function BuilderDrawer({
               <button
                 disabled={saving}
                 onClick={() => submit("submit")}
-                className="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-gradient-to-br from-zinc-900 to-zinc-800 text-white font-bold text-sm hover:shadow-lg transition-all disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-gradient-to-br from-navy-900 to-navy-800 text-white font-bold text-sm hover:shadow-lg transition-all disabled:opacity-50"
               >
                 <Send size={15} /> Submit for Review
               </button>
@@ -1747,9 +1747,9 @@ function SubjectRow({
 function ElectivesStep({ groups, setGroups, gDraft, setGDraft, addGroup }: any) {
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-violet-200/60 bg-violet-50/40 p-4 flex gap-3">
-        <CircleDot size={18} className="text-violet-500 shrink-0 mt-0.5" />
-        <p className="text-xs text-violet-900 font-semibold leading-relaxed">
+      <div className="rounded-2xl border border-navy-200/60 bg-navy-50/40 p-4 flex gap-3">
+        <CircleDot size={18} className="text-navy-500 shrink-0 mt-0.5" />
+        <p className="text-xs text-navy-900 font-semibold leading-relaxed">
           Define groups students choose from. Tag elective subjects with the
           matching group code on the previous step. Students must pick the
           required number from each group.
@@ -1833,7 +1833,7 @@ function ElectivesStep({ groups, setGroups, gDraft, setGDraft, addGroup }: any) 
               key={g.key}
               className="flex items-center gap-3 rounded-2xl border border-zinc-200/70 bg-white px-4 py-3"
             >
-              <div className="w-9 h-9 rounded-xl bg-violet-50 text-violet-500 flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-navy-50 text-navy-500 flex items-center justify-center shrink-0">
                 <Layers size={16} />
               </div>
               <div className="min-w-0 flex-1">
@@ -1879,7 +1879,7 @@ function ReviewStep({
   );
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 text-white p-6">
+      <div className="rounded-2xl bg-gradient-to-br from-navy-900 to-navy-800 text-white p-6">
         <p className="text-[10px] font-semibold tracking-[0.14em] text-white/60 mb-1">
           {program} {batch ? `· Batch ${batch}` : ""}{" "}
           {academicYear ? `· ${academicYear}` : ""}

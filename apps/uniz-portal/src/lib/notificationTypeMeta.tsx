@@ -44,14 +44,14 @@ const META: Record<NotificationVisualType, Meta> = {
   PROFILE: {
     label: "Profile",
     Icon: UserPen,
-    iconClass: "text-violet-700",
-    bgClass: "bg-violet-50 ring-violet-100",
+    iconClass: "text-navy-700",
+    bgClass: "bg-navy-50 ring-navy-100",
   },
   OTP: {
     label: "Verification",
     Icon: Shield,
-    iconClass: "text-indigo-700",
-    bgClass: "bg-indigo-50 ring-indigo-100",
+    iconClass: "text-navy-700",
+    bgClass: "bg-navy-50 ring-navy-100",
   },
   RESULTS: {
     label: "Results",

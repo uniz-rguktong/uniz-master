@@ -294,7 +294,7 @@ function OverviewSection({
   return (
     <div className="p-8 space-y-8 pb-20 animate-in fade-in duration-500">
       {/* Hero Card */}
-      <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-3xl py-8 px-10 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-br from-navy-900 to-navy-800 rounded-3xl py-8 px-10 text-white shadow-xl relative overflow-hidden">
         <div className="relative z-10 space-y-3">
           {isHOD && (
             <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 text-[9px] font-bold tracking-[0.14em] text-zinc-300">
@@ -528,7 +528,7 @@ function ProfileSection({
 
       <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
         {/* Profile header */}
-        <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 p-8 flex items-center gap-6">
+        <div className="bg-gradient-to-br from-navy-900 to-navy-800 p-8 flex items-center gap-6">
           <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-white font-bold text-3xl border-2 border-white/20 overflow-hidden shrink-0">
             {profile.ProfileUrl ? (
               <img

@@ -149,7 +149,7 @@ export default function AdminProfile() {
 
         <div className="bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-sm">
           {/* Header Banner */}
-          <div className="h-32 bg-gradient-to-r from-zinc-900 to-zinc-800 relative" />
+          <div className="h-32 bg-gradient-to-r from-navy-900 to-navy-800 relative" />
 
           <div className="px-8 pb-12">
             <div className="relative -mt-16 mb-8 flex flex-col md:flex-row md:items-end gap-6">

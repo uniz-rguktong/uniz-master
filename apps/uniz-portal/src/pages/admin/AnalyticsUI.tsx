@@ -94,7 +94,7 @@ export const TrendChart = ({
   subtitle,
   data,
   dataKey,
-  color = "#6366f1",
+  color = "#0B2A47",
   height = 300,
 }: {
   title: string;
@@ -194,7 +194,7 @@ export const DonutChart = ({
   subtitle: string;
   data?: any[];
 }) => {
-  const COLORS = ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
+  const COLORS = ["#0B2A47", "#1E5A8C", "#5A94B8", "#18181B", "#0F3B63"];
   const safeData = Array.isArray(data) ? data : [];
 
   return (
@@ -405,7 +405,7 @@ export const ComparisonChart = ({
             <div key={i} className="flex items-center gap-2">
               <div
                 className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: l?.color || "#6366f1" }}
+                style={{ backgroundColor: l?.color || "#0B2A47" }}
               />
               <span className="text-[11px] font-bold text-zinc-400 tracking-[0.14em]">
                 {l?.label}

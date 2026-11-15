@@ -16,7 +16,7 @@
 
   body {
     font-family: theme("fontFamily.body");
-    @apply bg-zinc-50 text-[#222222] antialiased selection:bg-zinc-100 selection:text-zinc-900;
+    @apply bg-white text-black antialiased selection:bg-navy-100 selection:text-navy-900;
   }
 
   h1,
@@ -416,16 +416,17 @@
   --portal-navy-tint: #edf5fb;
   --portal-navy-border: #d4e8f5;
 
-  --navy-900: #18181b;
-  --navy-800: #27272a;
-  --navy-700: #3f3f46;
-  --navy-600: #52525b;
-  --navy-500: #71717a;
-  --navy-400: #a1a1aa;
-  --navy-300: #d4d4d8;
-  --navy-200: #e4e4e7;
-  --navy-100: #f4f4f5;
-  --navy-50: #fafafa;
+  /* Site-wide navy scale (dark navy + white + black chrome) */
+  --navy-900: #0b2a47;
+  --navy-800: #0f3b63;
+  --navy-700: #16466f;
+  --navy-600: #1e5a8c;
+  --navy-500: #2e7099;
+  --navy-400: #5a94b8;
+  --navy-300: #9bc0dc;
+  --navy-200: #d4e8f5;
+  --navy-100: #edf5fb;
+  --navy-50: #f7fafd;
 
   /* Layout rhythm */
   --space-1: 4px;
@@ -439,20 +440,21 @@
   --radius-portal-2xl: 20px;
 
   --white: #ffffff;
-  --bg-page: #f4f6f8;
+  --black: #000000;
+  --bg-page: #ffffff;
   --card-bg: #ffffff;
-  --text-primary: #222222;
-  --text-secondary: #4f4f4f;
-  --accent-hover: #3f3f46;
+  --text-primary: #000000;
+  --text-secondary: #0b2a47;
+  --accent-hover: #0f3b63;
 
-  --muted-foreground: #64748b;
+  --muted-foreground: #5a94b8;
   --card: #ffffff;
-  --border: #e2e8f0;
-  --secondary: #f1f5f9;
-  --accent-foreground: #18181b;
+  --border: #d4e8f5;
+  --secondary: #edf5fb;
+  --accent-foreground: #0b2a47;
 
   --background: var(--white);
-  --primary: #111111;
+  --primary: #0b2a47;
   --component-inactive-color: var(--muted-foreground);
   --component-bg: var(--card);
   --component-shadow: var(--border);
@@ -654,12 +656,12 @@
   100% {
     transform: scale(1);
     opacity: 0.88;
-    filter: drop-shadow(0 0 2px rgba(246, 130, 31, 0.25));
+    filter: drop-shadow(0 0 2px rgba(11, 42, 71, 0.15));
   }
   50% {
     transform: scale(1.08);
     opacity: 1;
-    filter: drop-shadow(0 0 10px rgba(246, 130, 31, 0.45));
+    filter: drop-shadow(0 0 10px rgba(11, 42, 71, 0.25));
   }
 }
 
@@ -676,8 +678,9 @@
 }
 
 :root {
-  --chart-2: #2dd4bf;
-  --chart-3: #fb923c;
-  --chart-4: #818cf8;
-  --chart-5: #f472b6;
+  --chart-1: #0b2a47;
+  --chart-2: #1e5a8c;
+  --chart-3: #5a94b8;
+  --chart-4: #18181b;
+  --chart-5: #d4e8f5;
 }

@@ -1,81 +1,64 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getAcademicPage } from "../types/api";
 import type { AcademicSection, AcademicPageType } from "../types/api";
-import { Download, ExternalLink, FileText, BookOpen, Calendar, GraduationCap } from "lucide-react";
+import { Download, ExternalLink, FileText, GraduationCap } from "lucide-react";
+import { PageHero } from "../components/layout/PageHero";
+import { usePageTitle } from "../lib/usePageTitle";
+import { CampusBoot } from "../components/CampusBoot";
 
 // ── Page metadata ──────────────────────────────────────────────────
 const PAGE_META: Record<string, {
   displayName: string;
   subtitle: string;
-  pill: string;
-  pillBg: string;
-  pillBorder: string;
-  icon: React.ReactNode;
+  eyebrow: string;
 }> = {
   academicprograms: {
     displayName: "Academic Programs",
-    subtitle: "Explore the undergraduate and integrated programs offered at RGUKT Ongole, designed to empower gifted rural youth with world-class technical education.",
-    pill: "text-sky-300", pillBg: "bg-sky-400/10", pillBorder: "border-sky-400/30",
-    icon: <GraduationCap className="w-5 h-5" />,
+    subtitle: "Undergraduate and integrated programs offered at RGUKT Ongole for gifted rural youth.",
+    eyebrow: "RGUKT Ongole · Academics",
   },
   academiccalender: {
     displayName: "Academic Calendar",
-    subtitle: "Access semester-wise academic calendars with key dates, examination schedules, and holiday information for each academic year.",
-    pill: "text-amber-300", pillBg: "bg-amber-400/10", pillBorder: "border-amber-400/30",
-    icon: <Calendar className="w-5 h-5" />,
+    subtitle: "Semester calendars with examination schedules and holidays for each academic year.",
+    eyebrow: "RGUKT Ongole · Academics",
   },
   academicregulations: {
     displayName: "Academic Regulations",
-    subtitle: "Official academic rules, regulations, and guidelines governing the conduct and evaluation of students at RGUKT Ongole.",
-    pill: "text-violet-300", pillBg: "bg-violet-400/10", pillBorder: "border-violet-400/30",
-    icon: <FileText className="w-5 h-5" />,
+    subtitle: "Rules and guidelines governing student conduct and evaluation at RGUKT Ongole.",
+    eyebrow: "RGUKT Ongole · Academics",
   },
   curicula: {
     displayName: "Curricula",
-    subtitle: "Download department-wise curriculum documents covering course structures, credit requirements, and syllabi for each engineering discipline.",
-    pill: "text-emerald-300", pillBg: "bg-emerald-400/10", pillBorder: "border-emerald-400/30",
-    icon: <BookOpen className="w-5 h-5" />,
+    subtitle: "Department-wise curriculum documents, credit requirements, and syllabi.",
+    eyebrow: "RGUKT Ongole · Academics",
   },
 };
 
-// ── Shared hero banner ─────────────────────────────────────────────
 function HeroBanner({ meta }: { meta: typeof PAGE_META[string] }) {
   return (
-    <div className="relative bg-[#000035] overflow-hidden">
-      <div
-        className="absolute inset-0 opacity-15"
-        style={{ backgroundImage: "radial-gradient(ellipse at 70% 50%, #800000 0%, transparent 55%), radial-gradient(ellipse at 15% 80%, #1e3a8a 0%, transparent 55%)" }}
-      />
-      <div className="absolute inset-0 opacity-[0.04]"
-        style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
-      />
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <span className={`inline-flex items-center gap-2 px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] ${meta.pill} ${meta.pillBg} border ${meta.pillBorder} rounded-full`}>
-          {meta.icon}
-          RGUKT Ongole · Academics
-        </span>
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-5">
-          {meta.displayName}
-        </h1>
-        <p className="max-w-2xl mx-auto text-slate-300 text-lg leading-relaxed">
-          {meta.subtitle}
-        </p>
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-50 to-transparent" />
-    </div>
+    <PageHero
+      eyebrow={meta.eyebrow}
+      title={meta.displayName}
+      description={meta.subtitle}
+    />
   );
+}
+
+// Source data says "Semister"; show the right spelling.
+function fixSpelling(s: string) {
+  return s.replace(/semister/gi, (m) => (m[0] === "S" ? "Semester" : "semester"));
 }
 
 // ── Link row — always renders as a clickable link ─────────────────
 function LinkRow({ label, url }: { label: string; url: string | null }) {
-  const cleanLabel = label.replace(/\n\s+/g, " ").trim();
+  const cleanLabel = fixSpelling(label.replace(/\n\s+/g, " ").trim());
   return (
     <a
       href={url ?? "#"}
       target={url ? "_blank" : "_self"}
       rel="noreferrer"
-      className="flex items-center justify-between gap-4 px-4 py-3 rounded-xl bg-[#000035]/5 hover:bg-[#800000] text-[#000035] hover:text-white font-semibold text-sm transition-all duration-200 group"
+      className="flex items-center justify-between gap-4 px-4 py-3 rounded-xl bg-navy-900/5 hover:bg-navy text-navy-900 hover:text-white font-semibold text-sm transition-all duration-200 group"
     >
       <span className="flex items-center gap-2">
         <Download className="w-4 h-4 flex-shrink-0" />
@@ -96,9 +79,9 @@ function CalendarLayout({ sections }: { sections: AcademicSection[] }) {
         <div key={idx} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           {/* Year header */}
           <div className="flex items-center gap-3 px-7 py-5 border-b border-slate-100 bg-slate-50">
-            <div className="w-2 h-2 rounded-full bg-[#800000]" />
-            <h2 className="text-lg font-extrabold text-slate-900 tracking-tight">
-              {section.header.replace(/\n\s+/g, " ").trim()}
+            <div className="w-2 h-2 rounded-full bg-navy" />
+            <h2 className="text-lg font-medium text-slate-900 tracking-tight">
+              {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
             </h2>
           </div>
           {/* Semester links */}
@@ -123,12 +106,12 @@ function CurriculaLayout({ sections }: { sections: AcademicSection[] }) {
       {depts.map((section, idx) => (
         <div
           key={idx}
-          className="bg-white rounded-2xl border border-slate-100 border-l-4 border-l-[#800000] shadow-sm hover:shadow-md transition-shadow"
+          className="bg-white rounded-2xl border border-slate-100 border-l-4 border-l-[#0A2540] shadow-sm hover:shadow-md transition-shadow"
         >
           {/* Dept header */}
           <div className="px-6 pt-6 pb-4 border-b border-slate-100">
-            <h2 className="text-[15px] font-extrabold text-slate-900 leading-snug">
-              {section.header.replace(/\n\s+/g, " ").trim()}
+            <h2 className="text-[15px] font-medium text-slate-900 leading-snug">
+              {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
             </h2>
           </div>
           {/* Curriculum links */}
@@ -151,9 +134,9 @@ function GenericLayout({ sections }: { sections: AcademicSection[] }) {
   return (
     <div className="space-y-6">
       {meaningful.map((section, idx) => (
-        <div key={idx} className="bg-white rounded-2xl border border-slate-100 border-l-4 border-l-[#800000] shadow-sm p-7 md:p-9">
-          <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-5 tracking-tight">
-            {section.header.replace(/\n\s+/g, " ").trim()}
+        <div key={idx} className="bg-white rounded-2xl border border-slate-100 border-l-4 border-l-[#0A2540] shadow-sm p-7 md:p-9">
+          <h2 className="text-xl md:text-2xl font-medium text-slate-900 mb-5 tracking-tight">
+            {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
           </h2>
           <div className="flex flex-col gap-2">
             {section.links.map((link, i) => (
@@ -166,6 +149,15 @@ function GenericLayout({ sections }: { sections: AcademicSection[] }) {
   );
 }
 
+// Same departments the site header lists.
+const DEPT_LINKS = [
+  { code: "CSE", name: "CSE" },
+  { code: "ECE", name: "ECE" },
+  { code: "EEE", name: "EEE" },
+  { code: "CIVIL", name: "Civil" },
+  { code: "ME", name: "Mechanical" },
+];
+
 // ── Empty state ────────────────────────────────────────────────────
 function EmptyState() {
   return (
@@ -173,8 +165,15 @@ function EmptyState() {
       <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
         <FileText className="w-8 h-8 text-slate-300" />
       </div>
-      <p className="text-slate-500 font-semibold text-lg">Content Coming Soon</p>
-      <p className="text-slate-400 text-sm mt-2">This section will be updated shortly.</p>
+      <p className="text-slate-600 font-semibold text-lg">Nothing published here yet</p>
+      <p className="text-ink-subtle text-sm mt-2">Check back later, or browse the department pages for course and faculty details.</p>
+      <div className="mt-6 flex flex-wrap justify-center gap-2 px-6">
+        {DEPT_LINKS.map((d) => (
+          <Link key={d.code} to={`/departments/${d.code}`} className="px-3 py-1.5 rounded-full bg-navy-900/5 hover:bg-navy hover:text-white text-navy-900 text-sm font-semibold transition-colors">
+            {d.name}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
@@ -193,6 +192,8 @@ export function AcademicsPage() {
     icon: <GraduationCap className="w-5 h-5" />,
   };
 
+  usePageTitle(`${meta.displayName} · RGUKT Ongole`);
+
   useEffect(() => {
     async function fetchPage() {
       if (pageName) {
@@ -207,14 +208,7 @@ export function AcademicsPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#000035] border-t-transparent" />
-          <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">
-            Loading {meta.displayName}...
-          </p>
-        </div>
-      </div>
+      <CampusBoot label={`Loading ${meta.displayName}`} className="min-h-[50vh]" />
     );
   }
 

@@ -181,7 +181,7 @@ export default function SecurityPortal() {
     return (
       <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
         {/* Welcome Card */}
-        <div className="bg-gradient-to-br from-emerald-950 to-zinc-900 rounded-3xl py-10 px-12 text-white shadow-none relative overflow-hidden group border border-white/10">
+        <div className="bg-gradient-to-br from-navy-950 to-navy-900 rounded-3xl py-10 px-12 text-white shadow-none relative overflow-hidden group border border-white/10">
           <div className="relative z-10 space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 backdrop-blur-md">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -328,7 +328,7 @@ export default function SecurityPortal() {
         </div>
 
         {/* Sync Info Banner */}
-        <div className="bg-gradient-to-br from-emerald-600 to-teal-800 rounded-2xl p-10 text-white flex flex-col md:flex-row items-center justify-between relative overflow-hidden group border border-white/10 shadow-none">
+        <div className="bg-gradient-to-br from-navy-800 to-navy-900 rounded-2xl p-10 text-white flex flex-col md:flex-row items-center justify-between relative overflow-hidden group border border-white/10 shadow-none">
           <div className="relative z-10 space-y-3 text-center md:text-left">
             <h3 className="text-3xl font-semibold tracking-tight leading-tight italic">
               Gate Synchronization System

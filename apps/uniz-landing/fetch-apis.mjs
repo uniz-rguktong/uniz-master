@@ -26,6 +26,25 @@ const ACADEMIC_PAGES = [
     "curicula"
 ];
 
+// Hero images served locally as compressed webp (public/carousel/)
+const LOCAL_CAROUSEL = ["VRD.png", "all.jpg", "Sports.png", "Cul.png", "swatch.png"];
+
+function useLocalCarousel(value) {
+    if (typeof value === "string") {
+        for (const name of LOCAL_CAROUSEL) {
+            if (value === `https://rguktong.ac.in/svgs/carosel/${name}`) {
+                return `/carousel/${name}.webp`;
+            }
+        }
+        return value;
+    }
+    if (Array.isArray(value)) return value.map(useLocalCarousel);
+    if (value && typeof value === "object") {
+        return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, useLocalCarousel(v)]));
+    }
+    return value;
+}
+
 const NOTIFICATION_TYPES = ["news_updates", "tenders", "careers"];
 
 async function fetchJson(endpoint) {
@@ -87,7 +106,7 @@ async function main() {
     // Write output
     const tsContent = `// Auto-generated from ${BASE_URL}/docs — ${new Date().toISOString()}
 // Do not edit manually. Re-run: node fetch-apis.mjs
-export const apiData = ${JSON.stringify(data, null, 2)} as const;
+export const apiData = ${JSON.stringify(useLocalCarousel(data), null, 2)} as const;
 `;
 
     const outDir = path.join(process.cwd(), "src", "data");
