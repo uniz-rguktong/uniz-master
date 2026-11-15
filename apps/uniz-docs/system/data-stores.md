@@ -5,16 +5,21 @@ description: "Postgres and Redis layout — host containers, K8s Endpoints, whic
 
 ## Postgres
 
-Production uses a **host Docker container** `uniz-postgres`, not an in-cluster Postgres pod. K8s Service `uniz-postgres` uses Endpoints pointed at the VPS IP (`postgres.yaml.template`).
+Production uses a **host Docker container** `uniz-postgres`, not an in-cluster Postgres pod.
+
+**Publish bind (hardened):** `127.0.0.1:5432` and `10.42.0.1:5432` only — **not** `0.0.0.0` / public eth0. UFW + `DOCKER-USER` still drop internet hits on admin ports.
+
+K8s Service `uniz-postgres` uses Endpoints pointed at **`10.42.0.1:5432`** (cni0) so pods can reach the host Docker proxy. Vault / `uniz-secrets` `*_DATABASE_URL` hosts are rewritten to that address by `scripts/deploy/sync-k8s-secret-from-vault.sh` on deploy. Prisma migrate on the VPS host rewrites to `127.0.0.1` in `scripts/deploy/prisma-migrate-deploy-all.sh`.
 
 ```mermaid
 flowchart LR
-  Auth --> PG[(uniz-postgres)]
-  User --> PG
-  Acad[Academics] --> PG
-  Notif[Notifications] --> PG
-  Land[Landing FastAPI] --> PG
-  Land -.->|optional separate DB| LandDB[(landing compose db :5433)]
+  Auth --> EP[Endpoints 10.42.0.1:5432]
+  User --> EP
+  Acad[Academics] --> EP
+  Notif[Notifications] --> EP
+  EP --> PG[(uniz-postgres Docker)]
+  Land[Landing FastAPI] --> LandDB[(landing compose db 127.0.0.1:5433)]
+  Land -.->|analytics DB_HOST| EP
 ```
 
 | Consumer | Typical DB usage |
@@ -23,9 +28,9 @@ flowchart LR
 | User | Profiles, CMS banners/notices, grievances, file metadata |
 | Academics | Grades, attendance, subjects, semester registration |
 | Notifications | Push subscriptions, inbox, mail attribution |
-| Landing backend | CMS content; analytics may query main UniZ DB via `DB_*` |
+| Landing backend | CMS on landing DB; analytics may query main UniZ DB via `DB_*` |
 
-Prisma schemas live per service under `apps/uniz-*/prisma/` (where applicable). Migrations: [Database migrations](/howto/database-migrations).
+Prisma schemas live per service under `apps/uniz-*/prisma/`. Migrations: [Database migrations](/howto/database-migrations).
 
 ### Backup
 
@@ -42,10 +47,10 @@ Service URL (ConfigMap): `REDIS_URL=redis://uniz-redis:6379`.
 | Use | Service |
 |-----|---------|
 | Gateway GET response cache | gateway-api |
-| System health aggregate cache | gateway-api (`gateway:system_health_aggregate`) |
+| System health aggregate cache | gateway-api |
 | BullMQ / job queues | academics, user (bulk), notifications |
 | Rate / session helpers | auth / academics as implemented |
 
 ## Landing dual-DB note
 
-Compose file `apps/uniz-landing-backend/docker-compose.yml.vps` may still run a dedicated Postgres on **:5433** for CMS (`DATABASE_URL`), while analytics uses host Postgres via `DB_HOST` (often `172.17.0.1`). Long-term lean target: single `uniz-postgres` with a separate `uniz_landing` database.
+Compose `apps/uniz-landing-backend/docker-compose.yml.vps` runs CMS Postgres on **`127.0.0.1:5433`**. Landing API publishes `127.0.0.1` + `10.42.0.1:8000`. Analytics may use main UniZ Postgres via `DB_HOST=10.42.0.1`.

@@ -11,7 +11,7 @@
   TypeScript monorepo · Cloudflare Pages + single VPS (k3s) · PostgreSQL · Prisma · Redis · GitHub Actions
 </p>
 
-### Source of truth
+### Repositories
 
 | Repository | Purpose |
 |---|---|
@@ -19,23 +19,23 @@
 | **[uniz-hall-ticket](https://github.com/uniz-rguktong/uniz-hall-ticket)** | Standalone hall-ticket utility |
 | **[.github](https://github.com/uniz-rguktong/.github)** | Organization profile & community defaults |
 
-Production topology: **Cloudflare Pages** serves portal/landing; the **VPS** runs `gateway-api` → microservices, Postgres, Redis, docs, and localhost-only observability. No always-on legacy monolith.
+Production: **Cloudflare Pages** for portal/landing; **VPS** for `gateway-api` → microservices, Postgres (localhost/cni0 only), Redis, VitePress docs, SSH-tunnel observability. Legacy `uniz-api` monolith and the old `uniz-app` Android repo are gone — the TWA lives in `uniz-master/apps/uniz-android-twa`.
 
-The Android client is **not** a separate app repo. It lives in `uniz-master` as a Trusted Web Activity (`apps/uniz-android-twa`). Build with `npm run android:apk`; students download from [uniz.rguktong.in/download/uniz.apk](https://uniz.rguktong.in/download/uniz.apk).
+Portal brand chrome: **dark navy `#0B2A47` + white + black**.
 
 ### Start here
 
 1. Clone [uniz-master](https://github.com/uniz-rguktong/uniz-master)
-2. Read [STRUCTURE.md](https://github.com/uniz-rguktong/uniz-master/blob/main/STRUCTURE.md) and the [ops index](https://github.com/uniz-rguktong/uniz-master/blob/main/docs/ops/INDEX.md)
+2. Read [STRUCTURE.md](https://github.com/uniz-rguktong/uniz-master/blob/main/STRUCTURE.md) · [ops index](https://github.com/uniz-rguktong/uniz-master/blob/main/docs/ops/INDEX.md) · [live docs](https://api-uniz.rguktong.in/docs)
 3. Local setup: [CONTRIBUTING.md](https://github.com/uniz-rguktong/uniz-master/blob/main/CONTRIBUTING.md)
 
 ### Contribute
 
-UniZ is built by students across RGUKT. New here? Start with a [good first issue](https://github.com/uniz-rguktong/uniz-master/issues?q=is%3Aopen+label%3A%22good+first+issue%22), read [CONTRIBUTING](https://github.com/uniz-rguktong/.github/blob/main/CONTRIBUTING.md), and ask questions in [Discussions](https://github.com/uniz-rguktong/uniz-master/discussions).
+UniZ is built by students across RGUKT. Start with a [good first issue](https://github.com/uniz-rguktong/uniz-master/issues?q=is%3Aopen+label%3A%22good+first+issue%22), read [CONTRIBUTING](https://github.com/uniz-rguktong/.github/blob/main/CONTRIBUTING.md), ask in [Discussions](https://github.com/uniz-rguktong/uniz-master/discussions).
 
 ### Links
 
 - Portal: [uniz.rguktong.in](https://uniz.rguktong.in)
 - Landing: [rguktong.in](https://rguktong.in)
 - Docs: [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs)
-- Security: report privately per [SECURITY.md](https://github.com/uniz-rguktong/.github/blob/main/SECURITY.md)
+- Security: [SECURITY.md](https://github.com/uniz-rguktong/.github/blob/main/SECURITY.md)

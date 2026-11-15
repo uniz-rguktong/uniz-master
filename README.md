@@ -14,11 +14,11 @@ UniZ runs on a **single VPS + Cloudflare free**:
 
 | Layer | Owns |
 |---|---|
-| **Cloudflare Pages** | Portal (`uniz.rguktong.in`) and Landing (`rguktong.in`) SPAs |
+| **Cloudflare Pages** | Portal (`uniz.rguktong.in`, navy `#0B2A47` + white + black) and Landing (`rguktong.in`) SPAs |
 | **VPS (k3s)** | APIs, VitePress docs, landing-api, Postgres, Redis, uploads, observability |
 | **Off-box** | AWS SES for mail only |
 
-There is no always-on legacy monolith (`uniz-api` is gone). Public API traffic is **Traefik → `uniz-gateway-api` → microservices**.
+There is no always-on legacy monolith (`uniz-api` is gone). Public API traffic is **host nginx → Traefik → `uniz-gateway-api` → microservices**. Org repos: **`uniz-master`** (product) + **`.github`** (profile); hall-ticket is a separate utility if present.
 
 ### Request path
 
