@@ -9,40 +9,40 @@ export type Variant = "default" | "success" | "error" | "warning";
 export type ToasterProps = ToastInput;
 
 export interface ToasterRef {
-  show: (props: ToasterProps) => void;
+ show: (props: ToasterProps) => void;
 }
 
 const hotToastOptions = {
-  duration: 4000,
-  style: {
-    background: "transparent",
-    boxShadow: "none",
-    padding: 0,
-    maxWidth: "100%",
-  },
+ duration: 4000,
+ style: {
+ background: "transparent",
+ boxShadow: "none",
+ padding: 0,
+ maxWidth: "100%",
+ },
 };
 
 /** react-hot-toast host — slides in from the bottom-right */
 const Toaster = forwardRef<
-  ToasterRef,
-  { defaultPosition?: "bottom-right" | "top-right" }
+ ToasterRef,
+ { defaultPosition?: "bottom-right" | "top-right" }
 >(({ defaultPosition = "bottom-right" }, ref) => {
-  useImperativeHandle(ref, () => ({
-    show: (props) => showToast(props),
-  }));
+ useImperativeHandle(ref, () => ({
+ show: (props) => showToast(props),
+ }));
 
-  return (
-    <HotToaster
-      position={defaultPosition}
-      gutter={10}
-      containerStyle={{
-        bottom: 20,
-        right: 20,
-        top: defaultPosition.startsWith("top") ? 20 : undefined,
-      }}
-      toastOptions={hotToastOptions}
-    />
-  );
+ return (
+ <HotToaster
+ position={defaultPosition}
+ gutter={10}
+ containerStyle={{
+ bottom: 20,
+ right: 20,
+ top: defaultPosition.startsWith("top") ? 20 : undefined,
+ }}
+ toastOptions={hotToastOptions}
+ />
+ );
 });
 
 Toaster.displayName = "Toaster";

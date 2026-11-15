@@ -40,7 +40,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div
-      className={`flex flex-col ${isHomePage ? "h-dvh overflow-hidden bg-white pt-16" : "min-h-screen bg-white portal-page-shell"} text-zinc-900 selection:bg-[#D4E8F5] selection:text-[#0B2A47]`}
+      className={`flex flex-col ${isHomePage ? "h-dvh overflow-hidden bg-white pt-14" : "min-h-screen bg-white portal-page-shell"} text-navy-900 selection:bg-navy-100 selection:text-navy-900`}
     >
       <Suspense fallback={<LoadingAnim />}>
         <Navbar />

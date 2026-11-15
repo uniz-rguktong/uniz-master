@@ -298,12 +298,12 @@ export default function GradeHub() {
           })}
           {/* Centered celebration badge */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-white/95 backdrop-blur-sm rounded-3xl px-10 py-8 shadow-2xl border border-yellow-100 flex flex-col items-center gap-3 animate-bounce">
+            <div className="bg-white rounded-2xl px-8 py-6 shadow-sm border border-navy-200 flex flex-col items-center gap-3">
               <PartyPopper size={48} className="text-yellow-500" />
               <p className="text-2xl font-semibold text-zinc-900 tracking-tight">
                 Outstanding GPA! 🎉
               </p>
-              <p className="text-sm font-bold text-zinc-500 tracking-[0.14em]">
+              <p className="text-sm font-medium text-navy-500">
                 Above 9.0 - Exceptional Performance
               </p>
             </div>
@@ -332,7 +332,7 @@ export default function GradeHub() {
         <div className="mb-8 md:bg-white p-6 px-0 md:px-6 md:rounded-xl md:border md:border-zinc-100 md:shadow-sm bg-transparent">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
             <div className="relative group">
-              <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
+              <label className="text-[12px] font-medium text-navy-500 mb-1.5 block">
                 Academic Year
               </label>
               <div
@@ -347,7 +347,7 @@ export default function GradeHub() {
               </div>
 
               {showDropdown && (
-                <div className="absolute z-50 mt-1 w-full bg-white border border-zinc-100 rounded-xl shadow-xl overflow-hidden">
+                <div className="absolute z-50 mt-1 w-full bg-white border border-zinc-100 rounded-xl shadow-sm overflow-hidden">
                   {years.map((year) => (
                     <div
                       key={year}
@@ -370,7 +370,7 @@ export default function GradeHub() {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
+              <label className="text-[12px] font-medium text-navy-500 mb-1.5 block">
                 Semester
               </label>
               <div className="relative">
@@ -380,7 +380,7 @@ export default function GradeHub() {
                     setSelectedSemester(e.target.value);
                     setResultsFetched(false);
                   }}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-lg p-3 font-bold text-sm appearance-none focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-lg p-3 font-bold text-sm appearance-none focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-[color,background-color,border-color,box-shadow,transform] duration-150"
                 >
                   {semesterOptions.map((opt) => (
                     <option key={opt} value={opt}>
@@ -399,7 +399,7 @@ export default function GradeHub() {
               <div className="md:w-48">
                 <button
                   onClick={() => handleFetchResults(false)}
-                  className="w-full h-[46px] bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm disabled:opacity-50"
+                  className="w-full h-[46px] bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold text-sm transition-[color,background-color,border-color,box-shadow,transform] duration-150 active:scale-[0.98] shadow-sm disabled:opacity-50"
                   disabled={isLoading || !user?.username}
                 >
                   {isLoading ? (
@@ -446,7 +446,7 @@ export default function GradeHub() {
             {/* Results Header */}
             <div className="md:bg-white border-b border-zinc-100 md:px-6 px-4 py-5 flex justify-between items-center bg-transparent">
               <div>
-                <span className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 block mb-1">
+                <span className="text-[12px] font-medium text-navy-400 block mb-1">
                   Transcript For
                 </span>
                 <h2 className="text-[17px] font-semibold text-zinc-900 tracking-tight">
@@ -467,7 +467,7 @@ export default function GradeHub() {
                         { studentId: user.username, reportType: "REGULAR" },
                       );
                     }}
-                    className="h-10 px-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm"
+                    className="h-10 px-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg font-bold text-xs transition-[color,background-color,border-color,box-shadow,transform] duration-150 flex items-center gap-2 shadow-sm"
                   >
                     <Download size={14} /> Output PDF
                   </button>
@@ -483,7 +483,7 @@ export default function GradeHub() {
                   size={48}
                   className="mx-auto mb-4 text-zinc-300"
                 />
-                <h3 className="text-xl font-bold mb-2">No Results Available</h3>
+                <h3 className="text-xl font-semibold mb-2">No Results Available</h3>
                 <p className="text-zinc-500 max-w-sm mx-auto">
                   Calculated records for this semester are not yet finalized.
                   Please check back later or contact your department.
@@ -496,7 +496,7 @@ export default function GradeHub() {
                   {grades.regular?.length > 0 ? (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <h3 className="text-[13px] font-bold text-zinc-400 tracking-[0.14em] flex items-center gap-2">
+                        <h3 className="text-[13px] font-medium text-navy-400 flex items-center gap-2">
                           <div className="w-1.5 h-4 rounded-full bg-zinc-900"></div>
                           REGULAR RESULTS
                         </h3>
@@ -505,16 +505,16 @@ export default function GradeHub() {
                         <table className="w-full text-sm table-fixed">
                           <thead>
                             <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                              <th className="px-5 py-4 text-left font-bold text-[10px] tracking-[0.14em] text-zinc-400 w-[55%]">
+                              <th className="px-5 py-4 text-left font-medium text-[12px] text-zinc-400 w-[55%]">
                                 Subjects
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] tracking-[0.14em] text-zinc-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-medium text-[12px] text-zinc-400 w-[15%]">
                                 Credits
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] tracking-[0.14em] text-zinc-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-medium text-[12px] text-zinc-400 w-[15%]">
                                 Grade
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] tracking-[0.14em] text-zinc-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-medium text-[12px] text-zinc-400 w-[15%]">
                                 Status
                               </th>
                             </tr>
@@ -570,7 +570,7 @@ export default function GradeHub() {
                   {grades.remedial?.length > 0 ? (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <h3 className="text-[13px] font-bold text-zinc-400 tracking-[0.14em] flex items-center gap-2">
+                        <h3 className="text-[13px] font-medium text-navy-400 flex items-center gap-2">
                           <div className="w-1.5 h-4 rounded-full bg-orange-500"></div>
                           REMEDIAL RESULTS
                         </h3>
@@ -588,7 +588,7 @@ export default function GradeHub() {
                               },
                             );
                           }}
-                          className="h-8 px-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm"
+                          className="h-8 px-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold text-xs transition-[color,background-color,border-color,box-shadow,transform] duration-150 flex items-center gap-2 shadow-sm"
                         >
                           <Download size={14} /> Output Remedial PDF
                         </button>
@@ -597,16 +597,16 @@ export default function GradeHub() {
                         <table className="w-full text-sm table-fixed">
                           <thead>
                             <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                              <th className="px-5 py-4 text-left font-bold text-[10px] tracking-[0.14em] text-zinc-400 w-[55%]">
+                              <th className="px-5 py-4 text-left font-medium text-[12px] text-zinc-400 w-[55%]">
                                 Subjects
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] tracking-[0.14em] text-zinc-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-medium text-[12px] text-zinc-400 w-[15%]">
                                 Credits
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] tracking-[0.14em] text-zinc-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-medium text-[12px] text-zinc-400 w-[15%]">
                                 Grade
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] tracking-[0.14em] text-zinc-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-medium text-[12px] text-zinc-400 w-[15%]">
                                 Status
                               </th>
                             </tr>
@@ -672,7 +672,7 @@ export default function GradeHub() {
                 <div className="px-6 py-8 md:bg-zinc-50/30 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 border-t border-zinc-50 bg-transparent">
                   {/* SGPA Section */}
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] mb-1">
+                    <span className="text-[12px] font-medium text-navy-400 mb-1">
                       Semester GPA
                     </span>
                     <span className="text-4xl font-semibold text-zinc-900 tracking-tighter">
@@ -687,7 +687,7 @@ export default function GradeHub() {
 
                   {/* CGPA Section */}
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] mb-1">
+                    <span className="text-[12px] font-medium text-navy-400 mb-1">
                       Cumulative GPA
                     </span>
                     <span className="text-4xl font-semibold text-emerald-600 tracking-tighter">
@@ -703,7 +703,7 @@ export default function GradeHub() {
                       <>
                         <div className="w-[1px] h-12 bg-zinc-200 hidden md:block"></div>
                         <div className="flex flex-col items-center">
-                          <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] mb-1">
+                          <span className="text-[12px] font-medium text-navy-400 mb-1">
                             Active Backlogs
                           </span>
                           <span className="text-4xl font-semibold text-red-500 tracking-tighter flex items-center gap-2">

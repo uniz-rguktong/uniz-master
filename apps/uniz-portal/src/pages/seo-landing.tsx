@@ -109,9 +109,9 @@ export default function SEOLanding() {
         <div className="flex gap-3">
           <Link
             to="/signin"
-            className="px-4 py-2 bg-zinc-900 text-white rounded-lg font-bold text-sm hover:bg-zinc-800 transition-colors"
+            className="px-4 py-2 bg-navy-900 text-white rounded-lg font-medium text-sm hover:bg-navy-800 transition-[color,background-color] duration-150"
           >
-            Open WorkSpace
+            Sign in
           </Link>
         </div>
       </header>
@@ -120,7 +120,7 @@ export default function SEOLanding() {
       <main className="max-w-4xl mx-auto px-6 pt-32">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-sm font-bold text-zinc-400 hover:text-zinc-900 mb-8 transition-colors"
+          className="flex items-center gap-2 text-sm font-medium text-navy-400 hover:text-navy-900 mb-8 transition-colors"
         >
           <ArrowLeft size={16} /> Back
         </button>
@@ -135,25 +135,22 @@ export default function SEOLanding() {
         <div className="prose prose-slate prose-lg max-w-none">
           <h2>Overview of the Platform</h2>
           <p>
-            When utilizing a robust <strong>student project manager</strong>,
-            achieving goals becomes significantly easier. UniZ offers an
-            unparalleled experience to help you{" "}
-            <strong>manage college projects online</strong>. Whether you are
-            using this as a{" "}
-            <strong>notion alternative for engineering students</strong> or
-            simply integrating it into your daily lifecycle, the resulting
-            academic enhancements speak for themselves.
+            UniZ is the campus portal for RGUKT Ongole. Use it to{" "}
+            <strong>manage college projects online</strong>, track academics,
+            and collaborate with classmates. It works as a{" "}
+            <strong>notion alternative for engineering students</strong> when
+            you need shared project space on campus systems.
           </p>
 
           <div className="my-10 bg-white p-8 rounded-2xl border border-zinc-100 shadow-sm">
-            <h3 className="text-xl font-bold mt-0 flex items-center gap-2 text-zinc-900">
+            <h3 className="text-xl font-semibold mt-0 flex items-center gap-2 text-navy-900">
               <CheckCircle2 className="text-emerald-500" /> Comparison with
               Alternatives
             </h3>
             <div className="overflow-x-auto mt-6">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-zinc-100 text-zinc-400 font-bold text-xs tracking-wider">
+                  <tr className="border-b border-zinc-100 text-navy-400 font-medium text-xs">
                     <th className="py-3">Feature</th>
                     <th className="py-3">Traditional Tools</th>
                     <th className="py-3 text-zinc-900">UniZ</th>
@@ -216,19 +213,18 @@ export default function SEOLanding() {
         </div>
 
         {/* CTA Block */}
-        <div className="mt-16 bg-zinc-900 text-white rounded-3xl p-10 text-center">
+        <div className="mt-16 bg-navy-900 text-white rounded-2xl p-10 text-center">
           <h2 className="text-3xl font-semibold mb-4">
-            Ready to accelerate your academic journey?
+            Campus portal for RGUKT Ongole
           </h2>
           <p className="text-zinc-200 mb-8 text-lg font-medium max-w-xl mx-auto">
-            Experience the best real-time college team collaboration tool
-            exclusively tailored for students and faculty.
+            Academics, registration, and campus updates in one place.
           </p>
           <Link
             to="/signin"
-            className="inline-block bg-white text-zinc-900 px-8 py-4 rounded-xl font-bold hover:bg-zinc-50 transition-colors"
+            className="inline-block bg-white text-navy-900 px-7 py-3 rounded-lg font-medium hover:bg-navy-50 transition-[color,background-color] duration-150"
           >
-            Create Free Student Account
+            Get started
           </Link>
         </div>
       </main>
@@ -243,7 +239,7 @@ export default function SEOLanding() {
           </p>
         </div>
         <div>
-          <h4 className="font-bold mb-4 text-sm tracking-[0.14em] text-zinc-900">
+          <h4 className="font-medium mb-4 text-sm text-navy-900">
             Platforms
           </h4>
           <ul className="space-y-3 text-sm font-medium text-zinc-500">
@@ -271,7 +267,7 @@ export default function SEOLanding() {
           </ul>
         </div>
         <div>
-          <h4 className="font-bold mb-4 text-sm tracking-[0.14em] text-zinc-900">
+          <h4 className="font-medium mb-4 text-sm text-navy-900">
             Resources
           </h4>
           <ul className="space-y-3 text-sm font-medium text-zinc-500">
