@@ -24,6 +24,7 @@ app.get("/health", (req, res) => {
 
 import requestRoutes from "./routes/request.routes";
 import maintenanceRoutes from "./routes/maintenance.routes";
+import { API_ATTRIBUTION } from "@uniz/shared";
 
 // Grievance moved to uniz-user-service. Outpass/outing remain here (parked via gateway flag).
 
@@ -40,7 +41,7 @@ app.use((req, res) => {
     status: "error",
     message: `Route ${req.method} ${req.url} not found`,
     timestamp: new Date().toISOString(),
-    attribution: "SreeCharan",
+    attribution: API_ATTRIBUTION,
   });
 });
 

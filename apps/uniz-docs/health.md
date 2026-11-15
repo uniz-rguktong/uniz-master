@@ -18,7 +18,7 @@ Typical **200**:
 {
   "status": "ok",
   "service": "uniz-auth-service",
-  "attribution": "SreeCharan"
+  "attribution": "SreeCharan Desu"
 }
 ```
 
