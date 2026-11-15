@@ -32,7 +32,7 @@ export const portalCardInteractiveClass = cn(portalCardClass, portalCardHoverCla
 export const portalInsetPanelClass =
   "rounded-portal-xl border border-navy-200 bg-navy-50/60 p-4 md:p-5";
 
-export const portalBannerGradientClass = "portal-banner-gradient text-white";
+export const portalBannerGradientClass = "bg-navy-900 text-white";
 
 /* ── Typography ──────────────────────────────────────────────── */
 

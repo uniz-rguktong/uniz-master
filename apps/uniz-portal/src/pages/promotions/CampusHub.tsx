@@ -115,7 +115,7 @@ export default function CampusHub() {
             </motion.div>
 
             <motion.h1
-              className="text-5xl md:text-6xl font-bold tracking-tight mb-6"
+              className="text-5xl md:text-6xl font-semibold tracking-tight mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
@@ -140,13 +140,13 @@ export default function CampusHub() {
             >
               <a
                 href="https://srees-campushub.vercel.app"
-                className="px-8 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-black transition-all flex items-center justify-center shadow-sm"
+                className="px-8 py-3 bg-zinc-900 text-white font-medium rounded-lg hover:bg-black transition-[color,background-color,border-color,box-shadow,transform] duration-150 flex items-center justify-center shadow-sm"
               >
                 Explore Events <ArrowRight size={16} className="ml-2" />
               </a>
               <a
                 href="https://srees-campushub.vercel.app"
-                className="px-8 py-3 border-2 border-zinc-200 text-zinc-600 font-bold rounded-xl hover:bg-zinc-50 transition-all flex items-center justify-center"
+                className="px-8 py-3 border-2 border-zinc-200 text-zinc-600 font-medium rounded-lg hover:bg-zinc-50 transition-[color,background-color,border-color,box-shadow,transform] duration-150 flex items-center justify-center"
               >
                 Learn More
               </a>
@@ -204,7 +204,7 @@ export default function CampusHub() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl font-bold mb-3">
+            <h2 className="text-3xl font-semibold mb-3">
               Never Miss a Campus Event Again
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -279,7 +279,7 @@ export default function CampusHub() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl font-bold mb-3">Powerful Features</h2>
+            <h2 className="text-3xl font-semibold mb-3">Features</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Everything you need to stay connected with campus life
             </p>
@@ -328,7 +328,7 @@ export default function CampusHub() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-3xl font-bold mb-6">
+              <h2 className="text-3xl font-semibold mb-6">
                 Discover what's happening on campus
               </h2>
               <p className="text-lg text-gray-600 mb-8">
@@ -386,7 +386,7 @@ export default function CampusHub() {
               >
                 <a
                   href="https://srees-campushub.vercel.app"
-                  className="inline-flex items-center px-6 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-black transition-all shadow-sm"
+                  className="inline-flex items-center px-6 py-3 bg-zinc-900 text-white font-medium rounded-lg hover:bg-black transition-[color,background-color,border-color,box-shadow,transform] duration-150 shadow-sm"
                 >
                   Browse Events <ArrowRight size={16} className="ml-2" />
                 </a>
@@ -479,7 +479,7 @@ export default function CampusHub() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl font-bold mb-3">How It Works</h2>
+            <h2 className="text-3xl font-semibold mb-3">How It Works</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               A simple, intuitive platform designed for campus communities
             </p>
@@ -821,7 +821,7 @@ export default function CampusHub() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-3xl font-bold mb-6">For Event Organizers</h2>
+              <h2 className="text-3xl font-semibold mb-6">For Event Organizers</h2>
               <p className="text-lg text-gray-600 mb-8">
                 Easily create and promote your campus events to reach the
                 largest audience possible.
@@ -895,7 +895,7 @@ export default function CampusHub() {
               >
                 <a
                   href="https://srees-campushub.vercel.app"
-                  className="inline-flex items-center px-6 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-black transition-all shadow-sm"
+                  className="inline-flex items-center px-6 py-3 bg-zinc-900 text-white font-medium rounded-lg hover:bg-black transition-[color,background-color,border-color,box-shadow,transform] duration-150 shadow-sm"
                 >
                   Create an Event <ArrowRight size={16} className="ml-2" />
                 </a>

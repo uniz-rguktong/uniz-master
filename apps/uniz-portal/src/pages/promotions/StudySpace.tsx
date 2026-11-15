@@ -116,7 +116,7 @@ export default function StudySpace() {
             </motion.div>
 
             <motion.h1
-              className="text-5xl md:text-6xl font-bold tracking-tight mb-6"
+              className="text-5xl md:text-6xl font-semibold tracking-tight mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
@@ -205,7 +205,7 @@ export default function StudySpace() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl font-bold mb-3">How Study Space Works</h2>
+            <h2 className="text-3xl font-semibold mb-3">How Study Space Works</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               A simple process to connect with other learners in physical spaces
             </p>
@@ -272,7 +272,7 @@ export default function StudySpace() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl font-bold mb-3">Features</h2>
+            <h2 className="text-3xl font-semibold mb-3">Features</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Everything you need to build your perfect in-person study
               environment
@@ -321,7 +321,7 @@ export default function StudySpace() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-3xl font-bold mb-6">
+              <h2 className="text-3xl font-semibold mb-6">
                 Experience the power of in-person collaboration
               </h2>
               <p className="text-lg text-gray-600 mb-8">
@@ -482,7 +482,7 @@ export default function StudySpace() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl font-bold mb-3">What Our Users Say</h2>
+            <h2 className="text-3xl font-semibold mb-3">What Our Users Say</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Join thousands of students and educators enhancing their learning
               experience
@@ -540,7 +540,7 @@ export default function StudySpace() {
               <Sparkles size={48} className="mx-auto text-white" />
             </motion.div>
 
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            <h2 className="text-3xl md:text-4xl font-semibold mb-6">
               Ready to transform your learning experience?
             </h2>
             <p className="text-xl mb-10 text-gray-300">
@@ -555,7 +555,7 @@ export default function StudySpace() {
             >
               <a
                 href="https://studyspace-exp.vercel.app/"
-                className="px-8 py-4 bg-white text-zinc-950 font-bold rounded-xl hover:bg-zinc-50 transition-all inline-flex items-center shadow-lg"
+                className="px-8 py-4 bg-white text-zinc-950 font-medium rounded-lg hover:bg-zinc-50 transition-[color,background-color,border-color,box-shadow,transform] duration-150 inline-flex items-center shadow-sm"
               >
                 Get Started <ArrowRight size={16} className="ml-2" />
               </a>

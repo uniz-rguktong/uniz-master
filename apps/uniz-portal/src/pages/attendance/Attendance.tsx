@@ -232,14 +232,14 @@ export default function Attendance() {
         <div className="mb-8 md:bg-white p-6 md:rounded-xl md:border md:border-zinc-100 md:shadow-sm bg-transparent transition-all duration-300 px-0 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
             <div className="relative group">
-              <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
+              <label className="text-[12px] font-medium text-navy-500 mb-1.5 block">
                 Academic Year
               </label>
               <div
                 className="w-full flex items-center justify-between bg-zinc-50 border border-zinc-200 rounded-lg p-3 cursor-pointer hover:border-zinc-900 transition-colors"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
-                <span className="font-bold text-sm">{selectedYear}</span>
+                <span className="font-medium text-sm">{selectedYear}</span>
                 <ChevronDown
                   size={16}
                   className={`transition-transform duration-300 ${showDropdown ? "rotate-180" : ""} group-hover:text-zinc-900`}
@@ -247,7 +247,7 @@ export default function Attendance() {
               </div>
 
               {showDropdown && (
-                <div className="absolute z-20 mt-1 w-full bg-white border border-zinc-100 rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute z-20 mt-1 w-full bg-white border border-zinc-100 rounded-xl shadow-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                   {years.map((year) => (
                     <div
                       key={year}
@@ -275,7 +275,7 @@ export default function Attendance() {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
+              <label className="text-[12px] font-medium text-navy-500 mb-1.5 block">
                 Semester
               </label>
               <div className="relative">
@@ -286,7 +286,7 @@ export default function Attendance() {
                     setResultsFetched(false);
                     setAttendanceData(null);
                   }}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-lg p-3 font-bold text-sm appearance-none focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors cursor-pointer"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-lg p-3 font-medium text-sm appearance-none focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors cursor-pointer"
                 >
                   {availableSemesters.map((semester) => (
                     <option key={semester} value={semester}>
@@ -305,11 +305,11 @@ export default function Attendance() {
               <div className="md:w-56">
                 <button
                   onClick={() => handleFetchAttendance(false)}
-                  className="w-full h-[46px] bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm flex items-center justify-center disabled:opacity-50"
+                  className="w-full h-[46px] bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-medium text-sm transition-all active:scale-[0.98] shadow-sm flex items-center justify-center disabled:opacity-50"
                   disabled={isLoading || !user?.username}
                 >
                   {isLoading ? (
-                    <span className="flex items-center gap-1.5 text-sm tracking-[0.14em]">
+                    <span className="flex items-center gap-1.5 text-sm">
                       Syncing...
                     </span>
                   ) : fromCache ? (
@@ -365,7 +365,7 @@ export default function Attendance() {
               {/* Header */}
               <div className="flex items-end justify-between border-b pb-4 border-zinc-100 px-4 md:px-0 pt-5 md:pt-0">
                 <div>
-                  <span className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 block mb-1">
+                  <span className="text-[12px] font-medium text-navy-400 block mb-1">
                     Matrix Snapshot
                   </span>
                   <h2 className="text-[17px] font-semibold tracking-tight text-zinc-900">
@@ -391,7 +391,7 @@ export default function Attendance() {
                           },
                         );
                       }}
-                      className="h-10 px-4 bg-zinc-50 hover:bg-zinc-100 text-zinc-600 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-zinc-100 disabled:opacity-50"
+                      className="h-10 px-4 bg-zinc-50 hover:bg-zinc-100 text-zinc-600 rounded-lg font-medium text-xs transition-all flex items-center gap-2 border border-zinc-100 disabled:opacity-50"
                       disabled={false}
                     >
                       <Download size={14} />
@@ -408,7 +408,7 @@ export default function Attendance() {
                   <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm border border-zinc-100">
                     <AlertCircle size={28} className="text-zinc-400" />
                   </div>
-                  <h3 className="text-lg font-bold mb-2">
+                  <h3 className="text-lg font-semibold mb-2">
                     Attendance Not Available
                   </h3>
                   <p className="text-zinc-500 font-medium">
@@ -422,16 +422,16 @@ export default function Attendance() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-zinc-200 md:bg-zinc-50/50 bg-transparent">
-                          <th className="px-4 py-2 text-left text-[10px] font-bold tracking-[0.14em] text-zinc-500">
+                          <th className="px-4 py-2 text-left text-[12px] font-medium text-navy-500">
                             Subject
                           </th>
-                          <th className="px-4 py-2 text-center text-[10px] font-bold tracking-[0.14em] text-zinc-500">
+                          <th className="px-4 py-2 text-center text-[12px] font-medium text-navy-500">
                             Total Classes
                           </th>
-                          <th className="px-4 py-2 text-center text-[10px] font-bold tracking-[0.14em] text-zinc-500">
+                          <th className="px-4 py-2 text-center text-[12px] font-medium text-navy-500">
                             Attended
                           </th>
-                          <th className="px-4 py-2 text-center text-[10px] font-bold tracking-[0.14em] text-zinc-500">
+                          <th className="px-4 py-2 text-center text-[12px] font-medium text-navy-500">
                             Percentage
                           </th>
                         </tr>
@@ -444,7 +444,7 @@ export default function Attendance() {
                                 key={index}
                                 className="group hover:bg-zinc-50 transition-colors"
                               >
-                                <td className="px-4 py-2 font-bold text-xs text-zinc-900">
+                                <td className="px-4 py-2 font-medium text-xs text-zinc-900">
                                   {typeof record.subject === "string"
                                     ? record.subject
                                     : record.subject?.name || "Unknown Subject"}
@@ -488,7 +488,7 @@ export default function Attendance() {
                       {/* Summary calculation if available, or just a placeholder */}
                       <div className="flex items-center gap-6">
                         <div className="text-right flex items-center gap-3">
-                          <p className="text-zinc-400 font-bold text-[10px] tracking-[0.14em]">
+                          <p className="text-navy-400 font-medium text-[12px]">
                             Semester Avg :
                           </p>
                           <p className="text-3xl font-semibold text-zinc-900 md:text-white tracking-tighter">
@@ -524,7 +524,7 @@ export default function Attendance() {
               Please authenticate to access your institutional attendance
               terminal.
             </p>
-            <button className="h-[46px] px-8 bg-zinc-900 text-white rounded-xl font-bold text-sm transition-all hover:bg-zinc-800 active:scale-[0.98]">
+            <button className="h-[46px] px-8 bg-zinc-900 text-white rounded-xl font-medium text-sm transition-all hover:bg-zinc-800 active:scale-[0.98]">
               Sign In to Continue
             </button>
           </div>
