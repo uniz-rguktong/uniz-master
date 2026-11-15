@@ -12,6 +12,9 @@ description: "Edit portal or landing SPAs, local preview, production Pages deplo
 | API client | `src/api/` |
 | Feature flags | `src/lib/featureFlags.ts` (or equivalent) |
 | SPA redirects | `public/_redirects` |
+| Brand palette | Dark navy `#0B2A47` + white + black — tokens in `src/index.css`, `tailwind.config.js`, `src/lib/portal-ui.ts` / `landing-ui.ts` |
+
+Keep existing layouts; change color/CSS tokens rather than reinventing structure.
 
 ### Local
 

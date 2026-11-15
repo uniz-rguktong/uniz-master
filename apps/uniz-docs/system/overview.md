@@ -61,10 +61,12 @@ flowchart TB
 | Principle | What it means in practice |
 |-----------|---------------------------|
 | Frontends off-box | Portal + landing never burn VPS CPU for HTML/JS |
-| Thin edge | Traefik → **gateway-api only** (nginx hop parked) |
+| Thin edge | Host nginx → Traefik → **gateway-api only** (legacy `uniz-api` removed; nginx hop parked) |
 | Fold, don't multiply | Mail → notifications; files upload → user; grievance → user |
 | Gate unused product | Outpass/outing off by flags; outpass Deployment at 0 |
-| Burst with HPA, not always-on | Auth/user/academics/gateway-api scale on CPU/memory |
+| Burst with HPA, not always-on | Auth/user/academics/gateway/notifications scale on CPU/memory |
+| DB not world-reachable | Postgres / landing DB / landing API bind loopback + cni0 only |
+| Portal brand | Navy `#0B2A47` + white + black across `uniz.rguktong.in` |
 
 ## Monorepo layout
 
