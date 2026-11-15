@@ -19,6 +19,7 @@ uniz-master/
 │   ├── ops/                 # vault, latency, load tests, k6/
 │   └── *.sh                 # thin shims → ci/ or deploy/ (compat)
 ├── docs/
+│   ├── guides/              # UniZ-UI-Guidance.docx — trainer UI inventory by role
 │   ├── local/               # LOCAL_SETUP
 │   ├── architecture/        # topology, monitoring, scaling, URLs
 │   ├── api/postman/         # Postman collections + globals

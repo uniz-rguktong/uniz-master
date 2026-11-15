@@ -2,7 +2,7 @@
 
 [![VPS Automated Deployment](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml)
 
-**New here?** [Handover](docs/HANDOVER.md) · **Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Action flows:** [docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) · **Ops:** [docs/ops/INDEX.md](docs/ops/INDEX.md)
+**New here?** [Handover](docs/HANDOVER.md) · **Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Action flows:** [docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) · **UI guide (trainers):** [docs/guides/UniZ-UI-Guidance.docx](docs/guides/UniZ-UI-Guidance.docx) · **Ops:** [docs/ops/INDEX.md](docs/ops/INDEX.md)
 
 ## Architecture
 
@@ -14,7 +14,7 @@ UniZ runs on a **single VPS + Cloudflare free**:
 
 | Layer | Owns |
 |---|---|
-| **Cloudflare Pages** | Portal (`uniz.rguktong.in`, navy `#0B2A47` + white + black) and Landing (`rguktong.in`) SPAs |
+| **Cloudflare Pages** | Portal (`uniz.rguktong.in` — Elaya Layout A home, navy `#0B2A47` + white + black, Turnstile on sign-in) and Landing (`rguktong.in`) SPAs |
 | **VPS (k3s)** | APIs, VitePress docs, landing-api, Postgres, Redis, uploads, observability |
 | **Off-box** | AWS SES for mail only |
 
@@ -49,6 +49,7 @@ In-house docs are a static VitePress site on the VPS — not Cloudflare Pages.
 - App: `apps/uniz-docs`
 - Public: [https://api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs)
 - Architecture, API reference, role guides, [action flows](https://api-uniz.rguktong.in/docs/system/action-flows)
+- Campus UI inventory (Word): [`docs/guides/`](docs/guides/) — features/actions by role; not a substitute for API docs
 
 ### Backend services
 

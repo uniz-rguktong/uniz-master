@@ -1,6 +1,8 @@
 # UniZ Docs (in-house VitePress)
 
-Static documentation site. Replaces Mintlify.
+Static documentation site at [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs). Replaces Mintlify.
+
+Architecture, APIs, deploy, and role how-tos live here. Campus **UI feature inventory** (screenshots + actions by role) is separate: [`docs/guides/`](../../docs/guides/).
 
 ## Develop
 
