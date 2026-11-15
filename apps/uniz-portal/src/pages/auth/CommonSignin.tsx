@@ -23,6 +23,8 @@ import { motion } from "framer-motion";
 import { prepareStudentSession } from "../../utils/studentSessionCache";
 import { cn } from "@/lib/utils";
 import { getSafeReturnUrl } from "@/utils/returnUrl";
+import { TurnstileLoadingPlaceholder } from "../../components/ui/TurnstileLoadingPlaceholder";
+import { prefetchTurnstile } from "../../utils/prefetchTurnstile";
 import {
   portalGhostButtonClass,
   portalInputClass,
@@ -220,11 +222,11 @@ function PasswordStrength({ password }: { password: string }) {
         />
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-[10px] font-bold tracking-wider text-zinc-400">
+        <span className="text-[12px] font-medium text-navy-400">
           Password strength
         </span>
         <span
-          className={`text-[10px] font-semibold tracking-wider ${
+          className={`text-[12px] font-medium ${
             score <= 1
               ? "text-red-500"
               : score <= 2
@@ -284,15 +286,7 @@ function requiresCaptcha() {
   return turnstileEnabled() && !isLocalTestTurnstile();
 }
 
-const CAPTCHA_WAIT_MS = 6_000;
-
-function warmTurnstile(
-  turnstileRef: React.RefObject<{ execute?: () => void } | null>,
-  captchaTokenRef: React.MutableRefObject<string | null>,
-) {
-  if (!requiresCaptcha() || captchaTokenRef.current) return;
-  turnstileRef.current?.execute?.();
-}
+const CAPTCHA_WAIT_MS = 4_000;
 
 function waitForCaptchaToken(
   captchaTokenRef: React.MutableRefObject<string | null>,
@@ -1099,7 +1093,7 @@ export default function Signin({ type }: SigninProps) {
                   {/* OTP Verified badge */}
                   <div className="flex items-center justify-center gap-2 py-2">
                     <motion.div
-                      className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-emerald-50 border border-emerald-200"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{
@@ -1109,7 +1103,7 @@ export default function Signin({ type }: SigninProps) {
                       }}
                     >
                       <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      <span className="text-[11px] font-semibold text-emerald-700 tracking-[0.14em]">
+                      <span className="text-[12px] font-medium text-emerald-700">
                         OTP Verified
                       </span>
                     </motion.div>

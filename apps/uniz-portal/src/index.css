@@ -310,13 +310,11 @@
 
 @layer utilities {
   .glass-panel {
-    @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-sm;
+    @apply bg-white border border-navy-200 shadow-sm;
   }
 
   .premium-shadow {
-    box-shadow:
-      0 8px 32px -4px rgba(0, 0, 0, 0.04),
-      0 4px 12px -2px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 4px 16px -4px rgba(11, 42, 71, 0.06);
   }
 
   @keyframes marquee {

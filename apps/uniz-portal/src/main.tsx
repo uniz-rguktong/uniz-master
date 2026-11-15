@@ -5,8 +5,11 @@ import { Layout } from "./layout.tsx";
 import { RecoilRoot } from "recoil";
 import { BrowserRouter } from "react-router-dom";
 import { initializeGlobalInterceptor } from "./api/networkInterceptor.ts";
+import { prefetchTurnstile } from "./utils/prefetchTurnstile.ts";
 
 initializeGlobalInterceptor();
+// Start Turnstile download on first paint so login is not blocked waiting for the script.
+prefetchTurnstile();
 
 // // Hardcoded Responsive Lead Signature
 // (function() {

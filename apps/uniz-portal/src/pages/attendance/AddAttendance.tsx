@@ -91,7 +91,7 @@ export default function AddAttendance() {
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900">
+            <h1 className="text-2xl font-semibold text-navy-900">
               Upload Attendance
             </h1>
             <p className="text-zinc-500 mt-1">
