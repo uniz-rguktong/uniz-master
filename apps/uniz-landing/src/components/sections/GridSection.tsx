@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import type { FeedItem } from "../../types/api";
 
 export function GridSection({
   id,
@@ -15,7 +16,7 @@ export function GridSection({
   id: string;
   title: string;
   subtitle?: string;
-  items: readonly any[];
+  items: readonly FeedItem[];
   images: readonly string[];
   viewAllLink: string;
   viewAllText: string;
@@ -30,7 +31,7 @@ export function GridSection({
     <section id={id} className={`py-24 ${bgColor}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">{title}</h2>
+          <h2 className="text-4xl font-medium tracking-tight text-slate-900 sm:text-5xl">{title}</h2>
           {subtitle && (
             <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
               {subtitle}
@@ -41,7 +42,7 @@ export function GridSection({
           {displayItems.map((item, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col"
+              className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-200 flex flex-col"
             >
               <div className="w-full aspect-[4/3] bg-slate-100 overflow-hidden">
                 <img
@@ -52,7 +53,7 @@ export function GridSection({
               </div>
               <div className="p-6 flex-1 flex flex-col">
                 {item.date && (
-                  <p className="text-sm font-medium text-indigo-600">{item.date}</p>
+                  <p className="text-sm font-medium text-navy">{item.date}</p>
                 )}
                 <h3 className="mt-2 text-xl font-semibold text-slate-800 line-clamp-3">
                   {item.title}
@@ -66,7 +67,7 @@ export function GridSection({
                       href={item.links?.[0]?.url || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-700 font-semibold"
+                      className="inline-flex items-center gap-1 text-navy hover:text-navy-900 font-semibold underline-offset-[0.22em] hover:underline"
                     >
                       Read More
                       <ArrowRight className="w-4 h-4" />

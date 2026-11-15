@@ -61,12 +61,12 @@ export const apiData = {
       "https://rguktong.ac.in/images/new.gif",
       "https://rguktong.ac.in/images/new.gif",
       "https://rguktong.ac.in/images/new.gif",
-      "https://rguktong.ac.in/svgs/carosel/VRD.png",
-      "https://rguktong.ac.in/svgs/carosel/all.jpg",
-      "https://rguktong.ac.in/svgs/carosel/Sports.png",
-      "https://rguktong.ac.in/svgs/carosel/Cul.png",
+      "/carousel/VRD.png.webp",
+      "/carousel/all.jpg.webp",
+      "/carousel/Sports.png.webp",
+      "/carousel/Cul.png.webp",
       "https://rguktong.ac.in/svgs/carosel/Ornet25.png",
-      "https://rguktong.ac.in/svgs/carosel/swatch.png",
+      "/carousel/swatch.png.webp",
       "https://rguktong.ac.in/svgs/carosel/1 ind.jpeg",
       "https://rguktong.ac.in/svgs/carosel/Rupas Sir.jpeg",
       "https://rguktong.ac.in/svgs/carosel/78 ind.jpg",
@@ -6162,11 +6162,11 @@ export const apiData = {
         "header": "Academic Calendar for the year\n                        2019-20",
         "links": [
           {
-            "label": "Semister-1",
+            "label": "Semester-1",
             "url": "https://rguktong.ac.in/pdfs/academics/AC1920S1.pdf"
           },
           {
-            "label": "Semister-2",
+            "label": "Semester-2",
             "url": null
           }
         ]
@@ -6175,11 +6175,11 @@ export const apiData = {
         "header": "Academic Calendar for the year\n                        2018-19",
         "links": [
           {
-            "label": "Semister-1",
+            "label": "Semester-1",
             "url": "https://rguktong.ac.in/pdfs/academics/AC1920S1.pdf"
           },
           {
-            "label": "Semister-2",
+            "label": "Semester-2",
             "url": "https://rguktong.ac.in/pdfs/academics/AC1819S2.pdf"
           }
         ]

@@ -162,7 +162,9 @@ verify_deployment() {
     code=$(curl -sk -o /tmp/uniz-health.json -w "%{http_code}" --max-time 15 \
       https://api-uniz.rguktong.in/api/v1/system/health 2>/dev/null || true)
     code=${code:-000}
-    if [ "$code" = "200" ] || [ "$code" = "503" ]; then
+    if [ "$code" = "308" ] || [ "$code" = "301" ] || [ "$code" = "302" ]; then
+      echo "[Verify] Health got HTTP $code (redirect) — missing api-uniz nginx vhost? run ensure-nginx-api-uniz.sh"
+    elif [ "$code" = "200" ] || [ "$code" = "503" ]; then
       body=$(cat /tmp/uniz-health.json 2>/dev/null || echo "")
       if echo "$body" | grep -q '"status":"ok"'; then
         echo "[Verify] Health OK (HTTP $code, status ok)"
@@ -314,9 +316,10 @@ deploy_logic() {
     bash "$(dirname "$0")/configure-cloudflare-portal-cdn.sh" || true
   fi
 
-  echo "[Infra] Syncing host nginx TLS + www redirects..."
+  echo "[Infra] Syncing host nginx TLS + www redirects + api-uniz vhost..."
   bash "$(dirname "$0")/sync-nginx-k8s-tls.sh" 2>/dev/null || true
   bash "$(dirname "$0")/install-nginx-www-redirects.sh" 2>/dev/null || true
+  bash "$(dirname "$0")/ensure-nginx-api-uniz.sh" 2>/dev/null || true
   bash "$(dirname "$0")/install-nginx-k8s-tls-cron.sh" 2>/dev/null || true
   
   echo "[Infra] Applying branch components ($K_APPLY_PATH)..."
@@ -521,6 +524,7 @@ deploy_logic() {
     echo "[Infra] Ensuring www.* grey-cloud DNS (after tunnel sync)..."
     bash "$(dirname "$0")/ensure-cloudflare-www-dns.sh" || true
     bash "$(dirname "$0")/install-nginx-www-redirects.sh" 2>/dev/null || true
+    bash "$(dirname "$0")/ensure-nginx-api-uniz.sh" 2>/dev/null || true
     bash "$(dirname "$0")/configure-cloudflare-portal-cdn.sh" || true
   fi
 

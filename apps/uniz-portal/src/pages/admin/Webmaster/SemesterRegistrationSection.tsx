@@ -447,7 +447,7 @@ export default function SemesterRegistrationSection({
             {isAdmin && (
               <button
                 onClick={() => setShowNewModal(true)}
-                className="flex items-center gap-3 px-8 py-4 bg-gradient-to-br from-blue-600 to-zinc-700 text-white rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-none border-2 border-white/20"
+                className="flex items-center gap-3 px-8 py-4 bg-gradient-to-br from-navy-800 to-navy-900 text-white rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-none border-2 border-white/20"
               >
                 <Zap size={18} />
                 Start New Event

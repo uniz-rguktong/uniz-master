@@ -168,7 +168,7 @@ export function NotificationPanel() {
         <div className="p-6 border-b border-zinc-200/70 flex justify-between items-center bg-zinc-50/50">
           <div className="flex items-center gap-3">
             <h3 className={adminSectionTitleClass}>Announcements</h3>
-            <Megaphone className="w-5 h-5 text-pink-500 animate-pulse" />
+            <Megaphone className="w-5 h-5 text-navy-400 animate-pulse" />
           </div>
           <div className="flex items-center gap-2">
             <button
