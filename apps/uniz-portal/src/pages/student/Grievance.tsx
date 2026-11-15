@@ -85,14 +85,14 @@ export default function Grievance() {
               <div className="space-y-3 md:space-y-6">
                 {/* Category */}
                 <div>
-                  <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
+                  <label className="text-[10px] font-bold tracking-normal text-zinc-500 mb-1.5 block">
                     Category
                   </label>
                   <div className="relative group">
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 md:py-3.5 font-semibold text-sm md:text-[15px] focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all appearance-none text-zinc-900"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 md:py-3.5 font-semibold text-sm md:text-[15px] focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-[color,background-color,border-color,opacity,transform] appearance-none text-zinc-900"
                     >
                       <option value="Hostel">Hostel</option>
                       <option value="Mess">Mess</option>
@@ -120,14 +120,14 @@ export default function Grievance() {
 
                 {/* Description */}
                 <div>
-                  <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
+                  <label className="text-[10px] font-bold tracking-normal text-zinc-500 mb-1.5 block">
                     Description
                   </label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Provide detailed information about your grievance..."
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl p-3 md:p-5 font-semibold text-sm md:text-[15px] focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all h-[100px] md:min-h-[160px] resize-none text-zinc-900 placeholder:text-zinc-300 placeholder:font-normal"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl p-3 md:p-5 font-semibold text-sm md:text-[15px] focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-[color,background-color,border-color,opacity,transform] h-[100px] md:min-h-[160px] resize-none text-zinc-900 placeholder:text-zinc-300 placeholder:font-normal"
                   />
                 </div>
 
@@ -138,7 +138,7 @@ export default function Grievance() {
                     id="anonymous"
                     checked={isAnonymous}
                     onChange={(e) => setIsAnonymous(e.target.checked)}
-                    className="w-5 h-5 rounded-md border-zinc-300 text-zinc-900 focus:ring-zinc-900 focus:ring-offset-0 transition-all cursor-pointer"
+                    className="w-5 h-5 rounded-md border-zinc-300 text-zinc-900 focus:ring-zinc-900 focus:ring-offset-0 transition-[color,background-color,border-color,opacity,transform] cursor-pointer"
                   />
                   <label
                     htmlFor="anonymous"
@@ -151,7 +151,7 @@ export default function Grievance() {
                 {/* Action Buttons */}
                 <div className="pt-4">
                   <button
-                    className="w-full py-3.5 md:py-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-lg shadow-zinc-200"
+                    className="w-full py-3.5 md:py-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold text-sm transition-[color,background-color,border-color,opacity,transform] active:scale-[0.98] shadow-sm"
                     onClick={() => handleSubmit()}
                     disabled={loading}
                   >
@@ -164,7 +164,7 @@ export default function Grievance() {
             {/* Info Section - Hidden on Mobile */}
             <div className="hidden md:flex md:w-1/3 bg-zinc-50/30 p-8 flex-col justify-between">
               <div>
-                <h3 className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mb-6 flex items-center gap-2">
+                <h3 className="text-[10px] font-bold text-zinc-400 tracking-normal mb-6 flex items-center gap-2">
                   Official Guidelines
                 </h3>
 

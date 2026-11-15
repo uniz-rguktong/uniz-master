@@ -1197,7 +1197,7 @@ export default function StudentDetails() {
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 6 }}
-                  className="absolute z-50 left-0 right-0 mt-1 bg-white border border-zinc-200 rounded-xl shadow-lg overflow-hidden"
+                  className="absolute z-50 left-0 right-0 mt-1 bg-white border border-zinc-200 rounded-xl shadow-none overflow-hidden"
                 >
                   {recommendations.map((rec) => (
                     <button
@@ -1231,7 +1231,7 @@ export default function StudentDetails() {
               <SlidersHorizontal size={14} />
               Filters
               {activeFilterCount > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 rounded-full bg-zinc-900 text-white text-[10px] font-semibold">
+                <span className="ml-1 px-1.5 py-0.5 rounded-md bg-zinc-900 text-white text-[10px] font-semibold">
                   {activeFilterCount}
                 </span>
               )}
@@ -1701,7 +1701,7 @@ export default function StudentDetails() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 32, stiffness: 320 }}
-              className="fixed right-0 top-0 z-[101] h-full w-full max-w-2xl bg-[#fafafa] shadow-2xl overflow-y-auto custom-sidebar-scroll"
+              className="fixed right-0 top-0 z-[101] h-full w-full max-w-2xl bg-[#fafafa] border border-navy-200/80 overflow-y-auto custom-sidebar-scroll"
             >
               <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b border-zinc-200/70">
                 <div>

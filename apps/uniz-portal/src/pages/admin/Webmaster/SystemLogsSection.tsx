@@ -130,7 +130,7 @@ export default function SystemLogsSection() {
                 className={cn(
                   adminSegmentInactiveClass,
                   "px-2.5 py-1.5 hover:!text-rose-600",
-                  isMaintenanceLoading && "animate-pulse",
+         isMaintenanceLoading && "",
                 )}
               >
                 <AlertTriangle size={16} />
@@ -186,16 +186,16 @@ export default function SystemLogsSection() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-zinc-200/70">
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
                   Activity & Resource
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
                   Data Metrics
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
                   Status
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
                   Timestamp
                 </th>
               </tr>
@@ -271,7 +271,7 @@ export default function SystemLogsSection() {
                               </a>
                             )}
                           </div>
-                          <span className="px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded-full text-[10px] font-medium tracking-wide w-fit">
+                          <span className="px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded-md text-[10px] font-medium tracking-wide w-fit">
                             {formatDisplayText(log.type, "None")}
                           </span>
                         </div>
@@ -282,7 +282,7 @@ export default function SystemLogsSection() {
                             <p className="text-[14px] font-semibold text-zinc-900 tabular-nums">
                               {log.totalRows || 0}
                             </p>
-                            <span className="text-[10px] text-zinc-400 font-medium tracking-[0.12em]">
+                            <span className="text-[10px] text-zinc-400 font-medium">
                               Rows
                             </span>
                           </div>
@@ -301,14 +301,14 @@ export default function SystemLogsSection() {
                       <td className="px-8 py-5">
                         <div className="w-fit">
                           {log.status === "COMPLETED" ? (
-                            <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-full border border-zinc-200">
+                            <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-md border border-zinc-200">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                               <span className="text-[11px] font-medium">
                                 Completed
                               </span>
                             </div>
                           ) : (
-                            <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-full border border-zinc-200">
+                            <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-md border border-zinc-200">
                               <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
                               <span className="text-[11px] font-medium">
                                 {formatDisplayText(log.status, "Processing")}
@@ -329,7 +329,7 @@ export default function SystemLogsSection() {
                               },
                             )}
                           </p>
-                          <p className="text-[10px] font-medium text-zinc-400 tracking-[0.12em] mt-0.5 tabular-nums">
+                          <p className="text-[10px] font-medium text-zinc-400 mt-0.5 tabular-nums">
                             {new Date(log.createdAt).toLocaleTimeString([], {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -361,7 +361,7 @@ export default function SystemLogsSection() {
         {/* Pagination bar */}
         {filteredHistory.length > 0 && (
           <div className="px-8 py-4 bg-zinc-50/50 border-t border-zinc-200/70 flex items-center justify-between">
-            <p className="text-[11px] font-medium text-zinc-400 tracking-[0.12em]">
+            <p className="text-[11px] font-medium text-zinc-400">
               Showing{" "}
               <span className="text-zinc-900">
                 {Math.min(
@@ -376,7 +376,7 @@ export default function SystemLogsSection() {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="h-8 px-3.5 border border-zinc-200 bg-white rounded-lg text-[12px] font-semibold text-zinc-600 hover:text-zinc-900 hover:border-zinc-300 transition-all disabled:opacity-30 disabled:pointer-events-none"
+                className="h-8 px-3.5 border border-zinc-200 bg-white rounded-lg text-[12px] font-semibold text-zinc-600 hover:text-zinc-900 hover:border-zinc-300 transition-[color,background-color,border-color,opacity,transform,box-shadow] disabled:opacity-30 disabled:pointer-events-none"
               >
                 Previous
               </button>
@@ -386,7 +386,7 @@ export default function SystemLogsSection() {
                     <button
                       key={num}
                       onClick={() => setCurrentPage(num)}
-                      className={`w-8 h-8 rounded-lg text-[12px] font-semibold tabular-nums transition-all ${currentPage === num ? "bg-zinc-900 text-white" : "text-zinc-500 hover:bg-zinc-100"}`}
+                      className={`w-8 h-8 rounded-lg text-[12px] font-semibold tabular-nums transition-[color,background-color,border-color,opacity,transform,box-shadow] ${currentPage === num ? "bg-zinc-900 text-white" : "text-zinc-500 hover:bg-zinc-100"}`}
                     >
                       {num}
                     </button>
@@ -401,7 +401,7 @@ export default function SystemLogsSection() {
                 onClick={() =>
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
-                className="h-8 px-3.5 border border-zinc-200 bg-white rounded-lg text-[12px] font-semibold text-zinc-600 hover:text-zinc-900 hover:border-zinc-300 transition-all disabled:opacity-30 disabled:pointer-events-none"
+                className="h-8 px-3.5 border border-zinc-200 bg-white rounded-lg text-[12px] font-semibold text-zinc-600 hover:text-zinc-900 hover:border-zinc-300 transition-[color,background-color,border-color,opacity,transform,box-shadow] disabled:opacity-30 disabled:pointer-events-none"
               >
                 Next
               </button>

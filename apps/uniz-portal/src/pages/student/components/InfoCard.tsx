@@ -21,7 +21,7 @@ export const InfoCard = memo(
     return (
       <div
         className={cn(
-          "rounded-portal-xl border border-navy-200 bg-white p-4 md:p-5 shadow-whisper transition-all duration-200 hover:border-navy-300",
+          "rounded-portal-xl border border-navy-200 bg-white p-4 md:p-5 shadow-whisper transition-[color,background-color,border-color,opacity,transform] duration-200 hover:border-navy-300",
           fullWidth && "col-span-full",
         )}
       >

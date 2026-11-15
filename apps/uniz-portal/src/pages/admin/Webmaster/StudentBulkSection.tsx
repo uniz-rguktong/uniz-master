@@ -442,21 +442,21 @@ export default function StudentBulkSection() {
             <div className={cn(adminCardClass, "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-zinc-50/40 p-6")}>
               {Object.entries(FIELD_GROUPS).map(([group, fields]) => (
                 <div key={group} className="space-y-3">
-                  <h4 className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] px-2 border-l-2 border-zinc-300">
+                  <h4 className="text-[10px] font-semibold text-zinc-400 px-2 border-l-2 border-zinc-300">
                     {group}
                   </h4>
                   <div className="flex flex-col gap-1.5">
                     {fields.map((field) => (
                       <label
                         key={field}
-                        className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all border group ${
+                        className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-[color,background-color,border-color,opacity,transform,box-shadow] border group ${
                           selectedFields.includes(field)
                             ? "bg-white border-zinc-300 shadow-[0_1px_2px_rgba(10,10,10,0.04)]"
                             : "bg-transparent border-transparent hover:bg-white/60"
                         }`}
                       >
                         <div
-                          className={`w-4 h-4 rounded-md border flex items-center justify-center transition-all ${
+                          className={`w-4 h-4 rounded-md border flex items-center justify-center transition-[color,background-color,border-color,opacity,transform,box-shadow] ${
                             selectedFields.includes(field)
                               ? "bg-zinc-900 border-zinc-900"
                               : "border-zinc-300 bg-white group-hover:border-zinc-400"
@@ -510,7 +510,7 @@ export default function StudentBulkSection() {
               )}
               Download the data
             </button>
-            <p className="text-center text-zinc-300 text-[10px] font-medium tracking-[0.24em]">
+            <p className="text-center text-zinc-300 text-[10px] font-medium">
               Encrypted data streams active • Protocol 04-X
             </p>
           </div>

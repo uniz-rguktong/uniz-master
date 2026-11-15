@@ -36,7 +36,7 @@ export function LiveEditorChrome({
       <div className="px-6 py-7 md:px-9 md:py-8 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#0B2A47]/70 mb-2">
+            <p className="text-[11px] font-semibold text-[#0B2A47]/70 mb-2">
               RGUKT Ongole · {sectionLabel}
             </p>
             <h2 className="text-2xl md:text-[1.75rem] font-bold text-slate-900 tracking-tight">
@@ -47,7 +47,7 @@ export function LiveEditorChrome({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0B2A47]/5 text-[#0B2A47] border border-[#0B2A47]/10 text-[11px] font-semibold">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#0B2A47]/5 text-[#0B2A47] border border-[#0B2A47]/10 text-[11px] font-semibold">
               <Sparkles size={12} />
               Live editor
             </span>

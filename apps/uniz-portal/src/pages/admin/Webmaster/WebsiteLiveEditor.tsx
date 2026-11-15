@@ -62,7 +62,7 @@ function LiveField({
 }) {
   return (
     <div>
-      <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+      <label className="text-[10px] font-semibold text-slate-400 tracking-wide">
         {label}
       </label>
       {multiline ? (
@@ -115,7 +115,7 @@ function ImageUploadField({
 
   return (
     <div>
-      <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+      <label className="text-[10px] font-semibold text-slate-400 tracking-wide">
         {label}
       </label>
       <label
@@ -227,19 +227,19 @@ function AnnouncementsEditor({
         <motion.div
           key={idx}
           layout
-          className="rounded-xl border border-slate-200 bg-white p-4 group hover:border-[#0B2A47]/20 hover:shadow-sm transition-all"
+          className="rounded-xl border border-slate-200 bg-white p-4 group hover:border-[#0B2A47]/20 hover:shadow-sm transition-[color,background-color,border-color,opacity,transform,box-shadow]"
         >
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex items-center gap-2 text-[#0B2A47]">
               <Megaphone size={14} />
-              <span className="text-[10px] font-bold uppercase tracking-wide">
+              <span className="text-[10px] font-bold tracking-wide">
                 Ticker #{idx + 1}
               </span>
             </div>
             <button
               type="button"
               onClick={() => helpers.deleteArrayItem(["announcements"], idx)}
-              className="p-1.5 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+              className="p-1.5 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg opacity-0 group-hover:opacity-100 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
             >
               <Trash2 size={14} />
             </button>
@@ -417,7 +417,7 @@ function NotificationItemsEditor({
           <motion.div
             key={idx}
             layout
-            className="rounded-xl border border-slate-200 bg-white overflow-hidden group hover:border-[#0B2A47]/25 hover:shadow-sm transition-all"
+            className="rounded-xl border border-slate-200 bg-white overflow-hidden group hover:border-[#0B2A47]/25 hover:shadow-sm transition-[color,background-color,border-color,opacity,transform,box-shadow]"
           >
             <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
@@ -448,7 +448,7 @@ function NotificationItemsEditor({
               />
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                  <label className="text-[10px] font-semibold text-slate-400 tracking-wide flex items-center gap-1">
                     <Link2 size={10} /> Links
                   </label>
                   <button
@@ -566,7 +566,7 @@ function GenericLiveForm({
               key={idx}
               layout
               className={cn(
-                "rounded-xl border bg-white overflow-hidden transition-all group",
+                "rounded-xl border bg-white overflow-hidden transition-[color,background-color,border-color,opacity,transform,box-shadow] group",
                 isExpanded
                   ? "border-[#0B2A47]/25 shadow-md ring-1 ring-[#0B2A47]/10"
                   : "border-slate-200 hover:border-[#0B2A47]/20",

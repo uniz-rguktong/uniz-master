@@ -41,7 +41,7 @@ export const adminSidebarClass = cn(
 );
 
 export const adminSidebarToggleClass =
-  "absolute -right-3 top-7 bg-white border border-navy-200 rounded-full p-1 text-navy-400 hover:text-navy-900 hover:border-navy-300 shadow-whisper active:scale-95 transition-all z-50 hidden lg:flex items-center justify-center";
+  "absolute -right-3 top-7 bg-white border border-navy-200 rounded-md p-1 text-navy-400 hover:text-navy-900 hover:border-navy-300 shadow-whisper active:scale-95 transition-[color,background-color,border-color,opacity,transform,box-shadow] z-50 hidden lg:flex items-center justify-center";
 
 export const adminNavGroupLabelClass = portalEyebrowClass;
 
@@ -58,13 +58,13 @@ export const adminNavIconInactiveClass =
 export const adminHeaderClass = cn(portalHeaderClass, "px-6 md:px-10");
 
 export const adminAvatarButtonClass =
-  "w-9 h-9 rounded-full overflow-hidden bg-navy-50 ring-1 ring-navy-200 hover:ring-navy-300 transition-all active:scale-95 shrink-0";
+  "w-9 h-9 rounded-full overflow-hidden bg-navy-50 ring-1 ring-navy-200 hover:ring-navy-300 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95 shrink-0";
 
 export const adminAvatarFallbackClass =
   "w-full h-full flex items-center justify-center bg-navy-900 text-white font-semibold text-[13px]";
 
 export const adminLogoutButtonClass =
-  "w-9 h-9 rounded-full bg-white border border-navy-200 flex items-center justify-center text-navy-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all active:scale-95";
+  "w-9 h-9 rounded-full bg-white border border-navy-200 flex items-center justify-center text-navy-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95";
 
 export const adminSearchInputClass = cn(
   portalInputClass,
@@ -93,7 +93,7 @@ export const adminSectionTitleClass = portalSectionTitleClass;
 
 export const adminStatCardClass = cn(
   adminCardClass,
-  "p-5 flex flex-col gap-4 transition-all duration-200 hover:border-navy-300",
+  "p-5 flex flex-col gap-4 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-200 hover:border-navy-300",
 );
 
 export const adminStatValueClass =
@@ -127,10 +127,10 @@ export const adminSegmentWrapClass =
   "inline-flex items-center gap-1 p-1 rounded-portal-xl bg-navy-50 border border-navy-200/80";
 
 export const adminSegmentActiveClass =
-  "px-4 py-1.5 rounded-portal-lg text-[11px] font-semibold tracking-tight bg-white text-navy-900 shadow-whisper transition-all";
+  "px-4 py-1.5 rounded-portal-lg text-[11px] font-semibold tracking-tight bg-white text-navy-900 shadow-whisper transition-[color,background-color,border-color,opacity,transform,box-shadow]";
 
 export const adminSegmentInactiveClass =
-  "px-4 py-1.5 rounded-portal-lg text-[11px] font-semibold tracking-tight text-navy-500 hover:text-navy-900 transition-all";
+  "px-4 py-1.5 rounded-portal-lg text-[11px] font-semibold tracking-tight text-navy-500 hover:text-navy-900 transition-[color,background-color,border-color,opacity,transform,box-shadow]";
 
 export const adminModalShellClass = portalModalShellClass;
 
@@ -139,7 +139,7 @@ export const adminModalTitleClass = portalModalTitleClass;
 export const adminModalDescClass = portalModalDescClass;
 
 export const adminModalCloseClass =
-  "absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-all z-10";
+  "absolute top-5 right-5 p-2 text-navy-400 hover:text-navy-900 hover:bg-navy-50 rounded-full transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10";
 
 export const adminWarningBannerClass =
   "flex gap-3 p-4 rounded-portal-xl border border-amber-200/70 bg-amber-50/80";
@@ -150,7 +150,7 @@ export const adminWarningTitleClass =
 export const adminWarningTextClass = "text-[12px] text-amber-800/90 leading-relaxed";
 
 export const adminDangerInputClass =
-  "w-full min-h-11 px-3.5 bg-rose-50/60 border border-rose-200 rounded-portal-xl text-[13px] font-medium text-rose-800 placeholder:text-rose-300 focus:outline-none focus:border-rose-300 focus:ring-2 focus:ring-rose-500/10 transition-all";
+  "w-full min-h-11 px-3.5 bg-rose-50/60 border border-rose-200 rounded-portal-xl text-[13px] font-medium text-rose-800 placeholder:text-rose-300 focus:outline-none focus:border-rose-300 focus:ring-2 focus:ring-rose-500/10 transition-[color,background-color,border-color,opacity,transform,box-shadow]";
 
 /** Re-export for admin banners / notices */
 export { portalBannerGradientClass as adminBannerGradientClass };

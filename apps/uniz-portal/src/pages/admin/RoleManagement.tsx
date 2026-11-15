@@ -235,7 +235,7 @@ export default function RoleManagement() {
             key={t.key}
             onClick={() => setTab(t.key as any)}
             className={cn(
-              "flex items-center gap-2 px-6 py-3 text-sm font-medium border-b-2 transition-all hover:bg-zinc-50",
+              "flex items-center gap-2 px-6 py-3 text-sm font-medium border-b-2 transition-[color,background-color,border-color,opacity,transform,box-shadow] hover:bg-zinc-50",
               tab === t.key
                 ? "border-zinc-100 text-zinc-900"
                 : "border-transparent text-zinc-500 hover:text-zinc-700",
@@ -261,7 +261,7 @@ export default function RoleManagement() {
                   icon={<Search className="w-4 h-4" />}
                 />
               </div>
-              <span className="text-sm text-zinc-500 font-medium bg-zinc-100 px-3 py-1 rounded-full">
+              <span className="text-sm text-zinc-500 font-medium bg-zinc-100 px-3 py-1 rounded-md">
                 {filtered.length} Admins
               </span>
             </div>
@@ -315,7 +315,7 @@ export default function RoleManagement() {
                               onChange={(e) =>
                                 assignRole(a.username, e.target.value as Role)
                               }
-                              className="appearance-none w-full bg-white border border-zinc-200 text-zinc-700 py-1.5 pl-3 pr-8 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-medium shadow-sm transition-all hover:border-zinc-300"
+                              className="appearance-none w-full bg-white border border-zinc-200 text-zinc-700 py-1.5 pl-3 pr-8 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent font-medium shadow-sm transition-[color,background-color,border-color,opacity,transform,box-shadow] hover:border-zinc-300"
                             >
                               {roles.map((r) => (
                                 <option
@@ -360,7 +360,7 @@ export default function RoleManagement() {
           <div className="max-w-xl mx-auto animate-in fade-in duration-300 pt-8">
             <div className="bg-white p-8 rounded-2xl border border-zinc-200 shadow-sm">
               <div className="text-center mb-8">
-                <div className="mx-auto h-12 w-12 bg-zinc-50 rounded-full flex items-center justify-center mb-4 text-zinc-900">
+                <div className="mx-auto h-12 w-12 bg-zinc-50 rounded-md flex items-center justify-center mb-4 text-zinc-900">
                   <UserPlus className="w-6 h-6" />
                 </div>
                 <h2 className="text-xl font-bold text-zinc-900">
@@ -399,7 +399,7 @@ export default function RoleManagement() {
                     onChange={(e) =>
                       setNewAdmin({ ...newAdmin, role: e.target.value as Role })
                     }
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 focus:ring-2 focus:ring-zinc-900 focus:bg-white outline-none transition-all"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 focus:ring-2 focus:ring-zinc-900 focus:bg-white outline-none transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                   >
                     {roles.map((r) => (
                       <option key={r} value={r} className="capitalize">
@@ -506,7 +506,7 @@ export default function RoleManagement() {
                               );
                             }}
                             className={cn(
-                              "flex items-center p-4 border rounded-xl cursor-pointer transition-all",
+                              "flex items-center p-4 border rounded-xl cursor-pointer transition-[color,background-color,border-color,opacity,transform,box-shadow]",
                               isChecked
                                 ? "border-zinc-100 bg-zinc-50/50"
                                 : "border-zinc-200 hover:border-zinc-300",

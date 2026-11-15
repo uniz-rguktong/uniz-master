@@ -57,7 +57,7 @@ const HelpSupport = () => {
         <button
           onClick={() => setActiveTab("faq")}
           className={cn(
-            "px-6 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300",
+            "px-6 py-2.5 rounded-xl text-xs font-semibold transition-[color,background-color,border-color,opacity,transform] duration-300",
             activeTab === "faq"
               ? "bg-white text-zinc-900 shadow-sm"
               : "text-zinc-400 hover:text-zinc-600",
@@ -68,7 +68,7 @@ const HelpSupport = () => {
         <button
           onClick={() => setActiveTab("contact")}
           className={cn(
-            "px-6 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300",
+            "px-6 py-2.5 rounded-xl text-xs font-semibold transition-[color,background-color,border-color,opacity,transform] duration-300",
             activeTab === "contact"
               ? "bg-white text-zinc-900 shadow-sm"
               : "text-zinc-400 hover:text-zinc-600",
@@ -90,7 +90,7 @@ const HelpSupport = () => {
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-white border border-black rounded-xl overflow-hidden transition-all"
+                className="bg-white border border-black rounded-xl overflow-hidden transition-[color,background-color,border-color,opacity,transform]"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
@@ -128,7 +128,7 @@ const HelpSupport = () => {
           >
             <a
               href="mailto:webadmin@rguktong.ac.in"
-              className="flex items-center gap-4 bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:border-zinc-300 hover:shadow-md transition-all group"
+              className="flex items-center gap-4 bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:border-zinc-300 hover:shadow-md transition-[color,background-color,border-color,opacity,transform] group"
             >
               <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center shrink-0">
                 <Mail className="w-5 h-5 text-white" />
@@ -145,7 +145,7 @@ const HelpSupport = () => {
 
             <Link
               to="/developers"
-              className="flex items-center gap-4 bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:border-zinc-300 hover:shadow-md transition-all group"
+              className="flex items-center gap-4 bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:border-zinc-300 hover:shadow-md transition-[color,background-color,border-color,opacity,transform] group"
             >
               <div className="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center shrink-0 group-hover:bg-zinc-200 transition-colors">
                 <Users className="w-5 h-5 text-zinc-900" />

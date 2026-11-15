@@ -40,7 +40,7 @@ export default function CurrentSemesterAdmin() {
       <div className="flex h-[60vh] items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-zinc-400 font-bold text-xs tracking-[0.14em]">
+          <p className="text-zinc-400 font-bold text-xs">
             Syncing Academic Data...
           </p>
         </div>
@@ -95,7 +95,7 @@ export default function CurrentSemesterAdmin() {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-100 min-w-[140px]">
-            <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
+            <p className="text-[10px] font-bold text-zinc-400 mb-1">
               Total Branches
             </p>
             <div className="flex items-center gap-2">
@@ -106,7 +106,7 @@ export default function CurrentSemesterAdmin() {
             </div>
           </div>
           <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-100 min-w-[140px]">
-            <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
+            <p className="text-[10px] font-bold text-zinc-400 mb-1">
               Total Subjects
             </p>
             <div className="flex items-center gap-2">
@@ -123,7 +123,7 @@ export default function CurrentSemesterAdmin() {
       <div className="space-y-4">
         <div className="flex items-center gap-2 mb-2 ml-1">
           <LayoutGrid className="w-4 h-4 text-zinc-400" />
-          <h2 className="text-xs font-bold text-zinc-400 tracking-[0.14em]">
+          <h2 className="text-xs font-bold text-zinc-400">
             Branch Allocations
           </h2>
         </div>
@@ -131,7 +131,7 @@ export default function CurrentSemesterAdmin() {
         {adminData?.branches?.map((branch: any) => (
           <div
             key={branch.branch}
-            className="border border-zinc-100 rounded-3xl overflow-hidden bg-white shadow-sm hover:border-zinc-200 transition-all"
+            className="border border-zinc-100 rounded-3xl overflow-hidden bg-white shadow-sm hover:border-zinc-200 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
           >
             <button
               onClick={() =>
@@ -142,7 +142,7 @@ export default function CurrentSemesterAdmin() {
               className="w-full flex flex-col md:flex-row md:items-center justify-between p-6 text-left hover:bg-zinc-50/50 transition-colors"
             >
               <div className="flex items-center gap-6 mb-4 md:mb-0">
-                <div className="w-14 h-14 bg-zinc-900 text-white rounded-2xl flex items-center justify-center font-semibold text-xl shadow-lg ring-4 ring-neutral-50">
+                <div className="w-14 h-14 bg-zinc-900 text-white rounded-2xl flex items-center justify-center font-semibold text-xl shadow-none ring-4 ring-neutral-50">
                   {branch.branch}
                 </div>
                 <div>
@@ -162,7 +162,7 @@ export default function CurrentSemesterAdmin() {
 
               <div className="flex items-center gap-6">
                 <div className="text-right hidden sm:block">
-                  <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mb-0.5">
+                  <p className="text-[10px] font-bold text-zinc-400 mb-0.5">
                     Stats
                   </p>
                   <p className="text-sm font-semibold text-zinc-900">
@@ -195,7 +195,7 @@ export default function CurrentSemesterAdmin() {
                         >
                           <div>
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-[10px] font-semibold text-zinc-400 ">
+                              <span className="text-[10px] font-semibold text-zinc-400">
                                 {sub.year} Session
                               </span>
                               {sub.isApproved ? (
@@ -212,7 +212,7 @@ export default function CurrentSemesterAdmin() {
                             </p>
                           </div>
                           <div className="mt-4 flex items-center justify-between border-t border-zinc-50 pt-3">
-                            <span className="text-[10px] font-semibold text-zinc-300 tracking-[0.14em]">
+                            <span className="text-[10px] font-semibold text-zinc-300">
                               {formatStatus(sub.status)}
                             </span>
                             <span className="text-xs font-semibold text-zinc-900">

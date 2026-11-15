@@ -52,7 +52,7 @@ export default function StudentBulkActionsPanel({
                 onClick={() => setActiveAction(action)}
                 className={cn(
                   adminCardClass,
-                  "text-left p-5 transition-all duration-200 group",
+                  "text-left p-5 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-200 group",
                   toneBorder[action.tone],
                   "hover:shadow-[0_4px_12px_rgba(10,10,10,0.06)]",
                 )}
@@ -77,7 +77,7 @@ export default function StudentBulkActionsPanel({
                 <p className="text-[12px] text-zinc-500 mt-1.5 leading-relaxed">
                   {action.description}
                 </p>
-                <p className="text-[10px] font-medium text-zinc-400 mt-3 tracking-[0.12em] uppercase">
+                <p className="text-[10px] font-medium text-zinc-400 mt-3">
                   {action.filterMode === "promote"
                     ? "Dept · from/to year · batch"
                     : "Dept · year · batch"}

@@ -58,14 +58,14 @@ export default function RegisteredSubjectsPanel({
       <div className="space-y-4">
         <div className="flex items-end justify-between border-b border-zinc-100 pb-4">
           <div>
-            <span className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 block mb-1">
+            <span className="text-[10px] font-bold tracking-normal text-zinc-400 block mb-1">
               Current semester
             </span>
             <h2 className="text-[17px] font-semibold tracking-tight text-zinc-900">
               {semester.name}
             </h2>
           </div>
-          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-bold tracking-wide">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-bold tracking-normal">
             {formatStatus(semester.status)}
           </span>
         </div>
@@ -99,7 +99,7 @@ export default function RegisteredSubjectsPanel({
         )}
       >
         <div>
-          <span className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 block mb-1">
+          <span className="text-[10px] font-bold tracking-normal text-zinc-400 block mb-1">
             Current semester
           </span>
           <h2
@@ -111,7 +111,7 @@ export default function RegisteredSubjectsPanel({
             {semester.name}
           </h2>
           <div className="flex flex-wrap items-center gap-2 mt-2">
-            <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-bold tracking-wide">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-bold tracking-normal">
               {formatStatus(semester.status)}
             </span>
             <span className="text-[11px] font-semibold text-zinc-400 tabular-nums">
@@ -129,7 +129,7 @@ export default function RegisteredSubjectsPanel({
                 `REGISTRATION_${semester.id}.pdf`,
               )
             }
-            className="h-10 px-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm shrink-0 self-start sm:self-auto"
+            className="h-10 px-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg font-bold text-xs transition-[color,background-color,border-color,opacity,transform] flex items-center gap-2 shadow-sm shrink-0 self-start sm:self-auto"
           >
             <Download size={14} />
             Download PDF
@@ -147,19 +147,19 @@ export default function RegisteredSubjectsPanel({
           <table className="w-full text-sm min-w-[560px]">
             <thead>
               <tr className="border-b border-zinc-200 md:bg-zinc-50/50 bg-transparent">
-                <th className="px-4 py-3 text-left text-[10px] font-bold tracking-[0.14em] text-zinc-500 w-[18%]">
+                <th className="px-4 py-3 text-left text-[10px] font-bold tracking-normal text-zinc-500 w-[18%]">
                   Code
                 </th>
-                <th className="px-4 py-3 text-left text-[10px] font-bold tracking-[0.14em] text-zinc-500 w-[34%]">
+                <th className="px-4 py-3 text-left text-[10px] font-bold tracking-normal text-zinc-500 w-[34%]">
                   Subject
                 </th>
-                <th className="px-4 py-3 text-left text-[10px] font-bold tracking-[0.14em] text-zinc-500 w-[16%]">
+                <th className="px-4 py-3 text-left text-[10px] font-bold tracking-normal text-zinc-500 w-[16%]">
                   Department
                 </th>
-                <th className="px-4 py-3 text-center text-[10px] font-bold tracking-[0.14em] text-zinc-500 w-[14%]">
+                <th className="px-4 py-3 text-center text-[10px] font-bold tracking-normal text-zinc-500 w-[14%]">
                   Credits
                 </th>
-                <th className="px-4 py-3 text-right text-[10px] font-bold tracking-[0.14em] text-zinc-500 w-[18%]">
+                <th className="px-4 py-3 text-right text-[10px] font-bold tracking-normal text-zinc-500 w-[18%]">
                   Registered
                 </th>
               </tr>
@@ -171,7 +171,7 @@ export default function RegisteredSubjectsPanel({
                   className="group hover:bg-zinc-50/50 transition-colors"
                 >
                   <td className="px-4 py-3">
-                    <span className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700 text-[10px] font-bold tracking-wide">
+                    <span className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700 text-[10px] font-bold tracking-normal">
                       {row.subject?.code || "—"}
                     </span>
                   </td>
@@ -197,7 +197,7 @@ export default function RegisteredSubjectsPanel({
 
         {!compact && (
           <div className="px-4 md:px-6 py-4 border-t border-zinc-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-zinc-50/40">
-            <p className="text-[11px] font-semibold text-zinc-400 tracking-wide">
+            <p className="text-[11px] font-semibold text-zinc-400 tracking-normal">
               Total load
             </p>
             <p className="text-sm font-semibold text-zinc-900 tabular-nums">

@@ -59,12 +59,12 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                 <h2 className="text-3xl font-semibold tracking-tighter text-zinc-900 leading-none">
                   {sem}
                 </h2>
-                <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 mt-2">
+                <p className="text-[10px] font-semibold tracking-normal text-zinc-400 mt-2">
                   Terminal Records • Academic Unit {idx + 1}
                 </p>
               </div>
             </div>
-            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-zinc-50 border border-zinc-100 rounded-2xl text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-zinc-50 border border-zinc-100 rounded-2xl text-[10px] font-semibold tracking-normal text-zinc-400">
               Performance Score:{" "}
               <span className="text-zinc-900">High Resolution</span>
             </div>
@@ -78,11 +78,11 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                   <div className="w-8 h-8 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-900">
                     <Award size={16} />
                   </div>
-                  <h3 className="text-xs font-semibold tracking-[0.14em] text-zinc-500">
+                  <h3 className="text-xs font-semibold tracking-normal text-zinc-500">
                     Transcripts
                   </h3>
                 </div>
-                <div className="bg-white border border-zinc-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-zinc-200/40 transition-all duration-700">
+                <div className="bg-white border border-zinc-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-sm transition-[color,background-color,border-color,opacity,transform] duration-700">
                   <div className="divide-y divide-zinc-50">
                     {gradesBySemester[sem].map((g: Grade) => (
                       <div
@@ -94,20 +94,20 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                             {g.subject.name}
                           </span>
                           <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-semibold tracking-[0.14em] text-zinc-300 font-mono">
+                            <span className="text-[10px] font-semibold tracking-normal text-zinc-300 font-mono">
                               {g.subject?.id ||
                                 (g.subject as { code?: string })?.code ||
                                 "—"}
                             </span>
                             <div className="w-1 h-1 rounded-full bg-zinc-200" />
-                            <span className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
+                            <span className="text-[10px] font-bold text-zinc-400 tracking-normal">
                               {g.subject.credits} Credits
                             </span>
                           </div>
                         </div>
                         <div className="flex items-center gap-6 shrink-0">
                           <div
-                            className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-semibold ${g.grade === 0 ? "bg-rose-50 text-rose-500" : "bg-zinc-900 text-white shadow-xl shadow-zinc-100"}`}
+                            className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-semibold ${g.grade === 0 ? "bg-rose-50 text-rose-500" : "bg-zinc-900 text-white shadow-sm "}`}
                           >
                             {g.grade === 0 ? "F" : g.grade}
                           </div>
@@ -126,11 +126,11 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                   <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500">
                     <Percent size={16} />
                   </div>
-                  <h3 className="text-xs font-semibold tracking-[0.14em] text-zinc-500">
+                  <h3 className="text-xs font-semibold tracking-normal text-zinc-500">
                     Engagement Matrix
                   </h3>
                 </div>
-                <div className="bg-white border border-zinc-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-zinc-200/40 transition-all duration-700">
+                <div className="bg-white border border-zinc-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-sm transition-[color,background-color,border-color,opacity,transform] duration-700">
                   <div className="divide-y divide-zinc-100">
                     {attendanceBySemester[sem].map((att: Attendance) => {
                       const percentage =
@@ -151,7 +151,7 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                               <span className="text-base font-semibold text-zinc-900 tracking-tight leading-none truncate">
                                 {att.subject.name}
                               </span>
-                              <span className="text-[10px] font-semibold tracking-[0.15em] text-zinc-300">
+                              <span className="text-[10px] font-semibold tracking-normal text-zinc-300">
                                 {att.attendedClasses} / {att.totalClasses} Units
                               </span>
                             </div>

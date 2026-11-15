@@ -145,7 +145,7 @@ export default function SecuritySection({ username }: { username: string }) {
                     <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-100">
                       <div
                         className={cn(
-                          "h-full rounded-full transition-all duration-300",
+                          "h-full rounded-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300",
                           passwordStrength.barClass,
                         )}
                         style={{
@@ -153,7 +153,7 @@ export default function SecuritySection({ username }: { username: string }) {
                         }}
                       />
                     </div>
-                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                    <span className="shrink-0 text-[10px] font-bold text-zinc-400">
                       {passwordStrength.label}
                     </span>
                   </div>
@@ -236,7 +236,7 @@ export default function SecuritySection({ username }: { username: string }) {
 
           <div className="hidden flex-col justify-between bg-zinc-50/30 p-8 md:flex md:w-1/3">
             <div>
-              <h3 className="mb-6 flex items-center gap-2 text-[10px] font-bold tracking-[0.14em] text-zinc-400">
+              <h3 className="mb-6 flex items-center gap-2 text-[10px] font-bold text-zinc-400">
                 Password guidelines
               </h3>
 

@@ -156,7 +156,7 @@ export default function SemesterRegistration() {
         </div>
         <button
           onClick={() => setShowInitModal(true)}
-          className="bg-zinc-900 text-white px-8 py-4 rounded-xl font-semibold tracking-[0.14em] text-xs flex items-center gap-2.5 hover:bg-zinc-800 hover:-translate-y-1 transition-all shadow-none active:scale-95 active:translate-y-0"
+          className="bg-zinc-900 text-white px-8 py-4 rounded-xl font-semibold text-xs flex items-center gap-2.5 hover:bg-zinc-800 hover:-translate-y-1 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none active:scale-95 active:translate-y-0"
         >
           <Plus size={18} /> Initialize New Semester
         </button>
@@ -165,7 +165,7 @@ export default function SemesterRegistration() {
       {loading ? (
         <div className="flex flex-col items-center justify-center h-64 gap-4">
           <Spinner size="lg" />
-          <p className="text-zinc-400 font-semibold tracking-[0.14em] text-xs">
+          <p className="text-zinc-400 font-semibold text-xs">
             Loading Workflows...
           </p>
         </div>
@@ -174,12 +174,12 @@ export default function SemesterRegistration() {
           {semesters.map((sem: any) => (
             <div
               key={sem.id}
-              className="bg-white border border-zinc-100 rounded-xl p-8 shadow-none hover:shadow-none transition-all group relative overflow-hidden"
+              className="bg-white border border-zinc-100 rounded-xl p-8 shadow-none hover:shadow-none transition-[color,background-color,border-color,opacity,transform,box-shadow] group relative overflow-hidden"
             >
               <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-8 relative z-10">
                 <div className="flex items-center gap-6">
                   <div
-                    className={`p-5 rounded-xl border-2 ${getStatusColor(sem.status)} transition-all duration-300 group-hover:scale-105`}
+                    className={`p-5 rounded-xl border-2 ${getStatusColor(sem.status)} transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-`}
                   >
                     <Calendar size={32} strokeWidth={2.5} />
                   </div>
@@ -189,7 +189,7 @@ export default function SemesterRegistration() {
                     </h3>
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-3 py-1 rounded-xl text-[10px] font-semibold tracking-[0.14em] border ${getStatusColor(sem.status)}`}
+                        className={`px-3 py-1 rounded-xl text-[10px] font-semibold  border ${getStatusColor(sem.status)}`}
                       >
                         {formatStatus(sem.status)}
                       </span>
@@ -213,7 +213,7 @@ export default function SemesterRegistration() {
                       onClick={() =>
                         handleStatusUpdate(sem.id, "REGISTRATION_OPEN")
                       }
-                      className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-[10px] font-semibold tracking-[0.14em] flex items-center gap-2 hover:bg-zinc-800 transition-all shadow-none"
+                      className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-[10px] font-semibold flex items-center gap-2 hover:bg-zinc-800 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none"
                     >
                       <Play size={14} fill="currentColor" /> Open Registration
                     </button>
@@ -222,7 +222,7 @@ export default function SemesterRegistration() {
                     sem.status === "REGISTRATION_OPEN") && (
                     <button
                       onClick={() => handleStatusUpdate(sem.id, "ONGOING")}
-                      className="px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-semibold tracking-[0.14em] flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-none"
+                      className="px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-semibold flex items-center gap-2 hover:bg-emerald-700 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none"
                     >
                       <RotateCcw size={14} /> Start Classes
                     </button>
@@ -230,7 +230,7 @@ export default function SemesterRegistration() {
                   {sem.status === "ONGOING" && (
                     <button
                       onClick={() => handleStatusUpdate(sem.id, "COMPLETED")}
-                      className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-[10px] font-semibold tracking-[0.14em] flex items-center gap-2 hover:bg-zinc-800 transition-all shadow-none"
+                      className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-[10px] font-semibold flex items-center gap-2 hover:bg-zinc-800 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none"
                     >
                       <CheckCircle2 size={14} /> Close Semester
                     </button>
@@ -238,7 +238,7 @@ export default function SemesterRegistration() {
 
                   <button
                     onClick={() => handleDelete(sem.id)}
-                    className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-none border border-red-100 active:scale-90"
+                    className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none border border-red-100 active:scale-90"
                     title="Delete Session"
                   >
                     <Trash2 size={16} />
@@ -248,7 +248,7 @@ export default function SemesterRegistration() {
 
                   <div className="flex items-center gap-3">
                     <div className="flex flex-col items-end">
-                      <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
+                      <p className="text-[10px] font-semibold text-zinc-400">
                         Active Branches
                       </p>
                       <div className="flex -space-x-2 mt-1">
@@ -271,7 +271,7 @@ export default function SemesterRegistration() {
               </div>
 
               {/* Background Decoration */}
-              <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-zinc-50 rounded-full opacity-20 group-hover:opacity-40 transition-opacity" />
+              <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-zinc-50 rounded-md opacity-20 group-hover:opacity-40 transition-opacity" />
             </div>
           ))}
         </div>
@@ -289,7 +289,7 @@ export default function SemesterRegistration() {
           </p>
           <button
             onClick={() => setShowInitModal(true)}
-            className="bg-zinc-900 text-white px-8 py-3.5 rounded-xl font-semibold tracking-[0.14em] text-[10px] hover:bg-zinc-800 transition-all shadow-none"
+            className="bg-zinc-900 text-white px-8 py-3.5 rounded-xl font-semibold text-[10px] hover:bg-zinc-800 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none"
           >
             Start Initialization
           </button>
@@ -347,7 +347,7 @@ export default function SemesterRegistration() {
                             )
                           }
                           className={cn(
-                            "px-4 py-2 rounded-xl text-[12px] font-semibold border transition-all",
+                            "px-4 py-2 rounded-xl text-[12px] font-semibold border transition-[color,background-color,border-color,opacity,transform,box-shadow]",
                             selectedBranches.includes(branch)
                               ? "bg-zinc-900 text-white border-zinc-900"
                               : "bg-white text-zinc-500 border-zinc-200 hover:border-zinc-300",

@@ -305,7 +305,7 @@ export default function BannersSection() {
                     <img
                       src={banner.imageUrl}
                       alt={banner.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                      className="w-full h-full object-cover transition-transform duration-1000"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-zinc-300">
@@ -315,7 +315,7 @@ export default function BannersSection() {
 
                   {/* Status Badge */}
                   <div
-                    className={`absolute top-3.5 right-3.5 px-2.5 py-1 rounded-full text-[10px] font-medium tracking-tight flex items-center gap-1.5 border backdrop-blur-md ${banner.isVisible ? "bg-white/90 text-zinc-700 border-zinc-200" : "bg-white/90 text-zinc-400 border-zinc-200"}`}
+                    className={`absolute top-3.5 right-3.5 px-2.5 py-1 rounded-md text-[10px] font-medium tracking-tight flex items-center gap-1.5 border backdrop-blur-md ${banner.isVisible ? "bg-white/90 text-zinc-700 border-zinc-200" : "bg-white/90 text-zinc-400 border-zinc-200"}`}
                   >
                     <span
                       className={`w-1.5 h-1.5 rounded-full ${banner.isVisible ? "bg-emerald-500" : "bg-zinc-300"}`}
@@ -337,7 +337,7 @@ export default function BannersSection() {
                     <button
                       onClick={() => toggleVisibilityAction(banner)}
                       disabled={actionLoading === bannerId}
-                      className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl border border-zinc-200 bg-white text-zinc-600 text-[12px] font-semibold hover:text-zinc-900 hover:border-zinc-300 active:scale-[0.98] transition-all disabled:opacity-50"
+                      className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl border border-zinc-200 bg-white text-zinc-600 text-[12px] font-semibold hover:text-zinc-900 hover:border-zinc-300 active:scale-[0.98] transition-[color,background-color,border-color,opacity,transform,box-shadow] disabled:opacity-50"
                     >
                       {actionLoading === bannerId ? (
                         <Loader2 size={13} className="animate-spin" />
@@ -350,14 +350,14 @@ export default function BannersSection() {
                     </button>
                     <button
                       onClick={() => handleEditClick(banner)}
-                      className="h-10 w-10 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:text-zinc-900 hover:border-zinc-300 border border-zinc-200 transition-all active:scale-95"
+                      className="h-10 w-10 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:text-zinc-900 hover:border-zinc-300 border border-zinc-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95"
                     >
                       <Edit3 size={14} />
                     </button>
                     <button
                       onClick={() => deleteBanner(bannerId)}
                       disabled={actionLoading === bannerId}
-                      className="h-10 w-10 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-zinc-200 transition-all active:scale-95"
+                      className="h-10 w-10 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-zinc-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -410,7 +410,7 @@ export default function BannersSection() {
           }
         }}
       >
-        <AlertDialogContent className="max-w-md p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl shadow-xl">
+        <AlertDialogContent className="max-w-md p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl border border-navy-200/60">
           <div className="relative">
             {/* Close Button */}
             <button
@@ -425,7 +425,7 @@ export default function BannersSection() {
                   isVisible: true,
                 });
               }}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
             >
               <X size={20} />
             </button>
@@ -525,7 +525,7 @@ export default function BannersSection() {
                       }
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <p className="text-[10px] font-semibold text-white tracking-[0.14em]">
+                      <p className="text-[10px] font-semibold text-white">
                         Current Selection
                       </p>
                     </div>

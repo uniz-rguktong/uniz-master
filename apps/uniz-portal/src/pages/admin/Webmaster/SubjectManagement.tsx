@@ -203,7 +203,7 @@ export default function SubjectManagement() {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="h-11 px-6 bg-zinc-900 text-white rounded-xl font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2"
+          className="h-11 px-6 bg-zinc-900 text-white rounded-xl font-bold text-[10px] hover:bg-zinc-800 active:scale-95 transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center justify-center gap-2"
         >
           <Plus size={16} /> New Subject
         </button>
@@ -220,7 +220,7 @@ export default function SubjectManagement() {
             placeholder="Search by name or code..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-11 pl-12 pr-5 bg-white border border-zinc-200 rounded-xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-all font-semibold text-zinc-900 text-sm placeholder:text-zinc-400 placeholder:font-medium shadow-none"
+            className="w-full h-11 pl-12 pr-5 bg-white border border-zinc-200 rounded-xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-[color,background-color,border-color,opacity,transform,box-shadow] font-semibold text-zinc-900 text-sm placeholder:text-zinc-400 placeholder:font-medium shadow-none"
           />
         </div>
 
@@ -232,7 +232,7 @@ export default function SubjectManagement() {
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            className="bg-white border border-zinc-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
+            className="bg-white border border-zinc-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] text-zinc-600 outline-none focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 min-w-[170px] transition-[color,background-color,border-color,opacity,transform,box-shadow] cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Departments</option>
             <option value="AIML">AIML</option>
@@ -258,7 +258,7 @@ export default function SubjectManagement() {
           <select
             value={semester}
             onChange={(e) => setSemester(e.target.value)}
-            className="bg-white border border-zinc-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
+            className="bg-white border border-zinc-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] text-zinc-600 outline-none focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 min-w-[170px] transition-[color,background-color,border-color,opacity,transform,box-shadow] cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Semesters</option>
             {["E1", "E2", "E3", "E4"].map((y) => (
@@ -312,7 +312,7 @@ export default function SubjectManagement() {
             {subjects.map((sub, idx) => (
               <div
                 key={idx}
-                className="bg-white border border-zinc-100 rounded-xl p-5 transition-all group overflow-hidden relative"
+                className="bg-white border border-zinc-100 rounded-xl p-5 transition-[color,background-color,border-color,opacity,transform,box-shadow] group overflow-hidden relative"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2.5 bg-zinc-50 rounded-lg text-zinc-900 border border-zinc-100 transition-colors duration-300">
@@ -327,16 +327,16 @@ export default function SubjectManagement() {
                       {sub.name}
                     </h3>
                   </div>
-                  <div className="ml-auto flex gap-1 transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                  <div className="ml-auto flex gap-1 transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300">
                     <button
                       onClick={() => handleEditClick(sub)}
-                      className="p-1.5 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-lg transition-all"
+                      className="p-1.5 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-lg transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                     >
                       <Edit3 size={12} />
                     </button>
                     <button
                       onClick={() => handleDeleteSubject(sub.id)}
-                      className="p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                      className="p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                     >
                       <Trash2 size={12} />
                     </button>
@@ -345,7 +345,7 @@ export default function SubjectManagement() {
 
                 <div className="grid grid-cols-2 gap-3 pt-3 border-t border-zinc-50">
                   <div className="flex flex-col">
-                    <p className="text-[8px] font-semibold text-zinc-300 tracking-[0.14em] leading-none mb-1">
+                    <p className="text-[8px] font-semibold text-zinc-300 leading-none mb-1">
                       Department
                     </p>
                     <p className="font-bold text-zinc-600 text-[10px] flex items-center gap-1.5">
@@ -354,7 +354,7 @@ export default function SubjectManagement() {
                     </p>
                   </div>
                   <div className="flex flex-col">
-                    <p className="text-[8px] font-semibold text-zinc-300 tracking-[0.14em] leading-none mb-1">
+                    <p className="text-[8px] font-semibold text-zinc-300 leading-none mb-1">
                       Semester
                     </p>
                     <p className="font-bold text-zinc-600 text-[10px] flex items-center gap-1.5">
@@ -364,7 +364,7 @@ export default function SubjectManagement() {
                   </div>
                   <div className="col-span-2 pt-1">
                     <div className="flex items-center justify-between mb-1.5">
-                      <p className="text-[8px] font-semibold text-zinc-300 tracking-[0.14em]">
+                      <p className="text-[8px] font-semibold text-zinc-300">
                         Academic Weight
                       </p>
                       <span className="text-[9px] font-semibold text-zinc-900 px-1.5 py-0.5 bg-zinc-50 rounded-md">
@@ -376,7 +376,7 @@ export default function SubjectManagement() {
                         <div
                           key={i}
                           className={cn(
-                            "flex-1 h-1 rounded-full transition-all duration-500",
+                            "flex-1 h-1 rounded-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-500",
                             i < Number(sub.credits)
                               ? "bg-zinc-900"
                               : "bg-zinc-100",
@@ -395,7 +395,7 @@ export default function SubjectManagement() {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="w-10 h-10 flex items-center justify-center bg-white text-zinc-500 border border-zinc-200 rounded-xl hover:bg-zinc-50 hover:text-zinc-900 transition-all active:scale-90 disabled:opacity-40"
+                className="w-10 h-10 flex items-center justify-center bg-white text-zinc-500 border border-zinc-200 rounded-xl hover:bg-zinc-50 hover:text-zinc-900 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-90 disabled:opacity-40"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -412,7 +412,7 @@ export default function SubjectManagement() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl font-bold text-[11px] border transition-all ${
+                        className={`w-10 h-10 rounded-xl font-bold text-[11px] border transition-[color,background-color,border-color,opacity,transform,box-shadow] ${
                           page === p
                             ? "bg-zinc-900 text-white border-zinc-900"
                             : "bg-white text-zinc-400 border-zinc-100 hover:border-zinc-300 hover:text-zinc-600"
@@ -436,7 +436,7 @@ export default function SubjectManagement() {
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                className="w-10 h-10 flex items-center justify-center bg-white text-zinc-500 border border-zinc-200 rounded-xl hover:bg-zinc-50 hover:text-zinc-900 transition-all active:scale-90 disabled:opacity-40"
+                className="w-10 h-10 flex items-center justify-center bg-white text-zinc-500 border border-zinc-200 rounded-xl hover:bg-zinc-50 hover:text-zinc-900 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-90 disabled:opacity-40"
               >
                 <ChevronRight size={18} />
               </button>
@@ -463,7 +463,7 @@ export default function SubjectManagement() {
               setDepartment("");
               setSemester("");
             }}
-            className="text-zinc-900 font-semibold text-sm tracking-[0.14em] hover:underline active:scale-95"
+            className="text-zinc-900 font-semibold text-sm hover:underline active:scale-95"
           >
             Clear all filters
           </button>

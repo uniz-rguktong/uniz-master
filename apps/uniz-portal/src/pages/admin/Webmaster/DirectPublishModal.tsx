@@ -104,7 +104,7 @@ export default function DirectPublishModal({
       <div className={cn(adminModalShellClass, "w-full max-w-md p-8 space-y-6")}>
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 uppercase">
+            <p className="text-[10px] font-semibold text-zinc-400">
               Webadmin only
             </p>
             <h2 className={adminModalTitleClass}>Publish to students</h2>
@@ -158,7 +158,7 @@ export default function DirectPublishModal({
                 onChange={(e) =>
                   setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
                 }
-                className={cn(adminInputClass, "text-center text-lg tracking-[0.3em]")}
+                className={cn(adminInputClass, "text-center text-lg ")}
                 placeholder="000000"
                 autoComplete="one-time-code"
               />

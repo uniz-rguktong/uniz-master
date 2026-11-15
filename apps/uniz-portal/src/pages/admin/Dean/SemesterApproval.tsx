@@ -271,7 +271,7 @@ function PendingCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       onClick={() => onOpen(sem)}
-      className="group text-left relative rounded-3xl border border-amber-200/70 bg-gradient-to-br from-amber-50/40 to-white p-6 hover:shadow-lg transition-all overflow-hidden"
+      className="group text-left relative rounded-3xl border border-amber-200/70 bg-gradient-to-br from-amber-50/40 to-white p-6 hover:border-navy-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] overflow-hidden"
     >
       <div className="flex items-start justify-between mb-5">
         <div className="w-11 h-11 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
@@ -288,7 +288,7 @@ function PendingCard({
         {sem.batch ? `Batch ${sem.batch} · ` : ""}
         {sem.program || "B.Tech"}
       </p>
-      <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 group-hover:gap-2.5 transition-all">
+      <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 group-hover:gap-2.5 transition-[color,background-color,border-color,opacity,transform,box-shadow]">
         Review now <ChevronLeft size={16} className="rotate-180" />
       </div>
     </motion.button>
@@ -351,7 +351,7 @@ function DetailView({
 
       {/* Hero */}
       <div className="rounded-3xl bg-zinc-900 text-white p-7 relative overflow-hidden">
-        <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-white/10 blur-2xl" />
+        <div className="absolute -top-16 -right-10 w-56 h-56 rounded-md bg-white/10 blur-2xl" />
         <div className="relative">
           <p className={cn(adminLabelClass, "text-white/60 mb-1")}>
             {sem.program || "B.Tech"}

@@ -117,7 +117,7 @@ export default function ToasterDemo() {
           <Button
             variant="default"
             onClick={simulateApiCall}
-            className="bg-zinc-900 text-white hover:bg-zinc-800 h-12 px-8 rounded-xl shadow-lg"
+            className="bg-zinc-900 text-white hover:bg-zinc-800 h-12 px-8 rounded-xl shadow-sm"
           >
             Schedule Meeting
           </Button>

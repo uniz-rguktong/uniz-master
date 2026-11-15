@@ -76,10 +76,10 @@ function SubjectOption({
       onClick={onSelect}
       className={cn(
         adminCardClass,
-        "relative w-full p-4 text-left flex items-start gap-3.5 transition-all duration-200",
+        "relative w-full p-4 text-left flex items-start gap-3.5 transition-[color,background-color,border-color,opacity,transform] duration-200",
         !locked && adminCardHoverClass,
         selected
-          ? "border-zinc-900 bg-white shadow-[0_2px_12px_-4px_rgba(10,10,10,0.12)]"
+          ? "border-zinc-900 bg-white shadow-sm"
           : locked
             ? "border-zinc-200 bg-zinc-50/50"
             : "border-zinc-200/80 opacity-90 hover:opacity-100",
@@ -96,7 +96,7 @@ function SubjectOption({
 
       <div className="flex-1 min-w-0 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-semibold text-zinc-400 tracking-wide">
+          <span className="text-[10px] font-semibold text-zinc-400 tracking-normal">
             {code}
           </span>
           {sub.isMandatory && (
@@ -458,10 +458,10 @@ export default function CourseRegistration({
   return (
     <div className="max-w-3xl mx-auto space-y-8 pb-16 animate-in fade-in duration-500">
       {/* Hero */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 text-white p-6 md:p-8 shadow-[0_8px_30px_-12px_rgba(10,10,10,0.35)]">
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 text-white p-6 md:p-8 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-semibold tracking-wide text-white/90">
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-semibold tracking-normal text-white/90">
               <ShieldCheck size={12} /> Open enrollment
             </span>
             <h2 className="text-2xl md:text-[28px] font-semibold tracking-tight leading-tight">
