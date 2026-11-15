@@ -6,61 +6,64 @@ description: Build, Deploy and Verify UniZ services on VPS (K3s)
 
 ### 1. Synchronize Source Code
 
-Push local changes to GitHub. The VPS will pull these changes during the deployment workflow.
-
-```bash
-git add . && git commit -m "infra: manual deployment pipeline" && git push origin main
-```
+Push (or merge) to `main`. The VPS self-hosted runner checks out that SHA during deploy.
 
 ### 2. Manual Deployment (GitHub Actions)
 
-Trigger the deployment from the GitHub Web UI or CLI. This is the **preferred method** as it includes permission checks.
+Preferred — includes compile gate, GHCR builds, and post-deploy smoke.
 
 ```bash
-gh workflow run "Manual VPS Deployment" -f commit_message="Deploying bug fix"
+# Normal deploy of current main tip
+gh workflow run "VPS Automated Deployment" -f commit_message="manual deploy"
+
+# Full rebuild of every image
+gh workflow run "VPS Automated Deployment" -f force_rebuild=true -f commit_message="rebuild all"
+
+# Frontends (Cloudflare Pages)
+gh workflow run "Deploy Frontends to Cloudflare Pages" -f target=all
 ```
 
-### 3. Build & Deploy Logic (Atomic Safety)
+### 3. Build & Deploy Logic
 
-The system uses a **Build-then-Deploy** strategy. Images are built directly on the VPS to ensure environment parity.
-
-1.  **Build**: Script builds the Docker image.
-2.  **Validation**: If the build fails, the script **aborts immediately** (does not deploy).
-3.  **Deployment**: If success, images are imported to K3s image store and deployments are restarted.
-
-```bash
-# Scripted logic inside deploy.sh:
-if docker build ...; then
-  k3s ctr images import ...
-else
-  exit 1 # Abort
-fi
-```
+1. **CI compile** on GitHub-hosted runners.
+2. **Plan** which GHCR images changed (or all if `force_rebuild`).
+3. **Build/push** images in parallel.
+4. **Deploy** on the VPS self-hosted runner (`scripts/ci/ci-local-deploy.sh` → `deploy.sh`).
+5. **Smoke** (`scripts/ops/post-deploy-smoke.sh`) — required; failure fails the run.
 
 ### 4. Verify System Health
 
-Run the comprehensive test suite against the Production API.
+```bash
+bash scripts/ops/post-deploy-smoke.sh
+```
+
+Optional deeper suite:
 
 ```bash
-export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin && \
 BASE_URL=https://api-uniz.rguktong.in/api/v1 \
 GW_STATUS_URL=https://api-uniz.rguktong.in/api/v1/system/health \
-SKIP_OTP=true \
-INTERNAL_SECRET=uniz-core \
-MAP_LOCALHOST=false \
+SKIP_OTP=true MAP_LOCALHOST=false \
 node infra/tests/comprehensive_test.js
 ```
 
-### 5. Load Testing & HPA Auto-Scaling
+### 5. Load Testing & HPA (single 4-vCPU / 15Gi VPS)
 
-To rigorously verify that the Kubernetes Horizontal Pod Autoscaler (HPA) is functioning and successfully mitigating DDoS attacks, use the included npm scripts:
+Live HPA caps (see `infra/kubernetes/base/core/*`):
+
+| Deployment | min→max | CPU target |
+|---|---|---|
+| uniz-gateway-api | 1→3 | 45% |
+| uniz-auth-service | 1→2 | 50% |
+| uniz-user-service | 1→3 | 70% |
+| uniz-academics-service | 1→3 | 70% |
+| uniz-notification-service | 1→2 | 70% |
 
 ```bash
-# Terminal 1: Watch the scaling metrics in real-time
+# Terminal 1
 npm run watch
 
-# Terminal 2: Launch the attack simulation (200 concurrent connections, 90 seconds)
-npm run attack
+# Terminal 2 — capped read-only health load
+CONFIRM=1 CONCURRENCY=80 DURATION_SEC=90 bash scripts/ops/test-hpa-autoscale.sh
 ```
 
-The HPA should detect average pod CPU spikes strictly over 40% and automatically provision up to 15 pods for the Gateway dynamically. Once the attack completes, it will enter a standard 5-minute `ScaleDownStabilized` cooldown period before gracefully dropping back down to 3 minimum replicas to conserve cluster resources.
+Scale-down uses a ~5 minute stabilization window. On one node, desired replicas may exceed schedulable capacity — deploy accepts ≥1 ready with a warning.

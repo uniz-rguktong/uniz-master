@@ -105,8 +105,9 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-user-service
+  # Right-sized for one node so concurrent HPA scale-ups do not deadlock scheduling.
   minReplicas: 1
-  maxReplicas: 4
+  maxReplicas: 3
   metrics:
     - type: Resource
       resource:

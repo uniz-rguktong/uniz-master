@@ -79,8 +79,9 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-auth-service
+  # bcrypt is CPU-heavy; cap at 2 on the single 4-vCPU node.
   minReplicas: 1
-  maxReplicas: 3
+  maxReplicas: 2
   metrics:
     - type: Resource
       resource:
