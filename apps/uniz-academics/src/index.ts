@@ -53,6 +53,7 @@ startRegistrationPdfWorker();
 
 // Startup self-healing: Check for stuck jobs
 import { processNextBatch } from "./services/upload.service";
+import { API_ATTRIBUTION } from "@uniz/shared";
 const startWorker = async () => {
   try {
     const jobExists = await redis.llen("job:queue");
@@ -78,7 +79,7 @@ app.use((req, res) => {
     status: "error",
     message: `Route ${req.method} ${req.url} not found`,
     timestamp: new Date().toISOString(),
-    attribution: "SreeCharan",
+    attribution: API_ATTRIBUTION,
   });
 });
 

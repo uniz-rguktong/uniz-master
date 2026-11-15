@@ -1,4 +1,5 @@
 import rateLimit from "express-rate-limit";
+import { API_ATTRIBUTION } from "@uniz/shared";
 
 // Standard Auth limiter (Username-aware to prevent campus IP collisions)
 export const rateLimiter = rateLimit({
@@ -10,7 +11,7 @@ export const rateLimiter = rateLimit({
     success: false,
     message: "Security threshold exceeded. Please try again after 15 minutes.",
     code: "RATE_LIMIT_EXCEEDED",
-    attribution: "SreeCharan",
+    attribution: API_ATTRIBUTION,
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -28,7 +29,7 @@ export const otpPushLimiter = rateLimit({
     message:
       "Security check: Please wait 60 seconds before requesting another push code.",
     code: "OTP_PUSH_LIMIT",
-    attribution: "SreeCharan",
+    attribution: API_ATTRIBUTION,
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -45,7 +46,7 @@ export const otpEmailLimiter = rateLimit({
     success: false,
     message: "Email dispatch limit temporary reached. Please wait 2 minutes.",
     code: "OTP_EMAIL_LIMIT",
-    attribution: "SreeCharan",
+    attribution: API_ATTRIBUTION,
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -62,7 +63,7 @@ export const otpHourLimiter = rateLimit({
     success: false,
     message: "Maximum hourly security requests reached. Try again later.",
     code: "OTP_LIMIT_HOUR",
-    attribution: "SreeCharan",
+    attribution: API_ATTRIBUTION,
   },
   standardHeaders: true,
   legacyHeaders: false,

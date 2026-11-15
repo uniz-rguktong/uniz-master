@@ -18,6 +18,7 @@ app.use(compression());
 app.use(express.json());
 
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
+import { API_ATTRIBUTION } from "@uniz/shared";
 app.use(attributionMiddleware);
 
 app.get("/health", (req, res) => {
@@ -32,7 +33,7 @@ app.use((req, res) => {
     status: "error",
     message: `Route ${req.method} ${req.url} not found`,
     timestamp: new Date().toISOString(),
-    attribution: "SreeCharan",
+    attribution: API_ATTRIBUTION,
   });
 });
 
