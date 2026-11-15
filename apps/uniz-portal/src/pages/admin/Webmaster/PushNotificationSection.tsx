@@ -196,22 +196,22 @@ export default function PushNotificationSection() {
           <table className="w-full text-left border-collapse min-w-[900px]">
             <thead>
               <tr className="border-b border-zinc-200/70 bg-zinc-50/50">
-                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold text-zinc-500">
                   Person
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold text-zinc-500">
                   Student ID
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold text-zinc-500">
                   Academic
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold text-zinc-500">
                   Device
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold text-zinc-500">
                   Status
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold text-zinc-500">
                   Registered
                 </th>
               </tr>
@@ -254,7 +254,7 @@ export default function PushNotificationSection() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-[12px] font-semibold text-zinc-800 tabular-nums ">
+                        <p className="text-[12px] font-semibold text-zinc-800 tabular-nums">
                           {sub.username}
                         </p>
                       </td>
@@ -262,17 +262,17 @@ export default function PushNotificationSection() {
                         {sub.branch || sub.year || sub.batch ? (
                           <div className="flex flex-wrap gap-1">
                             {sub.branch && (
-                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700">
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700">
                                 {sub.branch}
                               </span>
                             )}
                             {sub.year && (
-                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700">
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700">
                                 {sub.year}
                               </span>
                             )}
                             {sub.batch && (
-                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700">
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700">
                                 {sub.batch}
                               </span>
                             )}
@@ -293,7 +293,7 @@ export default function PushNotificationSection() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 w-fit">
+                        <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100 w-fit">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           <span className="text-[11px] font-medium">Active</span>
                         </div>
@@ -369,7 +369,7 @@ export default function PushNotificationSection() {
           }
         }}
       >
-        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl shadow-xl">
+        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl border border-navy-200/60">
           <div className="relative">
             <button
               type="button"
@@ -377,7 +377,7 @@ export default function PushNotificationSection() {
                 setShowSendModal(false);
                 setBroadcast({ target: "all", title: "", body: "", image: "" });
               }}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
             >
               <X size={20} />
             </button>

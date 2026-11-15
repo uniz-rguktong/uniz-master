@@ -46,7 +46,7 @@ function CampusLabel({ large = false }: { large?: boolean }) {
   return (
     <p
       className={cn(
-        "font-semibold uppercase tracking-[0.12em] text-zinc-500",
+        "font-medium text-zinc-500",
         large ? "mt-1 text-[9px]" : "mt-0.5 text-[8px]",
       )}
     >
@@ -77,7 +77,7 @@ export function UnizLogo({
           <Wordmark large={large} />
           <span
             className={cn(
-              "shrink-0 font-semibold uppercase text-zinc-500 tracking-[0.12em]",
+              "shrink-0 font-medium text-zinc-500",
               large ? "text-[9px]" : "text-[8px]",
             )}
           >

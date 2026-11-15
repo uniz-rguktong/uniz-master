@@ -176,7 +176,7 @@ export default function Resetpassword() {
             {/* Form Section */}
             <div className="md:w-2/3 p-6 md:p-8 md:px-10">
               <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-zinc-900 text-white rounded-xl shadow-lg shadow-zinc-100">
+                <div className="p-3 bg-zinc-900 text-white rounded-xl shadow-none">
                   <svg
                     className="w-6 h-6"
                     fill="none"
@@ -204,7 +204,7 @@ export default function Resetpassword() {
               <div className="space-y-4 md:space-y-6">
                 {/* Current Password */}
                 <div>
-                  <label className="text-xs font-bold tracking-[0.14em] text-zinc-500 mb-2 block ml-1">
+                  <label className="text-xs font-bold text-zinc-500 mb-2 block ml-1">
                     Current Password
                   </label>
                   <div className="relative group">
@@ -219,7 +219,7 @@ export default function Resetpassword() {
 
                 {/* New Password */}
                 <div>
-                  <label className="text-xs font-bold tracking-[0.14em] text-zinc-500 mb-2 block ml-1">
+                  <label className="text-xs font-bold text-zinc-500 mb-2 block ml-1">
                     New Password
                   </label>
                   <div className="relative group">
@@ -235,14 +235,14 @@ export default function Resetpassword() {
                       <div className="flex items-center gap-3">
                         <div className="h-2 flex-1 bg-zinc-100 rounded-full overflow-hidden">
                           <div
-                            className={`h-full transition-all duration-500 ${passwordStrength.color}`}
+                            className={`h-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-500 ${passwordStrength.color}`}
                             style={{
                               width: `${(passwordStrength.score / 3) * 100}%`,
                             }}
                           ></div>
                         </div>
                         <span
-                          className={`text-xs font-bold tracking-wider w-20 text-right ${
+                          className={`text-xs font-bold  w-20 text-right ${
                             passwordStrength.score === 3
                               ? "text-zinc-900"
                               : passwordStrength.score === 2
@@ -259,7 +259,7 @@ export default function Resetpassword() {
 
                 {/* Confirm New Password */}
                 <div>
-                  <label className="text-xs font-bold tracking-[0.14em] text-zinc-500 mb-2 block ml-1">
+                  <label className="text-xs font-bold text-zinc-500 mb-2 block ml-1">
                     Confirm Password
                   </label>
                   <div className="relative group">
@@ -316,7 +316,7 @@ export default function Resetpassword() {
                   <button
                     onClick={sendDataToBackend}
                     disabled={isLoading}
-                    className="w-full h-[46px] bg-zinc-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm"
+                    className="w-full h-[46px] bg-zinc-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-[0.98] shadow-sm"
                   >
                     {isLoading ? "Processing..." : "Update Credentials"}
                   </button>
@@ -334,7 +334,7 @@ export default function Resetpassword() {
             {/* Info Section */}
             <div className="hidden md:flex md:w-1/3 bg-zinc-50/50 p-6 md:p-8 border-l border-zinc-100 flex-col justify-between">
               <div>
-                <h3 className="text-sm font-bold text-zinc-400 tracking-[0.14em] mb-6 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-zinc-400 mb-6 flex items-center gap-2">
                   Password Strength
                 </h3>
 
@@ -431,7 +431,7 @@ export default function Resetpassword() {
                       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                     />
                   </svg>
-                  <p className="text-[11px] font-medium text-zinc-400 leading-relaxed tracking-wider">
+                  <p className="text-[11px] font-medium text-zinc-400 leading-relaxed">
                     Terminal security protocol will automatically log out all
                     sessions after successful credential update.
                   </p>

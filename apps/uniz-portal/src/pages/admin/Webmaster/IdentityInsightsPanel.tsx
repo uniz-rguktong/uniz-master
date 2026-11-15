@@ -96,11 +96,11 @@ export default function IdentityInsightsPanel({
           <h2 className="text-[15px] font-semibold text-zinc-900 tracking-[-0.01em]">
             Access landscape
           </h2>
-          <p className="text-[11px] font-medium text-zinc-400 tracking-[0.12em] mt-0.5">
+          <p className="text-[11px] font-medium text-zinc-400 mt-0.5">
             Staff roles, enablement & student share
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 px-3 py-1">
+        <div className="flex items-center gap-2 rounded-md border border-emerald-100 bg-emerald-50/80 px-3 py-1">
           <UserCheck size={13} className="text-emerald-600" />
           <span className="text-[11px] font-semibold text-emerald-700 tabular-nums">
             {enablementPct.toFixed(1)}% enabled
@@ -138,7 +138,7 @@ export default function IdentityInsightsPanel({
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <div>
-          <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] uppercase mb-3">
+          <p className="text-[10px] font-semibold text-zinc-400 mb-3">
             Staff & admin by role
           </p>
           <div className="space-y-3">
@@ -164,7 +164,7 @@ export default function IdentityInsightsPanel({
                     </div>
                     <div className="h-2 rounded-full bg-zinc-100 overflow-hidden">
                       <div
-                        className="h-full rounded-full transition-all duration-700"
+                        className="h-full rounded-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-700"
                         style={{
                           width: `${pct}%`,
                           background: `linear-gradient(90deg, ${PORTAL_NAVY}, ${PORTAL_NAVY_MID})`,
@@ -179,7 +179,7 @@ export default function IdentityInsightsPanel({
         </div>
 
         <div className="flex flex-col justify-center">
-          <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] uppercase mb-3">
+          <p className="text-[10px] font-semibold text-zinc-400 mb-3">
             Account enablement
           </p>
           <div className="rounded-2xl border border-zinc-100 bg-zinc-50/50 p-5 space-y-4">
@@ -204,7 +204,7 @@ export default function IdentityInsightsPanel({
 
             <div className="h-3 rounded-full bg-zinc-200/80 overflow-hidden flex">
               <div
-                className="h-full rounded-l-full transition-all duration-700"
+                className="h-full rounded-l-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-700"
                 style={{
                   width: `${enablementPct}%`,
                   background: `linear-gradient(90deg, ${PORTAL_NAVY}, ${PORTAL_NAVY_MID})`,
@@ -212,7 +212,7 @@ export default function IdentityInsightsPanel({
               />
               {totalDisabled > 0 && (
                 <div
-                  className="h-full bg-rose-300 transition-all duration-700"
+                  className="h-full bg-rose-300 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-700"
                   style={{ width: `${100 - enablementPct}%` }}
                 />
               )}
@@ -243,7 +243,7 @@ export default function IdentityInsightsPanel({
               </div>
               <div className="h-1.5 rounded-full bg-zinc-200 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-blue-500 transition-all duration-700"
+                  className="h-full rounded-full bg-blue-500 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-700"
                   style={{ width: `${studentShare}%` }}
                 />
               </div>

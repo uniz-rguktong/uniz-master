@@ -158,7 +158,7 @@ export default function AdminShell({
             )}
           />
           {isSidebarOpen && (
-            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-zinc-200/60 rounded text-[9px] font-bold text-zinc-400 ">
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-zinc-200/60 rounded text-[9px] font-bold text-zinc-400">
               /
             </div>
           )}
@@ -212,7 +212,7 @@ export default function AdminShell({
 
         <div
           className={cn(
-            "px-4 pt-5 pb-3 transition-all duration-300",
+            "px-4 pt-5 pb-3 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300",
             collapseBranding === "hide" &&
               !isSidebarOpen &&
               "h-0 overflow-hidden pt-0 pb-0 opacity-0",
@@ -238,7 +238,7 @@ export default function AdminShell({
               <div className="w-12 h-12 bg-zinc-50 rounded-full flex items-center justify-center mb-3">
                 <Search size={20} className="text-zinc-300" />
               </div>
-              <p className="text-[11px] font-bold text-zinc-400 tracking-[0.14em] px-4">
+              <p className="text-[11px] font-bold text-zinc-400 px-4">
                 No operations found
               </p>
             </div>
@@ -343,7 +343,7 @@ export default function AdminShell({
               <div className="flex items-center gap-3 min-w-0">
                 <button
                   ref={avatarBtnRef}
-                  className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-zinc-100 flex items-center justify-center shadow-sm ring-1 ring-zinc-200/60 transition-transform group-hover:scale-105"
+                  className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-zinc-100 flex items-center justify-center shadow-sm ring-1 ring-zinc-200/60 transition-transform"
                 >
                   {profilePhoto ? (
                     <img
@@ -363,7 +363,7 @@ export default function AdminShell({
                       {profileName || username}
                     </p>
                     {roleLabel && (
-                      <p className="text-[9px] font-bold text-zinc-400 tracking-wider truncate mt-0.5">
+                      <p className="text-[9px] font-bold text-zinc-400 truncate mt-0.5">
                         {roleLabel}
                       </p>
                     )}
@@ -376,7 +376,7 @@ export default function AdminShell({
           {isSidebarOpen && (
             <div className="px-2 pt-2 space-y-2">
               <div className="rounded-xl bg-gradient-to-br from-navy-900 to-navy-800 p-3.5 text-white">
-                <p className="text-[10px] font-bold tracking-[0.12em] text-white/50 uppercase">
+                <p className="text-[10px] font-bold text-white/50">
                   Platform
                 </p>
                 <p className="text-[13px] font-semibold mt-1 leading-tight">
@@ -414,7 +414,7 @@ export default function AdminShell({
             {showHeaderMenuToggle && (
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="w-10 h-10 flex items-center justify-center bg-zinc-50 border border-zinc-100 rounded-xl hover:bg-white hover:shadow-lg transition-all text-zinc-400 hover:text-zinc-950 active:scale-95"
+                className="w-10 h-10 flex items-center justify-center bg-zinc-50 border border-zinc-100 rounded-xl hover:bg-white hover:border-navy-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] text-zinc-400 hover:text-zinc-950 active:scale-95"
                 aria-label="Toggle sidebar"
               >
                 {isSidebarOpen ? <ChevronLeft size={18} /> : <Menu size={18} />}
@@ -494,13 +494,13 @@ export default function AdminShell({
                   key={item.id}
                   onClick={() => onTabChange(item.id)}
                   className={cn(
-                    "flex flex-col items-center justify-center h-full flex-1 gap-1 transition-all",
+                    "flex flex-col items-center justify-center h-full flex-1 gap-1 transition-[color,background-color,border-color,opacity,transform,box-shadow]",
                     isActive ? "text-zinc-950" : "text-zinc-400",
                   )}
                 >
                   <div
                     className={cn(
-                      "p-1.5 rounded-xl transition-all",
+                      "p-1.5 rounded-xl transition-[color,background-color,border-color,opacity,transform,box-shadow]",
                       isActive && "bg-zinc-100",
                     )}
                   >
@@ -508,7 +508,7 @@ export default function AdminShell({
                   </div>
                   <span
                     className={cn(
-                      "text-[9px] font-bold tracking-wider",
+                      "text-[9px] font-bold ",
                       isActive ? "opacity-100" : "opacity-60",
                     )}
                   >

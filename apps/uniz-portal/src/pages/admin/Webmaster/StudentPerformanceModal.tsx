@@ -162,7 +162,7 @@ export default function StudentPerformanceModal({
             {data.motivation && (
               <div className={cn(adminCardClass, "p-4 flex gap-3 items-start")}>
                 <CheckCircle2 size={16} className="text-zinc-500 shrink-0 mt-0.5" />
-                <p className="text-[13px] text-zinc-600 leading-relaxed italic">
+                <p className="text-[13px] text-zinc-600 leading-relaxed">
                   {data.motivation}
                 </p>
               </div>
@@ -190,7 +190,7 @@ export default function StudentPerformanceModal({
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         {grade.isRemedial && (
-                          <span className="text-[10px] font-medium text-rose-600 bg-rose-50 border border-rose-100 px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] font-medium text-rose-600 bg-rose-50 border border-rose-100 px-2 py-0.5 rounded-md">
                             Remedial
                           </span>
                         )}

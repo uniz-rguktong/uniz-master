@@ -24,7 +24,7 @@ export function OutButton({ request }: requestProps) {
     <div className="flex justify-center items-center w-full md:w-auto mt-2 md:mt-0">
       <button
         onClick={() => navigateTo(`/student/${request}/request${request}`)}
-        className="w-full md:w-auto px-10 h-[48px] bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-md shadow-zinc-100 flex items-center justify-center gap-2"
+        className="w-full md:w-auto px-10 h-[48px] bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold text-sm transition-[color,background-color,border-color,opacity,transform] active:scale-[0.98] shadow-md flex items-center justify-center gap-2"
       >
         <Plus className="w-4 h-4" />
         <span>New {request.charAt(0).toUpperCase() + request.slice(1)}</span>
@@ -74,7 +74,7 @@ export default function Outpass_Outing({ request }: requestProps) {
     if (req.isApproved || req.is_approved)
       return {
         label: "Approved",
-        color: "bg-zinc-900 text-white shadow-lg shadow-zinc-100/10",
+        color: "bg-zinc-900 text-white shadow-sm ",
         icon: <CheckCircle className="w-3.5 h-3.5" />,
       };
     if (req.isRejected || req.is_rejected)
@@ -92,7 +92,7 @@ export default function Outpass_Outing({ request }: requestProps) {
     return {
       label: "Pending",
       color: "bg-white border border-zinc-200 text-zinc-800",
-      icon: <Clock className="w-3.5 h-3.5 animate-pulse" />,
+      icon: <Clock className="w-3.5 h-3.5" />,
     };
   };
 
@@ -109,7 +109,7 @@ export default function Outpass_Outing({ request }: requestProps) {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-6 mb-10 mt-4 md:mt-0">
         <div className="flex flex-col gap-1.5 text-center md:text-left">
-          <p className="text-zinc-400 font-medium text-[12px] tracking-[0.14em] leading-none mb-1">
+          <p className="text-zinc-400 font-medium text-[12px] tracking-normal leading-none mb-1">
             Institutional Permission Records
           </p>
           <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.02em] text-zinc-900 leading-none">
@@ -117,8 +117,8 @@ export default function Outpass_Outing({ request }: requestProps) {
           </h1>
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-4">
             {pendingCount > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-bold tracking-[0.14em] border border-amber-100/50">
-                <Clock className="w-3 h-3 animate-pulse" />
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-lg text-[10px] font-bold tracking-normal border border-amber-100/50">
+                <Clock className="w-3 h-3" />
                 {pendingCount} Pending Requests
               </span>
             )}
@@ -151,16 +151,16 @@ export default function Outpass_Outing({ request }: requestProps) {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-zinc-50">
-                      <th className="px-8 py-5 text-[11px] font-semibold tracking-[0.14em] text-zinc-400 bg-zinc-50/20">
+                      <th className="px-8 py-5 text-[11px] font-semibold tracking-normal text-zinc-400 bg-zinc-50/20">
                         Request Detail
                       </th>
-                      <th className="px-8 py-5 text-[11px] font-semibold tracking-[0.14em] text-zinc-400 bg-zinc-50/20">
+                      <th className="px-8 py-5 text-[11px] font-semibold tracking-normal text-zinc-400 bg-zinc-50/20">
                         Period & Interval
                       </th>
-                      <th className="px-8 py-5 text-[11px] font-semibold tracking-[0.14em] text-zinc-400 bg-zinc-50/20">
+                      <th className="px-8 py-5 text-[11px] font-semibold tracking-normal text-zinc-400 bg-zinc-50/20">
                         Reason for Leave
                       </th>
-                      <th className="px-8 py-5 text-[11px] font-semibold tracking-[0.14em] text-zinc-400 bg-zinc-50/20 text-right">
+                      <th className="px-8 py-5 text-[11px] font-semibold tracking-normal text-zinc-400 bg-zinc-50/20 text-right">
                         Status
                       </th>
                     </tr>
@@ -204,11 +204,11 @@ export default function Outpass_Outing({ request }: requestProps) {
                       return (
                         <tr
                           key={req._id}
-                          className="hover:bg-zinc-50/30 transition-all group"
+                          className="hover:bg-zinc-50/30 transition-[color,background-color,border-color,opacity,transform] group"
                         >
                           <td className="px-8 py-5 text-nowrap">
                             <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-500 flex items-center justify-center group-hover:bg-zinc-900 group-hover:text-white transition-all duration-300">
+                              <div className="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-500 flex items-center justify-center group-hover:bg-zinc-900 group-hover:text-white transition-[color,background-color,border-color,opacity,transform] duration-300">
                                 {request === "outing" ? (
                                   <Clock size={16} />
                                 ) : (
@@ -219,7 +219,7 @@ export default function Outpass_Outing({ request }: requestProps) {
                                 <p className="font-bold text-zinc-900 tracking-tight leading-none mb-1.5 capitalize text-[15px]">
                                   {request} Protocol
                                 </p>
-                                <p className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 leading-none">
+                                <p className="text-[10px] font-bold tracking-normal text-zinc-400 leading-none">
                                   ID:{" "}
                                   {req._id?.slice(-8).toUpperCase() || "N/A"}
                                 </p>
@@ -232,10 +232,10 @@ export default function Outpass_Outing({ request }: requestProps) {
                                 {timeRange}
                               </p>
                               <div className="flex items-center gap-2">
-                                <span className="text-[10px] text-zinc-400 font-bold tracking-[0.14em]">
+                                <span className="text-[10px] text-zinc-400 font-bold tracking-normal">
                                   {dateStr}
                                 </span>
-                                <span className="px-1.5 py-0.5 bg-zinc-900 text-white rounded text-[9px] font-bold tracking-wider">
+                                <span className="px-1.5 py-0.5 bg-zinc-900 text-white rounded text-[9px] font-bold tracking-normal">
                                   {durationText}
                                 </span>
                               </div>
@@ -251,7 +251,7 @@ export default function Outpass_Outing({ request }: requestProps) {
                           </td>
                           <td className="px-8 py-5 text-right">
                             <div
-                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-bold tracking-[0.14em] border border-current opacity-80 ${status.color.includes("bg-zinc-900") ? "text-zinc-900 bg-zinc-50 border-zinc-100" : status.color.includes("bg-white border border-red-50") ? "text-red-500 bg-red-50 border-red-100" : "text-zinc-400 bg-zinc-50 border-zinc-100"}`}
+                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[9px] font-bold tracking-normal border border-current opacity-80 ${status.color.includes("bg-zinc-900") ? "text-zinc-900 bg-zinc-50 border-zinc-100" : status.color.includes("bg-white border border-red-50") ? "text-red-500 bg-red-50 border-red-100" : "text-zinc-400 bg-zinc-50 border-zinc-100"}`}
                             >
                               {status.label}
                             </div>
@@ -299,7 +299,7 @@ export default function Outpass_Outing({ request }: requestProps) {
                 return (
                   <div
                     key={req._id}
-                    className="bg-white rounded-xl border border-zinc-100 p-5 shadow-sm active:scale-[0.99] transition-all"
+                    className="bg-white rounded-xl border border-zinc-100 p-5 shadow-sm active:scale-[0.99] transition-[color,background-color,border-color,opacity,transform]"
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-3">
@@ -314,13 +314,13 @@ export default function Outpass_Outing({ request }: requestProps) {
                           <p className="font-bold text-zinc-900 capitalize text-[15px] tracking-tight">
                             {request} Protocol
                           </p>
-                          <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
+                          <p className="text-[10px] font-bold text-zinc-400 tracking-normal">
                             ID: {req._id?.slice(-8).toUpperCase()}
                           </p>
                         </div>
                       </div>
                       <div
-                        className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-[0.14em] border border-current ${status.color.includes("bg-zinc-900") ? "text-zinc-900 bg-zinc-50 border-zinc-100" : status.color.includes("bg-white border border-red-50") ? "text-red-500 bg-red-50 border-red-100" : "text-zinc-400 bg-zinc-50 border-zinc-100"}`}
+                        className={`px-2.5 py-0.5 rounded-lg text-[9px] font-bold tracking-normal border border-current ${status.color.includes("bg-zinc-900") ? "text-zinc-900 bg-zinc-50 border-zinc-100" : status.color.includes("bg-white border border-red-50") ? "text-red-500 bg-red-50 border-red-100" : "text-zinc-400 bg-zinc-50 border-zinc-100"}`}
                       >
                         {status.label}
                       </div>
@@ -329,7 +329,7 @@ export default function Outpass_Outing({ request }: requestProps) {
                     <div className="space-y-3 pt-3 border-t border-zinc-50">
                       <div className="flex justify-between items-end">
                         <div className="space-y-1">
-                          <p className="text-[9px] font-bold text-zinc-300 tracking-[0.14em] leading-none">
+                          <p className="text-[9px] font-bold text-zinc-300 tracking-normal leading-none">
                             Interval Period
                           </p>
                           <p className="text-[14px] font-bold text-zinc-800 tracking-tight">
@@ -337,10 +337,10 @@ export default function Outpass_Outing({ request }: requestProps) {
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-[9px] font-bold text-zinc-300 tracking-[0.14em] leading-none mb-1">
+                          <p className="text-[9px] font-bold text-zinc-300 tracking-normal leading-none mb-1">
                             {dateStr}
                           </p>
-                          <span className="px-2 py-0.5 bg-zinc-900 text-white rounded text-[9px] font-bold tracking-wider">
+                          <span className="px-2 py-0.5 bg-zinc-900 text-white rounded text-[9px] font-bold tracking-normal">
                             {durationText}
                           </span>
                         </div>
@@ -348,7 +348,7 @@ export default function Outpass_Outing({ request }: requestProps) {
 
                       {req.reason && (
                         <div className="bg-zinc-50/50 p-3 rounded-lg border border-zinc-50">
-                          <p className="text-[10px] font-bold text-zinc-300 tracking-[0.14em] mb-1">
+                          <p className="text-[10px] font-bold text-zinc-300 tracking-normal mb-1">
                             Reason Statement
                           </p>
                           <p className="text-[13px] font-medium text-zinc-600 italic leading-relaxed">

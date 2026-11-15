@@ -170,7 +170,7 @@ export default function GrievanceList() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-zinc-900 font-bold text-[10px] tracking-[0.14em] mb-3 bg-zinc-50 w-fit px-3 py-1 rounded-full border border-zinc-100/50">
+          <div className="flex items-center gap-2 text-zinc-900 font-bold text-[10px] mb-3 bg-zinc-50 w-fit px-3 py-1 rounded-md border border-zinc-100/50">
             <ShieldCheck size={12} />
             Resolution Control
           </div>
@@ -186,7 +186,7 @@ export default function GrievanceList() {
         <div className="flex items-center gap-3">
           <button
             onClick={fetchGrievances}
-            className="px-5 py-2.5 bg-white border border-zinc-200 text-zinc-600 rounded-xl font-bold text-xs tracking-[0.14em] hover:bg-zinc-50 transition-all shadow-sm flex items-center gap-2"
+            className="px-5 py-2.5 bg-white border border-zinc-200 text-zinc-600 rounded-xl font-bold text-xs hover:bg-zinc-50 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-sm flex items-center gap-2"
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
             Sync Records
@@ -195,7 +195,7 @@ export default function GrievanceList() {
           <button
             onClick={handleDeleteAll}
             disabled={grievances.length === 0}
-            className="px-5 py-2.5 bg-red-50 border border-red-100 text-red-600 rounded-xl font-bold text-xs tracking-[0.14em] hover:bg-red-200 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2.5 bg-red-50 border border-red-100 text-red-600 rounded-xl font-bold text-xs hover:bg-red-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Trash2 size={14} />
             Clear all
@@ -205,44 +205,44 @@ export default function GrievanceList() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm flex flex-col justify-between group hover:border-zinc-100 transition-all duration-300">
+        <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm flex flex-col justify-between group hover:border-zinc-100 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-zinc-50 text-zinc-900 rounded-2xl group-hover:scale-110 transition-transform">
+            <div className="p-3 bg-zinc-50 text-zinc-900 rounded-2xl transition-transform">
               <MessageSquare size={20} />
             </div>
             <span className="text-zinc-900 font-semibold text-2xl">
               {grievances.length}
             </span>
           </div>
-          <p className="text-zinc-400 font-semibold text-[10px] tracking-[0.14em]">
+          <p className="text-zinc-400 font-semibold text-[10px]">
             Total Reports
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm flex flex-col justify-between group hover:border-amber-200 transition-all duration-300">
+        <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm flex flex-col justify-between group hover:border-amber-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl group-hover:scale-110 transition-transform">
+            <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl transition-transform">
               <Clock size={20} />
             </div>
             <span className="text-amber-600 font-semibold text-2xl">
               {grievances.filter((g) => g.status === "Pending").length}
             </span>
           </div>
-          <p className="text-zinc-400 font-semibold text-[10px] tracking-[0.14em]">
+          <p className="text-zinc-400 font-semibold text-[10px]">
             Active Tickets
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-all duration-300">
+        <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl group-hover:scale-110 transition-transform">
+            <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl transition-transform">
               <CheckCircle2 size={20} />
             </div>
             <span className="text-emerald-600 font-semibold text-2xl">
               {grievances.filter((g) => g.status === "Resolved").length}
             </span>
           </div>
-          <p className="text-zinc-400 font-semibold text-[10px] tracking-[0.14em]">
+          <p className="text-zinc-400 font-semibold text-[10px]">
             Resolved Actions
           </p>
         </div>
@@ -260,7 +260,7 @@ export default function GrievanceList() {
             placeholder="Search by name, ID, email, or description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-zinc-50 border border-transparent rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:bg-white focus:border-zinc-100 focus:ring-4 focus:ring-zinc-900 transition-all outline-none"
+            className="w-full bg-zinc-50 border border-transparent rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:bg-white focus:border-zinc-100 focus:ring-4 focus:ring-zinc-900 transition-[color,background-color,border-color,opacity,transform,box-shadow] outline-none"
           />
         </div>
 
@@ -271,7 +271,7 @@ export default function GrievanceList() {
               <button
                 key={cat}
                 onClick={() => setFilterCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-[11px] font-bold tracking-wider whitespace-nowrap transition-all ${
+                className={`px-4 py-2 rounded-xl text-[11px] font-bold  whitespace-nowrap transition-[color,background-color,border-color,opacity,transform,box-shadow] ${
                   filterCategory === cat
                     ? "bg-zinc-900 text-white shadow-md"
                     : "bg-zinc-50 text-zinc-500 hover:bg-zinc-100"
@@ -285,11 +285,11 @@ export default function GrievanceList() {
       </div>
 
       {/* Content Table/List */}
-      <div className="bg-white rounded-3xl border border-zinc-100 shadow-xl shadow-zinc-200/50 overflow-hidden min-h-[400px]">
+      <div className="bg-white rounded-3xl border border-zinc-100 border border-navy-200/60 overflow-hidden min-h-[400px]">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-[400px] text-zinc-300 gap-4">
             <RefreshCw className="animate-spin" size={32} />
-            <p className="font-bold tracking-[0.3em] text-[10px]">
+            <p className="font-bold text-[10px]">
               Accessing Database...
             </p>
           </div>
@@ -298,19 +298,19 @@ export default function GrievanceList() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                  <th className="px-8 py-5 text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
+                  <th className="px-8 py-5 text-[10px] font-semibold text-zinc-400">
                     Student Context
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
+                  <th className="px-6 py-5 text-[10px] font-semibold text-zinc-400">
                     Classification
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
+                  <th className="px-6 py-5 text-[10px] font-semibold text-zinc-400">
                     Statement
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
+                  <th className="px-6 py-5 text-[10px] font-semibold text-zinc-400">
                     Temporal Log
                   </th>
-                  <th className="px-8 py-5 text-[10px] font-semibold text-zinc-400 tracking-[0.14em] text-right">
+                  <th className="px-8 py-5 text-[10px] font-semibold text-zinc-400 text-right">
                     Action
                   </th>
                 </tr>
@@ -338,7 +338,7 @@ export default function GrievanceList() {
                               ? "Anonymous"
                               : studentDisplayName(g)}
                           </p>
-                          <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mt-1.5 flex items-center gap-1">
+                          <p className="text-[10px] font-bold text-zinc-400 mt-1.5 flex items-center gap-1">
                             {g.isAnonymous ? (
                               <>
                                 <ShieldCheck size={10} />
@@ -360,11 +360,11 @@ export default function GrievanceList() {
                       </div>
                     </td>
                     <td className="px-6 py-6">
-                      <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-lg font-bold text-[10px] tracking-[0.14em] whitespace-nowrap">
+                      <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-lg font-bold text-[10px] whitespace-nowrap">
                         {g.category}
                       </span>
                       <span
-                        className={`ml-2 px-2 py-1 rounded-lg font-bold text-[9px] tracking-[0.12em] ${
+                        className={`ml-2 px-2 py-1 rounded-lg font-bold text-[9px]  ${
                           g.status === "Resolved"
                             ? "bg-emerald-50 text-emerald-700"
                             : g.status === "In Progress"
@@ -400,7 +400,7 @@ export default function GrievanceList() {
                             type="button"
                             onClick={() => handleResolve(g.id)}
                             disabled={resolvingId === g.id}
-                            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 text-white text-[10px] font-bold tracking-[0.12em] hover:bg-emerald-700 transition-all active:scale-95 disabled:opacity-60"
+                            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 text-white text-[10px] font-bold hover:bg-emerald-700 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95 disabled:opacity-60"
                           >
                             <CheckCircle2 size={14} />
                             {resolvingId === g.id ? "..." : "Resolve"}
@@ -409,7 +409,7 @@ export default function GrievanceList() {
                         <button
                           type="button"
                           onClick={() => handleDelete(g.id)}
-                          className="p-2.5 rounded-xl bg-white border border-red-100 text-red-400 hover:text-red-700 hover:border-red-300 hover:bg-red-50 hover:shadow-lg transition-all active:scale-95 group/del"
+                          className="p-2.5 rounded-xl bg-white border border-red-100 text-red-400 hover:text-red-700 hover:border-red-300 hover:bg-red-50 hover:border-navy-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95 group/del"
                         >
                           <Trash2
                             size={18}

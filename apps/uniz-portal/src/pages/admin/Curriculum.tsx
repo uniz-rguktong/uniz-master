@@ -317,7 +317,7 @@ export default function CurriculumManager() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <Loader2 className="animate-spin text-zinc-900" size={32} />
-          <p className="text-zinc-400 font-medium text-[12px] tracking-[0.14em]">
+          <p className="text-zinc-400 font-medium text-[12px]">
             Loading curriculum…
           </p>
         </div>
@@ -353,13 +353,13 @@ export default function CurriculumManager() {
                 <div className="flex gap-1">
                   <button
                     onClick={() => handleOpenModal(sub)}
-                    className="p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-lg transition-all"
+                    className="p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-lg transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                   >
                     <Edit size={16} />
                   </button>
                   <button
                     onClick={() => handleDelete(sub.id)}
-                    className="p-2 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                    className="p-2 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -379,17 +379,17 @@ export default function CurriculumManager() {
 
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-6">
-                <span className="px-2.5 py-1 bg-zinc-900 text-white text-[10px] font-medium rounded-full tracking-wide">
+                <span className="px-2.5 py-1 bg-zinc-900 text-white text-[10px] font-medium rounded-md tracking-wide">
                   {sub.department}
                 </span>
-                <span className="px-2.5 py-1 bg-zinc-50 text-zinc-600 text-[10px] font-medium rounded-full tracking-wide border border-zinc-200">
+                <span className="px-2.5 py-1 bg-zinc-50 text-zinc-600 text-[10px] font-medium rounded-md tracking-wide border border-zinc-200">
                   {semesterLabel(sub)}
                 </span>
               </div>
 
               {/* Progress Bar (Weight) */}
               <div className="space-y-2">
-                <div className="flex justify-between items-center text-[10px] font-medium tracking-[0.12em] text-zinc-400">
+                <div className="flex justify-between items-center text-[10px] font-medium text-zinc-400">
                   <span>Academic Weight</span>
                   <span className="tabular-nums">{((sub.credits / 4) * 100).toFixed(0)}%</span>
                 </div>
@@ -406,7 +406,7 @@ export default function CurriculumManager() {
               <div className="mt-5 pt-4 border-t border-zinc-100 flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-zinc-400">
                   <BookOpen size={14} />
-                  <span className="text-[10px] font-medium tracking-[0.12em] tabular-nums">
+                  <span className="text-[10px] font-medium tabular-nums">
                     {sub.credits} Credits
                   </span>
                 </div>
@@ -420,7 +420,7 @@ export default function CurriculumManager() {
       {/* Pagination Controls */}
       {!loading && totalRecords > 0 && (
         <div className={cn(adminCardClass, "flex flex-col md:flex-row items-center justify-between gap-4 px-6 py-4")}>
-          <div className="text-[11px] font-medium text-zinc-400 tracking-[0.12em]">
+          <div className="text-[11px] font-medium text-zinc-400">
             Showing <span className="text-zinc-900">{subjects.length}</span> of{" "}
             {totalRecords} records
           </div>
@@ -428,7 +428,7 @@ export default function CurriculumManager() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="w-9 h-9 flex items-center justify-center bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="w-9 h-9 flex items-center justify-center bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition-[color,background-color,border-color,opacity,transform,box-shadow]"
             >
               <ChevronLeft size={18} />
             </button>
@@ -438,7 +438,7 @@ export default function CurriculumManager() {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="w-9 h-9 flex items-center justify-center bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="w-9 h-9 flex items-center justify-center bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition-[color,background-color,border-color,opacity,transform,box-shadow]"
             >
               <ChevronRight size={18} />
             </button>
@@ -476,7 +476,7 @@ export default function CurriculumManager() {
                   </div>
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="w-9 h-9 flex items-center justify-center bg-zinc-50 rounded-full text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
+                    className="w-9 h-9 flex items-center justify-center bg-zinc-50 rounded-full text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                   >
                     <X size={18} />
                   </button>

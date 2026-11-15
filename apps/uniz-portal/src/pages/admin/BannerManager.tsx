@@ -72,7 +72,7 @@ function SortableBannerCard({
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative bg-white border border-zinc-200 shadow-sm hover:shadow-md rounded-xl overflow-hidden transition-all duration-200"
+      className="group relative bg-white border border-zinc-200 shadow-sm hover:shadow-md rounded-xl overflow-hidden transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-200"
     >
       <div className="relative aspect-video bg-zinc-100">
         <img
@@ -266,7 +266,7 @@ export default function BannerManager() {
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-semibold text-[10px] tracking-[0.14em] hover:bg-black transition-all flex items-center gap-3 shadow-lg shadow-zinc-100/50"
+            className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-semibold text-[10px] hover:bg-black transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center gap-3 shadow-none"
           >
             <PlusCircle size={16} /> New Banner
           </button>
@@ -286,7 +286,7 @@ export default function BannerManager() {
             <button
               type="button"
               onClick={() => setShowAddModal(false)}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
             >
               <X size={20} />
             </button>
@@ -305,7 +305,7 @@ export default function BannerManager() {
                   <div
                     {...getRootProps()}
                     className={cn(
-                      "h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer transition-all bg-zinc-50",
+                      "h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer transition-[color,background-color,border-color,opacity,transform,box-shadow] bg-zinc-50",
                       isDragActive
                         ? "border-zinc-100 bg-zinc-50"
                         : "border-zinc-300 hover:border-zinc-400 hover:bg-zinc-100",
@@ -316,20 +316,20 @@ export default function BannerManager() {
                     {image ? (
                       <div className="text-emerald-700">
                         <ImageIcon className="w-6 h-6 mx-auto mb-1.5" />
-                        <p className="font-bold text-[10px] truncate max-w-[250px] ">
+                        <p className="font-bold text-[10px] truncate max-w-[250px]">
                           {image.name}
                         </p>
-                        <p className="text-[9px] opacity-70 mt-0.5 font-semibold ">
+                        <p className="text-[9px] opacity-70 mt-0.5 font-semibold">
                           Click to change
                         </p>
                       </div>
                     ) : (
                       <div className="text-zinc-500">
                         <Upload className="w-6 h-6 mx-auto mb-1.5 text-zinc-400" />
-                        <p className="font-bold text-[10px] tracking-wider">
+                        <p className="font-bold text-[10px]">
                           Select Banner Image
                         </p>
-                        <p className="text-[9px] opacity-60 mt-0.5 font-semibold ">
+                        <p className="text-[9px] opacity-60 mt-0.5 font-semibold">
                           Drop or click
                         </p>
                       </div>

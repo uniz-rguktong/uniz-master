@@ -654,7 +654,7 @@ export default function FacultyManagement({
                     value={csvText}
                     onChange={(e) => setCsvText(e.target.value)}
                     rows={8}
-                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-xl font-mono text-[11px] text-zinc-900 outline-none focus:ring-2 focus:ring-zinc-900/5 focus:border-zinc-400 transition-all resize-none"
+                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-xl font-mono text-[11px] text-zinc-900 outline-none focus:ring-2 focus:ring-zinc-900/5 focus:border-zinc-400 transition-[color,background-color,border-color,opacity,transform,box-shadow] resize-none"
                     placeholder={`username,name,email,department,designation,role\nktejokiran,K Tejo Kiran,ktejokiran@rguktong.ac.in,CSE,Lecturer,teacher`}
                   />
                 </div>
@@ -859,7 +859,7 @@ export default function FacultyManagement({
                   setShowDeleteConfirm(true);
                 }}
                 disabled={bulkLoading || !selectedUsernames.size}
-                className="w-full h-12 bg-rose-600 text-white rounded-xl font-semibold tracking-tight text-[13px] hover:bg-rose-700 transition-all flex items-center justify-center gap-2 disabled:opacity-40 active:scale-[0.99]"
+                className="w-full h-12 bg-rose-600 text-white rounded-xl font-semibold tracking-tight text-[13px] hover:bg-rose-700 transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center justify-center gap-2 disabled:opacity-40 active:scale-[0.99]"
               >
                 {bulkLoading ? (
                   <Loader2 className="animate-spin w-4 h-4" />
@@ -907,7 +907,7 @@ export default function FacultyManagement({
                       </button>
                       <button
                         onClick={handleBulkDelete}
-                        className="flex-[2] h-11 rounded-xl bg-rose-600 text-white font-semibold text-[13px] hover:bg-rose-700 transition-all"
+                        className="flex-[2] h-11 rounded-xl bg-rose-600 text-white font-semibold text-[13px] hover:bg-rose-700 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                       >
                         Yes, Delete All
                       </button>
@@ -926,12 +926,12 @@ export default function FacultyManagement({
                 <h4 className="font-semibold tracking-tight text-zinc-900">
                   Operation Result
                 </h4>
-                <span className="text-[11px] font-medium tracking-[0.12em] text-zinc-400">
+                <span className="text-[11px] font-medium text-zinc-400">
                   Total {bulkResult.summary?.total}
                 </span>
                 <button
                   onClick={() => setBulkResult(null)}
-                  className="ml-auto p-1.5 hover:bg-zinc-100 rounded-lg text-zinc-400 hover:text-rose-500 transition-all"
+                  className="ml-auto p-1.5 hover:bg-zinc-100 rounded-lg text-zinc-400 hover:text-rose-500 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                 >
                   <X size={14} />
                 </button>
@@ -949,7 +949,7 @@ export default function FacultyManagement({
                       >
                         {v}
                       </p>
-                      <p className="text-[9px] font-bold tracking-[0.14em] text-zinc-400 mt-0.5">
+                      <p className="text-[9px] font-bold text-zinc-400 mt-0.5">
                         {k}
                       </p>
                     </div>
@@ -985,21 +985,21 @@ export default function FacultyManagement({
       <div className={cn(adminCardClass, "overflow-hidden")}>
         {meta.totalPages > 1 && (
           <div className="flex items-center justify-between px-8 py-4 bg-zinc-50/50 border-b border-zinc-200/70">
-            <p className="text-[11px] font-medium text-zinc-400 tracking-[0.12em]">
+            <p className="text-[11px] font-medium text-zinc-400">
               Page {page} of {meta.totalPages}
             </p>
             <div className="flex gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 text-[12px] font-semibold transition-all"
+                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 text-[12px] font-semibold transition-[color,background-color,border-color,opacity,transform,box-shadow]"
               >
                 Prev
               </button>
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 text-[12px] font-semibold transition-all"
+                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 text-[12px] font-semibold transition-[color,background-color,border-color,opacity,transform,box-shadow]"
               >
                 Next
               </button>
@@ -1026,20 +1026,20 @@ export default function FacultyManagement({
                     </button>
                   </th>
                 )}
-                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-4 text-[10px] font-semibold text-zinc-400">
                   User Details
                 </th>
-                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-4 text-[10px] font-semibold text-zinc-400">
                   Designation
                 </th>
-                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-4 text-[10px] font-semibold text-zinc-400">
                   Role
                 </th>
-                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-4 text-[10px] font-semibold text-zinc-400">
                   Status
                 </th>
                 {mode === "single" && (
-                  <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400 text-right">
+                  <th className="px-6 py-4 text-[10px] font-semibold text-zinc-400 text-right">
                     Actions
                   </th>
                 )}
@@ -1146,12 +1146,12 @@ export default function FacultyManagement({
                         <p className="text-[13px] font-medium text-zinc-700">
                           {member.Designation || "Lecturer"}
                         </p>
-                        <p className="text-[10px] font-medium text-zinc-400 tracking-[0.12em] mt-0.5">
+                        <p className="text-[10px] font-medium text-zinc-400 mt-0.5">
                           {member.Department}
                         </p>
                       </td>
                       <td className="px-6 py-5">
-                        <span className="px-2.5 py-1 bg-zinc-50 rounded-full text-zinc-500 font-medium text-[11px] border border-zinc-200">
+                        <span className="px-2.5 py-1 bg-zinc-50 rounded-md text-zinc-500 font-medium text-[11px] border border-zinc-200">
                           {member.Role
                             ? formatRoleLabel(member.Role)
                             : "Faculty"}
@@ -1159,7 +1159,7 @@ export default function FacultyManagement({
                       </td>
                       <td className="px-6 py-5">
                         <div
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-medium w-fit ${!member.is_suspended ? "border-zinc-200 bg-zinc-50 text-zinc-700" : "border-rose-100 bg-rose-50 text-rose-600"}`}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[11px] font-medium w-fit ${!member.is_suspended ? "border-zinc-200 bg-zinc-50 text-zinc-700" : "border-rose-100 bg-rose-50 text-rose-600"}`}
                         >
                           <span
                             className={`w-1.5 h-1.5 rounded-full ${!member.is_suspended ? "bg-emerald-500" : "bg-rose-500"}`}
@@ -1175,14 +1175,14 @@ export default function FacultyManagement({
                                 setSelectedFaculty(member);
                                 setShowViewModal(true);
                               }}
-                              className="h-9 w-9 flex items-center justify-center bg-white border border-zinc-200 text-zinc-500 rounded-xl hover:bg-zinc-900 hover:text-white hover:border-zinc-900 transition-all active:scale-95"
+                              className="h-9 w-9 flex items-center justify-center bg-white border border-zinc-200 text-zinc-500 rounded-xl hover:bg-zinc-900 hover:text-white hover:border-zinc-900 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95"
                               title="View Details"
                             >
                               <Eye size={15} />
                             </button>
                             <button
                               onClick={() => openEdit(member)}
-                              className="h-9 px-4 bg-white border border-zinc-200 text-zinc-600 rounded-xl text-[12px] font-semibold hover:text-zinc-900 hover:border-zinc-300 active:scale-95 transition-all"
+                              className="h-9 px-4 bg-white border border-zinc-200 text-zinc-600 rounded-xl text-[12px] font-semibold hover:text-zinc-900 hover:border-zinc-300 active:scale-95 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                             >
                               Modify
                             </button>
@@ -1193,13 +1193,13 @@ export default function FacultyManagement({
                                   member.is_suspended,
                                 )
                               }
-                              className="h-9 px-4 rounded-xl text-[12px] font-semibold transition-all active:scale-95 bg-zinc-900 hover:bg-zinc-800 text-white"
+                              className="h-9 px-4 rounded-xl text-[12px] font-semibold transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95 bg-zinc-900 hover:bg-zinc-800 text-white"
                             >
                               {member.is_suspended ? "Reinstate" : "Suspend"}
                             </button>
                             <button
                               onClick={() => handleDelete(member.Username)}
-                              className="h-9 w-9 flex items-center justify-center bg-white border border-zinc-200 text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all active:scale-90"
+                              className="h-9 w-9 flex items-center justify-center bg-white border border-zinc-200 text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-90"
                               title="Delete"
                             >
                               <Trash2 size={15} />
@@ -1237,14 +1237,14 @@ export default function FacultyManagement({
 
         {meta.totalPages > 1 && (
           <div className="flex items-center justify-between px-8 py-4 bg-zinc-50/50 border-t border-zinc-200/70">
-            <p className="text-[11px] font-medium text-zinc-400 tracking-[0.12em]">
+            <p className="text-[11px] font-medium text-zinc-400">
               Page {page} of {meta.totalPages} • Total {meta.total} staff
             </p>
             <div className="flex items-center gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 transition-all"
+                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
               >
                 Previous
               </button>
@@ -1253,7 +1253,7 @@ export default function FacultyManagement({
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-[12px] font-semibold tabular-nums transition-all ${page === i + 1 ? "bg-zinc-900 text-white" : "bg-white border border-zinc-200 text-zinc-400 hover:border-zinc-300 hover:text-zinc-900"}`}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-[12px] font-semibold tabular-nums transition-[color,background-color,border-color,opacity,transform,box-shadow] ${page === i + 1 ? "bg-zinc-900 text-white" : "bg-white border border-zinc-200 text-zinc-400 hover:border-zinc-300 hover:text-zinc-900"}`}
                   >
                     {i + 1}
                   </button>
@@ -1262,7 +1262,7 @@ export default function FacultyManagement({
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 transition-all"
+                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
               >
                 Next
               </button>
@@ -1286,7 +1286,7 @@ export default function FacultyManagement({
             {/* Close Button */}
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
             >
               <X size={20} />
             </button>
@@ -1317,7 +1317,7 @@ export default function FacultyManagement({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0 right-0 w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center shadow-sm hover:bg-zinc-800 transition-all active:scale-90 border-2 border-white z-10"
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center shadow-sm hover:bg-zinc-800 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-90 border-2 border-white z-10"
                 >
                   <Camera size={14} />
                 </button>
@@ -1520,7 +1520,7 @@ export default function FacultyManagement({
             {/* Close Button */}
             <button
               onClick={() => setShowViewModal(false)}
-              className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
+              className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
             >
               <X size={20} />
             </button>
@@ -1551,14 +1551,14 @@ export default function FacultyManagement({
               </h3>
 
               <div className="flex flex-col items-center gap-2.5">
-                <p className="text-zinc-400 font-medium tracking-[0.14em] text-[10px]">
+                <p className="text-zinc-400 font-medium text-[10px]">
                   {selectedFaculty.Designation || "Faculty Member"}
                 </p>
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 bg-zinc-50 rounded-full text-[11px] font-medium text-zinc-500 border border-zinc-200">
+                  <span className="px-2.5 py-1 bg-zinc-50 rounded-md text-[11px] font-medium text-zinc-500 border border-zinc-200">
                     {selectedFaculty.Department} Department
                   </span>
-                  <span className="px-2.5 py-1 bg-zinc-900 rounded-full text-[11px] font-medium text-white">
+                  <span className="px-2.5 py-1 bg-zinc-900 rounded-md text-[11px] font-medium text-white">
                     {selectedFaculty.Role
                       ? formatRoleLabel(selectedFaculty.Role)
                       : "Faculty"}
@@ -1586,7 +1586,7 @@ export default function FacultyManagement({
               <div className="space-y-6">
                 <div className="flex items-center gap-2.5 mb-2">
                   <BookOpen size={16} className="text-zinc-400" />
-                  <h4 className="text-[10px] font-semibold tracking-[0.18em] text-zinc-400">
+                  <h4 className="text-[10px] font-semibold text-zinc-400">
                     Professional Biography
                   </h4>
                 </div>
@@ -1603,7 +1603,7 @@ export default function FacultyManagement({
                             key={key}
                             className="bg-white p-5 rounded-xl border border-zinc-200/70 hover:border-zinc-300 transition-colors"
                           >
-                            <label className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 block mb-3">
+                            <label className="text-[10px] font-semibold text-zinc-400 block mb-3">
                               {key.replace(/_/g, " ")}
                             </label>
                             {Array.isArray(val) ? (

@@ -375,7 +375,7 @@ export default function WebsiteUpdatesSection() {
       <div className="flex flex-1 min-h-0 border-t border-zinc-200/70">
         <aside
           className={cn(
-            "shrink-0 flex flex-col border-r border-zinc-200/70 bg-white transition-all duration-300 ease-out",
+            "shrink-0 flex flex-col border-r border-zinc-200/70 bg-white transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300 ease-out",
             sidebarOpen ? "w-[280px]" : "w-0 overflow-hidden border-r-0",
           )}
         >
@@ -390,7 +390,7 @@ export default function WebsiteUpdatesSection() {
                   type="button"
                   onClick={() => setActiveSectionId(section.id)}
                   className={cn(
-                    "w-full flex items-start gap-3 p-3 rounded-xl text-left transition-all duration-200",
+                    "w-full flex items-start gap-3 p-3 rounded-xl text-left transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-200",
                     isActive
                       ? "bg-zinc-900 text-white shadow-sm"
                       : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900",
@@ -448,7 +448,7 @@ export default function WebsiteUpdatesSection() {
                     type="button"
                     onClick={() => setActivePage(page)}
                     className={cn(
-                      "w-full text-left px-3 py-2 rounded-lg text-[12px] font-medium transition-all duration-150",
+                      "w-full text-left px-3 py-2 rounded-lg text-[12px] font-medium transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-150",
                       activePage === page
                         ? "bg-zinc-100 text-zinc-900"
                         : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800",
@@ -489,7 +489,7 @@ export default function WebsiteUpdatesSection() {
                   {breadcrumb}
                 </p>
               </div>
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0B2A47]/5 text-[#0B2A47] border border-[#0B2A47]/10 text-[10px] font-semibold tracking-wide">
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#0B2A47]/5 text-[#0B2A47] border border-[#0B2A47]/10 text-[10px] font-semibold tracking-wide">
                 <Sparkles size={10} /> Live editor
               </span>
             </div>

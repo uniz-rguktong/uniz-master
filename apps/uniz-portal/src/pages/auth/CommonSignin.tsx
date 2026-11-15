@@ -932,12 +932,13 @@ export default function Signin({ type }: SigninProps) {
                 </div>
               </div>
 
-              {requiresCaptcha() && (
+              {requiresCaptcha() && (step === "signin" || step === "forgot") && (
                 <TurnstileWidget
                   turnstileRef={turnstileRef}
                   captchaTokenRef={captchaTokenRef}
                   onTokenChange={syncCaptchaToken}
                   onStatusChange={setCaptchaStatus}
+                  status={captchaStatus}
                 />
               )}
 
@@ -964,7 +965,7 @@ export default function Signin({ type }: SigninProps) {
                   {isLoading
                     ? "Signing in…"
                     : requiresCaptcha() && !captchaReady
-                      ? "Complete security check"
+                      ? "Waiting for security check…"
                       : "Continue"}
                 </span>
               </Button>
@@ -1003,15 +1004,6 @@ export default function Signin({ type }: SigninProps) {
               />
 
               {requiresCaptcha() && (
-                <TurnstileWidget
-                  turnstileRef={turnstileRef}
-                  captchaTokenRef={captchaTokenRef}
-                  onTokenChange={syncCaptchaToken}
-                  onStatusChange={setCaptchaStatus}
-                />
-              )}
-
-              {requiresCaptcha() && (
                 <CaptchaStatus
                   status={captchaStatus}
                   hasToken={!!captchaToken}
@@ -1032,7 +1024,7 @@ export default function Signin({ type }: SigninProps) {
                   {isLoading
                     ? "Sending…"
                     : requiresCaptcha() && !captchaReady
-                      ? "Complete security check"
+                      ? "Waiting for security check…"
                       : "Send code"}
                 </span>
               </Button>

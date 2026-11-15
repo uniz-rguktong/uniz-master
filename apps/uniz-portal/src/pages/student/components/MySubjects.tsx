@@ -86,7 +86,7 @@ export default function MySubjects({
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 uppercase">
+          <p className="text-[10px] font-semibold tracking-normal text-zinc-400">
             Semester registration
           </p>
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
@@ -99,7 +99,7 @@ export default function MySubjects({
             type="button"
             onClick={() => setActiveTab("subjects")}
             className={cn(
-              "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all",
+              "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-[color,background-color,border-color,opacity,transform]",
               activeTab === "subjects"
                 ? "bg-white text-zinc-900 shadow-sm"
                 : "text-zinc-500 hover:text-zinc-800",
@@ -113,7 +113,7 @@ export default function MySubjects({
               type="button"
               onClick={() => setActiveTab("register")}
               className={cn(
-                "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all",
+                "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-[color,background-color,border-color,opacity,transform]",
                 activeTab === "register"
                   ? "bg-white text-zinc-900 shadow-sm"
                   : "text-zinc-500 hover:text-zinc-800",

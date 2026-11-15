@@ -168,7 +168,7 @@ export function DeptStaffEditor({
         <div className="px-6 py-8 md:px-10 md:py-10 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#0B2A47]/70 mb-2">
+              <p className="text-[11px] font-semibold text-[#0B2A47]/70 mb-2">
                 RGUKT Ongole · {deptCode}
               </p>
               <h2 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
@@ -179,7 +179,7 @@ export function DeptStaffEditor({
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0B2A47]/5 text-[#0B2A47] border border-[#0B2A47]/10 text-[11px] font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#0B2A47]/5 text-[#0B2A47] border border-[#0B2A47]/10 text-[11px] font-semibold">
                 <Sparkles size={12} />
                 Live editor
               </span>
@@ -234,9 +234,9 @@ export function DeptStaffEditor({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.98 }}
                 className={cn(
-                  "group rounded-xl border bg-white overflow-hidden transition-all duration-200",
+                  "group rounded-xl border bg-white overflow-hidden transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-200",
                   isExpanded
-                    ? "border-[#0B2A47]/30 shadow-lg ring-2 ring-[#0B2A47]/10"
+                    ? "border-[#0B2A47]/30 shadow-none ring-2 ring-[#0B2A47]/10"
                     : "border-slate-200 hover:border-[#0B2A47]/25 hover:shadow-md",
                 )}
               >
@@ -292,7 +292,7 @@ export function DeptStaffEditor({
                     <div className="flex items-start justify-between gap-3 mb-4">
                       <div className="flex-1 space-y-3 min-w-0">
                         <div>
-                          <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+                          <label className="text-[10px] font-semibold text-slate-400 tracking-wide">
                             Name
                           </label>
                           <input
@@ -309,7 +309,7 @@ export function DeptStaffEditor({
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+                          <label className="text-[10px] font-semibold text-slate-400 tracking-wide">
                             Designation
                           </label>
                           <input
@@ -367,7 +367,7 @@ export function DeptStaffEditor({
 
                     <div className="grid sm:grid-cols-2 gap-3 mb-4">
                       <div>
-                        <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                        <label className="text-[10px] font-semibold text-slate-400 tracking-wide flex items-center gap-1">
                           <Mail size={10} className="text-[#0B2A47]" /> Email
                         </label>
                         <input
@@ -381,7 +381,7 @@ export function DeptStaffEditor({
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                        <label className="text-[10px] font-semibold text-slate-400 tracking-wide flex items-center gap-1">
                           <Phone size={10} /> Phone (optional)
                         </label>
                         <input
@@ -400,7 +400,7 @@ export function DeptStaffEditor({
                     </div>
 
                     <div className="mb-3">
-                      <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+                      <label className="text-[10px] font-semibold text-slate-400 tracking-wide">
                         Specialization
                       </label>
                       <input
@@ -444,7 +444,7 @@ export function DeptStaffEditor({
                       className="overflow-hidden border-t border-slate-100 bg-slate-50/50"
                     >
                       <div className="p-5 md:p-6 space-y-4">
-                        <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
+                        <p className="text-[11px] font-semibold text-slate-500 tracking-wide">
                           Extended bio sections
                         </p>
                         <div className="grid gap-4 md:grid-cols-2">
@@ -497,7 +497,7 @@ export function DeptStaffEditor({
         <button
           type="button"
           onClick={addFaculty}
-          className="w-full rounded-xl border-2 border-dashed border-slate-200 hover:border-[#0B2A47]/40 hover:bg-[#0B2A47]/[0.02] py-10 flex flex-col items-center gap-2 text-slate-400 hover:text-[#0B2A47] transition-all duration-200 group"
+          className="w-full rounded-xl border-2 border-dashed border-slate-200 hover:border-[#0B2A47]/40 hover:bg-[#0B2A47]/[0.02] py-10 flex flex-col items-center gap-2 text-slate-400 hover:text-[#0B2A47] transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-200 group"
         >
           <div className="w-12 h-12 rounded-full bg-slate-100 group-hover:bg-[#0B2A47]/10 flex items-center justify-center transition-colors">
             <Plus size={22} />

@@ -142,7 +142,7 @@ export default function AdminProfile() {
       <div className="max-w-4xl mx-auto">
         <button
           onClick={() => navigate("/admin")}
-          className="mb-8 flex items-center gap-2 text-zinc-500 hover:text-zinc-900 transition-colors font-bold tracking-[0.14em] text-[10px]"
+          className="mb-8 flex items-center gap-2 text-zinc-500 hover:text-zinc-900 transition-colors font-bold text-[10px]"
         >
           <ArrowLeft size={16} /> Back to Dashboard
         </button>
@@ -155,7 +155,7 @@ export default function AdminProfile() {
             <div className="relative -mt-16 mb-8 flex flex-col md:flex-row md:items-end gap-6">
               {/* Avatar */}
               <div className="relative group">
-                <div className="w-32 h-32 rounded-2xl bg-white p-1.5 shadow-xl">
+                <div className="w-32 h-32 rounded-2xl bg-white p-1.5 border border-navy-200/60">
                   <div className="w-full h-full rounded-2xl bg-zinc-100 flex items-center justify-center overflow-hidden relative">
                     {profile?.profile_url ? (
                       <img
@@ -164,7 +164,7 @@ export default function AdminProfile() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-5xl font-semibold text-zinc-300 ">
+                      <span className="text-5xl font-semibold text-zinc-300">
                         {(profile?.name || username)?.[0] || "?"}
                       </span>
                     )}
@@ -178,7 +178,7 @@ export default function AdminProfile() {
                 </div>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-2 right-2 w-10 h-10 bg-zinc-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-zinc-800 transition-all active:scale-90 border-4 border-white"
+                  className="absolute bottom-2 right-2 w-10 h-10 bg-zinc-900 text-white rounded-full flex items-center justify-center shadow-none hover:bg-zinc-800 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-90 border-4 border-white"
                 >
                   <Camera size={18} />
                 </button>
@@ -209,7 +209,7 @@ export default function AdminProfile() {
                         {profile?.name || username}
                       </h1>
                     )}
-                    <div className="px-3 py-1 bg-zinc-50 text-zinc-900 rounded-full text-[9px] font-semibold tracking-[0.14em] border border-zinc-100 flex items-center gap-1.5 shrink-0">
+                    <div className="px-3 py-1 bg-zinc-50 text-zinc-900 rounded-md text-[9px] font-semibold border border-zinc-100 flex items-center gap-1.5 shrink-0">
                       <Shield size={10} /> {profile?.role}
                     </div>
                   </div>
@@ -218,9 +218,9 @@ export default function AdminProfile() {
                       if (isEditing) handleUpdateProfile();
                       else setIsEditing(true);
                     }}
-                    className={`px-6 py-2.5 rounded-full font-bold text-[10px] tracking-[0.14em] border transition-all ${
+                    className={`px-6 py-2.5 rounded-md font-bold text-[10px]  border transition-[color,background-color,border-color,opacity,transform,box-shadow] ${
                       isEditing
-                        ? "bg-zinc-900 text-white border-zinc-100 shadow-lg shadow-zinc-100 hover:bg-zinc-800"
+                        ? "bg-zinc-900 text-white border-zinc-100 shadow-none hover:bg-zinc-800"
                         : "bg-white text-zinc-900 border-zinc-200 hover:border-zinc-300"
                     }`}
                   >
@@ -235,7 +235,7 @@ export default function AdminProfile() {
                 {isEditing && (
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="mt-2 text-[9px] font-bold text-zinc-400 tracking-[0.14em] hover:text-red-500 transition-colors"
+                    className="mt-2 text-[9px] font-bold text-zinc-400 hover:text-red-500 transition-colors"
                   >
                     Cancel Editing
                   </button>
@@ -291,7 +291,7 @@ export default function AdminProfile() {
             <div className="mt-8 pt-8 border-t border-zinc-100">
               <div className="flex items-center gap-2 mb-4">
                 <FileText size={18} className="text-zinc-400" />
-                <h4 className="text-[10px] font-semibold tracking-[0.14em] text-zinc-900">
+                <h4 className="text-[10px] font-semibold text-zinc-900">
                   Professional Biography
                 </h4>
               </div>
@@ -318,12 +318,12 @@ export default function AdminProfile() {
         <div className="mt-6 flex gap-4">
           <button
             onClick={() => navigate("/admin/settings")}
-            className="flex-1 bg-white border border-zinc-200 p-6 rounded-2xl hover:border-zinc-100 transition-all group"
+            className="flex-1 bg-white border border-zinc-200 p-6 rounded-2xl hover:border-zinc-100 transition-[color,background-color,border-color,opacity,transform,box-shadow] group"
           >
             <h4 className="font-bold text-zinc-900 group-hover:text-zinc-900 transition-colors mb-1">
               Security Settings
             </h4>
-            <p className="text-xs text-zinc-400 font-medium tracking-[0.14em]">
+            <p className="text-xs text-zinc-400 font-medium">
               Reset or update your password
             </p>
           </button>
@@ -352,7 +352,7 @@ function ProfileItem({
         {icon}
       </div>
       <div className="flex-1">
-        <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mb-0.5">
+        <p className="text-[10px] font-bold text-zinc-400 mb-0.5">
           {label}
         </p>
         {editable && onChange ? (

@@ -366,13 +366,13 @@ export default function UnifiedAcademicManager() {
               fetchSemesters();
               fetchMasterSubjects();
             }}
-            className="p-3 bg-white border border-zinc-100 rounded-xl text-zinc-400 hover:text-zinc-900 transition-all active:scale-95"
+            className="p-3 bg-white border border-zinc-100 rounded-xl text-zinc-400 hover:text-zinc-900 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95"
           >
             <RefreshCcw size={20} className={loading ? "animate-spin" : ""} />
           </button>
           <button
             onClick={() => setShowNewSemModal(true)}
-            className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-semibold text-[10px] tracking-[0.14em] hover:bg-black transition-all flex items-center gap-3 shadow-lg shadow-zinc-100/50"
+            className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-semibold text-[10px] hover:bg-black transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center gap-3 shadow-none"
           >
             <Zap size={14} /> New Rollout
           </button>
@@ -400,7 +400,7 @@ export default function UnifiedAcademicManager() {
               disabled={tabId === "rollout" && !selectedSem}
               onClick={() => setActiveTab(tabId)}
               className={`
-                flex items-center gap-3 px-6 py-2.5 rounded-xl font-bold text-xs tracking-[0.14em] transition-all
+                flex items-center gap-3 px-6 py-2.5 rounded-xl font-bold text-xs  transition-[color,background-color,border-color,opacity,transform,box-shadow]
                 ${
                   activeTab === tabId
                     ? "bg-white text-zinc-900 border border-zinc-100"
@@ -427,7 +427,7 @@ export default function UnifiedAcademicManager() {
                   setSelectedSem(sem);
                   setActiveTab("rollout");
                 }}
-                className="bg-white rounded-xl border border-zinc-100 p-8 transition-all group cursor-pointer overflow-hidden relative"
+                className="bg-white rounded-xl border border-zinc-100 p-8 transition-[color,background-color,border-color,opacity,transform,box-shadow] group cursor-pointer overflow-hidden relative"
               >
                 <div className="flex justify-between items-start mb-10">
                   <div
@@ -437,7 +437,7 @@ export default function UnifiedAcademicManager() {
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span
-                      className={`px-4 py-1.5 rounded-xl text-[9px] font-semibold tracking-[0.14em] border ${
+                      className={`px-4 py-1.5 rounded-xl text-[9px] font-semibold  border ${
                         sem.status === "REGISTRATION_OPEN"
                           ? "bg-emerald-50 text-emerald-600 border-emerald-100"
                           : "bg-zinc-50 text-zinc-400 border-zinc-100"
@@ -447,12 +447,12 @@ export default function UnifiedAcademicManager() {
                     </span>
                   </div>
                 </div>
-                <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight group-hover:text-zinc-900 transition-colors ">
+                <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight group-hover:text-zinc-900 transition-colors">
                   {sem.name}
                 </h3>
                 <div className="flex items-center gap-6 mt-6 mb-8">
                   <div>
-                    <p className="text-[9px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
+                    <p className="text-[9px] font-bold text-zinc-400 mb-1">
                       Enrollment
                     </p>
                     <p className="text-lg font-semibold text-zinc-900">
@@ -465,7 +465,7 @@ export default function UnifiedAcademicManager() {
                         e.stopPropagation();
                         handleDeleteSem(sem.id);
                       }}
-                      className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-none"
+                      className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -473,7 +473,7 @@ export default function UnifiedAcademicManager() {
                 </div>
                 <div className="w-full h-2 bg-zinc-50 rounded-full overflow-hidden mt-auto">
                   <div
-                    className={`h-full transition-all duration-1000 ${sem.status === "REGISTRATION_OPEN" ? "w-full bg-emerald-500" : "w-1/3 bg-zinc-500"}`}
+                    className={`h-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-1000 ${sem.status === "REGISTRATION_OPEN" ? "w-full bg-emerald-500" : "w-1/3 bg-zinc-500"}`}
                   ></div>
                 </div>
               </div>
@@ -483,7 +483,7 @@ export default function UnifiedAcademicManager() {
                 <div className="w-24 h-24 bg-zinc-50 text-zinc-900 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-white shadow-none">
                   <BookOpen size={40} strokeWidth={2.5} />
                 </div>
-                <h3 className="text-2xl font-semibold text-zinc-900 mb-3 tracking-tight italic">
+                <h3 className="text-2xl font-semibold text-zinc-900 mb-3 tracking-tight">
                   Relaxation levels are dangerously high.
                 </h3>
                 <p className="text-zinc-500 font-medium max-w-md mx-auto mb-10 leading-relaxed">
@@ -492,7 +492,7 @@ export default function UnifiedAcademicManager() {
                 </p>
                 <button
                   onClick={() => setShowNewSemModal(true)}
-                  className="px-10 py-5 bg-zinc-900 text-white rounded-xl font-semibold tracking-[0.14em] text-[10px] hover:bg-black transition-all active:scale-95 shadow-none"
+                  className="px-10 py-5 bg-zinc-900 text-white rounded-xl font-semibold text-[10px] hover:bg-black transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95 shadow-none"
                 >
                   Initiate New Rollout
                 </button>
@@ -520,7 +520,7 @@ export default function UnifiedAcademicManager() {
               <select
                 value={subDept}
                 onChange={(e) => setSubDept(e.target.value)}
-                className="h-12 px-8 bg-zinc-50 rounded-xl font-bold tracking-[0.14em] text-[10px] text-zinc-600 border-none outline-none appearance-none"
+                className="h-12 px-8 bg-zinc-50 rounded-xl font-bold text-[10px] text-zinc-600 border-none outline-none appearance-none"
               >
                 <option value="">All Departments</option>
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((d) => (
@@ -541,7 +541,7 @@ export default function UnifiedAcademicManager() {
                   });
                   setShowSubModal(true);
                 }}
-                className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-bold tracking-[0.14em] text-[10px] transition-all flex items-center gap-2 border-2 border-white/20 shadow-none"
+                className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-bold text-[10px] transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center gap-2 border-2 border-white/20 shadow-none"
               >
                 <PlusCircle size={16} /> Add New Subject
               </button>
@@ -554,10 +554,10 @@ export default function UnifiedAcademicManager() {
                   className="bg-white border border-zinc-100 rounded-xl p-5 group overflow-hidden"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 bg-zinc-50 rounded-xl text-zinc-900 border border-zinc-100 transition-all">
+                    <div className="p-3 bg-zinc-50 rounded-xl text-zinc-900 border border-zinc-100 transition-[color,background-color,border-color,opacity,transform,box-shadow]">
                       <BookText size={20} />
                     </div>
-                    <div className="px-3 py-1 bg-zinc-50 rounded-xl text-[9px] font-semibold tracking-[0.14em] text-zinc-400">
+                    <div className="px-3 py-1 bg-zinc-50 rounded-xl text-[9px] font-semibold text-zinc-400">
                       {sub.code}
                     </div>
                   </div>
@@ -565,7 +565,7 @@ export default function UnifiedAcademicManager() {
                     {sub.name}
                   </h3>
                   <div className="flex items-center justify-between mt-auto pt-4 border-t border-zinc-50">
-                    <div className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
+                    <div className="text-[10px] font-semibold text-zinc-400">
                       {sub.department} • {sub.credits} Credits
                     </div>
                     <button
@@ -597,16 +597,16 @@ export default function UnifiedAcademicManager() {
               <div className="relative z-10 flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="px-4 py-1.5 bg-zinc-500/20 text-blue-400 rounded-xl text-[10px] font-semibold tracking-[0.14em] border border-zinc-100/30">
+                    <span className="px-4 py-1.5 bg-zinc-500/20 text-blue-400 rounded-xl text-[10px] font-semibold border border-zinc-100/30">
                       Active Rollout
                     </span>
                     <span className="text-zinc-500">•</span>
-                    <span className="text-xs font-bold text-zinc-400 italic">
+                    <span className="text-xs font-bold text-zinc-400">
                       Created{" "}
                       {new Date(selectedSem.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <h2 className="text-5xl font-semibold tracking-tighter italic">
+                  <h2 className="text-5xl font-semibold tracking-tighter">
                     {selectedSem.name}
                   </h2>
                 </div>
@@ -620,10 +620,10 @@ export default function UnifiedAcademicManager() {
                           : "REGISTRATION_OPEN",
                       )
                     }
-                    className={`h-14 px-10 rounded-xl font-semibold text-[10px] tracking-[0.14em] transition-all flex items-center gap-3 ${
+                    className={`h-14 px-10 rounded-xl font-semibold text-[10px]  transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center gap-3 ${
                       selectedSem.status === "REGISTRATION_OPEN"
                         ? "bg-red-50/5 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white"
-                        : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-100"
+                        : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-none"
                     }`}
                   >
                     {selectedSem.status === "REGISTRATION_OPEN" ? (
@@ -634,7 +634,7 @@ export default function UnifiedAcademicManager() {
                   </button>
                   <button
                     onClick={handleGlobalApprove}
-                    className="h-14 px-8 bg-white/10 text-white rounded-xl font-semibold text-xs tracking-[0.14em] hover:bg-white/20 transition-all border border-white/10"
+                    className="h-14 px-8 bg-white/10 text-white rounded-xl font-semibold text-xs hover:bg-white/20 transition-[color,background-color,border-color,opacity,transform,box-shadow] border border-white/10"
                   >
                     Push Progress
                   </button>
@@ -649,7 +649,7 @@ export default function UnifiedAcademicManager() {
                   <button
                     key={v}
                     onClick={() => setRolloutView(v)}
-                    className={`pb-4 text-[13px] font-semibold tracking-[0.14em] transition-all relative ${
+                    className={`pb-4 text-[13px] font-semibold  transition-[color,background-color,border-color,opacity,transform,box-shadow] relative ${
                       rolloutView === v
                         ? "text-zinc-900"
                         : "text-zinc-400 hover:text-zinc-600"
@@ -669,7 +669,7 @@ export default function UnifiedAcademicManager() {
                   <select
                     value={filterBranch}
                     onChange={(e) => setFilterBranch(e.target.value)}
-                    className="font-semibold text-[10px] tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
+                    className="font-semibold text-[10px] text-zinc-700 outline-none border-none bg-transparent"
                   >
                     <option value="all">All Branches</option>
                     {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
@@ -684,7 +684,7 @@ export default function UnifiedAcademicManager() {
                   <select
                     value={filterYear}
                     onChange={(e) => setFilterYear(e.target.value)}
-                    className="font-semibold text-[10px] tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
+                    className="font-semibold text-[10px] text-zinc-700 outline-none border-none bg-transparent"
                   >
                     <option value="all">All Years</option>
                     {["E1", "E2", "E3", "E4"].map((y) => (
@@ -699,7 +699,7 @@ export default function UnifiedAcademicManager() {
                   <select
                     value={filterBatch}
                     onChange={(e) => setFilterBatch(e.target.value)}
-                    className="font-semibold text-[10px] tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
+                    className="font-semibold text-[10px] text-zinc-700 outline-none border-none bg-transparent"
                   >
                     <option value="all">All Batches</option>
                     {availableBatches.map((b) => (
@@ -712,7 +712,7 @@ export default function UnifiedAcademicManager() {
                 {rolloutView === "allocations" && (
                   <button
                     onClick={() => setShowAddAllocModal(true)}
-                    className="flex items-center gap-2 bg-zinc-900 text-white px-6 py-2.5 rounded-xl font-semibold text-[10px] tracking-[0.14em] shadow-none hover:scale-105 active:scale-95 transition-all"
+                    className="flex items-center gap-2 bg-zinc-900 text-white px-6 py-2.5 rounded-xl font-semibold text-[10px] shadow-none active:scale-95 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                   >
                     <Plus size={14} /> Add subject
                   </button>
@@ -724,7 +724,7 @@ export default function UnifiedAcademicManager() {
               {rolloutView === "allocations" ? (
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-zinc-50/50 text-[10px] font-semibold tracking-[0.14em] text-zinc-400 border-b border-zinc-100">
+                    <tr className="bg-zinc-50/50 text-[10px] font-semibold text-zinc-400 border-b border-zinc-100">
                       <th className="px-10 py-6">Course Structure</th>
                       <th className="px-10 py-6">Branch / Year</th>
                       <th className="px-10 py-6">Status</th>
@@ -739,14 +739,14 @@ export default function UnifiedAcademicManager() {
                       >
                         <td className="px-10 py-6">
                           <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 bg-zinc-50 rounded-xl flex items-center justify-center text-zinc-300 group-hover:text-zinc-900 group-hover:bg-zinc-50 transition-all">
+                            <div className="w-12 h-12 bg-zinc-50 rounded-xl flex items-center justify-center text-zinc-300 group-hover:text-zinc-900 group-hover:bg-zinc-50 transition-[color,background-color,border-color,opacity,transform,box-shadow]">
                               <BookOpen size={20} />
                             </div>
                             <div>
                               <p className="font-bold text-zinc-900">
                                 {item.customName || item.subject.name}
                               </p>
-                              <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
+                              <p className="text-[10px] font-semibold text-zinc-400">
                                 {item.subject.code} •{" "}
                                 {item.customCredits || item.subject.credits}{" "}
                                 Credits
@@ -756,14 +756,14 @@ export default function UnifiedAcademicManager() {
                         </td>
                         <td className="px-10 py-6">
                           <div className="flex items-center gap-2">
-                            <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-xl text-[9px] font-semibold tracking-[0.14em]">
+                            <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-xl text-[9px] font-semibold">
                               {item.branch}
                             </span>
-                            <span className="px-3 py-1 bg-zinc-50 text-zinc-900 rounded-xl text-[9px] font-semibold tracking-[0.14em]">
+                            <span className="px-3 py-1 bg-zinc-50 text-zinc-900 rounded-xl text-[9px] font-semibold">
                               {item.academicYear}
                             </span>
                             {item.batch && (
-                              <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-semibold tracking-[0.14em]">
+                              <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-semibold">
                                 {item.batch}
                               </span>
                             )}
@@ -772,9 +772,9 @@ export default function UnifiedAcademicManager() {
                         <td className="px-10 py-6">
                           <div className="flex items-center gap-2">
                             <div
-                              className={`w-2 h-2 rounded-full ${item.status === "APPROVED" ? "bg-emerald-500 animate-pulse" : "bg-amber-400"}`}
+                              className={`w-2 h-2 rounded-full ${item.status === "APPROVED" ? "bg-emerald-500" : "bg-amber-400"}`}
                             ></div>
-                            <span className="text-[11px] font-extrabold tracking-tight text-zinc-600">
+                            <span className="text-[11px] font-semibold tracking-tight text-zinc-600">
                               {formatStatus(item.status)}
                             </span>
                           </div>
@@ -782,7 +782,7 @@ export default function UnifiedAcademicManager() {
                         <td className="px-10 py-6 text-right">
                           <button
                             onClick={() => handleRemoveAlloc(item.id)}
-                            className="p-3 bg-red-50 text-red-500 rounded-xl opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
+                            className="p-3 bg-red-50 text-red-500 rounded-xl opacity-0 group-hover:opacity-100 transition-[color,background-color,border-color,opacity,transform,box-shadow] hover:bg-red-500 hover:text-white"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -794,7 +794,7 @@ export default function UnifiedAcademicManager() {
               ) : (
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-zinc-50/50 text-[10px] font-semibold tracking-[0.14em] text-zinc-400 border-b border-zinc-100">
+                    <tr className="bg-zinc-50/50 text-[10px] font-semibold text-zinc-400 border-b border-zinc-100">
                       <th className="px-10 py-6">Enrolled Student</th>
                       <th className="px-10 py-6">Batch</th>
                       <th className="px-10 py-6">Allocated Course</th>
@@ -818,7 +818,7 @@ export default function UnifiedAcademicManager() {
                           </div>
                         </td>
                         <td className="px-10 py-6">
-                          <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-semibold tracking-[0.14em]">
+                          <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-semibold">
                             {reg.batch || "N/A"}
                           </span>
                         </td>
@@ -827,7 +827,7 @@ export default function UnifiedAcademicManager() {
                             <p className="text-xs font-bold text-zinc-800">
                               {reg.subject.name}
                             </p>
-                            <p className="text-[9px] font-semibold italic text-zinc-400">
+                            <p className="text-[9px] font-semibold text-zinc-400">
                               {reg.subject.code}
                             </p>
                           </div>
@@ -849,7 +849,7 @@ export default function UnifiedAcademicManager() {
                   <div className="w-20 h-20 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-6 text-zinc-200">
                     <X size={40} />
                   </div>
-                  <p className="text-zinc-400 font-bold tracking-[0.14em] text-xs">
+                  <p className="text-zinc-400 font-bold text-xs">
                     Zero activity detected for these parameters.
                   </p>
                 </div>
@@ -871,7 +871,7 @@ export default function UnifiedAcademicManager() {
             <button
               type="button"
               onClick={() => setShowNewSemModal(false)}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
             >
               <X size={20} />
             </button>
@@ -914,7 +914,7 @@ export default function UnifiedAcademicManager() {
                     >
                       <div
                         className={cn(
-                          "w-4 h-4 rounded border flex items-center justify-center transition-all",
+                          "w-4 h-4 rounded border flex items-center justify-center transition-[color,background-color,border-color,opacity,transform,box-shadow]",
                           allBranchesSelected
                             ? "bg-zinc-900 border-zinc-900"
                             : "border-zinc-300 group-hover:border-zinc-500",
@@ -944,7 +944,7 @@ export default function UnifiedAcademicManager() {
                             )
                           }
                           className={cn(
-                            "h-10 rounded-xl text-[12px] font-semibold border transition-all",
+                            "h-10 rounded-xl text-[12px] font-semibold border transition-[color,background-color,border-color,opacity,transform,box-shadow]",
                             selectedBranches.includes(b)
                               ? "bg-zinc-900 text-white border-zinc-900"
                               : "bg-white text-zinc-500 border-zinc-200 hover:border-zinc-300",

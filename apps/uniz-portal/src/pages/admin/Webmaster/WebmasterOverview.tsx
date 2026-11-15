@@ -207,7 +207,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
               title="Update photo"
-              className="absolute -bottom-0.5 -right-0.5 w-6 h-6 bg-white border border-zinc-200 rounded-full flex items-center justify-center text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 shadow-[0_1px_2px_rgba(10,10,10,0.08)] transition-all active:scale-95 disabled:opacity-50"
+              className="absolute -bottom-0.5 -right-0.5 w-6 h-6 bg-white border border-zinc-200 rounded-md flex items-center justify-center text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 shadow-[0_1px_2px_rgba(10,10,10,0.08)] transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95 disabled:opacity-50"
             >
               <Camera className="w-3 h-3" strokeWidth={2.2} />
             </button>
@@ -238,7 +238,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                 {metaTags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[10px] font-medium text-zinc-500 capitalize"
+                    className="rounded-md border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[10px] font-medium text-zinc-500 capitalize"
                   >
                     {tag}
                   </span>
@@ -251,7 +251,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
             onClick={() => setIsEditing((v) => !v)}
             title="Edit profile"
             className={cn(
-              "shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center transition-all active:scale-95",
+              "shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95",
               isEditing
                 ? "bg-zinc-900 border-zinc-900 text-white"
                 : "bg-white border-zinc-200 text-zinc-500 hover:text-zinc-900 hover:border-zinc-300",
@@ -288,7 +288,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                       <Icon size={13} className="text-zinc-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.12em]">
+                      <p className="text-[10px] font-semibold text-zinc-400">
                         {label}
                       </p>
                       <input
@@ -309,7 +309,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-zinc-900 text-white text-[13px] font-medium hover:bg-zinc-800 transition-all disabled:opacity-60 active:scale-[0.98]"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-zinc-900 text-white text-[13px] font-medium hover:bg-zinc-800 transition-[color,background-color,border-color,opacity,transform,box-shadow] disabled:opacity-60 active:scale-[0.98]"
                 >
                   {isSaving ? (
                     <Loader2 size={14} className="animate-spin" />
@@ -329,7 +329,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                       department: profile?.department || "",
                     });
                   }}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-zinc-200 text-zinc-600 text-[13px] font-medium hover:bg-zinc-50 hover:border-zinc-300 transition-all"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-zinc-200 text-zinc-600 text-[13px] font-medium hover:bg-zinc-50 hover:border-zinc-300 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                 >
                   <X size={14} /> Cancel
                 </button>
