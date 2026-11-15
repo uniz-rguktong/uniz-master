@@ -17,10 +17,6 @@ export function Layout({ children }: LayoutProps) {
 
   useAdminDesktopViewport();
 
-  // useWebSocket(undefined, (msg) => {
-  //   console.log("Real-time update signal:", msg);
-  // });
-
   const shouldHideNavbar =
     location.pathname.startsWith("/student") ||
     location.pathname.startsWith("/admin") ||
@@ -40,7 +36,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div
-      className={`flex flex-col ${isHomePage ? "h-dvh overflow-hidden bg-[#F5F7FA] pt-14" : "min-h-screen bg-white portal-page-shell"} text-navy-900 selection:bg-navy-100 selection:text-navy-900`}
+      className={`flex flex-col ${isHomePage ? "min-h-screen bg-white" : "min-h-screen bg-white portal-page-shell pt-14"} text-navy-900 selection:bg-navy-100 selection:text-navy-900`}
     >
       <Suspense fallback={<LoadingAnim />}>
         <Navbar />
@@ -48,9 +44,7 @@ export function Layout({ children }: LayoutProps) {
       <main
         className={`flex min-h-0 flex-1 flex-col ${isHomePage ? "" : "max-w-[1600px] w-full mx-auto p-4 sm:p-6 md:p-10"} animate-in fade-in duration-500`}
       >
-        <div className="flex h-full min-h-0 w-full flex-1 flex-col">
-          {children}
-        </div>
+        <div className="flex min-h-0 w-full flex-1 flex-col">{children}</div>
       </main>
     </div>
   );
@@ -58,10 +52,10 @@ export function Layout({ children }: LayoutProps) {
 
 const LoadingAnim = () => {
   return (
-    <div className="flex items-center justify-center h-screen bg-white">
+    <div className="flex h-screen items-center justify-center bg-white">
       <div className="relative flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-[#D4E8F5] rounded-full"></div>
-        <div className="absolute w-12 h-12 border-4 border-[#0B2A47] border-t-transparent rounded-full animate-spin"></div>
+        <div className="h-12 w-12 rounded-full border-4 border-[#D4E8F5]" />
+        <div className="absolute h-12 w-12 animate-spin rounded-full border-4 border-[#0B2A47] border-t-transparent" />
       </div>
     </div>
   );
