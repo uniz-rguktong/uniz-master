@@ -21,6 +21,10 @@ TODAY = date.today().strftime("%d %B %Y")
 DOC_TITLE = "UniZ UI Guidance"
 MD_NAME = "UniZ-UI-Guidance.md"
 DOCX_NAME = "UniZ-UI-Guidance.docx"
+PDF_NAME = "UniZ-UI-Guidance.pdf"
+AUTHOR = "SreeCharan Desu"
+AUTHOR_ROLE = "UniZ · RGUKT Ongole"
+CREDIT_LINE = f"Prepared and maintained by {AUTHOR} ({AUTHOR_ROLE})."
 
 # ---------------------------------------------------------------------------
 # Content model
@@ -1024,26 +1028,43 @@ def write_markdown():
     parts.append(f"# {DOC_TITLE}")
     parts.append("")
     parts.append(f"**Institution.** RGUKT Ongole  ")
+    parts.append(f"**Prepared by.** {AUTHOR}  ")
     parts.append(f"**Document date.** {TODAY}  ")
     parts.append(f"**Audience.** Campus users and trainers  ")
     parts.append(f"**Portal.** [{PORTAL}]({PORTAL})  ")
     parts.append(f"**Technical docs.** [{DOCS_BASE}/]({DOCS_BASE}/)  ")
     parts.append(f"**Action flows.** [{ACTION_FLOWS}]({ACTION_FLOWS})  ")
-    parts.append("**Repo mirror.** `apps/uniz-docs/`")
+    parts.append("")
+    parts.append(f"*{CREDIT_LINE}*")
     parts.append("")
     parts.append("---")
     parts.append("")
     parts.append("## How to use this guide")
     parts.append("")
-    parts.append("This document is a UI guidance inventory: every portal feature and every user-facing action, organized by role. It is not an architecture or API reference.")
+    parts.append(
+        "This is a **trainer-facing UI inventory** of the UniZ portal: what each screen is for, "
+        "who can use it, how to open it, and what every control does. It is not an API or architecture manual."
+    )
     parts.append("")
-    parts.append("For each feature you will find: what it is, who can use it, how to open it (navigation + URL from `apps/uniz-portal/src/App.tsx` and admin section routes), every actionable control, and what happens when the control is used. Where a matching page exists under the institutional docs site, a link is included.")
+    parts.append(
+        "For each feature you get: a short description, the audience, the entry path (menu + URL), "
+        "an actions table (control → outcome), and a docs link when one exists."
+    )
     parts.append("")
-    parts.append(f"> **Technical details.** For endpoints, storage, and deployment use [{DOCS_BASE}/]({DOCS_BASE}/) and especially [Action flows]({ACTION_FLOWS}). Prefer those pages over this guide for API behaviour.")
+    parts.append(
+        f"> **Technical details.** APIs, storage, and deploy live in [{DOCS_BASE}/]({DOCS_BASE}/) "
+        f"— especially [Action flows]({ACTION_FLOWS}). Prefer those pages for backend behaviour."
+    )
     parts.append("")
-    parts.append("**Screenshot policy.** Public pages in this revision were captured against a local Vite build of `apps/uniz-portal` (production capture is often blocked by Cloudflare challenge). Authenticated screens are described from React UI source and docs; those sections are marked *Live screenshot pending test account*. No production credentials were used or stored.")
+    parts.append(
+        "**Screenshots.** Public pages in this revision were captured from a local portal build "
+        "(live production capture is often blocked by Cloudflare). Authenticated screens are described "
+        "from the UI source and marked *Live screenshot pending test account*. No production credentials were used."
+    )
     parts.append("")
-    parts.append("**Feature flags.** Outing and outpass student/admin flows are gated by `VITE_ENABLE_OUTPASS_OUTING` (default off). Related routes may be commented out in `App.tsx` while the flag is off.")
+    parts.append(
+        "**Feature flags.** Outing and outpass flows stay off unless `VITE_ENABLE_OUTPASS_OUTING` is enabled."
+    )
     parts.append("")
     parts.append("---")
     parts.append("")
@@ -1124,6 +1145,17 @@ def write_markdown():
     parts.append("- Outing/outpass UI is inventoried but routes are commented while `VITE_ENABLE_OUTPASS_OUTING` is off.")
     parts.append("- StudySpace and CampusHub pages exist in source but are not mounted in `App.tsx`.")
     parts.append("- Faculty grade/attendance upload UX is primarily covered in admin academics sections and faculty docs; the faculty portal UI focuses on profile and branch students.")
+    parts.append("")
+    parts.append("---")
+    parts.append("")
+    parts.append("## Credits")
+    parts.append("")
+    parts.append(CREDIT_LINE)
+    parts.append("")
+    parts.append(
+        "UniZ is built for RGUKT Ongole. Portal: "
+        f"[{PORTAL}]({PORTAL}). Technical documentation: [{DOCS_BASE}/]({DOCS_BASE}/)."
+    )
     parts.append("")
 
     text = "\n".join(parts)
@@ -1216,16 +1248,43 @@ def write_docx():
     section.right_margin = Inches(0.9)
 
     # Title page
-    for _ in range(3):
+    for _ in range(2):
         doc.add_paragraph()
-    add_para(doc, DOC_TITLE, size=28, bold=True, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=12, color=RGBColor(0x0B, 0x2A, 0x47))
-    add_para(doc, "RGUKT Ongole", size=14, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=6)
-    add_para(doc, "Campus users and trainers", size=12, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=6)
-    add_para(doc, TODAY, size=12, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=18)
-    add_para(doc, f"Portal: {PORTAL}", size=11, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=4)
-    add_para(doc, f"Technical docs: {DOCS_BASE}/", size=11, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=4)
-    add_para(doc, f"Action flows: {ACTION_FLOWS}", size=11, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=4)
-    add_para(doc, "UI guidance — features and user actions by role", size=11, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=24)
+    add_para(
+        doc,
+        "uniZ.",
+        size=36,
+        bold=True,
+        align=WD_ALIGN_PARAGRAPH.CENTER,
+        space_after=8,
+        color=RGBColor(0x0B, 0x2A, 0x47),
+    )
+    add_para(
+        doc,
+        DOC_TITLE,
+        size=24,
+        bold=True,
+        align=WD_ALIGN_PARAGRAPH.CENTER,
+        space_after=10,
+        color=RGBColor(0x0B, 0x2A, 0x47),
+    )
+    add_para(
+        doc,
+        "Features and user actions by role",
+        size=12,
+        align=WD_ALIGN_PARAGRAPH.CENTER,
+        space_after=18,
+        color=RGBColor(0x3D, 0x4F, 0x5F),
+    )
+    add_para(doc, "RGUKT Ongole", size=14, bold=True, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=4)
+    add_para(doc, "Campus users and trainers", size=12, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=14)
+    add_para(doc, f"Prepared by {AUTHOR}", size=12, bold=True, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=4, color=RGBColor(0x0B, 0x2A, 0x47))
+    add_para(doc, AUTHOR_ROLE, size=11, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=4)
+    add_para(doc, TODAY, size=11, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=20)
+    add_para(doc, f"Portal · {PORTAL}", size=10, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=2)
+    add_para(doc, f"Technical docs · {DOCS_BASE}/", size=10, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=2)
+    add_para(doc, f"Action flows · {ACTION_FLOWS}", size=10, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=18)
+    add_para(doc, CREDIT_LINE, size=10, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=6, color=RGBColor(0x52, 0x52, 0x52))
     doc.add_page_break()
 
     # TOC placeholder
@@ -1245,18 +1304,41 @@ def write_docx():
         "Appendix B. Feature → docs URL map",
         "Appendix C. Screenshot checklist",
         "Appendix D. Known gaps",
+        "Credits",
     ]
     for i, item in enumerate(toc_items, 1):
         add_para(doc, f"{i}. {item}", size=11, space_after=4)
-    add_para(doc, "Tip. In Microsoft Word, use References → Table of Contents to refresh a dynamic TOC if desired.", size=9, color=RGBColor(0x66, 0x66, 0x66))
+    add_para(
+        doc,
+        "Tip. In Microsoft Word, use References → Table of Contents for a dynamic TOC.",
+        size=9,
+        color=RGBColor(0x66, 0x66, 0x66),
+    )
     doc.add_page_break()
 
     add_heading_sc(doc, "How to use this guide", 1)
-    add_para(doc, "This document is a UI guidance inventory: every portal feature and every user-facing action, organized by role. It is not an architecture or API reference.")
-    add_para(doc, "For each feature: what it is, who can use it, entry path (navigation + URL from App.tsx and admin section routes), every actionable control, and the plain-language outcome. Matching docs pages under the institutional docs site are linked when they exist.")
-    add_para(doc, f"Technical details. Use {DOCS_BASE}/ for APIs and {ACTION_FLOWS} for end-to-end action flows. Prefer those pages for endpoints, storage, and deployment.", size=10, color=RGBColor(0x33, 0x33, 0x33))
-    add_para(doc, "Screenshot policy. Public pages in this revision were captured against a local Vite build of apps/uniz-portal (production capture is often blocked by Cloudflare challenge). Authenticated screens are described from React UI source and docs and marked Live screenshot pending test account. No production credentials were used or stored.")
-    add_para(doc, "Feature flags. Outing and outpass flows are gated by VITE_ENABLE_OUTPASS_OUTING (default off). Related routes may be commented out in App.tsx while the flag is off.")
+    add_para(
+        doc,
+        "This is a trainer-facing UI inventory of the UniZ portal: what each screen is for, who can use it, how to open it, and what every control does. It is not an API or architecture manual.",
+    )
+    add_para(
+        doc,
+        "For each feature: a short description, the audience, the entry path (menu + URL), an actions table (control → outcome), and a docs link when one exists.",
+    )
+    add_para(
+        doc,
+        f"Technical details. APIs and deploy live at {DOCS_BASE}/ — especially Action flows at {ACTION_FLOWS}. Prefer those pages for backend behaviour.",
+        size=10,
+        color=RGBColor(0x33, 0x33, 0x33),
+    )
+    add_para(
+        doc,
+        "Screenshots. Public pages were captured from a local portal build (live capture is often blocked by Cloudflare). Authenticated screens are described from the UI source and marked Live screenshot pending test account. No production credentials were used.",
+    )
+    add_para(
+        doc,
+        "Feature flags. Outing and outpass flows stay off unless VITE_ENABLE_OUTPASS_OUTING is enabled.",
+    )
 
     add_heading_sc(doc, "Role overview", 1)
     table = doc.add_table(rows=1, cols=3)
@@ -1373,16 +1455,152 @@ def write_docx():
     ]:
         add_para(doc, f"- {gap}", size=10, space_after=4)
 
+    add_heading_sc(doc, "Credits", 1)
+    add_para(doc, CREDIT_LINE, size=11, bold=True, space_after=8)
+    add_para(
+        doc,
+        f"UniZ is built for RGUKT Ongole. Portal: {PORTAL}. Technical documentation: {DOCS_BASE}/.",
+        size=10,
+        space_after=6,
+    )
+
+    # Footer credit on sections
+    section = doc.sections[0]
+    footer = section.footer
+    fp = footer.paragraphs[0] if footer.paragraphs else footer.add_paragraph()
+    fp.text = f"{DOC_TITLE} · {AUTHOR} · {TODAY} · Confidential to RGUKT Ongole trainers"
+    for r in fp.runs:
+        set_run_font(r, size=8, color=RGBColor(0x88, 0x88, 0x88))
+    fp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
     out = ROOT / DOCX_NAME
     doc.save(out)
     return out
 
 
+def write_pdf_from_markdown(md_text: str) -> Path:
+    """Render a clean HTML view of the guide to PDF (xhtml2pdf)."""
+    import html as html_lib
+    import re
+
+    import markdown as md_lib
+    from xhtml2pdf import pisa
+
+    # Helvetica lacks some Unicode; normalize for PDF output.
+    pdf_md = (
+        md_text.replace("→", "->")
+        .replace("—", "-")
+        .replace("–", "-")
+        .replace("·", "|")
+        .replace("…", "...")
+    )
+    body = md_lib.markdown(
+        pdf_md,
+        extensions=["tables", "fenced_code", "sane_lists"],
+    )
+
+    def rewrite_img(m: re.Match[str]) -> str:
+        src = m.group(1)
+        if src.startswith("screenshots/"):
+            abs_path = (ROOT / src).resolve().as_uri()
+            return f'src="{abs_path}"'
+        return m.group(0)
+
+    body = re.sub(r'src="(screenshots/[^"]+)"', rewrite_img, body)
+
+    html_doc = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>{html_lib.escape(DOC_TITLE)}</title>
+<meta name="author" content="{html_lib.escape(AUTHOR)}"/>
+<style>
+  @page {{
+    size: A4;
+    margin: 18mm 16mm 20mm 16mm;
+    @frame footer {{
+      -pdf-frame-content: footerContent;
+      bottom: 8mm;
+      margin-left: 16mm;
+      margin-right: 16mm;
+      height: 10mm;
+    }}
+  }}
+  body {{
+    font-family: Helvetica, Arial, sans-serif;
+    color: #1a1a1a;
+    font-size: 10pt;
+    line-height: 1.4;
+  }}
+  h1 {{ color: #0B2A47; font-size: 20pt; margin: 0 0 10pt; }}
+  h2 {{
+    color: #0B2A47;
+    font-size: 13pt;
+    margin: 18pt 0 6pt;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 3pt;
+  }}
+  h3 {{ color: #0B2A47; font-size: 11.5pt; margin: 12pt 0 4pt; }}
+  p, li {{ margin: 0 0 6pt; }}
+  blockquote {{
+    margin: 8pt 0;
+    padding: 6pt 10pt;
+    border-left: 3px solid #0B2A47;
+    background: #f5f7fa;
+    color: #525252;
+  }}
+  table {{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 6pt 0 10pt;
+    font-size: 8.5pt;
+  }}
+  th, td {{
+    border: 1px solid #d1d5db;
+    padding: 4pt 6pt;
+    text-align: left;
+    vertical-align: top;
+  }}
+  th {{ background: #f5f7fa; color: #0B2A47; }}
+  img {{
+    max-width: 95%;
+    height: auto;
+    display: block;
+    margin: 8pt auto;
+  }}
+  code {{ font-size: 0.9em; }}
+  hr {{ border: none; border-top: 1px solid #e5e7eb; margin: 14pt 0; }}
+  #footerContent {{
+    font-size: 8pt;
+    color: #888888;
+    text-align: center;
+  }}
+</style>
+</head>
+<body>
+{body}
+<div id="footerContent">
+  {html_lib.escape(DOC_TITLE)} | {html_lib.escape(AUTHOR)} | {html_lib.escape(TODAY)} | Page <pdf:pagenumber/>
+</div>
+</body>
+</html>
+"""
+
+    out = ROOT / PDF_NAME
+    with out.open("wb") as fh:
+        status = pisa.CreatePDF(html_doc, dest=fh, encoding="utf-8")
+    if status.err:
+        raise RuntimeError(f"PDF generation failed with {status.err} errors")
+    return out
+
+
 def main():
-    write_markdown()
+    md = write_markdown()
     out = write_docx()
+    pdf = write_pdf_from_markdown(md)
     print("Wrote", ROOT / MD_NAME)
     print("Wrote", out)
+    print("Wrote", pdf)
 
 
 if __name__ == "__main__":

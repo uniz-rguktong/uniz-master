@@ -1,26 +1,28 @@
 # UniZ UI Guidance
 
 **Institution.** RGUKT Ongole  
+**Prepared by.** SreeCharan Desu  
 **Document date.** 15 November 2026  
 **Audience.** Campus users and trainers  
 **Portal.** [https://uniz.rguktong.in](https://uniz.rguktong.in)  
 **Technical docs.** [https://api-uniz.rguktong.in/docs/](https://api-uniz.rguktong.in/docs/)  
 **Action flows.** [https://api-uniz.rguktong.in/docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows)  
-**Repo mirror.** `apps/uniz-docs/`
+
+*Prepared and maintained by SreeCharan Desu (UniZ · RGUKT Ongole).*
 
 ---
 
 ## How to use this guide
 
-This document is a UI guidance inventory: every portal feature and every user-facing action, organized by role. It is not an architecture or API reference.
+This is a **trainer-facing UI inventory** of the UniZ portal: what each screen is for, who can use it, how to open it, and what every control does. It is not an API or architecture manual.
 
-For each feature you will find: what it is, who can use it, how to open it (navigation + URL from `apps/uniz-portal/src/App.tsx` and admin section routes), every actionable control, and what happens when the control is used. Where a matching page exists under the institutional docs site, a link is included.
+For each feature you get: a short description, the audience, the entry path (menu + URL), an actions table (control → outcome), and a docs link when one exists.
 
-> **Technical details.** For endpoints, storage, and deployment use [https://api-uniz.rguktong.in/docs/](https://api-uniz.rguktong.in/docs/) and especially [Action flows](https://api-uniz.rguktong.in/docs/system/action-flows). Prefer those pages over this guide for API behaviour.
+> **Technical details.** APIs, storage, and deploy live in [https://api-uniz.rguktong.in/docs/](https://api-uniz.rguktong.in/docs/) — especially [Action flows](https://api-uniz.rguktong.in/docs/system/action-flows). Prefer those pages for backend behaviour.
 
-**Screenshot policy.** Public pages in this revision were captured against a local Vite build of `apps/uniz-portal` (production capture is often blocked by Cloudflare challenge). Authenticated screens are described from React UI source and docs; those sections are marked *Live screenshot pending test account*. No production credentials were used or stored.
+**Screenshots.** Public pages in this revision were captured from a local portal build (live production capture is often blocked by Cloudflare). Authenticated screens are described from the UI source and marked *Live screenshot pending test account*. No production credentials were used.
 
-**Feature flags.** Outing and outpass student/admin flows are gated by `VITE_ENABLE_OUTPASS_OUTING` (default off). Related routes may be commented out in `App.tsx` while the flag is off.
+**Feature flags.** Outing and outpass flows stay off unless `VITE_ENABLE_OUTPASS_OUTING` is enabled.
 
 ---
 
@@ -1243,3 +1245,11 @@ Admin shell tabs sync to paths via `apps/uniz-portal/src/utils/adminSectionRoute
 - Outing/outpass UI is inventoried but routes are commented while `VITE_ENABLE_OUTPASS_OUTING` is off.
 - StudySpace and CampusHub pages exist in source but are not mounted in `App.tsx`.
 - Faculty grade/attendance upload UX is primarily covered in admin academics sections and faculty docs; the faculty portal UI focuses on profile and branch students.
+
+---
+
+## Credits
+
+Prepared and maintained by SreeCharan Desu (UniZ · RGUKT Ongole).
+
+UniZ is built for RGUKT Ongole. Portal: [https://uniz.rguktong.in](https://uniz.rguktong.in). Technical documentation: [https://api-uniz.rguktong.in/docs/](https://api-uniz.rguktong.in/docs/).
