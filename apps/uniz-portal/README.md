@@ -1,57 +1,37 @@
-# UniZ Portal - Unified Student & Admin Frontend
+# UniZ Portal
 
-![React](https://img.shields.io/badge/React-18.x-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![Recharts](https://img.shields.io/badge/Recharts-Analytics-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
+Student, faculty, and admin SPA for [uniz.rguktong.in](https://uniz.rguktong.in).
 
-> **UniZ Student Success Platform**
-> _Providing a seamless, high-performance interface for campus movement, academics, and profile management._
+React + Vite + TypeScript + Tailwind. Deploys on **Cloudflare Pages** (K8s portal Deployment is parked).
 
-## Architecture Overview
+## Brand & home
 
-The UniZ Portal is a high-performance Single Page Application (SPA) built using React and Vite. It serves as the primary touchpoint for students, administrative staff, wardens, and security personnel. The application is designed with a mobile-first approach, leveraging Tailwind CSS for responsive styling and Framer Motion for interactive micro-animations. It communicates exclusively with the Edge Gateway to orchestrate requests across the microservices ecosystem.
+- Palette: navy `#0B2A47` + white + black (`src/index.css`, `src/lib/portal-ui.ts`)
+- Public home: `src/pages/home.tsx` — Elaya Layout A (Manrope, split hero + product preview, scrollable)
+- Wordmark: Pattaya (`uniZ.`)
+- Sign-in: Cloudflare Turnstile when `VITE_TURNSTILE_SITE_KEY` is set; `src/utils/prefetchTurnstile.ts` warms the script on boot and Get started hover/focus
 
-## Key Features
+## Layouts
 
-- **Dynamic Dashboards**: Real-time academic results and attendance visualizations.
-- **Workflow Management**: Comprehensive outpass and outing request tracking with multi-role approval visibility.
-- **Admin Command Center**: Powerful tools for student management, bulk data ingestion, and system monitoring.
-- **Security Protocols**: Integration with border control endpoints for student checkout/checkin.
+| Audience | Entry |
+|----------|--------|
+| Public | `/` home, `/developers`, `/privacy`, SEO landings |
+| Student | `/student/*` after `/student/signin` |
+| Faculty | `/faculty` (admin sign-in → faculty role) |
+| Staff / admin | `/admin/*` after `/admin/signin` |
 
-## Technology Stack
+Trainer inventory (features + actions by role): [`docs/guides/UniZ-UI-Guidance.docx`](../../docs/guides/UniZ-UI-Guidance.docx). API / action flows: [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs).
 
-| Layer          | Technology              | Purpose                                                     |
-| :------------- | :---------------------- | :---------------------------------------------------------- |
-| **Framework**  | `React` + `Vite`        | Fast, modern frontend development and bundling.             |
-| **Styling**    | `Tailwind CSS`          | Utility-first CSS for rapid, consistent UI development.     |
-| **State**      | `Recoil` / `SWR`        | Management of global state and efficient data fetching.     |
-| **Charts**     | `Recharts` / `Chart.js` | Advanced data visualization for academic performance.       |
-| **Components** | `Radix UI` / `Lucide`   | Accessible, unstyled primitives and consistent iconography. |
+## Local
 
-## Getting Started
+```bash
+cp .env.example .env   # set VITE_API_URL; optional VITE_TURNSTILE_SITE_KEY
+npm install
+npm run dev
+```
 
-### Prerequisites
+http://localhost:5173 — monorepo setup: root [README](../../README.md) and [docs/local/LOCAL_SETUP.md](../../docs/local/LOCAL_SETUP.md).
 
-- Node.js 20+
-- Access to the UniZ Gateway API
+## Stack
 
-### Local Development
-
-1. **Setup Environment**:
-   ```bash
-   cp .env.example .env
-   npm install
-   ```
-2. **Run Application**:
-   ```bash
-   npm run dev
-   ```
-   Access the portal at `http://localhost:5173`.
-
----
-
-<p align="center">
-  Corporate Technical Infrastructure - internal Use Only
-</p>
+React 18 · Vite · Tailwind · Framer Motion · Radix · SWR / Recoil · Recharts
