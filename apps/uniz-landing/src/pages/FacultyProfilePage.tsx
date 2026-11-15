@@ -3,6 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getDepartmentStaff } from "../types/api";
 import type { FacultyMember, DeptCode } from "../types/api";
 import { Mail, ArrowLeft, BookOpen, Briefcase, FlaskConical, Award, FileText } from "lucide-react";
+import { PersonPhoto } from "../components/common/PersonPhoto";
+import { initials } from "../lib/initials";
+import { usePageTitle } from "../lib/usePageTitle";
+import { CampusBoot } from "../components/CampusBoot";
 
 const DEPT_NAMES: Record<string, string> = {
   CSE:         "Computer Science & Engineering",
@@ -66,6 +70,9 @@ export function FacultyProfilePage() {
 
   const code = deptCode?.toUpperCase() ?? "";
   const deptName = DEPT_NAMES[code] ?? code;
+  usePageTitle(
+    faculty ? `${faculty.name} · ${deptName}` : `${deptName} · RGUKT Ongole`,
+  );
 
   useEffect(() => {
     async function load() {
@@ -81,12 +88,7 @@ export function FacultyProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] w-full items-center justify-center bg-white">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#000035] border-t-transparent" />
-          <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">Loading Profile...</p>
-        </div>
-      </div>
+      <CampusBoot label="Loading profile" className="min-h-[50vh]" />
     );
   }
 
@@ -95,7 +97,7 @@ export function FacultyProfilePage() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-slate-500 text-lg font-semibold">Profile not found.</p>
-          <button onClick={() => navigate(-1)} className="mt-4 text-[#800000] text-sm font-bold hover:underline">
+          <button onClick={() => navigate(-1)} className="mt-4 text-navy text-sm font-medium hover:underline">
             Go Back
           </button>
         </div>
@@ -116,12 +118,12 @@ export function FacultyProfilePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <button
             onClick={() => navigate(`/departments/${deptCode}`)}
-            className="inline-flex items-center gap-2 text-slate-500 hover:text-[#800000] text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 text-slate-500 hover:text-navy text-sm font-semibold transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to {deptName}
           </button>
-          <span className="hidden sm:inline-block px-3 py-1 text-[10px] font-bold tracking-[0.2em] text-[#800000] bg-[#800000]/5 border border-[#800000]/10 rounded-full">
+          <span className="hidden sm:inline-block px-3 py-1 text-[10px] font-medium text-navy bg-navy/5 border border-navy/10 rounded-full">
             RGUKT Ongole · {code}
           </span>
         </div>
@@ -132,30 +134,25 @@ export function FacultyProfilePage() {
         <div className="flex flex-col md:flex-row gap-8 items-start mb-12">
           {/* Photo */}
           <div className="w-full md:w-56 flex-shrink-0 bg-slate-50 rounded-2xl border border-slate-100 p-2 flex items-center justify-center overflow-hidden">
-            {faculty.photo ? (
-              <img
-                src={faculty.photo}
-                alt={faculty.name}
-                className="w-full max-w-[200px] h-auto object-contain rounded-xl"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(faculty.name)}&background=000035&color=fff&size=200`;
-                }}
-              />
-            ) : (
-              <div className="w-full aspect-square max-w-[200px] rounded-xl bg-[#000035] flex items-center justify-center text-white text-6xl font-extrabold shadow-sm">
-                {faculty.name.charAt(0)}
+            <PersonPhoto
+              src={faculty.photo}
+              name={faculty.name}
+              className="w-full max-w-[200px] h-auto object-contain rounded-xl"
+              fallback={
+                <div className="w-full aspect-square max-w-[200px] rounded-xl bg-navy-900 flex items-center justify-center text-white text-6xl font-medium shadow-sm">
+                {initials(faculty.name)}
               </div>
-            )}
+              }
+            />
           </div>
 
           {/* Info */}
           <div className="flex-1 pt-2">
-            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-2 tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-medium text-slate-900 leading-tight mb-2 tracking-tight">
               {faculty.name}
             </h1>
             {role && (
-              <p className="text-lg text-[#800000] font-semibold mb-6">{role}</p>
+              <p className="text-lg text-navy font-semibold mb-6">{role}</p>
             )}
 
             <div className="space-y-4 max-w-2xl">
@@ -165,7 +162,7 @@ export function FacultyProfilePage() {
                     <FlaskConical className="w-4 h-4 text-slate-500" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold tracking-widest text-slate-400 mb-0.5">Specialization</p>
+                    <p className="text-xs font-medium tracking-normal text-ink-subtle mb-0.5">Specialization</p>
                     <p className="text-slate-700 text-sm leading-relaxed">{specialization}</p>
                   </div>
                 </div>
@@ -177,7 +174,7 @@ export function FacultyProfilePage() {
                     <Briefcase className="w-4 h-4 text-slate-500" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold tracking-widest text-slate-400 mb-0.5">Experience</p>
+                    <p className="text-xs font-medium tracking-normal text-ink-subtle mb-0.5">Experience</p>
                     <p className="text-slate-700 text-sm">{experience} {experience.toLowerCase().includes('year') ? '' : 'years overall experience'}</p>
                   </div>
                 </div>
@@ -185,11 +182,11 @@ export function FacultyProfilePage() {
 
               <div className="flex items-start gap-3">
                 <div className="mt-0.5 p-1.5 rounded-md bg-rose-50 border border-rose-100 flex-shrink-0">
-                  <Mail className="w-4 h-4 text-[#800000]" />
+                  <Mail className="w-4 h-4 text-navy" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold tracking-widest text-slate-400 mb-0.5">Contact</p>
-                  <a href={`mailto:${faculty.email}`} className="text-[#800000] text-sm font-semibold hover:underline">
+                  <p className="text-xs font-medium tracking-normal text-ink-subtle mb-0.5">Contact</p>
+                  <a href={`mailto:${faculty.email}`} className="text-navy text-sm font-semibold hover:underline">
                     {faculty.email}
                   </a>
                 </div>
@@ -201,14 +198,14 @@ export function FacultyProfilePage() {
         {/* ── Bio Sections ── */}
         {entries.length > 0 && (
           <div className="border-t border-slate-100 pt-12">
-            <h2 className="text-xl font-extrabold text-slate-900 mb-8 tracking-tight">
+            <h2 className="text-xl font-medium text-slate-900 mb-8 tracking-tight">
               Detailed Profile
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
               {entries.map(({ key, items }) => (
                 <div key={key}>
-                  <h3 className="flex items-center gap-2 text-[11px] font-extrabold tracking-widest text-[#000035] mb-3 border-b border-slate-100 pb-2">
-                    <span className="text-[#800000]/60">
+                  <h3 className="flex items-center gap-2 text-[11px] font-medium tracking-normal text-navy-900 mb-3 border-b border-slate-100 pb-2">
+                    <span className="text-navy/60">
                       {SECTION_ICONS[key] ?? <FileText className="w-4 h-4" />}
                     </span>
                     {key}
@@ -222,7 +219,7 @@ export function FacultyProfilePage() {
                         const cleanItem = item.replace(/^[0-9]+\.\s*/, "");
                         return (
                           <li key={i} className="flex items-start gap-2.5 text-sm text-slate-700 leading-relaxed">
-                            <span className="text-[#800000]/40 font-bold mt-0.5 flex-shrink-0">•</span>
+                            <span className="text-navy/40 font-medium mt-0.5 flex-shrink-0">•</span>
                             <span>{cleanItem}</span>
                           </li>
                         );

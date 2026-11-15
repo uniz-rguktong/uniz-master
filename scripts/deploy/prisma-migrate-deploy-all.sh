@@ -24,6 +24,18 @@ fi
 PRISMA_VERSION="${PRISMA_MIGRATE_VERSION:-6.19.3}"
 PRISMA="npx --yes prisma@${PRISMA_VERSION}"
 
+# Postgres publishes 127.0.0.1 (+ cni0 for pods), not the public NIC.
+# Vault URLs may still use the VPS public IP — rewrite for local migrate.
+rewrite_db_url_localhost() {
+  local url="$1"
+  local public_ip="${VPS_IP:-76.13.241.174}"
+  url="${url//@${public_ip}:/@127.0.0.1:}"
+  url="${url//@${public_ip}/@127.0.0.1}"
+  # Also catch bare host= form if present
+  url="${url//host=${public_ip}/host=127.0.0.1}"
+  printf '%s' "$url"
+}
+
 # app directory -> secrets env var for DATABASE_URL
 SERVICES=(
   "uniz-auth:AUTH_DATABASE_URL"
@@ -62,6 +74,7 @@ migrate_one() {
     return 0
   fi
 
+  url="$(rewrite_db_url_localhost "$url")"
   echo "[Prisma] migrate deploy → apps/$app"
   cd "$ROOT/apps/$app"
   export DATABASE_URL="$url"

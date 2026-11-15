@@ -391,7 +391,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
 
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-zinc-400">
-                  <div className="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500">
+                  <div className="w-8 h-8 rounded-xl bg-navy-50 flex items-center justify-center text-navy-500">
                     <Award size={14} />
                   </div>
                   <span className="text-[10px] font-semibold tracking-[0.14em]">

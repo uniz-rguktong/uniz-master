@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import clsx from "clsx";
 
@@ -26,10 +26,8 @@ const ImageCard: React.FC<ImageCardProps> = ({
     <div
       onClick={() => handleMove(position)}
       className={clsx(
-        "absolute left-1/2 top-1/2 cursor-pointer overflow-hidden rounded-2xl transition-all duration-500 ease-in-out",
-        isCenter
-          ? "z-10 ring-4 ring-primary/60 shadow-2xl shadow-primary/20"
-          : "z-0 ring-2 ring-slate-200 hover:ring-primary/30 shadow-lg"
+        "absolute left-1/2 top-1/2 cursor-pointer overflow-hidden transition-all duration-500 ease-in-out",
+        isCenter ? "z-10 shadow-xl" : "z-0 shadow-md"
       )}
       style={{
         width: cardSize,
@@ -37,11 +35,9 @@ const ImageCard: React.FC<ImageCardProps> = ({
         transform: `
           translate(-50%, -50%) 
           translateX(${(cardSize / 1.4) * position}px)
-          translateY(${isCenter ? -10 : position % 2 ? 20 : -20}px)
-          rotate(${isCenter ? 0 : position % 2 ? 3 : -3}deg)
-          scale(${isCenter ? 1.08 : 0.92})
+          scale(${isCenter ? 1.05 : 0.92})
         `,
-        opacity: Math.abs(position) > 3 ? 0 : 1,
+        opacity: Math.abs(position) > 3 ? 0 : isCenter ? 1 : 0.65,
       }}
     >
       <img
@@ -49,69 +45,65 @@ const ImageCard: React.FC<ImageCardProps> = ({
         alt={`Campus gallery ${image.tempId + 1}`}
         className={clsx(
           "w-full h-full object-cover transition-all duration-500",
-          isCenter ? "brightness-100" : "brightness-[0.7]"
+          isCenter ? "brightness-100" : "brightness-[0.75]"
         )}
         draggable={false}
       />
-      {/* Subtle gradient overlay for non-center cards */}
-      {!isCenter && (
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
-      )}
     </div>
   );
 };
 
+function cardSizeForWidth(width: number) {
+  if (width >= 1280) return 420;
+  if (width >= 1024) return 380;
+  if (width >= 640) return 320;
+  return 260;
+}
+
 export function Gallery({ images }: { images: readonly string[] }) {
-  const [cardSize, setCardSize] = useState(400);
-  const [imageList, setImageList] = useState<GalleryImage[]>([]);
+  const [cardSize, setCardSize] = useState(() =>
+    typeof window === "undefined" ? 400 : cardSizeForWidth(window.innerWidth),
+  );
+  const imagesKey = images.join("\0");
+  const [imageList, setImageList] = useState<GalleryImage[]>(() =>
+    images.map((src, idx) => ({ imgSrc: src, tempId: idx })),
+  );
+  const [seenKey, setSeenKey] = useState(imagesKey);
+  if (seenKey !== imagesKey) {
+    setSeenKey(imagesKey);
+    setImageList(images.map((src, idx) => ({ imgSrc: src, tempId: idx })));
+  }
 
-  // Build the image list from props
-  useEffect(() => {
-    if (images.length > 0) {
-      setImageList(
-        images.map((src, idx) => ({
-          imgSrc: src,
-          tempId: idx,
-        }))
-      );
-    }
-  }, [images]);
-
-  const handleMove = (steps: number) => {
-    const newList = [...imageList];
-    if (steps > 0) {
-      for (let i = steps; i > 0; i--) {
-        const item = newList.shift();
-        if (!item) return;
-        newList.push({ ...item, tempId: Math.random() });
+  const handleMove = useCallback((steps: number) => {
+    setImageList((current) => {
+      if (current.length === 0) return current;
+      const newList = [...current];
+      if (steps > 0) {
+        for (let i = steps; i > 0; i--) {
+          const item = newList.shift();
+          if (!item) return current;
+          newList.push({ ...item, tempId: Math.random() });
+        }
+      } else {
+        for (let i = steps; i < 0; i++) {
+          const item = newList.pop();
+          if (!item) return current;
+          newList.unshift({ ...item, tempId: Math.random() });
+        }
       }
-    } else {
-      for (let i = steps; i < 0; i++) {
-        const item = newList.pop();
-        if (!item) return;
-        newList.unshift({ ...item, tempId: Math.random() });
-      }
-    }
-    setImageList(newList);
-  };
+      return newList;
+    });
+  }, []);
 
-  // Auto-play
   useEffect(() => {
     const interval = setInterval(() => {
       handleMove(1);
-    }, 4000);
+    }, 5000);
     return () => clearInterval(interval);
-  }, [imageList]);
+  }, [handleMove]);
 
   useEffect(() => {
-    const updateSize = () => {
-      const width = window.innerWidth;
-      if (width >= 1280) setCardSize(420);
-      else if (width >= 1024) setCardSize(380);
-      else if (width >= 640) setCardSize(320);
-      else setCardSize(260);
-    };
-    updateSize();
+    const updateSize = () => setCardSize(cardSizeForWidth(window.innerWidth));
     window.addEventListener("resize", updateSize);
     return () => window.removeEventListener("resize", updateSize);
   }, []);
@@ -119,26 +111,22 @@ export function Gallery({ images }: { images: readonly string[] }) {
   if (!imageList.length) return null;
 
   return (
-    <section id="photo-gallery" className="py-24 bg-gradient-to-b from-white via-slate-50 to-white overflow-hidden">
-      {/* Section Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-14">
-        <div className="text-center">
-          <span className="inline-block px-5 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold tracking-wide mb-4">
-            Campus Gallery
-          </span>
-          <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
-            Life @ Campus
+    <section id="photo-gallery" className="section-editorial bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 mb-12 sm:mb-16">
+        <div className="max-w-2xl">
+          <p className="text-sm text-ink-muted mb-3">Campus gallery</p>
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-navy-900 leading-tight">
+            Campus photos
           </h2>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-500">
-            A visual journey through campus life, events, and achievements.
+          <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed">
+            Events, facilities, and student life at RGUKT Ongole.
           </p>
         </div>
       </div>
 
-      {/* Stagger Carousel */}
       <div
         className="relative w-full"
-        style={{ height: cardSize * 0.72 + 140 }}
+        style={{ height: cardSize * 0.72 + 120 }}
       >
         {imageList.map((image, index) => {
           const position =
@@ -156,18 +144,17 @@ export function Gallery({ images }: { images: readonly string[] }) {
           );
         })}
 
-        {/* Navigation Buttons */}
-        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-3 z-20">
+        <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-3 z-20">
           <button
             onClick={() => handleMove(-1)}
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-white border-2 border-slate-200 text-slate-700 shadow-lg hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-navy-900 hover:bg-navy-900 hover:text-white hover:border-navy-900 transition-colors"
             aria-label="Previous image"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={() => handleMove(1)}
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-white border-2 border-slate-200 text-slate-700 shadow-lg hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-navy-900 hover:bg-navy-900 hover:text-white hover:border-navy-900 transition-colors"
             aria-label="Next image"
           >
             <ChevronRight className="w-5 h-5" />

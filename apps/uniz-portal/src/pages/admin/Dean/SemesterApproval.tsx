@@ -409,9 +409,9 @@ function DetailView({
               {groups.map((g) => (
                 <div
                   key={g.id}
-                  className="rounded-2xl border border-violet-200/60 bg-violet-50/40 px-4 py-3 flex items-center gap-3"
+                  className="rounded-2xl border border-navy-200/60 bg-navy-50/40 px-4 py-3 flex items-center gap-3"
                 >
-                  <div className="w-9 h-9 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-navy-100 text-navy-600 flex items-center justify-center shrink-0">
                     <Layers size={16} />
                   </div>
                   <div className="min-w-0">

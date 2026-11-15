@@ -45,8 +45,8 @@ module.exports = {
         },
 
         accent: {
-          DEFAULT: "#eef2ff",
-          foreground: "#312e81",
+          DEFAULT: "#EDF5FB",
+          foreground: "#0B2A47",
         },
 
         portal: {
@@ -59,18 +59,19 @@ module.exports = {
           border: "var(--portal-navy-border, #D4E8F5)",
         },
 
+        /* Remap default Tailwind blue → institutional navy (no indigo) */
         blue: {
-          50: "#eef2ff",
-          100: "#e0e7ff",
-          200: "#c7d2fe",
-          300: "#a5b4fc",
-          400: "#818cf8",
-          500: "#6366f1",
-          600: "#4f46e5",
-          700: "#4338ca",
-          800: "#3730a3",
-          900: "#312e81",
-          950: "#1e1b4b",
+          50: "#F7FAFD",
+          100: "#EDF5FB",
+          200: "#D4E8F5",
+          300: "#9BC0DC",
+          400: "#5A94B8",
+          500: "#2E7099",
+          600: "#1E5A8C",
+          700: "#16466F",
+          800: "#0F3B63",
+          900: "#0B2A47",
+          950: "#081E33",
         },
 
         navy: {
