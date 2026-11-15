@@ -46,7 +46,7 @@ Source of truth for authorization semantics: [https://api-uniz.rguktong.in/docs/
 
 | Role | Entry | Primary navigation / actions |
 | --- | --- | --- |
-| Public | `/` | Get started; Download; Privacy; Developers; type `admin` for staff sign-in |
+| Public | `/` | Get started (navbar/hero/final CTA); Install app (final CTA); Privacy; Developers; type `admin` for staff sign-in |
 | Student | `/student (Sidebar dock / mobile menu)` | My Profile; Registration; Results; Attendance; Password; Grievance; Help; Notifications; Logout. Outing/Outpass when flag on |
 | Faculty | `/faculty (in-page tabs)` | Overview; My Profile; Branch Students; Change Password; Sign out |
 | HOD | `/admin (DeanDashboard, HOD subset)` | Overview; Student Details; Semester Approvals |
@@ -66,7 +66,7 @@ Admin tab → URL mapping is defined in `apps/uniz-portal/src/utils/adminSection
 
 ### Home
 
-**What it is.** Public landing for the UniZ campus portal (redesigned brand-first composition under the global Navbar). Shows campus label, uniZ wordmark, tagline, and CTAs. Signed-in users are redirected to their role home.
+**What it is.** Public Elaya Layout A landing (`pages/home.tsx`): brand-first Manrope page with floating Navbar, split hero (uniZ wordmark + “Campus tools for RGUKT Ongole students” + product preview), then scrollable benefits (“What you can do once you are in”), TaglineReveal, how-it-works steps, and a final navy CTA. Signed-in users are redirected to their role home.
 
 **Who.** Public (unauthenticated)
 
@@ -75,18 +75,20 @@ Admin tab → URL mapping is defined in `apps/uniz-portal/src/utils/adminSection
 **Actions.**
 
 - **Navbar Get started** — Opens `/student/signin`. Hover/focus prefetches Cloudflare Turnstile.
-- **Hero Get started** — Same destination as navbar; also prefetches Turnstile on hover/focus.
-- **Download (platform-aware)** — Triggers PWA install when available; on iOS shows Add to Home Screen instructions. Hidden when already installed.
+- **Hero Get started** — Same destination as navbar; also prefetches Turnstile on hover/focus. Secondary copy beside it: “Built for RGUKT Ongole” (not a control).
+- **Final CTA Get started** — Bottom navy section CTA; same sign-in destination + Turnstile prefetch on hover/focus.
+- **Install app (final CTA only)** — Platform-aware PWA install in the bottom CTA when not already installed; on iOS shows Add to Home Screen instructions. Not in the hero or Navbar.
 - **Privacy footer link** — Opens `/privacy`.
 - **Developers footer link** — Opens `/developers`.
 - **Hidden keyboard sequence `admin`** — Navigates to `/admin/signin` (staff entry shortcut).
-- **Turnstile prefetch (background)** — App bootstrap (`main.tsx`) and home mount call `prefetchTurnstile()` when `VITE_TURNSTILE_SITE_KEY` is set.
+- **Benefits / TaglineReveal / How it works (scroll)** — Read-only below-fold sections — no controls; describe campus tools, animated tagline words, and three sign-in steps.
+- **Turnstile prefetch (background)** — App bootstrap (`main.tsx`) and home mount call `prefetchTurnstile()` when `VITE_TURNSTILE_SITE_KEY` is set; CTA hover/focus warms it further.
 
 **Docs.** [https://api-uniz.rguktong.in/docs/](https://api-uniz.rguktong.in/docs/)
 
 ![Screenshot: Home](screenshots/01-home.png)
 
-> Inventory from `layout.tsx` (Navbar), `pages/home.tsx`, `main.tsx`, and `utils/prefetchTurnstile.ts` on current main. Local screenshot captured against Vite.
+> Inventory from `Navbar.tsx` (via layout), `pages/home.tsx` (Elaya Layout A + PortalPreview), `main.tsx`, and `utils/prefetchTurnstile.ts`. Local Vite screenshot at ~1440×900; Turnstile widget blank without site key.
 
 ### Developers
 

@@ -66,7 +66,7 @@ flowchart TB
 | Gate unused product | Outpass/outing off by flags; outpass Deployment at 0 |
 | Burst with HPA, not always-on | Auth/user/academics/gateway/notifications scale on CPU/memory |
 | DB not world-reachable | Postgres / landing DB / landing API bind loopback + cni0 only |
-| Portal brand | Navy `#0B2A47` + white + black across `uniz.rguktong.in` |
+| Portal brand | Navy `#0B2A47` + white + black across `uniz.rguktong.in`; public home is a brand-first conversion landing (not the college CMS site at `rguktong.in`) |
 
 ## Monorepo layout
 
