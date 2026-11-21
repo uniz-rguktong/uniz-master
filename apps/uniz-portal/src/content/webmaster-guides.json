@@ -1,0 +1,1461 @@
+{
+  "support": {
+    "directorPhone": "08592-223133",
+    "officerPhone": "08592-223121",
+    "pinEmail": "webadmin@rguktong.ac.in",
+    "portalSignIn": "https://uniz.rguktong.in/admin/signin",
+    "publicSite": "https://rguktong.ac.in",
+    "adminer": "https://dbadmin.rguktong.in",
+    "pdfPath": "/guides/uniz-webmaster-guide.pdf",
+    "printPath": "/admin/help/print"
+  },
+  "groups": [
+    { "id": "start", "title": "Start here" },
+    { "id": "students", "title": "Students" },
+    { "id": "marks", "title": "Marks and attendance" },
+    { "id": "semester", "title": "Semester registration" },
+    { "id": "website", "title": "Public website" },
+    { "id": "messages", "title": "Messages to students" },
+    { "id": "staff", "title": "Staff" },
+    { "id": "roles", "title": "Roles" },
+    { "id": "database", "title": "Database" },
+    { "id": "account", "title": "Your login" }
+  ],
+  "guides": [
+    {
+      "id": "sign-in",
+      "title": "Sign in",
+      "group": "start",
+      "screens": ["dashboard"],
+      "summary": "Open the staff side of UniZ on a computer.",
+      "steps": [
+        "Sit at a computer. A phone is hard for these screens.",
+        "Open the browser. Chrome is a good choice.",
+        "Go to https://uniz.rguktong.in/admin/signin",
+        "The page title is Sign in. The line under it says to use your staff ID or email.",
+        "Click the box Staff ID or email.",
+        "Type the staff ID the office gave you. It is often webadmin. You can also type webadmin@rguktong.ac.in",
+        "Click the box Password.",
+        "Type the password the office gave you. This guide does not contain the password.",
+        "If you see a security check, finish it. The button stays on Waiting for security check until the check is done.",
+        "Press **Sign in**.",
+        "You should land on Overview. The dark menu is on the left."
+      ],
+      "wrong": [
+        "If the page says the password is wrong, press **Forgot password?** and follow the guide Get a new password.",
+        "If the page says this is a student account, you are on the student sign-in. Use the staff address above.",
+        "If the page does not open, check the internet. Then try the address again."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "forgot-password",
+      "title": "Get a new password",
+      "group": "start",
+      "screens": ["dashboard", "security"],
+      "summary": "Use this when you cannot remember the password.",
+      "steps": [
+        "Open https://uniz.rguktong.in/admin/signin",
+        "Press **Forgot password?**",
+        "The title changes to Reset password.",
+        "Type your staff ID or email in Staff ID or email.",
+        "Finish the security check if you see one.",
+        "Press **Send code**.",
+        "A code may arrive as a phone alert. If it does not, press **Resend via Email**.",
+        "Open the mail for webadmin@rguktong.ac.in if you asked for email.",
+        "Type the code.",
+        "Press **Verify code**.",
+        "When you see Code verified, type a new password in New password.",
+        "Press **Set new password**.",
+        "The page says to sign in with the new password. Press **Sign in** and use that password."
+      ],
+      "wrong": [
+        "If no code arrives, wait two minutes. Then press **Resend via Email**.",
+        "If the code is rejected, request a new one. Do not keep typing the old code.",
+        "To go back without changing the password, press **Back to sign in**."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "find-your-way",
+      "title": "Find your way around",
+      "group": "start",
+      "screens": ["dashboard", "help"],
+      "summary": "The dark menu on the left is how you move.",
+      "steps": [
+        "After you sign in, you are on Overview.",
+        "The left menu has these words: Overview, Student Details, Student Bulk Ops, Attendance Upload, Grades Upload, Manage Subjects, Semester Registration, Home Banners, Campus Updates, Website Updates, Push Alerts, Faculty Management, System & Logs, Roles, Database, Security, and Help.",
+        "Press the name of the job you want. The page on the right changes.",
+        "On a phone, press the menu icon at the top left. Then press the name.",
+        "If the menu is only icons, press **Expand** at the bottom of the dark menu.",
+        "To hide the words again, press **Collapse**.",
+        "The **How to?** button at the top opens the guide for the page you are on.",
+        "Press **Help** in the left menu to search every guide."
+      ],
+      "wrong": [
+        "If you do not see Database or Roles, you are not signed in as the webmaster. Sign out and sign in with the webmaster staff ID.",
+        "If a name is missing, press **Expand** so the menu is wide enough to read."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "change-your-details",
+      "title": "Change your own details",
+      "group": "start",
+      "screens": ["dashboard"],
+      "summary": "Your name, phone, and photo on Overview.",
+      "steps": [
+        "Press **Overview** in the left menu.",
+        "You see your name and a round photo.",
+        "To change the photo, press the small camera on the photo.",
+        "Choose a picture from the computer. Wait until the new photo shows.",
+        "To change the words, press **Edit profile**.",
+        "Change Name, email, contact, designation, or department.",
+        "Press **Save changes**.",
+        "If you do not want the new words, press **Cancel** before you save.",
+        "You can also press your photo at the top of the page. The same **Edit profile**, **Save changes**, and **Sign out** buttons are there."
+      ],
+      "wrong": [
+        "If the photo does not change, try a smaller picture. JPG or PNG is fine.",
+        "If Save changes does nothing, check that the email looks like a real email address."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "read-the-counts",
+      "title": "Read the counts on Overview",
+      "group": "start",
+      "screens": ["dashboard"],
+      "summary": "The charts under your name are for looking, not for editing.",
+      "steps": [
+        "Press **Overview**.",
+        "Scroll down past your name.",
+        "You may see counts of students, staff, and other campus numbers.",
+        "These numbers update themselves. There is no save button here.",
+        "To change a person, use Student Details or Faculty Management.",
+        "To change a number on the public website, use Website Updates. That is a different set of numbers."
+      ],
+      "wrong": [
+        "If the charts are empty, the page may still be loading. Wait a moment and press Overview again.",
+        "Empty charts do not mean the students were deleted."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "sign-out",
+      "title": "Sign out",
+      "group": "start",
+      "screens": ["dashboard"],
+      "summary": "Leave the staff side when you are done, especially on a shared computer.",
+      "steps": [
+        "On a computer, look at the bottom of the dark menu.",
+        "Press the door icon. Its tip says **Log out**.",
+        "On a phone, press your photo at the top.",
+        "Press **Log out**.",
+        "You can also press your photo on a computer and then press **Sign out**.",
+        "The sign-in page comes back. Close the browser if the computer is shared."
+      ],
+      "wrong": [
+        "If you only closed the tab, you may still be signed in. Open the site again. If Overview appears at once, press **Log out**."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "look-up-student",
+      "title": "Look up a student",
+      "group": "students",
+      "screens": ["student"],
+      "summary": "Find one student by ID or name.",
+      "steps": [
+        "Press **Student Details** in the left menu.",
+        "Click the box that says Search by Student ID or name.",
+        "Type the ID or part of the name.",
+        "If a short list drops down, press the right person.",
+        "The sheet shows matching students. One page holds 25 students.",
+        "Press a row once. A panel opens on the right with the student profile.",
+        "To narrow the sheet, press **Filters**.",
+        "Set Branch, Year, Batch, or the other boxes.",
+        "Press **Clear all** when you want the full list again.",
+        "Use the page numbers at the bottom to move through the sheet."
+      ],
+      "wrong": [
+        "If you see No students to display, clear the search box and press **Clear all**.",
+        "If the list keeps spinning, wait a few seconds. Then press Student Details again."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "add-student",
+      "title": "Add a student",
+      "group": "students",
+      "screens": ["student"],
+      "summary": "Add one student. For a whole class, use the file upload instead.",
+      "steps": [
+        "Press **Student Details**.",
+        "Press **Add Student**.",
+        "A form opens. The title is about a new student record.",
+        "Fill the boxes. Student ID and name are the ones people search by later.",
+        "Check Branch, Year, Section, and Batch.",
+        "Press **Create student**.",
+        "If you opened the form by mistake, press **Cancel**.",
+        "Search for the new ID to confirm the row is there."
+      ],
+      "wrong": [
+        "If Create student fails, read the red message. A duplicate ID is the usual cause. Search that ID before you try again.",
+        "To add many students, do not use this form one by one. Use the guide Add many students from a file."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "change-student",
+      "title": "Change a student's details",
+      "group": "students",
+      "screens": ["student"],
+      "summary": "Fix a name, email, branch, or another box for one student.",
+      "steps": [
+        "Press **Student Details**.",
+        "Find the student. Press the row once.",
+        "In the side panel, press **Edit profile**.",
+        "Change the boxes that are wrong.",
+        "Press **Save changes**.",
+        "Press **Cancel** if you want to leave the old words.",
+        "For a small fix in the sheet itself, click that cell.",
+        "Type the new words.",
+        "Press Enter to save. Press Escape to keep the old words.",
+        "You can also click somewhere else on the page to save the cell."
+      ],
+      "wrong": [
+        "If the cell jumps back, the save did not stick. Open **Edit profile** and save from there.",
+        "Do not change the student ID unless the office told you the ID itself is wrong."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "reset-student-password",
+      "title": "Give a student a new password",
+      "group": "students",
+      "screens": ["student"],
+      "summary": "Set a temporary password the student can use to sign in.",
+      "steps": [
+        "Press **Student Details**.",
+        "Find the student. Press the row once.",
+        "In the side panel, press **Reset password**.",
+        "The box is titled Reset password.",
+        "Type a temporary password in Temporary password.",
+        "Tell the student that password in person or on a call. Do not put it in a public notice.",
+        "Press **Apply**.",
+        "Press **Cancel** if you do not want to change it."
+      ],
+      "wrong": [
+        "If Apply stays grey, type a password in the box first.",
+        "Ask the student to sign in and then change the password on their own Security page."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "suspend-student",
+      "title": "Stop or restore one student login",
+      "group": "students",
+      "screens": ["student"],
+      "summary": "A suspended student cannot sign in. The record stays.",
+      "steps": [
+        "Press **Student Details**.",
+        "Find the student. Press the row once.",
+        "The row shows Active or Suspended.",
+        "In the side panel, press **Suspend** to stop the login.",
+        "A small box asks you to confirm. Press **OK**.",
+        "To let them in again, press **Restore access**.",
+        "Press **OK** on the confirm box.",
+        "The badge should change between Active and Suspended."
+      ],
+      "wrong": [
+        "If you pressed OK by mistake, press the other button at once: **Restore access** or **Suspend**.",
+        "This does not delete marks. Removal is a different button."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "see-student-record",
+      "title": "See a student's marks and attendance",
+      "group": "students",
+      "screens": ["student"],
+      "summary": "Open the academic record. You look here. You do not type marks here.",
+      "steps": [
+        "Press **Student Details**.",
+        "Find the student.",
+        "Double-click the row.",
+        "A window opens. It says Academic record.",
+        "Read Recent grades, Attendance by subject, and Semester GPA.",
+        "Close the window when you are done.",
+        "To change marks or attendance for many students, use Grades Upload or Attendance Upload."
+      ],
+      "wrong": [
+        "If the window says the record could not be fetched, check the ID and try the double-click again.",
+        "A remedial mark shows a Remedial badge. That is a label, not a button."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "delete-student",
+      "title": "Remove a student",
+      "group": "students",
+      "screens": ["student"],
+      "summary": "This deletes the login, profile, marks, and attendance. It cannot be undone from this page.",
+      "steps": [
+        "Press **Student Details**.",
+        "Find the student. Press the row once.",
+        "Press **Delete permanently**.",
+        "Read the warning. It says this cannot be undone.",
+        "Type the student ID exactly in Student ID. The page shows the ID you must match.",
+        "Press **Delete permanently** again.",
+        "To remove several students, tick the box on each row.",
+        "Press **Delete selected**.",
+        "Type the words the page shows, such as Delete 3, in Confirmation.",
+        "Press the red button. It says Delete and the number, then permanently.",
+        "Press **Cancel** if you want to stop."
+      ],
+      "wrong": [
+        "If the red button stays grey, the confirmation words do not match. Copy them carefully, including the space.",
+        "If you only meant to block login, use **Suspend** instead. Do not delete.",
+        "There is no undo on this page. Call the office at once if you deleted the wrong person."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "export-students",
+      "title": "Save the student list as a file",
+      "group": "students",
+      "screens": ["student"],
+      "summary": "Download the sheet you are looking at.",
+      "steps": [
+        "Press **Student Details**.",
+        "Set Filters if you only want one branch, year, or batch.",
+        "Press **Export Excel**.",
+        "The browser saves a file. Open it in Excel.",
+        "This file is a copy. Editing it on your computer does not change UniZ.",
+        "To change UniZ from a file, use Add many students from a file or the upload guides."
+      ],
+      "wrong": [
+        "If the download does not start, allow downloads in the browser and press **Export Excel** again.",
+        "A large list can take a moment. Wait before you press the button a second time."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "upload-students",
+      "title": "Add many students from a file",
+      "group": "students",
+      "screens": ["student_bulk", "student"],
+      "summary": "Upload a spreadsheet of new students. Year and branch are columns in the file. There is no Year, Semester, or Branch button on this page.",
+      "steps": [
+        "Press **Student Bulk Ops**.",
+        "Press the tab **Bulk upload**.",
+        "Press **Download template**.",
+        "Open the file. Do not type year, semester, or branch anywhere except inside this file.",
+        "Leave the top row as it is. The columns are Student ID, Name, Email, Gender, Branch, Year, Section, Batch, Room No, Is In Campus, and Phone.",
+        "Delete the sample row, or replace it. The sample branch says N/A. That row will be rejected.",
+        "Student ID is the letter S or O, then 6 digits. An example is S240001.",
+        "Branch must be one of CSE, ECE, EEE, MECH, CIVIL, CHEM, MME, or AI/ML. Do not type N/A.",
+        "Year must be E1, E2, E3, or E4. There is no semester column.",
+        "Fill Name, Email, and Section on every row. One row is one student.",
+        "Save the file.",
+        "Back on the page, press the box that says Click to select.",
+        "Choose your file.",
+        "Press **Start uploading**.",
+        "If the button says Processing, wait. Do not close the tab."
+      ],
+      "wrong": [
+        "If a message lists a missing column or a bad row, fix the file and upload it again. No students are added from a rejected file.",
+        "Do not rename the top row. If you are unsure, press **Download template** again and copy your rows into that file.",
+        "The short list on the page is not the full file. Trust the downloaded template.",
+        "If the page title is Add Students, you are on the other upload page. It also has no Year, Semester, or Branch button. Press **Template**, press the box that says Click to upload spreadsheet, then press **Confirm & Upload**. Press **Back** to leave.",
+        "From Student Details you can also press **Cohort Actions**. That opens the group tools, not the upload."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "download-student-sheet",
+      "title": "Download a student spreadsheet",
+      "group": "students",
+      "screens": ["student_bulk"],
+      "summary": "Pick a branch, year, and batch, then save a file with the columns you choose.",
+      "steps": [
+        "Press **Student Bulk Ops**.",
+        "Press the tab **Batch export**.",
+        "Set Branch Focus. All Departments means everyone.",
+        "Set Academic Year. The choices include E1, E2, E3, and E4. All Levels means every year.",
+        "Set Batch Target. All Universal means every batch.",
+        "Tick the columns you want. Press **Select All** for every column.",
+        "Press **Reset** if you only want username and name again.",
+        "Press **Download the data**.",
+        "Open the Excel file from your downloads."
+      ],
+      "wrong": [
+        "If the file is empty, set the filters back to All Departments, All Levels, and All Universal. Then download again.",
+        "This download does not change any student."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "mark-campus",
+      "title": "Mark a group in or out of campus",
+      "group": "students",
+      "screens": ["student_bulk"],
+      "summary": "Set many students as on campus or off campus in one go.",
+      "steps": [
+        "Press **Student Bulk Ops**.",
+        "Press the tab **Cohort actions**.",
+        "Press the card **Mark IN campus** or **Mark OUT of campus**.",
+        "Set Department, Year, and Batch. ALL means you do not limit that box.",
+        "Read the warning.",
+        "For in campus, type mark in in the confirmation box.",
+        "Press **Mark all IN**.",
+        "For out of campus, type mark out.",
+        "Press **Mark all OUT**.",
+        "Press **Cancel** to close the box without changing anyone."
+      ],
+      "wrong": [
+        "Only students who are currently the other way are changed. People already IN stay IN when you mark IN.",
+        "If the button stays grey, the confirmation words must match, including the space.",
+        "This is not the same as deleting a student."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "promote-year",
+      "title": "Move a year group up",
+      "group": "students",
+      "screens": ["student_bulk"],
+      "summary": "Change E1 to E2, or another year step, for a whole group. This is not undone for you.",
+      "steps": [
+        "Press **Student Bulk Ops**.",
+        "Press **Cohort actions**.",
+        "Press **Promote academic year**.",
+        "Set From year and To year.",
+        "Set Department. Use ALL only if every department should move.",
+        "Set Batch if you need it. All batches is the wide choice.",
+        "Read the warning. It says the year change cannot be auto-reversed.",
+        "Type promote in the confirmation box.",
+        "Press **Promote cohort**."
+      ],
+      "wrong": [
+        "Do this only when the office has agreed the year should move.",
+        "If you moved the wrong year, do not press the button again. Call the office before a second change."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "clear-pending",
+      "title": "Clear pending flags",
+      "group": "students",
+      "screens": ["student_bulk"],
+      "summary": "Clear a stuck pending mark on a group of students.",
+      "steps": [
+        "Press **Student Bulk Ops**.",
+        "Press **Cohort actions**.",
+        "Press **Clear pending flags**.",
+        "Set Department, Year, and Batch.",
+        "Type clear pending in the confirmation box.",
+        "Press **Clear pending**."
+      ],
+      "wrong": [
+        "This only clears the pending flag. It does not approve or reject a request.",
+        "If the button stays grey, type the two words clear pending with a space."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "suspend-group",
+      "title": "Stop or restore a group's login",
+      "group": "students",
+      "screens": ["student_bulk"],
+      "summary": "Suspend or restore every matching student.",
+      "steps": [
+        "Press **Student Bulk Ops**.",
+        "Press **Cohort actions**.",
+        "Press **Suspend accounts** or **Restore accounts**.",
+        "Set Department, Year, and Batch as tightly as you can.",
+        "To suspend, type suspend and press **Suspend cohort**.",
+        "To restore, type restore and press **Restore cohort**.",
+        "Only people in the matching state are changed. Active students are the ones suspend affects. Suspended students are the ones restore affects."
+      ],
+      "wrong": [
+        "ALL in every box touches a very large group. Set at least the year before you confirm.",
+        "To fix one student, use Student Details instead."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "upload-attendance",
+      "title": "Upload attendance",
+      "group": "marks",
+      "screens": ["attendance"],
+      "summary": "Bring an attendance file into UniZ.",
+      "steps": [
+        "Press **Attendance Upload**.",
+        "Set Branch, Year, Semester, and Batch. The semester looks like SEM-1.",
+        "Press **Download template** so the columns match.",
+        "Fill one row per student. Save as Excel or CSV.",
+        "Press the box that says Click to select.",
+        "Choose the file.",
+        "Press **Process attendance**.",
+        "Wait. The button may say Synchronizing. Leave the tab open.",
+        "A failed upload shows Sync failed. Read that line."
+      ],
+      "wrong": [
+        "Accepted files are .xlsx, .xls, and .csv.",
+        "If it fails, download the template again and paste your rows into that file.",
+        "You can see past uploads under System & Logs."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "upload-grades",
+      "title": "Upload marks",
+      "group": "marks",
+      "screens": ["grades"],
+      "summary": "Bring a marks file into UniZ.",
+      "steps": [
+        "Press **Grades Upload**.",
+        "Set Branch, Year, Semester, and Batch.",
+        "Under Subject, pick one subject or ALL SUBJECTS (BULK).",
+        "Press **Regular** for normal marks. Press **Remedial** for remedial marks.",
+        "Press **Download template**.",
+        "Fill the file. One row per student.",
+        "Press Click to select and choose the file.",
+        "Press **Process grades**.",
+        "Wait until it finishes. Do not start a second file while the first still says Synchronizing."
+      ],
+      "wrong": [
+        "If the subject list says No subjects found, check Branch, Year, and Semester. The subject must exist under Manage Subjects.",
+        "If you chose the wrong subject, do not upload again until the office has looked at the first file."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "manage-subjects",
+      "title": "Add or change a subject",
+      "group": "marks",
+      "screens": ["subjects"],
+      "summary": "The subject list used by marks and registration.",
+      "steps": [
+        "Press **Manage Subjects**.",
+        "To add one, press **New subject**.",
+        "The window title is Create subject.",
+        "Fill Subject Code, Credits, Display Name, Department, and Level (Semester).",
+        "Press **Create subject**.",
+        "To change one, press the edit control on that row.",
+        "The window title becomes Edit subject. Press **Update subject** when the words are right.",
+        "Press **Cancel** to close without saving.",
+        "To remove one, press the delete control on that row.",
+        "The browser asks Are you sure you want to delete this subject? Press **OK** only if you mean it."
+      ],
+      "wrong": [
+        "Credits must be from 0 to 4. Half credits such as 0.5 are allowed.",
+        "Do not delete a subject that already has marks unless the office told you to.",
+        "Use the page arrows at the bottom if the subject is not on this page."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "create-semester",
+      "title": "Create a semester",
+      "group": "semester",
+      "screens": ["semester_registration"],
+      "summary": "Build a semester, then save a draft or send it for review.",
+      "steps": [
+        "Press **Semester Registration**.",
+        "Press **Create semester**.",
+        "The steps at the top are Details, Subjects, Electives, and Review.",
+        "On Details, fill Semester Name, Academic Year, Batch, and Program.",
+        "Fill Opens and Closes for registration. Fill Starts and Ends for the semester dates.",
+        "Press **Continue**.",
+        "On Subjects, add the subjects students must have. You can press **Add custom subject** if the list does not have it.",
+        "Press **Continue**.",
+        "On Electives, press **Add group** if students must pick from a group.",
+        "Fill Elective Group Code and the picks.",
+        "Press **Continue**.",
+        "On Review, read the summary.",
+        "Press **Save draft** to keep working later.",
+        "Press **Submit for review** to send it to the Dean.",
+        "Press **Back** to change an earlier step. Press **Cancel** on the first step to close."
+      ],
+      "wrong": [
+        "A saved draft shows the badge Draft.",
+        "After you submit, the badge says Dean review or HOD review. You wait. You do not open registration yourself at that moment unless you use Publish to Students.",
+        "If the window will not close, press **Cancel** or the close control. A draft you already saved is still in the list."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "open-registration",
+      "title": "Open registration for students",
+      "group": "semester",
+      "screens": ["semester_registration"],
+      "summary": "Let students register. A code is sent to your email first.",
+      "steps": [
+        "Press **Semester Registration**.",
+        "Find the semester card. Read its badge. It may say Draft, Dean review, HOD review, Approved, Registration open, or Closed.",
+        "On a Draft card you can press **Submit to Dean** if you have not sent it yet.",
+        "When you are allowed to open it, press **Publish to Students**.",
+        "The window title is Publish to students.",
+        "Press **Send verification code**.",
+        "Open the mail on your webmaster address. The page shows a masked email so you know where it went.",
+        "Type the code.",
+        "Press **Confirm and publish**.",
+        "The card should say Registration open.",
+        "When the window should shut, press **Close** on that card.",
+        "If the code expired, press **Resend code**."
+      ],
+      "wrong": [
+        "Publish to Students is hidden once registration is already open or already closed.",
+        "If the code does not arrive, wait one minute and press **Resend code**. Check the webmaster mailbox, not a personal mailbox.",
+        "To remove a semester you do not need, press **Delete** on the card. The browser asks Delete and the name, and says this is irreversible. Press **OK** only if you mean it."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "track-registration",
+      "title": "See who has registered",
+      "group": "semester",
+      "screens": ["semester_registration"],
+      "summary": "Counts of students who have registered, and who is still pending.",
+      "steps": [
+        "Press **Semester Registration**.",
+        "On the card, read Students registered.",
+        "When the badge says Registration open or Closed, press **Track progress**.",
+        "Read Eligible, Registered, and Pending.",
+        "Press **Back** to return to the semester list.",
+        "To change the subject list on a semester, press **Manage subjects** on the card."
+      ],
+      "wrong": [
+        "Track progress is not on a brand-new draft. Open or close registration first, or wait until the card offers the button.",
+        "Pending means they have not finished. It does not mean their account is broken."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "where-words",
+      "title": "Where the public website words come from",
+      "group": "website",
+      "screens": ["website_updates"],
+      "summary": "What you can change in Website Updates, and what you cannot.",
+      "steps": [
+        "The public website is https://rguktong.ac.in",
+        "Press **Website Updates** to change the parts listed below.",
+        "The home line of short announcements comes from the tab **Home**, in Announcement ticker.",
+        "The home counts, such as how many students are in a branch, come from the tab **Home**, in Campus statistics.",
+        "News on the home page and on News and updates comes from the tab **Notifications**, page **News Updates**.",
+        "Tenders come from **Notifications**, page **Tenders**.",
+        "Careers come from **Notifications**, page **Careers**.",
+        "About RGUKT, Campus Life, Education System, Governing Council, RTI Information, and SC/ST Cell come from the tab **Institute**.",
+        "Academic Programs, Academic Calendar, Academic Regulations, and Curricula come from the tab **Academics**.",
+        "Department staff pages come from the tab **Dept Staff**.",
+        "You cannot change these from Website Updates: the large home photographs, Explore campus, Quick links, the Administration people on the home page, Vision and Mission, Organizational Structure, Photo gallery, and the Contact page. Those are fixed in the website.",
+        "Student-portal banners are not the public website. They are under **Home Banners**.",
+        "Campus updates inside the student login are under **Campus Updates**, not under Website Updates."
+      ],
+      "wrong": [
+        "If a page you need is not in the list above, do not invent a new menu. Call the office. Someone has to change the website itself.",
+        "A change can take a short time to show. Refresh the public page before you type it a second time."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "post-announcement",
+      "title": "Change the home announcements",
+      "group": "website",
+      "screens": ["website_updates"],
+      "summary": "The short lines under the title on the public home page.",
+      "steps": [
+        "Press **Website Updates**.",
+        "Press the tab **Home**.",
+        "Find the block Announcement ticker.",
+        "To add a line, press **Add announcement**.",
+        "Type the words in Announcement text.",
+        "If the line should open a page, paste the address in Link URL. Leave it empty if there is no link.",
+        "To remove a line, move the pointer over that ticker. Press the small bin icon.",
+        "Wait. A bar at the bottom says Auto-publishing.",
+        "When the bar goes away, open https://rguktong.ac.in and check the lines.",
+        "If you see the bar and the words are wrong, press **Discard** at once. That reloads the last saved copy."
+      ],
+      "wrong": [
+        "Empty lines are hidden on the public page. A line needs words.",
+        "The bin icon can be hard to see until the pointer is on the line. Use a computer.",
+        "This does not change News, Tenders, or the student campus updates."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "change-home-numbers",
+      "title": "Change the home numbers",
+      "group": "website",
+      "screens": ["website_updates"],
+      "summary": "The counts on the public home page, such as how many students are in a branch.",
+      "steps": [
+        "Press **Website Updates**.",
+        "Press **Home**.",
+        "Find Campus statistics.",
+        "Press **Add stat** to add a number.",
+        "Type the label and the value.",
+        "To change a number, edit that row.",
+        "To remove one, move the pointer over it and press the bin icon.",
+        "Wait until Auto-publishing finishes.",
+        "Open the public home page and scroll to the numbers."
+      ],
+      "wrong": [
+        "These numbers are typed by you. They do not follow the student list by themselves.",
+        "Press **Discard** if you want the previous numbers back before the bar finishes. After it finishes, type the old number again."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "home-photos",
+      "title": "About the home photographs",
+      "group": "website",
+      "screens": ["website_updates"],
+      "summary": "The large photos on the public home page are not changed from the photo box.",
+      "steps": [
+        "Press **Website Updates**.",
+        "Press **Home**.",
+        "You may see a block called Carousel & media images.",
+        "That block is saved with the home page.",
+        "The large photo strip people see on the home page does not come from that block.",
+        "Do not delete those image lines hoping the home photos will change.",
+        "To change the large photos, Explore campus, or the Administration portraits on the home page, call the office. Those are fixed in the website."
+      ],
+      "wrong": [
+        "If you already deleted image lines, press **Discard** if the bar is still there.",
+        "If the bar has gone, call the office before you add new lines."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "post-notice",
+      "title": "Post a notice",
+      "group": "website",
+      "screens": ["website_updates"],
+      "summary": "Add a news item. It is meant for the public News and updates page.",
+      "steps": [
+        "Press **Website Updates**.",
+        "Press the tab **Notifications**.",
+        "In the page list, press **News Updates**.",
+        "Press **Add entry**.",
+        "Type the heading in Title.",
+        "Type the date as DD-MM-YYYY. For example, 21-11-2026.",
+        "Under Links, type what people should read in the label box. The placeholder says Link label.",
+        "Paste the PDF or page address in the box under it. The placeholder says PDF or page URL.",
+        "To add another file on the same notice, press **+ Add link**.",
+        "To remove a file, press the bin beside that link.",
+        "Wait until Auto-publishing finishes.",
+        "Open https://rguktong.ac.in/notifications/news and look for the new title."
+      ],
+      "wrong": [
+        "There is also a button **Add notification entry** lower on the page. **Add entry** at the top of the block is the one to use.",
+        "If the new item is not on the public News page, stop. Do not delete the other items. The public page may be reading a different saved list. Call the office.",
+        "To remove one notice, move the pointer over its card and press the bin icon. Then wait for Auto-publishing.",
+        "Press the round-arrow button if the list looks old. Its tip says **Refresh**. If the page says Could not load content, press **Retry**."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "post-tender",
+      "title": "Post a tender",
+      "group": "website",
+      "screens": ["website_updates"],
+      "summary": "Add a tender. It shows on the public Tenders page and on the home page.",
+      "steps": [
+        "Press **Website Updates**.",
+        "Press **Notifications**.",
+        "Press **Tenders**.",
+        "Press **Add entry**.",
+        "Type the title.",
+        "Type the date as DD-MM-YYYY.",
+        "Add the PDF label and address under Links.",
+        "Press **+ Add link** for a second file.",
+        "Wait until Auto-publishing finishes.",
+        "Open https://rguktong.ac.in/notifications/tenders and check the new title.",
+        "The home page also lists tenders. Refresh that page too."
+      ],
+      "wrong": [
+        "If the PDF link does not open, paste the full address, starting with https://",
+        "Do not use this page for a job advert. Jobs go under Careers.",
+        "Press **Discard** on the bottom bar only if you want to throw away the change that has not finished saving."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "post-career",
+      "title": "Post a job",
+      "group": "website",
+      "screens": ["website_updates"],
+      "summary": "Add a careers notice on the public website.",
+      "steps": [
+        "Press **Website Updates**.",
+        "Press **Notifications**.",
+        "Press **Careers**.",
+        "Press **Add entry**.",
+        "Type the job title.",
+        "Type the date as DD-MM-YYYY.",
+        "Add a link label and the address of the notice or PDF.",
+        "Wait until Auto-publishing finishes.",
+        "Open https://rguktong.ac.in/notifications/careers and check the title."
+      ],
+      "wrong": [
+        "A blank title shows as Entry and a number. Type a real title before you leave the page.",
+        "To take a job down, press the bin icon on that card and wait for the save."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "update-institute",
+      "title": "Update an institute page",
+      "group": "website",
+      "screens": ["website_updates"],
+      "summary": "About, campus life, education system, governing council, RTI, and the SC/ST cell.",
+      "steps": [
+        "Press **Website Updates**.",
+        "Press **Institute**.",
+        "Press one page: **About RGUKT**, **Campus Life**, **Education System**, **Governing Council**, **RTI Information**, or **SC/ST Cell**.",
+        "The public addresses are /institute/aboutrgukt, /institute/campuslife, /institute/edusys, /institute/govcouncil, /institute/rtiinfo, and /institute/scst on rguktong.ac.in.",
+        "The Right to information act link in the public menu uses the same RTI page.",
+        "Click a card that says Click to edit.",
+        "Change the boxes. Photo boxes say Upload image or Change image.",
+        "To add a block, press **Add entry**.",
+        "To remove a block, open it and press the bin icon.",
+        "Wait until Auto-publishing finishes.",
+        "Open that public page and read it."
+      ],
+      "wrong": [
+        "Section names on the form follow the saved names, such as sections or profiles. Edit the words inside. Do not rename the section unless you know the page needs that.",
+        "If the page says Could not load content, press **Retry**.",
+        "Vision and Mission, the photo gallery, and the administration people are not in this list."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "update-academics",
+      "title": "Update an academics page",
+      "group": "website",
+      "screens": ["website_updates"],
+      "summary": "Programs, calendar, regulations, and curricula on the public website.",
+      "steps": [
+        "Press **Website Updates**.",
+        "Press **Academics**.",
+        "Press **Academic Programs**, **Academic Calendar**, **Academic Regulations**, or **Curricula**.",
+        "The public pages are under https://rguktong.ac.in/academics/ and then the page name.",
+        "Each card is one block. The files people open are under Links.",
+        "Change a link label in the box that says Link label.",
+        "Change the file address in the box that says PDF or page URL.",
+        "Press **+ Add link** for another file on the same block.",
+        "Press the bin beside a link only when that file should go away.",
+        "Wait until Auto-publishing finishes.",
+        "Open the public page and click the file."
+      ],
+      "wrong": [
+        "The **Title** box on these cards is often empty. The heading people see is stored with the card even so. Leave Title empty if it was empty. Do not delete the card to fix a blank title.",
+        "If you need a new heading and Title does not change the public page, stop and call the office.",
+        "The calendar page is spelled Academic Calendar on the button. That spelling is the real button."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "update-department",
+      "title": "Update a department page",
+      "group": "website",
+      "screens": ["website_updates"],
+      "summary": "The staff cards on a public department page.",
+      "steps": [
+        "Press **Website Updates**.",
+        "Press **Dept Staff**.",
+        "Press the department. The buttons are BIOLOGY, CHEMISTRY, CIVIL, CSE, ECE, EEE, ENGLISH, IT, LIB, MANAGEMENT, MATHEMATICS, ME, PED, PHYSICS, TELUGU, and YOGA.",
+        "The public page is https://rguktong.ac.in/departments/ and then that same code. ME is Mechanical Engineering.",
+        "To add a person, press **Add faculty** or **Add another faculty member**.",
+        "Type the name, role, email, and phone.",
+        "Press the photo area to upload a picture.",
+        "Open the extra lines, such as Specialization, if you need them. One item per line.",
+        "To remove a person, press **Remove** on that card.",
+        "Then press **Delete** to confirm, or **Keep** to stop.",
+        "Press **Refresh** if you want to reload the page from the website.",
+        "Wait until Auto-publishing finishes.",
+        "Open the public department page and look for the name."
+      ],
+      "wrong": [
+        "Faculty Management in the left menu is the login list for UniZ. Dept Staff is the public website card. A person can need both. This page does not create a UniZ password.",
+        "If the photo fails, try a smaller JPG.",
+        "Press **Discard** on the bottom bar only to drop a change that is still saving."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "home-banners",
+      "title": "Change a student-portal banner",
+      "group": "messages",
+      "screens": ["banners"],
+      "summary": "Spotlight cards for the student portal. Show and Hide change whether students can see a card. This is not the public website.",
+      "steps": [
+        "Press **Home Banners**.",
+        "Press **New banner**. If the page is empty, the button may say **Add first banner**.",
+        "Type Banner Title.",
+        "Type Body Content.",
+        "Add a picture in Banner Image. Press **Upload file**, or paste an image address.",
+        "Press **Launch banner** for a new one. A new banner starts as Active, so students can see it.",
+        "Press **Update banner** if you are editing.",
+        "Press **Cancel** to close without saving.",
+        "A card marked Active is showing. A card marked Hidden is not.",
+        "Press **Hide** to stop showing an active banner. The card stays in the list and the mark changes to Hidden.",
+        "Press **Show** to show a hidden banner again.",
+        "Press **Edit** to change the words or the picture.",
+        "Press **Delete** only when you want the card gone. The browser asks if you want to delete this banner permanently. Press **OK** only if you mean it."
+      ],
+      "wrong": [
+        "These banners are not the home announcements on rguktong.ac.in. Use Website Updates for those.",
+        "If students do not see a banner, check that the card says Active, not Hidden. Then press **Show**.",
+        "**Hide** does not delete the banner. **Delete** does.",
+        "If the buttons say **Publish** and **Unpublish**, and the mark says Published or Draft, that is the other banner page. **Publish** means show. **Unpublish** means hide. Press **Back** and use **Home Banners** in the left menu."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "campus-updates",
+      "title": "Post a campus update",
+      "group": "messages",
+      "screens": ["updates"],
+      "summary": "A notice on the student home page, after they sign in.",
+      "steps": [
+        "Press **Campus Updates**.",
+        "Press **New Update**. If the list is empty, press **Create First Update**.",
+        "The window is New Broadcast, or Edit Broadcast if you are changing one.",
+        "Type Update Title.",
+        "Type Broadcast Content.",
+        "If students should open a page, paste it in Resource Link. You can leave it empty.",
+        "Press **Publish Now** for a new update.",
+        "Press **Update Broadcast** if you are editing.",
+        "Press **Cancel** to close without saving.",
+        "A Live badge means students can see it. It is live as soon as you publish.",
+        "To take it down, press **Delete** on that row.",
+        "The browser asks if you want to delete this broadcast permanently. Press **OK** only if you mean it.",
+        "Students see it on their home page in the notice list."
+      ],
+      "wrong": [
+        "This does not post to the public website. Use Website Updates for news, tenders, and careers.",
+        "The refresh icon tip says **Refresh Stream** if the list looks old.",
+        "There is no separate hide button. Delete is how you take one down."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "send-alert",
+      "title": "Send a phone alert",
+      "group": "messages",
+      "screens": ["push_alerts"],
+      "summary": "Send a short alert to phones that have allowed UniZ alerts.",
+      "steps": [
+        "Press **Push Alerts**.",
+        "The list shows people who can receive alerts. You can move with **Previous** and **Next**.",
+        "Press **Send Broadcast**.",
+        "The window title is Push Broadcast.",
+        "Set Target Audience. The choices are All (Students + Faculty), All Students, By Academic Year (E1/E2/E3/E4), By Batch Prefix, Single User, HODs Only, and Deans Only.",
+        "If you picked a year, batch, or one person, fill the extra box.",
+        "Type Alert Title.",
+        "Type Payload Message. Keep it short.",
+        "You may paste an image address. You can leave it empty.",
+        "Press **Deliver Pulse**.",
+        "Press **Cancel** if you do not want to send it."
+      ],
+      "wrong": [
+        "People who never allowed alerts on their phone will not see it. Also post a campus update if everyone must see the words.",
+        "You cannot pull a sent alert back. Check the title before you press **Deliver Pulse**.",
+        "If the button says Delivering, wait. Do not press it again."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "add-staff",
+      "title": "Add a staff member",
+      "group": "staff",
+      "screens": ["faculty_mgmt"],
+      "summary": "Create a UniZ login for a staff member.",
+      "steps": [
+        "Press **Faculty Management**.",
+        "Stay on the single-person view. If you see Bulk Add, press the stacked-squares button whose tip says **Toggle bulk mode** to go back.",
+        "Press **Add Faculty**.",
+        "Type Legal Full Name.",
+        "Type University Email.",
+        "Set Department.",
+        "Set System Privileges. The list is webadmin, coe, swo, dean, ao, and Other (custom).",
+        "Do not pick webadmin unless this person should have your full access.",
+        "Type Professional Designation.",
+        "Fill the other boxes the form asks for.",
+        "Press **Onboard Faculty**.",
+        "Press **Cancel** to close without creating the login.",
+        "Search for the person in the box Search registry to confirm the row."
+      ],
+      "wrong": [
+        "This login is not the public department card. To show them on the website, also use Dept Staff under Website Updates.",
+        "Roles in the left menu is a different list. It is only for webmaster, dean, and director. A teacher belongs here, in Faculty Management.",
+        "If the email is rejected, it may already exist. Search the registry first.",
+        "The refresh icon tip says **Refresh**."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "change-staff",
+      "title": "Change a staff member",
+      "group": "staff",
+      "screens": ["faculty_mgmt"],
+      "summary": "Change name, role, department, or contact for one person.",
+      "steps": [
+        "Press **Faculty Management**.",
+        "Type the name in Search registry.",
+        "Press **View** if you only want to read the card. Then press **Close Profile**.",
+        "Press **Modify** to edit.",
+        "Change the boxes.",
+        "Press **Update Registry**.",
+        "To change many people the same way, press the button whose tip says **Toggle bulk mode**.",
+        "Press **Bulk Update**.",
+        "Tick the people.",
+        "Fill only the boxes that should change, such as New Role or New Department.",
+        "Press the button that says Apply to the number Selected."
+      ],
+      "wrong": [
+        "Changing the public website card is a different page. See Update a department page.",
+        "If you change System Privileges to webadmin, that person can edit the database. Do that only when the office asks."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "suspend-staff",
+      "title": "Stop or remove a staff login",
+      "group": "staff",
+      "screens": ["faculty_mgmt"],
+      "summary": "Suspend blocks sign-in. Delete removes the login.",
+      "steps": [
+        "Press **Faculty Management**.",
+        "Find the person.",
+        "Press **Suspend** to block sign-in. The browser asks Suspend this user? Press **OK**.",
+        "Press **Reinstate** to allow sign-in again. The browser asks Reinstate this user? Press **OK**.",
+        "The badge says Active or Suspended.",
+        "To remove the login, press **Delete**.",
+        "The browser asks if you want to permanently delete that person and says this cannot be undone. Press **OK** only if you mean it.",
+        "To delete several, press the bulk-mode button, press **Bulk Delete**, tick the rows, and press the button that says Delete and the number Selected.",
+        "Read the list in the confirm box.",
+        "Press **Yes, Delete All** only if every name is right.",
+        "Press **Cancel** to stop."
+      ],
+      "wrong": [
+        "Delete does not remove their public website card. Remove that under Dept Staff if the page should change too.",
+        "Do not delete your own webmaster row.",
+        "Do not use Roles to remove a teacher. Roles can remove only a webmaster, a dean, or a director."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "upload-staff",
+      "title": "Add many staff from a file",
+      "group": "staff",
+      "screens": ["faculty_mgmt"],
+      "summary": "Upload a CSV of staff accounts.",
+      "steps": [
+        "Press **Faculty Management**.",
+        "Press the stacked-squares button. Its tip says **Toggle bulk mode**.",
+        "Press **Bulk Add**.",
+        "The heading says Bulk Import.",
+        "Press **Download Template**.",
+        "Fill the file. Do not rename the columns.",
+        "Press Click to select and choose the CSV.",
+        "Read CSV Preview.",
+        "Press **Run Bulk Import**.",
+        "Wait until it finishes. The button may say Processing."
+      ],
+      "wrong": [
+        "If the preview is empty, the file needs a header row. Use the template.",
+        "A failed row does not always stop the whole file. Read the result before you upload the same file again."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "see-roles",
+      "title": "See who is a dean, director, or webmaster",
+      "group": "roles",
+      "screens": ["role_mgmt"],
+      "summary": "The Roles page lists only those three kinds of account. Teachers are on Faculty Management.",
+      "steps": [
+        "Press **Roles**.",
+        "The title is Role Management.",
+        "Stay on the tab **Admins Overview**.",
+        "The list shows Admin User and Assigned Role.",
+        "The role is one of webadmin, dean, or director.",
+        "To find one person, type in the box that says Find admin by username.",
+        "The line on the right says how many people match.",
+        "Press **Back to Dashboard** when you want Overview again."
+      ],
+      "wrong": [
+        "If the list is empty, clear the search box. An empty search shows everyone on this page.",
+        "A teacher, warden, or other staff login is not here. Look in Faculty Management.",
+        "If you do not see **Roles** in the left menu, you are not signed in as the webmaster."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "add-role-account",
+      "title": "Add a dean, director, or webmaster",
+      "group": "roles",
+      "screens": ["role_mgmt"],
+      "summary": "Create a login that is only a webmaster, a dean, or a director.",
+      "steps": [
+        "Press **Roles**.",
+        "Press the tab **Add New Admin**.",
+        "The heading is Create New Admin.",
+        "Type Username. Use letters and numbers. A dot, a dash, or an underscore is allowed. At least 3 characters.",
+        "Type Password. It needs at least 6 characters. Tell the person in person or on a call. Do not put the password in a notice.",
+        "Set Initial Role. The choices are webadmin, dean, and director.",
+        "Pick webadmin only when this person should have your full access.",
+        "Press **Create Admin Account**.",
+        "A message box appears. If it says Admin added, press **OK**.",
+        "The page returns to Admins Overview. Look for the new name."
+      ],
+      "wrong": [
+        "If the message says All fields required, fill Username, Password, and Initial Role, then press **Create Admin Account** again.",
+        "If the message says Admin already exists, that username is taken. Pick another, or change the existing person instead.",
+        "If the message says Access denied, sign out and sign in as the webmaster. Only the webmaster can add these accounts.",
+        "This page does not add a teacher. Use Faculty Management for that."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "change-role",
+      "title": "Change a dean, director, or webmaster role",
+      "group": "roles",
+      "screens": ["role_mgmt"],
+      "summary": "Move one of these accounts between webadmin, dean, and director.",
+      "steps": [
+        "Press **Roles**.",
+        "Stay on **Admins Overview**.",
+        "Find the person. Use the search box if the list is long.",
+        "Open the box under Assigned Role.",
+        "Pick webadmin, dean, or director.",
+        "The change saves as soon as you pick. A message box says Role updated. Press **OK**.",
+        "Look at the row again and check the role you picked."
+      ],
+      "wrong": [
+        "This does not change a teacher's job. A teacher is changed under Faculty Management, in System Privileges.",
+        "Picking webadmin gives that person your full access, including the database. Do that only when the office asks.",
+        "If the message says Access denied, only the webmaster can change these roles.",
+        "If the message says Admin not found, search again. The name must match the row."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "remove-role-account",
+      "title": "Remove a dean, director, or webmaster",
+      "group": "roles",
+      "screens": ["role_mgmt"],
+      "summary": "Delete removes only a webmaster, dean, or director account. It does not remove teachers.",
+      "steps": [
+        "Press **Roles**.",
+        "Stay on **Admins Overview**.",
+        "Find the person.",
+        "Press the trash icon on that row. Its tip says **Delete Admin**.",
+        "The browser asks Delete admin and then the username. Press **OK** only if you mean it.",
+        "A message box says Admin removed. Press **OK**.",
+        "The name leaves the list."
+      ],
+      "wrong": [
+        "You cannot remove your own account. The message says You cannot remove your own account. Press **OK** and stop.",
+        "If the message says Only directory roles can be removed here, this person is not a webmaster, dean, or director. Remove a teacher from Faculty Management.",
+        "Press **Cancel** on the question if you picked the wrong name. Nothing is deleted.",
+        "Deleting here does not remove a public website card. That is under Website Updates."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "change-role-permissions",
+      "title": "Change what a role is allowed to do",
+      "group": "roles",
+      "screens": ["role_mgmt"],
+      "summary": "Tick what webadmin, dean, or director may do. Only the webmaster can save this.",
+      "steps": [
+        "Press **Roles**.",
+        "Press the tab **Permission Sets**.",
+        "Under Select Role, press webadmin, dean, or director.",
+        "The heading shows that role and the word Permissions.",
+        "Press a line to tick it or clear it. The lines are Manage Banners, Send Notifications, Assign Roles, Manage Users, Manage Curriculum, and View Reports.",
+        "Press **Save Changes**.",
+        "A message box says Permissions updated. Press **OK**."
+      ],
+      "wrong": [
+        "If you have not pressed a role, the page says No Role Selected. Press webadmin, dean, or director first.",
+        "If the message says Access denied, you are not signed in as the webmaster.",
+        "These ticks do not add or remove a person. Use Add New Admin or Admins Overview for that.",
+        "Do not clear every tick on webadmin unless the office has asked. You can lock yourself out of a job."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "read-logs",
+      "title": "Read the upload history",
+      "group": "staff",
+      "screens": ["system_logs"],
+      "summary": "See past student, attendance, and marks uploads.",
+      "steps": [
+        "Press **System & Logs**.",
+        "The title is System & Audit Logs.",
+        "Use the menu that says All Assets, Students, Attendance, or Grades.",
+        "Type in the search box if you know the file name.",
+        "Read the status. Completed means that upload finished.",
+        "If a row has a download icon, its tip says **Download Source File**. Press it to save the file that was uploaded.",
+        "Press the round-arrow button to reload. Its tip says **Refresh Logs**.",
+        "Press **Previous** or **Next** to change page."
+      ],
+      "wrong": [
+        "This page does not edit students. It only shows what was uploaded.",
+        "If a row says failed, download the file if you can, fix the spreadsheet, and upload it again from the right upload page."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "tidy-job",
+      "title": "Start the tidy-up job",
+      "group": "staff",
+      "screens": ["system_logs"],
+      "summary": "A button that starts a maintenance job. Use it only when the office asks.",
+      "steps": [
+        "Press **System & Logs**.",
+        "Find the warning-triangle button beside the refresh icon.",
+        "Its tip says **Trigger Maintenance**.",
+        "Press it only when someone from the office told you to.",
+        "Wait for the message. Success says the job was triggered.",
+        "You do not need this for a normal notice, student, or marks upload."
+      ],
+      "wrong": [
+        "If it says the trigger failed, do not keep pressing it. Call the office.",
+        "This does not undo a bad upload."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "fix-database-row",
+      "title": "Fix a wrong entry in the database",
+      "group": "database",
+      "screens": ["database"],
+      "summary": "Change one line in a stored table. Every change is kept and can be undone.",
+      "steps": [
+        "Use Student Details, Faculty Management, or Website Updates first when the job has its own page. Use Database only when those pages cannot fix the line.",
+        "Press **Database**.",
+        "Press the tab **Tables**.",
+        "The page names the database it opened. If it says no database is configured, stop and call the office.",
+        "Under Which group of tables? pick the group.",
+        "Under Which table? pick the table.",
+        "Type words in Find text in this table.",
+        "Press **Search**.",
+        "To narrow one column, pick it under Filter a column, type Filter text, and press **Apply filter**.",
+        "Press **Clear search and filter** to see the full table again.",
+        "Find the line. Press **Edit** on that line.",
+        "The form says Edit this row. A column marked key is the identity. Do not change the key unless the office said the key itself is wrong.",
+        "A file field says it is left unchanged. Leave it.",
+        "Yes and No are for yes-or-no columns. Blank means empty.",
+        "Press **Save this row**.",
+        "Press **Cancel** to close without saving.",
+        "The page says the change was saved. It is also listed under History."
+      ],
+      "wrong": [
+        "If the form says the table has no key column, do not try to save. Call the office.",
+        "If you saved the wrong words, open History and follow Undo a mistake. Do not edit again until you have read that line.",
+        "Use **Previous page** and **Next page** when the line is not on this page. The line shows how many rows you are seeing."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "add-database-row",
+      "title": "Add a row in the database",
+      "group": "database",
+      "screens": ["database"],
+      "summary": "Add one new line to a table.",
+      "steps": [
+        "Press **Database**.",
+        "Press **Tables**.",
+        "Pick the group and the table.",
+        "Press **Add a row**.",
+        "The form says New row.",
+        "Fill the boxes. Leave a box blank only when empty is correct.",
+        "Press **Save this row**.",
+        "Search for the new line to confirm it is there."
+      ],
+      "wrong": [
+        "If Save this row fails, read the red line. A duplicate key is common. Do not invent a second copy.",
+        "Prefer Add Student or Add Faculty when the person belongs on those pages."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "delete-database-row",
+      "title": "Remove a row in the database",
+      "group": "database",
+      "screens": ["database"],
+      "summary": "Delete one line. You must type DELETE. History can put it back.",
+      "steps": [
+        "Press **Database**.",
+        "Press **Tables**.",
+        "Find the line. Press **Edit**.",
+        "Read the line that says removing a row cannot be taken back from this screen until you use History.",
+        "In Type DELETE to confirm, type DELETE in capital letters.",
+        "Press **Remove this row**.",
+        "The button stays grey until the word is exactly DELETE.",
+        "Open the tab **History** and check that the removal is listed."
+      ],
+      "wrong": [
+        "If you removed the wrong line, do not add a new one by hand first. Use **Undo this change** in History.",
+        "You cannot delete from the table until the line has a key."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "undo-mistake",
+      "title": "Undo a mistake",
+      "group": "database",
+      "screens": ["database"],
+      "summary": "Put back an add, an edit, or a delete that was done in Tables.",
+      "steps": [
+        "Press **Database**.",
+        "Press the tab **History**.",
+        "Each card says what changed, when, and who did it.",
+        "Find the mistake. The newest items are first.",
+        "If the card says Already undone, leave it.",
+        "If the card says the command cannot be undone with one click, stop. That was a command, not a row edit.",
+        "On a card that has the button, press **Undo this change**.",
+        "Wait for the message.",
+        "Press **Tables** and search for the line to see that it is back.",
+        "Use **Previous page** and **Next page** if the card is older."
+      ],
+      "wrong": [
+        "Undo puts that one change back. If you made three edits, undo the latest wrong one first.",
+        "A command from the Command tab does not have Undo this change.",
+        "Student Details delete and Faculty delete are not in this History list. Call the office if you used those."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "run-database-command",
+      "title": "Run a database command",
+      "group": "database",
+      "screens": ["database"],
+      "summary": "Only when the office has written the command for you. A command that changes data is not undone with one click.",
+      "steps": [
+        "Ask the office to write the command on paper or in a mail. Do not guess the words.",
+        "Press **Database**.",
+        "Press the tab **Command**.",
+        "Click the box Database command.",
+        "Type the command exactly.",
+        "Press **Run command**.",
+        "If the command only reads, the rows appear below.",
+        "If the command changes data, the page tells you to type its first word.",
+        "Type that word in Confirmation.",
+        "Press **Confirm and run**.",
+        "Read the message. Then open **History**. The card will say the command cannot be undone with one click."
+      ],
+      "wrong": [
+        "If you are not sure, do not press **Run command**. Use Tables instead.",
+        "If the page shows an error, do not retype a longer command. Call the office and read them the error.",
+        "The emergency page at dbadmin.rguktong.in is a last resort. See Use the emergency database page."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "use-adminer",
+      "title": "Use the emergency database page",
+      "group": "database",
+      "screens": ["database"],
+      "summary": "A separate website when the Database tab cannot do the job. It has two logins.",
+      "steps": [
+        "Try the Database tab first. Use this page only when that tab cannot open or cannot do the job.",
+        "On a computer, open https://dbadmin.rguktong.in",
+        "The first page is Cloudflare. It asks for a one-time code.",
+        "The code is sent to webadmin@rguktong.ac.in",
+        "Open that mailbox. Type the code into the Cloudflare page.",
+        "You then see Adminer's own login. This is a second login.",
+        "Leave the server box as it is. Do not change it.",
+        "Set the system to PostgreSQL if it is not already.",
+        "Type the username uniz_dbadmin",
+        "Type the password. It is not in this guide. Ask the Administrative Officer.",
+        "Type the database name uniz_db",
+        "Press the login button on that form.",
+        "Do only the job the office described. Then sign out of Adminer and close the browser.",
+        "Changes you make here are still recorded, but the one-click undo in the portal is the safer path. Prefer the Database tab next time."
+      ],
+      "wrong": [
+        "If you see Adminer's form before any email code, you are not on the protected page. Close it and open https://dbadmin.rguktong.in again.",
+        "If the code email does not arrive, check the webmaster mailbox, including spam. Do not ask for many codes at once. Wait two minutes.",
+        "The session lasts about 8 hours. After that, the email code is required again.",
+        "Do not save the database password in a chat or on paper that other people can read."
+      ],
+      "call": "Call the Administrative Officer on 08592-223121 for the database password. Call the Director's office on 08592-223133 if the emergency page itself will not open."
+    },
+    {
+      "id": "change-password",
+      "title": "Change your password",
+      "group": "account",
+      "screens": ["security"],
+      "summary": "Set a new password while you are signed in.",
+      "steps": [
+        "Press **Security**.",
+        "Type your current password in Current password.",
+        "Type a new password in New password.",
+        "The new password needs at least 8 characters, a number, and a symbol. The page marks each rule Met or Needed.",
+        "Type the same new password again in the repeat box.",
+        "When the passwords match, you see Passwords match.",
+        "Press **Update password**.",
+        "Sign in next time with the new password."
+      ],
+      "wrong": [
+        "If the button says the passwords do not match, type the new password again in both boxes.",
+        "Do not use your staff ID as the password.",
+        "If you cannot remember the current password, sign out and use Get a new password."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "find-a-guide",
+      "title": "Find a guide",
+      "group": "account",
+      "screens": ["help"],
+      "summary": "Search these instructions.",
+      "steps": [
+        "Press **Help** in the left menu.",
+        "Click the search box.",
+        "Type a few words, such as notice, student, password, or undo.",
+        "The list hides guides that do not match.",
+        "Press a title to open the steps.",
+        "On any other page, press **How to?** at the top. That opens the guides for the page you are on.",
+        "Inside **How to?**, press **Open in Help** to land on the same guide here."
+      ],
+      "wrong": [
+        "If nothing matches, clear the search box. Try one simple word.",
+        "How to? only lists the job for the current page. Help lists every job."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "print-guide",
+      "title": "Print or save these guides",
+      "group": "account",
+      "screens": ["help"],
+      "summary": "Paper, or a PDF file you can keep.",
+      "steps": [
+        "Press **Help**.",
+        "Press **Open the print page**.",
+        "The address is https://uniz.rguktong.in/admin/help/print",
+        "Press **Print**.",
+        "In the print box, choose a printer, or choose Save as PDF if you want a new file.",
+        "You can also press **Download the PDF** on the Help page.",
+        "That file is the same guide, already made: uniz-webmaster-guide.pdf",
+        "Keep a paper copy in the office if the internet is down."
+      ],
+      "wrong": [
+        "If the print page shows the dark menu, you are on Help, not the print page. Press **Open the print page**.",
+        "If the PDF does not download, try the print page and choose Save as PDF."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    }
+  ]
+}

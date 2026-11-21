@@ -349,6 +349,7 @@ UNIZ_DB_DEPLOYMENTS=(
   uniz-outpass-service
   uniz-gateway-api
   uniz-cron-service
+  uniz-dbadmin-service
 )
 
 # Redact userinfo in any accidental database URL. Never print env or Secret data.
@@ -523,6 +524,16 @@ deploy_logic() {
   ROLLBACK_TARGETS=()
   VERIFY_DEPLOYMENTS=()
 
+  # Fill a missing DBADMIN_DB_PASSWORD before any secret sync. Direct deploys
+  # do not pass through ci-remote-deploy.sh, which does the same step.
+  if [ -f "/root/uniz-secrets.env" ] && [ -f "scripts/deploy/ensure-dbadmin-password.sh" ]; then
+    dbadmin_pw_status="$(bash scripts/deploy/ensure-dbadmin-password.sh /root/uniz-secrets.env)"
+    printf '%s\n' "$dbadmin_pw_status"
+    if [ "$dbadmin_pw_status" = "generated DBADMIN_DB_PASSWORD (new)" ]; then
+      export DBADMIN_PASSWORD_JUST_SET=1
+    fi
+  fi
+
   # LOAD SECRETS (Sanitized)
   if [ -f "/root/uniz-secrets.env" ]; then
     echo "[Vault] Loading sanitized secrets..."
@@ -584,10 +595,26 @@ deploy_logic() {
   bash "$(dirname "$0")/sync-nginx-k8s-tls.sh" 2>/dev/null || true
   bash "$(dirname "$0")/install-nginx-www-redirects.sh" 2>/dev/null || true
   bash "$(dirname "$0")/ensure-nginx-api-uniz.sh" 2>/dev/null || true
+  bash "$(dirname "$0")/ensure-nginx-dbadmin.sh" 2>/dev/null || true
   bash "$(dirname "$0")/install-nginx-k8s-tls-cron.sh" 2>/dev/null || true
   
   echo "[Infra] Applying branch components ($K_APPLY_PATH)..."
   kubectl apply -k "$K_APPLY_PATH" || true
+
+  if kubectl get cronjob uniz-dbadmin-role >/dev/null 2>&1; then
+    echo "[dbadmin] Applying uniz_dbadmin grants..."
+    dbadmin_job="uniz-dbadmin-role-$(date +%s)"
+    if kubectl create job --from=cronjob/uniz-dbadmin-role "$dbadmin_job" >/dev/null 2>&1; then
+      # ALTER runs even when the role already exists, so a new vault password matches.
+      kubectl wait --for=condition=complete "job/$dbadmin_job" --timeout=180s >/dev/null 2>&1 || true
+    fi
+  fi
+  if [ "${DBADMIN_PASSWORD_JUST_SET:-}" = "1" ]; then
+    echo "[dbadmin] Restarting the editor and Adminer so they load the vault password"
+    kubectl rollout restart deployment/uniz-dbadmin-service >/dev/null 2>&1 || true
+    kubectl rollout restart deployment/uniz-adminer >/dev/null 2>&1 || true
+  fi
+  bash "$(dirname "$0")/ensure-nginx-dbadmin.sh" 2>/dev/null || true
 
   if [ "$USE_GHCR" == "true" ] || [ -f "$MANIFEST_PATH" ]; then
     echo "[GHCR] Ensuring image tags after kubectl apply..."
@@ -702,6 +729,9 @@ deploy_logic() {
     if [ "$USE_GHCR" == "true" ] && [ -n "$FULL_IMAGE" ]; then
       echo "[Deploy] Updating $DEP -> $FULL_IMAGE"
       apply_ghcr_image_to_workload "$DEP" "$CON" "$FULL_IMAGE"
+      if [ "$IMG" = "uniz-dbadmin-service" ]; then
+        apply_ghcr_image_to_workload "uniz-adminer" "access-proxy" "$FULL_IMAGE" || true
+      fi
     elif [ -n "$TAG" ]; then
       import_image_to_k3s "$IMG" "$TAG" || {
         echo "[Error] Cannot deploy $DEP — image $IMG:$TAG missing from Docker and k3s"
@@ -712,6 +742,9 @@ deploy_logic() {
         kubectl set image "cronjob/$DEP" "$CON=docker.io/library/$IMG:$TAG"
       else
         kubectl set image "deployment/$DEP" "$CON=docker.io/library/$IMG:$TAG"
+      fi
+      if [ "$IMG" = "uniz-dbadmin-service" ]; then
+        kubectl set image "deployment/uniz-adminer" "access-proxy=docker.io/library/$IMG:$TAG" || true
       fi
     fi
   done
@@ -801,6 +834,7 @@ deploy_logic() {
     bash "$(dirname "$0")/ensure-cloudflare-www-dns.sh" || true
     bash "$(dirname "$0")/install-nginx-www-redirects.sh" 2>/dev/null || true
     bash "$(dirname "$0")/ensure-nginx-api-uniz.sh" 2>/dev/null || true
+    bash "$(dirname "$0")/ensure-nginx-dbadmin.sh" 2>/dev/null || true
     bash "$(dirname "$0")/configure-cloudflare-portal-cdn.sh" || true
   fi
 

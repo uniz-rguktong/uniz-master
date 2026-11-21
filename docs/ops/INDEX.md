@@ -10,6 +10,7 @@ Single-VPS + Cloudflare Pages (free) production.
 | Smoke | `bash scripts/ops/post-deploy-smoke.sh` |
 | HPA drill | [HPA_DRILL.md](HPA_DRILL.md) |
 | Backups / restore | [BACKUP_RESTORE.md](BACKUP_RESTORE.md) |
+| Database editor / Adminer | [adminer.md](adminer.md) |
 | Vault | `npm run vault:vps:status` · `npm run vault:vps-audit` |
 | Observability | See below (Netdata + Uptime Kuma via SSH tunnel) |
 | Infra overview | [infra/README.md](../../infra/README.md) |

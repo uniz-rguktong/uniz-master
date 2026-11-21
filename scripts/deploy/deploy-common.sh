@@ -18,6 +18,7 @@ infra_yaml_to_dir() {
     outpass-service.yaml) echo "uniz-outpass" ;;
     portal.yaml) echo "uniz-portal" ;;
     user-service.yaml) echo "uniz-user" ;;
+    dbadmin-service.yaml|adminer.yaml|dbadmin-role-cronjob.yaml) echo "uniz-dbadmin" ;;
     landing.yaml) echo "uniz-landing" ;;
     *) echo "" ;;
   esac
@@ -31,6 +32,7 @@ rebuild_tag_to_dir() {
     auth) echo "uniz-auth" ;;
     academics) echo "uniz-academics" ;;
     user) echo "uniz-user" ;;
+    dbadmin) echo "uniz-dbadmin" ;;
     files) echo "uniz-files" ;;
     mail) echo "uniz-mail" ;;
     notifications) echo "uniz-notifications" ;;
@@ -41,7 +43,7 @@ rebuild_tag_to_dir() {
   esac
 }
 
-MONOREPO_SERVICES="uniz-academics uniz-auth uniz-user uniz-outpass uniz-files uniz-mail uniz-notifications uniz-cron uniz-gateway"
+MONOREPO_SERVICES="uniz-academics uniz-auth uniz-user uniz-outpass uniz-files uniz-mail uniz-notifications uniz-cron uniz-gateway uniz-dbadmin"
 
 # Default CI/deploy image matrix. Mail + files apps remain in the monorepo for
 # local use, but production runtime folds them into notifications and user.
@@ -58,6 +60,7 @@ UNIZ_SERVICES=(
   "uniz-landing:uniz-landing:uniz-landing:landing"
   "uniz-docs:uniz-docs-service:uniz-docs-service:docs-service"
   "uniz-user:uniz-user-service:uniz-user-service:user-service"
+  "uniz-dbadmin:uniz-dbadmin-service:uniz-dbadmin-service:dbadmin-service"
   "infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
 )
 
@@ -172,7 +175,7 @@ deploy_detect_changes() {
       echo "[Build] SERVICE override: $tag -> $dir"
     done
   else
-    for tag in docs portal gateway auth academics user files mail notifications outpass cron landing; do
+    for tag in docs portal gateway auth academics user files mail notifications outpass cron landing dbadmin; do
       if [[ "$BUILD_MSG" == *"[rebuild $tag]"* ]]; then
         dir=$(rebuild_tag_to_dir "$tag")
         if [ -n "$dir" ]; then
