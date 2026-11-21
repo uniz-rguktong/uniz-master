@@ -291,16 +291,28 @@ function ProfileSection({
     if (!profile) return;
     setSaving(true);
     try {
+      const patch: Record<string, unknown> = {};
+      if ((form.name || "") !== (profile.Name || "")) patch.name = form.name;
+      if ((form.contact || "") !== (profile.Contact || "")) patch.contact = form.contact;
+      if ((form.designation || "") !== (profile.Designation || "")) {
+        patch.designation = form.designation;
+      }
+      if ((form.profileUrl || "") !== (profile.ProfileUrl || "")) {
+        patch.profileUrl = form.profileUrl;
+      }
+      if (JSON.stringify(form.bio || {}) !== JSON.stringify(profile.Bio || {})) {
+        patch.bio = form.bio;
+      }
+      if (Object.keys(patch).length === 0) {
+        toast.info("No changes to save");
+        setIsEditing(false);
+        setSaving(false);
+        return;
+      }
       const res = await fetch(`${BASE_URL}/profile/faculty/me/update`, {
         method: "PUT",
         headers: { ...authHeader(), "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          contact: form.contact,
-          designation: form.designation,
-          profileUrl: form.profileUrl,
-          bio: form.bio,
-        }),
+        body: JSON.stringify(patch),
       });
       const data = await res.json();
       if (data.success) {

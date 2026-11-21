@@ -175,12 +175,12 @@ const COLUMNS: { key: string; label: string; title?: string; pin?: boolean; widt
   { key: "cgpa", label: "CGPA", width: 80 },
   { key: "total_backlogs", label: "BL", title: "Backlogs", width: 64 },
   { key: "attendance_pct", label: "Att", title: "Attendance %", width: 72 },
-  { key: "phone_number", label: "Phone", width: 132 },
-  { key: "gender", label: "Gender", width: 80 },
+  { key: "phone_number", label: "Phone", width: 156 },
+  { key: "gender", label: "Gender", width: 96 },
   { key: "blood_group", label: "Blood", width: 72 },
   { key: "roomno", label: "Room", width: 80 },
   { key: "is_in_campus", label: "Campus", width: 88 },
-  { key: "is_suspended", label: "Status", width: 112 },
+  { key: "is_suspended", label: "Status", width: 128 },
 ];
 
 function placeholder(value: unknown): string {
@@ -841,9 +841,10 @@ export default function StudentDetails() {
       );
     }
 
+    const shown = String(cellValue(row, col.key, 0));
     return (
-      <span className="inline-flex items-center gap-1 group/cell">
-        {cellValue(row, col.key, 0)}
+      <span className="flex min-w-0 items-center gap-1 group/cell" title={shown}>
+        <span className="min-w-0 flex-1 truncate">{shown}</span>
         {!isHodReadOnly && EDITABLE_KEYS.has(col.key) && (
           <Pencil
             size={12}
@@ -1533,6 +1534,18 @@ export default function StudentDetails() {
                 </button>
               ),
               label: col.label,
+              clip: col.key !== "name" && col.key !== "is_suspended",
+              title: (row: StudentRow) => {
+                if (col.key === "name") {
+                  return [row.name, row.email].filter(Boolean).join(" · ") || undefined;
+                }
+                if (col.key === "is_suspended") {
+                  return row.is_suspended ? "Suspended" : "Active";
+                }
+                const index = rows.indexOf(row);
+                const value = cellValue(row, col.key, rangeStart + index);
+                return value === undefined || value === null ? undefined : String(value);
+              },
               primary: col.key === "name",
               meta: col.key === "username" || col.key === "branch",
               numeric: col.key === "cgpa" || col.key === "attendance_pct" || col.key === "total_backlogs" || col.key === "row",

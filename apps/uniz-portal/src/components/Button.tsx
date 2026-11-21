@@ -10,10 +10,10 @@ const buttonVariantsInner = cva(
     variants: {
       variant: {
         primary:
-          "bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-active",
+          "bg-primary text-on-primary hover:bg-primary-hover hover:text-on-primary active:bg-primary-active active:text-on-primary disabled:text-on-primary",
         outline: "border border-head bg-transparent text-head hover:bg-tint",
         ghost: "bg-transparent text-text-2 hover:bg-tint",
-        destructive: "bg-error text-on-error hover:opacity-90",
+        destructive: "bg-error text-on-error hover:text-on-error hover:opacity-90 active:text-on-error disabled:text-on-error",
         link: "h-auto min-h-0 rounded-none px-0 font-medium text-link underline-offset-[1px] hover:underline max-[639px]:min-h-0",
       },
       size: {
