@@ -61,8 +61,8 @@ export function Header() {
     <>
       <header className="sticky top-0 z-50 w-full border-b border-sb-border bg-navy-900 text-white">
         <div className="mx-auto flex h-[60px] w-full max-w-[1232px] items-center gap-3 px-5 min-[821px]:h-16 min-[821px]:px-10">
-          <Link to="/" className="focus-chrome inline-flex min-w-0 items-center gap-2.5 text-white">
-            <img src="/rgukt-logo.png" alt="" width={36} height={42} className="h-9 w-auto" />
+          <Link to="/" className="focus-chrome inline-flex min-h-10 items-center gap-2.5 text-white">
+            <img src="/rgukt-logo.png" alt="" width={36} height={42} className="h-9 w-auto shrink-0" />
             <span className="whitespace-nowrap font-serif text-[16px] font-semibold leading-none tracking-[-0.01em] min-[640px]:text-[20px]">
               RGUKT Ongole
             </span>
