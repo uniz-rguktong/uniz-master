@@ -341,6 +341,7 @@ PY
 
 # Deployments that read Postgres from uniz-secrets. cron is included when the
 # Deployment object still exists (it may be scaled to 0).
+# uniz-adminer is included so its rollout is waited on with these.
 UNIZ_DB_DEPLOYMENTS=(
   uniz-auth-service
   uniz-user-service
@@ -350,11 +351,67 @@ UNIZ_DB_DEPLOYMENTS=(
   uniz-gateway-api
   uniz-cron-service
   uniz-dbadmin-service
+  uniz-adminer
 )
 
 # Redact userinfo in any accidental database URL. Never print env or Secret data.
 scrub_deploy_output() {
   sed -E 's#postgres(ql)?://[^@]*@#postgresql://***@#g'
+}
+
+# Role-job logs can echo an ALTER ROLE password or a connection string.
+# shellcheck source=scrub-dbadmin-job-log.sh
+source "$(dirname "$0")/scrub-dbadmin-job-log.sh"
+
+# One job name per deploy. Wait for it, print a redacted result, and never fail the deploy.
+run_dbadmin_role_job() {
+  local job old complete failed
+  if ! kubectl get cronjob uniz-dbadmin-role >/dev/null 2>&1; then
+    echo "[dbadmin] WARN: cronjob uniz-dbadmin-role is not installed yet"
+    return 0
+  fi
+
+  while IFS= read -r old; do
+    [ -n "$old" ] || continue
+    kubectl delete "job/${old}" --wait=false >/dev/null 2>&1 || true
+    echo "[dbadmin] Removed finished role job ${old}"
+  done < <(kubectl get jobs -o go-template='{{range .items}}{{.metadata.name}} {{range .metadata.ownerReferences}}{{.kind}}/{{.name}} {{end}}{{range .status.conditions}}{{.type}}={{.status}} {{end}}{{"\n"}}{{end}}' 2>/dev/null \
+    | awk '($0 ~ /Complete=True/ || $0 ~ /Failed=True/) && ($1 ~ /^uniz-dbadmin-role-manual-[0-9]+(-[0-9]+)?$/ || $1 ~ /^uniz-dbadmin-role-[0-9]+$/ || $0 ~ /CronJob\/uniz-dbadmin-role/) { print $1 }')
+
+  # CronJob pods are named uniz-dbadmin-role-<time>-<suffix>. Deleting a
+  # finished job usually removes them; delete any that are still listed.
+  while IFS= read -r old; do
+    [ -n "$old" ] || continue
+    kubectl delete "pod/${old}" --wait=false >/dev/null 2>&1 || true
+    echo "[dbadmin] Removed finished role pod ${old}"
+  done < <(kubectl get pods -o go-template='{{range .items}}{{.metadata.name}} {{.status.phase}}{{"\n"}}{{end}}' 2>/dev/null \
+    | awk '$1 ~ /^uniz-dbadmin-role-/ && ($2 == "Succeeded" || $2 == "Failed") { print $1 }')
+
+  job="uniz-dbadmin-role-manual-$(date +%s)-$$"
+  echo "[dbadmin] Starting role job ${job}"
+  if ! kubectl create job --from=cronjob/uniz-dbadmin-role "$job"; then
+    echo "[dbadmin] WARN: could not start ${job}"
+    return 0
+  fi
+
+  # ALTER ROLE runs inside the job even when uniz_dbadmin already exists.
+  echo "[dbadmin] Waiting up to 180s for ${job}"
+  kubectl wait --for=condition=complete "job/${job}" --timeout=180s || true
+
+  complete=$(kubectl get job "$job" -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' 2>/dev/null || true)
+  failed=$(kubectl get job "$job" -o jsonpath='{.status.conditions[?(@.type=="Failed")].status}' 2>/dev/null || true)
+  if [ "$complete" = "True" ]; then
+    echo "[dbadmin] role job complete"
+  else
+    echo "[dbadmin] WARN: role job failed"
+    if [ "$failed" = "True" ]; then
+      echo "[dbadmin] WARN: job ${job} reported Failed"
+    fi
+  fi
+
+  echo "[dbadmin] role job log (last 20 lines, redacted)"
+  kubectl logs "job/${job}" --tail=20 2>&1 | scrub_dbadmin_job_log || true
+  return 0
 }
 
 # Hash is taken after the vault re-sync. Pods keep env from the template they
@@ -601,14 +658,11 @@ deploy_logic() {
   echo "[Infra] Applying branch components ($K_APPLY_PATH)..."
   kubectl apply -k "$K_APPLY_PATH" || true
 
-  if kubectl get cronjob uniz-dbadmin-role >/dev/null 2>&1; then
-    echo "[dbadmin] Applying uniz_dbadmin grants..."
-    dbadmin_job="uniz-dbadmin-role-$(date +%s)"
-    if kubectl create job --from=cronjob/uniz-dbadmin-role "$dbadmin_job" >/dev/null 2>&1; then
-      # ALTER runs even when the role already exists, so a new vault password matches.
-      kubectl wait --for=condition=complete "job/$dbadmin_job" --timeout=180s >/dev/null 2>&1 || true
-    fi
-  fi
+  # Cloudflare terminates dbadmin TLS. Drop a leftover cert-manager Certificate
+  # so it stops reporting uniz-adminer-tls as not ready.
+  kubectl delete certificate uniz-adminer-tls --ignore-not-found >/dev/null 2>&1 || true
+
+  run_dbadmin_role_job
   if [ "${DBADMIN_PASSWORD_JUST_SET:-}" = "1" ]; then
     echo "[dbadmin] Restarting the editor and Adminer so they load the vault password"
     kubectl rollout restart deployment/uniz-dbadmin-service >/dev/null 2>&1 || true

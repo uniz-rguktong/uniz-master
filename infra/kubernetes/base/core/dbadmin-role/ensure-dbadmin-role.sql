@@ -1,6 +1,9 @@
 \getenv dbadmin_password DBADMIN_DB_PASSWORD
 
+-- set_config returns the value. Hide that row so psql -f does not print it.
+\o /dev/null
 SELECT set_config('uniz.dbadmin_password', :'dbadmin_password', false);
+\o
 
 DO $$
 BEGIN
@@ -10,6 +13,8 @@ BEGIN
 END
 $$;
 
+-- The format() row is the ALTER/CREATE text, which contains the password.
+\o /dev/null
 SELECT format(
   'CREATE ROLE uniz_dbadmin LOGIN PASSWORD %L NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS',
   current_setting('uniz.dbadmin_password')
@@ -22,10 +27,13 @@ SELECT format(
   current_setting('uniz.dbadmin_password')
 )
 \gexec
+\o
 
 ALTER ROLE uniz_dbadmin SET statement_timeout = '60s';
 
+\o /dev/null
 SELECT set_config('uniz.dbadmin_password', '', false);
+\o
 
 DO $$
 DECLARE
