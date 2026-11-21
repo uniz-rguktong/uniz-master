@@ -475,9 +475,14 @@ function handleHttpError(
         toast.error(message || "Bad request. Please check your input.");
       }
       break;
-    case 500:
-      toast.error("A server error occurred. Our engineers are notified.");
+    case 500: {
+      const serverMessage =
+        typeof data?.message === "string" ? data.message.trim() : "";
+      toast.error(
+        serverMessage || "A server error occurred. Our engineers are notified.",
+      );
       break;
+    }
     default:
       toast.error(message || "An unexpected error occurred.");
   }
