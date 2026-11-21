@@ -40,10 +40,25 @@ export interface HistoryEntry {
   table: string;
   action: string;
   primaryKey: Record<string, unknown> | null;
+  before: Record<string, unknown> | null;
+  after: Record<string, unknown> | null;
   summary: string;
   sql?: string;
   undoable: boolean;
   undone: boolean;
+}
+
+export interface TableSummary {
+  name: string;
+  estimatedRows: number | null;
+}
+
+export type FilterOp = "eq" | "contains" | "isnull" | "gt" | "lt";
+
+export interface RowFilter {
+  column: string;
+  op: FilterOp;
+  value?: string;
 }
 
 async function dbFetch<T>(path: string, init?: RequestInit): Promise<T> {
@@ -74,7 +89,7 @@ export function listSchemas(databaseId: string): Promise<{ schemas: string[] }> 
   return dbFetch(`/databases/${databaseId}/schemas`);
 }
 
-export function listTables(databaseId: string, schema: string): Promise<{ tables: string[] }> {
+export function listTables(databaseId: string, schema: string): Promise<{ tables: TableSummary[] }> {
   return dbFetch(`/databases/${databaseId}/tables?schema=${encodeURIComponent(schema)}`);
 }
 
@@ -88,9 +103,7 @@ export function listRows(
     search?: string;
     sort?: string;
     direction?: "asc" | "desc";
-    filterColumn?: string;
-    filterOp?: "eq" | "contains";
-    filterValue?: string;
+    filters?: RowFilter[];
   },
 ): Promise<{ columns: ColumnInfo[]; rows: Record<string, unknown>[]; total: number }> {
   const params = new URLSearchParams({
@@ -102,10 +115,17 @@ export function listRows(
   if (query.search) params.set("search", query.search);
   if (query.sort) params.set("sort", query.sort);
   if (query.direction) params.set("direction", query.direction);
-  if (query.filterColumn && query.filterValue) {
-    params.set("filterColumn", query.filterColumn);
-    params.set("filterOp", query.filterOp || "contains");
-    params.set("filterValue", query.filterValue);
+  if (query.filters && query.filters.length > 0) {
+    params.set(
+      "filters",
+      JSON.stringify(
+        query.filters.map((filter) => ({
+          column: filter.column,
+          op: filter.op,
+          value: filter.value ?? "",
+        })),
+      ),
+    );
   }
   return dbFetch(`/databases/${databaseId}/rows?${params.toString()}`);
 }

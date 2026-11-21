@@ -1243,26 +1243,26 @@
       "steps": [
         "Use Student Details, Faculty Management, or Website Updates first when the job has its own page. Use Database only when those pages cannot fix the line.",
         "Press **Database**.",
-        "Press the tab **Tables**.",
-        "The page names the database it opened. If it says no database is configured, stop and call the office.",
-        "Under Which group of tables? pick the group.",
-        "Under Which table? pick the table.",
-        "Type words in Find text in this table.",
-        "Press **Search**.",
-        "To narrow one column, pick it under Filter a column, type Filter text, and press **Apply filter**.",
-        "Press **Clear search and filter** to see the full table again.",
-        "Find the line. Press **Edit** on that line.",
-        "The form says Edit this row. A column marked key is the identity. Do not change the key unless the office said the key itself is wrong.",
+        "If the page says no database is configured, stop and call the office.",
+        "In the left list, open **Schema** and pick the group. Public is the usual group.",
+        "Type in Search tables if the list is long, then press the table name.",
+        "Type words in Search this table to look across the row.",
+        "To narrow one column, press the filter icon on that column. Pick equals, contains, is null, greater than, or less than. Press **Apply filter**.",
+        "The filter shows as a chip. Press the chip to remove it.",
+        "Press a column heading to sort. Press it again to reverse the sort. Press it a third time to clear the sort.",
+        "Double-click the cell that is wrong.",
+        "Change the value. Yes and No are for yes-or-no columns. Dates use a date box. Press **Set NULL** to clear a cell that may be empty.",
+        "Press **Apply**.",
         "A file field says it is left unchanged. Leave it.",
-        "Yes and No are for yes-or-no columns. Blank means empty.",
-        "Press **Save this row**.",
-        "Press **Cancel** to close without saving.",
-        "The page says the change was saved. It is also listed under History."
+        "The cell is highlighted. The change is not stored yet.",
+        "Press the button that starts with Save. It shows how many changes are waiting.",
+        "Press **Discard** to throw the highlights away.",
+        "The page confirms the save. Press **History** if you need to see it."
       ],
       "wrong": [
-        "If the form says the table has no key column, do not try to save. Call the office.",
+        "If the page says the table has no key column, do not try to change an existing row. Call the office.",
         "If you saved the wrong words, open History and follow Undo a mistake. Do not edit again until you have read that line.",
-        "Use **Previous page** and **Next page** when the line is not on this page. The line shows how many rows you are seeing."
+        "Use **Previous** and **Next** when the line is not on this page. The line shows how many rows you are seeing."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
     },
@@ -1274,16 +1274,15 @@
       "summary": "Add one new line to a table.",
       "steps": [
         "Press **Database**.",
-        "Press **Tables**.",
-        "Pick the group and the table.",
-        "Press **Add a row**.",
-        "The form says New row.",
-        "Fill the boxes. Leave a box blank only when empty is correct.",
-        "Press **Save this row**.",
+        "Pick the schema and press the table name.",
+        "Press **Add record**.",
+        "A blank row appears at the top. Double-click a cell to type.",
+        "Leave a cell empty only when empty is correct. Press **Set NULL** when the cell should be empty and the column allows it.",
+        "Press **Apply** in the cell, then press the button that starts with Save.",
         "Search for the new line to confirm it is there."
       ],
       "wrong": [
-        "If Save this row fails, read the red line. A duplicate key is common. Do not invent a second copy.",
+        "If the save fails, read the message. A duplicate key is common. Do not invent a second copy.",
         "Prefer Add Student or Add Faculty when the person belongs on those pages."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
@@ -1293,20 +1292,18 @@
       "title": "Remove a row in the database",
       "group": "database",
       "screens": ["database"],
-      "summary": "Delete one line. You must type DELETE. History can put it back.",
+      "summary": "Delete one or more lines. The page asks you to confirm. History can put a saved row back.",
       "steps": [
         "Press **Database**.",
-        "Press **Tables**.",
-        "Find the line. Press **Edit**.",
-        "Read the line that says removing a row cannot be taken back from this screen until you use History.",
-        "In Type DELETE to confirm, type DELETE in capital letters.",
-        "Press **Remove this row**.",
-        "The button stays grey until the word is exactly DELETE.",
-        "Open the tab **History** and check that the removal is listed."
+        "Find the line.",
+        "Tick the box on that line. You can tick more than one.",
+        "Press the button that starts with Delete. It shows how many lines are ticked.",
+        "Read the question. Press the Delete button again to confirm, or press **Cancel** to stop.",
+        "Press **History** and check that the removal is listed."
       ],
       "wrong": [
-        "If you removed the wrong line, do not add a new one by hand first. Use **Undo this change** in History.",
-        "You cannot delete from the table until the line has a key."
+        "If you removed the wrong line, do not add a new one by hand first. Press **Undo** in History.",
+        "You cannot delete a saved row until the line has a key."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
     },
@@ -1315,22 +1312,22 @@
       "title": "Undo a mistake",
       "group": "database",
       "screens": ["database"],
-      "summary": "Put back an add, an edit, or a delete that was done in Tables.",
+      "summary": "Put back an add, an edit, or a delete that was saved from the table.",
       "steps": [
         "Press **Database**.",
-        "Press the tab **History**.",
-        "Each card says what changed, when, and who did it.",
-        "Find the mistake. The newest items are first.",
-        "If the card says Already undone, leave it.",
-        "If the card says the command cannot be undone with one click, stop. That was a command, not a row edit.",
-        "On a card that has the button, press **Undo this change**.",
+        "Press **History**.",
+        "Each item says what changed, when, and who did it. The newest items are first.",
+        "Press **Show changes** to see the old value and the new value.",
+        "If it says Already undone, leave it.",
+        "If it says the command cannot be undone with one click, stop. That was SQL, not a row edit.",
+        "Press **Undo**.",
         "Wait for the message.",
-        "Press **Tables** and search for the line to see that it is back.",
-        "Use **Previous page** and **Next page** if the card is older."
+        "Close History and look at the table.",
+        "Use **Previous** and **Next** if the item is older."
       ],
       "wrong": [
         "Undo puts that one change back. If you made three edits, undo the latest wrong one first.",
-        "A command from the Command tab does not have Undo this change.",
+        "SQL does not have Undo.",
         "Student Details delete and Faculty delete are not in this History list. Call the office if you used those."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
@@ -1344,18 +1341,18 @@
       "steps": [
         "Ask the office to write the command on paper or in a mail. Do not guess the words.",
         "Press **Database**.",
-        "Press the tab **Command**.",
-        "Click the box Database command.",
-        "Type the command exactly.",
-        "Press **Run command**.",
-        "If the command only reads, the rows appear below.",
+        "Press **SQL**. It is a small control beside History, not a main tab.",
+        "Type the command in the editor.",
+        "Press Ctrl+Enter, or Cmd+Enter on a Mac, or press **Run**.",
+        "If the command only reads, the rows appear in the grid.",
         "If the command changes data, the page tells you to type its first word.",
-        "Type that word in Confirmation.",
+        "Type that word.",
         "Press **Confirm and run**.",
-        "Read the message. Then open **History**. The card will say the command cannot be undone with one click."
+        "Read the message. Then press **History**. The item will say the command cannot be undone with one click.",
+        "Press **SQL** again to hide the editor. Press **Back to table** to leave the query results."
       ],
       "wrong": [
-        "If you are not sure, do not press **Run command**. Use Tables instead.",
+        "If you are not sure, do not press **Run**. Use the table instead.",
         "If the page shows an error, do not retype a longer command. Call the office and read them the error.",
         "The emergency page at dbadmin.rguktong.in is a last resort. See Use the emergency database page."
       ],
@@ -1366,10 +1363,10 @@
       "title": "Use the emergency database page",
       "group": "database",
       "screens": ["database"],
-      "summary": "A separate website when the Database tab cannot do the job. It has two logins.",
+      "summary": "A separate website when the Database page cannot do the job. It has two logins.",
       "steps": [
-        "Try the Database tab first. Use this page only when that tab cannot open or cannot do the job.",
-        "On a computer, open https://dbadmin.rguktong.in",
+        "Try the Database page first. Use this page only when that page cannot open or cannot do the job.",
+        "The Database page has a small link named Emergency Adminer. You can also open https://dbadmin.rguktong.in on a computer.",
         "The first page is Cloudflare. It asks for a one-time code.",
         "The code is sent to webadmin@rguktong.ac.in",
         "Open that mailbox. Type the code into the Cloudflare page.",
@@ -1381,11 +1378,11 @@
         "Type the database name uniz_db",
         "Press the login button on that form.",
         "Do only the job the office described. Then sign out of Adminer and close the browser.",
-        "Changes you make here are still recorded, but the one-click undo in the portal is the safer path. Prefer the Database tab next time."
+        "Changes you make here are still recorded, but the one-click undo in the portal is the safer path. Prefer the Database page next time."
       ],
       "wrong": [
         "If you see Adminer's form before any email code, you are not on the protected page. Close it and open https://dbadmin.rguktong.in again.",
-        "If the code email does not arrive, check the webmaster mailbox, including spam. Do not ask for many codes at once. Wait two minutes.",
+        "If the code email does not arrive, check the webadmin mailbox, including spam. Do not ask for many codes at once. Wait two minutes.",
         "The session lasts about 8 hours. After that, the email code is required again.",
         "Do not save the database password in a chat or on paper that other people can read."
       ],

@@ -42,7 +42,7 @@ export function requireWebadmin(req: Request, res: Response, next: NextFunction)
     if (role !== "webadmin") {
       res.status(403).json({
         success: false,
-        message: "Only the webmaster can open the database editor.",
+        message: "Only a webadmin can open the database editor.",
       });
       return;
     }
