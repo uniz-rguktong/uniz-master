@@ -7,15 +7,78 @@ export interface ColumnRef {
   dataType: string;
 }
 
+export type FilterOp = "eq" | "contains" | "isnull" | "gt" | "lt";
+
+export interface ColumnFilter {
+  column: string;
+  op: FilterOp;
+  value?: string;
+}
+
 export interface RowQuery {
   schema: string;
   table: string;
   columns: ColumnRef[];
   search?: string;
-  filter?: { column: string; op: "eq" | "contains"; value: string };
+  filters?: ColumnFilter[];
   sort?: { column: string; direction: "asc" | "desc" };
   limit: number;
   offset: number;
+}
+
+const FILTER_OPS = new Set<FilterOp>(["eq", "contains", "isnull", "gt", "lt"]);
+const MAX_FILTERS = 8;
+const MAX_FILTER_VALUE = 500;
+
+function isFilterOp(value: string): value is FilterOp {
+  return FILTER_OPS.has(value as FilterOp);
+}
+
+function pushFilter(out: ColumnFilter[], columnRaw: unknown, opRaw: unknown, valueRaw: unknown): void {
+  const column = String(columnRaw || "").trim();
+  if (!column) throw new DbAdminError(400, "Choose a column to filter.");
+  const opText = String(opRaw || "contains");
+  if (!isFilterOp(opText)) throw new DbAdminError(400, "That filter is not supported.");
+  const value = valueRaw == null ? "" : String(valueRaw);
+  if (value.length > MAX_FILTER_VALUE) throw new DbAdminError(400, "That filter is too long.");
+  if (opText !== "isnull" && !value.trim()) return;
+  out.push({ column, op: opText, value: value.trim() });
+}
+
+export function collectFilters(input: {
+  filters?: unknown;
+  filterColumn?: unknown;
+  filterOp?: unknown;
+  filterValue?: unknown;
+}): ColumnFilter[] {
+  const out: ColumnFilter[] = [];
+  const raw = input.filters;
+  if (typeof raw === "string" && raw.length > 4000) {
+    throw new DbAdminError(400, "Those filters were not sent correctly.");
+  }
+  if (raw !== undefined && raw !== null && raw !== "") {
+    let parsed: unknown = raw;
+    if (typeof raw === "string") {
+      try {
+        parsed = JSON.parse(raw);
+      } catch {
+        throw new DbAdminError(400, "Those filters were not sent correctly.");
+      }
+    }
+    if (!Array.isArray(parsed)) throw new DbAdminError(400, "Those filters were not sent correctly.");
+    for (const item of parsed) {
+      if (!item || typeof item !== "object" || Array.isArray(item)) {
+        throw new DbAdminError(400, "Those filters were not sent correctly.");
+      }
+      const record = item as Record<string, unknown>;
+      pushFilter(out, record.column, record.op, record.value);
+    }
+  }
+  if (String(input.filterColumn || "").trim()) {
+    pushFilter(out, input.filterColumn, input.filterOp || "contains", input.filterValue);
+  }
+  if (out.length > MAX_FILTERS) throw new DbAdminError(400, "Use at most 8 column filters.");
+  return out;
 }
 
 function known(columns: ColumnRef[], name: string): ColumnRef {
@@ -26,6 +89,39 @@ function known(columns: ColumnRef[], name: string): ColumnRef {
 
 function searchable(column: ColumnRef): boolean {
   return column.dataType.toLowerCase() !== "bytea";
+}
+
+function compareCast(dataType: string): string | undefined {
+  const type = dataType.toLowerCase();
+  if (["smallint", "integer", "bigint", "decimal", "numeric", "real", "double precision", "money"].includes(type)) {
+    return "numeric";
+  }
+  if (type === "date") return "date";
+  if (type === "timestamp with time zone") return "timestamptz";
+  if (type === "timestamp without time zone") return "timestamp";
+  return undefined;
+}
+
+function predicate(column: ColumnRef, filter: ColumnFilter, values: unknown[]): string {
+  if (!isFilterOp(filter.op)) throw new DbAdminError(400, "That filter is not supported.");
+  if ((filter.value?.length ?? 0) > MAX_FILTER_VALUE) throw new DbAdminError(400, "That filter is too long.");
+  const ident = quoteIdent(column.name);
+  if (filter.op === "isnull") return `${ident} IS NULL`;
+  const value = filter.value ?? "";
+  if (filter.op === "contains") {
+    values.push(`%${value}%`);
+    return `${ident}::text ILIKE $${values.length}`;
+  }
+  if (filter.op === "eq") {
+    values.push(value);
+    return `${ident}::text = $${values.length}`;
+  }
+  const cast = safeCast(compareCast(column.dataType));
+  values.push(value);
+  const param = cast ? `$${values.length}::${cast}` : `$${values.length}`;
+  const left = cast ? ident : `${ident}::text`;
+  const operator = filter.op === "gt" ? ">" : "<";
+  return `${left} ${operator} ${param}`;
 }
 
 function bind(index: number, value: unknown, cast?: string): { sql: string; value: unknown } {
@@ -40,7 +136,7 @@ function bind(index: number, value: unknown, cast?: string): { sql: string; valu
   return { sql: `$${index}`, value };
 }
 
-export function buildRowWhere(query: Pick<RowQuery, "columns" | "search" | "filter">): SqlStatement {
+export function buildRowWhere(query: Pick<RowQuery, "columns" | "search" | "filters">): SqlStatement {
   const parts: string[] = [];
   const values: unknown[] = [];
 
@@ -54,15 +150,11 @@ export function buildRowWhere(query: Pick<RowQuery, "columns" | "search" | "filt
     }
   }
 
-  if (query.filter && query.filter.value.trim()) {
-    const column = known(query.columns, query.filter.column);
-    if (query.filter.op === "contains") {
-      values.push(`%${query.filter.value.trim()}%`);
-      parts.push(`${quoteIdent(column.name)}::text ILIKE $${values.length}`);
-    } else {
-      values.push(query.filter.value);
-      parts.push(`${quoteIdent(column.name)}::text = $${values.length}`);
-    }
+  const filters = query.filters ?? [];
+  if (filters.length > MAX_FILTERS) throw new DbAdminError(400, "Use at most 8 column filters.");
+  for (const filter of filters) {
+    const column = known(query.columns, filter.column);
+    parts.push(predicate(column, filter, values));
   }
 
   return { text: parts.length ? parts.join(" AND ") : "TRUE", values };

@@ -3,7 +3,7 @@ import type { PoolClient } from "pg";
 import { confirmationSatisfied, classifySql } from "./audit/sql";
 import { isAuditTable, coerceColumnValue, describeChange } from "./audit/values";
 import { buildUndoStatement } from "./audit/undo";
-import { buildDelete, buildInsert, buildRowSelect, buildSelectForUpdate, buildUpdate } from "./audit/rowsql";
+import { buildDelete, buildInsert, buildRowSelect, buildSelectForUpdate, buildUpdate, collectFilters } from "./audit/rowsql";
 import { insertChange } from "./audit/store";
 import type { Actor } from "./auth";
 import { listColumns, listSchemas, listTables, primaryKeyFrom, serializeRow, type ColumnInfo } from "./catalog";
@@ -109,9 +109,12 @@ router.get("/databases/:database/rows", async (req, res, next) => {
     const offset = req.query.offset ? Number(req.query.offset) : 0;
     const sortColumn = String(req.query.sort || "");
     const direction = String(req.query.direction || "asc").toLowerCase() === "desc" ? "desc" : "asc";
-    const filterColumn = String(req.query.filterColumn || "");
-    const filterValue = String(req.query.filterValue || "");
-    const filterOp = String(req.query.filterOp || "contains") === "eq" ? "eq" : "contains";
+    const filters = collectFilters({
+      filters: req.query.filters,
+      filterColumn: req.query.filterColumn,
+      filterOp: req.query.filterOp,
+      filterValue: req.query.filterValue,
+    });
     const payload = await withClient(id, "read", async (client) => {
       const columns = await listColumns(client, schema, table);
       const built = buildRowSelect({
@@ -119,7 +122,7 @@ router.get("/databases/:database/rows", async (req, res, next) => {
         table,
         columns: columns.map((column) => ({ name: column.name, dataType: column.dataType })),
         search: String(req.query.search || ""),
-        filter: filterColumn ? { column: filterColumn, op: filterOp, value: filterValue } : undefined,
+        filters,
         sort: sortColumn ? { column: sortColumn, direction } : undefined,
         limit,
         offset,
