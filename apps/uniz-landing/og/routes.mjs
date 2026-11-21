@@ -320,16 +320,14 @@ export function redirectRules() {
   for (const page of pages) {
     if (page.path === "/") continue;
     if (reserved.has(page.path)) continue;
-    rules.push({ from: page.path, to: `${page.path}/index.html`, status: 200 });
-    rules.push({ from: `${page.path}/`, to: `${page.path}/index.html`, status: 200 });
+    rules.push({ from: page.path, to: page.path, status: 200 });
+    rules.push({ from: `${page.path}/`, to: page.path, status: 200 });
   }
   for (const item of FALLBACKS) {
     const from = `${item.prefix}*`;
     if (reserved.has(from)) continue;
-    const to = item.target === "/" ? "/index.html" : `${item.target}/index.html`;
-    rules.push({ from, to, status: 200 });
+    rules.push({ from, to: item.target, status: 200 });
   }
-  rules.push({ from: "/*", to: "/index.html", status: 200 });
   return rules;
 }
 
