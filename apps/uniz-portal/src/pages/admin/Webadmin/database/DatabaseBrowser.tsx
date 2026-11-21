@@ -60,6 +60,8 @@ export default function DatabaseBrowser({
   const [schema, setSchema] = useState("");
   const [tables, setTables] = useState<TableSummary[]>([]);
   const [tablesLoading, setTablesLoading] = useState(false);
+  const [tablesError, setTablesError] = useState("");
+  const [tablesReload, setTablesReload] = useState(0);
   const [tableQuery, setTableQuery] = useState("");
   const [table, setTable] = useState("");
   const [columns, setColumns] = useState<ColumnInfo[]>([]);
@@ -126,7 +128,9 @@ export default function DatabaseBrowser({
   useEffect(() => {
     if (!schema) return;
     let cancelled = false;
+    setTables([]);
     setTablesLoading(true);
+    setTablesError("");
     listTables(databaseId, schema)
       .then((result) => {
         if (cancelled) return;
@@ -135,7 +139,7 @@ export default function DatabaseBrowser({
       .catch((err: unknown) => {
         if (cancelled) return;
         setTables([]);
-        toast.error(errorText(err, "The tables could not be loaded."));
+        setTablesError(errorText(err, "The tables could not be loaded."));
       })
       .finally(() => {
         if (!cancelled) setTablesLoading(false);
@@ -143,7 +147,7 @@ export default function DatabaseBrowser({
     return () => {
       cancelled = true;
     };
-  }, [databaseId, schema]);
+  }, [databaseId, schema, tablesReload]);
 
   useEffect(() => {
     const handle = window.setTimeout(() => setAppliedSearch(search.trim()), 300);
@@ -405,6 +409,8 @@ export default function DatabaseBrowser({
           onQuery={setTableQuery}
           tables={tables}
           loading={tablesLoading}
+          error={tablesError}
+          onRetry={() => setTablesReload((token) => token + 1)}
           selected={table}
           onSelect={chooseTable}
         />
@@ -507,8 +513,19 @@ export default function DatabaseBrowser({
           />
 
           {!table && !sqlResult ? (
-            <div className="flex flex-1 items-center justify-center">
-              <p className="text-body text-text-2">Choose a table from the list.</p>
+            <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
+              {tablesError ? (
+                <>
+                  <p role="alert" className="text-body text-error">
+                    {tablesError}
+                  </p>
+                  <Button type="button" variant="outline" size="compact" onClick={() => setTablesReload((token) => token + 1)}>
+                    Retry
+                  </Button>
+                </>
+              ) : (
+                <p className="text-body text-text-2">Choose a table from the list.</p>
+              )}
             </div>
           ) : (
             <DataGrid
