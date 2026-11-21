@@ -9,6 +9,11 @@ import { randomUUID } from "crypto";
 import { resolveHodBranch } from "../utils/hod.util";
 import { resolveStudentBranch, webadminAssignmentRejection } from "@uniz/shared";
 import { canReadStaffBatches } from "../utils/staff-access";
+import {
+  normalizeEmail,
+  planProfilePatch,
+  type EmailAccount,
+} from "../utils/profile-email";
 import { buildStudentCohortWhere } from "../utils/student-cohort.util";
 import {
   bootstrapCacheKey,
@@ -91,6 +96,35 @@ const ACADEMICS_SERVICE_URL = (
 const OUTPASS_SERVICE_URL = (
   process.env.OUTPASS_SERVICE_URL || `${GATEWAY_URL}/requests`
 ).replace(/\/$/, "");
+
+async function findEmailOwners(email: string): Promise<EmailAccount[]> {
+  const normalized = normalizeEmail(email);
+  if (!normalized) return [];
+  const where = {
+    email: { equals: normalized, mode: "insensitive" as const },
+  };
+  const select = { id: true, username: true, email: true };
+  const [admins, faculty, students] = await Promise.all([
+    prisma.adminProfile.findMany({ where, select }),
+    prisma.facultyProfile.findMany({ where, select }),
+    prisma.studentProfile.findMany({ where, select }),
+  ]);
+  return [...admins, ...faculty, ...students];
+}
+
+async function applyEmailAwarePatch(
+  self: EmailAccount,
+  patch: Record<string, unknown>,
+) {
+  let owners: EmailAccount[] = [];
+  if (
+    Object.prototype.hasOwnProperty.call(patch, "email") &&
+    normalizeEmail(patch.email) !== normalizeEmail(self.email)
+  ) {
+    owners = await findEmailOwners(String(patch.email ?? ""));
+  }
+  return planProfilePatch({ self, patch, owners });
+}
 
 const sendPush = async (username: string, title: string, body: string) => {
   try {
@@ -178,6 +212,7 @@ const mapAdminProfile = (profile: any) => {
     email: profile.email,
     profile_url: profile.profileUrl,
     role: profile.role,
+    contact: profile.contact,
     department: profile.department,
     designation: profile.designation,
     bio: profile.bio,
@@ -507,14 +542,36 @@ export const updateStudentProfile = async (
   }
 
   try {
-    const updated = await prisma.studentProfile.upsert({
-      where: { username: user.username },
-      update: updates,
-      create: {
-        username: user.username,
-        ...updates,
-      },
+    const existing = await prisma.studentProfile.findFirst({
+      where: { username: { equals: user.username, mode: "insensitive" } },
     });
+    const planned = await applyEmailAwarePatch(
+      {
+        id: existing?.id ?? "",
+        username: existing?.username || user.username,
+        email: existing?.email || "",
+      },
+      updates,
+    );
+    if (!planned.ok) {
+      return res.status(400).json({
+        success: false,
+        code: ErrorCode.VALIDATION_ERROR,
+        message: planned.message,
+      });
+    }
+
+    const updated = existing
+      ? await prisma.studentProfile.update({
+          where: { id: existing.id },
+          data: planned.data,
+        })
+      : await prisma.studentProfile.create({
+          data: {
+            username: user.username,
+            ...planned.data,
+          },
+        });
 
     // Invalidate profile cache to prevent stale data
     await invalidateStudentProfileCaches(user.username);
@@ -1626,13 +1683,33 @@ export const updateFacultyProfile = async (
       updates.username || existingProfile.username
     ).toLowerCase();
 
+    const emailPatch =
+      isWebadmin && email !== undefined && email !== null && email !== ""
+        ? { email }
+        : {};
+    const planned = await applyEmailAwarePatch(
+      {
+        id: existingProfile.id,
+        username: existingProfile.username,
+        email: existingProfile.email,
+      },
+      emailPatch,
+    );
+    if (!planned.ok) {
+      return res.status(400).json({
+        success: false,
+        code: ErrorCode.VALIDATION_ERROR,
+        message: planned.message,
+      });
+    }
+
     let updated;
     if (profileType === "FACULTY") {
       updated = await prisma.facultyProfile.update({
         where: { id: existingProfile.id },
         data: {
           ...updates,
-          ...(isWebadmin && email && { email }),
+          ...(planned.data.email !== undefined ? { email: planned.data.email } : {}),
           username: targetUsername,
         },
       });
@@ -1641,7 +1718,7 @@ export const updateFacultyProfile = async (
         where: { id: existingProfile.id },
         data: {
           ...updates,
-          ...(isWebadmin && email && { email }),
+          ...(planned.data.email !== undefined ? { email: planned.data.email } : {}),
           username: targetUsername.toUpperCase(), // Admin usually uppercase
         },
       })) as any;
@@ -1973,10 +2050,38 @@ export const updateFacultyProfileSelf = async (
       cleanUpdates.profileUrl = updates.profileUrl || updates.profile_url;
     if (updates.bio || updates.Bio)
       cleanUpdates.bio = updates.bio || updates.Bio;
+    if (updates.email !== undefined) cleanUpdates.email = updates.email;
+
+    const existing = await prisma.facultyProfile.findFirst({
+      where: { username: { equals: user.username, mode: "insensitive" } },
+    });
+    if (!existing) {
+      return res.status(404).json({
+        success: false,
+        code: ErrorCode.RESOURCE_NOT_FOUND,
+        message: "Faculty profile not found",
+      });
+    }
+
+    const planned = await applyEmailAwarePatch(
+      {
+        id: existing.id,
+        username: existing.username,
+        email: existing.email,
+      },
+      cleanUpdates,
+    );
+    if (!planned.ok) {
+      return res.status(400).json({
+        success: false,
+        code: ErrorCode.VALIDATION_ERROR,
+        message: planned.message,
+      });
+    }
 
     const updated = await prisma.facultyProfile.update({
-      where: { username: user.username },
-      data: cleanUpdates,
+      where: { id: existing.id },
+      data: planned.data,
     });
 
     return res.json({ success: true, faculty: mapFacultyProfile(updated) });
@@ -2050,19 +2155,44 @@ export const updateAdminProfile = async (
         facultyData.profileUrl = updates.profileUrl || updates.profile_url;
       if (updates.bio !== undefined || updates.Bio !== undefined)
         facultyData.bio = updates.bio || updates.Bio;
+      if (updates.email !== undefined) facultyData.email = updates.email;
 
-      const updated: any = await prisma.facultyProfile.upsert({
-        where: { username: user.username },
-        update: facultyData,
-        create: {
-          username: user.username,
-          name: updates.name || user.username,
-          email: updates.email || `${user.username}@rguktong.ac.in`,
-          department: updates.department || "Administration",
-          designation: updates.designation || "Staff",
-          ...facultyData,
-        },
+      const existingFaculty = await prisma.facultyProfile.findFirst({
+        where: { username: { equals: user.username, mode: "insensitive" } },
       });
+      const plannedFaculty = await applyEmailAwarePatch(
+        {
+          id: existingFaculty?.id ?? "",
+          username: existingFaculty?.username || user.username,
+          email: existingFaculty?.email || "",
+        },
+        facultyData,
+      );
+      if (!plannedFaculty.ok) {
+        return res.status(400).json({
+          success: false,
+          code: ErrorCode.VALIDATION_ERROR,
+          message: plannedFaculty.message,
+        });
+      }
+
+      const updated: any = existingFaculty
+        ? await prisma.facultyProfile.update({
+            where: { id: existingFaculty.id },
+            data: plannedFaculty.data,
+          })
+        : await prisma.facultyProfile.create({
+            data: {
+              username: user.username.toLowerCase(),
+              name: updates.name || user.username,
+              email:
+                (plannedFaculty.data.email as string) ||
+                `${user.username.toLowerCase()}@rguktong.ac.in`,
+              department: updates.department || "Administration",
+              designation: updates.designation || "Staff",
+              ...plannedFaculty.data,
+            },
+          });
 
       return res.json({
         success: true,
@@ -2093,20 +2223,46 @@ export const updateAdminProfile = async (
       adminData.profileUrl = updates.profileUrl || updates.profile_url;
     if (updates.bio !== undefined) adminData.bio = updates.bio;
 
-    // For Admin roles, use upsert for better resilience
-    const updated = await prisma.adminProfile.upsert({
-      where: { username: user.username },
-      update: adminData,
-      create: {
-        username: user.username,
-        role: user.role as string,
-        name:
-          updates.name ||
-          user.username.charAt(0).toUpperCase() + user.username.slice(1),
-        email: updates.email || `${user.username}@rguktong.ac.in`,
-        ...adminData,
-      },
+    // Match the caller by id via a case-insensitive username lookup.
+    // An exact upsert misses seeded lowercase rows and then insert()
+    // collides with the caller's own unique email.
+    const existingAdmin = await prisma.adminProfile.findFirst({
+      where: { username: { equals: user.username, mode: "insensitive" } },
     });
+    const plannedAdmin = await applyEmailAwarePatch(
+      {
+        id: existingAdmin?.id ?? "",
+        username: existingAdmin?.username || user.username,
+        email: existingAdmin?.email || "",
+      },
+      adminData,
+    );
+    if (!plannedAdmin.ok) {
+      return res.status(400).json({
+        success: false,
+        code: ErrorCode.VALIDATION_ERROR,
+        message: plannedAdmin.message,
+      });
+    }
+
+    const updated = existingAdmin
+      ? await prisma.adminProfile.update({
+          where: { id: existingAdmin.id },
+          data: plannedAdmin.data,
+        })
+      : await prisma.adminProfile.create({
+          data: {
+            username: user.username.toLowerCase(),
+            role: user.role as string,
+            name:
+              updates.name ||
+              user.username.charAt(0).toUpperCase() + user.username.slice(1),
+            email:
+              (plannedAdmin.data.email as string) ||
+              `${user.username.toLowerCase()}@rguktong.ac.in`,
+            ...plannedAdmin.data,
+          },
+        });
 
     return res.json({ success: true, data: mapAdminProfile(updated) });
   } catch (e: any) {

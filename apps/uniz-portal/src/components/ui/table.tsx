@@ -11,8 +11,15 @@ export type TableColumn<T> = {
   numeric?: boolean;
   /** Keep this column visible while the table scrolls sideways. */
   pin?: boolean;
-  /** Pixel width used to place pinned columns. */
+  /** Pixel width used to place pinned columns and to stop cells overlapping. */
   width?: number;
+  /**
+   * Clip to one line with an ellipsis. Multi-line cells (name + email, badges
+   * with a second line, action buttons) set this false and wrap inside `width`.
+   */
+  clip?: boolean;
+  /** Tooltip for the full value. Shown on the cell. */
+  title?: (row: T) => string | undefined;
   cell: (row: T) => ReactNode;
   /** Title line in the stacked list under 640px. One column should set this. */
   primary?: boolean;
@@ -20,8 +27,14 @@ export type TableColumn<T> = {
   meta?: boolean;
 };
 
+function columnWidth<T>(column: TableColumn<T>) {
+  return column.width ?? (column.pin ? 120 : 160);
+}
+
 /**
  * Open table. No wrapper border. Under 640px it becomes a hairline list.
+ * From 640px the table scrolls sideways inside its own box. Every column has
+ * a fixed width so cells cannot paint over their neighbours.
  */
 export function Table<T>({
   columns,
@@ -52,10 +65,10 @@ export function Table<T>({
     column.label ?? (typeof column.header === "string" ? column.header : column.id);
 
   let pinCursor = 0;
-  const pinLayout: { pinned: boolean; left: number; width?: number; last: boolean }[] = columns.map(
+  const pinLayout: { pinned: boolean; left: number; width: number; last: boolean }[] = columns.map(
     (column) => {
-      if (!column.pin) return { pinned: false, left: 0, width: column.width, last: false };
-      const width = column.width ?? 120;
+      const width = columnWidth(column);
+      if (!column.pin) return { pinned: false, left: 0, width, last: false };
       const left = pinCursor;
       pinCursor += width;
       return { pinned: true, left, width, last: false };
@@ -63,50 +76,56 @@ export function Table<T>({
   );
   const lastPinned = pinLayout.map((item) => item.pinned).lastIndexOf(true);
   if (lastPinned >= 0) pinLayout[lastPinned].last = true;
-  const pinned = pinCursor > 0;
-  const tableWidth = columns.reduce(
-    (sum, column) => sum + (column.width ?? (column.pin ? 120 : 160)),
-    0,
-  );
+  const tableWidth = columns.reduce((sum, column) => sum + columnWidth(column), 0);
 
   return (
-    <div className={className}>
+    <div className={cn("min-w-0 max-w-full", className)}>
       {toolbar ? <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">{toolbar}</div> : null}
       {rows.length === 0 && empty ? (
         empty
       ) : (
         <>
-          <div className="hidden max-w-full overflow-x-auto sm:block">
+          <div className="hidden w-full min-w-0 max-w-full overflow-x-auto overscroll-x-contain sm:block">
             <table
-              className={cn(
-                "border-collapse text-left",
-                pinned ? "table-fixed" : "w-max min-w-full",
-              )}
-              style={pinned ? { width: tableWidth, minWidth: "100%" } : undefined}
+              className="table-fixed border-separate border-spacing-0 text-left"
+              style={{ width: tableWidth, minWidth: tableWidth }}
             >
-              <thead className="sticky top-0 bg-bg">
+              <colgroup>
+                {columns.map((column) => (
+                  <col key={column.id} style={{ width: columnWidth(column) }} />
+                ))}
+              </colgroup>
+              <thead className="sticky top-0 z-30 bg-bg">
                 <tr>
                   {columns.map((column, index) => {
                     const pin = pinLayout[index];
+                    const headerTitle =
+                      column.label ?? (typeof column.header === "string" ? column.header : undefined);
                     return (
                       <th
                         key={column.id}
                         scope="col"
-                        style={
-                          pin.pinned
-                            ? { left: pin.left, minWidth: pin.width, width: pin.width }
-                            : column.width
-                              ? { minWidth: column.width }
-                              : undefined
-                        }
+                        title={headerTitle}
+                        style={{
+                          left: pin.pinned ? pin.left : undefined,
+                          width: pin.width,
+                          minWidth: pin.width,
+                          maxWidth: pin.width,
+                        }}
                         className={cn(
-                          "h-11 whitespace-nowrap border-b border-border-strong px-3 text-small font-semibold text-text-2",
-                          column.numeric && "text-right tabular-nums",
-                          pin.pinned && "sticky z-30 overflow-hidden bg-bg",
-                          pin.last && "border-r border-border",
+                          "h-11 overflow-hidden border-b border-border-strong bg-bg px-3 text-left align-middle text-small font-semibold text-text-2",
+                          column.numeric && "pl-3 pr-5 text-right tabular-nums",
+                          pin.pinned && "sticky z-40 bg-bg",
+                          pin.last && "shadow-[1px_0_0_var(--border)]",
                         )}
                       >
-                        <div className={cn("flex items-center gap-1", column.numeric && "justify-end")}>
+                        <div
+                          className={cn(
+                            "min-w-0",
+                            column.clip === false ? "whitespace-normal" : "truncate",
+                            column.numeric && "text-right",
+                          )}
+                        >
                           {column.header}
                         </div>
                       </th>
@@ -124,32 +143,42 @@ export function Table<T>({
                       onClick={onRowClick ? () => onRowClick(row) : undefined}
                       onDoubleClick={onRowDoubleClick ? () => onRowDoubleClick(row) : undefined}
                       className={cn(
-                        "group h-14 border-b border-border text-dense text-text transition-colors duration-150",
+                        "group h-14 text-dense text-text transition-colors duration-150",
                         onRowClick && "cursor-pointer",
                         selected ? "bg-selected" : "hover:bg-tint",
                       )}
                     >
                       {columns.map((column, index) => {
                         const pin = pinLayout[index];
+                        const tip = column.title?.(row);
                         return (
                           <td
                             key={column.id}
-                            style={
-                              pin.pinned
-                                ? { left: pin.left, minWidth: pin.width, width: pin.width }
-                                : column.width
-                                  ? { minWidth: column.width }
-                                  : undefined
-                            }
+                            title={tip}
+                            style={{
+                              left: pin.pinned ? pin.left : undefined,
+                              width: pin.width,
+                              minWidth: pin.width,
+                              maxWidth: pin.width,
+                            }}
                             className={cn(
-                              "px-3 align-middle",
-                              column.numeric && "text-right tabular-nums",
-                              pin.pinned && "sticky z-10 overflow-hidden bg-bg group-hover:bg-tint",
+                              "overflow-hidden border-b border-border bg-bg px-3 align-middle",
+                              column.numeric && "pl-3 pr-5 text-right tabular-nums",
+                              !pin.pinned && (selected ? "bg-selected" : "group-hover:bg-tint"),
+                              pin.pinned && "sticky z-20 bg-bg group-hover:bg-tint",
                               pin.pinned && selected && "bg-selected group-hover:bg-selected",
-                              pin.last && "border-r border-border",
+                              pin.last && "shadow-[1px_0_0_var(--border)]",
                             )}
                           >
-                            {column.cell(row)}
+                            <div
+                              className={cn(
+                                "min-w-0",
+                                column.clip === false ? "whitespace-normal" : "truncate whitespace-nowrap",
+                                column.numeric && "text-right",
+                              )}
+                            >
+                              {column.cell(row)}
+                            </div>
                           </td>
                         );
                       })}

@@ -30,7 +30,7 @@ export const landingPillClass =
   "inline-flex h-6 items-center gap-1.5 rounded-full bg-tint px-2.5 text-small font-medium text-text-2";
 
 export const landingCtaClass =
-  "inline-flex h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-7 text-[16px] font-semibold leading-6 text-primary-foreground transition-[background-color] duration-150 ease-out hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+  "inline-flex h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-7 text-[16px] font-semibold leading-6 text-on-primary transition-[background-color,color] duration-150 ease-out hover:bg-primary-hover hover:text-on-primary active:text-on-primary disabled:text-on-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 export const landingDividerClass = "h-px w-full bg-border";
 

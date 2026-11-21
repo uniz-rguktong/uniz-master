@@ -559,7 +559,7 @@ export default function FacultyManagement({
                 placeholder="Search registry…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className={cn(adminInputClass, "pl-10 w-[240px]")}
+                className={cn(adminInputClass, "w-full min-w-0 max-w-[240px] pl-10")}
               />
             </div>
 
@@ -1032,6 +1032,8 @@ export default function FacultyManagement({
                     </button>
                   ),
                   label: "Select",
+                  width: 48,
+                  clip: false,
                   cell: (member: any) =>
                     selectedUsernames.has(member.Username) ? <CheckSquare size={16} /> : <Square size={16} className="text-text-3" />,
                 }]
@@ -1040,6 +1042,9 @@ export default function FacultyManagement({
               id: "user",
               header: "Staff",
               primary: true,
+              width: 240,
+              clip: false,
+              title: (member: any) => [member.Name, member.Email].filter(Boolean).join(" · "),
               cell: (member: any) => (
                 <span>
                   <span className="flex items-start gap-2">
@@ -1061,9 +1066,9 @@ export default function FacultyManagement({
                         )}
                       </span>
                     ) : null}
-                    <span>
-                      <span className="block font-semibold text-head">{member.Name}</span>
-                      <span className="mt-0.5 block text-small text-text-2">{member.Email}</span>
+                    <span className="min-w-0">
+                      <span className="block truncate font-semibold text-head">{member.Name}</span>
+                      <span className="mt-0.5 block truncate text-small text-text-2">{member.Email}</span>
                     </span>
                   </span>
                   {mode === "single" ? (
@@ -1089,17 +1094,23 @@ export default function FacultyManagement({
               id: "role",
               header: "Role",
               meta: true,
+              width: 120,
+              title: (member: any) => (member.Role ? formatRoleLabel(member.Role) : "Faculty"),
               cell: (member: any) => member.Role ? formatRoleLabel(member.Role) : "Faculty",
             },
             {
               id: "designation",
               header: "Designation",
               meta: true,
+              width: 180,
+              title: (member: any) => member.Designation || member.Department || "Lecturer",
               cell: (member: any) => member.Designation || member.Department || "Lecturer",
             },
             {
               id: "status",
               header: "Status",
+              width: 120,
+              clip: false,
               cell: (member: any) =>
                 member.is_suspended ? <Badge tone="error">Suspended</Badge> : <Badge tone="success">Active</Badge>,
             },
@@ -1108,6 +1119,8 @@ export default function FacultyManagement({
                   id: "actions",
                   header: "Actions",
                   label: "Actions",
+                  width: 300,
+                  clip: false,
                   cell: (member: any) => (
                     <span className="flex flex-wrap items-center gap-2">
                       <Button type="button" variant="ghost" size="icon" aria-label="View details" onClick={(e) => { e.stopPropagation(); setSelectedFaculty(member); setShowViewModal(true); }}>

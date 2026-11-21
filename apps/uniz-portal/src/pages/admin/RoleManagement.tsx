@@ -203,9 +203,11 @@ export default function RoleManagement() {
       id: "username",
       header: "Admin User",
       primary: true,
+      width: 220,
+      title: (admin) => admin.username,
       cell: (admin) => (
         <span className="flex items-center justify-between gap-3">
-          <span>{admin.username}</span>
+          <span className="min-w-0 truncate">{admin.username}</span>
           <Button
             type="button"
             variant="ghost"
@@ -226,6 +228,9 @@ export default function RoleManagement() {
       id: "role",
       header: "Assigned Role",
       meta: true,
+      width: 260,
+      clip: false,
+      title: (admin) => admin.role,
       cell: (admin) =>
         admin.role === "webadmin" ? (
           <span className="capitalize">webadmin</span>
@@ -253,6 +258,8 @@ export default function RoleManagement() {
     {
       id: "actions",
       header: "Actions",
+      width: 88,
+      clip: false,
       cell: (admin) => (
         <Button
           type="button"

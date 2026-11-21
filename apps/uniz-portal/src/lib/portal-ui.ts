@@ -47,7 +47,7 @@ const buttonBase =
 
 export const portalPrimaryButtonClass = cn(
   buttonBase,
-  "h-11 min-h-11 bg-primary px-6 text-[15px] leading-[22px] text-primary-foreground hover:bg-primary-hover active:bg-primary-active",
+  "h-11 min-h-11 bg-primary px-6 text-[15px] leading-[22px] text-on-primary hover:bg-primary-hover hover:text-on-primary active:bg-primary-active active:text-on-primary disabled:text-on-primary",
 );
 
 export const portalSecondaryButtonClass = cn(

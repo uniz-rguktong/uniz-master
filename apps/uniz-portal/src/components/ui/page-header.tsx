@@ -29,7 +29,7 @@ export function PageHeader({
         </h1>
         {meta ? <p className="mt-2 text-body leading-6 text-text-2">{meta}</p> : null}
       </div>
-      {action ? <div className="shrink-0">{action}</div> : null}
+      {action ? <div className="min-w-0 max-w-full">{action}</div> : null}
     </header>
   );
 }

@@ -19,6 +19,9 @@ import { BASE_URL } from "../../api/endpoints";
 import { uploadImage } from "../../api/uploadImage";
 import { Button } from "@/components/ui/button";
 import { adminInputClass, adminLabelClass } from "@/components/admin/admin-ui";
+import { changedProfileFields } from "@/utils/changedFields";
+
+const PROFILE_FIELDS = ["name", "email", "contact", "designation", "department"] as const;
 
 interface Profile {
   name?: string;
@@ -155,6 +158,22 @@ export default function ProfilePopup({
   };
 
   const handleSave = async () => {
+    const patch = changedProfileFields(
+      {
+        name: profile?.name || "",
+        email: profile?.email || "",
+        contact: profile?.contact || "",
+        designation: profile?.designation || "",
+        department: profile?.department || "",
+      },
+      formData,
+      PROFILE_FIELDS,
+    );
+    if (Object.keys(patch).length === 0) {
+      toast.info("No changes to save");
+      setIsEditing(false);
+      return;
+    }
     try {
       setIsSaving(true);
       const res = await fetch(`${BASE_URL}/profile/admin/me/update`, {
@@ -163,7 +182,7 @@ export default function ProfilePopup({
           "Content-Type": "application/json",
           Authorization: `Bearer ${token()}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(patch),
       });
       const data = await res.json();
       if (data.success) {
