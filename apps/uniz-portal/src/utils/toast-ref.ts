@@ -31,17 +31,17 @@ export interface ToastInput {
 }
 
 const variantBorder: Record<Variant, string> = {
-  default: "border-zinc-200",
-  success: "border-emerald-200",
-  error: "border-red-200",
-  warning: "border-amber-200",
+  default: "border-border",
+  success: "border-success",
+  error: "border-error",
+  warning: "border-warning",
 };
 
 const variantIconBg: Record<Variant, string> = {
-  default: "bg-zinc-100 text-zinc-600",
-  success: "bg-emerald-50 text-emerald-600",
-  error: "bg-red-50 text-red-600",
-  warning: "bg-amber-50 text-amber-600",
+  default: "text-text-2",
+  success: "text-success",
+  error: "text-error",
+  warning: "text-warning",
 };
 
 const variantIcons: Record<
@@ -74,7 +74,7 @@ export function showToast({
         "div",
         {
           className: cn(
-            "pointer-events-auto flex w-[min(360px,calc(100vw-2.5rem))] items-start gap-3 rounded-xl border bg-white px-3.5 py-3 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.2)] transition-all duration-300",
+            "pointer-events-auto flex w-[min(360px,calc(100vw-2.5rem))] items-start gap-3 rounded-lg border bg-surface px-4 py-4 text-text shadow-md transition-opacity duration-200 dark:shadow-none",
             variantBorder[variant],
             t.visible
               ? "translate-x-0 opacity-100"
@@ -85,7 +85,7 @@ export function showToast({
           "div",
           {
             className: cn(
-              "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg",
+              "flex h-6 w-6 shrink-0 items-center justify-center",
               variantIconBg[variant],
             ),
           },
@@ -99,7 +99,7 @@ export function showToast({
               "p",
               {
                 className:
-                  "text-[13px] font-semibold text-zinc-950 leading-snug",
+                  "text-body font-medium leading-[22px] text-text",
               },
               title,
             ),
@@ -107,7 +107,7 @@ export function showToast({
             "p",
             {
               className: cn(
-                "text-[13px] font-medium text-zinc-500 leading-relaxed",
+                "text-body leading-[22px] text-text",
                 title && "mt-0.5",
               ),
             },
@@ -119,7 +119,7 @@ export function showToast({
               {
                 type: "button",
                 className:
-                  "mt-2 text-[12px] font-semibold text-zinc-900 hover:text-zinc-600",
+                  "mt-2 text-small font-medium text-link underline-offset-[1px] hover:underline",
                 onClick: () => {
                   actions.onClick();
                   hotToast.dismiss(t.id);
@@ -134,7 +134,7 @@ export function showToast({
             type: "button",
             "aria-label": "Dismiss",
             className:
-              "shrink-0 rounded-md p-0.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700",
+              "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-text-3 hover:bg-tint hover:text-text",
             onClick: () => {
               hotToast.dismiss(t.id);
               onDismiss?.();

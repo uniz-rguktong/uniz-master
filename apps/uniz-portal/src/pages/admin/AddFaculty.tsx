@@ -1,20 +1,19 @@
 import { useState } from "react";
-import { Button } from "../../components/Button";
+import { Button } from "@/components/ui/button";
 import { Input } from "../../components/Input";
 import { useIsAuth } from "../../hooks/is_authenticated";
 import { toast } from "@/utils/toast-ref";
 import { useNavigate } from "react-router-dom";
-import {
-  UserPlus,
-  User,
-  Mail,
-  Lock,
-  Building,
-  Briefcase,
-  Phone,
-} from "lucide-react";
 import { CREATE_FACULTY } from "../../api/endpoints";
 import { apiClient } from "../../api/apiClient";
+import { PageHeader } from "@/components/ui/page-header";
+import {
+  adminLabelClass,
+  adminSelectClass,
+} from "@/components/admin/admin-ui";
+
+const sectionTitleClass =
+  "font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head";
 
 export default function AddFaculty() {
   useIsAuth();
@@ -78,51 +77,42 @@ export default function AddFaculty() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50/50 p-6 md:p-10 flex flex-col items-center">
-      <div className="w-full max-w-2xl bg-white border border-zinc-200 shadow-sm rounded-2xl p-8">
-        <div className="flex items-center gap-3 mb-6 pb-6 border-b border-zinc-100">
-          <div className="h-12 w-12 rounded-full bg-teal-50 flex items-center justify-center text-teal-600">
-            <UserPlus className="w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-zinc-900">
-              Add Faculty Member
-            </h1>
-            <p className="text-sm text-zinc-500">
-              Onboard new teaching staff or HODs
-            </p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-bg px-4 py-8">
+      <div className="mx-auto w-full max-w-[640px]">
+        <PageHeader
+          title="Add faculty member"
+          meta="Onboard new teaching staff or HODs"
+          action={
+            <Button type="button" variant="outline" onClick={() => navigate("/admin")}>
+              Back
+            </Button>
+          }
+        />
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <section className="space-y-4">
+            <h2 className={sectionTitleClass}>Identity</h2>
             <Input
               label="Staff ID / Username"
               name="username"
               value={formData.username}
               onChange={handleChange}
               placeholder="e.g. EMP123"
-              icon={<User className="w-4 h-4" />}
             />
             <Input
-              label="Full Name"
+              label="Full name"
               name="name"
               value={formData.name}
               onChange={handleChange}
               placeholder="Dr. John Doe"
-              icon={<User className="w-4 h-4" />}
             />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="Email Address"
+              label="Email address"
               name="email"
               type="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="john@university.edu"
-              icon={<Mail className="w-4 h-4" />}
             />
             <Input
               label="Password"
@@ -131,87 +121,67 @@ export default function AddFaculty() {
               value={formData.password}
               onChange={handleChange}
               placeholder="Strong password"
-              icon={<Lock className="w-4 h-4" />}
             />
-          </div>
+          </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-zinc-700 ml-1">
-                Department
-              </label>
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">
-                  <Building className="w-4 h-4" />
-                </div>
-                <select
-                  name="department"
-                  value={formData.department}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 transition-[color,background-color,border-color,opacity,transform,box-shadow] appearance-none"
-                >
-                  <option value="">Select Department</option>
-                  <option value="CSE">CSE</option>
-                  <option value="ECE">ECE</option>
-                  <option value="EEE">EEE</option>
-                  <option value="CIVIL">CIVIL</option>
-                  <option value="MECH">MECH</option>
-                  <option value="MME">MME</option>
-                  <option value="CHEM">CHEM</option>
-                </select>
-              </div>
+          <section className="space-y-4 border-t border-border pt-8">
+            <h2 className={sectionTitleClass}>Appointment</h2>
+            <div>
+              <label className={adminLabelClass}>Department</label>
+              <select
+                name="department"
+                value={formData.department}
+                onChange={handleChange}
+                className={adminSelectClass}
+              >
+                <option value="">Select Department</option>
+                <option value="CSE">CSE</option>
+                <option value="ECE">ECE</option>
+                <option value="EEE">EEE</option>
+                <option value="CIVIL">CIVIL</option>
+                <option value="MECH">MECH</option>
+                <option value="MME">MME</option>
+                <option value="CHEM">CHEM</option>
+              </select>
             </div>
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-zinc-700 ml-1">
-                Role
-              </label>
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">
-                  <UserPlus className="w-4 h-4" />
-                </div>
-                <select
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 transition-[color,background-color,border-color,opacity,transform,box-shadow] appearance-none"
-                >
-                  <option value="teacher">Teacher / Faculty</option>
-                  <option value="hod">Head of Department (HOD)</option>
-                </select>
-              </div>
+            <div>
+              <label className={adminLabelClass}>Role</label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className={adminSelectClass}
+              >
+                <option value="teacher">Teacher / Faculty</option>
+                <option value="hod">Head of Department (HOD)</option>
+              </select>
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Designation"
               name="designation"
               value={formData.designation}
               onChange={handleChange}
               placeholder="e.g. Assistant Professor"
-              icon={<Briefcase className="w-4 h-4" />}
             />
             <Input
-              label="Contact Number"
+              label="Contact number"
               name="contact"
               value={formData.contact}
               onChange={handleChange}
               placeholder="+91 9876543210"
-              icon={<Phone className="w-4 h-4" />}
             />
-          </div>
+          </section>
 
-          <div className="pt-4 flex gap-3">
+          <div className="flex flex-col-reverse gap-3 border-t border-border pt-8 sm:flex-row sm:justify-end">
             <Button
               type="button"
-              variant="ghost"
-              className="flex-1"
+              variant="outline"
               onClick={() => navigate("/admin")}
             >
               Cancel
             </Button>
-            <Button type="submit" className="flex-1" isLoading={loading}>
-              Create Account
+            <Button type="submit" isLoading={loading}>
+              Create account
             </Button>
           </div>
         </form>

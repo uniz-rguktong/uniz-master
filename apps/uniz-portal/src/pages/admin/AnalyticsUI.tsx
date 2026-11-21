@@ -2,8 +2,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ResponsiveContainer,
-  AreaChart,
-  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -16,13 +14,63 @@ import {
 } from "recharts";
 import {
   Activity,
-  Clock,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   ChevronDown,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "../../utils/cn";
+import { Panel } from "@/components/ui/panel";
+
+const COLORS = ["var(--navy-600)", "var(--navy-300)", "var(--navy-800)", "var(--text-3)"];
+
+const chartTick = { fill: "var(--text-3)", fontSize: 12, fontWeight: 600 };
+
+const chartTooltipStyle = {
+  backgroundColor: "var(--surface)",
+  color: "var(--text)",
+  border: "1px solid var(--border)",
+  borderRadius: 12,
+  fontSize: 12,
+  fontWeight: 600,
+  boxShadow: "none",
+};
+
+type LineTone = "success" | "warning" | "error" | "neutral";
+
+const STATUS_LINES: Record<string, { tone: LineTone; icon: LucideIcon }> = {
+  active: { tone: "success", icon: CheckCircle2 },
+  enabled: { tone: "success", icon: CheckCircle2 },
+  clear: { tone: "success", icon: CheckCircle2 },
+  running: { tone: "neutral", icon: Activity },
+  restricted: { tone: "error", icon: AlertCircle },
+  suspended: { tone: "error", icon: AlertCircle },
+  "at risk": { tone: "warning", icon: AlertTriangle },
+  "needs review": { tone: "warning", icon: AlertCircle },
+};
+
+function lineStatus(badge?: string, iconColor?: string) {
+  const word = STATUS_LINES[(badge || "").trim().toLowerCase()];
+  const color = iconColor || "";
+  if (color.includes("text-error")) {
+    return { tone: "error" as const, icon: word?.icon ?? AlertCircle };
+  }
+  if (color.includes("text-warning")) {
+    return { tone: "warning" as const, icon: word?.icon ?? AlertTriangle };
+  }
+  if (color.includes("text-success")) {
+    return { tone: "success" as const, icon: word?.icon ?? CheckCircle2 };
+  }
+  return word ?? null;
+}
+
+function statusIconClass(tone: LineTone) {
+  if (tone === "success") return "text-success";
+  if (tone === "warning") return "text-warning";
+  if (tone === "error") return "text-error";
+  return "text-text-2";
+}
 
 /**
  * KPI Card - High fidelity metric box matching the requested UI
@@ -30,9 +78,10 @@ import { cn } from "../../utils/cn";
 export const KPICard = ({
   title,
   value,
-  icon: Icon,
+  icon: _icon,
   badge = "Active",
-  iconColor = "text-zinc-400",
+  iconColor,
+  iconBg: _iconBg,
 }: {
   title: string;
   value: string | number;
@@ -42,47 +91,46 @@ export const KPICard = ({
   /** Retained for API compatibility — visuals are now monochrome. */
   iconBg?: string;
 }) => {
+  void _icon;
+  void _iconBg;
+  const status = badge ? lineStatus(badge, iconColor) : null;
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-      className="group rounded-2xl border border-zinc-200/70 bg-white p-5 flex flex-col gap-5 shadow-[0_1px_2px_rgba(10,10,10,0.03)] transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-200 hover:border-zinc-300"
-    >
-      <div className="flex items-start justify-between">
-        <div className="w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center ring-1 ring-inset ring-zinc-900/5 transition-colors group-hover:bg-[#0B2A47] group-hover:text-white">
-          <Icon size={17} strokeWidth={2} className="text-zinc-500 transition-colors group-hover:text-white" />
-        </div>
-        <div className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-zinc-50 px-2 py-0.5">
-          <span className={cn("w-1.5 h-1.5 rounded-full bg-current", iconColor)} />
-          <span className="text-[10px] font-medium text-zinc-500 tracking-tight">
-            {badge}
-          </span>
-        </div>
-      </div>
-
-      <div className="space-y-1">
-        <p className="text-[28px] font-semibold text-zinc-900 tracking-[-0.02em] leading-none tabular-nums">
-          {value}
+    <div className="flex min-h-[148px] flex-col rounded-lg border border-border bg-tile p-6">
+      <p className="text-dense leading-5 text-text-2">{title}</p>
+      <p className="mt-3 font-sans text-[28px] font-semibold leading-9 tracking-[-0.01em] text-head tabular-nums">
+        {value}
+      </p>
+      {badge ? (
+        <p className="mt-3 flex items-center gap-1.5 text-dense leading-5 text-text-2">
+          {status ? <StatusGlyph status={status} /> : null}
+          {badge}
         </p>
-        <p className="text-[12.5px] font-medium text-zinc-500 tracking-tight">
-          {title}
-        </p>
-      </div>
-    </motion.div>
+      ) : null}
+    </div>
   );
 };
 
+function StatusGlyph({
+  status,
+}: {
+  status: { tone: LineTone; icon: LucideIcon };
+}) {
+  const Icon = status.icon;
+  return (
+    <Icon
+      size={16}
+      strokeWidth={1.75}
+      aria-hidden
+      className={statusIconClass(status.tone)}
+    />
+  );
+}
+
 export const KPICardSkeleton = () => (
-  <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 flex flex-col gap-5 shadow-[0_1px_2px_rgba(10,10,10,0.03)] animate-pulse">
-    <div className="flex items-start justify-between">
-      <div className="w-9 h-9 rounded-xl bg-zinc-100" />
-      <div className="w-16 h-5 rounded-full bg-zinc-50" />
-    </div>
-    <div className="space-y-2.5">
-      <div className="w-20 h-7 rounded-lg bg-zinc-100" />
-      <div className="w-28 h-3.5 rounded-md bg-zinc-50" />
-    </div>
+  <div className="flex min-h-[148px] flex-col rounded-lg border border-border bg-tile p-6">
+    <div className="h-5 w-24 animate-pulse rounded-md bg-tint" />
+    <div className="mt-3 h-9 w-20 animate-pulse rounded-md bg-tint" />
+    <div className="mt-3 h-5 w-28 animate-pulse rounded-md bg-tint" />
   </div>
 );
 
@@ -94,7 +142,7 @@ export const TrendChart = ({
   subtitle,
   data,
   dataKey,
-  color = "#0B2A47",
+  color = "var(--navy-600)",
   height = 300,
 }: {
   title: string;
@@ -105,80 +153,43 @@ export const TrendChart = ({
   height?: number;
 }) => {
   const safeData = Array.isArray(data) ? data : [];
+  const stroke = COLORS.includes(color) ? color : "var(--navy-600)";
   return (
-    <div className="bg-transparent p-10 rounded-xl border border-zinc-100 relative overflow-hidden">
-      <div className="flex justify-between items-start mb-10 relative z-10">
-        <div>
-          <h3 className="text-xl font-semibold text-zinc-900 tracking-tight mb-1">
-            {title}
-          </h3>
-          <p className="text-[10px] font-semibold text-zinc-400">
-            {subtitle}
-          </p>
+    <Panel title={title}>
+      <div className="flex flex-col gap-4 min-[821px]:flex-row min-[821px]:items-start">
+        <div style={{ height }} className="min-w-0 w-full flex-1">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={safeData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+              <XAxis
+                dataKey="name"
+                axisLine={false}
+                tickLine={false}
+                tick={chartTick}
+                dy={10}
+              />
+              <YAxis axisLine={false} tickLine={false} tick={chartTick} />
+              <Tooltip
+                contentStyle={chartTooltipStyle}
+                itemStyle={{ color: "var(--text)" }}
+                labelStyle={{ color: "var(--text)" }}
+              />
+              <Line
+                type="monotone"
+                dataKey={dataKey}
+                stroke={stroke}
+                strokeWidth={2}
+                fill={stroke}
+                fillOpacity={0}
+                dot={false}
+                animationDuration={2000}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
-        <div className="w-10 h-10 bg-zinc-50 rounded-xl flex items-center justify-center text-zinc-300">
-          <Clock size={18} />
-        </div>
+        <p className="text-dense leading-5 text-text-2 min-[821px]:max-w-xs">{subtitle}</p>
       </div>
-
-      <div style={{ height }} className="w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            data={safeData}
-            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-          >
-            <defs>
-              <linearGradient
-                id={`colorTrend-${dataKey}`}
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
-                <stop offset="5%" stopColor={color} stopOpacity={0.15} />
-                <stop offset="95%" stopColor={color} stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              vertical={false}
-              stroke="#f1f5f9"
-            />
-            <XAxis
-              dataKey="name"
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: "#94a3b8", fontSize: 10, fontWeight: 700 }}
-              dy={10}
-            />
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: "#94a3b8", fontSize: 10, fontWeight: 700 }}
-            />
-            <Tooltip
-              contentStyle={{
-                borderRadius: "20px",
-                border: "1px solid #f1f5f9",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
-                fontSize: "11px",
-                fontWeight: "800",
-                textTransform: "",
-              }}
-            />
-            <Area
-              type="monotone"
-              dataKey={dataKey}
-              stroke={color}
-              strokeWidth={4}
-              fillOpacity={1}
-              fill={`url(#colorTrend-${dataKey})`}
-              animationDuration={2000}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+    </Panel>
   );
 };
 
@@ -194,122 +205,78 @@ export const DonutChart = ({
   subtitle: string;
   data?: any[];
 }) => {
-  const COLORS = ["#0B2A47", "#1E5A8C", "#5A94B8", "#18181B", "#0F3B63"];
   const safeData = Array.isArray(data) ? data : [];
 
   return (
-    <div className="bg-transparent p-10 rounded-xl border border-zinc-100 flex flex-col h-full">
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold text-zinc-900 tracking-tight mb-1">
-          {title}
-        </h3>
-        <p className="text-[10px] font-semibold text-zinc-400">
-          {subtitle}
-        </p>
-      </div>
-
-      <div className="flex-1 min-h-[250px] relative">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={safeData}
-              innerRadius={70}
-              outerRadius={90}
-              paddingAngle={8}
-              dataKey="value"
-              animationDuration={1500}
-            >
-              {safeData.map((_, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                  stroke="rgba(255,255,255,0.2)"
-                  strokeWidth={2}
+    <Panel title={title} className="h-full">
+      <div className="flex flex-col gap-4 min-[821px]:flex-row min-[821px]:items-center">
+        <div className="relative h-[250px] min-w-0 flex-1">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={safeData}
+                innerRadius={70}
+                outerRadius={90}
+                paddingAngle={8}
+                dataKey="value"
+                animationDuration={1500}
+              >
+                {safeData.map((_, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                    stroke="var(--surface)"
+                    strokeWidth={2}
+                  />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={chartTooltipStyle}
+                itemStyle={{ color: "var(--text)" }}
+                labelStyle={{ color: "var(--text)" }}
+                cursor={{ fill: "transparent" }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+            <p className="text-dense leading-5 text-text-2">Total</p>
+            <p className="font-sans text-[28px] font-semibold leading-9 text-head tabular-nums">
+              {safeData.reduce((acc, curr) => acc + (curr.value || 0), 0)}
+            </p>
+          </div>
+        </div>
+        <div className="min-[821px]:max-w-xs">
+          <p className="text-dense leading-5 text-text-2">{subtitle}</p>
+          <div className="mt-4 flex flex-col gap-2">
+            {safeData.map((item, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <div
+                  className="h-2 w-2 rounded-full"
+                  style={{ backgroundColor: COLORS[i % COLORS.length] }}
                 />
-              ))}
-            </Pie>
-            <Tooltip
-              contentStyle={{
-                borderRadius: "15px",
-                border: "none",
-                backgroundColor: "#0f172a",
-                color: "#fff",
-                padding: "10px 15px",
-                fontSize: "11px",
-                fontWeight: "bold",
-                boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
-              }}
-              itemStyle={{ color: "#fff" }}
-              cursor={{ fill: "transparent" }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <p className="text-[10px] font-semibold text-zinc-400">
-            Total
-          </p>
-          <p className="text-3xl font-semibold text-zinc-900 tracking-tight">
-            {safeData.reduce((acc, curr) => acc + (curr.value || 0), 0)}
-          </p>
+                <span className="text-dense text-text-2">{item.name}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-
-      <div className="mt-6 flex flex-wrap gap-4 justify-center">
-        {safeData.map((item, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <div
-              className="w-2 h-2 rounded-full"
-              style={{ backgroundColor: COLORS[i % COLORS.length] }}
-            />
-            <span className="text-[10px] font-bold text-zinc-500">
-              {item.name}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
+    </Panel>
   );
 };
 
 export const DonutChartSkeleton = () => (
-  <div className="bg-transparent p-10 rounded-xl border border-zinc-100 flex flex-col h-full animate-pulse">
-    <div className="mb-6 space-y-2">
-      <div className="w-40 h-6 rounded-lg bg-zinc-100" />
-      <div className="w-32 h-3 rounded-md bg-zinc-50" />
-    </div>
-    <div className="flex-1 min-h-[250px] flex items-center justify-center relative">
-      <div className="w-44 h-44 rounded-full border-[20px] border-zinc-50" />
-      <div className="absolute flex flex-col items-center gap-2">
-        <div className="w-10 h-3 rounded bg-zinc-50" />
-        <div className="w-16 h-8 rounded bg-zinc-100" />
-      </div>
-    </div>
-    <div className="mt-8 space-y-3">
-      <div className="h-8 w-full rounded-xl bg-zinc-50" />
-      <div className="h-8 w-full rounded-xl bg-zinc-50/50" />
-    </div>
+  <div className="flex h-full w-full flex-col rounded-xl border border-border bg-panel p-4 min-[821px]:p-8">
+    <div className="h-8 w-40 animate-pulse rounded-md bg-tint" />
+    <div className="mt-2 h-5 w-32 animate-pulse rounded-md bg-tint" />
+    <div className="mt-6 h-[250px] animate-pulse rounded-md bg-tint" />
   </div>
 );
 
 export const AreaChartSkeleton = () => (
-  <div className="w-full bg-white rounded-xl border border-zinc-100 p-10 animate-pulse">
-    <div className="flex justify-between items-start mb-10">
-      <div className="space-y-3">
-        <div className="w-32 h-4 rounded bg-zinc-50" />
-        <div className="w-56 h-12 rounded bg-zinc-100" />
-        <div className="w-64 h-4 rounded bg-zinc-50" />
-      </div>
-      <div className="w-32 h-10 rounded-xl bg-zinc-50" />
-    </div>
-    <div className="h-[250px] w-full bg-zinc-50/50 rounded-xl border border-dashed border-zinc-100 flex items-end px-4 py-4 gap-4">
-      {[...Array(12)].map((_, i) => (
-        <div
-          key={i}
-          className="flex-1 bg-zinc-100 rounded-t-sm"
-          style={{ height: `${Math.random() * 60 + 20}%`, opacity: 0.5 }}
-        />
-      ))}
-    </div>
+  <div className="w-full rounded-xl border border-border bg-panel p-4 min-[821px]:p-8">
+    <div className="h-8 w-40 animate-pulse rounded-md bg-tint" />
+    <div className="mt-2 h-5 w-64 animate-pulse rounded-md bg-tint" />
+    <div className="mt-6 h-[250px] animate-pulse rounded-md bg-tint" />
   </div>
 );
 
@@ -325,57 +292,30 @@ export const PulseFeed = ({
 }) => {
   const safeActivities = Array.isArray(activities) ? activities : [];
   return (
-    <div className="bg-transparent p-10 rounded-xl border border-zinc-100 h-full flex flex-col">
-      <div className="flex items-center gap-3 mb-10">
-        <div className="w-10 h-10 bg-zinc-950 rounded-xl flex items-center justify-center text-white">
-          <Activity size={18} />
-        </div>
-        <h3 className="text-xl font-semibold text-zinc-900 tracking-tight">
-          {title}
-        </h3>
-      </div>
-
-      <div className="space-y-8 flex-1">
+    <Panel title={title} className="h-full">
+      <div className="space-y-6 border-l border-border pl-4">
         {safeActivities.map((act, i) => (
-          <div key={i} className="flex gap-5 relative">
-            {i !== safeActivities.length - 1 && (
-              <div className="absolute left-6 top-10 bottom-[-20px] w-[2px] bg-zinc-50" />
-            )}
-            <div
-              className={cn(
-                "w-12 h-12 rounded-xl flex items-center justify-center border-2 border-white bg-white z-10 shrink-0",
-                act?.status === "success"
-                  ? "text-emerald-500 ring-4 ring-emerald-50"
-                  : act?.status === "warning"
-                    ? "text-orange-500 ring-4 ring-orange-50"
-                    : "text-red-500 ring-4 ring-red-50",
-              )}
-            >
+          <div key={i} className="flex gap-3">
+            <div className="mt-0.5 shrink-0">
               {act?.status === "success" ? (
-                <CheckCircle2 size={18} />
+                <CheckCircle2 size={16} strokeWidth={1.75} className="text-success" aria-hidden />
               ) : act?.status === "warning" ? (
-                <AlertCircle size={18} strokeWidth={2.5} />
+                <AlertTriangle size={16} strokeWidth={1.75} className="text-warning" aria-hidden />
               ) : (
-                <AlertCircle size={18} />
+                <AlertCircle size={16} strokeWidth={1.75} className="text-error" aria-hidden />
               )}
             </div>
-            <div className="pt-1 min-w-0">
-              <p className="text-[10px] font-semibold text-zinc-400 leading-none mb-1.5">
-                {act?.time}
-              </p>
-              <p className="text-[13px] font-semibold text-zinc-900 leading-tight tracking-tight">
-                {act?.message}
-              </p>
+            <div className="min-w-0">
+              <p className="text-small leading-[18px] text-text-2">{act?.time}</p>
+              <p className="text-dense font-medium text-head">{act?.message}</p>
               {act?.detail && (
-                <p className="text-[11px] text-zinc-500 font-medium mt-1 truncate">
-                  {act?.detail}
-                </p>
+                <p className="mt-1 truncate text-dense text-text-2">{act?.detail}</p>
               )}
             </div>
           </div>
         ))}
       </div>
-    </div>
+    </Panel>
   );
 };
 
@@ -393,23 +333,25 @@ export const ComparisonChart = ({
 }) => {
   const safeData = Array.isArray(data) ? data : [];
   const safeLines = Array.isArray(lines) ? lines : [];
+  const summary = safeLines
+    .map((l) => l?.label)
+    .filter(Boolean)
+    .join(" compared with ");
 
   return (
-    <div className="bg-transparent p-10 rounded-xl border border-zinc-100">
-      <div className="flex justify-between items-center mb-12">
-        <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight">
-          {title}
-        </h3>
-        <div className="flex gap-6">
+    <Panel title={title}>
+      <div className="mb-4 flex flex-col gap-3 min-[821px]:flex-row min-[821px]:items-start min-[821px]:justify-between">
+        <p className="text-dense leading-5 text-text-2 min-[821px]:max-w-sm">
+          {summary || "Comparison"}
+        </p>
+        <div className="flex flex-wrap gap-4">
           {safeLines.map((l, i) => (
             <div key={i} className="flex items-center gap-2">
               <div
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: l?.color || "#0B2A47" }}
+                className="h-2 w-2 rounded-full"
+                style={{ backgroundColor: COLORS[i % COLORS.length] }}
               />
-              <span className="text-[11px] font-bold text-zinc-400">
-                {l?.label}
-              </span>
+              <span className="text-dense text-text-2">{l?.label}</span>
             </div>
           ))}
         </div>
@@ -418,40 +360,36 @@ export const ComparisonChart = ({
       <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={safeData}>
-            <CartesianGrid
-              strokeDasharray="5 5"
-              vertical={false}
-              stroke="#f8fafc"
-            />
+            <CartesianGrid strokeDasharray="5 5" vertical={false} stroke="var(--border)" />
             <XAxis
               dataKey="name"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#94a3b8", fontSize: 11, fontWeight: 700 }}
+              tick={chartTick}
               dy={20}
             />
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: "#94a3b8", fontSize: 11, fontWeight: 700 }}
-            />
+            <YAxis axisLine={false} tickLine={false} tick={chartTick} />
             <Tooltip
-              contentStyle={{
-                borderRadius: "25px",
-                padding: "20px",
-                border: "none",
-                boxShadow: "0 20px 50px rgba(0,0,0,0.1)",
-              }}
+              contentStyle={chartTooltipStyle}
+              itemStyle={{ color: "var(--text)" }}
+              labelStyle={{ color: "var(--text)" }}
             />
             {safeLines.map((l, i) => (
               <Line
                 key={i}
                 type="monotone"
                 dataKey={l?.key}
-                stroke={l?.color}
-                strokeWidth={5}
-                dot={{ fill: l?.color, strokeWidth: 3, r: 6, stroke: "#fff" }}
-                activeDot={{ r: 10, strokeWidth: 0 }}
+                stroke={COLORS[i % COLORS.length]}
+                strokeWidth={2}
+                fill={COLORS[i % COLORS.length]}
+                fillOpacity={0}
+                dot={{
+                  fill: COLORS[i % COLORS.length],
+                  strokeWidth: 2,
+                  r: 4,
+                  stroke: "var(--surface)",
+                }}
+                activeDot={{ r: 6, strokeWidth: 0 }}
                 strokeDasharray={l?.dashed ? "10 10" : "0"}
                 animationDuration={2500}
               />
@@ -459,7 +397,7 @@ export const ComparisonChart = ({
           </LineChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </Panel>
   );
 };
 
@@ -480,32 +418,26 @@ export const SubjectHeatmap = ({
   onBranchChange: (branch: string) => void;
 }) => {
   const getGradeColor = (grade: number) => {
-    if (grade >= 8.5) return "bg-blue-600";
-    if (grade >= 8.0) return "bg-blue-500";
-    if (grade >= 7.8) return "bg-blue-400";
-    if (grade >= 7.5) return "bg-blue-300";
-    return "bg-blue-200";
+    if (grade >= 8.5) return "bg-navy-800";
+    if (grade >= 8.0) return "bg-navy-600";
+    if (grade >= 7.5) return "bg-navy-300";
+    return "bg-text-3";
   };
 
   const [hoveredItem, setHoveredItem] = useState<any | null>(null);
 
   return (
-    <div className="bg-transparent p-10 rounded-xl border border-zinc-100 flex flex-col h-full w-full">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
-        <div>
-          <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-1">
-            {title}
-          </h3>
-          <p className="text-[10px] font-semibold text-zinc-400">
-            Matrix performance intelligence
-          </p>
-        </div>
+    <Panel title={title} className="h-full w-full">
+      <div className="mb-6 flex flex-col gap-4 min-[821px]:flex-row min-[821px]:items-start min-[821px]:justify-between">
+        <p className="text-dense leading-5 text-text-2 min-[821px]:max-w-sm">
+          Average grade by subject
+        </p>
 
-        <div className="relative group">
+        <div className="relative">
           <select
             value={selectedBranch}
             onChange={(e) => onBranchChange(e.target.value)}
-            className="appearance-none bg-zinc-50 border border-zinc-100 rounded-xl px-5 py-2.5 pr-10 text-[11px] font-semibold text-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500/10 cursor-pointer hover:bg-zinc-100 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-sm"
+            className="h-11 cursor-pointer appearance-none rounded-md border border-border-strong bg-surface pl-4 pr-10 text-body text-text focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ring"
           >
             {branches.map((b) => (
               <option key={b} value={b}>
@@ -514,14 +446,15 @@ export const SubjectHeatmap = ({
             ))}
           </select>
           <ChevronDown
-            size={14}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+            size={16}
+            strokeWidth={1.75}
+            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-text-3"
           />
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col gap-8">
-        <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2">
+      <div className="flex flex-col gap-8">
+        <div className="grid grid-cols-5 gap-2 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12">
           <AnimatePresence>
             {data.map((item, i) => (
               <motion.div
@@ -532,16 +465,15 @@ export const SubjectHeatmap = ({
                 onMouseEnter={() => setHoveredItem(item)}
                 onMouseLeave={() => setHoveredItem(null)}
                 className={cn(
-                  "aspect-square rounded-md cursor-pointer transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300 relative",
+                  "relative aspect-square cursor-pointer rounded-md transition-opacity duration-150 hover:z-20 hover:opacity-80",
                   getGradeColor(Number(item.average_grade)),
-                  " hover:z-20  hover:shadow-blue-500/20",
                 )}
               />
             ))}
           </AnimatePresence>
         </div>
 
-        <div className="min-h-[100px] border-t border-zinc-50 pt-8 flex items-center justify-between">
+        <div className="flex items-center justify-between border-t border-border pt-6">
           <AnimatePresence mode="wait">
             {hoveredItem ? (
               <motion.div
@@ -549,23 +481,14 @@ export const SubjectHeatmap = ({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="flex items-center gap-6"
+                className="flex items-center gap-4"
               >
-                <div
-                  className={cn(
-                    "w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white text-lg font-semibold",
-                    getGradeColor(Number(hoveredItem.average_grade)),
-                  )}
-                >
+                <p className="font-sans text-[28px] font-semibold leading-9 text-head tabular-nums">
                   {Number(hoveredItem.average_grade).toFixed(1)}
-                </div>
+                </p>
                 <div>
-                  <p className="text-xs font-semibold text-blue-600 mb-1">
-                    {selectedBranch} • PERFORMANCE
-                  </p>
-                  <h4 className="text-sm font-semibold text-zinc-900 tracking-tight max-w-md">
-                    {hoveredItem.subject_name}
-                  </h4>
+                  <p className="text-dense leading-5 text-text-2">{selectedBranch}</p>
+                  <p className="text-dense font-medium text-head">{hoveredItem.subject_name}</p>
                 </div>
               </motion.div>
             ) : (
@@ -573,27 +496,24 @@ export const SubjectHeatmap = ({
                 key="placeholder"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-[10px] font-bold text-zinc-300"
+                className="text-dense leading-5 text-text-2"
               >
-                Hover over a cell to view grade intelligence
+                Hover a cell to see the subject and grade
               </motion.p>
             )}
           </AnimatePresence>
 
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col items-end">
-              <span className="text-[9px] font-semibold text-zinc-300">
-                Efficiency Scale
-              </span>
-              <div className="flex gap-1 mt-1.5">
-                <div className="w-3 h-3 rounded-sm bg-blue-200" />
-                <div className="w-3 h-3 rounded-sm bg-blue-400" />
-                <div className="w-3 h-3 rounded-sm bg-blue-600" />
-              </div>
+          <div className="flex flex-col items-end">
+            <span className="text-dense leading-5 text-text-2">Grade scale</span>
+            <div className="mt-2 flex gap-1">
+              <div className="h-3 w-3 rounded-sm bg-text-3" />
+              <div className="h-3 w-3 rounded-sm bg-navy-300" />
+              <div className="h-3 w-3 rounded-sm bg-navy-600" />
+              <div className="h-3 w-3 rounded-sm bg-navy-800" />
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </Panel>
   );
 };

@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { LandingMeshBackdrop } from "@/components/ui/landing-section";
 import { adminPageClass } from "@/components/admin/admin-ui";
 import { cn } from "@/lib/utils";
 
@@ -11,8 +10,7 @@ export default function AdminLayout({
   className?: string;
 }) {
   return (
-    <div className={cn(adminPageClass, "flex-col", className)}>
-      <LandingMeshBackdrop />
+    <div className={cn(adminPageClass, "flex-col bg-bg text-text", className)}>
       {children}
     </div>
   );

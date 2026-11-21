@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, Mail, Rocket, ShieldCheck, X } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
 import {
   CONFIRM_DIRECT_PUBLISH,
@@ -10,14 +9,12 @@ import {
 import { toast } from "@/utils/toast-ref";
 import { cn } from "@/utils/cn";
 import {
-  adminGhostButtonClass,
   adminInputClass,
   adminLabelClass,
-  adminModalDescClass,
-  adminModalShellClass,
-  adminModalTitleClass,
-  adminPrimaryButtonClass,
 } from "../../../components/admin/admin-ui";
+import { AdminDialog } from "@/components/admin/AdminDialog";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 type DirectPublishModalProps = {
   semester: { id: string; name: string; status?: string };
@@ -100,56 +97,55 @@ export default function DirectPublishModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className={cn(adminModalShellClass, "w-full max-w-md p-8 space-y-6")}>
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-[10px] font-semibold text-zinc-400">
-              Webadmin only
-            </p>
-            <h2 className={adminModalTitleClass}>Publish to students</h2>
-            <p className={cn(adminModalDescClass, "mt-1")}>{semester.name}</p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-2 rounded-xl text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
-            aria-label="Close"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        <div className="rounded-2xl bg-amber-50 border border-amber-100 px-4 py-3 text-sm text-amber-900">
+    <AdminDialog
+      open
+      elevated
+      onOpenChange={(open) => !open && onClose()}
+      maxWidth="max-w-[640px]"
+      title="Publish to students"
+      description={semester.name}
+      footer={
+        step === "intro" ? (
+          <Button type="button" disabled={loading} isLoading={loading} onClick={() => sendCode(false)}>
+            Send verification code
+          </Button>
+        ) : (
+          <>
+            <Button
+              type="button"
+              variant="ghost"
+              disabled={loading || resendIn > 0}
+              onClick={() => sendCode(true)}
+            >
+              {resendIn > 0 ? `Resend code in ${resendIn}s` : "Resend code"}
+            </Button>
+            <Button
+              type="button"
+              disabled={loading || code.length !== 6}
+              isLoading={loading}
+              onClick={confirmPublish}
+            >
+              Confirm and publish
+            </Button>
+          </>
+        )
+      }
+    >
+      <div className="space-y-6">
+        <Alert tone="warning" title="Skips the approval chain">
           Skips Dean and HOD approval and opens course registration for all
           students immediately. A verification code is sent to your registered
           email before this action runs.
-        </div>
+        </Alert>
 
-        {step === "intro" ? (
-          <div className="space-y-4">
-            <button
-              type="button"
-              disabled={loading}
-              onClick={() => sendCode(false)}
-              className={cn(adminPrimaryButtonClass, "w-full justify-center")}
-            >
-              {loading ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <Mail size={16} />
-              )}
-              Send verification code
-            </button>
-          </div>
-        ) : (
+        {step === "code" && (
           <div className="space-y-4">
             {maskedEmail && (
-              <p className="text-xs text-zinc-500">
-                Code sent to <span className="font-semibold">{maskedEmail}</span>
+              <p className="text-dense text-text-2">
+                Code sent to <span className="font-medium text-text">{maskedEmail}</span>
               </p>
             )}
-            <div className="space-y-2">
+            <div>
               <label className={adminLabelClass}>6-digit verification code</label>
               <input
                 inputMode="numeric"
@@ -158,42 +154,17 @@ export default function DirectPublishModal({
                 onChange={(e) =>
                   setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
                 }
-                className={cn(adminInputClass, "text-center text-lg ")}
+                className={cn(adminInputClass, "text-center tracking-[0.3em]")}
                 placeholder="000000"
                 autoComplete="one-time-code"
               />
             </div>
-            <button
-              type="button"
-              disabled={loading || resendIn > 0}
-              onClick={() => sendCode(true)}
-              className={cn(adminGhostButtonClass, "w-full justify-center text-xs")}
-            >
-              {resendIn > 0
-                ? `Resend code in ${resendIn}s`
-                : "Resend verification code"}
-            </button>
-            <button
-              type="button"
-              disabled={loading || code.length !== 6}
-              onClick={confirmPublish}
-              className={cn(adminPrimaryButtonClass, "w-full justify-center")}
-            >
-              {loading ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <Rocket size={16} />
-              )}
-              Confirm &amp; publish to students
-            </button>
+            <p className="text-caption text-text-3">
+              Rate limited: 2 codes per minute, 10 per hour
+            </p>
           </div>
         )}
-
-        <p className="flex items-center gap-2 text-[10px] text-zinc-400">
-          <ShieldCheck size={12} />
-          Rate limited: 2 codes per minute, 10 per hour
-        </p>
       </div>
-    </div>
+    </AdminDialog>
   );
 }

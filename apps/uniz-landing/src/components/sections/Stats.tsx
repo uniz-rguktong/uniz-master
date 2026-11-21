@@ -46,22 +46,22 @@ export function Stats({ stats }: { stats: readonly Stat[] }) {
   return (
     <section
       id="statistics"
-      className="relative overflow-hidden bg-navy-900 text-white"
+      className="bg-navy-900 text-white"
     >
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-20 sm:py-24 lg:py-28">
-        <div className="max-w-2xl mb-14 sm:mb-20">
-          <p className="text-sm text-white/60 mb-3">By the numbers</p>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-white leading-tight">
+      <div className="mx-auto max-w-[1232px] px-5 py-16 min-[821px]:px-10 min-[821px]:py-24">
+        <div className="mb-12 max-w-2xl">
+          <p className="mb-3 text-[15px] leading-6 text-navy-300">By the numbers</p>
+          <h2 className="u-section text-white">
             Student enrollment
           </h2>
-          <p className="mt-5 text-base sm:text-lg text-white/60 leading-relaxed max-w-xl">
+          <p className="mt-4 max-w-xl text-[15px] leading-6 text-chrome-link">
             Headcount by program and department on the Ongole campus (from campus records).
           </p>
         </div>
 
         <div
           ref={containerRef}
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-y-12 gap-x-8 lg:gap-x-6 border-t border-white/15 pt-12 sm:pt-16"
+          className="grid grid-cols-2 gap-x-8 gap-y-10 border-t border-navy-700 pt-10 md:grid-cols-3"
         >
           {stats.map((stat, idx) => {
             const num = parseInt(String(stat.value).replace(/,/g, ""), 10) || 0;
@@ -69,14 +69,14 @@ export function Stats({ stats }: { stats: readonly Stat[] }) {
               <div key={idx} className="flex flex-col">
                 <div className="flex items-baseline gap-0.5">
                   <span
-                    className="font-serif text-4xl sm:text-5xl font-semibold text-white leading-none tracking-tight"
+                    className="text-[28px] font-semibold leading-9 tracking-[-0.01em] text-white tabular-nums"
                     data-target={num}
                   >
                     0
                   </span>
-                  <span className="font-serif text-2xl text-white/80 leading-none">+</span>
+                  <span className="text-[18px] leading-6 text-chrome-link">+</span>
                 </div>
-                <p className="mt-4 text-xs sm:text-sm text-white/55 leading-relaxed">
+                <p className="mt-3 text-[13px] leading-[18px] text-navy-300">
                   {stat.label}
                 </p>
               </div>

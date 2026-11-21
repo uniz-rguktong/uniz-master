@@ -3,29 +3,36 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/utils/toast-ref";
 import { formatRoleLabel } from "@/utils/displayText";
-import { motion, AnimatePresence } from "framer-motion";
 import {
-  LogOut,
   User,
-  Building,
-  Mail,
-  Phone,
-  GraduationCap,
   LayoutDashboard,
   Users,
   Lock,
   Pencil,
   Save,
   X,
-  ChevronRight,
   Search,
-  Hash,
-  Filter,
   Loader2,
-  ShieldCheck,
-  BookOpen,
-  Menu,
+  AlertCircle,
+  CheckCircle2,
+  AlertTriangle,
 } from "lucide-react";
+import AdminShell from "@/components/admin/AdminShell";
+import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
+import { Panel } from "@/components/ui/panel";
+import { Tile } from "@/components/ui/tile";
+import { Table } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useLogout } from "../../hooks/useLogout";
 import {
   BASE_URL,
@@ -88,7 +95,7 @@ const calcStrength = (pwd: string) => {
   if (/[0-9]/.test(pwd)) score++;
   if (/[^A-Za-z0-9]/.test(pwd)) score++;
   const label = ["", "Weak", "Moderate", "Strong"][score];
-  const color = ["", "bg-red-500", "bg-amber-500", "bg-emerald-500"][score];
+  const color = ["", "bg-error", "bg-warning", "bg-success"][score];
   return { score, label, color };
 };
 
@@ -100,7 +107,6 @@ export default function FacultyDashboard() {
   const { logout } = useLogout();
 
   const [activeTab, setActiveTab] = useState<ActiveTab>("dashboard");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [profile, setProfile] = useState<FacultyProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
 
@@ -172,108 +178,26 @@ export default function FacultyDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
-      {/* ── Sidebar ── */}
-      <aside
-        className={`bg-white border-r border-navy-100 transition-[color,background-color,border-color,box-shadow] duration-150 duration-300 z-50 ${
-          isSidebarOpen ? "w-72" : "w-20"
-        } hidden md:flex flex-col h-screen sticky top-0 shadow-sm`}
-      >
-        <div className="p-6 flex items-center gap-4 border-b border-navy-50 shrink-0">
-          <div className="w-12 h-12 bg-navy-900 rounded-xl flex items-center justify-center shrink-0">
-            <BookOpen className="w-6 h-6 text-white" />
-          </div>
-          {isSidebarOpen && (
-            <div className="flex flex-col animate-in fade-in slide-in-from-left-2 duration-300">
-              <span className="font-semibold text-navy-900 text-lg tracking-tight leading-none">
-                Faculty Portal
-              </span>
-              <span className="text-[11px] text-navy-400 font-medium mt-1.5 leading-none">
-                {isHOD ? "HOD Dashboard" : "Staff Dashboard"}
-              </span>
-            </div>
-          )}
-        </div>
-
-        <nav className="flex-1 p-3 space-y-1 mt-4 overflow-y-auto">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id as ActiveTab)}
-              className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-[color,background-color] duration-150 group ${
-                activeTab === item.id
-                  ? "bg-navy-900 text-white"
-                  : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900"
-              }`}
-            >
-              <item.icon
-                size={20}
-                className={`shrink-0 ${activeTab === item.id ? "text-white" : "text-zinc-400"}`}
-              />
-              {isSidebarOpen && (
-                <span
-                  className={`text-[14px] tracking-tight ${activeTab === item.id ? "font-semibold" : "font-medium"}`}
-                >
-                  {item.label}
-                </span>
-              )}
-              {isSidebarOpen && activeTab === item.id && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-navy-300" />
-              )}
-            </button>
-          ))}
-        </nav>
-
-        <div className="p-4 border-t border-navy-50 shrink-0">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3.5 px-4 py-3 rounded-lg text-red-500 hover:bg-red-50 transition-[color,background-color] duration-150 group"
-          >
-            <LogOut size={20} className="shrink-0" />
-            {isSidebarOpen && (
-              <span className="text-[14px] font-semibold">Sign Out</span>
-            )}
-          </button>
-        </div>
-      </aside>
-
-      {/* ── Main ── */}
-      <main className="flex-1 overflow-y-auto max-h-screen">
-        {/* Header */}
-        <header className="bg-white sticky top-0 z-40 border-b border-navy-200 h-16 px-8 flex justify-between items-center">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2.5 hover:bg-zinc-100 rounded-xl transition-[color,background-color,border-color,box-shadow] duration-150 hidden md:flex text-zinc-400"
-          >
-            {isSidebarOpen ? <Menu size={20} /> : <ChevronRight size={20} />}
-          </button>
-          <div className="flex items-center gap-4 ml-auto">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold text-zinc-900 leading-none tracking-tight">
-                {profile?.Name || username}
-              </p>
-              <p className="text-[12px] font-medium text-navy-400 mt-1.5">
-                {isHOD ? "Head of Department" : "Faculty"} ·{" "}
-                {profile?.Department}
-              </p>
-            </div>
-            <div className="w-11 h-11 rounded-xl bg-navy-900 flex items-center justify-center font-semibold text-white overflow-hidden">
-              {profile?.ProfileUrl ? (
-                <img
-                  src={profile.ProfileUrl}
-                  alt={profile.Name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                (profile?.Name || username || "F")[0].toUpperCase()
-              )}
-            </div>
-          </div>
-        </header>
-
-        <div className="max-w-7xl mx-auto">{renderContent()}</div>
-      </main>
-    </div>
+    <AdminShell
+      navGroups={[{ group: null, items: navItems }]}
+      activeTab={activeTab}
+      onTabChange={(id) => setActiveTab(id as ActiveTab)}
+      onLogout={handleLogout}
+      username={profile?.Name || username}
+      roleLabel={isHOD ? "Head of department" : "Faculty"}
+      headerSubtitle={profile?.Department}
+    >
+      <Tabs
+        label="Faculty sections"
+        tabs={navItems.map((item) => ({ id: item.id, label: item.label }))}
+        value={activeTab}
+        onChange={(id) => setActiveTab(id as ActiveTab)}
+        className="mb-6"
+      />
+      <div id={`panel-${activeTab}`} role="tabpanel" aria-labelledby={`tab-${activeTab}`}>
+        {renderContent()}
+      </div>
+    </AdminShell>
   );
 }
 
@@ -291,113 +215,40 @@ function OverviewSection({
   isHOD: boolean;
   setActiveTab: (t: ActiveTab) => void;
 }) {
+  const summary = [
+    { label: "Email", value: profile?.Email },
+    { label: "Department", value: profile?.Department },
+    { label: "Designation", value: profile?.Designation || "Faculty" },
+    { label: "Contact", value: profile?.Contact || "Not provided" },
+  ];
+
   return (
-    <div className="p-8 space-y-8 pb-20 animate-in fade-in duration-500">
-      {/* Hero Card */}
-      <div className="bg-navy-900 rounded-2xl py-8 px-10 text-white relative overflow-hidden">
-        <div className="relative z-10 space-y-3">
-          {isHOD && (
-            <span className="inline-flex items-center gap-2 px-2.5 py-1 bg-white/10 rounded-md border border-white/10 text-[11px] font-medium text-navy-100">
-              <ShieldCheck className="w-3.5 h-3.5" /> Head of Department
-            </span>
-          )}
-          <div>
-            <h1 className="text-3xl font-semibold tracking-[-0.02em] leading-none">
-              {profile?.Name?.split(" ")[0] || "Professor"}
-            </h1>
-            <p className="text-zinc-400 text-sm mt-3 max-w-lg">
-              {profile?.Designation || "Faculty"} · {profile?.Department}{" "}
-              Department
-            </p>
-          </div>
-        </div>
-        <div className="absolute right-0 bottom-0 opacity-[0.04] translate-x-1/4 translate-y-1/4">
-          <BookOpen size={260} />
-        </div>
+    <div className="space-y-6">
+      <PageHeader
+        title={profile?.Name?.split(" ")[0] || "Overview"}
+        meta={
+          loading
+            ? "Loading your profile"
+            : `${profile?.Designation || "Faculty"} · ${profile?.Department || "Department"}${isHOD ? " · Head of department" : ""}`
+        }
+      />
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+        <Tile icon={User} label="My profile" line="View and update your details" onClick={() => setActiveTab("profile")} />
+        <Tile icon={Users} label="Branch students" line={`Students in ${profile?.Department || "your department"}`} onClick={() => setActiveTab("students")} />
+        <Tile icon={Lock} label="Change password" line="Secure your account" onClick={() => setActiveTab("password")} />
       </div>
-
-      {/* Quick Actions */}
-      <div>
-        <h2 className="text-[12px] font-medium text-navy-400 mb-5">
-          Quick Access
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {[
-            {
-              id: "profile",
-              label: "My Profile",
-              sub: "View & update details",
-              icon: User,
-            },
-            {
-              id: "students",
-              label: "Branch Students",
-              sub: `View all ${profile?.Department || ""} students`,
-              icon: Users,
-            },
-            {
-              id: "password",
-              label: "Change Password",
-              sub: "Secure your account",
-              icon: Lock,
-            },
-          ].map((item) => (
-            <motion.button
-              key={item.id}
-              onClick={() => setActiveTab(item.id as ActiveTab)}
-              className="group relative flex flex-col items-start p-6 bg-white border border-navy-200 rounded-xl hover:border-navy-300 hover:shadow-sm transition-[border-color,box-shadow] duration-150 text-left"
-            >
-              <div className="p-3 rounded-xl bg-navy-50 group-hover:bg-navy-900 group-hover:text-white transition-colors duration-150 mb-4">
-                <item.icon className="w-5 h-5" />
-              </div>
-              <h3 className="text-base font-semibold text-navy-900">
-                {item.label}
-              </h3>
-              <p className="text-xs text-zinc-500 mt-1 font-medium">
-                {item.sub}
-              </p>
-            </motion.button>
-          ))}
-        </div>
-      </div>
-
-      {/* Profile Card */}
-      {!loading && profile && (
-        <div className="bg-white rounded-xl border border-navy-200 p-8 shadow-sm">
-          <h2 className="text-[13px] font-medium text-navy-400 mb-6 flex items-center gap-2">
-            <User className="w-4 h-4" /> Profile Summary
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { label: "Email", value: profile.Email, icon: Mail },
-              {
-                label: "Department",
-                value: profile.Department,
-                icon: Building,
-              },
-              {
-                label: "Designation",
-                value: profile.Designation || "Faculty",
-                icon: GraduationCap,
-              },
-              {
-                label: "Contact",
-                value: profile.Contact || "Not provided",
-                icon: Phone,
-              },
-            ].map((f) => (
-              <div key={f.label} className="space-y-1.5">
-                <p className="text-[12px] font-medium text-navy-400 flex items-center gap-1.5">
-                  <f.icon className="w-3.5 h-3.5" /> {f.label}
-                </p>
-                <p className="font-semibold text-zinc-900 text-sm">
-                  {f.value}
-                </p>
+      {!loading && profile ? (
+        <Panel title="Profile">
+          <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            {summary.map((field) => (
+              <div key={field.label}>
+                <dt className="text-small text-text-2">{field.label}</dt>
+                <dd className="mt-1 text-body text-text">{field.value}</dd>
               </div>
             ))}
-          </div>
-        </div>
-      )}
+          </dl>
+        </Panel>
+      ) : null}
     </div>
   );
 }
@@ -470,8 +321,8 @@ function ProfileSection({
     return (
       <div className="p-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 bg-zinc-100 rounded-lg" />
-          <div className="h-64 bg-zinc-100 rounded-2xl" />
+          <div className="h-8 w-48 bg-surface-2 rounded-lg" />
+          <div className="h-64 bg-surface-2 rounded-lg" />
         </div>
       </div>
     );
@@ -479,76 +330,49 @@ function ProfileSection({
 
   if (!profile) {
     return (
-      <div className="p-8 text-center text-zinc-400">Profile not found</div>
+      <div className="p-8 text-center text-text-3">Profile not found</div>
     );
   }
 
   return (
-    <div className="p-8 pb-20 space-y-8 animate-in fade-in duration-500">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold text-navy-900 tracking-tight">
-            My Profile
-          </h2>
-          <p className="text-zinc-500 text-sm mt-1">
-            View and manage your faculty profile
-          </p>
-        </div>
-        {!isEditing ? (
-          <button
-            onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-navy-900 text-white rounded-lg text-sm font-medium hover:bg-navy-800 transition-[color,background-color] duration-150"
-          >
-            <Pencil className="w-4 h-4" /> Edit Profile
-          </button>
-        ) : (
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsEditing(false)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-navy-50 text-navy-600 rounded-lg text-sm font-medium hover:bg-navy-100 transition-[color,background-color] duration-150"
-            >
-              <X className="w-4 h-4" /> Cancel
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex items-center gap-2 px-5 py-2.5 bg-navy-900 text-white rounded-lg text-sm font-medium hover:bg-navy-800 transition-[color,background-color] duration-150 disabled:opacity-50"
-            >
-              {saving ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Save className="w-4 h-4" />
-              )}
-              Save
-            </button>
-          </div>
-        )}
-      </div>
+    <div className="max-w-[640px] space-y-6">
+      <PageHeader
+        title="My profile"
+        meta="View and manage your faculty profile"
+        action={
+          !isEditing ? (
+            <Button type="button" onClick={() => setIsEditing(true)}>
+              <Pencil className="h-4 w-4" /> Edit profile
+            </Button>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
+                <X className="h-4 w-4" /> Cancel
+              </Button>
+              <Button type="button" onClick={handleSave} disabled={saving}>
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                Save
+              </Button>
+            </div>
+          )
+        }
+      />
 
-      <div className="bg-white rounded-2xl border border-navy-100 shadow-sm overflow-hidden">
-        {/* Profile header */}
-        <div className="bg-navy-900 p-8 flex items-center gap-6">
-          <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-white font-semibold text-3xl border-2 border-white/20 overflow-hidden shrink-0">
+      <div className="overflow-hidden rounded-xl border border-border bg-panel">
+        <div className="flex items-center gap-4 border-b border-border p-6">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-navy-100 text-lg font-semibold text-navy-900 dark:bg-surface-2 dark:text-text">
             {profile.ProfileUrl ? (
-              <img
-                src={profile.ProfileUrl}
-                alt={profile.Name}
-                className="w-full h-full object-cover"
-              />
+              <img src={profile.ProfileUrl} alt={profile.Name} className="h-full w-full object-cover" />
             ) : (
               profile.Name[0]
             )}
           </div>
           <div>
-            <h3 className="text-2xl font-semibold text-white">{profile.Name}</h3>
-            <p className="text-navy-200 text-sm mt-1 font-medium">
+            <h3 className="text-h3 text-head">{profile.Name}</h3>
+            <p className="mt-1 text-body text-text-2">
               {profile.Designation || "Faculty"} · {profile.Department}
             </p>
-            {profile.Role?.toLowerCase() === "hod" && (
-              <span className="inline-flex items-center gap-1.5 mt-3 px-2.5 py-1 bg-amber-500/15 text-amber-200 border border-amber-500/25 rounded-md text-[11px] font-medium">
-                <ShieldCheck className="w-3 h-3" /> Head of Department
-              </span>
-            )}
+            {profile.Role?.toLowerCase() === "hod" ? <Badge tone="neutral">Head of department</Badge> : null}
           </div>
         </div>
 
@@ -569,10 +393,10 @@ function ProfileSection({
             },
           ].map((f) => (
             <div key={f.label} className="space-y-2">
-              <label className="text-[12px] font-medium text-navy-400">
+              <label className="text-caption font-medium text-text-2">
                 {f.label}
               </label>
-              <p className="font-semibold text-zinc-900 text-base">
+              <p className="font-semibold text-text text-base">
                 {f.value}
               </p>
             </div>
@@ -580,17 +404,17 @@ function ProfileSection({
 
           {/* Editable: Full Name */}
           <div className="space-y-2">
-            <label className="text-[12px] font-medium text-navy-400">
+            <label className="text-caption font-medium text-text-2">
               Full Name
             </label>
             {isEditing ? (
               <input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
               />
             ) : (
-              <p className="font-semibold text-zinc-900 text-base">
+              <p className="font-semibold text-text text-base">
                 {profile.Name || "Not set"}
               </p>
             )}
@@ -598,7 +422,7 @@ function ProfileSection({
 
           {/* Editable: Designation */}
           <div className="space-y-2">
-            <label className="text-[12px] font-medium text-navy-400">
+            <label className="text-caption font-medium text-text-2">
               Designation
             </label>
             {isEditing ? (
@@ -607,10 +431,10 @@ function ProfileSection({
                 onChange={(e) =>
                   setForm({ ...form, designation: e.target.value })
                 }
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
               />
             ) : (
-              <p className="font-semibold text-zinc-900 text-base">
+              <p className="font-semibold text-text text-base">
                 {profile.Designation || "Not set"}
               </p>
             )}
@@ -618,7 +442,7 @@ function ProfileSection({
 
           {/* Editable: Contact */}
           <div className="space-y-2">
-            <label className="text-[12px] font-medium text-navy-400">
+            <label className="text-caption font-medium text-text-2">
               Contact Number
             </label>
             {isEditing ? (
@@ -627,10 +451,10 @@ function ProfileSection({
                 value={form.contact}
                 onChange={(e) => setForm({ ...form, contact: e.target.value })}
                 placeholder="Your phone number"
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
               />
             ) : (
-              <p className="font-semibold text-zinc-900 text-base">
+              <p className="font-semibold text-text text-base">
                 {profile.Contact || "Not provided"}
               </p>
             )}
@@ -638,7 +462,7 @@ function ProfileSection({
 
           {/* Editable: Profile URL */}
           <div className="space-y-2">
-            <label className="text-[12px] font-medium text-navy-400">
+            <label className="text-caption font-medium text-text-2">
               Profile Photo URL
             </label>
             {isEditing ? (
@@ -649,10 +473,10 @@ function ProfileSection({
                   setForm({ ...form, profileUrl: e.target.value })
                 }
                 placeholder="https://example.com/photo.jpg"
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
               />
             ) : (
-              <p className="font-semibold text-zinc-900 text-base truncate">
+              <p className="font-semibold text-text text-base truncate">
                 {profile.ProfileUrl || "No photo set"}
               </p>
             )}
@@ -661,13 +485,10 @@ function ProfileSection({
       </div>
 
       {/* Bio / Professional Details */}
-      <div className="bg-white rounded-2xl border border-navy-100 shadow-sm overflow-hidden p-8 space-y-8">
-        <div className="flex items-center gap-3">
-          <BookOpen className="w-5 h-5 text-zinc-400" />
-          <h3 className="text-lg font-semibold text-navy-900">
-            Professional Information
-          </h3>
-        </div>
+      <div className="bg-surface rounded-lg border border-border shadow-sm overflow-hidden p-8 space-y-8">
+        <h2 className="font-serif text-[22px] font-normal leading-[30px] text-head">
+          Professional information
+        </h2>
 
         <div className="space-y-8">
           {[
@@ -686,7 +507,7 @@ function ProfileSection({
             const values = (form.bio as any)[key] || [];
             return (
               <div key={key} className="space-y-3">
-                <label className="text-[12px] font-medium text-navy-400 block">
+                <label className="text-caption font-medium text-text-2 block">
                   {key}
                 </label>
                 {isEditing ? (
@@ -703,22 +524,22 @@ function ProfileSection({
                     }}
                     placeholder={`Enter ${key} (one per line)`}
                     rows={4}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl font-medium text-zinc-900 outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150 text-sm leading-relaxed"
+                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-xl font-medium text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150 text-sm leading-relaxed"
                   />
                 ) : values.length > 0 ? (
                   <ul className="space-y-2">
                     {values.map((v: string, i: number) => (
                       <li
                         key={i}
-                        className="text-zinc-600 text-sm flex items-start gap-2 leading-relaxed"
+                        className="text-text-2 text-sm flex items-start gap-2 leading-relaxed"
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-300 mt-2 shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-border mt-2 shrink-0" />
                         {v}
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-zinc-400 text-sm italic">
+                  <p className="text-body text-text-3">
                     No information provided
                   </p>
                 )}
@@ -831,293 +652,156 @@ function StudentsSection({
   };
 
   return (
-    <div className="p-8 pb-20 space-y-6 animate-in fade-in duration-500">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-semibold text-navy-900 tracking-tight">
-            Branch Students
-          </h2>
-          <p className="text-zinc-500 text-sm mt-1">
-            {isHOD
-              ? "HOD - all department access"
-              : `View students in ${department}`}
-          </p>
-        </div>
-        {/* Mode Toggle */}
-        <div className="flex bg-navy-50 p-1 rounded-lg">
-          <button
-            onClick={() => {
-              setSearchMode("id");
-              setSearchResults([]);
-              setSelectedStudent(null);
-            }}
-            className={`px-5 py-2 rounded-md text-[12px] font-medium transition-[color,background-color,box-shadow] duration-150 ${searchMode === "id" ? "bg-white text-navy-900 shadow-sm" : "text-navy-500 hover:text-navy-900"}`}
-          >
-            By ID
-          </button>
-          <button
-            onClick={() => {
-              setSearchMode("filter");
-              setSearchResults([]);
-              setSelectedStudent(null);
-            }}
-            className={`px-5 py-2 rounded-md text-[12px] font-medium transition-[color,background-color,box-shadow] duration-150 ${searchMode === "filter" ? "bg-white text-navy-900 shadow-sm" : "text-navy-500 hover:text-navy-900"}`}
-          >
-            By Filter
-          </button>
-        </div>
-      </div>
-
-      {/* Search bar */}
+    <div className="space-y-6">
+      <PageHeader
+        title="Branch students"
+        meta={isHOD ? "All departments" : `Students in ${department}`}
+      />
+      <Tabs
+        label="Search mode"
+        tabs={[
+          { id: "filter", label: "By filter" },
+          { id: "id", label: "By ID" },
+        ]}
+        value={searchMode}
+        onChange={(id) => {
+          setSearchMode(id as "id" | "filter");
+          setSearchResults([]);
+          setSelectedStudent(null);
+        }}
+      />
       {searchMode === "id" ? (
         <form
           onSubmit={(e) => {
             e.preventDefault();
             fetchById();
           }}
-          className="flex items-center gap-3 max-w-2xl"
+          className="flex max-w-[640px] flex-col gap-3 sm:flex-row sm:items-center"
         >
-          <div className="relative flex-1">
-            <Hash
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"
-              size={16}
-            />
-            <input
-              type="text"
-              placeholder="Enter Student ID (e.g. O210329)"
-              value={studentId}
-              onChange={(e) => setStudentId(e.target.value.toUpperCase())}
-              className="w-full h-12 pl-12 pr-5 bg-white border border-zinc-200 rounded-lg focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 outline-none transition-[border-color,box-shadow] duration-150 font-medium text-navy-900 text-sm"
-            />
-          </div>
-          <button
-            disabled={loading}
-            type="submit"
-            className="h-11 px-6 bg-navy-900 text-white rounded-lg font-medium text-[13px] hover:bg-navy-800 transition-[color,background-color] duration-150 flex items-center gap-2 disabled:opacity-50"
-          >
-            {loading ? (
-              <Loader2 className="animate-spin w-4 h-4" />
-            ) : (
-              <Search className="w-4 h-4" />
-            )}
+          <input
+            type="text"
+            placeholder="Student ID, for example O210329"
+            aria-label="Student ID"
+            value={studentId}
+            onChange={(e) => setStudentId(e.target.value.toUpperCase())}
+            className="h-11 w-full rounded-md border border-border-strong bg-surface px-4 text-body text-text placeholder:text-text-3 focus:border-navy-600 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ring max-[639px]:h-12"
+          />
+          <Button type="submit" disabled={loading}>
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search size={16} />}
             Find
-          </button>
+          </Button>
         </form>
       ) : (
-        <div className="flex flex-wrap gap-4 items-center">
-          <div className="relative">
-            <Filter
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
-              size={14}
-            />
-            <select
-              value={branch}
-              onChange={(e) => setBranch(e.target.value)}
-              className="bg-white border border-navy-200 pl-10 pr-8 h-11 rounded-lg font-medium text-[13px] text-navy-600 outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 min-w-[160px] appearance-none cursor-pointer transition-[border-color,box-shadow] duration-150"
-            >
-              {departments.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="relative">
-            <select
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="bg-white border border-navy-200 pl-4 pr-8 h-11 rounded-lg font-medium text-[13px] text-navy-600 outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 min-w-[140px] appearance-none cursor-pointer transition-[border-color,box-shadow] duration-150"
-            >
-              <option value="">All Batches</option>
-              {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button
-            onClick={fetchByFilter}
-            disabled={loading}
-            className="h-11 px-6 bg-navy-900 text-white rounded-lg font-medium text-[13px] hover:bg-navy-800 transition-[color,background-color] duration-150 flex items-center gap-2 disabled:opacity-50"
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <select
+            value={branch}
+            aria-label="Department"
+            onChange={(e) => setBranch(e.target.value)}
+            className="h-11 rounded-md border border-border-strong bg-surface px-4 text-body text-text focus:border-navy-600 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ring max-[639px]:h-12"
           >
-            {loading ? <Loader2 className="animate-spin w-4 h-4" /> : null}
-            Fetch Students
-          </button>
+            {departments.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+          <select
+            value={year}
+            aria-label="Batch"
+            onChange={(e) => setYear(e.target.value)}
+            className="h-11 rounded-md border border-border-strong bg-surface px-4 text-body text-text focus:border-navy-600 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ring max-[639px]:h-12"
+          >
+            <option value="">All batches</option>
+            {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+          <Button type="button" onClick={fetchByFilter} disabled={loading}>
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            Fetch students
+          </Button>
         </div>
       )}
 
-      {/* Results */}
-      <div
-        className={`grid gap-6 ${selectedStudent ? "grid-cols-1 lg:grid-cols-12" : "grid-cols-1"}`}
-      >
-        <div className={`space-y-3 ${selectedStudent ? "lg:col-span-5" : ""}`}>
-          {searchResults.length > 0 && (
-            <p className="text-[12px] font-medium text-navy-400 px-2">
-              {searchResults.length} Student
-              {searchResults.length !== 1 ? "s" : ""} Found
-            </p>
-          )}
-          {searchResults.map((std) => (
-            <div
-              key={std.username}
-              onClick={() => fetchFullDetails(std.username)}
-              className={`group flex items-center justify-between p-4 px-6 bg-white border rounded-xl cursor-pointer transition-[border-color,box-shadow] duration-150 hover:shadow-sm ${
-                selectedStudent?.username === std.username
-                  ? "border-navy-900 ring-2 ring-navy-900/10 shadow-sm"
-                  : "border-navy-100 hover:border-zinc-200"
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <div
-                  className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-colors font-semibold ${selectedStudent?.username === std.username ? "bg-navy-900 text-white" : "bg-navy-50 text-navy-400 group-hover:bg-navy-900 group-hover:text-white"}`}
-                >
-                  {std.name?.[0] || "S"}
-                </div>
-                <div>
-                  <p className="font-semibold text-navy-900 leading-tight">
-                    {std.name}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[11px] font-medium text-navy-700 bg-navy-50 px-2 py-0.5 rounded-md">
-                      {std.username}
-                    </span>
-                    <span className="w-1 h-1 rounded-full bg-zinc-200" />
-                    <span className="text-[11px] font-medium text-navy-400">
-                      {std.branch}
-                    </span>
-                    {std.year && (
-                      <>
-                        <span className="w-1 h-1 rounded-full bg-zinc-200" />
-                        <span className="text-[11px] font-medium text-navy-400">
-                          {std.year}
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <ChevronRight
-                size={16}
-                className={`text-zinc-300 transition-transform ${selectedStudent?.username === std.username ? "rotate-90 text-black" : ""}`}
-              />
-            </div>
-          ))}
-
-          {searchResults.length === 0 && !loading && (
-            <div className="p-20 flex flex-col items-center gap-4 bg-white rounded-2xl border border-navy-100 text-center">
-              <div className="p-5 bg-zinc-50 rounded-2xl border border-navy-100">
-                <Users size={36} className="text-zinc-300" />
-              </div>
-              <div>
-                <p className="font-semibold text-navy-900">No students yet</p>
-                <p className="text-sm text-zinc-400 mt-1">
-                  Use a filter above to load students
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Details panel */}
-        <AnimatePresence>
-          {selectedStudent && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="lg:col-span-7 sticky top-24 h-fit"
-            >
-              {detailLoading ? (
-                <div className="p-8 bg-white rounded-2xl border border-navy-100 animate-pulse space-y-4">
-                  <div className="h-6 bg-zinc-100 w-1/2 rounded" />
-                  <div className="h-4 bg-zinc-100 w-2/3 rounded" />
-                  <div className="h-4 bg-zinc-100 w-1/3 rounded" />
-                </div>
+      <Table
+        rows={searchResults}
+        getRowId={(row) => row.username}
+        onRowClick={(row) => fetchFullDetails(row.username)}
+        empty={
+          <EmptyState
+            title="No students yet"
+            body="Use a filter above to load students."
+          />
+        }
+        columns={[
+          { id: "id", header: "ID", primary: true, cell: (row) => row.username },
+          { id: "name", header: "Name", meta: true, cell: (row) => row.name },
+          { id: "section", header: "Branch", meta: true, cell: (row) => row.branch || "—" },
+          { id: "year", header: "Batch", cell: (row) => row.year || "—" },
+          {
+            id: "status",
+            header: "Status",
+            cell: (row) =>
+              row.is_suspended ? (
+                <Badge tone="error">Suspended</Badge>
               ) : (
-                <div className="bg-white rounded-2xl border border-navy-100 shadow-sm overflow-hidden">
-                  <div className="bg-navy-900 p-8 text-white relative">
-                    <button
-                      onClick={() => setSelectedStudent(null)}
-                      className="absolute top-5 right-5 p-2 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white"
-                    >
-                      <X size={18} />
-                    </button>
-                    <div className="flex items-center gap-5">
-                      <div className="w-16 h-16 rounded-2xl bg-white/10 border-2 border-white/20 flex items-center justify-center">
-                        {selectedStudent.profile_url ? (
-                          <img
-                            src={selectedStudent.profile_url}
-                            className="w-full h-full object-cover rounded-2xl"
-                            alt=""
-                          />
-                        ) : (
-                          <span className="text-3xl font-semibold text-white opacity-40">
-                            {selectedStudent.name?.[0] || "S"}
-                          </span>
-                        )}
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-semibold">
-                          {selectedStudent.name}
-                        </h3>
-                        <p className="text-navy-300 text-sm font-medium mt-1">
-                          {selectedStudent.username}
-                        </p>
-                        <span
-                          className={`inline-block mt-2 px-3 py-1 rounded-md text-[11px] font-medium ${selectedStudent.is_suspended ? "bg-red-500/20 text-red-300" : "bg-emerald-500/20 text-emerald-300"}`}
-                        >
-                          {selectedStudent.is_suspended
-                            ? "Suspended"
-                            : "Active"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-8 grid grid-cols-2 gap-6 text-sm">
-                    {[
-                      ["Branch", selectedStudent.branch],
-                      ["Year", selectedStudent.year],
-                      ["Section", selectedStudent.section || "-"],
-                      [
-                        "Gender",
-                        selectedStudent.gender === "M"
-                          ? "Male"
-                          : selectedStudent.gender === "F"
-                            ? "Female"
-                            : selectedStudent.gender || "-",
-                      ],
-                      ["Email", selectedStudent.email || "-"],
-                      ["Phone", selectedStudent.phone_number || "-"],
-                      ["Room No.", selectedStudent.roomno || "-"],
-                      ["Blood Group", selectedStudent.blood_group || "-"],
-                    ].map(([k, v]) => (
-                      <div key={k} className="space-y-1">
-                        <p className="text-[11px] font-medium text-navy-400">
-                          {k}
-                        </p>
-                        <p className="font-semibold text-zinc-900 truncate">
-                          {v}
-                        </p>
-                      </div>
-                    ))}
-                    {selectedStudent.cgpa !== undefined && (
-                      <div className="space-y-1 col-span-2">
-                        <p className="text-[11px] font-medium text-navy-400">
-                          CGPA
-                        </p>
-                        <p className="font-semibold text-2xl text-navy-900 tabular-nums">
-                          {String(selectedStudent.cgpa)}
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                <Badge tone="success">Active</Badge>
+              ),
+          },
+        ]}
+      />
+
+      <AlertDialog open={Boolean(selectedStudent)} onOpenChange={(open) => { if (!open) setSelectedStudent(null); }}>
+        <AlertDialogContent className="max-w-[640px]">
+          <AlertDialogHeader className="items-start text-left">
+            <AlertDialogTitle className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head">
+              {detailLoading ? "Loading" : selectedStudent?.name || "Student"}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-body text-text-2">
+              {selectedStudent?.username}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {detailLoading ? (
+            <div className="space-y-3">
+              <div className="h-4 w-2/3 animate-pulse rounded-md bg-tint" />
+              <div className="h-4 w-1/2 animate-pulse rounded-md bg-tint" />
+            </div>
+          ) : selectedStudent ? (
+            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {[
+                ["Branch", selectedStudent.branch],
+                ["Year", selectedStudent.year],
+                ["Section", selectedStudent.section || "—"],
+                ["Gender", selectedStudent.gender === "M" ? "Male" : selectedStudent.gender === "F" ? "Female" : selectedStudent.gender || "—"],
+                ["Email", selectedStudent.email || "—"],
+                ["Phone", selectedStudent.phone_number || "—"],
+                ["Room", selectedStudent.roomno || "—"],
+                ["Blood group", selectedStudent.blood_group || "—"],
+              ].map(([label, value]) => (
+                <div key={label}>
+                  <dt className="text-small text-text-2">{label}</dt>
+                  <dd className="mt-1 text-body text-text">{value}</dd>
                 </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+              ))}
+              {selectedStudent.cgpa !== undefined ? (
+                <div className="sm:col-span-2">
+                  <dt className="text-small text-text-2">CGPA</dt>
+                  <dd className="mt-1 font-sans text-[28px] font-semibold leading-9 text-head tabular-nums">
+                    {String(selectedStudent.cgpa)}
+                  </dd>
+                </div>
+              ) : null}
+            </dl>
+          ) : null}
+          <div className="flex justify-end">
+            <Button type="button" variant="outline" onClick={() => setSelectedStudent(null)}>
+              Close
+            </Button>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -1271,58 +955,48 @@ function PasswordSection() {
   };
 
   return (
-    <div className="p-8 pb-20 max-w-2xl mx-auto animate-in fade-in duration-500">
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold text-navy-900 tracking-tight">
-          Change Password
-        </h2>
-        <p className="text-zinc-500 text-sm mt-1">
-          Secure your account with a new password
-        </p>
-      </div>
+    <div className="mx-auto max-w-[480px] space-y-6">
+      <PageHeader title="Change password" meta="Secure your account with a new password" />
 
       {/* Step indicator */}
       <div className="flex items-center gap-3 mb-8">
         {(["current", "otp", "new"] as PwdStep[]).map((s, i) => (
           <div key={s} className="flex items-center gap-3">
             <div
-              className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium transition-[color,background-color] duration-150 ${step === s ? "bg-navy-900 text-white" : i < ["current", "otp", "new"].indexOf(step) ? "bg-zinc-200 text-zinc-500" : "border-2 border-zinc-200 text-zinc-300"}`}
+              className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium transition-[color,background-color] duration-150 ${step === s ? "bg-primary text-primary-foreground" : i < ["current", "otp", "new"].indexOf(step) ? "bg-tint text-text-2" : "border-2 border-border text-text-3"}`}
             >
               {i + 1}
             </div>
             <span
-              className={`text-sm font-medium hidden sm:block ${step === s ? "text-zinc-900" : "text-zinc-400"}`}
+              className={`text-sm font-medium hidden sm:block ${step === s ? "text-text" : "text-text-3"}`}
             >
               {stepLabels[s]}
             </span>
             {i < 2 && (
-              <div className="w-8 h-0.5 bg-zinc-200 hidden sm:block" />
+              <div className="w-8 h-0.5 bg-tint hidden sm:block" />
             )}
           </div>
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl border border-navy-100 shadow-sm p-8 space-y-6">
-        <AnimatePresence mode="wait">
+      <div className="bg-surface rounded-lg border border-border shadow-sm p-8 space-y-6">
+        
           {step === "current" && (
-            <motion.div
+            <div
               key="current"
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
               className="space-y-6"
             >
-              <div className="p-4 bg-zinc-50 rounded-xl border border-navy-100">
-                <p className="text-sm text-zinc-600 font-medium">
+              <div className="p-4 bg-surface-2 rounded-xl border border-border">
+                <p className="text-sm text-text-2 font-medium">
                   We'll send a one-time password to your registered devices to
                   verify your identity.
                 </p>
               </div>
               <div className="space-y-2">
-                <label className="text-[12px] font-medium text-navy-400">
+                <label className="text-caption font-medium text-text-2">
                   Your Username
                 </label>
-                <div className="px-4 py-3 bg-navy-50 border border-navy-100 rounded-lg font-medium text-navy-900">
+                <div className="px-4 py-3 bg-tint border border-border rounded-lg font-medium text-navy-900">
                   {username || "Not found"}
                 </div>
               </div>
@@ -1330,12 +1004,12 @@ function PasswordSection() {
                 <button
                   onClick={requestOtp}
                   disabled={loading || !username}
-                  className="w-full h-11 bg-navy-900 text-white rounded-lg font-medium text-sm hover:bg-navy-800 transition-[color,background-color] duration-150 disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[15px] font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-[0.45]"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Send OTP to my Device
                 </button>
-                <p className="text-center text-zinc-400 text-xs font-medium">
+                <p className="text-center text-text-3 text-xs font-medium">
                   - or change with current password -
                 </p>
                 <div className="space-y-3">
@@ -1344,26 +1018,33 @@ function PasswordSection() {
                     placeholder="Current password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
                   />
                   <input
                     type="password"
                     placeholder="New password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
                   />
                   {newPassword && (
                     <div className="flex items-center gap-3">
-                      <div className="h-1.5 flex-1 bg-zinc-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 flex-1 bg-surface-2 rounded-full overflow-hidden">
                         <div
                           className={`h-full transition-[color,background-color,border-color,box-shadow] duration-150 duration-300 ${strength.color}`}
                           style={{ width: `${(strength.score / 3) * 100}%` }}
                         />
                       </div>
                       <span
-                        className={`text-xs font-medium ${strength.score === 3 ? "text-emerald-600" : strength.score === 2 ? "text-amber-600" : "text-red-500"}`}
+                        className={`inline-flex items-center gap-1.5 text-caption font-medium ${strength.score === 3 ? "text-success" : strength.score === 2 ? "text-warning" : "text-error"}`}
                       >
+                        {strength.score === 3 ? (
+                          <CheckCircle2 className="h-4 w-4" aria-hidden />
+                        ) : strength.score === 2 ? (
+                          <AlertTriangle className="h-4 w-4" aria-hidden />
+                        ) : (
+                          <AlertCircle className="h-4 w-4" aria-hidden />
+                        )}
                         {strength.label}
                       </span>
                     </div>
@@ -1371,31 +1052,28 @@ function PasswordSection() {
                   <button
                     onClick={changeDirectly}
                     disabled={loading || !currentPassword || !newPassword}
-                    className="w-full h-11 bg-navy-900 text-white rounded-lg font-medium text-sm hover:bg-navy-800 transition-[color,background-color] duration-150 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[15px] font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-[0.45]"
                   >
                     {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                     Change Password
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
 
           {step === "otp" && (
-            <motion.div
+            <div
               key="otp"
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
               className="space-y-6"
             >
-              <div className="p-4 bg-zinc-50 rounded-xl border border-navy-100">
-                <p className="text-sm text-zinc-600 font-medium">
+              <div className="p-4 bg-surface-2 rounded-xl border border-border">
+                <p className="text-sm text-text-2 font-medium">
                   Enter the 6-digit OTP sent to your registered devices.
                 </p>
               </div>
               <div className="space-y-2">
-                <label className="text-[12px] font-medium text-navy-400">
+                <label className="text-caption font-medium text-text-2">
                   One-Time Password
                 </label>
                 <input
@@ -1404,20 +1082,20 @@ function PasswordSection() {
                   placeholder="• • • • • •"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                  className="w-full px-4 py-4 bg-zinc-50 border border-zinc-200 rounded-lg font-semibold text-2xl text-center text-navy-900 outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                  className="w-full px-4 py-4 bg-surface-2 border border-border rounded-lg font-semibold text-2xl text-center text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
                 />
               </div>
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setStep("current")}
-                  className="flex-1 h-11 bg-navy-50 text-navy-600 rounded-lg font-medium text-sm hover:bg-navy-100 transition-[color,background-color] duration-150"
+                  className="flex h-11 flex-1 items-center justify-center rounded-full border border-head px-6 text-[15px] font-semibold text-head hover:bg-tint"
                 >
                   Back
                 </button>
                 <button
                   onClick={verifyOtp}
                   disabled={loading || otp.length !== 6}
-                  className="flex-[2] h-11 bg-navy-900 text-white rounded-lg font-medium text-sm hover:bg-navy-800 transition-[color,background-color] duration-150 disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex h-11 flex-[2] items-center justify-center gap-2 rounded-full bg-primary px-6 text-[15px] font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-[0.45]"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Verify OTP
@@ -1426,30 +1104,27 @@ function PasswordSection() {
               <button
                 onClick={requestOtp}
                 disabled={loading}
-                className="w-full text-center text-xs text-zinc-400 hover:text-zinc-900 font-medium transition-colors"
+                className="w-full text-center text-xs text-text-3 hover:text-text font-medium transition-colors"
               >
                 Resend OTP
               </button>
-            </motion.div>
+            </div>
           )}
 
           {step === "new" && (
-            <motion.div
+            <div
               key="new"
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
               className="space-y-6"
             >
-              <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
-                <p className="text-sm text-emerald-700 font-semibold flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4" /> Identity verified. Set
+              <div className="p-4 bg-[color-mix(in_srgb,var(--success)_8%,var(--surface))] rounded-xl border border-success">
+                <p className="text-sm text-success font-semibold flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" /> Identity verified. Set
                   your new password.
                 </p>
               </div>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[12px] font-medium text-navy-400">
+                  <label className="text-caption font-medium text-text-2">
                     New Password
                   </label>
                   <input
@@ -1457,26 +1132,33 @@ function PasswordSection() {
                     placeholder="Enter new password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
                   />
                   {newPassword && (
                     <div className="flex items-center gap-3 mt-2">
-                      <div className="h-1.5 flex-1 bg-zinc-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 flex-1 bg-surface-2 rounded-full overflow-hidden">
                         <div
                           className={`h-full transition-[color,background-color,border-color,box-shadow] duration-150 duration-300 ${strength.color}`}
                           style={{ width: `${(strength.score / 3) * 100}%` }}
                         />
                       </div>
                       <span
-                        className={`text-xs font-medium ${strength.score === 3 ? "text-emerald-600" : strength.score === 2 ? "text-amber-600" : "text-red-500"}`}
+                        className={`inline-flex items-center gap-1.5 text-caption font-medium ${strength.score === 3 ? "text-success" : strength.score === 2 ? "text-warning" : "text-error"}`}
                       >
+                        {strength.score === 3 ? (
+                          <CheckCircle2 className="h-4 w-4" aria-hidden />
+                        ) : strength.score === 2 ? (
+                          <AlertTriangle className="h-4 w-4" aria-hidden />
+                        ) : (
+                          <AlertCircle className="h-4 w-4" aria-hidden />
+                        )}
                         {strength.label}
                       </span>
                     </div>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[12px] font-medium text-navy-400">
+                  <label className="text-caption font-medium text-text-2">
                     Confirm Password
                   </label>
                   <input
@@ -1484,11 +1166,11 @@ function PasswordSection() {
                     placeholder="Re-enter new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
                   />
                   {confirmPassword && (
                     <p
-                      className={`text-xs font-medium flex items-center gap-1.5 mt-1 ${newPassword === confirmPassword ? "text-emerald-600" : "text-red-500"}`}
+                      className={`text-xs font-medium flex items-center gap-1.5 mt-1 ${newPassword === confirmPassword ? "text-success" : "text-error"}`}
                     >
                       {newPassword === confirmPassword
                         ? "✓ Passwords match"
@@ -1502,14 +1184,14 @@ function PasswordSection() {
                 disabled={
                   loading || !newPassword || newPassword !== confirmPassword
                 }
-                className="w-full h-11 bg-navy-900 text-white rounded-lg font-medium text-sm hover:bg-navy-800 transition-[color,background-color] duration-150 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[15px] font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-[0.45]"
               >
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                 Update Password
               </button>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        
       </div>
     </div>
   );

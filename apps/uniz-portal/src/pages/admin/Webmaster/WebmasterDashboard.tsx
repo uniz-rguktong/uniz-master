@@ -14,7 +14,7 @@ import {
   CalendarClock,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
-import { adminCardClass } from "@/components/admin/admin-ui";
+import { EmptyState } from "@/components/ui/empty-state";
 import CurriculumManager from "../Curriculum";
 import SemesterBuilder from "./SemesterBuilder";
 import SecuritySection from "./SecuritySection";
@@ -159,28 +159,11 @@ export default function WebmasterDashboard() {
   const { logout } = useLogout();
 
   const renderComingSoon = (title: string) => (
-    <div
-      className={`flex flex-col items-center justify-center py-24 text-center ${adminCardClass} animate-in fade-in zoom-in duration-500`}
-    >
-      <div className="w-20 h-20 bg-zinc-50 rounded-2xl flex items-center justify-center mb-6 border border-zinc-100 shadow-sm relative overflow-hidden group">
-        <div className="absolute inset-0 bg-zinc-950/5 transition-transform duration-500" />
-        <Activity className="w-8 h-8 text-zinc-200 group-hover:text-zinc-950 transition-colors" />
-      </div>
-      <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight leading-none mb-4">
-        {title} System Initialization
-      </h3>
-      <p className="text-zinc-400 font-bold max-w-sm mx-auto leading-relaxed text-sm opacity-60">
-        Automated {title.toLowerCase()} workflows are currently in deployment.
-        <br />
-        Please coordinate via manual channels for urgent actions.
-      </p>
-      <div className="mt-8 flex items-center gap-2 px-4 py-2 bg-zinc-50 rounded-md border border-zinc-100">
-        <span className="w-2 h-2 rounded-full bg-zinc-950 animate-pulse" />
-        <span className="text-[10px] font-semibold text-zinc-400">
-          Mirroring Student Experience Platform
-        </span>
-      </div>
-    </div>
+    <EmptyState
+      title={`${title} is not available yet`}
+      body={`Automated ${title.toLowerCase()} workflows are currently in deployment. Please coordinate via manual channels for urgent actions.`}
+      icon={Activity}
+    />
   );
 
   const renderContent = () => {

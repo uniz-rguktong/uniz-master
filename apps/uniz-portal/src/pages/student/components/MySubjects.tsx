@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { Loader2, ClipboardList, BookOpenCheck } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
 import { GET_AVAILABLE_SUBJECTS, GET_CURRENT_SUBJECTS } from "../../../api/endpoints";
-import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/ui/page-header";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { Tabs } from "@/components/ui/tabs";
 import CourseRegistration from "./CourseRegistration";
 import RegisteredSubjectsPanel, {
   type RegisteredSubjectRow,
@@ -76,55 +77,34 @@ export default function MySubjects({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 text-zinc-900 animate-spin" />
+      <div className="space-y-4" aria-hidden>
+        <Skeleton className="h-10 w-72" />
+        <Skeleton className="h-11 w-full max-w-sm" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
       </div>
     );
   }
 
+  const tabs = [
+    { id: "subjects", label: "My subjects" },
+    ...(showRegisterTab ? [{ id: "register", label: "Register" }] : []),
+  ];
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
-          <p className="text-[10px] font-semibold tracking-normal text-zinc-400">
-            Semester registration
-          </p>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
-            {hasRegistered ? "Your current semester" : "Course registration"}
-          </h1>
-        </div>
+      <PageHeader
+        className="mb-0"
+        title={hasRegistered ? "Your current semester" : "Course registration"}
+      />
 
-        <div className="flex gap-1 p-1 bg-zinc-100 rounded-xl w-fit">
-          <button
-            type="button"
-            onClick={() => setActiveTab("subjects")}
-            className={cn(
-              "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-[color,background-color,border-color,opacity,transform]",
-              activeTab === "subjects"
-                ? "bg-white text-zinc-900 shadow-sm"
-                : "text-zinc-500 hover:text-zinc-800",
-            )}
-          >
-            <BookOpenCheck size={14} />
-            My subjects
-          </button>
-          {showRegisterTab && (
-            <button
-              type="button"
-              onClick={() => setActiveTab("register")}
-              className={cn(
-                "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-[color,background-color,border-color,opacity,transform]",
-                activeTab === "register"
-                  ? "bg-white text-zinc-900 shadow-sm"
-                  : "text-zinc-500 hover:text-zinc-800",
-              )}
-            >
-              <ClipboardList size={14} />
-              Register
-            </button>
-          )}
-        </div>
-      </div>
+      <Tabs
+        tabs={tabs}
+        value={activeTab}
+        onChange={(id) => setActiveTab(id as TabId)}
+        label="Semester registration"
+      />
 
       {activeTab === "subjects" ? (
         <RegisteredSubjectsPanel

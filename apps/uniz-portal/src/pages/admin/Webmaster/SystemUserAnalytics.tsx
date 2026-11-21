@@ -15,17 +15,19 @@ import {
 } from "../../../api/endpoints";
 import { KPICard } from "../AnalyticsUI";
 import { DonutChart } from "../../../components/ui/donut-chart";
-import { Card } from "../../../components/ui/card";
 import IdentityInsightsPanel from "./IdentityInsightsPanel";
 import InstitutionAnalytics from "./InstitutionAnalytics";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDisplayText } from "@/utils/displayText";
 import { cn } from "../../../utils/cn";
 import { useAdminDashboardStats } from "../../../hooks/useAdminDashboardStats";
+import { Panel } from "@/components/ui/panel";
 
 import { useRecoilState } from "recoil";
 import { systemUserAnalyticsAtom } from "../../../store/atoms";
 import { KPICardSkeleton, DonutChartSkeleton } from "../AnalyticsUI";
+
+const ROLE_COLORS = ["var(--navy-600)", "var(--navy-300)", "var(--navy-800)", "var(--text-3)"];
 
 export default function SystemUserAnalytics() {
   const [cachedData, setCachedData] = useRecoilState(systemUserAnalyticsAtom);
@@ -79,17 +81,6 @@ export default function SystemUserAnalytics() {
   const data = cachedData.data;
 
   const roleData = useMemo(() => {
-    const colors: Record<string, string> = {
-      STUDENT: "#0B2A47",
-      DEAN: "hsl(142.1 76.2% 36.3%)",
-      HOD: "hsl(47.9 95.8% 53.1%)",
-      WEBMASTER: "hsl(262.1 83.3% 57.8%)",
-      ADMIN: "hsl(262.1 83.3% 57.8%)",
-      COE: "hsl(199 89% 48%)",
-      DIRECTOR: "hsl(346 77% 50%)",
-      SWO: "hsl(25 95% 53%)",
-    };
-
     // Group by role name and aggregate values
     const grouped = data.reduce((acc: Record<string, any>, curr) => {
       const roleKey = (curr.role || "unknown").toUpperCase();
@@ -97,7 +88,7 @@ export default function SystemUserAnalytics() {
         acc[roleKey] = {
           label: formatDisplayText(roleKey),
           value: 0,
-          color: colors[roleKey] || "hsl(0 0% 63.9%)",
+          color: ROLE_COLORS[0],
         };
       }
       acc[roleKey].value +=
@@ -105,7 +96,12 @@ export default function SystemUserAnalytics() {
       return acc;
     }, {});
 
-    return Object.values(grouped).sort((a: any, b: any) => b.value - a.value);
+    return Object.values(grouped)
+      .sort((a: any, b: any) => b.value - a.value)
+      .map((item: any, index: number) => ({
+        ...item,
+        color: ROLE_COLORS[index % ROLE_COLORS.length],
+      }));
   }, [data]);
 
   const totalUsersCount = useMemo(
@@ -119,19 +115,19 @@ export default function SystemUserAnalytics() {
 
   if (loading && !cachedData.fetched) {
     return (
-      <div className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <KPICardSkeleton />
           <KPICardSkeleton />
           <KPICardSkeleton />
           <KPICardSkeleton />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-4 flex">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+          <div className="flex lg:col-span-4">
             <DonutChartSkeleton />
           </div>
-          <div className="lg:col-span-8 flex">
-            <div className="w-full bg-zinc-50/50 rounded-xl animate-pulse min-h-[400px]" />
+          <div className="flex lg:col-span-8">
+            <div className="min-h-[400px] w-full animate-pulse rounded-md bg-tint" />
           </div>
         </div>
       </div>
@@ -174,19 +170,14 @@ export default function SystemUserAnalytics() {
     : 100;
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-6">
       {/* Academic Insights */}
       {academicStats && (
         <div className="space-y-4">
-          <div>
-            <p className="text-[11px] font-semibold text-zinc-400">
-              Academic overview
-            </p>
-            <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
-              {academicStats.currentSemester || "Current Semester"}
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head min-[821px]:text-[28px] min-[821px]:leading-9">
+            {academicStats.currentSemester || "Current Semester"}
+          </h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <KPICard
               title="Total Students"
               value={academicStats.totalStudents.toLocaleString()}
@@ -206,8 +197,8 @@ export default function SystemUserAnalytics() {
               badge={academicStats.backlogCount ? "At Risk" : "Clear"}
               iconColor={
                 academicStats.backlogCount
-                  ? "text-amber-500"
-                  : "text-emerald-500"
+                  ? "text-warning"
+                  : "text-success"
               }
             />
             <KPICard
@@ -220,7 +211,7 @@ export default function SystemUserAnalytics() {
         </div>
       )}
       {statsLoading && !academicStats && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <KPICardSkeleton />
           <KPICardSkeleton />
           <KPICardSkeleton />
@@ -230,75 +221,56 @@ export default function SystemUserAnalytics() {
 
       <InstitutionAnalytics />
 
-      <div>
-        <p className="text-[11px] font-semibold text-zinc-400">
-          Access & identity
-        </p>
-        <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
-          Platform accounts
-        </h2>
-      </div>
+      <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head min-[821px]:text-[28px] min-[821px]:leading-9">
+        Platform accounts
+      </h2>
 
       {/* KPI Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Total accounts"
           value={totalUsers.toLocaleString()}
           icon={Users}
           badge="Registered"
-          iconColor="text-blue-600"
-          iconBg="bg-blue-50"
+          iconColor="text-link"
+          iconBg="bg-tint"
         />
         <KPICard
           title="Active accounts"
           value={totalActive.toLocaleString()}
           icon={UserCheck}
           badge="Enabled"
-          iconColor="text-emerald-600"
-          iconBg="bg-emerald-50"
+          iconColor="text-success"
+          iconBg="bg-[color-mix(in_srgb,var(--success)_8%,var(--surface))]"
         />
         <KPICard
           title="Disabled accounts"
           value={totalDisabled.toLocaleString()}
           icon={UserX}
           badge="Restricted"
-          iconColor="text-rose-600"
-          iconBg="bg-rose-50"
+          iconColor="text-error"
+          iconBg="bg-[color-mix(in_srgb,var(--error)_8%,var(--surface))]"
         />
         <KPICard
           title="Staff accounts"
           value={staffTotal.toLocaleString()}
           icon={Shield}
           badge="Admin roles"
-          iconColor="text-zinc-600"
-          iconBg="bg-zinc-50"
+          iconColor="text-text-2"
+          iconBg="bg-surface-2"
         />
       </div>
 
-      <div>
-        <p className="text-[11px] font-semibold text-zinc-400">
-          Operations
-        </p>
-        <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
-          Identity mix & access health
-        </h2>
-      </div>
-
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-12">
         {/* New Interactive Donut Chart */}
-        <div className="lg:col-span-4 flex">
-          <Card className="p-7 w-full flex flex-col items-center justify-center space-y-7 bg-white border border-zinc-200/70 shadow-[0_1px_2px_rgba(10,10,10,0.03)] rounded-2xl transition-colors duration-300 hover:border-zinc-300">
-            <div className="text-center space-y-1">
-              <h2 className="text-[15px] font-semibold text-zinc-900 tracking-[-0.01em]">
-                Accounts by role
-              </h2>
-              <p className="text-[11px] font-medium text-zinc-400">
-                Students, faculty & admin
-              </p>
-            </div>
+        <div className="flex lg:col-span-4">
+          <Panel title="Accounts by role" className="h-full w-full">
+            <p className="text-center text-dense leading-5 text-text-2">
+              Students, faculty & admin
+            </p>
 
-            <div className="relative flex items-center justify-center">
+            <div className="relative mt-4 flex items-center justify-center">
               <DonutChart
                 data={roleData}
                 size={220}
@@ -317,14 +289,14 @@ export default function SystemUserAnalytics() {
                       transition={{ duration: 0.2, ease: "circOut" }}
                       className="flex flex-col items-center justify-center text-center"
                     >
-                      <p className="text-zinc-400 text-[10px] font-medium mb-1 max-w-[120px] truncate">
+                      <p className="mb-1 max-w-[140px] truncate text-dense text-text-2">
                         {displayLabel}
                       </p>
-                      <p className="text-[32px] font-semibold text-zinc-900 leading-none tracking-[-0.03em] tabular-nums">
+                      <p className="font-sans text-[28px] font-semibold leading-9 tracking-[-0.01em] text-head tabular-nums">
                         {displayValue.toLocaleString()}
                       </p>
                       {activeSegment && (
-                        <p className="text-xs font-semibold text-zinc-500 mt-1.5 tabular-nums">
+                        <p className="mt-1.5 text-dense tabular-nums text-text-2">
                           {displayPercentage.toFixed(1)}%
                         </p>
                       )}
@@ -334,7 +306,7 @@ export default function SystemUserAnalytics() {
               />
             </div>
 
-            <div className="flex flex-col space-y-1 w-full pt-5 border-t border-zinc-100">
+            <div className="mt-4 flex w-full flex-col space-y-1 border-t border-border pt-4">
               {roleData.map((segment, index) => (
                 <motion.div
                   key={segment.label}
@@ -342,33 +314,31 @@ export default function SystemUserAnalytics() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.35 + index * 0.06 }}
                   className={cn(
-                    "flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors duration-200 group cursor-pointer",
-                    hoveredSegment === segment.label
-                      ? "bg-zinc-50"
-                      : "hover:bg-zinc-50/60",
+                    "flex cursor-pointer items-center justify-between rounded-md px-2.5 py-1.5 transition-colors duration-150",
+                    hoveredSegment === segment.label ? "bg-tint" : "hover:bg-tint",
                   )}
                   onMouseEnter={() => setHoveredSegment(segment.label)}
                   onMouseLeave={() => setHoveredSegment(null)}
                 >
                   <div className="flex items-center space-x-2.5">
                     <div
-                      className="h-2 w-2 rounded-full transition-transform"
+                      className="h-2 w-2 rounded-full"
                       style={{ backgroundColor: segment.color }}
                     />
-                    <span className="text-[12.5px] font-medium text-zinc-600 capitalize tracking-tight">
-                      {segment.label.toLowerCase()}
+                    <span className="text-dense font-medium text-text-2">
+                      {segment.label}
                     </span>
                   </div>
-                  <span className="text-[12.5px] font-semibold text-zinc-900 tabular-nums">
+                  <span className="text-dense font-semibold tabular-nums text-head">
                     {segment.value.toLocaleString()}
                   </span>
                 </motion.div>
               ))}
             </div>
-          </Card>
+          </Panel>
         </div>
 
-        <div className="lg:col-span-8 flex">
+        <div className="flex lg:col-span-8">
           <IdentityInsightsPanel data={data} />
         </div>
       </div>

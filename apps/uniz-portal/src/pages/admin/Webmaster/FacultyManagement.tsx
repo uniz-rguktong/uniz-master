@@ -46,7 +46,10 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Table } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Button } from "@/components/ui/button";
 import { SectionHeader } from "../../../components/admin/SectionHeader";
 import { uploadImage } from "../../../api/uploadImage";
 import {
@@ -340,7 +343,8 @@ export default function FacultyManagement({
   const toggleSelect = (username: string) => {
     setSelectedUsernames((prev) => {
       const n = new Set(prev);
-      n.has(username) ? n.delete(username) : n.add(username);
+      if (n.has(username)) n.delete(username);
+      else n.add(username);
       return n;
     });
   };
@@ -536,7 +540,7 @@ export default function FacultyManagement({
 
             <div className="relative">
               <Search
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                 size={15}
               />
               <input
@@ -575,7 +579,7 @@ export default function FacultyManagement({
                 className={
                   bulkTab === t
                     ? t === "delete"
-                      ? cn(adminSegmentActiveClass, "!bg-rose-600 !text-white")
+                      ? cn(adminSegmentActiveClass, "!bg-error !text-on-error")
                       : adminSegmentActiveClass
                     : adminSegmentInactiveClass
                 }
@@ -594,10 +598,10 @@ export default function FacultyManagement({
             <div className="w-full space-y-8">
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
-                  <h3 className="text-[16px] font-semibold tracking-tight text-zinc-900">
+                  <h3 className="text-[16px] font-semibold tracking-tight text-text">
                     Bulk Import
                   </h3>
-                  <p className="text-[13px] text-zinc-500">
+                  <p className="text-[13px] text-text-2">
                     Automated registry ingestion via protocol-aligned CSV.
                   </p>
                 </div>
@@ -614,7 +618,7 @@ export default function FacultyManagement({
                   <div
                     className={cn(
                       adminCardClass,
-                      "overflow-hidden border-dashed border-zinc-300 bg-zinc-50/40 p-6",
+                      "overflow-hidden border-dashed border-border-strong bg-surface-2/40 p-6",
                     )}
                   >
                     <FileUploader
@@ -654,7 +658,7 @@ export default function FacultyManagement({
                     value={csvText}
                     onChange={(e) => setCsvText(e.target.value)}
                     rows={8}
-                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-xl font-mono text-[11px] text-zinc-900 outline-none focus:ring-2 focus:ring-zinc-900/5 focus:border-zinc-400 transition-[color,background-color,border-color,opacity,transform,box-shadow] resize-none"
+                    className="w-full px-4 py-3 bg-surface border border-border rounded-xl font-mono text-caption text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-border-strong transition-[color,background-color,border-color,opacity,transform,box-shadow] resize-none"
                     placeholder={`username,name,email,department,designation,role\nktejokiran,K Tejo Kiran,ktejokiran@rguktong.ac.in,CSE,Lecturer,teacher`}
                   />
                 </div>
@@ -678,18 +682,18 @@ export default function FacultyManagement({
           {/* ── Bulk Update ── */}
           {bulkTab === "update" && (
             <div className="space-y-4">
-              <div className="bg-zinc-50 border border-zinc-200/70 rounded-xl p-4 flex items-center gap-3">
-                <CheckSquare size={18} className="text-zinc-700 shrink-0" />
-                <p className="text-[13px] text-zinc-600">
+              <div className="bg-surface-2 border border-border/70 rounded-xl p-4 flex items-center gap-3">
+                <CheckSquare size={18} className="text-text shrink-0" />
+                <p className="text-[13px] text-text-2">
                   Select faculty from the table below, then pick fields to
                   update.
-                  <span className="font-semibold text-zinc-900 ml-1">
+                  <span className="font-semibold text-text ml-1">
                     {selectedUsernames.size} selected.
                   </span>
                 </p>
               </div>
               <div className={cn(adminCardClass, "p-8 space-y-6")}>
-                <h3 className="text-[16px] font-semibold tracking-tight text-zinc-900">
+                <h3 className="text-[16px] font-semibold tracking-tight text-text">
                   Fields to Apply to Selected
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -715,7 +719,7 @@ export default function FacultyManagement({
                       </select>
                       <ChevronDown
                         size={14}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                       />
                     </div>
                   </div>
@@ -741,7 +745,7 @@ export default function FacultyManagement({
                       </select>
                       <ChevronDown
                         size={14}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                       />
                     </div>
                   </div>
@@ -840,17 +844,20 @@ export default function FacultyManagement({
           {/* ── Bulk Delete ── */}
           {bulkTab === "delete" && (
             <div className="space-y-4">
-              <div className="bg-rose-50 border border-rose-100 rounded-xl p-4 flex items-center gap-3">
-                <AlertTriangle size={18} className="text-rose-500 shrink-0" />
-                <p className="text-[13px] text-rose-700">
+              <div className="bg-[color-mix(in_srgb,var(--error)_8%,var(--surface))] border border-error rounded-xl p-4 flex items-center gap-3">
+                <AlertTriangle size={18} className="text-error shrink-0" />
+                <p className="text-[13px] text-error">
                   Select rows below then delete. This is{" "}
-                  <strong>permanent and cannot be undone.</strong>
+                  <span className="font-semibold">permanent and cannot be undone.</span>
                   <span className="font-semibold ml-1">
                     {selectedUsernames.size} selected.
                   </span>
                 </p>
               </div>
-              <button
+              <Button
+                type="button"
+                variant="destructive"
+                className="w-full"
                 onClick={() => {
                   if (!selectedUsernames.size) {
                     toast.error("Select at least one user");
@@ -859,7 +866,6 @@ export default function FacultyManagement({
                   setShowDeleteConfirm(true);
                 }}
                 disabled={bulkLoading || !selectedUsernames.size}
-                className="w-full h-12 bg-rose-600 text-white rounded-xl font-semibold tracking-tight text-[13px] hover:bg-rose-700 transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center justify-center gap-2 disabled:opacity-40 active:scale-[0.99]"
               >
                 {bulkLoading ? (
                   <Loader2 className="animate-spin w-4 h-4" />
@@ -869,31 +875,31 @@ export default function FacultyManagement({
                 {bulkLoading
                   ? "Deleting..."
                   : `Delete ${selectedUsernames.size} Selected`}
-              </button>
+              </Button>
 
               {/* Confirm Dialog */}
               {showDeleteConfirm && (
-                <div className="fixed inset-0 z-[80] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4">
+                <div className="fixed inset-0 z-[80] flex items-center justify-center bg-primary/40  p-4">
                   <div
                     className={cn("max-w-sm w-full p-8", adminModalShellClass)}
                   >
-                    <div className="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center mb-5">
-                      <AlertTriangle size={24} className="text-rose-500" />
+                    <div className="w-12 h-12 bg-[color-mix(in_srgb,var(--error)_8%,var(--surface))] rounded-xl flex items-center justify-center mb-5">
+                      <AlertTriangle size={24} className="text-error" />
                     </div>
                     <h3 className={cn(adminModalTitleClass, "mb-2")}>
                       Confirm bulk delete
                     </h3>
                     <p className={cn(adminModalDescClass, "mb-3")}>
                       You are about to permanently delete{" "}
-                      <strong className="text-rose-600 font-semibold">
+                      <strong className="text-error font-semibold">
                         {selectedUsernames.size} faculty account
                         {selectedUsernames.size > 1 ? "s" : ""}
                       </strong>
                       .
                     </p>
-                    <div className="max-h-28 overflow-y-auto bg-zinc-50 rounded-xl p-3 mb-6 border border-zinc-200/70">
+                    <div className="max-h-28 overflow-y-auto bg-surface-2 rounded-xl p-3 mb-6 border border-border/70">
                       {Array.from(selectedUsernames).map((u) => (
-                        <p key={u} className="text-xs font-mono text-zinc-600">
+                        <p key={u} className="text-caption font-mono text-text-2">
                           {u}
                         </p>
                       ))}
@@ -905,12 +911,9 @@ export default function FacultyManagement({
                       >
                         Cancel
                       </button>
-                      <button
-                        onClick={handleBulkDelete}
-                        className="flex-[2] h-11 rounded-xl bg-rose-600 text-white font-semibold text-[13px] hover:bg-rose-700 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
-                      >
+                      <Button type="button" variant="destructive" className="flex-[2]" onClick={handleBulkDelete}>
                         Yes, Delete All
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -922,16 +925,16 @@ export default function FacultyManagement({
           {bulkResult && (
             <div className={cn(adminCardClass, "p-6")}>
               <div className="flex items-center gap-2 mb-4">
-                <CheckCircle2 size={18} className="text-emerald-500" />
-                <h4 className="font-semibold tracking-tight text-zinc-900">
+                <CheckCircle2 size={18} className="text-success" />
+                <h4 className="font-semibold tracking-tight text-text">
                   Operation Result
                 </h4>
-                <span className="text-[11px] font-medium text-zinc-400">
+                <span className="text-caption font-medium text-text-3">
                   Total {bulkResult.summary?.total}
                 </span>
                 <button
                   onClick={() => setBulkResult(null)}
-                  className="ml-auto p-1.5 hover:bg-zinc-100 rounded-lg text-zinc-400 hover:text-rose-500 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
+                  className="ml-auto p-1.5 hover:bg-surface-2 rounded-lg text-text-3 hover:text-error transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                 >
                   <X size={14} />
                 </button>
@@ -942,14 +945,14 @@ export default function FacultyManagement({
                   .map(([k, v]: any) => (
                     <div
                       key={k}
-                      className={`p-3 rounded-xl text-center ${k === "errors" || k === "deleted" ? (k === "deleted" ? "bg-red-50" : "bg-red-50") : k.includes("skip") || k.includes("not") ? "bg-amber-50" : "bg-emerald-50"}`}
+                      className={`p-3 rounded-xl text-center ${k === "errors" || k === "deleted" ? (k === "deleted" ? "bg-[color-mix(in_srgb,var(--error)_8%,var(--surface))]" : "bg-[color-mix(in_srgb,var(--error)_8%,var(--surface))]") : k.includes("skip") || k.includes("not") ? "bg-[color-mix(in_srgb,var(--warning)_8%,var(--surface))]" : "bg-[color-mix(in_srgb,var(--success)_8%,var(--surface))]"}`}
                     >
                       <p
-                        className={`text-2xl font-semibold ${k === "errors" ? "text-red-600" : k.includes("skip") || k.includes("not") ? "text-amber-600" : k === "deleted" ? "text-red-600" : "text-emerald-600"}`}
+                        className={`text-2xl font-semibold ${k === "errors" ? "text-error" : k.includes("skip") || k.includes("not") ? "text-warning" : k === "deleted" ? "text-error" : "text-success"}`}
                       >
                         {v}
                       </p>
-                      <p className="text-[9px] font-bold text-zinc-400 mt-0.5">
+                      <p className="text-caption font-semibold text-text-3 mt-0.5">
                         {k}
                       </p>
                     </div>
@@ -958,16 +961,16 @@ export default function FacultyManagement({
               {bulkResult.results?.filter(
                 (r: any) => r.status === "error" || r.reason,
               ).length > 0 && (
-                <div className="max-h-36 overflow-y-auto bg-zinc-50 rounded-xl p-3 space-y-1">
+                <div className="max-h-36 overflow-y-auto bg-surface-2 rounded-xl p-3 space-y-1">
                   {bulkResult.results
                     .filter(
                       (r: any) =>
                         r.status !== "created" && r.status !== "updated",
                     )
                     .map((r: any, i: number) => (
-                      <p key={i} className="text-xs font-mono text-zinc-600">
+                      <p key={i} className="text-caption font-mono text-text-2">
                         <span
-                          className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
+                          className={`font-semibold ${r.status === "error" ? "text-error" : "text-warning"}`}
                         >
                           [{r.status}]
                         </span>{" "}
@@ -981,295 +984,140 @@ export default function FacultyManagement({
         </div>
       )}
 
-      {/* ─── TABLE (shown in both modes) ─── */}
-      <div className={cn(adminCardClass, "overflow-hidden")}>
-        {meta.totalPages > 1 && (
-          <div className="flex items-center justify-between px-8 py-4 bg-zinc-50/50 border-b border-zinc-200/70">
-            <p className="text-[11px] font-medium text-zinc-400">
-              Page {page} of {meta.totalPages}
-            </p>
-            <div className="flex gap-2">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 text-[12px] font-semibold transition-[color,background-color,border-color,opacity,transform,box-shadow]"
-              >
-                Prev
-              </button>
-              <button
-                disabled={page >= meta.totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 text-[12px] font-semibold transition-[color,background-color,border-color,opacity,transform,box-shadow]"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
-
-        <div className="relative">
-          <table className="w-full text-left border-collapse table-auto">
-            <thead>
-              <tr className="border-b border-zinc-200/70">
-                {mode === "bulk" && (
-                  <th className="px-6 py-4">
-                    <button
-                      onClick={toggleAll}
-                      className="text-zinc-400 hover:text-zinc-700 transition-colors"
-                    >
-                      {selectedUsernames.size === faculty.length &&
-                      faculty.length > 0 ? (
-                        <CheckSquare size={18} className="text-zinc-900" />
-                      ) : (
-                        <Square size={18} />
-                      )}
-                    </button>
-                  </th>
-                )}
-                <th className="px-6 py-4 text-[10px] font-semibold text-zinc-400">
-                  User Details
-                </th>
-                <th className="px-6 py-4 text-[10px] font-semibold text-zinc-400">
-                  Designation
-                </th>
-                <th className="px-6 py-4 text-[10px] font-semibold text-zinc-400">
-                  Role
-                </th>
-                <th className="px-6 py-4 text-[10px] font-semibold text-zinc-400">
-                  Status
-                </th>
-                {mode === "single" && (
-                  <th className="px-6 py-4 text-[10px] font-semibold text-zinc-400 text-right">
-                    Actions
-                  </th>
-                )}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {loading ? (
-                Array(limit)
-                  .fill(0)
-                  .map((_, i) => (
-                    <tr key={i} className="border-b border-zinc-50/60">
-                      {mode === "bulk" && (
-                        <td className="px-6 py-6">
-                          <Skeleton className="w-5 h-5 rounded-lg" />
-                        </td>
-                      )}
-                      <td className="px-6 py-6">
-                        <div className="flex items-center gap-4">
-                          <Skeleton className="w-11 h-11 rounded-full shrink-0" />
-                          <div className="space-y-2 w-full">
-                            <Skeleton className="h-4 w-32" />
-                            <Skeleton className="h-2 w-48 opacity-50" />
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-6">
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-24" />
-                          <Skeleton className="h-2 w-16 opacity-50" />
-                        </div>
-                      </td>
-                      <td className="px-6 py-6">
-                        <Skeleton className="h-7 w-20 rounded-lg" />
-                      </td>
-                      <td className="px-6 py-6">
-                        <Skeleton className="h-7 w-24 rounded-full" />
-                      </td>
-                      {mode === "single" && (
-                        <td className="px-6 py-6">
-                          <div className="flex justify-end gap-3">
-                            <Skeleton className="w-10 h-10 rounded-full" />
-                            <Skeleton className="w-20 h-10 rounded-full" />
-                            <Skeleton className="w-20 h-10 rounded-full" />
-                          </div>
-                        </td>
-                      )}
-                    </tr>
-                  ))
-              ) : faculty.length > 0 ? (
-                faculty.map((member) => {
-                  const isSelected = selectedUsernames.has(member.Username);
-                  return (
-                    <tr
-                      key={member.id}
-                      onClick={() =>
-                        mode === "bulk"
-                          ? toggleSelect(member.Username)
-                          : undefined
-                      }
-                      className={`transition-colors group ${mode === "bulk" ? "cursor-pointer select-none" : ""} ${isSelected ? "bg-zinc-100/70 hover:bg-zinc-100" : "hover:bg-zinc-50/60"}`}
-                    >
-                      {mode === "bulk" && (
-                        <td className="px-6 py-5">
-                          {isSelected ? (
-                            <CheckSquare size={18} className="text-zinc-900" />
-                          ) : (
-                            <Square
-                              size={18}
-                              className="text-zinc-300 group-hover:text-zinc-400"
-                            />
-                          )}
-                        </td>
-                      )}
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-3.5">
-                          <div className="w-10 h-10 rounded-full bg-zinc-900 text-white flex items-center justify-center font-semibold text-[13px] overflow-hidden shrink-0">
-                            {member.ProfileUrl ? (
-                              <img
-                                src={member.ProfileUrl}
-                                alt={member.Name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              member.Name?.[0] || member.Username?.[0]
-                            )}
-                          </div>
-                          <div className="flex flex-col min-w-0">
-                            <p className="font-semibold text-zinc-900 tracking-tight leading-tight mb-0.5">
-                              {member.Name}
-                            </p>
-                            <div className="flex items-center gap-1.5">
-                              <Mail size={10} className="text-zinc-300" />
-                              <p className="text-[12px] text-zinc-400 leading-none truncate">
-                                {member.Email}
-                              </p>
-                            </div>
-                            <p className="text-[10px] font-mono text-zinc-300 mt-1">
-                              {member.Username}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <p className="text-[13px] font-medium text-zinc-700">
-                          {member.Designation || "Lecturer"}
-                        </p>
-                        <p className="text-[10px] font-medium text-zinc-400 mt-0.5">
-                          {member.Department}
-                        </p>
-                      </td>
-                      <td className="px-6 py-5">
-                        <span className="px-2.5 py-1 bg-zinc-50 rounded-md text-zinc-500 font-medium text-[11px] border border-zinc-200">
-                          {member.Role
-                            ? formatRoleLabel(member.Role)
-                            : "Faculty"}
-                        </span>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[11px] font-medium w-fit ${!member.is_suspended ? "border-zinc-200 bg-zinc-50 text-zinc-700" : "border-rose-100 bg-rose-50 text-rose-600"}`}
-                        >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full ${!member.is_suspended ? "bg-emerald-500" : "bg-rose-500"}`}
-                          ></span>
-                          {!member.is_suspended ? "Active" : "Suspended"}
-                        </div>
-                      </td>
-                      {mode === "single" && (
-                        <td className="px-6 py-5">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => {
-                                setSelectedFaculty(member);
-                                setShowViewModal(true);
-                              }}
-                              className="h-9 w-9 flex items-center justify-center bg-white border border-zinc-200 text-zinc-500 rounded-xl hover:bg-zinc-900 hover:text-white hover:border-zinc-900 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95"
-                              title="View Details"
-                            >
-                              <Eye size={15} />
-                            </button>
-                            <button
-                              onClick={() => openEdit(member)}
-                              className="h-9 px-4 bg-white border border-zinc-200 text-zinc-600 rounded-xl text-[12px] font-semibold hover:text-zinc-900 hover:border-zinc-300 active:scale-95 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
-                            >
-                              Modify
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleSuspend(
-                                  member.Username,
-                                  member.is_suspended,
-                                )
-                              }
-                              className="h-9 px-4 rounded-xl text-[12px] font-semibold transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95 bg-zinc-900 hover:bg-zinc-800 text-white"
-                            >
-                              {member.is_suspended ? "Reinstate" : "Suspend"}
-                            </button>
-                            <button
-                              onClick={() => handleDelete(member.Username)}
-                              className="h-9 w-9 flex items-center justify-center bg-white border border-zinc-200 text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-90"
-                              title="Delete"
-                            >
-                              <Trash2 size={15} />
-                            </button>
-                          </div>
-                        </td>
-                      )}
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan={mode === "bulk" ? 5 : 5}
-                    className="py-20 text-center"
-                  >
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 flex items-center justify-center bg-zinc-50 rounded-2xl border border-zinc-200/70">
-                        <Users
-                          size={32}
-                          strokeWidth={1.5}
-                          className="text-zinc-300"
-                        />
-                      </div>
-                      <p className="text-[14px] font-medium text-zinc-500 tracking-tight">
-                        No staff members matching your criteria.
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {meta.totalPages > 1 && (
-          <div className="flex items-center justify-between px-8 py-4 bg-zinc-50/50 border-t border-zinc-200/70">
-            <p className="text-[11px] font-medium text-zinc-400">
-              Page {page} of {meta.totalPages} • Total {meta.total} staff
-            </p>
-            <div className="flex items-center gap-2">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
-              >
-                Previous
-              </button>
-              <div className="flex gap-1.5">
-                {[...Array(Math.min(meta.totalPages, 5))].map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setPage(i + 1)}
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-[12px] font-semibold tabular-nums transition-[color,background-color,border-color,opacity,transform,box-shadow] ${page === i + 1 ? "bg-zinc-900 text-white" : "bg-white border border-zinc-200 text-zinc-400 hover:border-zinc-300 hover:text-zinc-900"}`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+      {loading ? (
+        <p className="text-body text-text-2">Loading staff…</p>
+      ) : (
+        <Table
+          rows={faculty}
+          getRowId={(member: any) => String(member.id || member.Username)}
+          onRowClick={mode === "bulk" ? (member: any) => toggleSelect(member.Username) : undefined}
+          selectedId={undefined}
+          empty={<EmptyState title="No staff members matching your criteria." icon={Users} />}
+          footer={
+            meta.totalPages > 1 ? (
+              <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-small text-text-2 tabular-nums">
+                  Page {page} of {meta.totalPages} · {meta.total} staff
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button type="button" variant="outline" size="compact" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+                    Previous
+                  </Button>
+                  <span className="text-small tabular-nums text-text">{page} / {meta.totalPages}</span>
+                  <Button type="button" variant="outline" size="compact" disabled={page >= meta.totalPages} onClick={() => setPage((p) => p + 1)}>
+                    Next
+                  </Button>
+                </div>
               </div>
-              <button
-                disabled={page >= meta.totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+            ) : null
+          }
+          columns={[
+            ...(mode === "bulk"
+              ? [{
+                  id: "select",
+                  header: (
+                    <button type="button" onClick={toggleAll} aria-label="Select page" className="text-text-2">
+                      {selectedUsernames.size === faculty.length && faculty.length > 0 ? <CheckSquare size={16} /> : <Square size={16} />}
+                    </button>
+                  ),
+                  label: "Select",
+                  cell: (member: any) =>
+                    selectedUsernames.has(member.Username) ? <CheckSquare size={16} /> : <Square size={16} className="text-text-3" />,
+                }]
+              : []),
+            {
+              id: "user",
+              header: "Staff",
+              primary: true,
+              cell: (member: any) => (
+                <span>
+                  <span className="flex items-start gap-2">
+                    {mode === "bulk" ? (
+                      <span
+                        role="checkbox"
+                        aria-checked={selectedUsernames.has(member.Username)}
+                        className="mt-1 text-text-2 sm:hidden"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleSelect(member.Username);
+                        }}
+                        aria-label={selectedUsernames.has(member.Username) ? "Deselect staff" : "Select staff"}
+                      >
+                        {selectedUsernames.has(member.Username) ? (
+                          <CheckSquare size={16} className="text-text" />
+                        ) : (
+                          <Square size={16} />
+                        )}
+                      </span>
+                    ) : null}
+                    <span>
+                      <span className="block font-semibold text-head">{member.Name}</span>
+                      <span className="mt-0.5 block text-small text-text-2">{member.Email}</span>
+                    </span>
+                  </span>
+                  {mode === "single" ? (
+                    <span className="mt-2 flex flex-wrap gap-2 sm:hidden">
+                      <Button type="button" variant="ghost" size="compact" onClick={(e) => { e.stopPropagation(); setSelectedFaculty(member); setShowViewModal(true); }}>
+                        View
+                      </Button>
+                      <Button type="button" variant="outline" size="compact" onClick={(e) => { e.stopPropagation(); openEdit(member); }}>
+                        Modify
+                      </Button>
+                      <Button type="button" variant="outline" size="compact" onClick={(e) => { e.stopPropagation(); handleSuspend(member.Username, member.is_suspended); }}>
+                        {member.is_suspended ? "Reinstate" : "Suspend"}
+                      </Button>
+                      <Button type="button" variant="destructive" size="compact" onClick={(e) => { e.stopPropagation(); handleDelete(member.Username); }}>
+                        Delete
+                      </Button>
+                    </span>
+                  ) : null}
+                </span>
+              ),
+            },
+            {
+              id: "role",
+              header: "Role",
+              meta: true,
+              cell: (member: any) => member.Role ? formatRoleLabel(member.Role) : "Faculty",
+            },
+            {
+              id: "designation",
+              header: "Designation",
+              meta: true,
+              cell: (member: any) => member.Designation || member.Department || "Lecturer",
+            },
+            {
+              id: "status",
+              header: "Status",
+              cell: (member: any) =>
+                member.is_suspended ? <Badge tone="error">Suspended</Badge> : <Badge tone="success">Active</Badge>,
+            },
+            ...(mode === "single"
+              ? [{
+                  id: "actions",
+                  header: "Actions",
+                  label: "Actions",
+                  cell: (member: any) => (
+                    <span className="flex flex-wrap items-center gap-2">
+                      <Button type="button" variant="ghost" size="icon" aria-label="View details" onClick={(e) => { e.stopPropagation(); setSelectedFaculty(member); setShowViewModal(true); }}>
+                        <Eye size={16} />
+                      </Button>
+                      <Button type="button" variant="outline" size="compact" onClick={(e) => { e.stopPropagation(); openEdit(member); }}>
+                        Modify
+                      </Button>
+                      <Button type="button" variant="outline" size="compact" onClick={(e) => { e.stopPropagation(); handleSuspend(member.Username, member.is_suspended); }}>
+                        {member.is_suspended ? "Reinstate" : "Suspend"}
+                      </Button>
+                      <Button type="button" variant="destructive" size="icon" aria-label="Delete staff" onClick={(e) => { e.stopPropagation(); handleDelete(member.Username); }}>
+                        <Trash2 size={16} />
+                      </Button>
+                    </span>
+                  ),
+                }]
+              : []),
+          ]}
+        />
+      )}
 
       <AlertDialog
         open={showModal}
@@ -1286,14 +1134,14 @@ export default function FacultyManagement({
             {/* Close Button */}
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
+              className="absolute top-5 right-5 p-2 text-text-3 hover:text-text hover:bg-surface-2 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
             >
               <X size={20} />
             </button>
 
             <AlertDialogHeader className="p-8 pb-4 flex flex-col items-center text-center gap-2">
               <div className="relative mb-3 group">
-                <div className="w-24 h-24 rounded-full bg-zinc-50 border border-dashed border-zinc-300 flex items-center justify-center overflow-hidden relative">
+                <div className="w-24 h-24 rounded-full bg-surface-2 border border-dashed border-border-strong flex items-center justify-center overflow-hidden relative">
                   {formData.profileUrl ? (
                     <img
                       src={formData.profileUrl}
@@ -1301,23 +1149,23 @@ export default function FacultyManagement({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="flex flex-col items-center text-zinc-300">
+                    <div className="flex flex-col items-center text-text-3">
                       <Users size={28} />
-                      <span className="text-[9px] font-medium tracking-tight mt-1">
+                      <span className="text-caption font-medium tracking-tight mt-1">
                         No Photo
                       </span>
                     </div>
                   )}
                   {isUploading && (
-                    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
-                      <Loader2 className="animate-spin text-zinc-900 w-5 h-5" />
+                    <div className="absolute inset-0 bg-white/80  flex items-center justify-center">
+                      <Loader2 className="animate-spin text-text w-5 h-5" />
                     </div>
                   )}
                 </div>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0 right-0 w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center shadow-sm hover:bg-zinc-800 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-90 border-2 border-white z-10"
+                  className="absolute bottom-0 right-0 z-10 flex h-11 w-11 items-center justify-center rounded-full border-2 border-surface bg-primary text-primary-foreground hover:bg-primary-hover"
                 >
                   <Camera size={14} />
                 </button>
@@ -1448,7 +1296,7 @@ export default function FacultyManagement({
                               role: e.target.value.toLowerCase(),
                             })
                           }
-                          className={cn(adminInputClass, "h-10 text-xs")}
+                          className={adminInputClass}
                           placeholder="Type custom role (e.g. registrar)"
                         />
                       )}
@@ -1507,7 +1355,7 @@ export default function FacultyManagement({
       {/* ─── Bio View Modal ─── */}
       {showViewModal && selectedFaculty && (
         <div
-          className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm cursor-pointer"
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-primary/40  cursor-pointer"
           onClick={() => setShowViewModal(false)}
         >
           <div
@@ -1520,7 +1368,7 @@ export default function FacultyManagement({
             {/* Close Button */}
             <button
               onClick={() => setShowViewModal(false)}
-              className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
+              className="absolute top-6 right-6 p-2 text-text-3 hover:text-text hover:bg-surface-2 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
             >
               <X size={20} />
             </button>
@@ -1528,7 +1376,7 @@ export default function FacultyManagement({
             {/* Centralized Header */}
             <div className="p-10 pb-4 flex flex-col items-center text-center">
               <div className="relative mb-5 group">
-                <div className="w-24 h-24 rounded-full bg-zinc-50 border border-dashed border-zinc-300 flex items-center justify-center overflow-hidden">
+                <div className="w-24 h-24 rounded-full bg-surface-2 border border-dashed border-border-strong flex items-center justify-center overflow-hidden">
                   {selectedFaculty.ProfileUrl ? (
                     <img
                       src={selectedFaculty.ProfileUrl}
@@ -1536,9 +1384,9 @@ export default function FacultyManagement({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="flex flex-col items-center text-zinc-300">
+                    <div className="flex flex-col items-center text-text-3">
                       <Users size={28} />
-                      <span className="text-[9px] font-medium tracking-tight mt-1">
+                      <span className="text-caption font-medium tracking-tight mt-1">
                         No Photo
                       </span>
                     </div>
@@ -1546,19 +1394,19 @@ export default function FacultyManagement({
                 </div>
               </div>
 
-              <h3 className="text-[24px] font-semibold text-zinc-900 tracking-[-0.01em] leading-none mb-3">
+              <h3 className="mb-3 font-serif text-[24px] font-normal leading-8 text-head">
                 {selectedFaculty.Name}
               </h3>
 
               <div className="flex flex-col items-center gap-2.5">
-                <p className="text-zinc-400 font-medium text-[10px]">
+                <p className="text-text-3 font-medium text-caption">
                   {selectedFaculty.Designation || "Faculty Member"}
                 </p>
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 bg-zinc-50 rounded-md text-[11px] font-medium text-zinc-500 border border-zinc-200">
+                  <span className="px-2.5 py-1 bg-surface-2 rounded-md text-caption font-medium text-text-2 border border-border">
                     {selectedFaculty.Department} Department
                   </span>
-                  <span className="px-2.5 py-1 bg-zinc-900 rounded-md text-[11px] font-medium text-white">
+                  <span className="px-2.5 py-1 bg-primary rounded-md text-caption font-medium text-primary-foreground">
                     {selectedFaculty.Role
                       ? formatRoleLabel(selectedFaculty.Role)
                       : "Faculty"}
@@ -1566,14 +1414,14 @@ export default function FacultyManagement({
                 </div>
               </div>
 
-              <div className="flex items-center justify-center gap-6 mt-6 text-zinc-400">
-                <div className="flex items-center gap-2 text-[11px] font-medium">
-                  <Mail size={12} className="text-zinc-400" />
+              <div className="flex items-center justify-center gap-6 mt-6 text-text-3">
+                <div className="flex items-center gap-2 text-caption font-medium">
+                  <Mail size={12} className="text-text-3" />
                   {selectedFaculty.Email}
                 </div>
                 {selectedFaculty.CreatedAt && (
-                  <div className="flex items-center gap-2 text-[11px] font-medium">
-                    <Calendar size={12} className="text-zinc-400" />
+                  <div className="flex items-center gap-2 text-caption font-medium">
+                    <Calendar size={12} className="text-text-3" />
                     Joined{" "}
                     {new Date(selectedFaculty.CreatedAt).toLocaleDateString()}
                   </div>
@@ -1582,11 +1430,11 @@ export default function FacultyManagement({
             </div>
 
             {/* Bio Content Area */}
-            <div className="px-10 py-6 max-h-[50vh] overflow-y-auto bg-zinc-50/40 border-t border-zinc-200/70">
+            <div className="px-10 py-6 max-h-[50vh] overflow-y-auto bg-surface-2/40 border-t border-border/70">
               <div className="space-y-6">
                 <div className="flex items-center gap-2.5 mb-2">
-                  <BookOpen size={16} className="text-zinc-400" />
-                  <h4 className="text-[10px] font-semibold text-zinc-400">
+                  <BookOpen size={16} className="text-text-3" />
+                  <h4 className="text-caption font-semibold text-text-3">
                     Professional Biography
                   </h4>
                 </div>
@@ -1601,9 +1449,9 @@ export default function FacultyManagement({
                         return (
                           <div
                             key={key}
-                            className="bg-white p-5 rounded-xl border border-zinc-200/70 hover:border-zinc-300 transition-colors"
+                            className="bg-surface p-5 rounded-xl border border-border/70 hover:border-border-strong transition-colors"
                           >
-                            <label className="text-[10px] font-semibold text-zinc-400 block mb-3">
+                            <label className="text-caption font-semibold text-text-3 block mb-3">
                               {key.replace(/_/g, " ")}
                             </label>
                             {Array.isArray(val) ? (
@@ -1611,15 +1459,15 @@ export default function FacultyManagement({
                                 {val.map((item: string, i: number) => (
                                   <li
                                     key={i}
-                                    className="text-[13px] text-zinc-600 flex items-start gap-3 leading-relaxed"
+                                    className="text-[13px] text-text-2 flex items-start gap-3 leading-relaxed"
                                   >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-zinc-300 mt-2 shrink-0" />
+                                    <span className="w-1.5 h-1.5 rounded-full bg-border mt-2 shrink-0" />
                                     {item}
                                   </li>
                                 ))}
                               </ul>
                             ) : (
-                              <p className="text-[13px] text-zinc-600 leading-relaxed">
+                              <p className="text-[13px] text-text-2 leading-relaxed">
                                 {val}
                               </p>
                             )}
@@ -1629,12 +1477,12 @@ export default function FacultyManagement({
                     )}
                   </div>
                 ) : (
-                  <div className="text-center py-12 bg-white rounded-xl border border-zinc-200 border-dashed">
+                  <div className="text-center py-12 bg-surface rounded-xl border border-border border-dashed">
                     <BookOpen
                       size={28}
-                      className="mx-auto text-zinc-200 mb-3"
+                      className="mx-auto text-text-3 mb-3"
                     />
-                    <p className="text-zinc-400 text-[13px]">
+                    <p className="text-text-3 text-[13px]">
                       No biographical data available for this member.
                     </p>
                   </div>
@@ -1643,7 +1491,7 @@ export default function FacultyManagement({
             </div>
 
             {/* Modal Footer */}
-            <div className="p-6 bg-white border-t border-zinc-200/70 flex justify-end gap-3">
+            <div className="p-6 bg-surface border-t border-border/70 flex justify-end gap-3">
               <button
                 onClick={() => setShowViewModal(false)}
                 className={adminPrimaryButtonClass}

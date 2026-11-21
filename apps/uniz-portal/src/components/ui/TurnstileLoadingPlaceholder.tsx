@@ -8,8 +8,8 @@ export function TurnstileLoadingPlaceholder({
  <div
  className={
  compact
- ? "relative flex w-full max-w-[168px] items-center justify-center overflow-hidden rounded-md border border-zinc-200/90 bg-[#fafafa] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
- : "relative flex w-full max-w-[302px] items-center justify-center overflow-hidden rounded-md border border-zinc-200/90 bg-[#fafafa] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+ ? "relative flex w-full max-w-[168px] items-center justify-center overflow-hidden rounded-md border border-border bg-surface-2 px-3 py-2.5"
+ : "relative flex w-full max-w-[302px] items-center justify-center overflow-hidden rounded-md border border-border bg-surface-2 px-4 py-3"
  }
  role="status"
  aria-label="Loading security check"
@@ -19,19 +19,19 @@ export function TurnstileLoadingPlaceholder({
  className="pointer-events-none absolute inset-0 overflow-hidden rounded-md"
  aria-hidden
  >
- <div className="cf-turnstile-shimmer absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/70 to-transparent" />
+ <div className="cf-turnstile-shimmer absolute inset-y-0 w-1/2 bg-tint" />
  </div>
 
  <div className="relative flex min-w-0 items-center gap-2.5 sm:gap-3">
  {/* Orbiting ring + cloud mark */}
  <div className="relative flex h-8 w-8 shrink-0 items-center justify-center sm:h-9 sm:w-9">
  <div
- className="cf-turnstile-ring absolute inset-0 rounded-full border-2 border-transparent border-t-[#F6821F] border-r-[#F6821F]/25"
+ className="cf-turnstile-ring absolute inset-0 rounded-full border-2 border-transparent border-t-accent border-r-accent"
  aria-hidden
  />
  <svg
  viewBox="0 0 48 32"
- className="cf-turnstile-cloud relative h-4 w-7 text-[#F6821F] sm:h-5 sm:w-8"
+ className="cf-turnstile-cloud relative h-4 w-7 text-accent sm:h-5 sm:w-8"
  fill="currentColor"
  aria-hidden
  >
@@ -40,12 +40,12 @@ export function TurnstileLoadingPlaceholder({
  </div>
 
  <div className="flex min-w-0 flex-col gap-0.5">
- <span className="truncate text-[10px] font-semibold tracking-tight text-zinc-700 sm:text-[11px]">
+ <span className="truncate text-caption font-semibold text-text">
  Verifying you&apos;re human
  </span>
- <span className="truncate text-[9px] font-medium text-zinc-400 sm:text-[10px]">
+ <span className="truncate text-caption font-medium text-text-3">
  Protected by{" "}
- <span className="text-[#F6821F]">Cloudflare</span>
+ <span className="text-accent">Cloudflare</span>
  </span>
  </div>
  </div>

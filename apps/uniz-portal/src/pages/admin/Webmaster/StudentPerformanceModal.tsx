@@ -1,30 +1,15 @@
 import {
-  X,
-  GraduationCap,
   TrendingUp,
   Clock,
   AlertCircle,
   CheckCircle2,
 } from "lucide-react";
-import { motion } from "framer-motion";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-} from "@/components/ui/alert-dialog";
-import {
-  adminModalShellClass,
-  adminModalTitleClass,
-  adminModalDescClass,
-  adminModalCloseClass,
-  adminCardClass,
-  adminChipClass,
-  adminSectionTitleClass,
-  adminNumsClass,
-} from "@/components/admin/admin-ui";
-import { cn } from "@/utils/cn";
+import { AdminDialog } from "@/components/admin/AdminDialog";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatTile } from "@/components/ui/tile";
+import { adminNumsClass } from "@/components/admin/admin-ui";
+import { cn } from "@/lib/utils";
 
 interface Grade {
   id: string;
@@ -80,6 +65,9 @@ interface StudentPerformanceModalProps {
   data: PerformanceData;
 }
 
+const sectionTitleClass =
+  "font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head";
+
 export default function StudentPerformanceModal({
   isOpen,
   onClose,
@@ -96,209 +84,137 @@ export default function StudentPerformanceModal({
     ) / (Object.keys(data.attendance_summary || {}).length || 1)
   ).toFixed(1);
 
+  const grades = data.grades || [];
+  const attendance = data.attendance || [];
+  const gpaEntries = Object.entries(data.gpa_stats || {});
+  const backlogCount = data.total_backlogs ?? 0;
+
   return (
-    <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent
-        className={cn("max-w-4xl", adminModalShellClass)}
-      >
-        <div className="relative flex flex-col max-h-[90vh]">
-          <button
-            type="button"
-            onClick={onClose}
-            className={adminModalCloseClass}
-          >
-            <X size={20} />
-          </button>
+    <AdminDialog
+      open={isOpen}
+      onOpenChange={(open) => !open && onClose()}
+      maxWidth="max-w-3xl"
+      className="max-h-[90vh] overflow-y-auto"
+      title={studentName}
+      description={`Student ID ${studentId}`}
+    >
+      <div className="space-y-8">
+        <div className="flex flex-wrap gap-2">
+          <Badge>Academic record</Badge>
+          <Badge tone="success">Synchronized</Badge>
+        </div>
 
-          <AlertDialogHeader className="p-8 pb-4 flex flex-col items-start text-left gap-3 border-b border-zinc-200/70">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-zinc-900 text-white flex items-center justify-center">
-                <GraduationCap size={22} />
-              </div>
-              <div>
-                <AlertDialogTitle className={adminModalTitleClass}>
-                  {studentName}
-                </AlertDialogTitle>
-                <AlertDialogDescription className={adminModalDescClass}>
-                  Student ID: <span className="font-medium text-zinc-700">{studentId}</span>
-                </AlertDialogDescription>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <span className={adminChipClass}>Academic record</span>
-              <span className={cn(adminChipClass, "text-emerald-600 border-emerald-200 bg-emerald-50")}>
-                Synchronized
-              </span>
-            </div>
-          </AlertDialogHeader>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <StatTile
+            label="CGPA"
+            value={data.cgpa?.toFixed(2) ?? "0.00"}
+            line="Cumulative"
+            icon={TrendingUp}
+          />
+          <StatTile
+            label="Attendance"
+            value={`${overallAttendance}%`}
+            line="Average across semesters"
+            icon={Clock}
+          />
+          <StatTile
+            label="Backlogs"
+            value={String(backlogCount)}
+            line={backlogCount === 0 ? "Clear" : "Needs attention"}
+            status={backlogCount > 0 ? "error" : "success"}
+            icon={backlogCount > 0 ? AlertCircle : CheckCircle2}
+          />
+        </div>
 
-          <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-sidebar-scroll">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <StatCard
-                icon={<TrendingUp size={16} className="text-zinc-700" />}
-                label="CGPA"
-                value={data.cgpa?.toFixed(2) ?? "0.00"}
-                subValue="Cumulative"
-              />
-              <StatCard
-                icon={<Clock size={16} className="text-emerald-600" />}
-                label="Attendance"
-                value={`${overallAttendance}%`}
-                subValue="Average across semesters"
-              />
-              <StatCard
-                icon={
-                  <AlertCircle
-                    size={16}
-                    className={data.total_backlogs > 0 ? "text-rose-500" : "text-zinc-400"}
-                  />
-                }
-                label="Backlogs"
-                value={String(data.total_backlogs ?? 0)}
-                subValue={data.total_backlogs === 0 ? "Clear" : "Needs attention"}
-              />
-            </div>
+        {data.motivation && (
+          <p className="text-dense leading-6 text-text-2">{data.motivation}</p>
+        )}
 
-            {data.motivation && (
-              <div className={cn(adminCardClass, "p-4 flex gap-3 items-start")}>
-                <CheckCircle2 size={16} className="text-zinc-500 shrink-0 mt-0.5" />
-                <p className="text-[13px] text-zinc-600 leading-relaxed">
-                  {data.motivation}
-                </p>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="space-y-3">
-                <h4 className={adminSectionTitleClass}>Recent grades</h4>
-                <div className="space-y-2">
-                  {(data.grades || []).slice(0, 6).map((grade) => (
-                    <div
-                      key={grade.id}
-                      className={cn(
-                        adminCardClass,
-                        "p-4 flex items-center justify-between",
-                      )}
-                    >
-                      <div className="min-w-0">
-                        <p className="font-semibold text-zinc-900 text-[13px] truncate">
-                          {grade.subject.name}
-                        </p>
-                        <p className="text-[11px] text-zinc-400 mt-0.5">
-                          {grade.subject.code} · {grade.semesterId}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        {grade.isRemedial && (
-                          <span className="text-[10px] font-medium text-rose-600 bg-rose-50 border border-rose-100 px-2 py-0.5 rounded-md">
-                            Remedial
-                          </span>
-                        )}
-                        <span className={cn("text-sm font-semibold text-zinc-900", adminNumsClass)}>
-                          {grade.grade}
-                        </span>
-                      </div>
+        <div className="grid grid-cols-1 gap-8 min-[821px]:grid-cols-2">
+          <section className="space-y-4">
+            <h2 className={sectionTitleClass}>Recent grades</h2>
+            {grades.length === 0 ? (
+              <EmptyState title="No grades yet" body="Grades appear here after they are recorded." />
+            ) : (
+              <ul className="space-y-3">
+                {grades.slice(0, 6).map((grade) => (
+                  <li
+                    key={grade.id}
+                    className="flex items-center justify-between gap-3 border-b border-border py-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-dense font-medium text-text">
+                        {grade.subject.name}
+                      </p>
+                      <p className="mt-0.5 text-caption text-text-3">
+                        {grade.subject.code} · {grade.semesterId}
+                      </p>
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      {grade.isRemedial && <Badge tone="error">Remedial</Badge>}
+                      <span className={cn("text-dense font-medium text-text", adminNumsClass)}>
+                        {grade.grade}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
 
-              <div className="space-y-3">
-                <h4 className={adminSectionTitleClass}>Attendance by subject</h4>
-                <div className="space-y-2">
-                  {(data.attendance || []).slice(0, 6).map((att) => (
-                    <div key={att.id} className={cn(adminCardClass, "p-4 space-y-3")}>
+          <section className="space-y-4 border-t border-border pt-8 min-[821px]:border-t-0 min-[821px]:pt-0">
+            <h2 className={sectionTitleClass}>Attendance by subject</h2>
+            {attendance.length === 0 ? (
+              <EmptyState title="No attendance yet" body="Subject attendance appears here once classes are marked." />
+            ) : (
+              <ul className="space-y-4">
+                {attendance.slice(0, 6).map((att) => {
+                  const clear = att.percentage >= 75;
+                  return (
+                    <li key={att.id} className="space-y-2 border-b border-border pb-4">
                       <div className="flex items-center justify-between gap-2">
                         <div className="min-w-0">
-                          <p className="font-semibold text-zinc-900 text-[13px] truncate">
+                          <p className="truncate text-dense font-medium text-text">
                             {att.subject.name}
                           </p>
-                          <p className="text-[11px] text-zinc-400">
+                          <p className="text-caption text-text-3">
                             {att.attendedClasses}/{att.totalClasses} classes
                           </p>
                         </div>
-                        <span
-                          className={cn(
-                            "text-[13px] font-semibold shrink-0",
-                            adminNumsClass,
-                            att.percentage >= 75 ? "text-emerald-600" : "text-rose-500",
-                          )}
-                        >
-                          {att.percentage}%
-                        </span>
+                        <Badge tone={clear ? "success" : "error"}>{att.percentage}%</Badge>
                       </div>
-                      <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${att.percentage}%` }}
-                          transition={{ duration: 0.6, ease: "easeOut" }}
-                          className={cn(
-                            "h-full rounded-full",
-                            att.percentage >= 75 ? "bg-emerald-500" : "bg-rose-500",
-                          )}
+                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
+                        <div
+                          className="h-full rounded-full bg-primary"
+                          style={{ width: `${Math.min(100, att.percentage)}%` }}
                         />
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {Object.keys(data.gpa_stats || {}).length > 0 && (
-              <div className="space-y-3">
-                <h4 className={adminSectionTitleClass}>Semester GPA</h4>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                  {Object.entries(data.gpa_stats).map(([sem, stats]) => (
-                    <div key={sem} className={cn(adminCardClass, "p-4")}>
-                      <p className="text-[10px] font-semibold tracking-wide text-zinc-400">
-                        {sem}
-                      </p>
-                      <p className={cn("text-2xl font-semibold text-zinc-900 mt-1", adminNumsClass)}>
-                        {stats.gpa}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                    </li>
+                  );
+                })}
+              </ul>
             )}
-          </div>
-
-          <div className="px-8 py-4 border-t border-zinc-200/70 text-[11px] text-zinc-400 font-medium bg-zinc-50/50">
-            Academic record · internal use only
-          </div>
+          </section>
         </div>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
 
-function StatCard({
-  icon,
-  label,
-  value,
-  subValue,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  subValue: string;
-}) {
-  return (
-    <div className={cn(adminCardClass, "p-5 flex flex-col gap-3")}>
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] font-semibold tracking-wide text-zinc-400">
-          {label}
-        </p>
-        <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center">
-          {icon}
-        </div>
+        {gpaEntries.length > 0 && (
+          <section className="space-y-4 border-t border-border pt-8">
+            <h2 className={sectionTitleClass}>Semester GPA</h2>
+            <div className="grid grid-cols-2 gap-3 min-[821px]:grid-cols-4">
+              {gpaEntries.map(([sem, stats]) => (
+                <div key={sem} className="rounded-lg border border-border bg-tile p-4">
+                  <p className="text-caption text-text-3">{sem}</p>
+                  <p className={cn("mt-1 text-[24px] font-semibold leading-8 text-head", adminNumsClass)}>
+                    {stats.gpa}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <p className="text-caption text-text-3">Academic record · internal use only</p>
       </div>
-      <div>
-        <p className={cn("text-2xl font-semibold text-zinc-900", adminNumsClass)}>
-          {value}
-        </p>
-        <p className="text-[11px] text-zinc-400 mt-0.5">{subValue}</p>
-      </div>
-    </div>
+    </AdminDialog>
   );
 }

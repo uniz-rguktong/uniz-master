@@ -15,7 +15,7 @@ import {
 } from "../../api/endpoints";
 import { apiClient } from "../../api/apiClient";
 import { parseJwt } from "../../utils/security";
-import { User, Lock, ArrowLeft, CheckCircle2, Mail } from "lucide-react";
+import { User, Lock, ArrowLeft, Mail } from "lucide-react";
 import LoginScreen from "../../components/ui/login-1";
 import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -25,11 +25,11 @@ import { cn } from "@/lib/utils";
 import { getSafeReturnUrl } from "@/utils/returnUrl";
 import { TurnstileLoadingPlaceholder } from "../../components/ui/TurnstileLoadingPlaceholder";
 import { prefetchTurnstile } from "../../utils/prefetchTurnstile";
+import { Alert } from "@/components/ui/alert";
 import {
   portalGhostButtonClass,
   portalInputClass,
   portalLabelClass,
-  portalPrimaryButtonClass,
   portalSecondaryButtonClass,
 } from "@/lib/portal-ui";
 
@@ -92,6 +92,7 @@ interface SigninResponse {
   admin_token?: string;
   success?: boolean;
   role?: string;
+  username?: string;
 }
 
 // ─── OTP Input Component ──────────────────────────────────────
@@ -142,15 +143,8 @@ function OtpInput({
 
   return (
     <div className="space-y-2">
-      <label
-        className={cn(
-          portalLabelClass,
-          "normal-case tracking-normal text-[12px]",
-        )}
-      >
-        Verification Code
-      </label>
-      <div className="flex gap-2.5 justify-center">
+      <label className={portalLabelClass}>Verification code</label>
+      <div className="flex justify-center gap-2">
         {Array.from({ length: 6 }).map((_, i) => (
           <motion.input
             key={i}
@@ -165,7 +159,7 @@ function OtpInput({
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
-            className="w-11 h-14 sm:w-12 text-center text-xl font-semibold rounded-portal-xl border border-navy-200 bg-white text-navy-900 focus:outline-none focus:border-navy-900 focus:ring-2 focus:ring-navy-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-14 w-12 rounded-md border border-border-strong bg-surface text-center font-sans text-2xl font-semibold text-head focus:border-navy-600 focus:shadow-[0_0_0_3px_var(--ring-soft)] focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ring disabled:cursor-not-allowed disabled:opacity-[0.45] dark:focus:border-navy-300"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.25 }}
@@ -183,7 +177,7 @@ function PasswordStrength({ password }: { password: string }) {
       return {
         score: 0,
         label: "",
-        color: "bg-zinc-200",
+        color: "bg-border",
         width: "0%",
       };
     let s = 0;
@@ -194,11 +188,11 @@ function PasswordStrength({ password }: { password: string }) {
     if (/[^A-Za-z0-9]/.test(password)) s++;
 
     const levels = [
-      { label: "Very Weak", color: "bg-red-500", width: "20%" },
-      { label: "Weak", color: "bg-orange-500", width: "40%" },
-      { label: "Fair", color: "bg-amber-500", width: "60%" },
-      { label: "Strong", color: "bg-emerald-500", width: "80%" },
-      { label: "Excellent", color: "bg-green-500", width: "100%" },
+      { label: "Very weak", color: "bg-error", width: "20%" },
+      { label: "Weak", color: "bg-error", width: "40%" },
+      { label: "Fair", color: "bg-warning", width: "60%" },
+      { label: "Strong", color: "bg-success", width: "80%" },
+      { label: "Excellent", color: "bg-success", width: "100%" },
     ];
     const level = levels[Math.min(s, 4)];
     return { score: s, ...level };
@@ -213,7 +207,7 @@ function PasswordStrength({ password }: { password: string }) {
       animate={{ opacity: 1, height: "auto" }}
       transition={{ duration: 0.3 }}
     >
-      <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
         <motion.div
           className={`h-full rounded-full ${color}`}
           initial={{ width: 0 }}
@@ -222,18 +216,12 @@ function PasswordStrength({ password }: { password: string }) {
         />
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-[12px] font-medium text-navy-400">
+        <span className="text-caption font-medium text-text-3">
           Password strength
         </span>
         <span
-          className={`text-[12px] font-medium ${
-            score <= 1
-              ? "text-red-500"
-              : score <= 2
-                ? "text-orange-500"
-                : score <= 3
-                  ? "text-amber-500"
-                  : "text-emerald-600"
+          className={`text-caption font-medium ${
+            score <= 2 ? "text-error" : score <= 3 ? "text-warning" : "text-success"
           }`}
         >
           {label}
@@ -244,32 +232,20 @@ function PasswordStrength({ password }: { password: string }) {
 }
 
 // ─── Shared login styles (portal navy) ────────────────────────
-const loginLabelClass = cn(
-  portalLabelClass,
-  "normal-case tracking-normal !text-[12px] !font-medium !text-navy-600",
-);
+const loginLabelClass = portalLabelClass;
 
-const loginInputClass = cn(
-  portalInputClass,
-  "login-field !shadow-none hover:!border-navy-300",
-);
+const loginInputClass = cn(portalInputClass, "h-12 min-h-12");
 
-const loginInputWithIconClass = cn(loginInputClass, "!pl-10 !pr-3.5");
+const loginInputWithIconClass = cn(loginInputClass, "pl-11");
 
-const loginInputPasswordClass = cn(loginInputClass, "!pl-10 !pr-10");
+const loginInputPasswordClass = cn(loginInputClass, "pl-11 pr-12");
 
-const loginBtnClass = cn(
-  portalPrimaryButtonClass,
-  "w-full !min-h-12 !rounded-portal-xl text-[15px] !hover:translate-y-0",
-);
+const loginBtnClass = "w-full";
 
-const loginSecondaryBtnClass = cn(
-  portalSecondaryButtonClass,
-  "w-full !min-h-12 !rounded-portal-xl text-[14px]",
-);
+const loginSecondaryBtnClass = cn(portalSecondaryButtonClass, "w-full");
 
 const loginLinkBtnClass =
-  "inline-flex items-center justify-center min-h-11 text-[13px] font-semibold text-navy-600 hover:text-navy-900 transition-colors";
+  "inline-flex min-h-11 items-center justify-center text-small font-medium text-link underline-offset-[1px] hover:underline";
 
 const TURNSTILE_TEST_SITE_KEY_PREFIX = "1x00000000000000000000AA";
 
@@ -361,7 +337,7 @@ function TurnstileWidget({
 
   if (!turnstileEnabled()) {
     return import.meta.env.DEV ? (
-      <p className="text-center text-[11px] text-amber-600 font-medium py-1">
+      <p className="py-1 text-center text-caption font-medium text-warning">
         Turnstile not configured (no site key)
       </p>
     ) : null;
@@ -452,30 +428,14 @@ function CaptchaStatus({
 
   if (status === "error") {
     return (
-      <div
-        className="rounded-xl border border-amber-100 bg-amber-50/80 px-3 py-2.5 text-center"
-        role="alert"
-      >
-        <p className="text-[11px] font-medium text-amber-800">
-          Security check could not load. Refresh the page or check your
-          connection.
-        </p>
-      </div>
+      <Alert tone="warning">
+        Security check could not load. Refresh the page or check your connection.
+      </Alert>
     );
   }
 
   if (hasToken || status === "ready") {
-    return (
-      <div
-        className="flex items-center justify-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/80 px-3 py-2.5"
-        role="status"
-      >
-        <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-        <p className="text-[11px] font-medium text-emerald-700">
-          Security check complete
-        </p>
-      </div>
-    );
+    return <Alert tone="success">Security check complete</Alert>;
   }
 
   return null;
@@ -879,31 +839,24 @@ export default function Signin({ type }: SigninProps) {
     if (step === "verifyOtp") resetPassword();
   };
 
-  const dashboardLabel =
-    type === "student"
-      ? "Sign in"
-      : type === "faculty"
-        ? "Faculty sign in"
-        : "Admin sign in";
-
   const stepSubtitle =
     step === "signin"
       ? type === "student"
-        ? "Use your university ID or college email and password"
-        : "Use your staff credentials"
+        ? "Use your university ID or college email."
+        : "Use your staff ID or email."
       : step === "forgot"
         ? "We'll send a code to your registered email"
         : "Check your mail or notifications";
 
   const stepTitle =
     step === "signin"
-      ? dashboardLabel
+      ? "Sign in"
       : step === "forgot"
         ? "Reset password"
         : "New password";
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-bg">
       <LoginScreen
         isLogin={step === "signin"}
         onBack={() => navigate("/")}
@@ -1030,7 +983,7 @@ export default function Signin({ type }: SigninProps) {
           {step === "signin" && (
             <Button
               className={loginBtnClass}
-              size="lg"
+              size="hero"
               isLoading={isLoading}
               type="submit"
               disabled={
@@ -1044,7 +997,7 @@ export default function Signin({ type }: SigninProps) {
                   ? "Signing in…"
                   : requiresCaptcha() && !captchaReady
                     ? "Waiting for security check…"
-                    : "Continue"}
+                    : "Sign in"}
               </span>
             </Button>
           )}
@@ -1097,8 +1050,8 @@ export default function Signin({ type }: SigninProps) {
                     <span className="relative z-10">Verify code</span>
                   </Button>
 
-                  <div className="rounded-portal-xl border border-navy-200 bg-navy-50/80 p-4 space-y-3">
-                    <p className="text-[12px] font-medium text-navy-700 text-center leading-relaxed">
+                  <div className="space-y-3 rounded-lg border border-border bg-surface-2 p-4">
+                    <p className="text-center text-small leading-relaxed text-text-2">
                       Didn&apos;t get a push notification? Send the code to your
                       registered college email instead.
                     </p>
@@ -1123,23 +1076,7 @@ export default function Signin({ type }: SigninProps) {
                   transition={{ duration: 0.5, ease: "easeOut" }}
                 >
                   {/* OTP Verified badge */}
-                  <div className="flex items-center justify-center gap-2 py-2">
-                    <motion.div
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-emerald-50 border border-emerald-200"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 20,
-                      }}
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      <span className="text-[12px] font-medium text-emerald-700">
-                        OTP Verified
-                      </span>
-                    </motion.div>
-                  </div>
+                  <Alert tone="success">Code verified</Alert>
 
                   <Input
                     label="New password"

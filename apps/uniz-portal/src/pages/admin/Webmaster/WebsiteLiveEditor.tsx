@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell,
@@ -16,12 +16,12 @@ import {
   BarChart3,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { Button } from "@/components/ui/button";
 import { toast } from "@/utils/toast-ref";
 import { LiveEditorChrome } from "@/components/admin/LiveEditorChrome";
 import {
   adminCardClass,
   adminChipClass,
-  adminGhostButtonClass,
   adminInputClass,
   adminLabelClass,
   adminTextareaClass,
@@ -62,7 +62,7 @@ function LiveField({
 }) {
   return (
     <div>
-      <label className="text-[10px] font-semibold text-slate-400 tracking-wide">
+      <label className={adminLabelClass}>
         {label}
       </label>
       {multiline ? (
@@ -81,7 +81,7 @@ function LiveField({
           placeholder={placeholder}
           className={cn(
             adminInputClass,
-            "mt-1 border-transparent bg-transparent hover:bg-slate-50 focus:bg-white focus:border-zinc-300 px-2 -mx-2",
+            "mt-1 border-transparent bg-transparent hover:bg-surface-2 focus:bg-surface focus:border-border-strong px-2 -mx-2",
             mono && "font-mono text-xs",
           )}
         />
@@ -115,12 +115,12 @@ function ImageUploadField({
 
   return (
     <div>
-      <label className="text-[10px] font-semibold text-slate-400 tracking-wide">
+      <label className={adminLabelClass}>
         {label}
       </label>
       <label
         className={cn(
-          "mt-2 block rounded-xl border border-dashed border-slate-200 hover:border-[#0B2A47]/30 bg-slate-50/50 cursor-pointer overflow-hidden transition-colors",
+          "mt-2 block cursor-pointer overflow-hidden rounded-lg border border-dashed border-border-strong bg-surface",
           uploading && "opacity-60 pointer-events-none",
         )}
       >
@@ -137,20 +137,20 @@ function ImageUploadField({
         {value ? (
           <div className="relative h-32">
             <img src={value} alt="" className="w-full h-full object-contain p-2" />
-            <div className="absolute inset-0 bg-black/0 hover:bg-black/5 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-              <span className="text-[10px] font-bold bg-white/90 px-2 py-1 rounded-lg shadow">
+            <div className="absolute inset-0 flex items-center justify-center bg-surface/80 opacity-0 transition-opacity hover:opacity-100">
+              <span className="rounded-lg border border-border bg-surface px-2 py-1 text-caption font-semibold text-text">
                 Change image
               </span>
             </div>
           </div>
         ) : (
-          <div className="h-28 flex flex-col items-center justify-center gap-1 text-slate-400">
+          <div className="h-28 flex flex-col items-center justify-center gap-1 text-text-3">
             {uploading ? (
               <Loader2 size={20} className="animate-spin" />
             ) : (
               <>
                 <Upload size={18} />
-                <span className="text-[10px] font-semibold">Upload image</span>
+                <span className="text-caption font-semibold">Upload image</span>
               </>
             )}
           </div>
@@ -184,26 +184,21 @@ function SectionBlock({
 }) {
   return (
     <section className={cn(adminCardClass, "overflow-hidden")}>
-      <div className="px-5 py-4 border-b border-zinc-100 flex items-center justify-between gap-3 bg-white">
+      <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3 bg-surface">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#0B2A47]/5 text-[#0B2A47] flex items-center justify-center">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-tint text-head">
             <Icon size={16} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-zinc-900">{title}</h3>
-            <p className="text-[11px] text-zinc-400">{count} items</p>
+            <h3 className="text-sm font-semibold text-text">{title}</h3>
+            <p className="text-caption text-text-3">{count} items</p>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={onAdd}
-          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg bg-[#0B2A47] hover:bg-[#081E33] text-white text-[12px] font-semibold transition-colors"
-        >
-          <Plus size={14} />
+        <Button type="button" size="compact" onClick={onAdd}>
           {addLabel}
-        </button>
+        </Button>
       </div>
-      <div className="p-4 space-y-3 bg-slate-50/30">{children}</div>
+      <div className="p-4 space-y-3 bg-surface-2/30">{children}</div>
     </section>
   );
 }
@@ -227,19 +222,19 @@ function AnnouncementsEditor({
         <motion.div
           key={idx}
           layout
-          className="rounded-xl border border-slate-200 bg-white p-4 group hover:border-[#0B2A47]/20 hover:shadow-sm transition-[color,background-color,border-color,opacity,transform,box-shadow]"
+          className="rounded-xl border border-border bg-surface p-4 group hover:border-border-strong hover:shadow-sm transition-[color,background-color,border-color,opacity,transform,box-shadow]"
         >
           <div className="flex items-start justify-between gap-3 mb-3">
-            <div className="flex items-center gap-2 text-[#0B2A47]">
+            <div className="flex items-center gap-2 text-head">
               <Megaphone size={14} />
-              <span className="text-[10px] font-bold tracking-wide">
+              <span className="text-caption font-semibold">
                 Ticker #{idx + 1}
               </span>
             </div>
             <button
               type="button"
               onClick={() => helpers.deleteArrayItem(["announcements"], idx)}
-              className="p-1.5 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg opacity-0 group-hover:opacity-100 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
+              className="p-1.5 text-text-3 hover:text-error hover:bg-tint rounded-lg opacity-0 group-hover:opacity-100 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
             >
               <Trash2 size={14} />
             </button>
@@ -295,23 +290,23 @@ function StatsEditor({
         {items.map((item, idx) => (
           <div
             key={idx}
-            className="rounded-xl border border-slate-200 bg-white p-4 group relative hover:border-[#0B2A47]/20 transition-colors"
+            className="rounded-xl border border-border bg-surface p-4 group relative hover:border-border-strong transition-colors"
           >
             <button
               type="button"
               onClick={() => helpers.deleteArrayItem(["stats"], idx)}
-              className="absolute top-2 right-2 p-1 text-slate-300 hover:text-rose-600 opacity-0 group-hover:opacity-100"
+              className="absolute top-2 right-2 p-1 text-text-3 hover:text-error opacity-0 group-hover:opacity-100"
             >
               <Trash2 size={13} />
             </button>
-            <p className="text-2xl font-bold text-[#0B2A47] mb-1 tabular-nums">
+            <p className="text-2xl font-semibold text-head mb-1 tabular-nums">
               <input
                 type="text"
                 value={item.value ?? ""}
                 onChange={(e) =>
                   helpers.updateNestedData(["stats", idx.toString(), "value"], e.target.value)
                 }
-                className="w-full bg-transparent border-none outline-none focus:ring-0 p-0"
+                className="w-full bg-transparent border-none p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 placeholder="0"
               />
             </p>
@@ -321,7 +316,7 @@ function StatsEditor({
               onChange={(e) =>
                 helpers.updateNestedData(["stats", idx.toString(), "label"], e.target.value)
               }
-              className="w-full text-xs text-slate-500 bg-transparent border-none outline-none"
+              className="w-full text-caption text-text-2 bg-transparent border-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               placeholder="Stat label"
             />
           </div>
@@ -354,19 +349,19 @@ function ImagesEditor({
         {items.map((url, idx) => (
           <div
             key={idx}
-            className="group relative aspect-square rounded-lg border border-slate-200 bg-white overflow-hidden"
+            className="group relative aspect-square rounded-lg border border-border bg-surface overflow-hidden"
           >
             {url ? (
               <img src={url} alt="" className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-slate-300">
+              <div className="w-full h-full flex items-center justify-center text-text-3">
                 <ImageIcon size={20} />
               </div>
             )}
             <button
               type="button"
               onClick={() => helpers.deleteArrayItem(["images"], idx)}
-              className="absolute top-1 right-1 p-1 bg-white/90 rounded-md text-slate-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 shadow-sm"
+              className="absolute top-1 right-1 rounded-md bg-surface p-1 text-text-3 opacity-0 hover:text-error group-hover:opacity-100"
             >
               <Trash2 size={12} />
             </button>
@@ -376,7 +371,7 @@ function ImagesEditor({
       <div className="pt-2 space-y-2 max-h-64 overflow-y-auto custom-sidebar-scroll">
         {items.map((url, idx) => (
           <div key={`url-${idx}`} className="flex gap-2 items-center">
-            <span className="text-[10px] text-zinc-400 w-6">#{idx + 1}</span>
+            <span className="text-caption text-text-3 w-6">#{idx + 1}</span>
             <input
               type="text"
               value={url}
@@ -417,19 +412,19 @@ function NotificationItemsEditor({
           <motion.div
             key={idx}
             layout
-            className="rounded-xl border border-slate-200 bg-white overflow-hidden group hover:border-[#0B2A47]/25 hover:shadow-sm transition-[color,background-color,border-color,opacity,transform,box-shadow]"
+            className="rounded-xl border border-border bg-surface overflow-hidden group hover:border-border-strong hover:shadow-sm transition-[color,background-color,border-color,opacity,transform,box-shadow]"
           >
-            <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between gap-2">
+            <div className="px-4 py-3 border-b border-border bg-surface-2/50 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
-                <Bell size={14} className="text-[#0B2A47] shrink-0" />
-                <span className="text-[11px] font-semibold text-slate-500 truncate">
+                <Bell size={14} className="text-head shrink-0" />
+                <span className="text-caption font-semibold text-text-2 truncate">
                   {item.title || `Entry ${idx + 1}`}
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => helpers.deleteArrayItem(pathPrefix, idx)}
-                className="p-1.5 text-slate-300 hover:text-rose-600 rounded-lg opacity-0 group-hover:opacity-100"
+                className="p-1.5 text-text-3 hover:text-error rounded-lg opacity-0 group-hover:opacity-100"
               >
                 <Trash2 size={14} />
               </button>
@@ -448,7 +443,7 @@ function NotificationItemsEditor({
               />
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-[10px] font-semibold text-slate-400 tracking-wide flex items-center gap-1">
+                  <label className="text-caption font-semibold text-text-3 flex items-center gap-1">
                     <Link2 size={10} /> Links
                   </label>
                   <button
@@ -457,7 +452,7 @@ function NotificationItemsEditor({
                       const next = [...links, { label: "", url: "" }];
                       helpers.updateNestedData([...path, "links"], next);
                     }}
-                    className="text-[10px] font-semibold text-[#0B2A47] hover:underline"
+                    className="text-caption font-semibold text-head hover:underline"
                   >
                     + Add link
                   </button>
@@ -466,7 +461,7 @@ function NotificationItemsEditor({
                   {links.map((link, linkIdx) => (
                     <div
                       key={linkIdx}
-                      className="flex gap-2 items-start p-2 rounded-lg bg-slate-50 border border-slate-100"
+                      className="flex gap-2 items-start p-2 rounded-lg bg-surface-2 border border-border"
                     >
                       <div className="flex-1 space-y-2 min-w-0">
                         <input
@@ -501,7 +496,7 @@ function NotificationItemsEditor({
                           const next = links.filter((_, i) => i !== linkIdx);
                           helpers.updateNestedData([...path, "links"], next);
                         }}
-                        className="p-1 text-slate-300 hover:text-rose-600 mt-1"
+                        className="p-1 text-text-3 hover:text-error mt-1"
                       >
                         <Trash2 size={12} />
                       </button>
@@ -526,7 +521,7 @@ function AddPlaceholder({ label, onClick }: { label: string; onClick: () => void
     <button
       type="button"
       onClick={onClick}
-      className="w-full rounded-xl border-2 border-dashed border-slate-200 hover:border-[#0B2A47]/35 py-6 flex items-center justify-center gap-2 text-slate-400 hover:text-[#0B2A47] text-sm font-semibold transition-colors"
+      className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-strong py-6 text-dense font-medium text-text-3 hover:bg-tint hover:text-head"
     >
       <Plus size={18} />
       {label}
@@ -566,10 +561,10 @@ function GenericLiveForm({
               key={idx}
               layout
               className={cn(
-                "rounded-xl border bg-white overflow-hidden transition-[color,background-color,border-color,opacity,transform,box-shadow] group",
+                "rounded-xl border bg-surface overflow-hidden transition-[color,background-color,border-color,opacity,transform,box-shadow] group",
                 isExpanded
-                  ? "border-[#0B2A47]/25 shadow-md ring-1 ring-[#0B2A47]/10"
-                  : "border-slate-200 hover:border-[#0B2A47]/20",
+                  ? "border-border-strong"
+                  : "border-border hover:border-border-strong",
               )}
             >
               <button
@@ -577,24 +572,24 @@ function GenericLiveForm({
                 onClick={() => setExpandedIndex(isExpanded ? null : idx)}
                 className={cn(
                   "w-full p-4 flex items-center gap-4 text-left",
-                  isExpanded ? "bg-slate-50/80" : "hover:bg-slate-50/50",
+                  isExpanded ? "bg-surface-2/80" : "hover:bg-surface-2/50",
                 )}
               >
-                <div className="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-xl bg-surface-2 border border-border overflow-hidden flex items-center justify-center shrink-0">
                   {image ? (
                     <img src={image} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <Users size={16} className="text-slate-300" />
+                    <Users size={16} className="text-text-3" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-zinc-900 text-sm truncate">{String(name)}</p>
-                  <p className="text-[10px] text-zinc-400 mt-0.5">Click to edit</p>
+                  <p className="font-semibold text-text text-sm truncate">{String(name)}</p>
+                  <p className="text-caption text-text-3 mt-0.5">Click to edit</p>
                 </div>
                 <ChevronRight
                   size={16}
                   className={cn(
-                    "text-zinc-400 shrink-0 transition-transform",
+                    "text-text-3 shrink-0 transition-transform",
                     isExpanded && "rotate-90",
                   )}
                 />
@@ -605,13 +600,13 @@ function GenericLiveForm({
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden border-t border-slate-100"
+                    className="overflow-hidden border-t border-border"
                   >
                     <div className="p-4 relative">
                       <button
                         type="button"
                         onClick={() => helpers.deleteArrayItem(pathPrefix, idx)}
-                        className="absolute top-3 right-3 p-1.5 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
+                        className="absolute top-3 right-3 p-1.5 text-text-3 hover:text-error hover:bg-tint rounded-lg"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -720,12 +715,12 @@ function GenericLiveForm({
               onClick={() =>
                 setCollapsedKeys((prev) => ({ ...prev, [sectionKey]: !prev[sectionKey] }))
               }
-              className="w-full px-5 py-4 flex items-center justify-between gap-3 text-left bg-white border-b border-zinc-100"
+              className="w-full px-5 py-4 flex items-center justify-between gap-3 text-left bg-surface border-b border-border"
             >
               <div className="flex items-center gap-2">
                 <ChevronRight
                   size={14}
-                  className={cn("text-zinc-400 transition-transform", !isCollapsed && "rotate-90")}
+                  className={cn("text-text-3 transition-transform", !isCollapsed && "rotate-90")}
                 />
                 <h4 className={cn(adminLabelClass, "normal-case capitalize mb-0")}>
                   {key.replace(/_/g, " ")}
@@ -735,20 +730,21 @@ function GenericLiveForm({
                 )}
               </div>
               {Array.isArray(value) && !isCollapsed && (
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  size="compact"
                   onClick={(e) => {
                     e.stopPropagation();
                     helpers.addArrayItem(currentPath, value[0] ?? {});
                   }}
-                  className={cn(adminGhostButtonClass, "h-8 text-xs shrink-0")}
                 >
-                  <Plus size={12} /> Add
-                </button>
+                  Add
+                </Button>
               )}
             </button>
             {!isCollapsed && (
-              <div className="p-4 bg-slate-50/30">
+              <div className="p-4 bg-surface-2/30">
                 <GenericLiveForm
                   obj={value}
                   path={currentPath}
@@ -796,7 +792,7 @@ export function WebsiteLiveEditor({
 
     if (sectionId === "home") {
       return (
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 gap-6 min-[821px]:grid-cols-2">
           <AnnouncementsEditor
             items={Array.isArray(data.announcements) ? data.announcements : []}
             helpers={helpers}
@@ -864,7 +860,7 @@ export function WebsiteLiveEditor({
         loading={loading}
       />
       {renderBody()}
-      <p className="text-center text-[11px] text-slate-400 mt-8 flex items-center justify-center gap-1.5">
+      <p className="text-center text-caption text-text-3 mt-8 flex items-center justify-center gap-1.5">
         <ExternalLink size={12} />
         Edits auto-publish to the live RGUKT landing site
       </p>

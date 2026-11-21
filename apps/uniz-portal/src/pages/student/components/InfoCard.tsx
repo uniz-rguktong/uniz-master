@@ -1,10 +1,33 @@
 import { memo } from "react";
 import { cn } from "@/lib/utils";
-import { portalInputClass, portalLabelClass } from "@/lib/portal-ui";
+import { portalInputClass } from "@/lib/portal-ui";
+import { Skeleton } from "@/components/ui/Skeleton";
+
+function displayValue(
+  value: unknown,
+  type: string,
+  options?: { v: string; l: string }[],
+): string {
+  const match = (options || []).find((opt) => opt.v === value);
+  if (match) return match.l;
+  if (type === "date" && typeof value === "string" && /^\d{4}-\d{2}-\d{2}/.test(value)) {
+    const [year, month, day] = value.slice(0, 10).split("-").map(Number);
+    const date = new Date(year, month - 1, day);
+    if (!Number.isNaN(date.getTime())) {
+      return date.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+    }
+  }
+  if (value === undefined || value === null) return "";
+  return String(value);
+}
 
 export const InfoCard = memo(
   ({
-    icon,
+    icon: _icon,
     label,
     name,
     value,
@@ -16,59 +39,68 @@ export const InfoCard = memo(
     fullWidth,
     options,
   }: any) => {
+    void _icon;
     const handleChange = (e: any) => onValueChange(name, e.target.value);
+    const empty = value === undefined || value === null || value === "";
+    const shown = displayValue(value, type, options);
 
     return (
       <div
         className={cn(
-          "rounded-portal-xl border border-navy-200 bg-white p-4 md:p-5 shadow-whisper transition-[color,background-color,border-color,opacity,transform] duration-200 hover:border-navy-300",
-          fullWidth && "col-span-full",
+          "border-b border-border py-3",
+          fullWidth && "min-[821px]:col-span-2",
         )}
       >
-        <div className="flex items-center gap-2 mb-2.5">
-          <span className="text-navy-700">{icon}</span>
-          <span className={cn(portalLabelClass, "!mb-0")}>{label}</span>
-        </div>
-
-        {isLoading ? (
-          <div className="h-6 w-3/4 animate-pulse rounded-portal-lg bg-navy-50" />
-        ) : isEditing && editable ? (
-          type === "select" ? (
-            <select
-              name={name}
-              value={value}
-              onChange={handleChange}
-              className={cn(portalInputClass, "font-semibold")}
-            >
-              <option value="">Select {label}</option>
-              {(options || []).map((opt: any) => (
-                <option key={opt.v} value={opt.v}>
-                  {opt.l}
-                </option>
-              ))}
-            </select>
+        <dt>
+          {isEditing && editable ? (
+            <label htmlFor={name} className="text-dense font-medium text-text-2">
+              {label}
+            </label>
           ) : (
-            <input
-              type={type}
-              name={name}
-              value={value}
-              onChange={handleChange}
-              className={cn(portalInputClass, "font-semibold")}
-              autoComplete="off"
-              placeholder={`Enter ${label.toLowerCase()}`}
-            />
-          )
-        ) : (
-          <p className="truncate px-0.5 text-[15px] font-semibold leading-tight tracking-normal text-navy-900">
-            {value ? (
-              value
+            <span className="text-dense font-medium text-text-2">{label}</span>
+          )}
+        </dt>
+        <dd className="mt-1">
+          {isLoading ? (
+            <Skeleton className="h-6 w-3/4" />
+          ) : isEditing && editable ? (
+            type === "select" ? (
+              <select
+                id={name}
+                name={name}
+                value={value}
+                onChange={handleChange}
+                className={portalInputClass}
+              >
+                <option value="">Select {label}</option>
+                {(options || []).map((opt: any) => (
+                  <option key={opt.v} value={opt.v}>
+                    {opt.l}
+                  </option>
+                ))}
+              </select>
             ) : (
-              <span className="text-sm font-medium italic text-navy-300">
-                No data
-              </span>
-            )}
-          </p>
-        )}
+              <input
+                id={name}
+                type={type}
+                name={name}
+                value={value}
+                onChange={handleChange}
+                className={portalInputClass}
+                autoComplete="off"
+                placeholder={`Enter ${String(label).toLowerCase()}`}
+              />
+            )
+          ) : (
+            <p className="text-body text-head [overflow-wrap:anywhere]">
+              {empty ? (
+                <span className="text-text-2">No data</span>
+              ) : (
+                shown
+              )}
+            </p>
+          )}
+        </dd>
       </div>
     );
   },
