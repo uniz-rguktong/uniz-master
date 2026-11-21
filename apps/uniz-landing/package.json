@@ -6,10 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "eslint . && npm run lint:hex",
+    "lint:hex": "node scripts/lint-hex.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource-variable/noto-serif": "^5.2.8",
     "@iconify/react": "^6.0.2",
     "@radix-ui/react-slot": "^1.2.4",
     "@react-three/fiber": "^9.5.0",

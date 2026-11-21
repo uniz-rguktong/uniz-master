@@ -3,13 +3,24 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="/rgukt-logo.png" />
+  <script>
+    (function () {
+      try {
+        var pref = localStorage.getItem("uniz-landing-theme");
+        var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var dark = pref === "dark" || (pref !== "light" && systemDark);
+        if (dark) document.documentElement.classList.add("dark");
+        document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IIIT Ongole :: RGUKT-AP</title>
   <meta name="description" content="Rajiv Gandhi University of Knowledge Technologies, Ongole Campus. Academics, departments, notifications, tenders and campus life." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cabin+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 
 <body>

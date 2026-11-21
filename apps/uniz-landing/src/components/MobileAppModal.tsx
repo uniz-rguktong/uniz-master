@@ -7,6 +7,10 @@ import {
   IOS_PROFILE_URL,
   OPEN_IOS_MODAL_EVENT,
 } from "../lib/mobile-app";
+import { PORTAL_URL } from "@/lib/portal";
+import { Lockup } from "./brand/Lockup";
+import { buttonVariants } from "./ui/button-variants";
+import { cn } from "@/lib/utils";
 
 export function AndroidIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -34,11 +38,25 @@ export function MobileAppModal() {
     return () => window.removeEventListener(OPEN_IOS_MODAL_EVENT, handler);
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
+
   if (!open) return null;
 
   const copyPortalUrl = async () => {
     try {
-      await navigator.clipboard.writeText("https://uniz.rguktong.in");
+      await navigator.clipboard.writeText(PORTAL_URL);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -48,102 +66,100 @@ export function MobileAppModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-navy-900/65 p-4"
+      className="fixed inset-0 z-[200] flex items-end justify-center bg-[var(--overlay)] sm:items-center sm:p-4"
       onClick={() => setOpen(false)}
     >
       <div
-        className="w-full max-w-md overflow-hidden rounded-xs border border-navy bg-white text-navy-900 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ios-install-title"
+        className="max-h-[92vh] w-full overflow-y-auto rounded-t-xl border border-border-strong bg-surface p-5 pb-[calc(24px+env(safe-area-inset-bottom))] text-text shadow-lg sm:max-w-[640px] sm:rounded-xl sm:p-8 dark:shadow-none"
+        onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-center justify-between bg-navy px-5 py-3.5 text-white">
-          <div className="flex items-center gap-2.5">
-            <img
-              src="/rgukt-logo.png"
-              alt="RGUKT"
-              className="h-7 w-7 rounded-xs bg-white p-0.5 object-contain"
-            />
-            <div>
-              <h3 className="text-[15px] font-medium text-white">
-                Download iOS App
-              </h3>
-              <p className="text-[11px] text-white/75">
-                RGUKT Ongole · uniZ app
-              </p>
-            </div>
+        <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-border-strong sm:hidden" aria-hidden="true" />
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <Lockup mark={32} word={20} className="text-head" />
+            <h2 id="ios-install-title" className="mt-4 font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head">
+              Download iOS App
+            </h2>
+            <p className="mt-2 text-[15px] leading-6 text-text-2">
+              RGUKT Ongole · uniZ app
+            </p>
           </div>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-xs p-1 text-white/80 hover:bg-white/10 hover:text-white"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-text-2 hover:bg-tint-2"
             aria-label="Close"
           >
-            <X className="h-4 w-4" />
+            <X size={18} strokeWidth={1.75} />
           </button>
         </div>
 
-        <div className="space-y-4 p-5">
-          <div className="rounded-xs border border-slate-200 bg-surface p-4">
-            <p className="text-[11px] font-medium text-slate-500">
+        <div className="mt-6 space-y-6">
+          <div className="border-t border-border pt-6">
+            <p className="text-[13px] font-medium leading-[18px] text-text-2">
               Option 1 · Direct iOS Profile
             </p>
-            <p className="mt-1 text-[13px] text-slate-600">
+            <p className="mt-2 text-[15px] leading-6 text-text-2">
               Download the signed iOS WebClip profile and approve it in{" "}
-              <strong className="text-navy-900">Settings → Profile Downloaded</strong>.
+              <strong className="font-semibold text-text">Settings → Profile Downloaded</strong>.
             </p>
             <a
               href={IOS_PROFILE_URL}
               download={IOS_PROFILE_FILENAME}
-              className="mt-3 inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-navy px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-navy-950"
+              className={cn(buttonVariants({ size: "hero" }), "mt-4 w-full")}
             >
-              <AppleIcon className="w-3.5 h-3.5" />
+              <AppleIcon className="h-4 w-4" />
               Download iOS App Profile (.mobileconfig)
             </a>
           </div>
 
-          <div className="rounded-xs border border-slate-200 bg-white p-4">
-            <p className="text-[11px] font-medium text-slate-500">
+          <div className="border-t border-border pt-6">
+            <p className="text-[13px] font-medium leading-[18px] text-text-2">
               Option 2 · Safari Home Screen
             </p>
-            <ol className="mt-2.5 space-y-2 text-[13px] text-slate-700">
-              <li className="flex items-center gap-2">
-                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-navy text-[11px] font-medium text-white">
+            <ol className="mt-3 space-y-3 text-[15px] leading-6 text-text">
+              <li className="flex items-start gap-3">
+                <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy-900 text-[12px] font-medium leading-4 text-white">
                   1
                 </span>
                 <span>
-                  Open <strong>uniz.rguktong.in</strong> in Safari and tap{" "}
-                  <Share className="mx-0.5 inline h-3.5 w-3.5 text-navy" />{" "}
-                  <strong>Share</strong>.
+                  Open <strong className="font-semibold">uniz.rguktong.in</strong> in Safari and tap{" "}
+                  <Share className="mx-0.5 inline h-4 w-4 text-accent" aria-hidden="true" />{" "}
+                  <strong className="font-semibold">Share</strong>.
                 </span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-navy text-[11px] font-medium text-white">
+              <li className="flex items-start gap-3">
+                <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy-900 text-[12px] font-medium leading-4 text-white">
                   2
                 </span>
                 <span>
                   Select{" "}
-                  <PlusSquare className="mx-0.5 inline h-3.5 w-3.5 text-navy" />{" "}
-                  <strong>Add to Home Screen</strong>.
+                  <PlusSquare className="mx-0.5 inline h-4 w-4 text-accent" aria-hidden="true" />{" "}
+                  <strong className="font-semibold">Add to Home Screen</strong>.
                 </span>
               </li>
             </ol>
             <button
               type="button"
               onClick={copyPortalUrl}
-              className="mt-3 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-xs border border-slate-200 bg-surface px-3 text-xs font-medium text-navy hover:bg-slate-100"
+              className={cn(buttonVariants({ variant: "outline", size: "default" }), "mt-4 w-full")}
             >
-              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              {copied ? <Check size={16} strokeWidth={1.75} aria-hidden="true" /> : <Copy size={16} strokeWidth={1.75} aria-hidden="true" />}
               {copied ? "Copied uniz.rguktong.in" : "Copy Safari Portal Link"}
             </button>
           </div>
 
-          <div className="flex items-center justify-between border-t border-slate-200 pt-3 text-xs text-slate-500">
+          <div className="flex flex-col gap-3 border-t border-border pt-6 text-[15px] leading-6 text-text-2 sm:flex-row sm:items-center sm:justify-between">
             <span>Using Android?</span>
             <a
               href={ANDROID_APK_URL}
               download={ANDROID_APK_FILENAME}
-              className="inline-flex items-center gap-1 font-medium text-navy underline underline-offset-2"
+              className="inline-flex min-h-11 items-center gap-2 font-medium text-link underline-offset-2 hover:underline"
             >
-              <Download className="h-3.5 w-3.5" />
+              <Download size={16} strokeWidth={1.75} aria-hidden="true" />
               Download Android App (.apk)
             </a>
           </div>
