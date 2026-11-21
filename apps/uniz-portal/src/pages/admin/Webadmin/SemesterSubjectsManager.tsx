@@ -124,6 +124,9 @@ export default function SemesterSubjectsManager({
       id: "subject",
       header: "Subject",
       primary: true,
+      grow: true,
+      width: 220,
+      title: (row) => row.customName || row.subject.name,
       cell: (row) => row.customName || row.subject.name,
     },
     {
@@ -162,11 +165,14 @@ export default function SemesterSubjectsManager({
     {
       id: "edit",
       header: "Edit",
+      actions: true,
+      width: 112,
       cell: (row) => (
         <Button
           type="button"
           variant="ghost"
           size="compact"
+          className="whitespace-nowrap"
           onClick={(e) => {
             e.stopPropagation();
             openEdit(row);
@@ -226,20 +232,16 @@ export default function SemesterSubjectsManager({
         </p>
       </div>
 
-      {loading ? (
-        <div className="flex flex-col items-center py-16 text-text-3">
-          <Loader2 className="animate-spin mb-2" size={24} />
-          <p className="text-caption">Loading…</p>
-        </div>
-      ) : (
-        <Table
+      <Table
+          loading={loading}
+          sticky
+          stack="wide"
           columns={columns}
           rows={rows}
           getRowId={(row) => row.id}
           onRowClick={openEdit}
-          empty={<EmptyState title="No subjects for these filters" />}
+          empty={<EmptyState title="No subjects for these filters" body="Try another branch or year." />}
         />
-      )}
 
       <AdminDialog
         open={!!editing}

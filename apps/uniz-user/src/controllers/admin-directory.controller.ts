@@ -9,9 +9,11 @@ import { resolveEffectiveRole, webadminAssignmentRejection } from "@uniz/shared"
 import {
   DIRECTORY_ROLES,
   canReadAdminDirectory,
+  directoryPermissionWriteBlocked,
   isDirectoryRole,
   isDirectoryWebadmin,
   sanitizeDirectoryPermissions,
+  WEBADMIN_PERMISSION_LOCK_MESSAGE,
 } from "../utils/staff-access";
 
 const AUTH_SERVICE_URL = (
@@ -146,6 +148,9 @@ export const updateAdminRolePermissions = async (
 ) => {
   if (!requireWebadmin(req, res)) return;
   const role = String(req.params.role || "").toLowerCase();
+  if (directoryPermissionWriteBlocked(role)) {
+    return res.status(403).json({ success: false, msg: WEBADMIN_PERMISSION_LOCK_MESSAGE });
+  }
   if (!isDirectoryRole(role)) {
     return res.status(400).json({ success: false, msg: "Unknown role" });
   }

@@ -252,9 +252,9 @@ export default function WebadminOverview({ username }: { username: string }) {
                     </dd>
                   </div>
                   {fields.map(({ key, label }) => (
-                    <div key={key}>
+                    <div key={key} className="min-w-0">
                       <dt className="text-dense leading-5 text-text-2">{label}</dt>
-                      <dd className="mt-1 text-body text-head">
+                      <dd className="mt-1 min-w-0 text-body text-head">
                         {isEditing ? (
                           <input
                             type="text"
@@ -267,7 +267,7 @@ export default function WebadminOverview({ username }: { username: string }) {
                             aria-label={label}
                           />
                         ) : key === "email" ? (
-                          email
+                          <span className="block truncate" title={email}>{email}</span>
                         ) : key === "designation" ? (
                           formData.designation
                             ? formatDisplayText(formData.designation)

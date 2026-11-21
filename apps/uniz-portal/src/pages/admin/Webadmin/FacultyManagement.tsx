@@ -17,6 +17,7 @@ import {
   ChevronDown,
   Layers,
   Eye,
+  Pencil,
   BookOpen,
   Calendar,
   Camera,
@@ -50,6 +51,7 @@ import { Table } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
+import { RowActions } from "@/components/ui/row-actions";
 import { SectionHeader } from "../../../components/admin/SectionHeader";
 import { uploadImage } from "../../../api/uploadImage";
 import {
@@ -256,8 +258,6 @@ export default function FacultyManagement({
   };
 
   const handleSuspend = async (username: string, current: boolean) => {
-    if (!window.confirm(`${current ? "Reinstate" : "Suspend"} this user?`))
-      return;
     try {
       const res = await fetch(ADMIN_SUSPEND_FACULTY(username), {
         method: "PUT",
@@ -278,10 +278,6 @@ export default function FacultyManagement({
   };
 
   const handleDelete = async (username: string) => {
-    if (
-      !window.confirm(`Permanently delete ${username}? This cannot be undone.`)
-    )
-      return;
     try {
       const res = await fetch(`${BASE_URL}/profile/admin/faculty/${username}`, {
         method: "DELETE",
@@ -521,7 +517,7 @@ export default function FacultyManagement({
         icon={<Users size={18} />}
         eyebrow="Management"
         title="Faculty Management"
-        subtitle="Strategic management of administrative and teaching assets."
+        subtitle="Faculty and staff accounts, roles and status."
         actions={
           <>
             <div className={adminSegmentWrapClass}>
@@ -559,7 +555,7 @@ export default function FacultyManagement({
                 placeholder="Search registry…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className={cn(adminInputClass, "w-full min-w-0 max-w-[240px] pl-10")}
+                className={cn(adminInputClass, "w-full min-w-0 pl-10 min-[900px]:w-56")}
               />
             </div>
 
@@ -995,15 +991,21 @@ export default function FacultyManagement({
         </div>
       )}
 
-      {loading ? (
-        <p className="text-body text-text-2">Loading staff…</p>
-      ) : (
-        <Table
+      <Table
+          loading={loading}
+          sticky
+          stack="wide"
           rows={faculty}
           getRowId={(member: any) => String(member.id || member.Username)}
           onRowClick={mode === "bulk" ? (member: any) => toggleSelect(member.Username) : undefined}
           selectedId={undefined}
-          empty={<EmptyState title="No staff members matching your criteria." icon={Users} />}
+          empty={
+            <EmptyState
+              title="No staff members match"
+              body="Try another name or email, or add a faculty account."
+              icon={Users}
+            />
+          }
           footer={
             meta.totalPages > 1 ? (
               <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -1033,7 +1035,7 @@ export default function FacultyManagement({
                   ),
                   label: "Select",
                   width: 48,
-                  clip: false,
+                  fixed: true,
                   cell: (member: any) =>
                     selectedUsernames.has(member.Username) ? <CheckSquare size={16} /> : <Square size={16} className="text-text-3" />,
                 }]
@@ -1043,50 +1045,17 @@ export default function FacultyManagement({
               header: "Staff",
               primary: true,
               width: 240,
+              fixed: true,
               clip: false,
               title: (member: any) => [member.Name, member.Email].filter(Boolean).join(" · "),
               cell: (member: any) => (
-                <span>
-                  <span className="flex items-start gap-2">
-                    {mode === "bulk" ? (
-                      <span
-                        role="checkbox"
-                        aria-checked={selectedUsernames.has(member.Username)}
-                        className="mt-1 text-text-2 sm:hidden"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleSelect(member.Username);
-                        }}
-                        aria-label={selectedUsernames.has(member.Username) ? "Deselect staff" : "Select staff"}
-                      >
-                        {selectedUsernames.has(member.Username) ? (
-                          <CheckSquare size={16} className="text-text" />
-                        ) : (
-                          <Square size={16} />
-                        )}
-                      </span>
-                    ) : null}
-                    <span className="min-w-0">
-                      <span className="block truncate font-semibold text-head">{member.Name}</span>
-                      <span className="mt-0.5 block truncate text-small text-text-2">{member.Email}</span>
-                    </span>
+                <span className="block min-w-0">
+                  <span className="block truncate font-semibold text-head" title={member.Name || undefined}>
+                    {member.Name}
                   </span>
-                  {mode === "single" ? (
-                    <span className="mt-2 flex flex-wrap gap-2 sm:hidden">
-                      <Button type="button" variant="ghost" size="compact" onClick={(e) => { e.stopPropagation(); setSelectedFaculty(member); setShowViewModal(true); }}>
-                        View
-                      </Button>
-                      <Button type="button" variant="outline" size="compact" onClick={(e) => { e.stopPropagation(); openEdit(member); }}>
-                        Modify
-                      </Button>
-                      <Button type="button" variant="outline" size="compact" onClick={(e) => { e.stopPropagation(); handleSuspend(member.Username, member.is_suspended); }}>
-                        {member.is_suspended ? "Reinstate" : "Suspend"}
-                      </Button>
-                      <Button type="button" variant="destructive" size="compact" onClick={(e) => { e.stopPropagation(); handleDelete(member.Username); }}>
-                        Delete
-                      </Button>
-                    </span>
-                  ) : null}
+                  <span className="mt-0.5 block truncate text-small text-text-2" title={member.Email || undefined}>
+                    {member.Email}
+                  </span>
                 </span>
               ),
             },
@@ -1094,7 +1063,8 @@ export default function FacultyManagement({
               id: "role",
               header: "Role",
               meta: true,
-              width: 120,
+              width: 104,
+              fixed: true,
               title: (member: any) => (member.Role ? formatRoleLabel(member.Role) : "Faculty"),
               cell: (member: any) => member.Role ? formatRoleLabel(member.Role) : "Faculty",
             },
@@ -1102,15 +1072,16 @@ export default function FacultyManagement({
               id: "designation",
               header: "Designation",
               meta: true,
-              width: 180,
+              grow: true,
+              width: 220,
               title: (member: any) => member.Designation || member.Department || "Lecturer",
               cell: (member: any) => member.Designation || member.Department || "Lecturer",
             },
             {
               id: "status",
               header: "Status",
-              width: 120,
-              clip: false,
+              width: 132,
+              fixed: true,
               cell: (member: any) =>
                 member.is_suspended ? <Badge tone="error">Suspended</Badge> : <Badge tone="success">Active</Badge>,
             },
@@ -1119,29 +1090,58 @@ export default function FacultyManagement({
                   id: "actions",
                   header: "Actions",
                   label: "Actions",
-                  width: 300,
-                  clip: false,
+                  actions: true,
+                  width: 72,
                   cell: (member: any) => (
-                    <span className="flex flex-wrap items-center gap-2">
-                      <Button type="button" variant="ghost" size="icon" aria-label="View details" onClick={(e) => { e.stopPropagation(); setSelectedFaculty(member); setShowViewModal(true); }}>
-                        <Eye size={16} />
-                      </Button>
-                      <Button type="button" variant="outline" size="compact" onClick={(e) => { e.stopPropagation(); openEdit(member); }}>
-                        Modify
-                      </Button>
-                      <Button type="button" variant="outline" size="compact" onClick={(e) => { e.stopPropagation(); handleSuspend(member.Username, member.is_suspended); }}>
-                        {member.is_suspended ? "Reinstate" : "Suspend"}
-                      </Button>
-                      <Button type="button" variant="destructive" size="icon" aria-label="Delete staff" onClick={(e) => { e.stopPropagation(); handleDelete(member.Username); }}>
-                        <Trash2 size={16} />
-                      </Button>
-                    </span>
+                    <RowActions
+                      label={`Actions for ${member.Name || member.Username}`}
+                      items={[
+                        {
+                          id: "view",
+                          label: "View",
+                          icon: Eye,
+                          onSelect: () => {
+                            setSelectedFaculty(member);
+                            setShowViewModal(true);
+                          },
+                        },
+                        {
+                          id: "modify",
+                          label: "Modify",
+                          icon: Pencil,
+                          onSelect: () => openEdit(member),
+                        },
+                        {
+                          id: "suspend",
+                          label: member.is_suspended ? "Reinstate" : "Suspend",
+                          confirm: {
+                            title: member.is_suspended ? "Reinstate this account?" : "Suspend this account?",
+                            body: member.is_suspended
+                              ? `${member.Name || member.Username} will be able to sign in again.`
+                              : `${member.Name || member.Username} will not be able to sign in until reinstated.`,
+                            confirmLabel: member.is_suspended ? "Reinstate" : "Suspend",
+                          },
+                          onSelect: () => handleSuspend(member.Username, member.is_suspended),
+                        },
+                        {
+                          id: "delete",
+                          label: "Delete",
+                          icon: Trash2,
+                          destructive: true,
+                          confirm: {
+                            title: "Delete this staff account?",
+                            body: `Permanently delete ${member.Name || member.Username}? This cannot be undone.`,
+                            confirmLabel: "Delete",
+                          },
+                          onSelect: () => handleDelete(member.Username),
+                        },
+                      ]}
+                    />
                   ),
                 }]
               : []),
           ]}
         />
-      )}
 
       <AlertDialog
         open={showModal}

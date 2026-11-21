@@ -122,7 +122,7 @@ export default function SecuritySection({ username }: { username: string }) {
       <div className="mx-auto max-w-[640px]">
         <PageHeader
           title="Security"
-          meta="Update your access credentials to maintain account integrity."
+          meta="Change the password for this account."
         />
 
         <div className="space-y-8">

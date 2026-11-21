@@ -311,7 +311,7 @@ export default function SemesterBuilder() {
 
       {/* List */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-[repeat(2,minmax(0,1fr))] xl:grid-cols-[repeat(3,minmax(0,1fr))]">
           {[0, 1, 2].map((i) => (
             <div
               key={i}
@@ -322,7 +322,7 @@ export default function SemesterBuilder() {
       ) : semesters.length === 0 ? (
         <EmptyState onCreate={() => setBuilderOpen(true)} />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-[repeat(2,minmax(0,1fr))] xl:grid-cols-[repeat(3,minmax(0,1fr))]">
           {semesters.map((sem, i) => (
             <SemesterCard
               key={sem.id}
@@ -414,11 +414,11 @@ function SemesterCard({
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.35 }}
-      className={cn(adminCardClass, "group relative p-6")}
+      className={cn(adminCardClass, "group relative min-w-0 p-6")}
     >
       <div className="relative flex flex-col gap-3 mb-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h3 className="text-lg font-semibold text-text tracking-tight truncate">
+          <h3 className="text-lg font-semibold text-text tracking-tight truncate" title={sem.name}>
             {sem.name}
           </h3>
           <p className="text-xs font-semibold text-text-3 mt-0.5">
@@ -448,7 +448,7 @@ function SemesterCard({
         </div>
       </div>
 
-      <div className="relative flex flex-wrap items-center gap-2">
+      <div className="relative flex min-w-0 flex-wrap items-center gap-2">
         <ActionBtn
           tone="ghost"
           icon={<BookOpen size={14} />}
@@ -506,13 +506,13 @@ function SemesterCard({
             onClick={onTrack}
           />
         )}
-        <div className="flex-1" />
         <Button
           type="button"
           variant="destructive"
           size="compact"
           onClick={() => onRemove(sem.id, sem.name)}
           title="Delete semester"
+          className="shrink-0 whitespace-nowrap"
         >
           <Trash2 size={15} />
           Delete
@@ -535,7 +535,7 @@ function ActionBtn({
 }) {
   const variant = tone === "primary" ? "primary" : "outline";
   return (
-    <Button type="button" size="compact" variant={variant} onClick={onClick}>
+    <Button type="button" size="compact" variant={variant} onClick={onClick} className="shrink-0 whitespace-nowrap">
       {icon}
       {label}
     </Button>

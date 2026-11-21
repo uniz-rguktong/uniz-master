@@ -147,7 +147,7 @@ export default function PushNotificationSection() {
         icon={<Send size={18} />}
         eyebrow="Campus"
         title="Push & Alerts"
-        subtitle="Manage browser push subscriptions and broadcast instant system alerts."
+        subtitle="Push subscriptions and broadcasts."
         actions={
           <>
             <div className="relative">
@@ -160,7 +160,7 @@ export default function PushNotificationSection() {
                 placeholder="Search by ID, name, or email…"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className={cn(adminInputClass, "pl-10 w-full sm:w-72")}
+                className={cn(adminInputClass, "w-full min-w-0 pl-10 min-[900px]:w-64")}
               />
               {refreshing && (
                 <Loader2
@@ -190,10 +190,10 @@ export default function PushNotificationSection() {
         )}
       </div>
 
-      {loading ? (
-        <p className="text-body text-text-2">Loading subscribers…</p>
-      ) : (
-        <Table
+      <Table
+          loading={loading}
+          sticky
+          stack="wide"
           rows={subscribers}
           getRowId={(sub) => sub.id}
           empty={
@@ -229,14 +229,24 @@ export default function PushNotificationSection() {
               id: "person",
               header: "Person",
               primary: true,
+              grow: true,
+              width: 240,
+              clip: false,
+              title: (sub) => [sub.displayName || sub.username, sub.email].filter(Boolean).join(" · "),
               cell: (sub) => (
-                <span>
-                  <span className="block font-semibold text-head">{sub.displayName || sub.username}</span>
-                  {sub.email ? <span className="mt-0.5 block text-small text-text-2">{sub.email}</span> : null}
+                <span className="block min-w-0">
+                  <span className="block truncate font-semibold text-head" title={sub.displayName || sub.username}>
+                    {sub.displayName || sub.username}
+                  </span>
+                  {sub.email ? (
+                    <span className="mt-0.5 block truncate text-small text-text-2" title={sub.email}>
+                      {sub.email}
+                    </span>
+                  ) : null}
                 </span>
               ),
             },
-            { id: "id", header: "Student ID", meta: true, cell: (sub) => sub.username },
+            { id: "id", header: "Student ID", meta: true, width: 140, fixed: true, title: (sub) => sub.username, cell: (sub) => sub.username },
             {
               id: "academic",
               header: "Academic",
@@ -246,8 +256,10 @@ export default function PushNotificationSection() {
             {
               id: "device",
               header: "Device",
+              width: 180,
+              title: (sub) => sub.endpoint,
               cell: (sub) => (
-                <span className="inline-flex max-w-full items-center gap-1.5 text-small text-text-2">
+                <span className="inline-flex max-w-full items-center gap-1.5 text-small text-text-2" title={sub.endpoint}>
                   <Smartphone size={14} aria-hidden />
                   <span className="truncate">{shortEndpoint(sub.endpoint)}</span>
                 </span>
@@ -256,11 +268,15 @@ export default function PushNotificationSection() {
             {
               id: "status",
               header: "Status",
+              width: 110,
+              fixed: true,
               cell: () => <Badge tone="success">Active</Badge>,
             },
             {
               id: "registered",
               header: "Registered",
+              width: 140,
+              fixed: true,
               cell: (sub) => (
                 <span className="tabular-nums">
                   {new Date(sub.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
@@ -269,7 +285,6 @@ export default function PushNotificationSection() {
             },
           ]}
         />
-      )}
 
       <AlertDialog
         open={showSendModal}

@@ -410,8 +410,9 @@ export default function WebsiteUpdatesSection() {
                     key={page}
                     type="button"
                     onClick={() => setActivePage(page)}
+                    title={formatPageLabel(page)}
                     className={cn(
-                      "w-full text-left px-3 py-2 rounded-lg text-[12px] font-medium transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-150",
+                      "w-full truncate text-left px-3 py-2 rounded-lg text-[12px] font-medium transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-150",
                       activePage === page
                         ? "bg-surface-2 text-text"
                         : "text-text-2 hover:bg-surface-2 hover:text-text",
