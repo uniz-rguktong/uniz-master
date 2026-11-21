@@ -41,37 +41,71 @@ export interface TableSummary {
   estimatedRows: number | null;
 }
 
-export const TABLE_LIST_SQL = `SELECT t.table_name,
+// Names come from pg_catalog. information_schema.tables hides tables this login
+// cannot use, and a direct read of pg_class fails when that grant is missing
+// even though the information_schema view can still see the names.
+// reltuples is a float4. Casting it to bigint throws for NaN, infinity, or a
+// value past bigint, and that error used to abort the whole list. The estimate
+// stays on a LEFT JOIN and an unusable value becomes null. 9007199254740991 is
+// the largest integer JavaScript can return without rounding it.
+export const TABLE_LIST_SQL = `SELECT c.relname AS table_name,
             CASE
-              WHEN c.reltuples IS NULL OR c.reltuples < 0 THEN NULL
-              ELSE c.reltuples::bigint
-            END AS estimated_rows
-     FROM information_schema.tables t
-     LEFT JOIN pg_namespace n ON n.nspname = t.table_schema
-     LEFT JOIN pg_class c
-       ON c.relnamespace = n.oid
-      AND c.relname = t.table_name
-      AND c.relkind IN ('r', 'p')
-     WHERE t.table_schema = $1 AND t.table_type = 'BASE TABLE'
-     ORDER BY t.table_name`;
+              WHEN est.reltuples IS NULL THEN NULL
+              WHEN est.reltuples < 0 THEN NULL
+              WHEN est.reltuples <> est.reltuples THEN NULL
+              WHEN est.reltuples > 9007199254740991 THEN NULL
+              ELSE est.reltuples
+            END AS reltuples
+     FROM pg_catalog.pg_class c
+     JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+     LEFT JOIN pg_catalog.pg_class est ON est.oid = c.oid
+     WHERE n.nspname = $1
+       AND c.relkind IN ('r', 'p')
+     ORDER BY c.relname`;
+
+// Used only when this login cannot read pg_class. information_schema is a
+// security-barrier view, so it can still list tables the caller is allowed to use.
+export const TABLE_LIST_FALLBACK_SQL = `SELECT table_name
+     FROM information_schema.tables
+     WHERE table_schema = $1 AND table_type = 'BASE TABLE'
+     ORDER BY table_name`;
+
+export function estimatedRowsFromRelTuples(raw: unknown): number | null {
+  if (raw === null || raw === undefined || raw === "") return null;
+  const value = typeof raw === "number" ? raw : Number(raw);
+  if (!Number.isFinite(value) || value < 0) return null;
+  if (value > Number.MAX_SAFE_INTEGER) return null;
+  return Math.round(value);
+}
+
+function pgErrorCode(error: unknown): string {
+  if (!error || typeof error !== "object" || !("code" in error)) return "";
+  const code = (error as { code?: unknown }).code;
+  return typeof code === "string" ? code : "";
+}
 
 export async function listTables(client: PoolClient, schema: string): Promise<TableSummary[]> {
   quoteIdent(schema);
-  const rows = await queryRows<{ table_name: string; estimated_rows: string | number | null }>(
-    client,
-    TABLE_LIST_SQL,
-    [schema],
-  );
-  return rows.map((row) => {
-    if (row.estimated_rows === null || row.estimated_rows === undefined) {
-      return { name: row.table_name, estimatedRows: null };
-    }
-    const count = Number(row.estimated_rows);
-    return {
+  await client.query("SAVEPOINT uniz_table_list");
+  try {
+    const rows = await queryRows<{ table_name: string; reltuples: string | number | null }>(
+      client,
+      TABLE_LIST_SQL,
+      [schema],
+    );
+    await client.query("RELEASE SAVEPOINT uniz_table_list");
+    return rows.map((row) => ({
       name: row.table_name,
-      estimatedRows: Number.isFinite(count) ? count : null,
-    };
-  });
+      estimatedRows: estimatedRowsFromRelTuples(row.reltuples),
+    }));
+  } catch (error) {
+    await client.query("ROLLBACK TO SAVEPOINT uniz_table_list");
+    await client.query("RELEASE SAVEPOINT uniz_table_list");
+    // 42501: this login can use information_schema but was not granted pg_class.
+    if (pgErrorCode(error) !== "42501") throw error;
+    const rows = await queryRows<{ table_name: string }>(client, TABLE_LIST_FALLBACK_SQL, [schema]);
+    return rows.map((row) => ({ name: row.table_name, estimatedRows: null }));
+  }
 }
 
 async function enumLabels(client: PoolClient, schema: string, typeName: string): Promise<string[]> {

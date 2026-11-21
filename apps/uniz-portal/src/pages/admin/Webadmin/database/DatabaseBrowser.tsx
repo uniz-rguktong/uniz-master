@@ -22,6 +22,7 @@ import {
   type FilterOp,
   type TableSummary,
 } from "./databaseApi";
+import { rememberSchema, resolveStartingSchema } from "./schemaPreference";
 import {
   buildDisplayRows,
   dirtyKeys,
@@ -60,6 +61,8 @@ export default function DatabaseBrowser({
   const [schema, setSchema] = useState("");
   const [tables, setTables] = useState<TableSummary[]>([]);
   const [tablesLoading, setTablesLoading] = useState(false);
+  const [tablesError, setTablesError] = useState("");
+  const [tablesReload, setTablesReload] = useState(0);
   const [tableQuery, setTableQuery] = useState("");
   const [table, setTable] = useState("");
   const [columns, setColumns] = useState<ColumnInfo[]>([]);
@@ -102,15 +105,14 @@ export default function DatabaseBrowser({
 
   useEffect(() => {
     let cancelled = false;
+    setSchema("");
+    setTables([]);
     listSchemas(databaseId)
-      .then((result) => {
+      .then(async (result) => {
         if (cancelled) return;
         setSchemas(result.schemas);
-        setSchema((current) => {
-          if (current && result.schemas.includes(current)) return current;
-          if (result.schemas.includes("public")) return "public";
-          return result.schemas[0] || "";
-        });
+        const next = await resolveStartingSchema(databaseId, result.schemas);
+        if (!cancelled) setSchema(next);
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -126,7 +128,9 @@ export default function DatabaseBrowser({
   useEffect(() => {
     if (!schema) return;
     let cancelled = false;
+    setTables([]);
     setTablesLoading(true);
+    setTablesError("");
     listTables(databaseId, schema)
       .then((result) => {
         if (cancelled) return;
@@ -135,7 +139,7 @@ export default function DatabaseBrowser({
       .catch((err: unknown) => {
         if (cancelled) return;
         setTables([]);
-        toast.error(errorText(err, "The tables could not be loaded."));
+        setTablesError(errorText(err, "The tables could not be loaded."));
       })
       .finally(() => {
         if (!cancelled) setTablesLoading(false);
@@ -143,7 +147,7 @@ export default function DatabaseBrowser({
     return () => {
       cancelled = true;
     };
-  }, [databaseId, schema]);
+  }, [databaseId, schema, tablesReload]);
 
   useEffect(() => {
     const handle = window.setTimeout(() => setAppliedSearch(search.trim()), 300);
@@ -199,6 +203,7 @@ export default function DatabaseBrowser({
   const pending = dirty.size > 0 || drafts.length > 0;
 
   function chooseSchema(next: string) {
+    rememberSchema(databaseId, next);
     setSchema(next);
     setTable("");
     setRows([]);
@@ -405,6 +410,8 @@ export default function DatabaseBrowser({
           onQuery={setTableQuery}
           tables={tables}
           loading={tablesLoading}
+          error={tablesError}
+          onRetry={() => setTablesReload((token) => token + 1)}
           selected={table}
           onSelect={chooseTable}
         />
@@ -507,8 +514,24 @@ export default function DatabaseBrowser({
           />
 
           {!table && !sqlResult ? (
-            <div className="flex flex-1 items-center justify-center">
-              <p className="text-body text-text-2">Choose a table from the list.</p>
+            <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
+              {tablesError ? (
+                <>
+                  <p role="alert" className="text-body text-error">
+                    {tablesError}
+                  </p>
+                  <Button type="button" variant="outline" size="compact" onClick={() => setTablesReload((token) => token + 1)}>
+                    Retry
+                  </Button>
+                </>
+              ) : tablesLoading ? null : tables.length === 0 ? (
+                <div>
+                  <p className="text-body text-text-2">This schema has no tables.</p>
+                  <p className="mt-1 text-small text-text-3">Pick another schema from the list.</p>
+                </div>
+              ) : (
+                <p className="text-body text-text-2">Choose a table from the list.</p>
+              )}
             </div>
           ) : (
             <DataGrid

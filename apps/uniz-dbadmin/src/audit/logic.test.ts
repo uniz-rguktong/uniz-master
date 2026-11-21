@@ -4,7 +4,7 @@ import { claimsAllow, decideAccess, readAccessToken, accessCertsUrl, accessIssue
 import { classifySql, confirmationSatisfied, targetsAuditTable } from "../audit/sql";
 import { quoteIdent } from "../audit/idents";
 import { buildDelete, buildInsert, buildRowSelect, buildUpdate, collectFilters } from "../audit/rowsql";
-import { TABLE_LIST_SQL } from "../catalog";
+import { TABLE_LIST_SQL, estimatedRowsFromRelTuples } from "../catalog";
 import { buildUndoStatement, fitAuditJson, isChangeUndone } from "../audit/undo";
 import { coerceColumnValue, columnInputKind, describeChange } from "../audit/values";
 import { DbAdminError, sanitizePgMessage } from "../errors";
@@ -313,9 +313,19 @@ describe("row commands", () => {
   });
 
   it("estimates table size from planner stats instead of counting every row", () => {
+    assert.match(TABLE_LIST_SQL, /pg_catalog\.pg_class/);
+    assert.match(TABLE_LIST_SQL, /LEFT JOIN/);
     assert.match(TABLE_LIST_SQL, /reltuples/);
     assert.match(TABLE_LIST_SQL, /\$1/);
+    assert.equal(TABLE_LIST_SQL.includes("::bigint"), false);
     assert.equal(TABLE_LIST_SQL.includes("${"), false);
+    assert.equal(estimatedRowsFromRelTuples(-1), null);
+    assert.equal(estimatedRowsFromRelTuples(0), 0);
+    assert.equal(estimatedRowsFromRelTuples(2.4), 2);
+    assert.equal(estimatedRowsFromRelTuples(Number.NaN), null);
+    assert.equal(estimatedRowsFromRelTuples(Number.POSITIVE_INFINITY), null);
+    assert.equal(estimatedRowsFromRelTuples(1e20), null);
+    assert.equal(estimatedRowsFromRelTuples(null), null);
   });
 });
 
