@@ -659,6 +659,7 @@ export const changePassword = async (
       });
     }
 
+    // Verify current password
     // The forced screen has no current-password field: the login just proved it.
     if (currentPassword) {
       const isValid = await comparePassword(
@@ -709,6 +710,7 @@ export const changePassword = async (
       exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
     });
 
+    // Send password change notification email
     sendPasswordChangeNotification(
       deliveryEmailFor(targetUser),
       targetUser.username,

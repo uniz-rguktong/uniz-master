@@ -78,6 +78,7 @@ export const authMiddleware = async (
       });
     }
 
+    // --- INTERNAL API SUSPENSION CHECK (OPTIMIZED WITH REDIS) ---
     // Suspension, token generation, and the forced password change.
     const cacheKey = `user:status:${parsed.data.id}`;
     try {
@@ -98,6 +99,7 @@ export const authMiddleware = async (
           tokenVersion: Number(data.tokenVersion ?? 0),
           mustChangePassword: Boolean(data.mustChangePassword),
         };
+        // Cache for 10 minutes (now 60 seconds, so a sign-out or forced password change lands fast)
         await redis.setex(cacheKey, 60, encodeCredentialStatus(status));
       }
 
