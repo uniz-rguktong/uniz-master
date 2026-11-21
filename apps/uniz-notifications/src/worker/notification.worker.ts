@@ -2,6 +2,7 @@ import { Worker, type ConnectionOptions } from "bullmq";
 import type IORedis from "ioredis";
 import { sendWebPush } from "../services/push.service";
 import { dispatchEmailByType } from "../mail/services/email-dispatch.service";
+import { activeMailProvider } from "../mail/services/email.service";
 import {
   getNotificationQueue,
   NOTIFICATION_QUEUE_NAME,
@@ -27,9 +28,16 @@ export const createNotificationWorker = (connection: IORedis) => {
         }
         const payload = { ...data, ...(data.data || {}) };
         const ok = await dispatchEmailByType(type, to, payload);
-        if (!ok)
-          throw new Error(`Email delivery failed for type=${type} to=${to}`);
-        return { sent: true, type, to };
+        const provider = activeMailProvider();
+        if (!ok) {
+          throw new Error(
+            `Email delivery failed for type=${type} to=${to} provider=${provider}`,
+          );
+        }
+        console.log(
+          `[MAIL-JOB] id=${job.id} result=sent provider=${provider} type=${type}`,
+        );
+        return { sent: true, type, to, provider };
       }
 
       if (jobType === "OTP_DELIVER") {
@@ -167,8 +175,11 @@ export const createNotificationWorker = (connection: IORedis) => {
   );
 
   worker.on("failed", (job, err) => {
+    const made = job?.attemptsMade ?? 1;
+    const maxAttempts = job?.opts?.attempts ?? 1;
+    const final = made >= maxAttempts ? "yes" : "no";
     console.error(
-      `[NotificationWorker] Job ${job?.id} (${job?.name}) failed: ${err.message}`,
+      `[NotificationWorker] Job ${job?.id} (${job?.name}) failed: ${err.message} final=${final}`,
     );
   });
 
