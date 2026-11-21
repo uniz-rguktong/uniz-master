@@ -44,7 +44,7 @@ export function HowToButton({ screen, tone = "page" }: HowToButtonProps) {
         type="button"
         onClick={() => setOpen(true)}
         className={cn(
-          "inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-dense font-semibold leading-5",
+          "inline-flex h-10 items-center gap-1.5 rounded-full border px-3 text-dense font-semibold leading-5",
           tone === "chrome"
             ? "border-navy-300 text-white hover:bg-white/10"
             : "border-head bg-transparent text-head hover:bg-tint",

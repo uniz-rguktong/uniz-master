@@ -270,7 +270,7 @@ export default function ProfilePopup({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground"
+                  className="absolute -bottom-1 -right-1 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground"
                   aria-label="Change photo"
                 >
                   <Camera size={12} />

@@ -107,6 +107,12 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Long emails and ids wrap inside their cell instead of spilling out. */
+  dd,
+  p {
+    overflow-wrap: break-word;
+  }
+
   ::-webkit-scrollbar {
     width: 5px;
     height: 5px;

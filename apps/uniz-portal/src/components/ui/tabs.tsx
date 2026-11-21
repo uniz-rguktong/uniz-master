@@ -28,7 +28,15 @@ export function Tabs({
   useEffect(() => {
     const list = listRef.current;
     const active = list?.querySelector<HTMLElement>('[aria-selected="true"]');
-    active?.scrollIntoView({ inline: "nearest", block: "nearest" });
+    if (!list || !active) return;
+    // Scroll the tab strip only. scrollIntoView also scrolls the page and
+    // parks these tabs under the fixed mobile bar.
+    const left = active.offsetLeft;
+    const right = left + active.offsetWidth;
+    if (left < list.scrollLeft) list.scrollLeft = left;
+    else if (right > list.scrollLeft + list.clientWidth) {
+      list.scrollLeft = right - list.clientWidth;
+    }
   }, [value]);
 
   return (

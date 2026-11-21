@@ -126,3 +126,33 @@ jobs:
 
       - name: Build portal
         run: npm run build -w uniz
+
+  # Optional layout sweep. Failures are reported as artifacts and do not block merge.
+  responsive:
+    name: Responsive audit
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Audit portal, landing, and docs
+        run: npm run audit:responsive
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-audit
+          path: scripts/responsive-audit/out
+          if-no-files-found: ignore
