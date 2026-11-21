@@ -115,7 +115,7 @@ export function ServiceIndex() {
           Services
         </h2>
         <p className="mt-2.5 text-[17px] leading-[26px] text-text-2">
-          Sign in with your university ID or college email.
+          Results, attendance and registration open on the student portal.
         </p>
         <div className="mt-8 grid grid-cols-1 min-[821px]:mt-14 min-[821px]:grid-cols-3 min-[821px]:gap-x-14">
           {services().map((item) => (
