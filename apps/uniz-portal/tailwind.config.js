@@ -75,6 +75,7 @@ module.exports = {
           hover: "var(--primary-hover)",
           active: "var(--primary-active)",
         },
+        "on-primary": "var(--on-primary)",
         link: "var(--link)",
         selected: "var(--selected)",
         ring: "var(--ring)",

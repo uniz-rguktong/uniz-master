@@ -143,14 +143,14 @@ export default function AdminShell({
   const sidebar = (mobile: boolean) => (
     <aside
       className={cn(
-        "flex h-full flex-col border-r border-[var(--sb-border)] bg-navy-900 text-navy-300",
-        mobile ? "w-[280px]" : isSidebarOpen ? "w-[248px]" : "w-[72px]",
+        "flex h-full min-h-0 w-[248px] shrink-0 flex-col border-r border-[var(--sb-border)] bg-navy-900 text-navy-300",
+        mobile ? "h-dvh w-[280px]" : isSidebarOpen ? "w-[248px]" : "w-[72px]",
       )}
       data-admin-chrome=""
     >
       <div
         className={cn(
-          "flex h-16 items-center border-b border-[var(--sb-div)] px-3",
+          "flex h-16 shrink-0 items-center border-b border-[var(--sb-div)] px-3",
           !mobile && !isSidebarOpen && collapseBranding === "hide" && "justify-center",
         )}
       >
@@ -174,7 +174,7 @@ export default function AdminShell({
       </div>
 
       {enableNavSearch && (mobile || isSidebarOpen) ? (
-        <div className="px-3 py-3">
+        <div className="shrink-0 px-3 py-3">
           <div className="relative">
             <Search
               size={16}
@@ -197,7 +197,7 @@ export default function AdminShell({
 
       <nav
         className={cn(
-          "flex-1 overflow-y-auto px-3",
+          "admin-nav-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain px-3",
           navSpacing === "default" ? "py-2" : "py-1",
         )}
         aria-label="Administration"
@@ -241,7 +241,7 @@ export default function AdminShell({
         )}
       </nav>
 
-      <div className="mt-auto border-t border-[var(--sb-div)] p-3">
+      <div className="mt-auto shrink-0 border-t border-[var(--sb-div)] p-3">
         {sidebarFooter}
         <div className={cn("flex items-center gap-3", !mobile && !isSidebarOpen && "flex-col")}>
           <button
@@ -286,8 +286,8 @@ export default function AdminShell({
   );
 
   return (
-    <div className="flex min-h-screen bg-bg text-text">
-      <div className="sticky top-0 hidden h-screen min-[821px]:flex">{sidebar(false)}</div>
+    <div className="fixed inset-x-0 top-0 z-20 flex h-app-frame w-full overflow-hidden bg-bg text-text">
+      <div className="sticky top-0 hidden h-full shrink-0 self-start min-[821px]:flex">{sidebar(false)}</div>
 
       {mobileOpen ? (
         <div className="fixed inset-0 z-50 min-[821px]:hidden">
@@ -297,12 +297,12 @@ export default function AdminShell({
             aria-label="Close menu"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="absolute bottom-0 left-0 top-0">{sidebar(true)}</div>
+          <div className="absolute bottom-0 left-0 top-0 h-full">{sidebar(true)}</div>
         </div>
       ) : null}
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header data-admin-chrome="" className="sticky top-0 z-30 flex h-[60px] items-center gap-2 bg-navy-900 px-3 text-white min-[821px]:hidden">
+      <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        <header data-admin-chrome="" className="z-30 flex h-[60px] shrink-0 items-center gap-2 bg-navy-900 px-3 text-white min-[821px]:hidden">
           <button
             type="button"
             className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10"
@@ -327,7 +327,7 @@ export default function AdminShell({
         <header
           data-admin-chrome=""
           className={cn(
-            "sticky top-0 z-30 hidden h-16 items-center gap-3 border-b border-border bg-bg px-10 min-[821px]:flex",
+            "z-30 hidden h-16 shrink-0 items-center gap-3 border-b border-border bg-bg px-10 min-[821px]:flex",
             headerAlign === "between" || headerLeft ? "justify-between" : "justify-end",
           )}
         >
@@ -403,7 +403,7 @@ export default function AdminShell({
           initialPhoto={profilePhoto}
         />
 
-        <div className={cn("min-w-0 w-full flex-1 px-4 py-6 min-[821px]:px-10 min-[821px]:py-8", contentClassName)}>
+        <div className={cn("min-h-0 min-w-0 w-full flex-1 overflow-x-hidden overflow-y-auto px-4 py-6 min-[821px]:px-10 min-[821px]:py-8", contentClassName)}>
           {children}
         </div>
       </div>

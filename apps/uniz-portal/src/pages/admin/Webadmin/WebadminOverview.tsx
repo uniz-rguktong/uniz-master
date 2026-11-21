@@ -23,6 +23,7 @@ import { Panel } from "@/components/ui/panel";
 import { formatDisplayText } from "@/utils/displayText";
 import SystemUserAnalytics from "./SystemUserAnalytics";
 import { uploadImage } from "../../../api/uploadImage";
+import { changedProfileFields } from "@/utils/changedFields";
 
 function greeting() {
   const h = new Date().getHours();
@@ -113,6 +114,22 @@ export default function WebadminOverview({ username }: { username: string }) {
   };
 
   const handleSave = async () => {
+    const patch = changedProfileFields(
+      {
+        name: profile?.name || "",
+        email: profile?.email || "",
+        contact: profile?.contact || "",
+        designation: profile?.designation || "",
+        department: profile?.department || "",
+      },
+      formData,
+      ["name", "email", "contact", "designation", "department"],
+    );
+    if (Object.keys(patch).length === 0) {
+      toast.info("No changes to save");
+      setIsEditing(false);
+      return;
+    }
     try {
       setIsSaving(true);
       const res = await fetch(`${BASE_URL}/profile/admin/me/update`, {
@@ -121,7 +138,7 @@ export default function WebadminOverview({ username }: { username: string }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token()}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(patch),
       });
       const data = await res.json();
       if (data.success) {

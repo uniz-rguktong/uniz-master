@@ -108,6 +108,9 @@ export default function SystemLogsSection() {
       id: "activity",
       header: "Activity & Resource",
       primary: true,
+      width: 280,
+      clip: false,
+      title: (log) => String(log.filename || "Automated sync"),
       cell: (log) => {
         const errorsJson =
           typeof log.errors === "string" ? JSON.parse(log.errors) : log.errors;
@@ -149,6 +152,8 @@ export default function SystemLogsSection() {
       header: "Data Metrics",
       meta: true,
       numeric: true,
+      width: 168,
+      clip: false,
       cell: (log) => (
         <span className="block">
           <span className="text-dense font-semibold tabular-nums text-text">
@@ -170,6 +175,8 @@ export default function SystemLogsSection() {
     {
       id: "status",
       header: "Status",
+      width: 140,
+      clip: false,
       cell: (log) => {
         const tone =
           log.status === "COMPLETED"
@@ -190,6 +197,7 @@ export default function SystemLogsSection() {
       id: "time",
       header: "Timestamp",
       meta: true,
+      width: 188,
       cell: (log) => (
         <span className="tabular-nums text-dense text-text">
           {new Date(log.createdAt).toLocaleDateString("en-GB", {
@@ -268,7 +276,7 @@ export default function SystemLogsSection() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className={cn(adminInputClass, "w-full pl-10 sm:w-60")}
+                className={cn(adminInputClass, "w-full min-w-0 max-w-full pl-10 sm:max-w-[240px]")}
               />
             </div>
           </>

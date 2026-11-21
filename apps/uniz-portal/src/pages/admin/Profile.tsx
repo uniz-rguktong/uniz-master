@@ -17,6 +17,7 @@ import {
   adminLabelClass,
   adminTextareaClass,
 } from "@/components/admin/admin-ui";
+import { changedProfileFields } from "@/utils/changedFields";
 
 const sectionTitleClass =
   "font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head";
@@ -107,6 +108,27 @@ export default function AdminProfile() {
 
   const handleUpdateProfile = async () => {
     const token = localStorage.getItem("admin_token");
+    const patch: Record<string, unknown> = changedProfileFields(
+      {
+        name: profile?.name || "",
+        email: profile?.email || "",
+        contact: profile?.contact || "",
+        designation: profile?.designation || "",
+        department: profile?.department || "",
+      },
+      formData,
+      ["name", "email", "contact", "designation", "department"],
+    );
+    const bioBefore =
+      typeof profile?.bio === "string" ? profile.bio : JSON.stringify(profile?.bio ?? "");
+    const bioAfter =
+      typeof formData.bio === "string" ? formData.bio : JSON.stringify(formData.bio ?? "");
+    if (bioBefore !== bioAfter) patch.bio = formData.bio;
+    if (Object.keys(patch).length === 0) {
+      toast.info("No changes to save");
+      setIsEditing(false);
+      return;
+    }
     try {
       setLoading(true);
       const res = await fetch(`${BASE_URL}/profile/admin/me/update`, {
@@ -115,7 +137,7 @@ export default function AdminProfile() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(patch),
       });
       const data = await res.json();
       if (data.success) {

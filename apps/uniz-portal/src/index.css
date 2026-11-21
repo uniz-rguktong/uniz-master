@@ -149,8 +149,8 @@
   }
 
   .uniz-primary-btn {
-    @apply inline-flex h-11 min-h-11 items-center justify-center rounded-full bg-primary px-6 text-[15px] font-semibold leading-[22px] text-primary-foreground transition-[background-color,color,opacity,transform] duration-150 ease-out;
-    @apply hover:bg-primary-hover active:bg-primary-active;
+    @apply inline-flex h-11 min-h-11 items-center justify-center rounded-full bg-primary px-6 text-[15px] font-semibold leading-[22px] text-on-primary transition-[background-color,color,opacity,transform] duration-150 ease-out;
+    @apply hover:bg-primary-hover hover:text-on-primary active:bg-primary-active active:text-on-primary disabled:text-on-primary;
     @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
     @apply disabled:pointer-events-none disabled:opacity-[0.45];
   }
@@ -227,6 +227,28 @@
 }
 
 @layer utilities {
+  .h-app-frame {
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+  }
+
+  .admin-nav-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--navy-700) transparent;
+  }
+
+  .admin-nav-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .admin-nav-scroll::-webkit-scrollbar-thumb {
+    background: var(--navy-700);
+    border-radius: 999px;
+  }
+
+
   @keyframes portal-updates-marquee {
     0% {
       transform: translateX(0);
