@@ -3,9 +3,8 @@ import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
 export const SITE_URL = "https://uniz.rguktong.in";
 export const SITE_NAME = "uniZ";
 
-/** 1200×630 JPG for link previews — no colons in URL (breaks some crawlers). */
-export const DEFAULT_OG_IMAGE =
-  "https://res.cloudinary.com/diipfzmyj/image/upload/w_1200,h_630,c_fill,f_jpg,q_auto/v1772885809/signIn_ojzi3w.png";
+/** 1200×630 PNG committed at public/og/uniz.png. Absolute URL, no user data. */
+export const DEFAULT_OG_IMAGE = "https://uniz.rguktong.in/og/uniz.png";
 
 export const HOME_SEO = {
   title: "uniZ — Campus platform for RGUKT students",

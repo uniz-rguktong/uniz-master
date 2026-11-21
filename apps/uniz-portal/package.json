@@ -9,11 +9,11 @@
   "scripts": {
     "dev": "vite",
     "sync": "npm run dev -- --host",
-    "build": "vite build && node scripts/build-sitemap.js",
+    "build": "vite build && node scripts/build-sitemap.js && node scripts/prerender-og.mjs",
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "lint:hex": "node scripts/lint-hex.mjs",
-    "test": "NODE_OPTIONS='--require ./test/register-react.cjs --import ./test/register-react.mjs' vitest run",
+    "test": "NODE_OPTIONS='--require ./test/register-react.cjs --import ./test/register-react.mjs' vitest run && node scripts/og-assert.mjs",
     "guides:pdf": "node scripts/build-webadmin-pdf.mjs",
     "preview": "vite preview"
   },
