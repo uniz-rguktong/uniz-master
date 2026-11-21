@@ -48,6 +48,7 @@ export const REQUEST_OTP_EMAIL_ENDPOINT = `${BASE_URL}/auth/otp/request-email`;
 export const VERIFY_OTP_ENDPOINT = `${BASE_URL}/auth/otp/verify`;
 export const SET_NEW_PASS_ENDPOINT = `${BASE_URL}/auth/password/reset`;
 export const CHANGE_PASS_ENDPOINT = `${BASE_URL}/auth/password/change`;
+export const CHANGE_PASS_OTP_ENDPOINT = `${BASE_URL}/auth/password/change/otp`;
 
 // Profile (User Service)
 export const STUDENT_INFO = `${BASE_URL}/profile/student/me`;

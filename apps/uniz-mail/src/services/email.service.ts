@@ -8,6 +8,21 @@ import {
   AttendanceData,
 } from "../utils/pdf.util";
 import {
+  buildAdminActionEmail,
+  buildAdminAlertEmail,
+  buildAttendanceEmail,
+  buildCheckpointEmail,
+  buildGrievanceResolvedEmail,
+  buildGrievanceSubmissionEmail,
+  buildLoginAlertEmail,
+  buildOtpEmail,
+  buildOutingApprovalEmail,
+  buildOutingRequestEmail,
+  buildOutpassApprovalEmail,
+  buildOutpassRequestEmail,
+  buildPasswordChangeEmail,
+  buildProfileUpdateEmail,
+  buildResultsEmail,
   formatGrievanceCategoryLabel,
   formatStudentDisplayName,
   isActionableGrievanceDescription,
@@ -84,6 +99,7 @@ const sendEmailUnified = async (options: {
   to: string;
   subject: string;
   html: string;
+  text?: string;
   attachments?: any[];
 }): Promise<boolean> => {
   const provider = sesTransporter ? "SES" : "GMAIL";
@@ -127,59 +143,7 @@ const sendEmailUnified = async (options: {
 
 // Logic moved to simplified sendEmailUnified above
 
-// Super professional minimalist email template (No gradients, high clarity)
-const emailTemplate = (title: string, content: string) => `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="margin: 0; padding: 0; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-  <div style="max-width: 580px; margin: 0 auto; padding: 40px 20px;">
-    <!-- Minimalist Branding -->
-    <div style="margin-bottom: 40px; border-bottom: 2px solid #000000; padding-bottom: 12px;">
-      <h1 style="margin: 0; color: #000000; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">
-        uniZ <span style="font-weight: 300; color: #666666;">Security Dispatch</span>
-      </h1>
-    </div>
-    
-    <!-- Professional Content -->
-    <div style="margin-bottom: 60px;">
-      <h2 style="margin: 0 0 24px 0; color: #000000; font-size: 22px; font-weight: 600; letter-spacing: -0.01em;">
-        ${title}
-      </h2>
-      <div style="color: #333333; font-size: 15px; line-height: 1.6; font-weight: 400;">
-        ${content}
-      </div>
-    </div>
-    
-    <!-- Clean Structured Footer -->
-    <div style="padding: 30px 0; border-top: 1px solid #eeeeee;">
-      <p style="margin: 0; color: #000000; font-size: 14px; font-weight: 600;">
-        Office of Information Security
-      </p>
-      <p style="margin: 4px 0 0 0; color: #888888; font-size: 13px;">
-        Rajiv Gandhi University of Knowledge Technologies
-      </p>
-      
-      <div style="margin-top: 40px;">
-        <p style="margin: 0; color: #bbbbbb; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">
-          Administrative Notice
-        </p>
-        <p style="margin: 8px 0 0 0; color: #bbbbbb; font-size: 11px; line-height: 1.5;">
-          This is an automated administrative transmission initiated by system security. If you did not expect this communication, please disregard or notify the institutional IT helpdesk. Confidentiality and security are paramount.
-        </p>
-      </div>
-    </div>
-    
-    <div style="margin-top: 30px; text-align: left;">
-      <p style="color: #cccccc; font-size: 10px;">&copy; 2026 uniZ Integrated Services. Document ID: SEC/${Date.now().toString(36).toUpperCase()}</p>
-    </div>
-  </div>
-</body>
-</html>
-`;
+// Layout and copy live in @uniz/shared email-messages.
 
 export const sendOtpEmail = async (
   email: string,
@@ -187,24 +151,13 @@ export const sendOtpEmail = async (
   otp: string,
 ): Promise<boolean> => {
   try {
-    const content = `
-      <p style="margin: 0;">Identity verification for student ID: <strong>${username}</strong></p>
-      <p style="margin: 16px 0 0 0;">Please enter the following security code to authenticate your session. This code is unique and valid for a single transaction.</p>
-      
-      <div style="margin: 40px 0; border: 1px solid #000000; padding: 30px; text-align: center;">
-        <span style="font-size: 32px; font-weight: 700; letter-spacing: 12px; color: #000000; font-family: 'Courier New', Courier, monospace;">${otp}</span>
-      </div>
-      
-      <p style="margin: 0; font-size: 13px; color: #666666;">
-        This security code will expire automatically in 10 minutes.
-      </p>
-    `;
-
+    const rendered = buildOtpEmail({ username, otp });
     const success = await sendEmailUnified({
-      from: '"uniZ Official" <no-reply@rguktong.in>',
+      from: '"uniZ" <no-reply@rguktong.in>',
       to: email,
-      subject: `Your uniZ Access Code: ${otp}`,
-      html: emailTemplate("Verification Required", content),
+      subject: rendered.subject,
+      html: rendered.html,
+      text: rendered.text,
     });
     return success;
   } catch (error) {
@@ -222,16 +175,8 @@ export const sendLoginNotification = async (
     const timestamp = new Date().toLocaleString("en-IN", {
       timeZone: "Asia/Kolkata",
     });
-    const content = `
-      <p>Dear <strong>${username}</strong>,</p>
-      <p>A new login was detected on your uniZ account.</p>
-      <div style="background-color: #fffaf0; border-left: 4px solid #ed8936; padding: 15px; margin: 20px 0;">
-        <p style="margin: 0; font-size: 14px;"><strong>Time:</strong> ${timestamp}</p>
-        ${ipAddress ? `<p style="margin: 5px 0 0 0; font-size: 14px;"><strong>IP Address:</strong> ${ipAddress}</p>` : ""}
-        <p style="margin: 5px 0 0 0; font-size: 14px;"><strong>Device:</strong> Web Browser</p>
-      </div>
-      <p style="color: #e53e3e; font-size: 13px; font-weight: 500;">If this was not you, please reset your password immediately via the uniZ portal.</p>
-    `;
+    const rendered = buildLoginAlertEmail({ username, timestamp, ipAddress });
+    void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Login notification suppressed for ${username}`);
@@ -250,17 +195,13 @@ export const sendOutpassRequestNotification = async (
   toDate: string,
 ): Promise<boolean> => {
   try {
-    const content = `
-      <p>Dear <strong>${username}</strong>,</p>
-      <p>Your outpass application has been successfully submitted and is now awaiting review.</p>
-      <div style="background-color: #f7fafc; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #edf2f7;">
-        <p style="margin: 0;"><strong>Reason:</strong> ${reason}</p>
-        <p style="margin: 10px 0 0 0;"><strong>From:</strong> ${new Date(fromDate).toLocaleDateString("en-IN")}</p>
-        <p style="margin: 5px 0 0 0;"><strong>To:</strong> ${new Date(toDate).toLocaleDateString("en-IN")}</p>
-        <p style="margin: 10px 0 0 0; color: #3182ce;"><strong>Status:</strong> Pending Approval</p>
-      </div>
-      <p>You will receive another email once your request is processed.</p>
-    `;
+    const rendered = buildOutpassRequestEmail({
+      username,
+      reason,
+      fromDate,
+      toDate,
+    });
+    void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Outpass notification suppressed for ${username}`);
@@ -279,17 +220,13 @@ export const sendOutingRequestNotification = async (
   toDate: string,
 ): Promise<boolean> => {
   try {
-    const content = `
-      <p>Dear <strong>${username}</strong>,</p>
-      <p>Your outing application has been successfully submitted.</p>
-      <div style="background-color: #f7fafc; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #edf2f7;">
-        <p style="margin: 0;"><strong>Reason:</strong> ${reason}</p>
-        <p style="margin: 10px 0 0 0;"><strong>From:</strong> ${new Date(fromDate).toLocaleDateString("en-IN")}</p>
-        <p style="margin: 5px 0 0 0;"><strong>To:</strong> ${new Date(toDate).toLocaleDateString("en-IN")}</p>
-        <p style="margin: 10px 0 0 0; color: #3182ce;"><strong>Status:</strong> Pending Approval</p>
-      </div>
-      <p>You will be notified once the request is reviewed.</p>
-    `;
+    const rendered = buildOutingRequestEmail({
+      username,
+      reason,
+      fromDate,
+      toDate,
+    });
+    void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Outing notification suppressed for ${username}`);
@@ -308,16 +245,13 @@ export const sendOutpassApprovalNotification = async (
   comment?: string,
 ): Promise<boolean> => {
   try {
-    let statusText = status.charAt(0).toUpperCase() + status.slice(1);
-    const content = `
-      <p>Dear <strong>${username}</strong>,</p>
-      <p>Your outpass application has been <strong>${statusText}</strong>.</p>
-      <div style="background-color: #f7fafc; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #edf2f7;">
-        <p style="margin: 0;"><strong>Reviewer:</strong> ${approver}</p>
-        ${comment ? `<p style="margin: 10px 0 0 0;"><strong>Remark:</strong> ${comment}</p>` : ""}
-        <p style="margin: 10px 0 0 0;"><strong>Status:</strong> ${statusText}</p>
-      </div>
-    `;
+    const rendered = buildOutpassApprovalEmail({
+      username,
+      status,
+      approver,
+      comment,
+    });
+    void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Outpass approval suppressed for ${username}`);
@@ -335,16 +269,13 @@ export const sendOutingApprovalNotification = async (
   comment?: string,
 ): Promise<boolean> => {
   try {
-    let statusText = status.charAt(0).toUpperCase() + status.slice(1);
-    const content = `
-      <p>Dear <strong>${username}</strong>,</p>
-      <p>Your outing application has been <strong>${statusText}</strong>.</p>
-      <div style="background-color: #f7fafc; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #edf2f7;">
-        <p style="margin: 0;"><strong>Reviewer:</strong> ${approver}</p>
-        ${comment ? `<p style="margin: 10px 0 0 0;"><strong>Remark:</strong> ${comment}</p>` : ""}
-        <p style="margin: 10px 0 0 0;"><strong>Status:</strong> ${statusText}</p>
-      </div>
-    `;
+    const rendered = buildOutingApprovalEmail({
+      username,
+      status,
+      approver,
+      comment,
+    });
+    void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Outing approval suppressed for ${username}`);
@@ -362,15 +293,8 @@ export const sendCheckpointNotification = async (
 ): Promise<boolean> => {
   try {
     const action = type === "check_in" ? "Checked In" : "Checked Out";
-    const content = `
-      <p>Dear <strong>${username}</strong>,</p>
-      <p>You have successfully ${action.toLowerCase()} at the campus gate.</p>
-      <div style="background-color: #f0fff4; border-left: 4px solid #48bb78; padding: 15px; margin: 20px 0;">
-        <p style="margin: 0;"><strong>Action:</strong> ${action}</p>
-        <p style="margin: 5px 0 0 0;"><strong>Time:</strong> ${time}</p>
-      </div>
-      <p>Safe travels!</p>
-    `;
+    const rendered = buildCheckpointEmail({ username, action, time });
+    void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Checkpoint notification suppressed for ${username}`);
@@ -390,15 +314,11 @@ export const sendResultEmail = async (
   grades: any[],
 ): Promise<boolean> => {
   try {
-    const content = `
-      <p>Dear <strong>${name}</strong>,</p>
-      <p>The results for <strong>${semesterId}</strong> have been officially published.</p>
-      <p>Please find your detailed grade report attached to this email as a PDF document.</p>
-      <div style="margin: 25px 0; text-align: center;">
-        <a href="https://uniz.sreecharandesu.in" style="background-color: #cc0000; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">View on Dashboard</a>
-      </div>
-    `;
 
+    const rendered = buildResultsEmail({
+      name: name || username,
+      semesterId,
+    });
     const pdfBuffer = await generateResultPdf({
       username,
       name: name || username,
@@ -407,11 +327,11 @@ export const sendResultEmail = async (
       semesterId,
       grades,
     });
+    void rendered;
+    void pdfBuffer;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Result email suppressed for ${username}`);
-    return true;
-
     return true;
   } catch (error: any) {
     console.error(`Failed to send result email:`, error.message);
@@ -429,12 +349,11 @@ export const sendAttendanceReportEmail = async (
   records: any[],
 ): Promise<boolean> => {
   try {
-    const content = `
-      <p>Dear <strong>${name}</strong>,</p>
-      <p>The attendance report for <strong>${semesterId}</strong> is now available.</p>
-      <p>Please find your detailed attendance record attached to this email.</p>
-    `;
 
+    const rendered = buildAttendanceEmail({
+      name: name || username,
+      semesterId,
+    });
     const pdfBuffer = await generateAttendancePdf({
       username,
       name,
@@ -443,11 +362,11 @@ export const sendAttendanceReportEmail = async (
       semesterId,
       records,
     });
+    void rendered;
+    void pdfBuffer;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Attendance email suppressed for ${username}`);
-    return true;
-
     return true;
   } catch (error: any) {
     console.error(`Failed to send attendance email:`, error.message);
@@ -463,15 +382,13 @@ export const sendNewRequestAlertToAdmin = async (
   type: string = "outpass",
 ): Promise<boolean> => {
   try {
-    let label = type.charAt(0).toUpperCase() + type.slice(1);
-    const content = `
-      <p>Dear Administrator,</p>
-      <p>A new <strong>${label.toLowerCase()}</strong> has been submitted by <strong>${studentName}</strong> (${studentId}).</p>
-      <div style="background-color: #f7fafc; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #edf2f7;">
-        <p style="margin: 0;"><strong>Details:</strong> ${reason}</p>
-      </div>
-      <p>Please login to the uniZ Admin Portal to review and take action.</p>
-    `;
+    const rendered = buildAdminAlertEmail({
+      studentName,
+      studentId,
+      reason,
+      type,
+    });
+    void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Admin alert suppressed`);
@@ -488,15 +405,8 @@ export const sendGrievanceSubmissionNotification = async (
   ticketId: string,
 ): Promise<boolean> => {
   try {
-    const content = `
-      <p>Dear Student,</p>
-      <p>Your grievance regarding <strong>${category}</strong> has been received.</p>
-      <div style="background-color: #fff5f5; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #fed7d7;">
-        <p style="margin: 0; color: #c53030;"><strong>Ticket ID:</strong> ${ticketId}</p>
-        <p style="margin: 10px 0 0 0;"><strong>Status:</strong> Under Review</p>
-      </div>
-      <p>The Student Welfare Office will look into this matter shortly.</p>
-    `;
+    const rendered = buildGrievanceSubmissionEmail({ category, ticketId });
+    void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Grievance ack suppressed`);
@@ -517,49 +427,19 @@ export const sendGrievanceResolvedNotification = async (
     const safeName = formatStudentDisplayName(studentName);
     const categoryLabel = formatGrievanceCategoryLabel(category);
     const actionable = isActionableGrievanceDescription(description);
-
-    const content = actionable
-      ? `
-      <p>Dear <strong>${safeName}</strong>,</p>
-      <p>We have reviewed your grievance regarding <strong>${categoryLabel}</strong>.</p>
-      <p>The Student Welfare Office has looked into the matter based on the details you shared, and this grievance has been marked as <strong>resolved</strong>.</p>
-      <div style="background-color: #f0fdf4; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #bbf7d0;">
-        <p style="margin: 0;"><strong>Category:</strong> ${category}</p>
-        <p style="margin: 10px 0 0 0;"><strong>Status:</strong> Resolved</p>
-      </div>
-      <p>If you feel the issue is still unresolved, or if you have additional information to share, you may submit a follow-up grievance through the uniZ portal.</p>
-      <p>Thank you for bringing this to our attention.</p>
-      <p style="margin-top: 24px; color: #525252;">Regards,<br/><strong>Student Welfare Office (SWO)</strong><br/>Rajiv Gandhi University of Knowledge Technologies, Ongole</p>
-    `
-      : `
-      <p>Dear <strong>${safeName}</strong>,</p>
-      <p>Thank you for using the uniZ grievance portal.</p>
-      <p>We have reviewed your submission regarding <strong>${categoryLabel}</strong>. After going through the details you shared, we were unable to identify a specific concern that we can take forward from the information provided.</p>
-      <p>For this reason, we are <strong>closing this grievance</strong>. This does not mean your concern is unimportant — we simply need a clear description of the issue so the Student Welfare Office can look into it properly.</p>
-      <div style="background-color: #fafafa; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #e4e4e7;">
-        <p style="margin: 0;"><strong>Category:</strong> ${category}</p>
-        <p style="margin: 10px 0 0 0;"><strong>Status:</strong> Closed</p>
-      </div>
-      <p>If you are facing a genuine issue related to ${categoryLabel}, please submit a <strong>new grievance</strong> with:</p>
-      <ul style="color: #404040; line-height: 1.7; padding-left: 20px;">
-        <li>A brief, clear description of what happened</li>
-        <li>When and where it occurred (if applicable)</li>
-        <li>Any other details that would help us verify and take action</li>
-      </ul>
-      <p>If you need help submitting the grievance, you can reply to this email or contact the SWO office.</p>
-      <p style="margin-top: 24px; color: #525252;">Regards,<br/><strong>Student Welfare Office (SWO)</strong><br/>Rajiv Gandhi University of Knowledge Technologies, Ongole</p>
-    `;
-
-    const emailTitle = actionable ? "Grievance resolved" : "Grievance closed";
-    const subject = actionable
-      ? `Grievance resolved: ${category}`
-      : `Grievance update: ${category}`;
+    const rendered = buildGrievanceResolvedEmail({
+      studentName: safeName,
+      category,
+      categoryLabel,
+      actionable,
+    });
 
     return await sendEmailUnified({
       from: '"uniZ SWO" <no-reply@rguktong.in>',
       to: email,
-      subject,
-      html: emailTemplate(emailTitle, content),
+      subject: rendered.subject,
+      html: rendered.html,
+      text: rendered.text,
     });
   } catch (error) {
     console.error(`Failed to send grievance resolved email:`, error);
@@ -575,12 +455,13 @@ export const sendActionConfirmationToAdmin = async (
   type: "outing" | "outpass" = "outpass",
 ): Promise<boolean> => {
   try {
-    const label = type.charAt(0).toUpperCase() + type.slice(1);
-    const actionText = action.charAt(0).toUpperCase() + action.slice(1);
-    const content = `
-      <p>Dear Administrator,</p>
-      <p>You have successfully <strong>${actionText.toLowerCase()}</strong> the ${label.toLowerCase()} request for <strong>${studentName}</strong> (${studentId}).</p>
-    `;
+    const rendered = buildAdminActionEmail({
+      action,
+      studentName,
+      studentId,
+      type,
+    });
+    void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Admin confirmation suppressed`);
@@ -598,12 +479,8 @@ export const sendPasswordChangeNotification = async (
     const timestamp = new Date().toLocaleString("en-IN", {
       timeZone: "Asia/Kolkata",
     });
-    const content = `
-      <p>Dear <strong>${username}</strong>,</p>
-      <p>Your uniZ account password has been changed successfully.</p>
-      <p style="margin-top: 20px;"><strong>Time:</strong> ${timestamp}</p>
-      <p style="color: #e53e3e; font-size: 13px; margin-top: 20px;">If you did not perform this action, please contact uniZ administration immediately.</p>
-    `;
+    const rendered = buildPasswordChangeEmail({ username, timestamp });
+    void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Password change alert suppressed for ${username}`);
@@ -622,18 +499,12 @@ export const sendProfileUpdateNotification = async (
     const timestamp = new Date().toLocaleString("en-IN", {
       timeZone: "Asia/Kolkata",
     });
-    const content = `
-      <p>Dear <strong>${username}</strong>,</p>
-      <p>Your profile information has been updated.</p>
-      <div style="background-color: #f7fafc; padding: 15px; margin: 20px 0; border-radius: 8px;">
-        <p style="margin: 0;"><strong>Time:</strong> ${timestamp}</p>
-        <p style="margin: 10px 0 0 0;"><strong>Fields Updated:</strong></p>
-        <ul style="margin: 5px 0 0 0; color: #4b5563;">
-          ${updatedFields.map((f) => `<li>${f}</li>`).join("")}
-        </ul>
-      </div>
-      <p style="font-size: 13px; color: #718096;">If you did not make these changes, please notify administration.</p>
-    `;
+    const rendered = buildProfileUpdateEmail({
+      username,
+      timestamp,
+      updatedFields,
+    });
+    void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Profile update alert suppressed for ${username}`);
