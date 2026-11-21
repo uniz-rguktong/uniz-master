@@ -8,7 +8,6 @@ import {
   adminSearchInputClass,
 } from "./admin-ui";
 import { Lockup, Mark } from "@/components/brand/Mark";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Avatar } from "@/components/ui/avatar";
 
 export interface AdminNavItem {
@@ -305,7 +304,6 @@ export default function AdminShell({
             {activeLabel || "Admin"}
           </p>
           {mobileHeaderExtra}
-          <ThemeToggle tone="chrome" />
           <button
             type="button"
             aria-label="Account menu"
@@ -338,7 +336,6 @@ export default function AdminShell({
           <div className="ml-auto flex items-center gap-2">
             {headerExtra}
             {searchSlot}
-            <ThemeToggle />
             <button
               ref={headerAvatarRef}
               type="button"

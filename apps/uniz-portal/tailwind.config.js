@@ -1,6 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{html,js,jsx,ts,tsx}"],
+  // Class strategy so leftover `dark:` utilities stay off. The portal never
+  // adds `.dark` and does not follow prefers-color-scheme.
   darkMode: "class",
 
   theme: {

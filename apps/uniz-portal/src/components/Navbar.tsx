@@ -5,8 +5,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { prefetchTurnstile } from "../utils/prefetchTurnstile";
+import { hasPortalSession } from "@/utils/portalSession";
 import { Lockup } from "@/components/brand/Mark";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Avatar } from "@/components/ui/avatar";
 
 function formatNavDisplayName(name?: string | null): string {
@@ -42,6 +42,12 @@ export default function Navbar() {
       isAuth.type === "student" &&
       localStorage.getItem("student_token")) ||
     (localStorage.getItem("student_token") && user);
+  const signedIn = hasPortalSession();
+  const signedInHome = localStorage.getItem("admin_token")
+    ? "/admin"
+    : localStorage.getItem("faculty_token")
+      ? "/faculty"
+      : "/student";
 
   return (
     <header
@@ -54,8 +60,7 @@ export default function Navbar() {
         <Lockup mark={32} word={20} tone="chrome" className="max-[820px]:[&_span]:sr-only" />
       </button>
       <div className="ml-auto flex items-center gap-2">
-        <ThemeToggle tone="chrome" />
-        {!isAuthenticated ? (
+        {!signedIn ? (
           <button
             type="button"
             onMouseEnter={prefetchTurnstile}
@@ -64,6 +69,14 @@ export default function Navbar() {
             className="inline-flex h-[38px] items-center rounded-full bg-white px-5 text-dense font-semibold text-navy-900 transition-colors duration-150 hover:bg-navy-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             Sign in
+          </button>
+        ) : !isAuthenticated ? (
+          <button
+            type="button"
+            onClick={() => navigate(signedInHome)}
+            className="inline-flex h-[38px] max-w-[160px] items-center truncate rounded-full bg-white px-5 text-dense font-semibold text-navy-900 transition-colors duration-150 hover:bg-navy-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {localStorage.getItem("username")?.replace(/"/g, "") || "Account"}
           </button>
         ) : (
           <>
