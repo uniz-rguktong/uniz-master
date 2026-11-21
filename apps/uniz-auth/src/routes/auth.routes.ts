@@ -132,6 +132,9 @@ router.post(
 router.post(
   "/password/change",
   authMiddleware,
+  // Caps guesses at the first-login email code per account.
+  bindSessionUsername,
+  rateLimiter,
   validateRequest(PasswordChangeSchema),
   changePassword,
 );

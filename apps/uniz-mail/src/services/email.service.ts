@@ -330,6 +330,7 @@ export const sendResultEmail = async (
     void rendered;
     void pdfBuffer;
 
+    // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Result email suppressed for ${username}`);
     return true;
   } catch (error: any) {
@@ -364,6 +365,7 @@ export const sendAttendanceReportEmail = async (
     void rendered;
     void pdfBuffer;
 
+    // Disabled per user policy: only OTP-on-demand uses email
     console.log(`[MAIL] Attendance email suppressed for ${username}`);
     return true;
   } catch (error: any) {
