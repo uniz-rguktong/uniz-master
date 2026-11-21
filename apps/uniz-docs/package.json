@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vitepress dev --port 3333 --host 0.0.0.0",
-    "build": "vitepress build",
+    "build": "vitepress build && node scripts/verify-og.mjs",
     "preview": "vitepress preview --port 3333 --host 0.0.0.0",
     "start": "vitepress preview --port 3333 --host 0.0.0.0"
   },

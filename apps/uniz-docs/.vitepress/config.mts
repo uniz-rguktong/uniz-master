@@ -1,9 +1,50 @@
 import { defineConfig } from 'vitepress'
 
+const SITE = 'https://api-uniz.rguktong.in/docs'
+const OG_IMAGE = `${SITE}/og.png`
+
 export default defineConfig({
   title: 'UniZ',
   description: 'UniZ system documentation — architecture, services, deploy, APIs',
   base: '/docs/',
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/docs/favicon.svg' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/docs/favicon-32.png' }],
+    ['link', { rel: 'apple-touch-icon', href: '/docs/apple-touch-icon.png' }],
+    ['link', { rel: 'manifest', href: '/docs/manifest.webmanifest' }],
+    ['meta', { name: 'theme-color', content: '#0b1b3a' }],
+    ['meta', { property: 'og:site_name', content: 'UniZ Docs' }],
+    ['meta', { property: 'og:locale', content: 'en_IN' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:image', content: OG_IMAGE }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
+    ['meta', { property: 'og:image:type', content: 'image/png' }],
+    ['meta', { property: 'og:image:alt', content: 'UniZ Docs — RGUKT Ongole' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:image', content: OG_IMAGE }],
+  ],
+  transformHead(context) {
+    const pageTitle = context.pageData.title
+      ? `${context.pageData.title} | UniZ`
+      : 'UniZ Docs'
+    const description =
+      context.pageData.description ||
+      'UniZ system documentation — architecture, services, deploy, APIs'
+    const relative = context.pageData.relativePath
+      .replace(/\.md$/, '')
+      .replace(/(^|\/)index$/, '')
+      .replace(/\/$/, '')
+    const url = relative ? `${SITE}/${relative}` : `${SITE}/`
+    return [
+      ['meta', { property: 'og:title', content: pageTitle }],
+      ['meta', { property: 'og:description', content: description }],
+      ['meta', { property: 'og:url', content: url }],
+      ['meta', { name: 'twitter:title', content: pageTitle }],
+      ['meta', { name: 'twitter:description', content: description }],
+      ['link', { rel: 'canonical', href: url }],
+    ]
+  },
   cleanUrls: true,
   ignoreDeadLinks: true,
   srcExclude: ['**/node_modules/**', 'README.md', 'AGENTS.md', 'CONTRIBUTING.md', '_sidebar.md'],
