@@ -89,8 +89,38 @@ export function listSchemas(databaseId: string): Promise<{ schemas: string[] }> 
   return dbFetch(`/databases/${databaseId}/schemas`);
 }
 
-export function listTables(databaseId: string, schema: string): Promise<{ tables: TableSummary[] }> {
-  return dbFetch(`/databases/${databaseId}/tables?schema=${encodeURIComponent(schema)}`);
+function estimatedRowsField(value: unknown): number | null {
+  if (value === null || value === undefined || value === "") return null;
+  const count = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(count) || count < 0) return null;
+  return count;
+}
+
+// The tables route used to return string[]. Keep accepting that, and accept
+// {name, estimatedRows}. Anything else is a failed load, not an empty schema.
+export function normalizeTables(value: unknown): TableSummary[] {
+  if (!Array.isArray(value)) {
+    throw new DbAdminError("The tables could not be loaded.", 500);
+  }
+  return value.map((item) => {
+    if (typeof item === "string" && item.trim()) {
+      return { name: item, estimatedRows: null };
+    }
+    if (!item || typeof item !== "object" || Array.isArray(item)) {
+      throw new DbAdminError("The tables could not be loaded.", 500);
+    }
+    const record = item as { name?: unknown; estimatedRows?: unknown };
+    const name = typeof record.name === "string" ? record.name.trim() : "";
+    if (!name) throw new DbAdminError("The tables could not be loaded.", 500);
+    return { name, estimatedRows: estimatedRowsField(record.estimatedRows) };
+  });
+}
+
+export async function listTables(databaseId: string, schema: string): Promise<{ tables: TableSummary[] }> {
+  const body = await dbFetch<{ tables?: unknown }>(
+    `/databases/${databaseId}/tables?schema=${encodeURIComponent(schema)}`,
+  );
+  return { tables: normalizeTables(body.tables) };
 }
 
 export function listRows(
