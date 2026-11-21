@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { MobileAppModal } from "../MobileAppModal";
+import { CampusBoot } from "../CampusBoot";
 
 export function RootLayout() {
   return (
@@ -11,7 +13,9 @@ export function RootLayout() {
       </a>
       <Header />
       <main id="content" className="w-full flex-1">
-        <Outlet />
+        <Suspense fallback={<CampusBoot label="Loading page" />}>
+          <Outlet />
+        </Suspense>
       </main>
       <Footer />
       <MobileAppModal />

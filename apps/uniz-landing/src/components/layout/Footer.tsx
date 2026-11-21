@@ -7,40 +7,41 @@ import { ANDROID_APK_FILENAME, ANDROID_APK_URL, openLandingIosModal } from "@/li
 
 const columns = [
   {
+    title: "About",
+    links: [
+      { n: "About RGUKT", p: "/institute/aboutrgukt" },
+      { n: "Campus life", p: "/institute/campuslife" },
+      { n: "Governing council", p: "/institute/govcouncil" },
+      { n: "Photo gallery", p: "/about/gallery" },
+      { n: "RTI", p: "/institute/rtiinfo" },
+    ],
+  },
+  {
     title: "Academics",
     links: [
       { n: "Programs", p: "/academics/AcademicPrograms" },
       { n: "Calendar", p: "/academics/AcademicCalender" },
-      { n: "Regulations", p: "/academics/AcademicRegulations" },
-      { n: "Curricula", p: "/academics/curicula" },
+      { n: "Departments", p: "/academics/departments" },
+      { n: "Examination cell", p: "/academics/examination-cell" },
+      { n: "Admissions", p: "/admissions" },
     ],
   },
   {
-    title: "Departments",
+    title: "Campus",
     links: [
-      { n: "Computer Science", p: "/departments/CSE" },
-      { n: "Electronics", p: "/departments/ECE" },
-      { n: "Civil Engg", p: "/departments/CIVIL" },
-      { n: "Mechanical", p: "/departments/ME" },
-      { n: "Mathematics", p: "/departments/MATHEMATICS" },
+      { n: "Administration", p: "/administration" },
+      { n: "Placements", p: "/nexus/placements" },
+      { n: "SC/ST cell", p: "/institute/scst" },
+      { n: "Contact", p: "/information/contact" },
+      { n: "Consultancy", p: "/consultancy" },
     ],
   },
   {
-    title: "Institute",
+    title: "Notices",
     links: [
-      { n: "About RGUKT", p: "/institute/aboutrgukt" },
-      { n: "Campus Life", p: "/institute/campuslife" },
-      { n: "Governing Council", p: "/institute/govcouncil" },
-      { n: "RTI Info", p: "/institute/rtiinfo" },
-      { n: "SC/ST Cell", p: "/institute/scst" },
-    ],
-  },
-  {
-    title: "Notifications",
-    links: [
-      { n: "News & Notifications", p: "/notifications/news" },
-      { n: "Careers", p: "/notifications/careers" },
+      { n: "News and updates", p: "/notifications/news" },
       { n: "Tenders", p: "/notifications/tenders" },
+      { n: "Careers", p: "/notifications/careers" },
     ],
   },
 ];
@@ -91,7 +92,9 @@ export function Footer() {
 
       <div className="border-t border-navy-700">
         <Wrap className="flex flex-col gap-4 py-[22px] min-[821px]:flex-row min-[821px]:items-center min-[821px]:justify-between">
-          <p className="text-[13px] leading-[18px] text-navy-300">© 2026 UniZ · RGUKT Ongole</p>
+          <p className="max-w-[520px] text-[13px] leading-[18px] text-navy-300">
+            © 2026 RGUKT Ongole · UniZ. The Rajiv Gandhi University of Knowledge Technologies has been constituted under A.P. Act No. 18 of 2008.
+          </p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <a href={ANDROID_APK_URL} download={ANDROID_APK_FILENAME} className={barLink}>
               Android
