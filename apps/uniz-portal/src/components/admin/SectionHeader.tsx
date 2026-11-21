@@ -24,7 +24,7 @@ export function SectionHeader({
   return (
     <div
       className={cn(
-        "mb-6 flex flex-col gap-4 min-[1200px]:flex-row min-[1200px]:items-end min-[1200px]:justify-between",
+        "mb-6 flex flex-col gap-4 min-[900px]:flex-row min-[900px]:flex-wrap min-[900px]:items-end min-[900px]:justify-between",
         className,
       )}
     >
@@ -35,7 +35,7 @@ export function SectionHeader({
         {meta ? <p className="mt-2 text-body leading-6 text-text-2">{meta}</p> : null}
       </div>
       {actions ? (
-        <div className="flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2">
+        <div className="flex w-full min-w-0 max-w-full flex-wrap items-center gap-2 min-[900px]:w-auto min-[900px]:justify-end">
           {actions}
         </div>
       ) : null}

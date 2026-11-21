@@ -259,13 +259,13 @@ export default function CurriculumManager() {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <div className="relative">
+          <div className="relative w-full min-[640px]:w-auto">
             <Filter
               className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none z-10"
               size={14}
             />
             <select
-              className={cn(adminSelectClass, "pl-9 w-[180px]")}
+              className={cn(adminSelectClass, "w-full pl-9 min-[640px]:w-44")}
               value={deptFilter}
               onChange={(e) => {
                 setDeptFilter(e.target.value);
@@ -281,13 +281,13 @@ export default function CurriculumManager() {
             </select>
           </div>
 
-          <div className="relative">
+          <div className="relative w-full min-[640px]:w-auto">
             <BookOpen
               className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none z-10"
               size={14}
             />
             <select
-              className={cn(adminSelectClass, "pl-9 w-[180px]")}
+              className={cn(adminSelectClass, "w-full pl-9 min-[640px]:w-44")}
               value={semFilter}
               onChange={(e) => {
                 setSemFilter(e.target.value);
@@ -307,11 +307,10 @@ export default function CurriculumManager() {
 
       {/* Grid Area */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-4">
-          <Loader2 className="animate-spin text-text" size={32} />
-          <p className="text-text-3 font-medium text-[12px]">
-            Loading curriculum…
-          </p>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {[0, 1, 2, 3].map((item) => (
+            <div key={item} className="h-52 animate-pulse rounded-lg border border-border bg-surface-2/70" />
+          ))}
         </div>
       ) : subjects.length === 0 ? (
         <EmptyState
@@ -359,7 +358,7 @@ export default function CurriculumManager() {
                   code={sub.displayCode || sub.code}
                   academicCode={sub.academicCode}
                 />
-                <h3 className="text-[16px] font-semibold text-text line-clamp-2 leading-tight">
+                <h3 className="text-[16px] font-semibold text-text line-clamp-2 leading-tight" title={sub.name}>
                   {sub.name}
                 </h3>
               </div>

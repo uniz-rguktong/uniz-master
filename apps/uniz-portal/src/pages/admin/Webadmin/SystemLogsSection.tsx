@@ -250,7 +250,7 @@ export default function SystemLogsSection() {
                   setFilterType(e.target.value);
                   setCurrentPage(1);
                 }}
-                className={cn(adminSelectClass, "w-full pl-10 sm:w-44")}
+                className={cn(adminSelectClass, "w-full pl-10 min-[900px]:w-44")}
               >
                 <option value="ALL">All Assets</option>
                 <option value="STUDENTS">Students</option>
@@ -276,17 +276,17 @@ export default function SystemLogsSection() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className={cn(adminInputClass, "w-full min-w-0 max-w-full pl-10 sm:max-w-[240px]")}
+                className={cn(adminInputClass, "w-full min-w-0 pl-10 min-[900px]:w-56")}
               />
             </div>
           </>
         }
       />
 
-      {loading ? (
-        <p className="text-body text-text-2">Loading logs…</p>
-      ) : (
-        <Table
+      <Table
+          loading={loading}
+          sticky
+          stack="wide"
           rows={paginatedHistory}
           getRowId={(log: any) => String(log.id || log.createdAt || log.filename)}
           empty={<EmptyState title="No logs found matching your criteria." icon={AlertCircle} />}
@@ -311,7 +311,6 @@ export default function SystemLogsSection() {
           }
           columns={logColumns}
         />
-      )}
     </div>
   );
 }
