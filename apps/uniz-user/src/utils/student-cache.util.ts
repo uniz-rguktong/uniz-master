@@ -9,16 +9,25 @@ export function bootstrapCacheKey(username: string): string {
   return `bootstrap:v1:${username.toUpperCase()}`;
 }
 
+/** Compact student home cards. Busted with the profile cache on write. */
+export function studentHomeSummaryKey(username: string): string {
+  return `student:home-summary:v1:${username.toUpperCase()}`;
+}
+
 export async function invalidateStudentProfileCaches(
   username: string,
 ): Promise<void> {
   const id = username.toUpperCase();
-  await redis.del(profileCacheKey(id), bootstrapCacheKey(id));
+  await redis.del(
+    profileCacheKey(id),
+    bootstrapCacheKey(id),
+    studentHomeSummaryKey(id),
+  );
 }
 
 /** Flush all cached student profile/bootstrap entries after bulk presence updates. */
 export async function invalidateAllStudentProfileCaches(): Promise<number> {
-  const patterns = ["profile:v2:*", "bootstrap:v1:*"];
+  const patterns = ["profile:v2:*", "bootstrap:v1:*", "student:home-summary:v1:*"];
   let deleted = 0;
 
   for (const pattern of patterns) {

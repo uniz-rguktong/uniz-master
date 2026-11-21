@@ -26,6 +26,7 @@ export function useAdminDashboardStats(
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+          signal: AbortSignal.timeout(8000),
         });
         const json = await res.json();
         if (json.success && json.data) {

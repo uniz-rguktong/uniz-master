@@ -9,6 +9,10 @@ export type TableColumn<T> = {
   label?: string;
   /** Right-align and use tabular figures. */
   numeric?: boolean;
+  /** Keep this column visible while the table scrolls sideways. */
+  pin?: boolean;
+  /** Pixel width used to place pinned columns. */
+  width?: number;
   cell: (row: T) => ReactNode;
   /** Title line in the stacked list under 640px. One column should set this. */
   primary?: boolean;
@@ -47,6 +51,24 @@ export function Table<T>({
   const columnLabel = (column: TableColumn<T>) =>
     column.label ?? (typeof column.header === "string" ? column.header : column.id);
 
+  let pinCursor = 0;
+  const pinLayout: { pinned: boolean; left: number; width?: number; last: boolean }[] = columns.map(
+    (column) => {
+      if (!column.pin) return { pinned: false, left: 0, width: column.width, last: false };
+      const width = column.width ?? 120;
+      const left = pinCursor;
+      pinCursor += width;
+      return { pinned: true, left, width, last: false };
+    },
+  );
+  const lastPinned = pinLayout.map((item) => item.pinned).lastIndexOf(true);
+  if (lastPinned >= 0) pinLayout[lastPinned].last = true;
+  const pinned = pinCursor > 0;
+  const tableWidth = columns.reduce(
+    (sum, column) => sum + (column.width ?? (column.pin ? 120 : 160)),
+    0,
+  );
+
   return (
     <div className={className}>
       {toolbar ? <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">{toolbar}</div> : null}
@@ -54,22 +76,42 @@ export function Table<T>({
         empty
       ) : (
         <>
-          <div className="hidden sm:block">
-            <table className="w-full border-collapse text-left">
+          <div className="hidden max-w-full overflow-x-auto sm:block">
+            <table
+              className={cn(
+                "border-collapse text-left",
+                pinned ? "table-fixed" : "w-max min-w-full",
+              )}
+              style={pinned ? { width: tableWidth, minWidth: "100%" } : undefined}
+            >
               <thead className="sticky top-0 bg-bg">
                 <tr>
-                  {columns.map((column) => (
-                    <th
-                      key={column.id}
-                      scope="col"
-                      className={cn(
-                        "h-11 border-b border-border-strong text-small font-semibold text-text-2",
-                        column.numeric && "text-right tabular-nums",
-                      )}
-                    >
-                      {column.header}
-                    </th>
-                  ))}
+                  {columns.map((column, index) => {
+                    const pin = pinLayout[index];
+                    return (
+                      <th
+                        key={column.id}
+                        scope="col"
+                        style={
+                          pin.pinned
+                            ? { left: pin.left, minWidth: pin.width, width: pin.width }
+                            : column.width
+                              ? { minWidth: column.width }
+                              : undefined
+                        }
+                        className={cn(
+                          "h-11 whitespace-nowrap border-b border-border-strong px-3 text-small font-semibold text-text-2",
+                          column.numeric && "text-right tabular-nums",
+                          pin.pinned && "sticky z-30 overflow-hidden bg-bg",
+                          pin.last && "border-r border-border",
+                        )}
+                      >
+                        <div className={cn("flex items-center gap-1", column.numeric && "justify-end")}>
+                          {column.header}
+                        </div>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
@@ -82,22 +124,35 @@ export function Table<T>({
                       onClick={onRowClick ? () => onRowClick(row) : undefined}
                       onDoubleClick={onRowDoubleClick ? () => onRowDoubleClick(row) : undefined}
                       className={cn(
-                        "h-14 border-b border-border text-dense text-text transition-colors duration-150",
+                        "group h-14 border-b border-border text-dense text-text transition-colors duration-150",
                         onRowClick && "cursor-pointer",
                         selected ? "bg-selected" : "hover:bg-tint",
                       )}
                     >
-                      {columns.map((column) => (
-                        <td
-                          key={column.id}
-                          className={cn(
-                            "pr-4 align-middle",
-                            column.numeric && "text-right tabular-nums",
-                          )}
-                        >
-                          {column.cell(row)}
-                        </td>
-                      ))}
+                      {columns.map((column, index) => {
+                        const pin = pinLayout[index];
+                        return (
+                          <td
+                            key={column.id}
+                            style={
+                              pin.pinned
+                                ? { left: pin.left, minWidth: pin.width, width: pin.width }
+                                : column.width
+                                  ? { minWidth: column.width }
+                                  : undefined
+                            }
+                            className={cn(
+                              "px-3 align-middle",
+                              column.numeric && "text-right tabular-nums",
+                              pin.pinned && "sticky z-10 overflow-hidden bg-bg group-hover:bg-tint",
+                              pin.pinned && selected && "bg-selected group-hover:bg-selected",
+                              pin.last && "border-r border-border",
+                            )}
+                          >
+                            {column.cell(row)}
+                          </td>
+                        );
+                      })}
                     </tr>
                   );
                 })}

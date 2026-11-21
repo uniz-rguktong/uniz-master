@@ -184,7 +184,7 @@ export default function RegistrationTracking({
     },
     {
       id: "username",
-      header: "Student ID",
+      header: "ID",
       meta: true,
       cell: (row) => <span className="font-semibold">{row.username}</span>,
     },

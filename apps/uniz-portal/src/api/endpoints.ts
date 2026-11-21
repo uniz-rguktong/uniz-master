@@ -52,6 +52,7 @@ export const CHANGE_PASS_ENDPOINT = `${BASE_URL}/auth/password/change`;
 // Profile (User Service)
 export const STUDENT_INFO = `${BASE_URL}/profile/student/me`;
 export const STUDENT_BOOTSTRAP = `${BASE_URL}/profile/student/bootstrap`;
+export const STUDENT_HOME_SUMMARY = `${BASE_URL}/profile/student/home-summary`;
 export const UPDATE_DETAILS = `${BASE_URL}/profile/student/update`;
 export const FACULTY_INFO = `${BASE_URL}/profile/faculty/me`;
 export const ADMIN_INFO = `${BASE_URL}/profile/admin/me`;
@@ -182,6 +183,8 @@ export const ADMIN_STUDENT_CREATE = `${BASE_URL}/profile/admin/student/create`;
 export const ADMIN_STUDENT_PROMOTE = `${BASE_URL}/profile/admin/student/promote`;
 export const ADMIN_STUDENT_RESET_CAMPUS_PRESENCE = `${BASE_URL}/profile/admin/student/reset-campus-presence`;
 export const ADMIN_CAMPUS_PRESENCE_STATS = `${BASE_URL}/profile/admin/analytics/campus-presence`;
+/** One SQL aggregate for the webadmin overview cards. Cached 60s on the user service. */
+export const ADMIN_OVERVIEW_SUMMARY = `${BASE_URL}/profile/admin/overview-summary`;
 export const ADMIN_STUDENT_COHORT_ACTION = `${BASE_URL}/profile/admin/student/cohort-action`;
 
 // Student Bulk Management

@@ -164,24 +164,31 @@ const CATEGORY_OPTIONS = ["ALL", "GENERAL", "OBC", "SC", "ST", "EWS"];
 const CAMPUS_OPTIONS = ["ALL", "ONGOLE", "NIDADAVOLE"];
 
 /** Fixed widths so sticky `left` offsets stay aligned while scrolling. */
-const COLUMNS: { key: string; label: string }[] = [
-  { key: "row", label: "#" },
-  { key: "username", label: "Student ID" },
-  { key: "name", label: "Name" },
-  { key: "branch", label: "Branch" },
-  { key: "year", label: "Year" },
-  { key: "batch", label: "Batch" },
-  { key: "section", label: "Sec" },
-  { key: "cgpa", label: "CGPA" },
-  { key: "total_backlogs", label: "BL" },
-  { key: "attendance_pct", label: "Att %" },
-  { key: "phone_number", label: "Phone" },
-  { key: "gender", label: "Gender" },
-  { key: "blood_group", label: "Blood" },
-  { key: "roomno", label: "Room" },
-  { key: "is_in_campus", label: "Campus" },
-  { key: "is_suspended", label: "Status" },
+const COLUMNS: { key: string; label: string; title?: string; pin?: boolean; width?: number }[] = [
+  { key: "row", label: "#", pin: true, width: 52 },
+  { key: "username", label: "ID", title: "Student ID", pin: true, width: 112 },
+  { key: "name", label: "Name", pin: true, width: 220 },
+  { key: "branch", label: "Branch", width: 88 },
+  { key: "year", label: "Year", width: 72 },
+  { key: "batch", label: "Batch", width: 80 },
+  { key: "section", label: "Sec", width: 64 },
+  { key: "cgpa", label: "CGPA", width: 80 },
+  { key: "total_backlogs", label: "BL", title: "Backlogs", width: 64 },
+  { key: "attendance_pct", label: "Att", title: "Attendance %", width: 72 },
+  { key: "phone_number", label: "Phone", width: 132 },
+  { key: "gender", label: "Gender", width: 80 },
+  { key: "blood_group", label: "Blood", width: 72 },
+  { key: "roomno", label: "Room", width: 80 },
+  { key: "is_in_campus", label: "Campus", width: 88 },
+  { key: "is_suspended", label: "Status", width: 112 },
 ];
+
+function placeholder(value: unknown): string {
+  if (value === null || value === undefined) return "—";
+  const text = String(value).trim();
+  if (!text || text === "-" || text === "—" || /^n\/?a$/i.test(text)) return "—";
+  return text;
+}
 
 function cellValue(row: StudentRow, key: string, rowIndex: number) {
   switch (key) {
@@ -202,9 +209,12 @@ function cellValue(row: StudentRow, key: string, rowIndex: number) {
     case "blood_group":
     case "section":
     case "roomno":
-      return row[key] || "—";
+    case "phone_number":
+      return placeholder(row[key]);
+    case "name":
+      return row.name || "—";
     default:
-      return row[key] ?? "—";
+      return placeholder(row[key]);
   }
 }
 
@@ -673,10 +683,10 @@ export default function StudentDetails() {
   const renderNameCell = (row: StudentRow) => {
     if (isHodReadOnly) {
       return (
-        <div className="flex flex-col gap-0.5 min-w-0">
+        <div className="flex min-w-0 flex-col gap-0.5 overflow-hidden">
           <span className="truncate text-text font-medium">{row.name || "—"}</span>
           <span className="truncate text-caption text-text-2 font-normal">
-            {row.email || "—"}
+            {placeholder(row.email)}
           </span>
         </div>
       );
@@ -706,7 +716,7 @@ export default function StudentDetails() {
             className={adminInputClass}
           />
           <span className="truncate text-caption text-text-2 font-normal">
-            {row.email || "—"}
+            {placeholder(row.email)}
           </span>
         </div>
       );
@@ -734,12 +744,12 @@ export default function StudentDetails() {
     }
 
     return (
-      <div className="flex flex-col gap-0.5 min-w-0">
+      <div className="flex w-full min-w-0 flex-col gap-0.5 overflow-hidden">
         <span
-          className="inline-flex items-center gap-1 min-w-0 group/name cursor-text"
+          className="flex min-w-0 items-center gap-1 group/name cursor-text"
           onClick={(e) => startCellEdit(row, "name", e)}
         >
-          <span className="truncate text-text font-medium">{row.name || "—"}</span>
+          <span className="min-w-0 flex-1 truncate text-text font-medium">{row.name || "—"}</span>
           <Pencil
             size={12}
             className="opacity-0 group-hover/name:opacity-40 text-text-3 shrink-0"
@@ -747,11 +757,11 @@ export default function StudentDetails() {
           {isSavingName && <Loader2 size={12} className="animate-spin text-text-3 shrink-0" />}
         </span>
         <span
-          className="inline-flex items-center gap-1 min-w-0 group/email cursor-text"
+          className="flex min-w-0 items-center gap-1 group/email cursor-text"
           onClick={(e) => startCellEdit(row, "email", e)}
         >
-          <span className="truncate text-caption text-text-2 font-normal">
-            {row.email || "—"}
+          <span className="min-w-0 flex-1 truncate text-caption text-text-2 font-normal">
+            {placeholder(row.email)}
           </span>
           <Pencil
             size={12}
@@ -1037,7 +1047,7 @@ export default function StudentDetails() {
   const rangeEnd = Math.min(pagination.page * PAGE_SIZE, pagination.total);
 
   return (
-    <div className={cn(adminPageWrapClass, "pb-24")}>
+    <div className={cn(adminPageWrapClass, "min-w-0 pb-24")}>
       <SectionHeader
         icon={<FileSpreadsheet size={18} />}
         eyebrow="Students"
@@ -1176,7 +1186,7 @@ export default function StudentDetails() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+        <div className="grid grid-cols-2 gap-2 min-[1100px]:grid-cols-3 min-[1440px]:grid-cols-6">
           {[
             {
               label: "Branch",
@@ -1211,7 +1221,7 @@ export default function StudentDetails() {
               value: sortBy,
               onChange: (v: string) => setSortBy(v as SortKey),
               options: [
-                { v: "username", l: "Student ID" },
+                { v: "username", l: "ID" },
                 { v: "name", l: "Name" },
                 { v: "branch", l: "Branch" },
                 { v: "year", l: "Year" },
@@ -1470,6 +1480,8 @@ export default function StudentDetails() {
               ? [
                   {
                     id: "select",
+                    pin: true,
+                    width: 44,
                     header: (
                       <button
                         type="button"
@@ -1507,14 +1519,17 @@ export default function StudentDetails() {
               : []),
             ...COLUMNS.map((col) => ({
               id: col.key,
+              pin: col.pin,
+              width: col.width,
               header: (
                 <button
                   type="button"
+                  title={col.title || col.label}
                   onClick={() => SORTABLE_KEYS.has(col.key) && handleSort(col.key)}
-                  className="inline-flex items-center gap-1"
+                  className="inline-flex items-center gap-1 whitespace-nowrap"
                 >
                   {col.label}
-                  {renderSortIcon(col.key)}
+                  <span className="inline-flex shrink-0">{renderSortIcon(col.key)}</span>
                 </button>
               ),
               label: col.label,
