@@ -151,10 +151,16 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
       >
-        {finalIsLoading && !asChild ? (
-          <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.75} aria-hidden />
-        ) : null}
-        {children || value}
+        {asChild ? (
+          children || value
+        ) : (
+          <>
+            {finalIsLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.75} aria-hidden />
+            ) : null}
+            {children || value}
+          </>
+        )}
       </Comp>
     );
   },
