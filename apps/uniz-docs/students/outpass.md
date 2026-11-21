@@ -7,7 +7,7 @@ description: "How to submit outpass and outing requests, track their status, and
 **Production status:** Outpass/outing UI and APIs are **disabled** (`VITE_ENABLE_OUTPASS_OUTING` / `ENABLE_OUTPASS_OUTING` default false; `uniz-outpass-service` replicas 0). Grievances still work via user-service. To re-enable, see [Revive outpass](/howto/revive-outpass).
 :::
 
-UniZ handles two types of campus exit permissions:
+uniZ handles two types of campus exit permissions:
 
 - **Outpass** — multi-day leave (overnight or longer). Requires full multi-level approval before you can leave.
 - **Outing** — short-duration leave on the same day. Used for trips that start and end on the same day (e.g., going to town for a few hours).

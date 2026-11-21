@@ -48,7 +48,7 @@ The `source` field will be `"cache"` or `"db"`. When served from cache, response
 
 ### Understanding grade values
 
-RGUKT uses a letter-grade system. The grades you may see in UniZ:
+RGUKT uses a letter-grade system. The grades you may see in uniZ:
 
 | Grade | Description               |
 | ----- | ------------------------- |
@@ -144,9 +144,9 @@ If you see "No Registered Subjects", you have not completed registration for
 
 If the page shows "No Active Semester", the administration has not yet opened a semester session for your batch. Check back later or contact your academic office.
 
-### Semester registration (in UniZ)
+### Semester registration (in uniZ)
 
-Subject registration happens **inside the UniZ portal** when the administration opens a semester.
+Subject registration happens **inside the uniZ portal** when the administration opens a semester.
 
   ### Wait for registration to open
 

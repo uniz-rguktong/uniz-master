@@ -60,10 +60,10 @@ self.addEventListener("push", function (event) {
       data = event.data.json();
     }
   } catch (e) {
-    data = { title: "UniZ", body: event.data ? event.data.text() : "" };
+    data = { title: "uniZ", body: event.data ? event.data.text() : "" };
   }
 
-  const title = data.title || "UniZ Notification";
+  const title = data.title || "uniZ Notification";
   const options = {
     body: data.body || "You have a new update.",
     icon: "/assets/uniz-logo.png",

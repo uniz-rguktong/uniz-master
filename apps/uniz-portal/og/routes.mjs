@@ -33,26 +33,26 @@ add(
 add(
   "/developers",
   "Developers — uniZ",
-  "Meet the RGUKT Ongole student team behind the UniZ campus platform.",
+  "Meet the RGUKT Ongole student team behind the uniZ campus platform.",
 );
 add(
   "/student-project-management",
-  "Student Project Management Platform | UniZ",
+  "Student Project Management Platform | uniZ",
   "Organize your academic projects with ease. Build specific roadmaps and manage your college team projects online quickly.",
 );
 add(
   "/college-team-collaboration",
-  "College Team Collaboration Tool | UniZ",
+  "College Team Collaboration Tool | uniZ",
   "The best academic productivity system guide integrated natively for engineering students. Avoid friction.",
 );
 add(
   "/academic-task-tracker",
-  "Academic Task Tracker for Colleges | UniZ",
+  "Academic Task Tracker for Colleges | uniZ",
   "Track assignments, grades, and projects simultaneously with the native real-time academic tracker.",
 );
 add(
   "/blog",
-  "UniZ Academic Blog | UniZ",
+  "uniZ Academic Blog | uniZ",
   "Discover insights about academic productivity and tools.",
 );
 
@@ -66,7 +66,7 @@ const BLOG_SLUGS = [
 for (const slug of BLOG_SLUGS) {
   const words = slug.replace(/-/g, " ");
   const titled = words.replace(/\b\w/g, (letter) => letter.toUpperCase());
-  add(`/blog/${slug}`, `${titled} | UniZ`, `Comprehensive guide to mastering ${words}`, "article");
+  add(`/blog/${slug}`, `${titled} | uniZ`, `Comprehensive guide to mastering ${words}`, "article");
 }
 
 const SIGN_IN = ["Sign in — uniZ", "Sign in to the RGUKT Ongole campus portal."];

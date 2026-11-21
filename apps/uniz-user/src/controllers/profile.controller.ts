@@ -1527,7 +1527,7 @@ export const toggleUserSuspension = async (
         : "Account Access Reinstated",
       suspended
         ? "We regret to inform you that your academic account access has been suspended by the university administration. For further clarification and to discuss the restoration of your services, please contact the administrative office at your earliest convenience."
-        : "We are pleased to inform you that your UniZ account access has been fully reinstated. You may now resume using all university digital services and portals.",
+        : "We are pleased to inform you that your uniZ account access has been fully reinstated. You may now resume using all university digital services and portals.",
     );
 
     return res.json({

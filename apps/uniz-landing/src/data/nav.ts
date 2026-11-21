@@ -51,7 +51,7 @@ export const PRIMARY_NAV: NavGroup[] = [
       { label: "Examination Cell", to: "/academics/examination-cell" },
     ],
   },
-  { label: "UniZ", to: "/uniz/student-cell" },
+  { label: "uniZ", to: "/uniz/student-cell" },
   { label: "Careers", to: "/notifications/careers" },
   {
     label: "Notifications",

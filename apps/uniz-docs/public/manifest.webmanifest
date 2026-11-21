@@ -1,6 +1,6 @@
 {
-  "name": "UniZ Docs",
-  "short_name": "UniZ Docs",
+  "name": "uniZ Docs",
+  "short_name": "uniZ Docs",
   "start_url": "/docs/",
   "display": "standalone",
   "background_color": "#ffffff",

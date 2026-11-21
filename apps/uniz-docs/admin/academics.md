@@ -1,6 +1,6 @@
 ---
 title: "Academic Management"
-description: "How deans, directors, and webadmins manage grades, semesters, student records, and banners in UniZ."
+description: "How deans, directors, and webadmins manage grades, semesters, student records, and banners in uniZ."
 ---
 
 The academic management section covers everything from viewing batch grades and running bulk updates to uploading new student cohorts and managing homepage banners. These features are available to the **dean**, **director**, and **webadmin** roles.
@@ -289,7 +289,7 @@ Content-Type: application/json
 
 ## Banner management
 
-Webadmins create and manage homepage banners visible to all students in the UniZ portal. Banners support a title, description text, and an image.
+Webadmins create and manage homepage banners visible to all students in the uniZ portal. Banners support a title, description text, and an image.
 
 ::: info
 Only the **webadmin** role can create and publish banners. The director and

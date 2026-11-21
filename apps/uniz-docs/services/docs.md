@@ -1,11 +1,11 @@
 ---
 title: Docs service (VitePress)
-description: In-house UniZ docs — VitePress static site served at /docs.
+description: In-house uniZ docs — VitePress static site served at /docs.
 ---
 
 ## Role
 
-In-house VitePress documentation for UniZ operators and API consumers. No Mintlify runtime.
+In-house VitePress documentation for uniZ operators and API consumers. No Mintlify runtime.
 
 | | |
 |--|--|

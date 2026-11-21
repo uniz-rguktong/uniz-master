@@ -60,7 +60,7 @@ export default function LoginScreen({
           </p>
         </div>
         <p className="mt-auto hidden text-small text-navy-300 min-[821px]:block">
-          © 2026 UniZ · RGUKT Ongole
+          © 2026 uniZ · RGUKT Ongole
         </p>
       </aside>
 

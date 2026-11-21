@@ -56,7 +56,7 @@ export default function Navbar() {
         isHome && "max-[820px]:h-[60px]",
       )}
     >
-      <button type="button" onClick={() => navigate("/")} className="text-white" aria-label="UniZ home">
+      <button type="button" onClick={() => navigate("/")} className="text-white" aria-label="uniZ home">
         <Lockup height={32} tone="chrome" className="min-[821px]:hidden" />
         <Lockup height={36} tone="chrome" className="hidden min-[821px]:block" />
       </button>

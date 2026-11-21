@@ -1,6 +1,6 @@
 ---
 title: "Quick Start"
-description: "Install UniZ as a PWA and sign in — student and admin portals."
+description: "Install uniZ as a PWA and sign in — student and admin portals."
 ---
 
 ## Open the portal
@@ -13,7 +13,7 @@ API (integrators): [https://api-uniz.rguktong.in/api/v1](https://api-uniz.rgukto
 
   ### Install as a PWA
 
-Open the portal in Chrome/Safari/Edge. Use **Install app** / **Add to Home Screen**. UniZ works as a Progressive Web App — no Play Store required.
+Open the portal in Chrome/Safari/Edge. Use **Install app** / **Add to Home Screen**. uniZ works as a Progressive Web App — no Play Store required.
 
   ### Choose the right sign-in
 

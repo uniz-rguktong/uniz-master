@@ -1,9 +1,9 @@
 ---
 title: "Admin Overview"
-description: "How administrative staff log in and navigate the UniZ admin portal — covering roles, the dashboard, and key functions."
+description: "How administrative staff log in and navigate the uniZ admin portal — covering roles, the dashboard, and key functions."
 ---
 
-The UniZ admin portal gives non-student staff a dedicated interface for managing approvals, academic data, campus security, announcements, and **semester registration**. Every administrative role — caretaker, warden, SWO, HOD, dean, director, and webadmin — uses the same portal with a role-appropriate view.
+The uniZ admin portal gives non-student staff a dedicated interface for managing approvals, academic data, campus security, announcements, and **semester registration**. Every administrative role — caretaker, warden, SWO, HOD, dean, director, and webadmin — uses the same portal with a role-appropriate view.
 
 ## Logging in
 
@@ -73,7 +73,7 @@ The portal automatically hides features your role cannot access. You do not need
 
 ## System health
 
-You can check the status of all UniZ backend services at any time without authentication.
+You can check the status of all uniZ backend services at any time without authentication.
 
 **Endpoint:** `GET /system/health`
 

@@ -8,7 +8,7 @@ All endpoints require `Authorization: Bearer <token>` unless noted otherwise.
   Base URL: `https://api-uniz.rguktong.in/api/v1/academics`
 :::
 
-UniZ manages **in-portal semester registration**. Webadmins configure a semester and subject catalog; deans and HODs review allocations; students register subjects during an IST registration window; administrators track completion per student.
+uniZ manages **in-portal semester registration**. Webadmins configure a semester and subject catalog; deans and HODs review allocations; students register subjects during an IST registration window; administrators track completion per student.
 
 ---
 

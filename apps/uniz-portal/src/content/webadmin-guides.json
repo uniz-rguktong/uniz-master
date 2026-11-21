@@ -27,7 +27,7 @@
       "title": "Sign in",
       "group": "start",
       "screens": ["dashboard"],
-      "summary": "Open the staff side of UniZ on a computer.",
+      "summary": "Open the staff side of uniZ on a computer.",
       "steps": [
         "Sit at a computer. A phone is hard for these screens.",
         "Open the browser. Chrome is a good choice.",
@@ -332,8 +332,8 @@
         "Set Filters if you only want one branch, year, or batch.",
         "Press **Export Excel**.",
         "The browser saves a file. Open it in Excel.",
-        "This file is a copy. Editing it on your computer does not change UniZ.",
-        "To change UniZ from a file, use Add many students from a file or the upload guides."
+        "This file is a copy. Editing it on your computer does not change uniZ.",
+        "To change uniZ from a file, use Add many students from a file or the upload guides."
       ],
       "wrong": [
         "If the download does not start, allow downloads in the browser and press **Export Excel** again.",
@@ -490,7 +490,7 @@
       "title": "Upload attendance",
       "group": "marks",
       "screens": ["attendance"],
-      "summary": "Bring an attendance file into UniZ.",
+      "summary": "Bring an attendance file into uniZ.",
       "steps": [
         "Press **Attendance Upload**.",
         "Set Branch, Year, Semester, and Batch. The semester looks like SEM-1.",
@@ -514,7 +514,7 @@
       "title": "Upload marks",
       "group": "marks",
       "screens": ["grades"],
-      "summary": "Bring a marks file into UniZ.",
+      "summary": "Bring a marks file into uniZ.",
       "steps": [
         "Press **Grades Upload**.",
         "Set Branch, Year, Semester, and Batch.",
@@ -881,7 +881,7 @@
         "Open the public department page and look for the name."
       ],
       "wrong": [
-        "Faculty Management in the left menu is the login list for UniZ. Dept Staff is the public website card. A person can need both. This page does not create a UniZ password.",
+        "Faculty Management in the left menu is the login list for uniZ. Dept Staff is the public website card. A person can need both. This page does not create a uniZ password.",
         "If the photo fails, try a smaller JPG.",
         "Press **Discard** on the bottom bar only to drop a change that is still saving."
       ],
@@ -949,7 +949,7 @@
       "title": "Send a phone alert",
       "group": "messages",
       "screens": ["push_alerts"],
-      "summary": "Send a short alert to phones that have allowed UniZ alerts.",
+      "summary": "Send a short alert to phones that have allowed uniZ alerts.",
       "steps": [
         "Press **Push Alerts**.",
         "The list shows people who can receive alerts. You can move with **Previous** and **Next**.",
@@ -975,7 +975,7 @@
       "title": "Add a staff member",
       "group": "staff",
       "screens": ["faculty_mgmt"],
-      "summary": "Create a UniZ login for a staff member.",
+      "summary": "Create a uniZ login for a staff member.",
       "steps": [
         "Press **Faculty Management**.",
         "Stay on the single-person view. If you see Bulk Add, press the stacked-squares button whose tip says **Toggle bulk mode** to go back.",

@@ -1,6 +1,6 @@
 ---
 title: "Production topology"
-description: "Where UniZ runs in production — Cloudflare Pages vs VPS K3s, parked pods, HPA limits, and hostnames."
+description: "Where uniZ runs in production — Cloudflare Pages vs VPS K3s, parked pods, HPA limits, and hostnames."
 ---
 
 Canonical ops doc in the repo: [`docs/architecture/PRODUCTION_TOPOLOGY.md`](https://github.com/uniz-rguktong/uniz-master/blob/main/docs/architecture/PRODUCTION_TOPOLOGY.md). Manifests under `infra/kubernetes/base/`. Day-to-day checklist: [`docs/ops/INDEX.md`](https://github.com/uniz-rguktong/uniz-master/blob/main/docs/ops/INDEX.md).

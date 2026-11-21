@@ -44,7 +44,7 @@ if (REDIS_URL) {
 
         if (type === "EMAIL") {
           await transporter.sendMail({
-            from: '"UniZ System" <no-reply@uniz.edu>',
+            from: '"uniZ System" <no-reply@uniz.edu>',
             to: recipient,
             subject: subject,
             text: body,

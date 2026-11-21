@@ -435,7 +435,7 @@ curl --request POST \
 
 `GET /system/health`
 
-Returns the real-time health status and latency of all services in the UniZ platform. Use this to diagnose service degradation or verify that the platform is fully operational.
+Returns the real-time health status and latency of all services in the uniZ platform. Use this to diagnose service degradation or verify that the platform is fully operational.
 
 **Auth required:** No
 

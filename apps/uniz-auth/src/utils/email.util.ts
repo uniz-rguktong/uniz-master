@@ -187,7 +187,7 @@ export const sendLoginNotification = async (
   await sendPush(
     username,
     "Security Alert: New Login Detected",
-    `An access attempt has been successfully identified on your UniZ account${deviceStr}. If you did not authorize this login, please take immediate action to secure your account by reviewing your active sessions and updating your password.`,
+    `An access attempt has been successfully identified on your uniZ account${deviceStr}. If you did not authorize this login, please take immediate action to secure your account by reviewing your active sessions and updating your password.`,
     "LOGIN",
   );
   return true;
@@ -200,7 +200,7 @@ export const sendPasswordChangeNotification = async (
   await sendPush(
     username,
     "Account Security: Password Updated",
-    "We are writing to confirm that the password for your UniZ account has been successfully modified. If you did not initiate this change, please contact our administrative support team immediately to report unauthorized activity.",
+    "We are writing to confirm that the password for your uniZ account has been successfully modified. If you did not initiate this change, please contact our administrative support team immediately to report unauthorized activity.",
     "PASSWORD",
   );
   return true;

@@ -11,7 +11,7 @@ export function PublicHeader({
   return (
     <header className="border-b border-[var(--sb-border)] bg-navy-900">
       <div className="mx-auto flex h-16 w-full max-w-[1232px] items-center justify-between px-5 min-[821px]:px-10">
-        <Link to="/" aria-label="UniZ home" className="text-white">
+        <Link to="/" aria-label="uniZ home" className="text-white">
           <Lockup height={36} tone="chrome" />
         </Link>
         <Link
@@ -52,7 +52,7 @@ export function PublicFooter() {
       </div>
       <div className="border-t border-navy-700">
         <p className="mx-auto w-full max-w-[1232px] px-5 py-5 text-small text-navy-300 min-[821px]:px-10">
-          © {new Date().getFullYear()} UniZ · RGUKT Ongole
+          © {new Date().getFullYear()} uniZ · RGUKT Ongole
         </p>
       </div>
     </footer>

@@ -1,6 +1,6 @@
 ---
 title: "Security Portal"
-description: "How security staff use the UniZ Security Portal to verify students at the campus gate, log entry and exit, and monitor who is currently outside."
+description: "How security staff use the uniZ Security Portal to verify students at the campus gate, log entry and exit, and monitor who is currently outside."
 ---
 
 The Security Portal gives security staff at the campus gate a dedicated interface for verifying approved passes, logging student entry and exit, and tracking who is currently outside campus.

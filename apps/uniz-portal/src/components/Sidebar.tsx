@@ -225,7 +225,7 @@ export default function Sidebar({ content }: MainContent) {
 
   const pageName =
     navItems.find((item) => item.content === content)?.label ??
-    (content === "notifications" ? "Notifications" : "UniZ");
+    (content === "notifications" ? "Notifications" : "uniZ");
 
   const moreItems = navItems.filter((item) => item.section === "account" || item.id === "outing" || item.id === "outpass");
   const moreActive = moreItems.some((item) => item.content === content);
