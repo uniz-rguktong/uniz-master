@@ -73,7 +73,8 @@ jobs:
           mkdir -p login-revamp-artifact
           kubectl logs job/uniz-login-revamp > login-revamp-artifact/job.log || true
           awk '
-            /---LOGIN-REVAMP-CSV---/ { capture = !capture; next }
+            /^---LOGIN-REVAMP-CSV---$/ { capture = 1; next }
+            /^---END-LOGIN-REVAMP-CSV---$/ { capture = 0; next }
             capture { print }
           ' login-revamp-artifact/job.log > login-revamp-artifact/login-revamp.csv
           if [ ! -s login-revamp-artifact/login-revamp.csv ]; then

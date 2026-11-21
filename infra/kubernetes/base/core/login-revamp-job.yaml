@@ -23,9 +23,11 @@ spec:
             - -c
             - |
               set -eu
+              # The script is mounted read-only, so its packages live in /tmp/revamp.
+              mkdir -p /tmp/revamp
               cd /tmp/revamp
               npm install --no-save --silent pg@8 bcryptjs@2 ioredis@5
-              node /opt/revamp/login-revamp.js
+              NODE_PATH=/tmp/revamp/node_modules node /opt/revamp/login-revamp.js
           env:
             - name: AUTH_DATABASE_URL
               valueFrom:
