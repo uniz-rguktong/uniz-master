@@ -127,22 +127,26 @@ export function prerenderPaths() {
 
 export function redirectRules() {
   const rules = [];
+  // Exact public paths are static files (path.html). These rules keep a
+  // trailing-slash request on that shell, and they win over the private
+  // splats below so /student/signin is not rewritten to the private card.
   for (const page of pages) {
     if (page.path === "/") continue;
-    rules.push({ from: page.path, to: `${page.path}/index.html` });
-    rules.push({ from: `${page.path}/`, to: `${page.path}/index.html` });
+    rules.push({ from: page.path, to: page.path, status: 200 });
+    rules.push({ from: `${page.path}/`, to: page.path, status: 200 });
   }
-  rules.push({ from: "/blog/*", to: "/blog/index.html" });
+  rules.push({ from: "/blog/*", to: "/blog", status: 200 });
   for (const root of PRIVATE_ROOTS) {
-    rules.push({ from: root, to: "/og/private.html" });
-    rules.push({ from: `${root}/`, to: "/og/private.html" });
-    rules.push({ from: `${root}/*`, to: "/og/private.html" });
+    // /og/private/ is a directory index. A target ending in .html is
+    // stripped by Pages and 308s the browser off the SPA route.
+    rules.push({ from: root, to: "/og/private/", status: 200 });
+    rules.push({ from: `${root}/`, to: "/og/private/", status: 200 });
+    rules.push({ from: `${root}/*`, to: "/og/private/", status: 200 });
   }
-  rules.push({ from: "/*", to: "/index.html" });
   return rules;
 }
 
-export const shells = [{ file: "og/private.html", asPath: "/student", stripJsonLd: true }];
+export const shells = [{ file: "og/private/index.html", asPath: "/student", stripJsonLd: true }];
 
 export const checks = [
   { path: "/" },
