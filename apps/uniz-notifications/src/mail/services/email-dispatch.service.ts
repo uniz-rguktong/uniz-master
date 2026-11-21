@@ -14,12 +14,38 @@ import {
   sendAttendanceReportEmail,
   sendGrievanceSubmissionNotification,
   sendGrievanceResolvedNotification,
+  sendPlainNoticeEmail,
 } from "./email.service";
+import { preparePlainNotice, type PreparedPlainNotice } from "./plain-notice";
+
+export const EMAIL_TYPES = [
+  "otp",
+  "results",
+  "attendance_report",
+  "login_alert",
+  "outpass_request",
+  "outing_request",
+  "outpass_approval",
+  "outing_approval",
+  "admin_alert",
+  "admin_action_confirmation",
+  "checkpoint",
+  "password_change",
+  "profile_update",
+  "grievance_submission",
+  "grievance_resolved",
+  "plain_notice",
+] as const;
+
+export type EmailType = (typeof EMAIL_TYPES)[number];
 
 export async function dispatchEmailByType(
   type: string,
   to: string,
   data: Record<string, any> = {},
+  deps?: {
+    sendPlainNotice?: (notice: PreparedPlainNotice) => Promise<boolean>;
+  },
 ): Promise<boolean> {
   switch (type) {
     case "otp":
@@ -122,6 +148,11 @@ export async function dispatchEmailByType(
         data.category,
         data.description ?? "",
       );
+    case "plain_notice": {
+      const notice = preparePlainNotice(to, data);
+      const send = deps?.sendPlainNotice ?? sendPlainNoticeEmail;
+      return send(notice);
+    }
     default:
       throw new Error(`Invalid email type: ${type}`);
   }
