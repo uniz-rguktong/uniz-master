@@ -12,6 +12,7 @@
     "build": "vite build && node scripts/build-sitemap.js",
     "typecheck": "tsc -b",
     "lint": "eslint .",
+    "lint:hex": "node scripts/lint-hex.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

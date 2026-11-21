@@ -212,7 +212,7 @@ export default function SubjectManagement() {
             placeholder="Search by name or code..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-11 pl-12 pr-5 bg-surface border border-border rounded-xl focus:ring-4 focus:ring-ring/5 focus:border-border outline-none transition-[color,background-color,border-color,opacity,transform,box-shadow] font-semibold text-text text-sm placeholder:text-text-3 placeholder:font-medium shadow-none"
+            className="w-full h-11 pl-12 pr-5 bg-surface border border-border rounded-xl focus:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring transition-[color,background-color,border-color,opacity,transform,box-shadow] font-semibold text-text text-sm placeholder:text-text-3 placeholder:font-medium shadow-none"
           />
         </div>
 
@@ -224,7 +224,7 @@ export default function SubjectManagement() {
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            className="bg-surface border border-border pl-11 pr-10 h-11 rounded-xl font-semibold text-caption text-text-2 outline-none focus:ring-4 focus:ring-ring/5 focus:border-border min-w-[170px] transition-[color,background-color,border-color,opacity,transform,box-shadow] cursor-pointer appearance-none shadow-none"
+            className="bg-surface border border-border pl-11 pr-10 h-11 rounded-xl font-semibold text-caption text-text-2 focus:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring min-w-[170px] transition-[color,background-color,border-color,opacity,transform,box-shadow] cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Departments</option>
             <option value="AIML">AIML</option>
@@ -250,7 +250,7 @@ export default function SubjectManagement() {
           <select
             value={semester}
             onChange={(e) => setSemester(e.target.value)}
-            className="bg-surface border border-border pl-11 pr-10 h-11 rounded-xl font-semibold text-caption text-text-2 outline-none focus:ring-4 focus:ring-ring/5 focus:border-border min-w-[170px] transition-[color,background-color,border-color,opacity,transform,box-shadow] cursor-pointer appearance-none shadow-none"
+            className="bg-surface border border-border pl-11 pr-10 h-11 rounded-xl font-semibold text-caption text-text-2 focus:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring min-w-[170px] transition-[color,background-color,border-color,opacity,transform,box-shadow] cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Semesters</option>
             {["E1", "E2", "E3", "E4"].map((y) => (
