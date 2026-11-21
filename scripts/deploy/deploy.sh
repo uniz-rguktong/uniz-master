@@ -392,6 +392,16 @@ deploy_logic() {
   ROLLBACK_TARGETS=()
   VERIFY_DEPLOYMENTS=()
 
+  # Fill a missing DBADMIN_DB_PASSWORD before any secret sync. Direct deploys
+  # do not pass through ci-remote-deploy.sh, which does the same step.
+  if [ -f "/root/uniz-secrets.env" ] && [ -f "scripts/deploy/ensure-dbadmin-password.sh" ]; then
+    dbadmin_pw_status="$(bash scripts/deploy/ensure-dbadmin-password.sh /root/uniz-secrets.env)"
+    printf '%s\n' "$dbadmin_pw_status"
+    if [ "$dbadmin_pw_status" = "generated DBADMIN_DB_PASSWORD (new)" ]; then
+      export DBADMIN_PASSWORD_JUST_SET=1
+    fi
+  fi
+
   # LOAD SECRETS (Sanitized)
   if [ -f "/root/uniz-secrets.env" ]; then
     echo "[Vault] Loading sanitized secrets..."
@@ -461,7 +471,16 @@ deploy_logic() {
 
   if kubectl get cronjob uniz-dbadmin-role >/dev/null 2>&1; then
     echo "[dbadmin] Applying uniz_dbadmin grants..."
-    kubectl create job --from=cronjob/uniz-dbadmin-role "uniz-dbadmin-role-$(date +%s)" >/dev/null 2>&1 || true
+    dbadmin_job="uniz-dbadmin-role-$(date +%s)"
+    if kubectl create job --from=cronjob/uniz-dbadmin-role "$dbadmin_job" >/dev/null 2>&1; then
+      # ALTER runs even when the role already exists, so a new vault password matches.
+      kubectl wait --for=condition=complete "job/$dbadmin_job" --timeout=180s >/dev/null 2>&1 || true
+    fi
+  fi
+  if [ "${DBADMIN_PASSWORD_JUST_SET:-}" = "1" ]; then
+    echo "[dbadmin] Restarting the editor and Adminer so they load the vault password"
+    kubectl rollout restart deployment/uniz-dbadmin-service >/dev/null 2>&1 || true
+    kubectl rollout restart deployment/uniz-adminer >/dev/null 2>&1 || true
   fi
   bash "$(dirname "$0")/ensure-nginx-dbadmin.sh" 2>/dev/null || true
 
