@@ -202,7 +202,7 @@ export default function SubjectManagement() {
       />
 
       <div className="flex flex-wrap gap-4 items-center">
-        <div className="relative group flex-1 min-w-[300px]">
+        <div className="relative group min-w-0 flex-1 basis-full sm:basis-auto">
           <Search
             className="absolute left-4 top-1/2 -translate-y-1/2 text-text-3 group-focus-within:text-text transition-colors"
             size={16}
@@ -224,7 +224,7 @@ export default function SubjectManagement() {
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            className="bg-surface border border-border pl-11 pr-10 h-11 rounded-xl font-semibold text-caption text-text-2 focus:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring min-w-[170px] transition-[color,background-color,border-color,opacity,transform,box-shadow] cursor-pointer appearance-none shadow-none"
+            className="bg-surface border border-border pl-11 pr-10 h-11 w-full min-w-0 rounded-xl font-semibold text-caption text-text-2 focus:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:w-auto sm:min-w-[140px] transition-[color,background-color,border-color,opacity,transform,box-shadow] cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Departments</option>
             <option value="AIML">AIML</option>
@@ -250,7 +250,7 @@ export default function SubjectManagement() {
           <select
             value={semester}
             onChange={(e) => setSemester(e.target.value)}
-            className="bg-surface border border-border pl-11 pr-10 h-11 rounded-xl font-semibold text-caption text-text-2 focus:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring min-w-[170px] transition-[color,background-color,border-color,opacity,transform,box-shadow] cursor-pointer appearance-none shadow-none"
+            className="bg-surface border border-border pl-11 pr-10 h-11 w-full min-w-0 rounded-xl font-semibold text-caption text-text-2 focus:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:w-auto sm:min-w-[140px] transition-[color,background-color,border-color,opacity,transform,box-shadow] cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Semesters</option>
             {["E1", "E2", "E3", "E4"].map((y) => (

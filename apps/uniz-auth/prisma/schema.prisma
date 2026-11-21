@@ -17,6 +17,9 @@ model AuthCredential {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   isDisabled   Boolean  @default(false)
+
+  // Overview summary GROUP BY role with an active/disabled filter.
+  @@index([role, isDisabled])
 }
 
 model OtpLog {

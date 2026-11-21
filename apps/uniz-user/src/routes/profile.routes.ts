@@ -33,6 +33,10 @@ import {
   resolveLoginByEmail,
 } from "../controllers/profile.controller";
 import {
+  getAdminOverviewSummary,
+  getStudentHomeSummary,
+} from "../controllers/overview-summary.controller";
+import {
   addAdmin,
   assignAdminRole,
   deleteAdmin,
@@ -243,6 +247,7 @@ const FacultyCreateSchema = z.object({
 
 router.get("/student/me", authMiddleware, getStudentProfile);
 router.get("/student/bootstrap", authMiddleware, getStudentBootstrap);
+router.get("/student/home-summary", authMiddleware, getStudentHomeSummary);
 
 // Bulk Import Routes
 router.get("/admin/student/template", authMiddleware, getStudentsTemplate);
@@ -335,6 +340,7 @@ router.put(
 router.put("/student/status", authMiddleware, updateStudentPresence);
 router.post("/student/status", authMiddleware, updateStudentPresence); // Support legacy POST calls from portal
 
+router.get("/admin/overview-summary", authMiddleware, getAdminOverviewSummary);
 router.get("/admin/me", authMiddleware, getAdminProfile);
 router.get("/admin/batches", authMiddleware, getAvailableBatches);
 

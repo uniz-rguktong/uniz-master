@@ -187,7 +187,8 @@ export const systemUserAnalyticsAtom = atom({
   key: "systemUserAnalyticsAtom",
   default: {
     fetched: false,
-    data: [] as any[],
+    data: null as any,
+    error: null as string | null,
   },
 });
 

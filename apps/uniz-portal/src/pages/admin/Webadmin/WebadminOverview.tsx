@@ -1,5 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import {
+  rememberAdminProfile,
+  useAdminProfile,
+  type AdminProfile,
+} from "../../../api/adminProfile";
+import {
   Camera,
   Loader2,
   Check,
@@ -19,16 +24,6 @@ import { formatDisplayText } from "@/utils/displayText";
 import SystemUserAnalytics from "./SystemUserAnalytics";
 import { uploadImage } from "../../../api/uploadImage";
 
-interface Profile {
-  name?: string;
-  email?: string;
-  contact?: string;
-  designation?: string;
-  department?: string;
-  role?: string;
-  profile_url?: string;
-}
-
 function greeting() {
   const h = new Date().getHours();
   if (h < 12) return "Good morning";
@@ -36,10 +31,29 @@ function greeting() {
   return "Good evening";
 }
 
+function sameText(a: string, b: string) {
+  return a.trim().toLowerCase() === b.trim().toLowerCase();
+}
+
+/** Role once, then designation and department when they add something new. */
+function identityMeta(profile: AdminProfile | null, email: string) {
+  const role = (profile?.role || "").trim();
+  const designation = (profile?.designation || "").trim();
+  const department = (profile?.department || "").trim();
+  const parts: string[] = [];
+  if (role) parts.push(formatDisplayText(role));
+  if (designation && !sameText(designation, role)) {
+    parts.push(formatDisplayText(designation));
+  }
+  if (department && !parts.some((part) => sameText(part, department))) {
+    parts.push(formatDisplayText(department));
+  }
+  return parts.length ? parts.join(" · ") : email;
+}
+
 export default function WebadminOverview({ username }: { username: string }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { profile, loading, error: profileError, refresh } = useAdminProfile();
   const [isUploading, setIsUploading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -54,33 +68,20 @@ export default function WebadminOverview({ username }: { username: string }) {
   const token = () =>
     (localStorage.getItem("admin_token") || "").replace(/"/g, "");
 
-  const fetchProfile = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`${BASE_URL}/profile/admin/me`, {
-        headers: { Authorization: `Bearer ${token()}` },
-      });
-      const data = await res.json();
-      if (data.success && data.data) {
-        setProfile(data.data);
-        setFormData({
-          name: data.data.name || "",
-          email: data.data.email || "",
-          contact: data.data.contact || "",
-          designation: data.data.designation || "",
-          department: data.data.department || "",
-        });
-      }
-    } catch {
-      toast.error("Failed to load profile");
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    if (!profile || isEditing) return;
+    setFormData({
+      name: profile.name || "",
+      email: profile.email || "",
+      contact: profile.contact || "",
+      designation: profile.designation || "",
+      department: profile.department || "",
+    });
+  }, [profile, isEditing]);
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    if (profileError) toast.error("Failed to load profile");
+  }, [profileError]);
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -100,7 +101,8 @@ export default function WebadminOverview({ username }: { username: string }) {
       const updData = await upd.json();
       if (updData.success) {
         toast.success("Photo updated!");
-        fetchProfile();
+        if (uploadedUrl) rememberAdminProfile({ profile_url: uploadedUrl });
+        refresh();
       }
     } catch {
       toast.error("Failed to upload photo");
@@ -125,7 +127,8 @@ export default function WebadminOverview({ username }: { username: string }) {
       if (data.success) {
         toast.success("Profile saved!");
         setIsEditing(false);
-        fetchProfile();
+        rememberAdminProfile(formData);
+        refresh();
       } else {
         toast.error(data.message || "Failed to save");
       }
@@ -140,9 +143,7 @@ export default function WebadminOverview({ username }: { username: string }) {
   const initials = displayName[0].toUpperCase();
   const email = (profile?.email || `${username}@rguktong.ac.in`).toLowerCase();
 
-  const metaTags = [profile?.role, profile?.designation, profile?.department]
-    .map((t) => (t || "").trim())
-    .filter(Boolean);
+  const metaLine = identityMeta(profile, email);
 
   const fields: { key: "email" | "contact" | "designation" | "department"; label: string }[] = [
     { key: "email", label: "Email" },
@@ -165,9 +166,7 @@ export default function WebadminOverview({ username }: { username: string }) {
         meta={
           loading
             ? undefined
-            : metaTags.length
-              ? metaTags.map((tag) => formatDisplayText(tag)).join(" · ")
-              : email
+            : metaLine
         }
       />
 
@@ -252,6 +251,10 @@ export default function WebadminOverview({ username }: { username: string }) {
                           />
                         ) : key === "email" ? (
                           email
+                        ) : key === "designation" ? (
+                          formData.designation
+                            ? formatDisplayText(formData.designation)
+                            : "—"
                         ) : (
                           formData[key] || "—"
                         )}
@@ -260,6 +263,18 @@ export default function WebadminOverview({ username }: { username: string }) {
                   ))}
                 </dl>
 
+                {profileError && !loading ? (
+                  <p className="mt-4 text-dense text-text-2">
+                    Couldn&apos;t load profile.{" "}
+                    <button
+                      type="button"
+                      onClick={() => refresh()}
+                      className="font-medium text-link"
+                    >
+                      Try again
+                    </button>
+                  </p>
+                ) : null}
                 <div className="mt-6 flex flex-wrap gap-2">
                   {isEditing ? (
                     <>
@@ -309,8 +324,8 @@ export default function WebadminOverview({ username }: { username: string }) {
         </div>
       </Panel>
 
-      {/* Analytics */}
-      {!loading && <SystemUserAnalytics />}
+      {/* Analytics — independent of the profile request */}
+      <SystemUserAnalytics />
     </div>
   );
 }
