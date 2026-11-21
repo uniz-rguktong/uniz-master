@@ -5,14 +5,10 @@ import "./index.css";
 import { PageTransition } from "./components/Transition";
 import Toaster from "@/components/ui/toast";
 import { useIsAuth } from "./hooks/is_authenticated";
-import {
-  Construction,
-  FileQuestion,
-  ArrowLeft,
-  ArrowRight,
-} from "lucide-react";
+import { Construction, ArrowLeft } from "lucide-react";
 import { Button } from "./components/Button";
-import { motion } from "framer-motion";
+import { Skeleton } from "./components/ui/Skeleton";
+import { CampusIllustration } from "./components/public/PublicFrame";
 
 // Lazy imports
 const Home = lazy(() => import("./pages/home"));
@@ -50,68 +46,38 @@ const CurrentSemesterAdmin = lazy(
 
 export const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === "true";
 
-import { Spinner } from "./components/ui/ios-spinner";
-
 const LoadingFallback = () => (
-  <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4">
-    <Spinner size="lg" />
+  <div className="min-h-screen bg-bg px-4 py-10 min-[821px]:px-10">
+    <div className="mx-auto max-w-[1280px] space-y-6">
+      <Skeleton className="h-10 w-64" />
+      <Skeleton className="h-5 w-80" />
+      <Skeleton className="h-48 w-full rounded-xl" />
+      <div className="grid grid-cols-2 gap-5 min-[821px]:grid-cols-4">
+        <Skeleton className="h-36 rounded-lg" />
+        <Skeleton className="h-36 rounded-lg" />
+        <Skeleton className="h-36 rounded-lg" />
+        <Skeleton className="h-36 rounded-lg" />
+      </div>
+    </div>
   </div>
 );
 
 export function Error() {
   useIsAuth();
-  const navigate = useNavigate();
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center bg-white text-center px-4 font-sans overflow-hidden selection:bg-zinc-100">
-      {/* ── High-End Mesh Gradient Backdrop ── */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <motion.div
-          animate={{ x: [0, 50, 0], y: [0, -30, 0], scale: [1, 1.1, 1] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] rounded-full bg-gradient-to-br from-blue-50/40 via-blue-100/10 to-transparent blur-[120px] opacity-70"
-        />
-        <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+    <div className="flex min-h-screen flex-col items-center justify-center bg-bg px-4 text-center">
+      <div className="h-64 w-[280px] overflow-hidden rounded-xl bg-tint">
+        <CampusIllustration />
       </div>
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative z-10 flex flex-col items-center max-w-lg mx-auto"
-      >
-        <div className="w-16 h-16 bg-zinc-950 rounded-2xl flex items-center justify-center mb-8 text-white shadow-xl shadow-zinc-200/50">
-          <FileQuestion size={28} strokeWidth={2.5} />
-        </div>
-
-        <h1 className="text-5xl md:text-7xl font-semibold text-zinc-950 mb-3 tracking-tight leading-none">
-          404{" "}
-          <span className="text-zinc-300 font-light tracking-[-0.04em]">
-            Error
-          </span>
-        </h1>
-
-        <p className="text-zinc-500 mb-10 font-medium text-[15px] leading-relaxed">
-          The requested resource is unavailable, has been relocated, or is
-          simply a glitch in the matrix.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <button
-            onClick={() => navigate(-1)}
-            className="group relative h-12 px-8 bg-white border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 text-zinc-900 text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-sm"
-          >
-            <ArrowLeft className="w-4 h-4 text-zinc-400 group-hover:-translate-x-1 transition-transform" />
-            Go Back
-          </button>
-          <Link to="/" className="w-full sm:w-auto">
-            <button className="w-full sm:w-auto group relative h-12 px-8 bg-zinc-950 hover:bg-black text-white text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
-              Return Home
-              <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </Link>
-        </div>
-      </motion.div>
+      <h1 className="mt-8 font-serif text-[28px] font-normal leading-9 tracking-[-0.01em] text-head">
+        Page not found
+      </h1>
+      <p className="mt-3 max-w-sm text-body leading-6 text-text-2">
+        The requested resource is unavailable or has been relocated.
+      </p>
+      <Button size="default" className="mt-8" asChild>
+        <Link to="/">Go home</Link>
+      </Button>
     </div>
   );
 }
@@ -119,22 +85,20 @@ export function Error() {
 export function Maintenance() {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50 text-center px-4">
-      <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mb-6 text-white animate-pulse">
-        <Construction size={40} />
-      </div>
-      <h1 className="text-3xl font-bold text-zinc-900 mb-2">
-        Under Maintenance
-      </h1>
-      <p className="text-zinc-500 max-w-md mb-8 leading-relaxed">
-        We are currently updating the system to serve you better. Please check
-        back later or contact administration if this persists.
-      </p>
-      <div className="flex gap-4">
-        <Button variant="outline" onclickFunction={() => navigate(-1)}>
-          <ArrowLeft className="w-4 h-4 mr-2" /> Go Back
+    <div className="flex min-h-screen items-center justify-center bg-bg px-4">
+      <section className="w-full max-w-lg rounded-xl border border-border bg-panel p-8 text-center">
+        <Construction className="mx-auto text-text-2" size={32} strokeWidth={1.5} aria-hidden />
+        <h1 className="mt-4 font-serif text-[28px] font-normal leading-9 tracking-[-0.01em] text-head">
+          Under maintenance
+        </h1>
+        <p className="mt-3 text-body leading-6 text-text-2">
+          We are currently updating the system to serve you better. Please check
+          back later or contact administration if this persists.
+        </p>
+        <Button variant="outline" className="mt-8" onclickFunction={() => navigate(-1)}>
+          <ArrowLeft className="h-4 w-4" aria-hidden /> Go back
         </Button>
-      </div>
+      </section>
     </div>
   );
 }

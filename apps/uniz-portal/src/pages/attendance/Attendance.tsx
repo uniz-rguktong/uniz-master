@@ -1,13 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRecoilValue } from "recoil";
 import { student, studentAuthLoading } from "../../store";
-import {
-  ChevronDown,
-  CalendarCheck,
-  AlertCircle,
-  Download,
-  CheckCircle2,
-} from "lucide-react";
+import { AlertTriangle, Download } from "lucide-react";
 import { GET_ATTENDANCE, DOWNLOAD_ATTENDANCE } from "../../api/endpoints";
 import { apiClient, downloadFile } from "../../api/apiClient";
 import {
@@ -15,6 +9,14 @@ import {
   readAcademicCache,
   isCacheStale,
 } from "../../utils/academicCache";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/Button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { StatTile } from "@/components/ui/tile";
+import { Table, type TableColumn } from "@/components/ui/table";
+import { portalLabelClass, portalSelectClass } from "@/lib/portal-ui";
 
 interface AttendanceRecord {
   subject: string | { name: string; [key: string]: any };
@@ -47,8 +49,15 @@ const years = Array.from(
   new Set(semesterOptions.map((opt) => opt.year)),
 ).sort();
 
-// Pikachu image URL (same as GradeHub)
-const PIKACHU_IMAGE = "https://img.pokemondb.net/artwork/large/pikachu.jpg";
+function subjectName(record: AttendanceRecord) {
+  return typeof record.subject === "string"
+    ? record.subject
+    : record.subject?.name || "Unknown Subject";
+}
+
+function percentValue(record: AttendanceRecord) {
+  return parseFloat(String(record.percentage ?? ""));
+}
 
 export default function Attendance() {
   const user = useRecoilValue(student);
@@ -60,8 +69,6 @@ export default function Attendance() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [resultsFetched, setResultsFetched] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState("g your attendance!");
   const [fromCache, setFromCache] = useState(false);
 
   // Guard: prevents concurrent duplicate API calls
@@ -112,18 +119,6 @@ export default function Attendance() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYear, selectedSemester, userUsername]);
-
-  // Handle dynamic loading message
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isLoading) {
-      setLoadingMessage("g your attendance!");
-      timer = setTimeout(() => {
-        setLoadingMessage("Pikachu is asking Sreecharan for details...");
-      }, 1000);
-    }
-    return () => clearTimeout(timer);
-  }, [isLoading]);
 
   // Fetch attendance data
   const handleFetchAttendance = async (silent = false) => {
@@ -196,360 +191,226 @@ export default function Attendance() {
 
   // Skeleton Loader Component
   // Show a loading state while the /me call is in-flight to prevent false "Sign In" flash
+  // Handle dynamic loading message
   if (authLoading) {
     return (
-      <div className="font-sans text-zinc-900">
-        <div className="max-w-6xl mx-auto px-4 pb-10">
-          <div className="flex flex-col gap-1.5 mb-8 animate-pulse">
-            <div className="h-4 w-48 bg-zinc-200 rounded mb-2" />
-            <div className="h-7 w-64 bg-zinc-200 rounded" />
-          </div>
-          <div className="bg-white p-6 rounded-xl border border-zinc-100 shadow-sm animate-pulse">
-            <div className="h-5 w-48 bg-zinc-200 rounded mb-6" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="h-12 bg-zinc-100 rounded-lg" />
-              <div className="h-12 bg-zinc-100 rounded-lg" />
-              <div className="h-12 bg-zinc-100 rounded-lg" />
-            </div>
-          </div>
-        </div>
+      <div className="space-y-3" aria-hidden>
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-5 w-80" />
+        <Skeleton className="mt-4 h-11 w-full" />
+        {Array.from({ length: 5 }).map((_, index) => (
+          <Skeleton key={index} className="h-14 w-full" />
+        ))}
       </div>
     );
   }
 
+  const records = Array.isArray(attendanceData?.attendance)
+    ? attendanceData.attendance
+    : [];
+  // Summary calculation if available, or just a placeholder
+  const overall =
+    records.length > 0
+      ? records.reduce(
+          (acc, curr) => acc + (parseFloat(String(curr?.percentage || "0")) || 0),
+          0,
+        ) / records.length
+      : null;
+  const belowAverage = overall != null && overall < 75;
+
+  const columns: TableColumn<AttendanceRecord & { id: string }>[] = [
+    {
+      id: "subject",
+      header: "Subject",
+      primary: true,
+      cell: (row) => (
+        <span className="font-medium text-head">
+          {subjectName(row)}
+          <span className="mt-0.5 block text-small font-normal text-text-2 sm:hidden">
+            Held {row.totalClasses} · Attended {row.attendedClasses}
+          </span>
+        </span>
+      ),
+    },
+    {
+      id: "held",
+      header: "Held",
+      numeric: true,
+      cell: (row) => row.totalClasses,
+    },
+    {
+      id: "attended",
+      header: "Attended",
+      numeric: true,
+      cell: (row) => row.attendedClasses,
+    },
+    {
+      id: "percent",
+      header: "Percent",
+      numeric: true,
+      meta: true,
+      cell: (row) => `${row.percentage}%`,
+    },
+    {
+      id: "status",
+      header: "Status",
+      meta: true,
+      cell: (row) => {
+        const value = percentValue(row);
+        const below = !Number.isFinite(value) || value < 75;
+        return below ? (
+          <Badge tone="warning">Below 75%</Badge>
+        ) : (
+          <Badge tone="success">On track</Badge>
+        );
+      },
+    },
+  ];
+
   return (
-    <div className="font-sans text-zinc-900">
-      <div className="max-w-6xl mx-auto px-4 pb-10">
-        <div className="flex flex-col gap-1.5 mb-8">
-          <p className="text-zinc-500 font-medium text-[13px]">
-            Institutional Attendance Terminal
-          </p>
-          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-zinc-900 leading-none">
-            Attendance Tracking
-          </h1>
+    <div>
+      <PageHeader
+        title="Attendance"
+        meta="Held classes, attended classes, and percentage."
+        action={
+          <Button
+            variant={userUsername ? "primary" : "outline"}
+            onClick={() => handleFetchAttendance()}
+            isLoading={isLoading}
+            disabled={isLoading || !userUsername}
+          >
+            {isLoading ? "Fetching…" : fromCache ? "Refresh" : "Get attendance"}
+          </Button>
+        }
+      />
+      {/* Selection Criteria */}
+      <div className="mb-6 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label className={portalLabelClass} htmlFor="attendance-year">
+            Academic Year
+          </label>
+          <select
+            id="attendance-year"
+            value={selectedYear}
+            onChange={(event) => {
+              const year = event.target.value;
+              setSelectedYear(year);
+              setSelectedSemester(
+                semesterOptions.filter((opt) => opt.year === year)[0].name,
+              );
+              setResultsFetched(false);
+              setAttendanceData(null);
+            }}
+            className={portalSelectClass}
+          >
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
         </div>
-        {/* Selection Criteria */}
-        <div className="mb-8 md:bg-white p-6 md:rounded-xl md:border md:border-zinc-100 md:shadow-sm bg-transparent transition-all duration-300 px-0 md:px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
-            <div className="relative group">
-              <label className="text-[12px] font-medium text-navy-500 mb-1.5 block">
-                Academic Year
-              </label>
-              <div
-                className="w-full flex items-center justify-between bg-zinc-50 border border-zinc-200 rounded-lg p-3 cursor-pointer hover:border-zinc-900 transition-colors"
-                onClick={() => setShowDropdown(!showDropdown)}
+        <div>
+          <label className={portalLabelClass} htmlFor="attendance-semester">
+            Semester
+          </label>
+          <select
+            id="attendance-semester"
+            value={selectedSemester}
+            onChange={(event) => {
+              setSelectedSemester(event.target.value);
+              setResultsFetched(false);
+              setAttendanceData(null);
+            }}
+            className={portalSelectClass}
+          >
+            {availableSemesters.map((semester) => (
+              <option key={semester} value={semester}>
+                {semester}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      {/* Loading State */}
+      {isLoading && !attendanceData ? (
+        <div className="space-y-3" aria-hidden>
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-11 w-full" />
+          {Array.from({ length: 5 }).map((_, index) => (
+            <Skeleton key={index} className="h-14 w-full" />
+          ))}
+        </div>
+      ) : error ? (
+        <EmptyState title="Attendance unavailable" body={error} />
+      ) : !userUsername && !resultsFetched ? (
+        /* Not Logged In State - only show AFTER /me has resolved */
+        <EmptyState
+          title="Sign in to view attendance"
+          body="Sign in with your university ID to see held and attended classes."
+        />
+      ) : !resultsFetched ? (
+        /* Empty State - only show after /me resolved and user is known */
+        <EmptyState
+          title="Choose a semester"
+          body="Select a year and semester, then get attendance."
+        />
+      ) : (
+        /* Results Section */
+        <div ref={resultsRef} className="space-y-6">
+          {/* Header */}
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="font-serif text-2xl font-normal leading-8 text-head">
+              {selectedYear} / {selectedSemester}
+            </h2>
+            {records.length > 0 ? (
+              <Button
+                variant="outline"
+                size="compact"
+                onClick={async () => {
+                  const mappedSemester = selectedSemester.replace("Sem - ", "SEM-");
+                  const semId = `${selectedYear}-${mappedSemester}`;
+                  await downloadFile(
+                    DOWNLOAD_ATTENDANCE(semId),
+                    `Attendance_${userUsername}_${semId}.pdf`,
+                    { studentId: userUsername },
+                  );
+                }}
               >
-                <span className="font-medium text-sm">{selectedYear}</span>
-                <ChevronDown
-                  size={16}
-                  className={`transition-transform duration-300 ${showDropdown ? "rotate-180" : ""} group-hover:text-zinc-900`}
-                />
-              </div>
-
-              {showDropdown && (
-                <div className="absolute z-20 mt-1 w-full bg-white border border-zinc-100 rounded-xl shadow-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                  {years.map((year) => (
-                    <div
-                      key={year}
-                      className={`p-3 cursor-pointer text-sm font-semibold hover:bg-zinc-50 transition-colors ${
-                        selectedYear === year
-                          ? "bg-zinc-900 text-white"
-                          : "text-zinc-600"
-                      }`}
-                      onClick={() => {
-                        setSelectedYear(year);
-                        setSelectedSemester(
-                          semesterOptions.filter((opt) => opt.year === year)[0]
-                            .name,
-                        );
-                        setShowDropdown(false);
-                        setResultsFetched(false);
-                        setAttendanceData(null);
-                      }}
-                    >
-                      {year}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div>
-              <label className="text-[12px] font-medium text-navy-500 mb-1.5 block">
-                Semester
-              </label>
-              <div className="relative">
-                <select
-                  value={selectedSemester}
-                  onChange={(e) => {
-                    setSelectedSemester(e.target.value);
-                    setResultsFetched(false);
-                    setAttendanceData(null);
-                  }}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-lg p-3 font-medium text-sm appearance-none focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors cursor-pointer"
-                >
-                  {availableSemesters.map((semester) => (
-                    <option key={semester} value={semester}>
-                      {semester}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown
-                  className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500"
-                  size={16}
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-4 flex-1">
-              <div className="md:w-56">
-                <button
-                  onClick={() => handleFetchAttendance(false)}
-                  className="w-full h-[46px] bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-medium text-sm transition-all active:scale-[0.98] shadow-sm flex items-center justify-center disabled:opacity-50"
-                  disabled={isLoading || !user?.username}
-                >
-                  {isLoading ? (
-                    <span className="flex items-center gap-1.5 text-sm">
-                      Syncing...
-                    </span>
-                  ) : fromCache ? (
-                    <span className="flex items-center gap-1.5">
-                      <CheckCircle2 size={14} /> Refresh
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1.5">
-                      Get Attendance
-                    </span>
-                  )}
-                </button>
-              </div>
-            </div>
+                <Download size={16} aria-hidden />
+                Export PDF
+              </Button>
+            ) : null}
           </div>
-
-          {error && (
-            <div className="mt-8 bg-zinc-900 text-white rounded-xl p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 shadow-lg shadow-zinc-100">
-              <AlertCircle size={20} className="text-white flex-shrink-0" />
-              <div className="font-medium">{error}</div>
-            </div>
-          )}
-        </div>
-
-        {/* Loading State */}
-        {isLoading && (
-          <div className="bg-zinc-50/50 border border-zinc-100 rounded-xl p-10 text-center animate-pulse">
-            <div className="w-16 h-16 mx-auto mb-4 bg-white/50 rounded-full flex items-center justify-center">
-              <img
-                src={PIKACHU_IMAGE}
-                alt="Pikachu"
-                className="w-12 h-12 object-contain grayscale opacity-30"
+          {/* Content */}
+          {overall != null ? (
+            <div className="grid grid-cols-1 min-[821px]:grid-cols-2 min-[1100px]:grid-cols-4">
+              <StatTile
+                label="Semester average"
+                value={`${overall.toFixed(1)}%`}
+                line={belowAverage ? "Below 75%" : "On track"}
+                status={belowAverage ? "warning" : undefined}
+                icon={belowAverage ? AlertTriangle : undefined}
               />
             </div>
-            <h3 className="text-base font-semibold text-zinc-600 mb-1">
-              Terminal Synchronization
-            </h3>
-            <p className="text-zinc-400 text-xs font-medium">
-              {loadingMessage}
-            </p>
-          </div>
-        )}
-
-        {/* Results Section */}
-        {resultsFetched &&
-          attendanceData &&
-          attendanceData.success &&
-          !isLoading && (
-            <div
-              ref={resultsRef}
-              className="-mx-4 md:mx-0 space-y-0 animate-in fade-in slide-in-from-bottom-8 duration-500 scroll-mt-4 bg-white md:bg-transparent md:space-y-4 rounded-none md:rounded-xl overflow-hidden"
-            >
-              {/* Header */}
-              <div className="flex items-end justify-between border-b pb-4 border-zinc-100 px-4 md:px-0 pt-5 md:pt-0">
-                <div>
-                  <span className="text-[12px] font-medium text-navy-400 block mb-1">
-                    Matrix Snapshot
-                  </span>
-                  <h2 className="text-[17px] font-semibold tracking-tight text-zinc-900">
-                    {selectedYear}{" "}
-                    <span className="text-zinc-300 mx-1">/</span>{" "}
-                    {selectedSemester}
-                  </h2>
-                </div>
-                {attendanceData.attendance &&
-                  attendanceData.attendance.length > 0 && (
-                    <button
-                      onClick={async () => {
-                        const mappedSemester = selectedSemester.replace(
-                          "Sem - ",
-                          "SEM-",
-                        );
-                        const semId = `${selectedYear}-${mappedSemester}`;
-                        await downloadFile(
-                          DOWNLOAD_ATTENDANCE(semId),
-                          `Attendance_${user.username}_${semId}.pdf`,
-                          {
-                            studentId: user.username,
-                          },
-                        );
-                      }}
-                      className="h-10 px-4 bg-zinc-50 hover:bg-zinc-100 text-zinc-600 rounded-lg font-medium text-xs transition-all flex items-center gap-2 border border-zinc-100 disabled:opacity-50"
-                      disabled={false}
-                    >
-                      <Download size={14} />
-                      Export PDF
-                    </button>
-                  )}
-              </div>
-
-              {/* Content */}
-              {!attendanceData.attendance ||
-              !Array.isArray(attendanceData.attendance) ||
-              attendanceData.attendance.length === 0 ? (
-                <div className="bg-zinc-50 rounded-xl p-8 text-center border border-zinc-200">
-                  <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm border border-zinc-100">
-                    <AlertCircle size={28} className="text-zinc-400" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">
-                    Attendance Not Available
-                  </h3>
-                  <p className="text-zinc-500 font-medium">
-                    These details are not yet updated, please check back
-                    shortly...
-                  </p>
-                </div>
-              ) : (
-                <div className="md:bg-white md:rounded-xl overflow-hidden md:border md:border-zinc-100 md:shadow-sm bg-transparent">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-zinc-200 md:bg-zinc-50/50 bg-transparent">
-                          <th className="px-4 py-2 text-left text-[12px] font-medium text-navy-500">
-                            Subject
-                          </th>
-                          <th className="px-4 py-2 text-center text-[12px] font-medium text-navy-500">
-                            Total Classes
-                          </th>
-                          <th className="px-4 py-2 text-center text-[12px] font-medium text-navy-500">
-                            Attended
-                          </th>
-                          <th className="px-4 py-2 text-center text-[12px] font-medium text-navy-500">
-                            Percentage
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-zinc-100">
-                        {Array.isArray(attendanceData.attendance) &&
-                          attendanceData.attendance.map(
-                            (record: any, index: number) => (
-                              <tr
-                                key={index}
-                                className="group hover:bg-zinc-50 transition-colors"
-                              >
-                                <td className="px-4 py-2 font-medium text-xs text-zinc-900">
-                                  {typeof record.subject === "string"
-                                    ? record.subject
-                                    : record.subject?.name || "Unknown Subject"}
-                                </td>
-                                <td className="px-4 py-2 text-center text-zinc-600 font-medium text-xs">
-                                  {record.totalClasses}
-                                </td>
-                                <td className="px-4 py-2 text-center text-zinc-600 font-medium text-xs">
-                                  {record.attendedClasses}
-                                </td>
-                                <td className="px-4 py-2 text-center">
-                                  <span
-                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                                      parseFloat(String(record.percentage)) >=
-                                      75
-                                        ? "bg-zinc-900 text-white"
-                                        : parseFloat(
-                                              String(record.percentage),
-                                            ) >= 65
-                                          ? "bg-zinc-200 text-zinc-700"
-                                          : "bg-zinc-100 text-zinc-400"
-                                    }`}
-                                  >
-                                    {record.percentage}%
-                                  </span>
-                                </td>
-                              </tr>
-                            ),
-                          )}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div className="px-6 py-8 md:bg-zinc-900 text-white md:mt-0 shadow-inner bg-transparent mt-4 border-t border-zinc-100">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                      <div>
-                        <h3 className="text-base font-semibold tracking-tight text-zinc-800 md:text-white">
-                          Aggregate Attendance
-                        </h3>
-                      </div>
-                      {/* Summary calculation if available, or just a placeholder */}
-                      <div className="flex items-center gap-6">
-                        <div className="text-right flex items-center gap-3">
-                          <p className="text-navy-400 font-medium text-[12px]">
-                            Semester Avg :
-                          </p>
-                          <p className="text-3xl font-semibold text-zinc-900 md:text-white tracking-tighter">
-                            {(
-                              attendanceData.attendance.reduce(
-                                (acc, curr: any) =>
-                                  acc +
-                                  (parseFloat(curr?.percentage || "0") || 0),
-                                0,
-                              ) / (attendanceData.attendance.length || 1)
-                            ).toFixed(1)}
-                            %
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+          ) : null}
+          {records.length === 0 ? (
+            <EmptyState
+              title="No attendance yet"
+              body="This semester has no attendance records."
+            />
+          ) : (
+            <Table
+              columns={columns}
+              rows={records.map((record, index) => ({
+                ...record,
+                id: `${subjectName(record)}-${index}`,
+              }))}
+              getRowId={(row) => row.id}
+            />
           )}
-
-        {/* Not Logged In State - only show AFTER /me has resolved */}
-        {!authLoading && !user?.username && !isLoading && !resultsFetched && (
-          <div className="bg-zinc-50/50 border border-zinc-100 rounded-xl p-12 text-center">
-            <div className="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-zinc-50">
-              <AlertCircle size={32} className="text-zinc-300" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2 text-zinc-800">
-              Authorization Required
-            </h3>
-            <p className="text-zinc-500 mb-8 max-w-xs mx-auto text-xs font-medium leading-relaxed">
-              Please authenticate to access your institutional attendance
-              terminal.
-            </p>
-            <button className="h-[46px] px-8 bg-zinc-900 text-white rounded-xl font-medium text-sm transition-all hover:bg-zinc-800 active:scale-[0.98]">
-              Sign In to Continue
-            </button>
-          </div>
-        )}
-
-        {/* Empty State - only show after /me resolved and user is known */}
-        {!authLoading &&
-          user?.username &&
-          !isLoading &&
-          !resultsFetched &&
-          !error && (
-            <div className="bg-zinc-50/50 border border-zinc-100 rounded-xl p-12 text-center">
-              <div className="md:bg-white w-16 h-16 md:rounded-2xl flex items-center justify-center mx-auto mb-6 md:shadow-sm md:border md:border-zinc-50 bg-transparent">
-                <CalendarCheck size={32} className="text-zinc-300" />
-              </div>
-              <h3 className="text-base font-semibold mb-2 text-zinc-800">
-                No Snapshot Selected
-              </h3>
-              <p className="text-zinc-500 mb-6 max-w-xs mx-auto font-medium text-xs leading-relaxed">
-                Specify an academic year and semester to generate your
-                attendance matrix.
-              </p>
-            </div>
-          )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

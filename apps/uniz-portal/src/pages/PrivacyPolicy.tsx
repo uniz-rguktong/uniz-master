@@ -1,8 +1,6 @@
-import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { UNIZ_CAMPUS_LABEL } from "@/constants/branding";
-import { SiteLegalFooter } from "@/components/SiteLegalFooter";
+import { PublicFooter, PublicHeader } from "@/components/public/PublicFrame";
 
 const sections = [
   {
@@ -41,46 +39,32 @@ const sections = [
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-[#fafafa] font-sans">
+    <div className="min-h-screen bg-bg text-text">
       <SEO
         title="Privacy Policy — uniZ"
         description={`Privacy policy for the uniZ campus platform at ${UNIZ_CAMPUS_LABEL}.`}
         canonical="https://uniz.rguktong.in/privacy"
       />
-
-      <header className="max-w-3xl mx-auto px-6 py-8">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to home
-        </Link>
-      </header>
-
-      <main className="max-w-3xl mx-auto px-6 pb-16">
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-950 mb-2">
+      <PublicHeader />
+      <main className="mx-auto w-full max-w-[65ch] px-4 py-10 min-[821px]:px-0 min-[821px]:py-16">
+        <h1 className="font-serif text-[26px] font-normal leading-[34px] tracking-[-0.01em] text-head min-[821px]:text-[32px] min-[821px]:leading-10">
           Privacy Policy
         </h1>
-        <p className="text-sm text-zinc-500 mb-10">
+        <p className="mt-3 text-body leading-6 text-text-2">
           Last updated: June 2026 · {UNIZ_CAMPUS_LABEL}
         </p>
-
-        <div className="space-y-8">
+        <div className="mt-10 space-y-8">
           {sections.map((section) => (
             <section key={section.title}>
-              <h2 className="text-lg font-semibold text-zinc-900 mb-2">
+              <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head">
                 {section.title}
               </h2>
-              <p className="text-[15px] leading-relaxed text-zinc-600">
-                {section.body}
-              </p>
+              <p className="mt-2 text-[16px] leading-[26px] text-text">{section.body}</p>
             </section>
           ))}
         </div>
       </main>
-
-      <SiteLegalFooter />
+      <PublicFooter />
     </div>
   );
 }
