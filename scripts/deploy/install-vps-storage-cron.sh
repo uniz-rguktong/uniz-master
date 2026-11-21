@@ -3,7 +3,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CLEANUP_SCRIPT="$SCRIPT_DIR/vps-storage-cleanup.sh"
+CLEANUP_SCRIPT="$(cd "$SCRIPT_DIR/../ops" && pwd)/vps-storage-cleanup.sh"
 CRON_LINE="0 2 * * * bash $CLEANUP_SCRIPT >> /var/log/uniz-storage-cleanup.log 2>&1"
 MARKER="uniz-vps-storage-cleanup"
 

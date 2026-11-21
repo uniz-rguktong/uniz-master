@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/utils/toast-ref";
 import { apiClient } from "../../api/apiClient";
-import { BASE_URL } from "../../api/endpoints";
+import { BANNERS_BASE, UPDATE_BANNER_VISIBILITY } from "../../api/endpoints";
 import { uploadImage } from "../../api/uploadImage";
 import {
   GripVertical,
@@ -40,7 +40,7 @@ type Banner = {
   id: string;
   text: string;
   imageUrl: string;
-  isPublished: boolean;
+  isVisible: boolean;
   title: string;
 };
 
@@ -81,8 +81,8 @@ function SortableBannerCard({
           <GripVertical className="w-5 h-5" />
         </div>
         <div className="absolute top-3 right-3">
-          <Badge tone={banner.isPublished ? "success" : "neutral"}>
-            {banner.isPublished ? "Published" : "Draft"}
+          <Badge tone={banner.isVisible ? "success" : "neutral"}>
+            {banner.isVisible ? "Published" : "Draft"}
           </Badge>
         </div>
       </div>
@@ -100,9 +100,9 @@ function SortableBannerCard({
             type="button"
             variant="outline"
             size="compact"
-            onClick={() => publishBanner(banner.id, !banner.isPublished)}
+            onClick={() => publishBanner(banner.id, !banner.isVisible)}
           >
-            {banner.isPublished ? "Unpublish" : "Publish"}
+            {banner.isVisible ? "Unpublish" : "Publish"}
           </Button>
           <Button
             type="button"
@@ -129,7 +129,7 @@ export default function BannerManager() {
 
   const fetchBanners = async () => {
     try {
-      const data = await apiClient<any>(`${BASE_URL}/admin/banners`);
+      const data = await apiClient<any>(BANNERS_BASE);
       if (data && data.success) setBanners(data.banners);
     } catch (err) {
       console.error("fetchBanners error:", err);
@@ -152,9 +152,9 @@ export default function BannerManager() {
         toast.error("Image upload failed");
         return;
       }
-      const data = await apiClient<any>(`${BASE_URL}/admin/banners`, {
+      const data = await apiClient<any>(BANNERS_BASE, {
         method: "POST",
-        body: JSON.stringify({ title, text, imageUrl }),
+        body: JSON.stringify({ title, text, imageUrl, isVisible: true }),
       });
       if (data && data.success) {
         setText("");
@@ -174,7 +174,7 @@ export default function BannerManager() {
   const deleteBanner = async (id: string) => {
     if (!confirm("Are you sure you want to delete this banner?")) return;
     try {
-      const data = await apiClient<any>(`${BASE_URL}/admin/banners/${id}`, {
+      const data = await apiClient<any>(`${BANNERS_BASE}/${id}`, {
         method: "DELETE",
       });
       if (data && data.success) {
@@ -188,13 +188,10 @@ export default function BannerManager() {
 
   const publishBanner = async (id: string, publish: boolean) => {
     try {
-      const data = await apiClient<any>(
-        `${BASE_URL}/admin/banners/${id}/publish`,
-        {
-          method: "POST",
-          body: JSON.stringify({ publish }),
-        },
-      );
+      const data = await apiClient<any>(UPDATE_BANNER_VISIBILITY(id), {
+        method: "POST",
+        body: JSON.stringify({ isVisible: publish }),
+      });
       if (data && data.success) {
         toast.success(publish ? "Banner published" : "Banner unpublished");
         fetchBanners();

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ExcelJS from "exceljs";
 import {
@@ -13,7 +13,11 @@ import {
   FileSpreadsheet,
   ArrowLeft,
 } from "lucide-react";
-import { BASE_URL } from "../../api/endpoints";
+import {
+  ADMIN_STUDENT_PROGRESS,
+  ADMIN_STUDENT_TEMPLATE,
+  ADMIN_STUDENT_UPLOAD,
+} from "../../api/endpoints";
 import { Button } from "@/components/ui/button";
 import { Input } from "../../components/Input";
 import { PageHeader } from "@/components/ui/page-header";
@@ -21,12 +25,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Table, type TableColumn } from "@/components/ui/table";
 import { apiClient, downloadFile } from "../../api/apiClient";
-import {
-  adminCardClass,
-  adminLabelClass,
-  adminPageWrapClass,
-  adminSelectClass,
-} from "../../components/admin/admin-ui";
+import { adminCardClass, adminPageWrapClass } from "../../components/admin/admin-ui";
 import { cn } from "../../utils/cn";
 
 export default function AddStudents() {
@@ -35,11 +34,8 @@ export default function AddStudents() {
   const [file, setFile] = useState<File | null>(null);
   const [rows, setRows] = useState<any[]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
-  const [year, setYear] = useState("E1");
-  const [sem, setSem] = useState("Sem - 1");
-  const [branch, setBranch] = useState("CSE");
-  const [_processId, setProcessId] = useState<string | null>(null);
-  const [progress, _setProgress] = useState<any>(null);
+  const [progress, setProgress] = useState<any>(null);
+  const pollRef = useRef<number | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -90,33 +86,51 @@ export default function AddStudents() {
     setError(null);
   };
 
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) window.clearInterval(pollRef.current);
+    };
+  }, []);
+
   const handleUpload = async () => {
-    if (!rows.length) return setError("Select a valid file first");
+    if (!file || !rows.length) return setError("Select a valid file first");
     setUploading(true);
     setError(null);
+    setProgress({ status: "processing", percentage: 0 });
     try {
-      const data = await apiClient<any>(`${BASE_URL}/admin/addstudents`, {
+      const body = new FormData();
+      body.append("file", file);
+      const data = await apiClient<any>(ADMIN_STUDENT_UPLOAD, {
         method: "POST",
-        body: JSON.stringify({
-          year,
-          SemesterName: sem,
-          branch,
-          Students: rows.map((r) => ({
-            Username: r.Username,
-            RollNumber: r.RollNumber,
-            FullName: r.FullName,
-            Email: r.Email,
-          })),
-        }),
+        body,
       });
 
       if (data && data.success) {
-        setProcessId(data.processId);
-        _setProgress({ status: "completed", percentage: 100 });
+        if (pollRef.current) window.clearInterval(pollRef.current);
+        pollRef.current = window.setInterval(async () => {
+          const tick = await apiClient<{ percent?: number; status?: string }>(
+            ADMIN_STUDENT_PROGRESS,
+            {},
+            false,
+          );
+          if (!tick) return;
+          const done = tick.status === "completed" || tick.status === "done";
+          const failed = tick.status === "failed" || tick.status === "error";
+          setProgress({
+            percentage: done ? 100 : tick.percent || 0,
+            status: done ? "completed" : failed ? "failed" : "processing",
+          });
+          if (!done && !failed) return;
+          if (pollRef.current) window.clearInterval(pollRef.current);
+          pollRef.current = null;
+          if (failed) setError("Upload failed");
+        }, 2000);
       } else {
-        setError(data?.msg || "Upload failed");
+        setProgress(null);
+        setError(data?.message || data?.msg || "Upload failed");
       }
     } catch {
+      setProgress(null);
       setError("Upload failed due to network error");
     } finally {
       setUploading(false);
@@ -125,11 +139,7 @@ export default function AddStudents() {
 
   const downloadTemplate = async () => {
     try {
-      await downloadFile(
-        `${BASE_URL}/admin/students/template`,
-        `${year}_${sem}_${branch}_students_template.xlsx`,
-        { year, semester: sem, branch },
-      );
+      await downloadFile(ADMIN_STUDENT_TEMPLATE, "Student_Upload_Template.xlsx");
     } catch {
       setError("Error downloading template");
     }
@@ -173,56 +183,6 @@ export default function AddStudents() {
           </Button>
         }
       />
-
-      <div className={cn(adminCardClass, "grid grid-cols-1 gap-6 p-6 md:grid-cols-3")}>
-        <div className="space-y-2">
-          <label className={adminLabelClass}>Year</label>
-          <div className="flex rounded-lg bg-surface-2 p-1">
-            {["E1", "E2", "E3", "E4"].map((y) => (
-              <button
-                key={y}
-                type="button"
-                onClick={() => setYear(y)}
-                className={cn(
-                  "flex-1 rounded-md py-2 text-dense font-medium transition-colors",
-                  year === y
-                    ? "bg-surface text-text"
-                    : "text-text-2 hover:text-text",
-                )}
-              >
-                {y}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className={adminLabelClass}>Semester</label>
-          <select
-            value={sem}
-            onChange={(e) => setSem(e.target.value)}
-            className={adminSelectClass}
-          >
-            <option value="Sem - 1">Semester 1</option>
-            <option value="Sem - 2">Semester 2</option>
-          </select>
-        </div>
-
-        <div className="space-y-2">
-          <label className={adminLabelClass}>Branch</label>
-          <select
-            value={branch}
-            onChange={(e) => setBranch(e.target.value)}
-            className={adminSelectClass}
-          >
-            {["CSE", "ECE", "EEE", "CIVIL", "MECH"].map((b) => (
-              <option key={b} value={b}>
-                {b}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
 
       {!rows.length ? (
         <div
