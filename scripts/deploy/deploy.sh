@@ -234,6 +234,254 @@ rollback_ghcr_images() {
   verify_deployment || true
 }
 
+# Fingerprint Secret data only. Never print values. Stable across key order.
+uniz_secrets_data_hash() {
+  kubectl get secret uniz-secrets -n "${NAMESPACE:-default}" \
+    -o go-template='{{range $k, $v := .data}}{{printf "%s=%s\n" $k $v}}{{end}}' 2>/dev/null \
+    | sort \
+    | sha256sum \
+    | awk '{print $1}' || true
+}
+
+# envsubst writes raw vault DATABASE_URLs (127.0.0.1 / localhost) into secrets.yaml.
+# Pods cannot dial loopback. Rewrite those DB hosts before kubectl apply.
+rewrite_rendered_secret_db_hosts() {
+  local path="$1"
+  local pod_host="${POD_PG_HOST:-10.42.0.1}"
+  [ -f "$path" ] || return 0
+  POD_PG_HOST="$pod_host" python3 - "$path" <<'PY' || echo "[Infra] WARN: could not rewrite rendered DB hosts"
+import os, re, sys
+from pathlib import Path
+path = Path(sys.argv[1])
+pod = os.environ["POD_PG_HOST"]
+pat = re.compile(r"(@|//)(?:127\.0\.0\.1|localhost)(?::\d+)?")
+rewritten = 0
+out = []
+text = path.read_text()
+for line in text.splitlines(keepends=True):
+    nl = "\n" if line.endswith("\n") else ""
+    body = line[:-1] if nl else line
+    m = re.match(r"^(\s*)([A-Za-z_][A-Za-z0-9_]*)(:)(.*)$", body)
+    if not m:
+        out.append(line)
+        continue
+    key, rest = m.group(2), m.group(4)
+    if key.endswith("DATABASE_URL") or key == "DB_HOST":
+        new_rest = pat.sub(lambda mm, host=pod: f"{mm.group(1)}{host}:5432", rest)
+        if key == "DB_HOST":
+            bare = new_rest.strip().strip("'\"")
+            if bare in {"127.0.0.1", "localhost"}:
+                quote = '"' if '"' in new_rest else ""
+                new_rest = f" {quote}{pod}{quote}"
+        if new_rest != rest:
+            rewritten += 1
+            rest = new_rest
+    out.append(f"{m.group(1)}{key}:{rest}{nl}")
+path.write_text("".join(out))
+print(f"[Infra] Rewrote loopback DB hosts in {rewritten} rendered secret keys")
+PY
+}
+
+# sync-k8s-secret-from-vault.sh rewrites 127.0.0.1 and the public IP, not the
+# hostname "localhost". After it is the last writer, strip any DB host it left
+# on loopback. Do not print secret values; the patched manifest stays in a 0600 temp file.
+strip_loopback_db_hosts_in_secret() {
+  local ns="${NAMESPACE:-default}"
+  local pod_host="${POD_PG_HOST:-10.42.0.1}"
+  local raw patched rc
+  raw="$(mktemp)"
+  patched="$(mktemp)"
+  chmod 600 "$raw" "$patched"
+  rc=0
+  if ! kubectl get secret uniz-secrets -n "$ns" -o json >"$raw" 2>/dev/null; then
+    rm -f "$raw" "$patched"
+    return 0
+  fi
+  POD_PG_HOST="$pod_host" python3 - "$raw" "$patched" <<'PY' || rc=$?
+import json, os, re, base64, sys
+from pathlib import Path
+pod = os.environ["POD_PG_HOST"]
+src, dst = Path(sys.argv[1]), Path(sys.argv[2])
+doc = json.loads(src.read_text() or "{}")
+data = doc.get("data") or {}
+changed = False
+pat = re.compile(r"(@|//)(?:127\.0\.0\.1|localhost)(?::\d+)?")
+
+def rewrite(val, key):
+    new = pat.sub(lambda m, host=pod: f"{m.group(1)}{host}:5432", val)
+    if key == "DB_HOST" and val.strip().strip("'\"") in {"127.0.0.1", "localhost"}:
+        new = pod
+    return new
+
+for key, b64 in list(data.items()):
+    if not (str(key).endswith("DATABASE_URL") or key == "DB_HOST"):
+        continue
+    try:
+        val = base64.b64decode(b64).decode()
+    except Exception:
+        continue
+    new = rewrite(val, key)
+    if new != val:
+        data[key] = base64.b64encode(new.encode()).decode()
+        changed = True
+if not changed:
+    sys.exit(0)
+meta = doc.setdefault("metadata", {})
+for field in ("resourceVersion", "uid", "creationTimestamp", "managedFields", "generation"):
+    meta.pop(field, None)
+doc["data"] = data
+dst.write_text(json.dumps(doc))
+PY
+  if [ "$rc" -eq 0 ] && [ -s "$patched" ]; then
+    echo "[Vault] Stripping loopback DB hosts from uniz-secrets"
+    kubectl apply -f "$patched" >/dev/null || true
+  fi
+  rm -f "$raw" "$patched"
+}
+
+# Deployments that read Postgres from uniz-secrets. cron is included when the
+# Deployment object still exists (it may be scaled to 0).
+UNIZ_DB_DEPLOYMENTS=(
+  uniz-auth-service
+  uniz-user-service
+  uniz-academics-service
+  uniz-notification-service
+  uniz-outpass-service
+  uniz-gateway-api
+  uniz-cron-service
+)
+
+# Redact userinfo in any accidental database URL. Never print env or Secret data.
+scrub_deploy_output() {
+  sed -E 's#postgres(ql)?://[^@]*@#postgresql://***@#g'
+}
+
+# Hash is taken after the vault re-sync. Pods keep env from the template they
+# started with, so compare that hash to uniz.rguktong.in/secrets-hash and patch
+# when it is missing or different. The patch itself rolls the Deployment.
+roll_db_deployments_for_secret() {
+  local hash dep current
+  hash="$(uniz_secrets_data_hash)"
+  if [ -z "$hash" ]; then
+    echo "[Vault] uniz-secrets hash unavailable — skipping annotation rollout"
+    return 0
+  fi
+  echo "[Vault] Aligning DB deployments to uniz-secrets hash ${hash:0:12}"
+  for dep in "${UNIZ_DB_DEPLOYMENTS[@]}"; do
+    if ! kubectl get deployment "$dep" >/dev/null 2>&1; then
+      echo "[Vault] $dep absent — skip"
+      continue
+    fi
+    current=$(kubectl get deployment "$dep" -o go-template='{{if .spec.template.metadata.annotations}}{{index .spec.template.metadata.annotations "uniz.rguktong.in/secrets-hash"}}{{end}}' 2>/dev/null | tr -d '[:space:]' || true)
+    if [ "$current" = "$hash" ]; then
+      echo "[Vault] $dep secrets-hash matches"
+      continue
+    fi
+    echo "[Vault] $dep secrets-hash missing or stale — patching annotation"
+    kubectl patch deployment "$dep" --type=merge \
+      -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"uniz.rguktong.in/secrets-hash\":\"${hash}\"}}}}}" \
+      || true
+  done
+}
+
+verify_db_secret_rollouts() {
+  local dep timeout="${ROLLOUT_TIMEOUT:-300s}" failed=0
+  echo "[Verify] Waiting for DB-reading rollouts..."
+  for dep in "${UNIZ_DB_DEPLOYMENTS[@]}"; do
+    if ! kubectl get deployment "$dep" >/dev/null 2>&1; then
+      echo "[Verify] $dep absent — skip"
+      continue
+    fi
+    if kubectl rollout status "deployment/$dep" --timeout="$timeout"; then
+      echo "[Verify] $dep rolled out"
+    else
+      echo "[Verify] rollout failed for $dep"
+      failed=1
+    fi
+  done
+  return "$failed"
+}
+
+# Connectivity evidence after rollouts. Stdout is scrubbed; do not print URLs or env.
+diag_db_connectivity() {
+  local dep hp host port hba found pod_lines log_lines listen hba_lines
+  echo "[diag] DB connectivity"
+  echo "[diag] pods"
+  pod_lines=$(kubectl get pods -o wide 2>&1 \
+    | grep -E 'NAME|uniz-auth-service|uniz-user-service|uniz-academics-service|uniz-notification-service|uniz-outpass-service|uniz-gateway-api|uniz-cron-service' \
+    || true)
+  printf '%s\n' "$pod_lines" | scrub_deploy_output || true
+
+  for dep in uniz-auth-service uniz-user-service; do
+    echo "[diag] logs $dep (last 40 lines, filtered)"
+    log_lines=$(kubectl logs "deploy/$dep" --tail=40 2>&1 \
+      | grep -iE 'prisma|database|ECONNREFUSED|P1001|P1000|P1010|error' || true)
+    if [ -n "$log_lines" ]; then
+      printf '%s\n' "$log_lines" | scrub_deploy_output || true
+    else
+      echo "[diag] no matching log lines for $dep"
+    fi
+  done
+
+  echo "[diag] AUTH_DATABASE_URL host"
+  hp=$(
+    kubectl get secret uniz-secrets -n "${NAMESPACE:-default}" \
+      -o go-template='{{index .data "AUTH_DATABASE_URL"}}' 2>/dev/null \
+      | base64 -d 2>/dev/null \
+      | python3 -c '
+import sys
+from urllib.parse import urlparse
+raw = sys.stdin.read().strip()
+if not raw:
+    sys.exit(0)
+u = urlparse(raw)
+if not u.hostname:
+    sys.exit(0)
+print(f"{u.hostname}:{u.port or 5432}")
+' || true
+  )
+  hp=$(printf '%s' "$hp" | tr -d '[:space:]' | scrub_deploy_output)
+  echo "[diag] AUTH_DATABASE_URL ${hp:-unknown}"
+
+  host="${hp%%:*}"
+  port="${hp##*:}"
+  if [[ "$host" =~ ^[A-Za-z0-9._-]+$ ]] && [[ "$port" =~ ^[0-9]+$ ]]; then
+    echo "[diag] tcp probe ${host}:${port} from uniz-auth-service"
+    kubectl exec deploy/uniz-auth-service -- node -e \
+      "require('net').connect(${port}, '${host}').on('connect',()=>{console.log('tcp ok');process.exit(0)}).on('error',e=>{console.log('tcp fail',e.code);process.exit(0)})" \
+      2>&1 | scrub_deploy_output || true
+  else
+    echo "[diag] tcp probe skipped — host:port unavailable"
+  fi
+
+  echo "[diag] listeners :5432"
+  listen=$(ss -ltnp 2>/dev/null | grep 5432 | sed -E 's/users:.*//' || true)
+  if [ -n "$listen" ]; then
+    printf '%s\n' "$listen" | scrub_deploy_output || true
+  else
+    echo "[diag] ss unavailable or nothing listening on 5432"
+  fi
+
+  echo "[diag] pg_hba"
+  found=0
+  for hba in /etc/postgresql/*/main/pg_hba.conf /var/lib/pgsql/*/data/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf; do
+    if [ -r "$hba" ]; then
+      found=1
+      echo "[diag] $hba"
+      hba_lines=$(grep -vE '^[[:space:]]*#' "$hba" | grep -E '10\.42|0\.0\.0\.0' || true)
+      if [ -n "$hba_lines" ]; then
+        printf '%s\n' "$hba_lines" | scrub_deploy_output || true
+      else
+        echo "[diag] no non-comment 10.42 or 0.0.0.0 line in $hba"
+      fi
+    fi
+  done
+  if [ "$found" -eq 0 ]; then
+    echo "[diag] pg_hba not readable — skipped"
+  fi
+  return 0
+}
+
 # 16. Deploy Logic
 deploy_logic() {
   set -e
@@ -302,6 +550,7 @@ deploy_logic() {
   if [ -f "infra/kubernetes/base/shared/secrets.yaml.template" ]; then
     echo "[Infra] Generating secrets.yaml..."
     envsubst < infra/kubernetes/base/shared/secrets.yaml.template > infra/kubernetes/base/shared/secrets.yaml
+    rewrite_rendered_secret_db_hosts "infra/kubernetes/base/shared/secrets.yaml"
   fi
 
   # Apply Infrastructure
@@ -309,6 +558,16 @@ deploy_logic() {
   # Stale ingress-nginx admission webhook blocks Ingress updates after controller removal
   kubectl delete validatingwebhookconfiguration ingress-nginx-admission 2>/dev/null || true
   kubectl apply -k infra/kubernetes/base/shared/ || true
+
+  # The apply above replaces uniz-secrets with the rendered template (a subset
+  # of vault keys). Re-run the vault sync so it is the last writer: full key
+  # set, %q unescape, cni0 host. The earlier sync stays so host-side Prisma
+  # migrations still use loopback.
+  if [ -f "/root/uniz-secrets.env" ] && [ -f "scripts/deploy/sync-k8s-secret-from-vault.sh" ]; then
+    echo "[Vault] Re-syncing Kubernetes uniz-secrets after shared apply (pod Postgres host)..."
+    bash scripts/deploy/sync-k8s-secret-from-vault.sh /root/uniz-secrets.env || true
+    strip_loopback_db_hosts_in_secret || true
+  fi
 
   if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
     echo "[Infra] Syncing Cloudflare DNS token for cert-manager..."
@@ -499,9 +758,21 @@ deploy_logic() {
     VERIFY_DEPLOYMENTS+=("$dep")
   done
 
+  # Secret handling is finished (vault re-sync is the last writer). Roll any
+  # DB-reading pod whose template is not stamped with that secret hash, then
+  # always wait. A missing annotation (this deploy) restarts them once.
+  roll_db_deployments_for_secret
+  db_rollout_rc=0
+  verify_db_secret_rollouts || db_rollout_rc=$?
+  diag_db_connectivity || true
+  if [ "$db_rollout_rc" -ne 0 ]; then
+    echo "[Verify] DB-reading rollout failed — diagnostics above; not continuing to smoke."
+    exit 1
+  fi
+
   if [ "$DEPLOY_CONTEXT" = "GITHUB_ACTIONS" ]; then
     if [ "$REBUILT_COUNT" -eq 0 ]; then
-      echo "[Verify] No images updated this deploy — skipping rollout verify."
+      echo "[Verify] No images updated this deploy — skipping image rollout verify."
     elif ! verify_deployment; then
       echo "[Warn] Deploy verify failed — leaving rolled-out images in place (no GHCR rollback; old SHA tags may not exist in registry)."
       exit 1
@@ -594,5 +865,5 @@ else
 EOF
 fi
 
-echo "[Health] API: \$(curl -s -o /dev/null -w "%{http_code}" https://api-uniz.rguktong.in/api/v1/system/health || echo 'FAIL')"
+echo "[Health] API: $(curl -s -o /dev/null -w "%{http_code}" https://api-uniz.rguktong.in/api/v1/system/health || echo 'FAIL')"
 echo "[Done] Branch $CURRENT_BRANCH Deployed."
