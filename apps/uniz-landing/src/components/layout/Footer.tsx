@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Linkedin, Instagram, Youtube } from "lucide-react";
 import { Wrap } from "./Wrap";
-import { portalPath, PORTAL_URL } from "@/lib/portal";
+import { portalPath } from "@/lib/portal";
 import { officialHome } from "@/data/official";
+import { EditableText } from "../preview/EditRegion";
+import { useSiteContent } from "@/components/site-context";
 import { ANDROID_APK_FILENAME, ANDROID_APK_URL, openLandingIosModal } from "@/lib/mobile-app";
 
 const columns = [
@@ -30,7 +32,7 @@ const columns = [
     title: "Campus",
     links: [
       { n: "Administration", p: "/administration" },
-      { n: "Placements", p: "/nexus/placements" },
+      { n: "Placements", p: "/information/placements" },
       { n: "SC/ST cell", p: "/institute/scst" },
       { n: "Contact", p: "/information/contact" },
       { n: "Consultancy", p: "/consultancy" },
@@ -57,6 +59,7 @@ const socials = [
 const barLink = "focus-chrome inline-flex min-h-11 items-center text-[13px] leading-[18px] text-chrome-link hover:underline min-[640px]:min-h-0";
 
 export function Footer() {
+  const { contact, authorized } = useSiteContent();
   return (
     <footer className="mt-[72px] w-full bg-navy-900 text-white min-[821px]:mt-[120px] dark:border-t dark:border-sb-border">
       <Wrap className="grid grid-cols-2 gap-x-6 gap-y-9 py-12 pb-9 min-[821px]:grid-cols-[1.6fr_repeat(4,1fr)] min-[821px]:gap-12 min-[821px]:py-[72px] min-[821px]:pb-14">
@@ -65,8 +68,27 @@ export function Footer() {
             <img src="/rgukt-logo.png" alt="" width={40} height={46} className="h-10 w-auto brightness-0 invert" />
             <span className="font-serif text-[22px] font-semibold leading-none tracking-[-0.01em]">RGUKT Ongole</span>
           </Link>
-          <p className="mt-5 max-w-[360px] text-[14px] leading-[22px] text-chrome-link">
-            Rajiv Gandhi University of Knowledge Technologies, Ongole. RGUKT Ongole Campus, Kurnool Road, Santhanuthalapadu (V&amp;M), Prakasam District, Andhra Pradesh — 523225.
+          <EditableText
+            region="contact-address"
+            value={contact.address}
+            as="p"
+            className="mt-5 max-w-[360px] text-[14px] leading-[22px] text-chrome-link"
+          />
+          <p className="mt-3 flex flex-col gap-1 text-[13px] leading-[18px] text-chrome-link">
+            {authorized ? (
+              <EditableText region="contact-phone" value={contact.phone} />
+            ) : (
+              <a href={`tel:${contact.phone.replace(/[^\d+]/g, "")}`} className="hover:underline">
+                {contact.phone}
+              </a>
+            )}
+            {authorized ? (
+              <EditableText region="contact-email" value={contact.email} />
+            ) : (
+              <a href={`mailto:${contact.email}`} className="hover:underline">
+                {contact.email}
+              </a>
+            )}
           </p>
           <p className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-[13px] leading-[18px]">
             {officialHome.campuses.map((campus) => (
@@ -123,9 +145,6 @@ export function Footer() {
                 <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
               </a>
             ))}
-            <a href={PORTAL_URL} className={barLink}>
-              Student Portal
-            </a>
             <a href={portalPath("/privacy")} className={barLink}>
               Privacy
             </a>
