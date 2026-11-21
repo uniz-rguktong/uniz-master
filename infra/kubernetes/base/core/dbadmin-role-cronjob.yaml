@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: uniz-dbadmin-role
+  labels:
+    app: uniz-dbadmin-role
+spec:
+  schedule: "15 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: grant
+              image: postgres:17-alpine
+              imagePullPolicy: IfNotPresent
+              command: ["sh", "/sql/ensure-dbadmin-role.sh"]
+              env:
+                - name: DBADMIN_DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: uniz-secrets
+                      key: DBADMIN_DB_PASSWORD
+                - name: USER_DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uniz-secrets
+                      key: USER_DATABASE_URL
+                - name: DBADMIN_BOOTSTRAP_DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uniz-secrets
+                      key: DBADMIN_BOOTSTRAP_DATABASE_URL
+                      optional: true
+              volumeMounts:
+                - name: sql
+                  mountPath: /sql
+                  readOnly: true
+          volumes:
+            - name: sql
+              configMap:
+                name: uniz-dbadmin-role-sql

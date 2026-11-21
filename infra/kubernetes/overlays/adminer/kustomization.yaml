@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base/core/adminer.yaml
+  - ../../base/core/dbadmin-service.yaml
+  - ../../base/core/dbadmin-role-cronjob.yaml
+
+configMapGenerator:
+  - name: uniz-dbadmin-role-sql
+    files:
+      - ensure-dbadmin-role.sql=../../../../scripts/ops/ensure-dbadmin-role.sql
+      - ensure-dbadmin-role.sh=../../../../scripts/ops/ensure-dbadmin-role.sh
+
+generatorOptions:
+  disableNameSuffixHash: true

@@ -1,0 +1,33 @@
+{
+  "name": "uniz-dbadmin-service",
+  "version": "1.0.0",
+  "description": "Webmaster database editor for UniZ",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "start:access-proxy": "node dist/access-proxy.js",
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "test": "tsc && node --test dist/audit/logic.test.js",
+    "prisma:generate": "prisma generate"
+  },
+  "dependencies": {
+    "@uniz/shared": "*",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "helmet": "^7.1.0",
+    "jose": "^4.15.9",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.11.10",
+    "prisma": "^6.4.1",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.5.3"
+  }
+}

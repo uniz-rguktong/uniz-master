@@ -36,7 +36,9 @@ rewrite_db_url_localhost() {
   printf '%s' "$url"
 }
 
-# app directory -> secrets env var for DATABASE_URL
+# app directory -> secrets env var for DATABASE_URL -> optional mode
+# uniz-dbadmin uses the owner URL with schema=uniz_dbadmin and must not be baselined:
+# the database already holds the other service schemas.
 SERVICES=(
   "uniz-auth:AUTH_DATABASE_URL"
   "uniz-user:USER_DATABASE_URL"
@@ -44,7 +46,20 @@ SERVICES=(
   "uniz-outpass:OUTPASS_DATABASE_URL"
   "uniz-notifications:NOTIFICATION_DATABASE_URL"
   "uniz-cron:CRON_DATABASE_URL"
+  "uniz-dbadmin:DBADMIN_MIGRATE_DATABASE_URL:no-baseline"
 )
+
+rewrite_schema_param() {
+  local url="$1"
+  local schema="$2"
+  if printf '%s' "$url" | grep -q 'schema='; then
+    printf '%s' "$url" | sed -E "s/schema=[^&]*/schema=${schema}/"
+  elif printf '%s' "$url" | grep -q '?'; then
+    printf '%s&schema=%s' "$url" "$schema"
+  else
+    printf '%s?schema=%s' "$url" "$schema"
+  fi
+}
 
 list_migrations() {
   local dir
@@ -57,6 +72,7 @@ list_migrations() {
 migrate_one() {
   local app="$1"
   local url_var="$2"
+  local mode="${3:-}"
   local url="${!url_var:-}"
 
   if [ ! -f "apps/$app/prisma/schema.prisma" ]; then
@@ -91,6 +107,11 @@ migrate_one() {
     return 0
   fi
 
+  if [ "$mode" = "no-baseline" ] && echo "$out" | grep -q "P3005"; then
+    echo "[Prisma] $app FAILED. Refusing to mark migrations applied without running them." >&2
+    return "$rc"
+  fi
+
   if echo "$out" | grep -q "P3005"; then
     echo "[Prisma] $app: existing database without migration history — baselining..."
     local name
@@ -110,8 +131,12 @@ migrate_one() {
 
 failed=0
 for entry in "${SERVICES[@]}"; do
-  IFS=':' read -r app url_var <<< "$entry"
-  if ! migrate_one "$app" "$url_var"; then
+  IFS=':' read -r app url_var mode <<< "$entry"
+  if [ "$app" = "uniz-dbadmin" ] && [ -z "${DBADMIN_MIGRATE_DATABASE_URL:-}" ] && [ -n "${USER_DATABASE_URL:-}" ]; then
+    DBADMIN_MIGRATE_DATABASE_URL="$(rewrite_schema_param "$USER_DATABASE_URL" "uniz_dbadmin")"
+    export DBADMIN_MIGRATE_DATABASE_URL
+  fi
+  if ! migrate_one "$app" "$url_var" "${mode:-}"; then
     failed=$((failed + 1))
   fi
   cd "$ROOT"

@@ -1,0 +1,116 @@
+# Public values only. The Access application tag is not a secret.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: uniz-adminer-access
+data:
+  CF_ACCESS_TEAM_DOMAIN: sweet-frost-287a.cloudflareaccess.com
+  CF_ACCESS_AUD: f7f85a6370a5369a98b00fa3cdd47fe5d487317bad36bc70a52df6984e2f4ba0
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-adminer
+  labels:
+    app: uniz-adminer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uniz-adminer
+  template:
+    metadata:
+      labels:
+        app: uniz-adminer
+    spec:
+      priorityClassName: uniz-medium-priority
+      containers:
+        - name: access-proxy
+          image: uniz-dbadmin-service:local
+          imagePullPolicy: IfNotPresent
+          command: ["node", "dist/access-proxy.js"]
+          ports:
+            - name: http
+              containerPort: 4180
+          env:
+            - name: PORT
+              value: "4180"
+            - name: ADMINER_UPSTREAM
+              value: http://127.0.0.1:8080
+          envFrom:
+            - configMapRef:
+                name: uniz-adminer-access
+          resources:
+            requests:
+              cpu: "20m"
+              memory: "64Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+          readinessProbe:
+            tcpSocket:
+              port: 4180
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 4180
+            initialDelaySeconds: 20
+            periodSeconds: 20
+        - name: adminer
+          image: adminer:4.8.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: adminer
+              containerPort: 8080
+          env:
+            # Prefills the server box. Username and password stay on Adminer's own login form.
+            - name: ADMINER_DEFAULT_SERVER
+              value: "10.42.0.1"
+          resources:
+            requests:
+              cpu: "20m"
+              memory: "64Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-adminer
+spec:
+  selector:
+    app: uniz-adminer
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 4180
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: uniz-adminer
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod-dns"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - dbadmin.rguktong.in
+      secretName: uniz-adminer-tls
+  rules:
+    - host: dbadmin.rguktong.in
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: uniz-adminer
+                port:
+                  number: 8080
