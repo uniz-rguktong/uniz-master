@@ -36,17 +36,42 @@ export async function listSchemas(client: PoolClient): Promise<string[]> {
   return rows.map((row) => row.nspname);
 }
 
-export async function listTables(client: PoolClient, schema: string): Promise<string[]> {
+export interface TableSummary {
+  name: string;
+  estimatedRows: number | null;
+}
+
+export const TABLE_LIST_SQL = `SELECT t.table_name,
+            CASE
+              WHEN c.reltuples IS NULL OR c.reltuples < 0 THEN NULL
+              ELSE c.reltuples::bigint
+            END AS estimated_rows
+     FROM information_schema.tables t
+     LEFT JOIN pg_namespace n ON n.nspname = t.table_schema
+     LEFT JOIN pg_class c
+       ON c.relnamespace = n.oid
+      AND c.relname = t.table_name
+      AND c.relkind IN ('r', 'p')
+     WHERE t.table_schema = $1 AND t.table_type = 'BASE TABLE'
+     ORDER BY t.table_name`;
+
+export async function listTables(client: PoolClient, schema: string): Promise<TableSummary[]> {
   quoteIdent(schema);
-  const rows = await queryRows<{ table_name: string }>(
+  const rows = await queryRows<{ table_name: string; estimated_rows: string | number | null }>(
     client,
-    `SELECT table_name
-     FROM information_schema.tables
-     WHERE table_schema = $1 AND table_type = 'BASE TABLE'
-     ORDER BY table_name`,
+    TABLE_LIST_SQL,
     [schema],
   );
-  return rows.map((row) => row.table_name);
+  return rows.map((row) => {
+    if (row.estimated_rows === null || row.estimated_rows === undefined) {
+      return { name: row.table_name, estimatedRows: null };
+    }
+    const count = Number(row.estimated_rows);
+    return {
+      name: row.table_name,
+      estimatedRows: Number.isFinite(count) ? count : null,
+    };
+  });
 }
 
 async function enumLabels(client: PoolClient, schema: string, typeName: string): Promise<string[]> {

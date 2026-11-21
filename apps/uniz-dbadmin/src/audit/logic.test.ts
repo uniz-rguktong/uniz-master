@@ -3,7 +3,8 @@ import { describe, it } from "node:test";
 import { claimsAllow, decideAccess, readAccessToken, accessCertsUrl, accessIssuer } from "../access/claims";
 import { classifySql, confirmationSatisfied, targetsAuditTable } from "../audit/sql";
 import { quoteIdent } from "../audit/idents";
-import { buildDelete, buildInsert, buildRowSelect, buildUpdate } from "../audit/rowsql";
+import { buildDelete, buildInsert, buildRowSelect, buildUpdate, collectFilters } from "../audit/rowsql";
+import { TABLE_LIST_SQL } from "../catalog";
 import { buildUndoStatement, fitAuditJson, isChangeUndone } from "../audit/undo";
 import { coerceColumnValue, columnInputKind, describeChange } from "../audit/values";
 import { DbAdminError, sanitizePgMessage } from "../errors";
@@ -192,6 +193,129 @@ describe("row commands", () => {
 
   it("rejects unsafe names", () => {
     assert.throws(() => quoteIdent('id"; drop table t;--'), DbAdminError);
+  });
+
+  it("binds column filters and keeps their text out of the command", () => {
+    const contains = buildRowSelect({
+      schema: "s",
+      table: "t",
+      columns,
+      filters: [{ column: "name", op: "contains", value: "a'b" }],
+      limit: 10,
+      offset: 0,
+    });
+    assert.equal(contains.rows.text.includes("a'b"), false);
+    assert.match(contains.rows.text, /"name"::text ILIKE \$1/);
+    assert.equal(contains.rows.values[0], "%a'b%");
+
+    const equals = buildRowSelect({
+      schema: "s",
+      table: "t",
+      columns,
+      filters: [{ column: "name", op: "eq", value: "Ann" }],
+      limit: 10,
+      offset: 0,
+    });
+    assert.match(equals.rows.text, /"name"::text = \$1/);
+    assert.equal(equals.rows.values[0], "Ann");
+  });
+
+  it("treats is null as a predicate with no bound value", () => {
+    const built = buildRowSelect({
+      schema: "s",
+      table: "t",
+      columns,
+      filters: [{ column: "name", op: "isnull", value: "'); DROP TABLE t;--" }],
+      limit: 10,
+      offset: 0,
+    });
+    assert.equal(built.rows.text.includes("DROP"), false);
+    assert.match(built.rows.text, /"name" IS NULL/);
+    assert.deepEqual(built.rows.values, [10, 0]);
+  });
+
+  it("compares numbers and text with the column type", () => {
+    const greater = buildRowSelect({
+      schema: "s",
+      table: "t",
+      columns: [...columns, { name: "age", dataType: "integer" }],
+      filters: [{ column: "age", op: "gt", value: "21" }],
+      limit: 10,
+      offset: 0,
+    });
+    assert.match(greater.rows.text, /"age" > \$1::numeric/);
+    assert.equal(greater.rows.text.includes("21"), false);
+    assert.equal(greater.rows.values[0], "21");
+
+    const less = buildRowSelect({
+      schema: "s",
+      table: "t",
+      columns,
+      filters: [{ column: "name", op: "lt", value: "M" }],
+      limit: 5,
+      offset: 0,
+    });
+    assert.match(less.rows.text, /"name"::text < \$1/);
+    assert.equal(less.rows.text.includes("::numeric"), false);
+  });
+
+  it("ands several filters and rejects a missing column", () => {
+    const built = buildRowSelect({
+      schema: "s",
+      table: "t",
+      columns,
+      filters: [
+        { column: "name", op: "eq", value: "Ann" },
+        { column: "note", op: "isnull" },
+      ],
+      limit: 10,
+      offset: 0,
+    });
+    assert.match(built.rows.text, /"name"::text = \$1 AND "note" IS NULL/);
+    assert.throws(
+      () =>
+        buildRowSelect({
+          schema: "s",
+          table: "t",
+          columns,
+          filters: [{ column: "secret", op: "eq", value: "x" }],
+          limit: 10,
+          offset: 0,
+        }),
+      DbAdminError,
+    );
+  });
+
+  it("reads the filter list and the older single filter", () => {
+    assert.deepEqual(
+      collectFilters({
+        filters: JSON.stringify([
+          { column: "name", op: "contains", value: "an" },
+          { column: "note", op: "isnull", value: "" },
+        ]),
+      }),
+      [
+        { column: "name", op: "contains", value: "an" },
+        { column: "note", op: "isnull", value: "" },
+      ],
+    );
+    assert.deepEqual(collectFilters({ filterColumn: "name", filterOp: "eq", filterValue: "Ann" }), [
+      { column: "name", op: "eq", value: "Ann" },
+    ]);
+    assert.deepEqual(collectFilters({ filterColumn: "name", filterOp: "contains", filterValue: "  " }), []);
+    assert.throws(() => collectFilters({ filters: "{" }), /not sent correctly/);
+    assert.throws(
+      () => collectFilters({ filters: JSON.stringify([{ column: "name", op: "like", value: "a" }]) }),
+      /not supported/,
+    );
+    const many = Array.from({ length: 9 }, (_, index) => ({ column: "name", op: "eq", value: String(index) }));
+    assert.throws(() => collectFilters({ filters: JSON.stringify(many) }), /at most 8/);
+  });
+
+  it("estimates table size from planner stats instead of counting every row", () => {
+    assert.match(TABLE_LIST_SQL, /reltuples/);
+    assert.match(TABLE_LIST_SQL, /\$1/);
+    assert.equal(TABLE_LIST_SQL.includes("${"), false);
   });
 });
 
