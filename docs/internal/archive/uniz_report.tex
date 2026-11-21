@@ -151,7 +151,7 @@ Dept. of CSE, RGUKT ONG & Dept. of CSE, RGUKT ONG \\
 \noindent This report presents \textbf{UniZ}, a distributed university administration platform purpose-built for Rajiv Gandhi University of Knowledge Technologies (RGUKT), Ongole. UniZ is architected as a Progressive Web Application (PWA) served at \url{https://uniz.rguktong.in}, backed by a RESTful API at \url{https://api-uniz.rguktong.in/api/v1}. The platform unifies five primary operational domains: student academic record management, outpass and outing request workflows, hostel administration, campus security gate operations, and institutional announcement management under a single, role-differentiated interface.
 
 \vspace{0.4cm}
-\noindent The platform implements a formal Role-Based Access Control (RBAC) model in which access permissions are determined by the function $\textsc{Access} = f(\text{role}, \text{resource}, \text{action})$. Nine distinct roles are modelled: \role{student}, \role{caretaker\_male}, \role{caretaker\_female}, \role{warden\_male}, \role{warden\_female}, \role{swo}, \role{dean}, \role{director}, \role{security}, \role{faculty}, and \role{webmaster}. Each role exposes a strictly bounded capability surface, enforced at both the API gateway and the database query layer.
+\noindent The platform implements a formal Role-Based Access Control (RBAC) model in which access permissions are determined by the function $\textsc{Access} = f(\text{role}, \text{resource}, \text{action})$. Nine distinct roles are modelled: \role{student}, \role{caretaker\_male}, \role{caretaker\_female}, \role{warden\_male}, \role{warden\_female}, \role{swo}, \role{dean}, \role{director}, \role{security}, \role{faculty}, and \role{webadmin}. Each role exposes a strictly bounded capability surface, enforced at both the API gateway and the database query layer.
 
 \vspace{0.4cm}
 \noindent The outpass approval engine implements a deterministic finite-state machine with six states: \texttt{caretaker} $\to$ \texttt{warden} $\to$ \texttt{swo} $\to$ \texttt{dean/director} $\to$ \texttt{approved} $\mid$ \texttt{rejected}. The system enforces the invariant $|R_{\text{active}}| \leq 1$, prohibiting concurrent active requests from a single student. Final authority roles (dean, director) possess an override capability that collapses the remaining approval chain to a terminal approved state.
@@ -324,7 +324,7 @@ Table~\ref{tab:roles} presents the complete role catalogue.
 \code{director}          & \code{director}            & Super authority, global override \\
 \code{security}          & \code{security\_admin}     & Gate check-in/check-out \\
 \code{faculty}           & \code{faculty\_<id>}       & Grade and attendance upload \\
-\code{webmaster}         & \code{webmaster}           & Banner management, system health \\
+\code{webadmin}         & \code{webadmin}           & Banner management, system health \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -428,7 +428,7 @@ Student profiles carry: full name (uppercase, per university records), roll numb
 
 \section{Overview}
 
-The admin module serves caretaker, warden, SWO, dean, director, security, and webmaster roles. All authenticate via \api{POST /auth/login}; the server determines the capability surface from the role embedded in the issued JWT.
+The admin module serves caretaker, warden, SWO, dean, director, security, and webadmin roles. All authenticate via \api{POST /auth/login}; the server determines the capability surface from the role embedded in the issued JWT.
 
 \section{Approvals Subsystem}
 
@@ -490,7 +490,7 @@ New cohorts are onboarded by downloading the student template (\api{GET /admin/s
 
 \section{Banner Management}
 
-Banners are created in draft state (\field{isPublished}: \code{false}) and explicitly published via \api{POST /profile/admin/banners/:id/publish}. Published banners appear to all authenticated users. Only the webmaster can create and publish; dean and director have read-only visibility.
+Banners are created in draft state (\field{isPublished}: \code{false}) and explicitly published via \api{POST /profile/admin/banners/:id/publish}. Published banners appear to all authenticated users. Only the webadmin can create and publish; dean and director have read-only visibility.
 
 \section{Security Portal}
 
@@ -610,7 +610,7 @@ The UniZ REST API adheres to: (1) \textbf{Versioning} via \api{/api/v1/} prefix;
 \end{lstlisting}
 
 \subsection{GET /academics/grades/batch}
-\textbf{Role:} Webmaster, Dean, Director. \textbf{Query params:} branch, year, semesterId, failedOnly.
+\textbf{Role:} Webadmin, Dean, Director. \textbf{Query params:} branch, year, semesterId, failedOnly.
 \begin{lstlisting}[caption={Batch grades response},label={lst:batchgrades}]
 {
   "success": true,
@@ -632,7 +632,7 @@ The UniZ REST API adheres to: (1) \textbf{Versioning} via \api{/api/v1/} prefix;
 \textbf{Role:} Faculty, Admin. \textbf{Body:} studentId, subjectId (UUID), semesterId, grade. \textbf{Response:} \code{\{"success": true, "message": "Grade added successfully"\}}.
 
 \subsection{PUT /academics/grades/bulk-update}
-\textbf{Role:} Webmaster, Dean. \textbf{Body:} updates array of \{studentId, subjectId, semesterId, grade\}. Invalid subject IDs silently skipped. \textbf{Response:} includes \field{updated} count.
+\textbf{Role:} Webadmin, Dean. \textbf{Body:} updates array of \{studentId, subjectId, semesterId, grade\}. Invalid subject IDs silently skipped. \textbf{Response:} includes \field{updated} count.
 
 \subsection{GET /academics/grades/template}
 \textbf{Role:} Faculty, Admin. Returns binary \code{.xlsx} pre-populated with student IDs. \textbf{Query:} branch, year, semester, subjectCode.
@@ -1158,9 +1158,9 @@ UniZ demonstrates that carefully designed software systems can substantially imp
 /auth/otp & POST & All (unauth) & OTP password recovery \\
 /system/health & GET & Public & Service health check \\
 /academics/grades & GET & Student & Own grade records \\
-/academics/grades/batch & GET & Dean, Director, Webmaster & Batch grade query \\
+/academics/grades/batch & GET & Dean, Director, Webadmin & Batch grade query \\
 /academics/grades/add & POST & Faculty, Admin & Add single grade \\
-/academics/grades/bulk-update & PUT & Dean, Webmaster & Bulk grade correction \\
+/academics/grades/bulk-update & PUT & Dean, Webadmin & Bulk grade correction \\
 /academics/grades/template & GET & Faculty, Admin & Download grade template \\
 /academics/grades/upload & POST & Faculty, Admin & Bulk grade upload \\
 /academics/grades/upload/progress & GET & Faculty, Admin & Upload job progress \\
@@ -1189,8 +1189,8 @@ UniZ demonstrates that carefully designed software systems can substantially imp
 /profile/student/search & POST & Dean, Director, Security & Student search \\
 /profile/student/status & PUT & Director, Security & Manual status override \\
 /profile/admin/banners & GET & Admin roles & List banners \\
-/profile/admin/banners & POST & Webmaster & Create banner \\
-/profile/admin/banners/:id/publish & POST & Webmaster & Publish/unpublish banner \\
+/profile/admin/banners & POST & Webadmin & Create banner \\
+/profile/admin/banners/:id/publish & POST & Webadmin & Publish/unpublish banner \\
 /admin/student/template & GET & Admin & Download student template \\
 /admin/student/upload & POST & Admin & Bulk student upload \\
 \end{longtable}

@@ -9,7 +9,7 @@ datasource db {
   schemas  = ["uniz_dbadmin"]
 }
 
-/// Append-only history of webmaster row edits. The runtime login may insert and read, not update or delete.
+/// Append-only history of webadmin row edits. The runtime login may insert and read, not update or delete.
 model DbAdminChange {
   id            String   @id
   at            DateTime @default(now()) @db.Timestamptz(6)

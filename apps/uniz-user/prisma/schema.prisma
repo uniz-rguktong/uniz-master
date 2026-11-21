@@ -77,7 +77,7 @@ model AdminProfile {
   email       String   @unique @default("")
   contact     String   @default("")
   profileUrl  String   @default("")
-  role        String   @default("webadmin")
+  role        String   @default("faculty")
   designation String   @default("")
   department  String   @default("")
   bio         Json?

@@ -130,7 +130,7 @@ export const BULK_CREATE_FACULTY = `${BASE_URL}/profile/admin/faculty/bulk-creat
 export const BULK_UPDATE_FACULTY = `${BASE_URL}/profile/admin/faculty/bulk-update`;
 export const BULK_DELETE_FACULTY = `${BASE_URL}/profile/admin/faculty/bulk-delete`;
 
-// Webmaster / Specialized Admin Endpoints
+// Webadmin / Specialized Admin Endpoints
 export const ADMIN_VIEW_STUDENT = (id: string) =>
   `${BASE_URL}/profile/admin/student/${id}`;
 export const GET_SUBJECTS = `${BASE_URL}/academics/subjects`;
@@ -305,11 +305,11 @@ export const ANALYTICS_KEY =
   import.meta.env.VITE_ANALYTICS_API_KEY ||
   "";
 
-export const ANALYTICS_UPLOAD_HEALTH = `${BASE_URL}/analytics/webmaster/upload-health`;
-export const ANALYTICS_SYSTEM_USERS = `${BASE_URL}/analytics/webmaster/system-users`;
-export const ANALYTICS_INSTITUTION_SNAPSHOT = `${BASE_URL}/analytics/webmaster/institution-snapshot`;
-export const ANALYTICS_BRANCH_DISTRIBUTION = `${BASE_URL}/analytics/webmaster/branch-distribution`;
-export const ANALYTICS_GRIEVANCE_SUMMARY = `${BASE_URL}/analytics/webmaster/grievance-summary`;
+export const ANALYTICS_UPLOAD_HEALTH = `${BASE_URL}/analytics/webadmin/upload-health`;
+export const ANALYTICS_SYSTEM_USERS = `${BASE_URL}/analytics/webadmin/system-users`;
+export const ANALYTICS_INSTITUTION_SNAPSHOT = `${BASE_URL}/analytics/webadmin/institution-snapshot`;
+export const ANALYTICS_BRANCH_DISTRIBUTION = `${BASE_URL}/analytics/webadmin/branch-distribution`;
+export const ANALYTICS_GRIEVANCE_SUMMARY = `${BASE_URL}/analytics/webadmin/grievance-summary`;
 export const ANALYTICS_CAMPUS_OCCUPANCY = `${BASE_URL}/analytics/dean/campus-occupancy`;
 export const ANALYTICS_ACADEMIC_HEATMAP = `${BASE_URL}/analytics/dean/academic-heatmap`;
 export const ANALYTICS_GRIEVANCE_TRENDS = `${BASE_URL}/analytics/dean/grievance-trends`;

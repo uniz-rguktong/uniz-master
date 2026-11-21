@@ -12,7 +12,7 @@
  * Env:
  *   BASE_URL       gateway base (default prod)
  *   STUDENT_TOKEN  JWT for student-scoped endpoints (optional)
- *   ADMIN_TOKEN    JWT for admin/webmaster endpoints (optional)
+ *   ADMIN_TOKEN    JWT for admin/webadmin endpoints (optional)
  *   STUDENT_ID     student id used for grades/attendance probes (default O210001)
  *   INSECURE_SSL   set truthy to skip TLS verification (self-signed VPS)
  *   RUNS           measured runs per endpoint (default 10)
@@ -48,7 +48,7 @@ const ENDPOINTS = [
   { name: "cms/banners/public", path: "/cms/banners/public", auth: "none", phase: "2 (gateway cache)" },
   { name: "cms/notifications", path: "/cms/notifications", auth: "none", phase: "2 (gateway cache)" },
   { name: "academics/semester", path: "/academics/semester", auth: "admin", phase: "3 (SQL count + cache)" },
-  { name: "analytics/admin-summary", path: "/academics/analytics/admin-summary?role=webmaster", auth: "admin", phase: "3 (SQL + cache)" },
+  { name: "analytics/admin-summary", path: "/academics/analytics/admin-summary?role=webadmin", auth: "admin", phase: "3 (SQL + cache)" },
   { name: "registrations", path: "/academics/registrations", auth: "admin", phase: "3 (paginate/select)" },
   { name: "student/search", path: "/profile/student/search?query=a&limit=20", auth: "admin", phase: "3 (capped limit)" },
   { name: "profile/student/me", path: "/profile/student/me", auth: "student", phase: "0/3 (15s cache)" },

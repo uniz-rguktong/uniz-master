@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/Skeleton";
-import StudentDashboardSkeleton from "../pages/admin/Webmaster/StudentDashboardSkeleton";
+import StudentDashboardSkeleton from "../pages/admin/Webadmin/StudentDashboardSkeleton";
 
 type StudentPageSkeletonVariant = "dashboard" | "form" | "table";
 

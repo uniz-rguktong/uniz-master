@@ -12,7 +12,7 @@ FOR STAFF & ADMIN
 • Secure staff portal for campus operations
 • Bulk academic uploads and student records
 • Campus communications and push alerts
-• Role-based access for deans, HODs, webmasters, and security
+• Role-based access for deans, HODs, webadmins, and security
 
 BUILT FOR RGUKT ONGOLE
 uniZ is designed around how RGUKT Ongole runs day to day — from classroom attendance to hostel outpass workflows. Sign in with your college credentials and get a fast, mobile-friendly experience tuned for campus life.
