@@ -13,6 +13,7 @@ import {
   Globe,
   CalendarClock,
   Database,
+  CircleHelp,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -39,6 +40,8 @@ import {
 import { parseJwt } from "@/utils/security";
 import { resolveAdminPortalRole } from "@/utils/adminRole";
 import DatabaseSection from "./database/DatabaseSection";
+import HelpSection from "./HelpSection";
+import { HowToButton } from "@/components/help/HowToButton";
 
 export default function WebmasterDashboard() {
   useIsAuth();
@@ -58,6 +61,7 @@ export default function WebmasterDashboard() {
     username,
   );
   const canUseDatabase = portalRole === "webadmin";
+  const showHelp = role === "webadmin" || portalRole === "webadmin";
 
   const allowedTabs = useMemo(
     () =>
@@ -82,8 +86,9 @@ export default function WebmasterDashboard() {
         "push_alerts",
         "security",
         ...(canUseDatabase ? ["database"] : []),
+        ...(showHelp ? ["help"] : []),
       ] as const),
-    [role, canUseDatabase],
+    [role, canUseDatabase, showHelp],
   );
 
   const { activeTab, setActiveTab } = useAdminSectionRoute(allowedTabs);
@@ -169,6 +174,14 @@ export default function WebmasterDashboard() {
         { id: "security", label: "Security", icon: Lock },
       ],
     },
+    ...(showHelp
+      ? [
+          {
+            group: "Help",
+            items: [{ id: "help", label: "Help", icon: CircleHelp }],
+          },
+        ]
+      : []),
   ];
 
   const { logout } = useLogout();
@@ -211,6 +224,8 @@ export default function WebmasterDashboard() {
         return <WebsiteUpdatesSection />;
       case "database":
         return <DatabaseSection />;
+      case "help":
+        return <HelpSection />;
       case "grievances":
         return renderComingSoon("Grievance Redressal");
       case "outpass":
@@ -234,6 +249,10 @@ export default function WebmasterDashboard() {
       onLogout={logout}
       username={username}
       collapseBranding="hide"
+      headerExtra={showHelp ? <HowToButton screen={activeTab} /> : undefined}
+      mobileHeaderExtra={
+        showHelp ? <HowToButton screen={activeTab} tone="chrome" /> : undefined
+      }
     >
       {renderContent()}
     </AdminShell>

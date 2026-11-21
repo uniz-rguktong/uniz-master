@@ -1,0 +1,30 @@
+@media print {
+  [data-admin-chrome] {
+    display: none !important;
+  }
+
+  .help-no-print {
+    display: none !important;
+  }
+
+  .help-sheet {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .help-sheet .help-group + .help-group {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .help-sheet .help-article {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .help-sheet a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 11px;
+    font-weight: 400;
+  }
+}
