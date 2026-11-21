@@ -19,7 +19,7 @@ import {
   ADMIN_CAMPUS_PRESENCE_STATS,
   getAnalyticsHeaders,
 } from "../../../api/endpoints";
-import { webmasterInstitutionAnalyticsAtom } from "../../../store/atoms";
+import { webadminInstitutionAnalyticsAtom } from "../../../store/atoms";
 
 function isProdHost() {
   return (
@@ -29,7 +29,7 @@ function isProdHost() {
 }
 
 export default function InstitutionAnalytics() {
-  const [cached, setCached] = useRecoilState(webmasterInstitutionAnalyticsAtom);
+  const [cached, setCached] = useRecoilState(webadminInstitutionAnalyticsAtom);
   const [loading, setLoading] = useState(!cached.fetched);
   const [campusStats, setCampusStats] = useState<{
     total_students: number;

@@ -41,12 +41,12 @@ function req(method, path, data, token) {
 
 async function main() {
   const login = await req("POST", "/api/v1/auth/login", {
-    username: "webmaster",
-    password: "webmaster@uniz",
+    username: "webadmin",
+    password: "webadmin@uniz",
   });
   const token = login.body.token;
   console.log(
-    "Webmaster login:",
+    "Webadmin login:",
     login.status,
     token ? "✅ Token OK" : "❌ No token",
   );

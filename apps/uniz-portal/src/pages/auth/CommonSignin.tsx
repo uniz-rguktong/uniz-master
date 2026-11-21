@@ -590,9 +590,7 @@ export default function Signin({ type }: SigninProps) {
       }
       if (
         type === "student" &&
-        (data.role === "admin" ||
-          data.role === "webmaster" ||
-          data.role === "webadmin")
+        (data.role === "admin" || data.role === "webadmin")
       ) {
         toast.error("This is an Admin account. Please use the Admin Login.");
         return;
@@ -638,12 +636,7 @@ export default function Signin({ type }: SigninProps) {
         const rawAdminRole = (jwtRole || (data as any).role || "admin")
           .toString()
           .toLowerCase();
-        // Backward-compat shim: converge legacy "webmaster" tokens onto the
-        // canonical "webadmin" (see resolveAdminPortalRole).
-        localStorage.setItem(
-          "admin_role",
-          rawAdminRole === "webmaster" ? "webadmin" : rawAdminRole,
-        );
+        localStorage.setItem("admin_role", rawAdminRole);
         if (jwtDept) {
           localStorage.setItem("department", jwtDept);
         }

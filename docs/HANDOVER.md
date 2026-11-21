@@ -41,7 +41,7 @@ with push access merges it. Do not merge your own PR.
 
 | Area | What changed | Where to read more |
 |------|--------------|--------------------|
-| **Admin role rename** | The top admin role `webmaster` was renamed to **`webadmin`** everywhere (canonical). `webmaster` remains a temporary backward-compatible alias and will be removed. | `packages/uniz-shared/src/roles.enum.ts`, `admin-role.ts` |
+| **Admin role rename** | The top admin role `webadmin` was renamed to **`webadmin`** everywhere (canonical). `webadmin` remains a temporary backward-compatible alias and will be removed. | `packages/uniz-shared/src/roles.enum.ts`, `admin-role.ts` |
 | **Self-hosted image uploads** | Profile photos, banners, and website images upload to the user-service `/files/image/upload` endpoint, which compresses to WebP (`sharp`) and stores them on a **persistent VPS volume**, served back via `/api/v1/files/img/*` behind the Cloudflare CDN. Free, no third-party dependency. Old Cloudinary URLs still work; Excel/CSV bulk backups still use Cloudinary. | [`api/comms/files`](https://api-uniz.rguktong.in/docs/api/comms/files), `apps/uniz-user/src/utils/storage.util.ts` |
 | **API performance overhaul** | Indexing, Redis caching, gateway cache, bounded concurrency, and inter-service hardening across all services. | [`docs/architecture/PERFORMANCE_OVERHAUL.md`](architecture/PERFORMANCE_OVERHAUL.md) |
 | **Database redesign / hygiene** | Dropped dead databases/tables, added composite + functional/case-insensitive unique indexes, CHECK constraints, and a scheduled `ANALYZE` CronJob. | `apps/*/prisma/`, `infra/kubernetes/base/core/postgres-analyze-job.yaml` |

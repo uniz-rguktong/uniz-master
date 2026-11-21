@@ -8,7 +8,7 @@ test("registration list is limited to academic staff", () => {
   for (const role of ["webadmin", "coe", "dean", "director", "hod"]) {
     assert.equal(canListRegistrations(role), true);
   }
-  assert.equal(canListRegistrations("WEBMASTER"), false);
+  assert.equal(canListRegistrations("WEBADMIN"), true);
   assert.equal(canListRegistrations("student"), false);
   assert.equal(canListRegistrations("faculty"), false);
   assert.equal(canListRegistrations("teacher"), false);

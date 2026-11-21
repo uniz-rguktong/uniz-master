@@ -7,7 +7,7 @@ import axios from "axios";
 import { redis } from "../utils/redis.util";
 import { randomUUID } from "crypto";
 import { resolveHodBranch } from "../utils/hod.util";
-import { resolveStudentBranch } from "@uniz/shared";
+import { resolveStudentBranch, webadminAssignmentRejection } from "@uniz/shared";
 import { canReadStaffBatches } from "../utils/staff-access";
 import { buildStudentCohortWhere } from "../utils/student-cohort.util";
 import {
@@ -1075,11 +1075,18 @@ export const getAdminProfile = async (
       const canonicalUsername = lookup;
       const inferred = inferDept(canonicalUsername);
       const email = `${canonicalUsername}@rguktong.ac.in`;
+      const requestedRole = String(user.role || "faculty");
+      const role = webadminAssignmentRejection(
+        { username: canonicalUsername, email },
+        requestedRole,
+      )
+        ? "faculty"
+        : requestedRole;
       try {
         profile = await prisma.adminProfile.create({
           data: {
             username: canonicalUsername,
-            role: user.role as string,
+            role,
             name:
               canonicalUsername.charAt(0).toUpperCase() +
               canonicalUsername.slice(1),
@@ -1601,6 +1608,20 @@ export const updateFacultyProfile = async (
       return res.status(404).json({ message: "Staff profile not found" });
     }
 
+    const grantError = webadminAssignmentRejection(
+      {
+        username: existingProfile.username,
+        email: existingProfile.email,
+      },
+      updates.role,
+    );
+    if (grantError) {
+      return res.status(403).json({
+        code: ErrorCode.AUTH_FORBIDDEN,
+        message: grantError,
+      });
+    }
+
     const targetUsername = (
       updates.username || existingProfile.username
     ).toLowerCase();
@@ -1654,7 +1675,7 @@ export const updateFacultyProfile = async (
           },
         );
         console.log(
-          `[USER] Successfully synced auth update for faculty: ${targetUsername} with password: ${defaultPassword}`,
+          `[USER] Successfully synced auth update for faculty: ${targetUsername}`,
         );
       } catch (authErr: any) {
         console.error(
@@ -2162,15 +2183,25 @@ export const bulkCreateFaculty = async (
     }
 
     try {
+      const staffEmail = entry.email || `${username}@rguktong.ac.in`;
+      const grantError = webadminAssignmentRejection(
+        { username, email: `${username}@rguktong.ac.in` },
+        entry.role || "teacher",
+      );
+      if (grantError) {
+        results.push({ username, status: "error", reason: grantError });
+        continue;
+      }
+      const staffRole = entry.role || "teacher";
       await prisma.facultyProfile.create({
         data: {
           id: randomUUID(),
           username,
           name: entry.name || username.toUpperCase(),
-          email: entry.email || `${username}@rguktong.ac.in`,
+          email: staffEmail,
           department: (entry.department || "ALL").toUpperCase(),
           designation: entry.designation || "Faculty",
-          role: entry.role || "teacher",
+          role: staffRole,
           contact: entry.contact || undefined,
         },
       });
@@ -2183,7 +2214,7 @@ export const bulkCreateFaculty = async (
           {
             username,
             password: defaultPassword,
-            role: entry.role || "teacher",
+            role: staffRole,
             email: entry.email,
           },
           { headers: { "x-internal-secret": SECRET }, timeout: 5000 },
@@ -2268,7 +2299,21 @@ export const bulkUpdateFaculty = async (
         }
         data.email = upd.email;
       }
-      if (upd.role !== undefined) data.role = upd.role;
+      if (upd.role !== undefined) {
+        const grantError = webadminAssignmentRejection(
+          { username: existing.username, email: existing.email },
+          upd.role,
+        );
+        if (grantError) {
+          results.push({
+            username: rawUsername,
+            status: "error",
+            reason: grantError,
+          });
+          continue;
+        }
+        data.role = upd.role;
+      }
       if (upd.designation !== undefined) data.designation = upd.designation;
       if (upd.department !== undefined) data.department = upd.department;
       if (upd.contact !== undefined) data.contact = upd.contact;

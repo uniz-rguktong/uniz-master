@@ -5,7 +5,7 @@ import { prisma } from "../utils/prisma";
 import { redis } from "../utils/redis.util";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { ErrorCode } from "../shared/error-codes";
-import { resolveEffectiveRole } from "@uniz/shared";
+import { resolveEffectiveRole, webadminAssignmentRejection } from "@uniz/shared";
 import {
   DIRECTORY_ROLES,
   canReadAdminDirectory,
@@ -206,6 +206,10 @@ export const addAdmin = async (req: AuthenticatedRequest, res: Response) => {
   }
 
   const email = `${username}@rguktong.ac.in`;
+  const assignmentError = webadminAssignmentRejection({ username, email }, role);
+  if (assignmentError) {
+    return res.status(403).json({ success: false, msg: assignmentError });
+  }
   let createdId: string | null = null;
   try {
     const existing = await prisma.adminProfile.findFirst({
@@ -314,7 +318,15 @@ export const assignAdminRole = async (
     if (!admin && !faculty) {
       return res.status(404).json({ success: false, msg: "Admin not found" });
     }
-    const canonical = (admin || faculty)!.username;
+    const target = (admin || faculty)!;
+    const assignmentError = webadminAssignmentRejection(
+      { username: target.username, email: target.email },
+      role,
+    );
+    if (assignmentError) {
+      return res.status(403).json({ success: false, msg: assignmentError });
+    }
+    const canonical = target.username;
     if (admin) {
       await prisma.adminProfile.update({ where: { id: admin.id }, data: { role } });
     } else if (faculty) {

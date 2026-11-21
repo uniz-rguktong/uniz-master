@@ -5,11 +5,8 @@ export enum UserRole {
   FACULTY = "faculty",
   HOD = "hod",
 
-  // Canonical highest-privilege role.
+  // Canonical highest-privilege role. Only webadmin@rguktong.ac.in may hold it.
   WEBADMIN = "webadmin",
-  // Legacy alias for WEBADMIN, retained only while pre-flip 'webmaster' JWTs
-  // may still be in flight. Remove once those tokens have expired.
-  WEBMASTER = "webmaster",
   DEAN = "dean",
   DIRECTOR = "director",
   COE = "coe",
@@ -30,7 +27,6 @@ export enum UserRole {
 }
 
 export const ADMIN_ROLES: string[] = [
-  UserRole.WEBMASTER,
   UserRole.WEBADMIN,
   UserRole.DEAN,
   UserRole.DIRECTOR,

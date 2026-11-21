@@ -7,6 +7,15 @@ export {
   aliasWebadminRole,
   isHodUser,
   resolveHodBranch,
+  isWebadmin,
+  accessRole,
+  isCanonicalWebadminAccount,
+  webadminAssignmentRejection,
+  institutionalEmail,
+  resolveAccountEmail,
+  normalizeAccountEmail,
+  WEBADMIN_EMAIL,
+  WEBADMIN_ASSIGNMENT_MESSAGE,
 } from "./admin-role";
 export {
   formatGrievanceCategoryLabel,

@@ -96,7 +96,7 @@ Migration: `20261121120000_dbadmin_audit` in `apps/uniz-dbadmin`. It creates sch
 
 ## In-portal editor
 
-The Database item is on the webmaster screen only. The API is `GET/POST /api/v1/dbadmin/*` on the gateway, served by `uniz-dbadmin-service`. The service checks the portal JWT and allows only `webadmin` (legacy `webmaster` tokens count as `webadmin`). It connects as `uniz_dbadmin`, so a request cannot do more than that login can.
+The Database item is on the webadmin screen only. The API is `GET/POST /api/v1/dbadmin/*` on the gateway, served by `uniz-dbadmin-service`. The service checks the portal JWT and allows only the account `webadmin@rguktong.ac.in`. It connects as `uniz_dbadmin`, so a request cannot do more than that login can.
 
 Every row change runs in a transaction and is inserted into `uniz_dbadmin.changes` (who, when, table, key, before, after, SQL). History can undo an add, edit, or delete in one click. Deletes and commands that change data ask you to type `DELETE` or the command word. Requests are rate-limited and written to `uniz_dbadmin.requests`.
 

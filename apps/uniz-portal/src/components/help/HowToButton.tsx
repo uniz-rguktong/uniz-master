@@ -4,11 +4,11 @@ import { CircleHelp, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GuideArticle } from "@/components/help/GuideArticle";
 import {
-  WEBMASTER_SCREEN_LABELS,
+  WEBADMIN_SCREEN_LABELS,
   guideBook,
   guidesForScreen,
   type Guide,
-} from "@/content/webmasterGuides";
+} from "@/content/webadminGuides";
 import { cn } from "@/lib/utils";
 
 type HowToButtonProps = {
@@ -21,7 +21,7 @@ export function HowToButton({ screen, tone = "page" }: HowToButtonProps) {
   const [open, setOpen] = useState(false);
   const [picked, setPicked] = useState<Guide | null>(guides.length === 1 ? guides[0] : null);
   const titleId = useId();
-  const screenLabel = WEBMASTER_SCREEN_LABELS[screen] || "This page";
+  const screenLabel = WEBADMIN_SCREEN_LABELS[screen] || "This page";
 
   useEffect(() => {
     setPicked(guides.length === 1 ? guides[0] : null);

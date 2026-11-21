@@ -52,7 +52,10 @@ async function main() {
       create: {
         id,
         username: admin.username,
-        email: `${admin.username}@uniz`,
+        email:
+          admin.username === "webadmin"
+            ? "webadmin@rguktong.ac.in"
+            : `${admin.username}@uniz`,
         role: admin.role,
       },
     });

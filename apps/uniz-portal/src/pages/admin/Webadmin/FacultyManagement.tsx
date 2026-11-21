@@ -68,7 +68,7 @@ import {
   adminModalDescClass,
 } from "../../../components/admin/admin-ui";
 
-const ROLES = ["webadmin", "coe", "swo", "dean", "ao", "OTHER"];
+const ROLES = ["coe", "swo", "dean", "ao", "OTHER"];
 const DEPARTMENTS = [
   "CSE",
   "ECE",
@@ -91,8 +91,19 @@ const DEPARTMENTS = [
 const getToken = () =>
   (localStorage.getItem("admin_token") || "").replace(/"/g, "");
 
-const isWebmasterRole = () =>
-  (localStorage.getItem("admin_role") || "").toLowerCase() === "webadmin";
+const isWebadminRole = () => {
+  const role = (localStorage.getItem("admin_role") || "").toLowerCase();
+  const username = (localStorage.getItem("username") || "")
+    .replace(/"/g, "")
+    .trim()
+    .toLowerCase();
+  const identity = username.includes("@")
+    ? username
+    : username
+      ? `${username}@rguktong.ac.in`
+      : "";
+  return role === "webadmin" && identity === "webadmin@rguktong.ac.in";
+};
 
 export default function FacultyManagement({
   deptRestrict,
@@ -428,8 +439,8 @@ export default function FacultyManagement({
       fieldsToApply.department = bulkUpdateFields.department;
     if (bulkUpdateFields.name) fieldsToApply.name = bulkUpdateFields.name;
     if (bulkUpdateFields.email) {
-      if (!isWebmasterRole()) {
-        toast.error("Only webmaster can change faculty email");
+      if (!isWebadminRole()) {
+        toast.error("Only webadmin can change faculty email");
         return;
       }
       fieldsToApply.email = bulkUpdateFields.email;
@@ -793,7 +804,7 @@ export default function FacultyManagement({
                       className={adminInputClass}
                     />
                   </div>
-                  {isWebmasterRole() && (
+                  {isWebadminRole() && (
                     <div className="space-y-2">
                       <label className={adminLabelClass}>New Email</label>
                       <input
@@ -1227,7 +1238,7 @@ export default function FacultyManagement({
                   <input
                     required
                     type="email"
-                    disabled={editMode && !isWebmasterRole()}
+                    disabled={editMode && !isWebadminRole()}
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })

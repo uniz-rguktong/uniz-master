@@ -19,7 +19,12 @@ import {
 } from "../utils/password.util";
 import { ErrorCode } from "../shared/error-codes";
 import { UserRole, ADMIN_ROLES } from "../shared/roles.enum";
-import { isValidInternalSecret } from "@uniz/shared";
+import {
+  accessRole,
+  institutionalEmail,
+  isValidInternalSecret,
+  webadminAssignmentRejection,
+} from "@uniz/shared";
 import { UAParser } from "ua-parser-js";
 import { verifyTurnstileToken } from "../utils/turnstile.util";
 
@@ -208,10 +213,19 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
+    const email = institutionalEmail(user.username);
+    const grantedRole = accessRole({
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      email,
+    });
+
     const token = signToken({
       id: user.id,
       username: normalizedUsername,
-      role: user.role as UserRole,
+      role: grantedRole as UserRole,
+      email,
       department,
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
@@ -220,7 +234,7 @@ export const login = async (req: Request, res: Response) => {
     const response: any = {
       success: true,
       token,
-      role: user.role,
+      role: grantedRole,
       username: normalizedUsername,
     };
 
@@ -241,7 +255,6 @@ export const login = async (req: Request, res: Response) => {
     const deviceInfo = `${browserName} on ${osName}`;
 
     // Send login notification (Backgrounded for latency optimization)
-    const email = `${normalizedUsername.toLowerCase()}@rguktong.ac.in`;
     sendLoginNotification(
       email,
       normalizedUsername,
@@ -734,6 +747,17 @@ export const signup = async (req: Request, res: Response) => {
     return res.status(403).json({
       code: ErrorCode.AUTH_FORBIDDEN,
       message: "Account registration is restricted to internal services.",
+    });
+  }
+
+  const assignmentError = webadminAssignmentRejection(
+    { username, email: institutionalEmail(username) },
+    role,
+  );
+  if (assignmentError) {
+    return res.status(403).json({
+      code: ErrorCode.AUTH_FORBIDDEN,
+      message: assignmentError,
     });
   }
 

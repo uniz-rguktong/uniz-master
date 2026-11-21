@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { ADMIN_ROLES, aliasWebadminRole } from "@uniz/shared";
+import { ADMIN_ROLES, accessRole } from "@uniz/shared";
 
 const JWT_SECRET: string = (
   process.env.JWT_SECURITY_KEY || "default_secret_unsafe"
@@ -56,7 +56,7 @@ export const requireAuth = (
     const payload = jwt.verify(token, JWT_SECRET) as any;
     (req as AuthenticatedRequest).user = {
       ...payload,
-      role: aliasWebadminRole(payload?.role),
+      role: accessRole(payload),
     };
     next();
   } catch (e) {

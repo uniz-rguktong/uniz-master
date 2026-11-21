@@ -17,20 +17,20 @@ import AdminShell from "@/components/admin/AdminShell";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
-import StudentDetails from "../Webmaster/StudentDetails";
-import UploadSection from "../Webmaster/UploadSection";
-import StudentBulkSection from "../Webmaster/StudentBulkSection";
-import SystemLogsSection from "../Webmaster/SystemLogsSection";
-import FacultyManagement from "../Webmaster/FacultyManagement";
-import WebmasterOverview from "../Webmaster/WebmasterOverview";
+import StudentDetails from "../Webadmin/StudentDetails";
+import UploadSection from "../Webadmin/UploadSection";
+import StudentBulkSection from "../Webadmin/StudentBulkSection";
+import SystemLogsSection from "../Webadmin/SystemLogsSection";
+import FacultyManagement from "../Webadmin/FacultyManagement";
+import WebadminOverview from "../Webadmin/WebadminOverview";
 import SemesterApproval from "./SemesterApproval";
-import BannersSection from "../Webmaster/BannersSection";
-import UpdatesSection from "../Webmaster/UpdatesSection";
-import WebsiteUpdatesSection from "../Webmaster/WebsiteUpdatesSection";
-import PushNotificationSection from "../Webmaster/PushNotificationSection";
-import SecuritySection from "../Webmaster/SecuritySection";
+import BannersSection from "../Webadmin/BannersSection";
+import UpdatesSection from "../Webadmin/UpdatesSection";
+import WebsiteUpdatesSection from "../Webadmin/WebsiteUpdatesSection";
+import PushNotificationSection from "../Webadmin/PushNotificationSection";
+import SecuritySection from "../Webadmin/SecuritySection";
 import CurriculumManager from "../Curriculum";
-import SemesterBuilder from "../Webmaster/SemesterBuilder";
+import SemesterBuilder from "../Webadmin/SemesterBuilder";
 import { resolveAdminPortalRole } from "../../../utils/adminRole";
 import { parseJwt } from "../../../utils/security";
 
@@ -185,7 +185,7 @@ export default function DeanDashboard() {
       default:
         return (
           <div className="animate-in fade-in duration-500">
-            <WebmasterOverview username={username} />
+            <WebadminOverview username={username} />
           </div>
         );
     }

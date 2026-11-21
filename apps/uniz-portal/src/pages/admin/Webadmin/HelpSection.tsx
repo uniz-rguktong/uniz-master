@@ -6,7 +6,7 @@ import {
   guideBook,
   guidesInGroup,
   searchGuides,
-} from "@/content/webmasterGuides";
+} from "@/content/webadminGuides";
 import { cn } from "@/lib/utils";
 import { adminInputClass, adminPageWrapClass } from "@/components/admin/admin-ui";
 import "./help-print.css";
@@ -34,7 +34,7 @@ export default function HelpSection() {
     <div className={cn(adminPageWrapClass, "help-sheet")}>
       <PageHeader
         title="Help"
-        meta="Step by step for the webmaster. Search, or press How to? on any page."
+        meta="Step by step for the webadmin. Search, or press How to? on any page."
       />
       <div className="help-no-print mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <label className="block min-w-0 flex-1">

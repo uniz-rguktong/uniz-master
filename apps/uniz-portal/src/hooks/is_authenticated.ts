@@ -102,7 +102,6 @@ export function useIsAuth() {
       const decoded = parseJwt(adminToken);
       const validAdminRoles = [
         "admin",
-        "webmaster",
         "webadmin",
         "dean",
         "director",

@@ -1,11 +1,11 @@
 /**
- * Rebuild the printable webmaster guide.
+ * Rebuild the printable webadmin guide.
  * Run from the portal package: npm run guides:pdf
  *
- * Reads src/content/webmaster-guides.json (the same file the Help page uses)
+ * Reads src/content/webadmin-guides.json (the same file the Help page uses)
  * and prints it with the system Chrome.
  */
-import { existsSync, readFileSync, mkdirSync, mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { copyFileSync, existsSync, readFileSync, mkdirSync, mkdtempSync, writeFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -13,9 +13,11 @@ import { tmpdir } from "node:os";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const portalRoot = resolve(here, "..");
-const sourcePath = resolve(portalRoot, "src/content/webmaster-guides.json");
-const pdfPath = resolve(portalRoot, "public/guides/uniz-webmaster-guide.pdf");
-const htmlPath = resolve(tmpdir(), "uniz-webmaster-guide.print.html");
+const sourcePath = resolve(portalRoot, "src/content/webadmin-guides.json");
+const pdfPath = resolve(portalRoot, "public/guides/uniz-webadmin-guide.pdf");
+// Older links used this filename. Keep serving the same PDF there.
+const legacyPdfPath = resolve(portalRoot, "public/guides/uniz-webmaster-guide.pdf");
+const htmlPath = resolve(tmpdir(), "uniz-webadmin-guide.print.html");
 
 const book = JSON.parse(readFileSync(sourcePath, "utf8"));
 
@@ -101,7 +103,7 @@ const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>UniZ webmaster guide</title>
+  <title>UniZ webadmin guide</title>
   <style>
     @page { size: A4; margin: 16mm 16mm 18mm; }
     * { box-sizing: border-box; }
@@ -132,8 +134,8 @@ const html = `<!DOCTYPE html>
 </head>
 <body>
   <p class="kicker">RGUKT Ongole · UniZ</p>
-  <h1>Webmaster guide</h1>
-  <p class="lede">These steps are for the webmaster. One action per step. The bold words are the words on the button.</p>
+  <h1>Webadmin guide</h1>
+  <p class="lede">These steps are for the webadmin. One action per step. The bold words are the words on the button.</p>
   <p class="meta">
     Staff sign-in: ${escapeHtml(book.support.portalSignIn)}<br />
     Public website: ${escapeHtml(book.support.publicSite)}<br />
@@ -189,6 +191,8 @@ if (printed.status !== 0) {
 const pdf = readFileSync(pdfPath);
 const pages = pdf.toString("latin1").match(/\/Type\s*\/Page(?![s])/g);
 const pageCount = pages ? pages.length : 0;
+copyFileSync(pdfPath, legacyPdfPath);
 console.log(`Wrote ${pdfPath}`);
+console.log(`Wrote ${legacyPdfPath}`);
 console.log(`Pages: ${pageCount}`);
 console.log(`Guides: ${book.guides.length}`);

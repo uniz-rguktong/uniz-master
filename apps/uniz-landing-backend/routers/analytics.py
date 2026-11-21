@@ -158,7 +158,11 @@ async def get_grievance_trends():
     """
     return await fetch_records(query)
 
-@router.get("/webmaster/institution-snapshot")
+# Previous path. Older portal builds still request it.
+_LEGACY_ANALYTICS_PREFIX = "webmaster"
+
+@router.get(f"/{_LEGACY_ANALYTICS_PREFIX}/institution-snapshot", include_in_schema=False)
+@router.get("/webadmin/institution-snapshot")
 async def get_institution_snapshot(response: Response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
@@ -177,7 +181,8 @@ async def get_institution_snapshot(response: Response):
     records = await fetch_records(query)
     return records[0] if records else {}
 
-@router.get("/webmaster/branch-distribution")
+@router.get(f"/{_LEGACY_ANALYTICS_PREFIX}/branch-distribution", include_in_schema=False)
+@router.get("/webadmin/branch-distribution")
 @cache(expire=3600)
 async def get_branch_distribution():
     query = """
@@ -190,7 +195,8 @@ async def get_branch_distribution():
     """
     return await fetch_records(query)
 
-@router.get("/webmaster/grievance-summary")
+@router.get(f"/{_LEGACY_ANALYTICS_PREFIX}/grievance-summary", include_in_schema=False)
+@router.get("/webadmin/grievance-summary")
 @cache(expire=300)
 async def get_grievance_summary():
     query = """
@@ -201,7 +207,8 @@ async def get_grievance_summary():
     """
     return await fetch_records(query)
 
-@router.get("/webmaster/upload-health")
+@router.get(f"/{_LEGACY_ANALYTICS_PREFIX}/upload-health", include_in_schema=False)
+@router.get("/webadmin/upload-health")
 @cache(expire=300)
 async def get_upload_health():
     query = """
@@ -217,7 +224,8 @@ async def get_upload_health():
     for r in records: r['date'] = str(r['date'])
     return records
 
-@router.get("/webmaster/system-users")
+@router.get(f"/{_LEGACY_ANALYTICS_PREFIX}/system-users", include_in_schema=False)
+@router.get("/webadmin/system-users")
 @cache(expire=3600)
 async def get_system_user_distribution():
     query = """

@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { JwtPayload, JwtPayloadSchema } from "../shared/jwt.schema";
 import { ErrorCode } from "../shared/error-codes";
-import { aliasWebadminRole } from "@uniz/shared";
+import { accessRole } from "@uniz/shared";
 import axios from "axios";
 import { redis } from "../utils/redis.util";
 
@@ -126,7 +126,7 @@ export const authMiddleware = async (
 
     (req as AuthenticatedRequest).user = {
       ...parsed.data,
-      role: aliasWebadminRole(parsed.data.role) as JwtPayload["role"],
+      role: accessRole(parsed.data) as JwtPayload["role"],
     };
     next();
   } catch (error) {

@@ -6,7 +6,7 @@
     "portalSignIn": "https://uniz.rguktong.in/admin/signin",
     "publicSite": "https://rguktong.ac.in",
     "adminer": "https://dbadmin.rguktong.in",
-    "pdfPath": "/guides/uniz-webmaster-guide.pdf",
+    "pdfPath": "/guides/uniz-webadmin-guide.pdf",
     "printPath": "/admin/help/print"
   },
   "groups": [
@@ -93,7 +93,7 @@
         "Press **Help** in the left menu to search every guide."
       ],
       "wrong": [
-        "If you do not see Database or Roles, you are not signed in as the webmaster. Sign out and sign in with the webmaster staff ID.",
+        "If you do not see Database or Roles, you are not signed in as the webadmin. Sign out and sign in with the webadmin staff ID.",
         "If a name is missing, press **Expand** so the menu is wide enough to read."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
@@ -600,7 +600,7 @@
         "When you are allowed to open it, press **Publish to Students**.",
         "The window title is Publish to students.",
         "Press **Send verification code**.",
-        "Open the mail on your webmaster address. The page shows a masked email so you know where it went.",
+        "Open the mail on your webadmin address. The page shows a masked email so you know where it went.",
         "Type the code.",
         "Press **Confirm and publish**.",
         "The card should say Registration open.",
@@ -609,7 +609,7 @@
       ],
       "wrong": [
         "Publish to Students is hidden once registration is already open or already closed.",
-        "If the code does not arrive, wait one minute and press **Resend code**. Check the webmaster mailbox, not a personal mailbox.",
+        "If the code does not arrive, wait one minute and press **Resend code**. Check the webadmin mailbox, not a personal mailbox.",
         "To remove a semester you do not need, press **Delete** on the card. The browser asks Delete and the name, and says this is irreversible. Press **OK** only if you mean it."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
@@ -983,8 +983,8 @@
         "Type Legal Full Name.",
         "Type University Email.",
         "Set Department.",
-        "Set System Privileges. The list is webadmin, coe, swo, dean, ao, and Other (custom).",
-        "Do not pick webadmin unless this person should have your full access.",
+        "Set System Privileges. The list is coe, swo, dean, ao, and Other (custom).",
+        "Webadmin is not in that list. Only webadmin@rguktong.ac.in holds that role.",
         "Type Professional Designation.",
         "Fill the other boxes the form asks for.",
         "Press **Onboard Faculty**.",
@@ -993,7 +993,7 @@
       ],
       "wrong": [
         "This login is not the public department card. To show them on the website, also use Dept Staff under Website Updates.",
-        "Roles in the left menu is a different list. It is only for webmaster, dean, and director. A teacher belongs here, in Faculty Management.",
+        "Roles in the left menu is a different list. It is only for webadmin, dean, and director. A teacher belongs here, in Faculty Management.",
         "If the email is rejected, it may already exist. Search the registry first.",
         "The refresh icon tip says **Refresh**."
       ],
@@ -1020,7 +1020,7 @@
       ],
       "wrong": [
         "Changing the public website card is a different page. See Update a department page.",
-        "If you change System Privileges to webadmin, that person can edit the database. Do that only when the office asks."
+        "You cannot give someone the webadmin role from this page. That role belongs only to webadmin@rguktong.ac.in."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
     },
@@ -1045,8 +1045,8 @@
       ],
       "wrong": [
         "Delete does not remove their public website card. Remove that under Dept Staff if the page should change too.",
-        "Do not delete your own webmaster row.",
-        "Do not use Roles to remove a teacher. Roles can remove only a webmaster, a dean, or a director."
+        "Do not delete your own webadmin row.",
+        "Do not use Roles to remove a teacher. Roles can remove only a webadmin, a dean, or a director."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
     },
@@ -1076,7 +1076,7 @@
     },
     {
       "id": "see-roles",
-      "title": "See who is a dean, director, or webmaster",
+      "title": "See who is a dean, director, or the webadmin",
       "group": "roles",
       "screens": ["role_mgmt"],
       "summary": "The Roles page lists only those three kinds of account. Teachers are on Faculty Management.",
@@ -1085,7 +1085,7 @@
         "The title is Role Management.",
         "Stay on the tab **Admins Overview**.",
         "The list shows Admin User and Assigned Role.",
-        "The role is one of webadmin, dean, or director.",
+        "The role is dean or director. The webadmin row, when it is listed, is only webadmin@rguktong.ac.in and its role cannot be changed here.",
         "To find one person, type in the box that says Find admin by username.",
         "The line on the right says how many people match.",
         "Press **Back to Dashboard** when you want Overview again."
@@ -1093,24 +1093,24 @@
       "wrong": [
         "If the list is empty, clear the search box. An empty search shows everyone on this page.",
         "A teacher, warden, or other staff login is not here. Look in Faculty Management.",
-        "If you do not see **Roles** in the left menu, you are not signed in as the webmaster."
+        "If you do not see **Roles** in the left menu, you are not signed in as the webadmin."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
     },
     {
       "id": "add-role-account",
-      "title": "Add a dean, director, or webmaster",
+      "title": "Add a dean or a director",
       "group": "roles",
       "screens": ["role_mgmt"],
-      "summary": "Create a login that is only a webmaster, a dean, or a director.",
+      "summary": "Create a login that is a dean or a director. Webadmin cannot be created here.",
       "steps": [
         "Press **Roles**.",
         "Press the tab **Add New Admin**.",
         "The heading is Create New Admin.",
         "Type Username. Use letters and numbers. A dot, a dash, or an underscore is allowed. At least 3 characters.",
         "Type Password. It needs at least 6 characters. Tell the person in person or on a call. Do not put the password in a notice.",
-        "Set Initial Role. The choices are webadmin, dean, and director.",
-        "Pick webadmin only when this person should have your full access.",
+        "Set Initial Role. The choices are dean and director.",
+        "Webadmin is not a choice. That role belongs only to webadmin@rguktong.ac.in.",
         "Press **Create Admin Account**.",
         "A message box appears. If it says Admin added, press **OK**.",
         "The page returns to Admins Overview. Look for the new name."
@@ -1118,40 +1118,40 @@
       "wrong": [
         "If the message says All fields required, fill Username, Password, and Initial Role, then press **Create Admin Account** again.",
         "If the message says Admin already exists, that username is taken. Pick another, or change the existing person instead.",
-        "If the message says Access denied, sign out and sign in as the webmaster. Only the webmaster can add these accounts.",
+        "If the message says Access denied, sign out and sign in as the webadmin. Only the webadmin can add these accounts.",
         "This page does not add a teacher. Use Faculty Management for that."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
     },
     {
       "id": "change-role",
-      "title": "Change a dean, director, or webmaster role",
+      "title": "Change a dean or director role",
       "group": "roles",
       "screens": ["role_mgmt"],
-      "summary": "Move one of these accounts between webadmin, dean, and director.",
+      "summary": "Move a dean or director between those two roles. The webadmin account cannot be reassigned.",
       "steps": [
         "Press **Roles**.",
         "Stay on **Admins Overview**.",
         "Find the person. Use the search box if the list is long.",
         "Open the box under Assigned Role.",
-        "Pick webadmin, dean, or director.",
+        "Pick dean or director. Webadmin is not in the list.",
         "The change saves as soon as you pick. A message box says Role updated. Press **OK**.",
         "Look at the row again and check the role you picked."
       ],
       "wrong": [
         "This does not change a teacher's job. A teacher is changed under Faculty Management, in System Privileges.",
-        "Picking webadmin gives that person your full access, including the database. Do that only when the office asks.",
-        "If the message says Access denied, only the webmaster can change these roles.",
+        "If the message says the webadmin role can only be assigned to webadmin@rguktong.ac.in, stop. That role cannot be given to this person.",
+        "If the message says Access denied, only the webadmin can change these roles.",
         "If the message says Admin not found, search again. The name must match the row."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
     },
     {
       "id": "remove-role-account",
-      "title": "Remove a dean, director, or webmaster",
+      "title": "Remove a dean, director, or webadmin",
       "group": "roles",
       "screens": ["role_mgmt"],
-      "summary": "Delete removes only a webmaster, dean, or director account. It does not remove teachers.",
+      "summary": "Delete removes only a webadmin, dean, or director account. It does not remove teachers.",
       "steps": [
         "Press **Roles**.",
         "Stay on **Admins Overview**.",
@@ -1163,7 +1163,7 @@
       ],
       "wrong": [
         "You cannot remove your own account. The message says You cannot remove your own account. Press **OK** and stop.",
-        "If the message says Only directory roles can be removed here, this person is not a webmaster, dean, or director. Remove a teacher from Faculty Management.",
+        "If the message says Only directory roles can be removed here, this person is not a webadmin, dean, or director. Remove a teacher from Faculty Management.",
         "Press **Cancel** on the question if you picked the wrong name. Nothing is deleted.",
         "Deleting here does not remove a public website card. That is under Website Updates."
       ],
@@ -1174,19 +1174,19 @@
       "title": "Change what a role is allowed to do",
       "group": "roles",
       "screens": ["role_mgmt"],
-      "summary": "Tick what webadmin, dean, or director may do. Only the webmaster can save this.",
+      "summary": "Tick what webadmin, dean, or director may do. Only the webadmin can save this.",
       "steps": [
         "Press **Roles**.",
         "Press the tab **Permission Sets**.",
-        "Under Select Role, press webadmin, dean, or director.",
+        "Under Select Role, press dean or director. Webadmin is not listed.",
         "The heading shows that role and the word Permissions.",
         "Press a line to tick it or clear it. The lines are Manage Banners, Send Notifications, Assign Roles, Manage Users, Manage Curriculum, and View Reports.",
         "Press **Save Changes**.",
         "A message box says Permissions updated. Press **OK**."
       ],
       "wrong": [
-        "If you have not pressed a role, the page says No Role Selected. Press webadmin, dean, or director first.",
-        "If the message says Access denied, you are not signed in as the webmaster.",
+        "If you have not pressed a role, the page says No Role Selected. Press dean or director first.",
+        "If the message says Access denied, you are not signed in as the webadmin.",
         "These ticks do not add or remove a person. Use Add New Admin or Admins Overview for that.",
         "Do not clear every tick on webadmin unless the office has asked. You can lock yourself out of a job."
       ],
@@ -1385,7 +1385,7 @@
       ],
       "wrong": [
         "If you see Adminer's form before any email code, you are not on the protected page. Close it and open https://dbadmin.rguktong.in again.",
-        "If the code email does not arrive, check the webmaster mailbox, including spam. Do not ask for many codes at once. Wait two minutes.",
+        "If the code email does not arrive, check the webadmin mailbox, including spam. Do not ask for many codes at once. Wait two minutes.",
         "The session lasts about 8 hours. After that, the email code is required again.",
         "Do not save the database password in a chat or on paper that other people can read."
       ],
@@ -1448,7 +1448,7 @@
         "Press **Print**.",
         "In the print box, choose a printer, or choose Save as PDF if you want a new file.",
         "You can also press **Download the PDF** on the Help page.",
-        "That file is the same guide, already made: uniz-webmaster-guide.pdf",
+        "That file is the same guide, already made: uniz-webadmin-guide.pdf",
         "Keep a paper copy in the office if the internet is down."
       ],
       "wrong": [

@@ -18,7 +18,7 @@ import {
   UserCircle,
 } from "lucide-react";
 import { useLogout } from "../../hooks/useLogout";
-import WebmasterDashboard from "./Webmaster/WebmasterDashboard";
+import WebadminDashboard from "./Webadmin/WebadminDashboard";
 import DeanDashboard from "./Dean/DeanDashboard";
 import SWODashboard from "./SWO/SWODashboard";
 import CaretakerDashboard from "./Caretaker/CaretakerDashboard";
@@ -50,7 +50,7 @@ export default function Admin() {
   const role = resolveAdminPortalRole(decoded, username);
 
   if (role === "webadmin" || role === "coe") {
-    return <WebmasterDashboard />;
+    return <WebadminDashboard />;
   }
 
   if (role === "director") {

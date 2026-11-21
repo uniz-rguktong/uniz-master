@@ -20,11 +20,17 @@ export function resolveAdminPortalRole(
     .replace(/"/g, "")
     .toLowerCase();
 
-  // Backward-compat shim for the webmaster -> webadmin role rename: 'webadmin'
-  // is now the canonical role the portal gates on, so converge any lingering
-  // legacy 'webmaster' (old JWTs / previously-persisted admin_role) onto it.
-  // Remove once all pre-flip 'webmaster' tokens have expired.
-  if (role === "webmaster") role = "webadmin";
+  // Only webadmin@rguktong.ac.in keeps the webadmin shell. Any other account
+  // whose stored role still says webadmin is shown as faculty.
+  if (role === "webadmin") {
+    const email = String(decoded?.email || "")
+      .trim()
+      .toLowerCase();
+    const identity =
+      email ||
+      (uname.includes("@") ? uname : uname ? `${uname}@rguktong.ac.in` : "");
+    if (identity !== "webadmin@rguktong.ac.in") role = "faculty";
+  }
 
   if ((role === "faculty" || role === "teacher") && /^hod[_-]/.test(uname)) {
     role = "hod";

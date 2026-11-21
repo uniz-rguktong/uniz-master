@@ -328,7 +328,7 @@ Administrators interface with aggregate operational statistics computed dynamica
 Administrators interact with a distributed query engine reflecting their targeted state pointer in the State Machine tree. When Wardens issue a pending fetch, the execution engine forces strict Role-Based intersections matching the Warden's precise demographic boundaries to the student's immutable registration variables.
 
 \subsection{Administrative Academic Adjustments}
-Unlike Faculty who submit batch data asynchronously, core Administrative nodes (like Deans or system Webmasters) control the schema states (e.g., locking a semester against further faculty inputs). This is executed using database transactional commits modifying the `metadata.semester_locked` boolean vectors. When $Semester_{locked} = 1$, all write operations directed at academic evaluation endpoints hard-fail with $403$ parameters preventing retroactive manipulation.
+Unlike Faculty who submit batch data asynchronously, core Administrative nodes (like Deans or system Webadmins) control the schema states (e.g., locking a semester against further faculty inputs). This is executed using database transactional commits modifying the `metadata.semester_locked` boolean vectors. When $Semester_{locked} = 1$, all write operations directed at academic evaluation endpoints hard-fail with $403$ parameters preventing retroactive manipulation.
 
 \subsection{Gate Security Operations}
 Gate Security utilizes an explicit deterministic protocol separated from conventional UI access. When an $Approved$ outpass arrives at the institutional physical boundary, Security scans the mathematically generated QR signature containing cryptographic timestamps.
