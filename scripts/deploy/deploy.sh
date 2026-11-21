@@ -360,12 +360,8 @@ scrub_deploy_output() {
 }
 
 # Role-job logs can echo an ALTER ROLE password or a connection string.
-scrub_dbadmin_job_log() {
-  sed -E \
-    -e 's#postgres(ql)?://[^[:space:]]+#postgresql://***#g' \
-    -e 's#(PASSWORD[[:space:]]*['"'"'"]?)[^[:space:]'"'"'"]+#\1***#gI' \
-    -e 's#(DBADMIN_DB_PASSWORD=)[^[:space:]]+#\1***#g'
-}
+# shellcheck source=scrub-dbadmin-job-log.sh
+source "$(dirname "$0")/scrub-dbadmin-job-log.sh"
 
 # One job name per deploy. Wait for it, print a redacted result, and never fail the deploy.
 run_dbadmin_role_job() {
@@ -379,9 +375,17 @@ run_dbadmin_role_job() {
     [ -n "$old" ] || continue
     kubectl delete "job/${old}" --wait=false >/dev/null 2>&1 || true
     echo "[dbadmin] Removed finished role job ${old}"
-  done < <(kubectl get jobs -o go-template='{{range .items}}{{.metadata.name}} {{range .status.conditions}}{{.type}}={{.status}} {{end}}{{"\n"}}{{end}}' 2>/dev/null \
-    | awk '$1 ~ /^uniz-dbadmin-role-manual-[0-9]+(-[0-9]+)?$/ && ($0 ~ /Complete=True/ || $0 ~ /Failed=True/) { print $1 }
-         $1 ~ /^uniz-dbadmin-role-[0-9]+$/ && ($0 ~ /Complete=True/ || $0 ~ /Failed=True/) { print $1 }')
+  done < <(kubectl get jobs -o go-template='{{range .items}}{{.metadata.name}} {{range .metadata.ownerReferences}}{{.kind}}/{{.name}} {{end}}{{range .status.conditions}}{{.type}}={{.status}} {{end}}{{"\n"}}{{end}}' 2>/dev/null \
+    | awk '($0 ~ /Complete=True/ || $0 ~ /Failed=True/) && ($1 ~ /^uniz-dbadmin-role-manual-[0-9]+(-[0-9]+)?$/ || $1 ~ /^uniz-dbadmin-role-[0-9]+$/ || $0 ~ /CronJob\/uniz-dbadmin-role/) { print $1 }')
+
+  # CronJob pods are named uniz-dbadmin-role-<time>-<suffix>. Deleting a
+  # finished job usually removes them; delete any that are still listed.
+  while IFS= read -r old; do
+    [ -n "$old" ] || continue
+    kubectl delete "pod/${old}" --wait=false >/dev/null 2>&1 || true
+    echo "[dbadmin] Removed finished role pod ${old}"
+  done < <(kubectl get pods -o go-template='{{range .items}}{{.metadata.name}} {{.status.phase}}{{"\n"}}{{end}}' 2>/dev/null \
+    | awk '$1 ~ /^uniz-dbadmin-role-/ && ($2 == "Succeeded" || $2 == "Failed") { print $1 }')
 
   job="uniz-dbadmin-role-manual-$(date +%s)-$$"
   echo "[dbadmin] Starting role job ${job}"

@@ -68,7 +68,7 @@ The role can `SELECT`, `INSERT`, `UPDATE`, and `DELETE` on application tables, a
 
 ## Create the login
 
-Deploy fills `DBADMIN_DB_PASSWORD` in `/root/uniz-secrets.env` when that line is missing or empty. It generates the value on the VPS, or stores the Actions secret of the same name when that secret is set. The file stays mode 600 and the owner is left as it was. The deploy log says `present` or `generated DBADMIN_DB_PASSWORD (new)` and does not print the value.
+Deploy fills `DBADMIN_DB_PASSWORD` in `/root/uniz-secrets.env` when that line is missing or empty. It generates the value on the VPS, or stores the Actions secret of the same name when that secret is set. The file stays mode 600 and the owner is left as it was. The deploy log says `present` or `generated DBADMIN_DB_PASSWORD (new)` and does not print the value. A vault that already has a password and is missing `DBADMIN_DB_PASSWORD_VERSION=2` (or has an older marker) is rotated once to a new random password. Later deploys leave that pair alone and re-apply it with `ALTER ROLE`.
 
 That step runs before the vault is copied into Secret `uniz-secrets`. The same deploy then starts a job from CronJob `uniz-dbadmin-role`, which creates `uniz_dbadmin` or `ALTER`s its password, and restarts `uniz-dbadmin-service` and Adminer when the password was just written.
 
