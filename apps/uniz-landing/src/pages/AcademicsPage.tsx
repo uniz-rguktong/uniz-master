@@ -34,6 +34,16 @@ const PAGE_META: Record<string, {
     subtitle: "Department-wise curriculum documents, credit requirements, and syllabi.",
     eyebrow: "RGUKT Ongole · Academics",
   },
+  timetable: {
+    displayName: "Time table",
+    subtitle: "The campus publishes examination time tables with the academic calendar.",
+    eyebrow: "RGUKT Ongole · Academics",
+  },
+};
+
+// The official menu labels Time table separately, and points it at the calendar.
+const FETCH_AS: Record<string, AcademicPageType> = {
+  timetable: "AcademicCalender",
 };
 
 function HeroBanner({ meta }: { meta: typeof PAGE_META[string] }) {
@@ -172,7 +182,7 @@ export function AcademicsPage() {
     async function fetchPage() {
       if (pageName) {
         setLoading(true);
-        const res = await getAcademicPage(pageName as AcademicPageType);
+        const res = await getAcademicPage((FETCH_AS[pageName.toLowerCase()] ?? pageName) as AcademicPageType);
         setData(res);
         setLoading(false);
       }
@@ -192,10 +202,10 @@ export function AcademicsPage() {
 
       <Wrap className="pb-16">
         {/* Route to specific layout based on page */}
-        {key === "academiccalender" && <CalendarLayout sections={data} />}
+        {(key === "academiccalender" || key === "timetable") && <CalendarLayout sections={data} />}
         {key === "curicula"         && <CurriculaLayout sections={data} />}
         {(key === "academicprograms" || key === "academicregulations") && <GenericLayout sections={data} />}
-        {!["academiccalender", "curicula", "academicprograms", "academicregulations"].includes(key) && (
+        {!["academiccalender", "timetable", "curicula", "academicprograms", "academicregulations"].includes(key) && (
           <GenericLayout sections={data} />
         )}
       </Wrap>
