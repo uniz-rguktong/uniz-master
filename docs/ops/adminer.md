@@ -70,7 +70,11 @@ The role can `SELECT`, `INSERT`, `UPDATE`, and `DELETE` on application tables, a
 
 ## Create the login
 
-Add these names to `/root/uniz-secrets.env`. Do not commit the values. If the vault is ever regenerated from GitHub Actions, set the same names as Actions secrets first or the rendered file will contain empty values.
+Deploy fills `DBADMIN_DB_PASSWORD` in `/root/uniz-secrets.env` when that line is missing or empty. It generates the value on the VPS, or stores the Actions secret of the same name when that secret is set. The file stays mode 600 and the owner is left as it was. The deploy log says `present` or `generated DBADMIN_DB_PASSWORD (new)` and does not print the value.
+
+That step runs before the vault is copied into Secret `uniz-secrets`. The same deploy then starts a job from CronJob `uniz-dbadmin-role`, which creates `uniz_dbadmin` or `ALTER`s its password, and restarts `uniz-dbadmin-service` and Adminer when the password was just written.
+
+The other two names are optional. If the vault is ever regenerated from GitHub Actions, set them as Actions secrets first or the rendered file will contain empty values. Do not commit any of these values.
 
 | Key | Required | Purpose |
 |---|---|---|
@@ -80,7 +84,7 @@ Add these names to `/root/uniz-secrets.env`. Do not commit the values. If the va
 
 The bootstrap user must be allowed to `CREATE ROLE`. If `USER_DATABASE_URL` cannot, set `DBADMIN_BOOTSTRAP_DATABASE_URL` to a superuser URL.
 
-Then:
+To do the same by hand:
 
 ```bash
 bash scripts/deploy/sync-k8s-secret-from-vault.sh

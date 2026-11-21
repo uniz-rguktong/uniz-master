@@ -44,6 +44,13 @@ if [ "${UNIZ_USE_EXISTING_VAULT:-true}" = "true" ] \
 else
   ./scripts/deploy/render-vps-secrets.sh /root/uniz-secrets.env
 fi
+# Fill DBADMIN_DB_PASSWORD before the secret sync. The hand-managed vault is
+# reused on every deploy, and nobody SSHes in to add the line.
+dbadmin_pw_status="$(./scripts/deploy/ensure-dbadmin-password.sh /root/uniz-secrets.env)"
+printf '%s\n' "$dbadmin_pw_status"
+if [ "$dbadmin_pw_status" = "generated DBADMIN_DB_PASSWORD (new)" ]; then
+  export DBADMIN_PASSWORD_JUST_SET=1
+fi
 ./scripts/deploy/ensure-ghcr-pull-secret.sh
 # Keep k8s Secret in sync with the vault file used by pods.
 ./scripts/deploy/sync-k8s-secret-from-vault.sh /root/uniz-secrets.env || true
