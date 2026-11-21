@@ -1,9 +1,8 @@
 import { useEffect, useId, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ArrowRight, ChevronDown, Menu, Moon, Search, Sun, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Menu, Search, X } from "lucide-react";
 import { Lockup } from "../brand/Lockup";
 import { portalPath } from "@/lib/portal";
-import { useTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { PRIMARY_NAV, searchDirectory } from "@/data/nav";
 import { officialHome } from "@/data/official";
@@ -23,7 +22,6 @@ export function Header() {
   });
   const navigate = useNavigate();
   const location = useLocation();
-  const { dark, toggle } = useTheme();
   const searchId = useId();
   const onThisPage = chrome.path === location.pathname;
   const menuSection = onThisPage ? chrome.section : null;
@@ -91,14 +89,6 @@ export function Header() {
           </Link>
 
           <div className="ml-auto flex items-center gap-1">
-            <button
-              type="button"
-              onClick={toggle}
-              aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
-              className={cn(iconButton, "hidden min-[821px]:inline-flex")}
-            >
-              {dark ? <Sun size={20} strokeWidth={1.75} /> : <Moon size={20} strokeWidth={1.75} />}
-            </button>
             <button
               type="button"
               onClick={() => setIsSearchOpen(true)}
@@ -245,16 +235,6 @@ export function Header() {
                 ),
               )}
             </nav>
-            <div className="mt-3 border-t border-border pt-3">
-              <button
-                type="button"
-                onClick={toggle}
-                className="inline-flex min-h-11 items-center gap-2 text-[14px] font-medium leading-5 text-text-2"
-              >
-                {dark ? <Sun size={18} strokeWidth={1.75} aria-hidden="true" /> : <Moon size={18} strokeWidth={1.75} aria-hidden="true" />}
-                {dark ? "Light theme" : "Dark theme"}
-              </button>
-            </div>
           </div>
         </div>
       )}

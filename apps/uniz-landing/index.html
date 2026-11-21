@@ -5,12 +5,10 @@
   <meta charset="UTF-8" />
   <script>
     (function () {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.style.colorScheme = "light";
       try {
-        var pref = localStorage.getItem("uniz-landing-theme");
-        var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        var dark = pref === "dark" || (pref !== "light" && systemDark);
-        if (dark) document.documentElement.classList.add("dark");
-        document.documentElement.style.colorScheme = dark ? "dark" : "light";
+        localStorage.removeItem("uniz-landing-theme");
       } catch (e) {}
     })();
   </script>

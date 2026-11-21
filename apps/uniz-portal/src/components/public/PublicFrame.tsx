@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Lockup } from "@/components/brand/Mark";
 
-/** Navy header shared by the portal's public pages. Stays navy in both themes. */
+/** Navy header shared by the portal's public pages. */
 export function PublicHeader({
   signInTo = "/student/signin",
 }: {

@@ -144,7 +144,7 @@ function OtpInput({
   return (
     <div className="space-y-2">
       <label className={portalLabelClass}>Verification code</label>
-      <div className="flex justify-center gap-2">
+      <div className="grid grid-cols-6 gap-1.5 sm:gap-2">
         {Array.from({ length: 6 }).map((_, i) => (
           <motion.input
             key={i}
@@ -159,7 +159,7 @@ function OtpInput({
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
-            className="h-14 w-12 rounded-md border border-border-strong bg-surface text-center font-sans text-2xl font-semibold text-head focus:border-navy-600 focus:shadow-[0_0_0_3px_var(--ring-soft)] focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ring disabled:cursor-not-allowed disabled:opacity-[0.45] dark:focus:border-navy-300"
+            className="h-12 w-full min-w-0 rounded-md border border-border-strong bg-surface px-0 text-center font-sans text-xl font-semibold text-head focus:border-navy-600 focus:shadow-[0_0_0_3px_var(--ring-soft)] focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ring disabled:cursor-not-allowed disabled:opacity-[0.45] sm:h-14 sm:text-2xl"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.25 }}
@@ -171,34 +171,34 @@ function OtpInput({
 }
 
 // ─── Password Strength Meter ──────────────────────────────────
+// Label, bar, and fill share one level so "Strong" is never amber on a green bar.
+const PASSWORD_LEVELS = [
+  { label: "Weak", bar: "bg-error", text: "text-error", width: "25%" },
+  { label: "Fair", bar: "bg-warning", text: "text-warning", width: "50%" },
+  { label: "Good", bar: "bg-accent", text: "text-accent", width: "75%" },
+  { label: "Strong", bar: "bg-success", text: "text-success", width: "100%" },
+] as const;
+
+function passwordLevel(password: string) {
+  let score = 0;
+  if (password.length >= 6) score++;
+  if (password.length >= 10) score++;
+  if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score++;
+  if (/\d/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+  if (score <= 1) return PASSWORD_LEVELS[0];
+  if (score === 2) return PASSWORD_LEVELS[1];
+  if (score === 3) return PASSWORD_LEVELS[2];
+  return PASSWORD_LEVELS[3];
+}
+
 function PasswordStrength({ password }: { password: string }) {
-  const { score, label, color, width } = useMemo(() => {
-    if (!password)
-      return {
-        score: 0,
-        label: "",
-        color: "bg-border",
-        width: "0%",
-      };
-    let s = 0;
-    if (password.length >= 6) s++;
-    if (password.length >= 10) s++;
-    if (/[A-Z]/.test(password) && /[a-z]/.test(password)) s++;
-    if (/\d/.test(password)) s++;
-    if (/[^A-Za-z0-9]/.test(password)) s++;
+  const level = useMemo(
+    () => (password ? passwordLevel(password) : null),
+    [password],
+  );
 
-    const levels = [
-      { label: "Very weak", color: "bg-error", width: "20%" },
-      { label: "Weak", color: "bg-error", width: "40%" },
-      { label: "Fair", color: "bg-warning", width: "60%" },
-      { label: "Strong", color: "bg-success", width: "80%" },
-      { label: "Excellent", color: "bg-success", width: "100%" },
-    ];
-    const level = levels[Math.min(s, 4)];
-    return { score: s, ...level };
-  }, [password]);
-
-  if (!password) return null;
+  if (!level) return null;
 
   return (
     <motion.div
@@ -209,9 +209,9 @@ function PasswordStrength({ password }: { password: string }) {
     >
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
         <motion.div
-          className={`h-full rounded-full ${color}`}
+          className={`h-full rounded-full ${level.bar}`}
           initial={{ width: 0 }}
-          animate={{ width }}
+          animate={{ width: level.width }}
           transition={{ duration: 0.4, ease: "easeOut" }}
         />
       </div>
@@ -219,12 +219,8 @@ function PasswordStrength({ password }: { password: string }) {
         <span className="text-caption font-medium text-text-3">
           Password strength
         </span>
-        <span
-          className={`text-caption font-medium ${
-            score <= 2 ? "text-error" : score <= 3 ? "text-warning" : "text-success"
-          }`}
-        >
-          {label}
+        <span className={`text-caption font-medium ${level.text}`}>
+          {level.label}
         </span>
       </div>
     </motion.div>
@@ -315,21 +311,47 @@ async function ensureCaptchaToken(
   return true;
 }
 
-/** Turnstile — script prefetched at boot; placeholder until iframe ready. */
+// Stable option values. The widget re-renders its challenge when these change,
+// including under StrictMode's extra mount, so they stay module-level constants.
+const TURNSTILE_OPTIONS = {
+  theme: "light",
+  size: "flexible",
+  action: "login",
+  retry: "auto",
+  retryInterval: 2000,
+  refreshExpired: "auto",
+  refreshTimeout: "auto",
+  appearance: "interaction-only",
+  execution: "render",
+} as const;
+
+const TURNSTILE_SCRIPT_OPTIONS = {
+  id: "cf-turnstile-script",
+  async: true,
+  defer: true,
+  appendTo: "head",
+  onLoadCallbackName: "onloadTurnstileCallback",
+} as const;
+
+/** Turnstile — script starts in index.html; the widget renders on mount. */
 function TurnstileWidget({
   turnstileRef,
   captchaTokenRef,
   onTokenChange,
   onStatusChange,
+  onProblem,
   status,
 }: {
   turnstileRef: React.RefObject<any>;
   captchaTokenRef: React.MutableRefObject<string | null>;
   onTokenChange: (token: string | null) => void;
   onStatusChange: (status: "loading" | "ready" | "error") => void;
+  onProblem: () => void;
   status: "loading" | "ready" | "error";
 }) {
-  const [iframeReady, setIframeReady] = useState(false);
+  const [widgetMounted, setWidgetMounted] = useState(false);
+  const problemRef = useRef(onProblem);
+  problemRef.current = onProblem;
 
   useEffect(() => {
     prefetchTurnstile();
@@ -343,67 +365,33 @@ function TurnstileWidget({
     ) : null;
   }
 
-  const showPlaceholder =
-    !iframeReady && status !== "ready" && status !== "error";
-
   return (
-    <div className="relative flex min-h-[65px] w-full items-center justify-center">
-      {showPlaceholder && (
-        <div className="absolute inset-0 z-[1] flex items-center justify-center">
-          <TurnstileLoadingPlaceholder />
+    <div className="flex w-full flex-col items-center">
+      {!widgetMounted && status === "loading" ? (
+        <div className="flex w-full justify-center py-1">
+          <TurnstileLoadingPlaceholder compact />
         </div>
-      )}
-      <div
-        className={cn(
-          "flex w-full justify-center transition-opacity duration-150",
-          showPlaceholder ? "opacity-0" : "opacity-100",
-        )}
-      >
-        <Turnstile
-          ref={turnstileRef}
-          siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-          scriptOptions={{
-            id: "cf-turnstile-script",
-            async: true,
-            defer: true,
-            appendTo: "head",
-          }}
-          options={{
-            theme: "light",
-            size: "flexible",
-            action: "login",
-            retry: "auto",
-            retryInterval: 2000,
-            refreshExpired: "auto",
-            appearance: "always",
-            execution: "render",
-          }}
-          onLoadScript={() => onStatusChange("loading")}
-          onWidgetLoad={() => {
-            setIframeReady(true);
-            onStatusChange("loading");
-          }}
-          onBeforeInteractive={() => setIframeReady(true)}
-          onSuccess={(token) => {
-            captchaTokenRef.current = token;
-            onTokenChange(token);
-            setIframeReady(true);
-            onStatusChange("ready");
-          }}
-          onExpire={() => {
-            captchaTokenRef.current = null;
-            onTokenChange(null);
-            onStatusChange("loading");
-            turnstileRef.current?.reset();
-          }}
-          onError={() => {
-            captchaTokenRef.current = null;
-            onTokenChange(null);
-            setIframeReady(true);
-            onStatusChange("error");
-          }}
-        />
-      </div>
+      ) : null}
+      <Turnstile
+        ref={turnstileRef}
+        siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+        scriptOptions={TURNSTILE_SCRIPT_OPTIONS}
+        options={TURNSTILE_OPTIONS}
+        onWidgetLoad={() => setWidgetMounted(true)}
+        onSuccess={(token) => {
+          captchaTokenRef.current = token;
+          onTokenChange(token);
+          setWidgetMounted(true);
+          onStatusChange("ready");
+        }}
+        onExpire={() => {
+          captchaTokenRef.current = null;
+          onTokenChange(null);
+          onStatusChange("loading");
+        }}
+        onTimeout={() => problemRef.current()}
+        onError={() => problemRef.current()}
+      />
     </div>
   );
 }
@@ -412,10 +400,12 @@ function CaptchaStatus({
   status,
   hasToken,
   waitingOnSubmit,
+  onRetry,
 }: {
   status: "loading" | "ready" | "error";
   hasToken: boolean;
   waitingOnSubmit?: boolean;
+  onRetry: () => void;
 }) {
   if (!requiresCaptcha()) {
     return null;
@@ -429,12 +419,19 @@ function CaptchaStatus({
   if (status === "error") {
     return (
       <Alert tone="warning">
-        Security check could not load. Refresh the page or check your connection.
+        Security check didn’t finish.{" "}
+        <button
+          type="button"
+          className="font-semibold underline underline-offset-2"
+          onClick={onRetry}
+        >
+          Try again
+        </button>
       </Alert>
     );
   }
 
-  // "ready" without a token is a spent check (widget reset, callback not back yet).
+  // Success only with a live token. "ready" without one is a spent check.
   if (hasToken) {
     return <Alert tone="success">Security check complete</Alert>;
   }
@@ -465,10 +462,37 @@ export default function Signin({ type }: SigninProps) {
     setCaptchaToken(token);
   }, []);
 
+  const captchaAutoResets = useRef(0);
+
+  const noteCaptchaProblem = useCallback(() => {
+    syncCaptchaToken(null);
+    setCaptchaStatus("error");
+    // One automatic reset. Another failure waits for Try again so the
+    // challenge is not restarted in a loop.
+    if (captchaAutoResets.current >= 1) return;
+    captchaAutoResets.current += 1;
+    turnstileRef.current?.reset?.();
+  }, [syncCaptchaToken]);
+
+  const retryCaptcha = useCallback(() => {
+    captchaAutoResets.current = 0;
+    syncCaptchaToken(null);
+    setCaptchaStatus("loading");
+    const widget = turnstileRef.current;
+    if (!widget) return;
+    if (typeof widget.reset === "function") {
+      widget.reset();
+      return;
+    }
+    widget.remove?.();
+    widget.render?.();
+  }, [syncCaptchaToken]);
+
   const resetCaptchaAfterFailure = useCallback(() => {
     // Clear before reset(). reset() can invoke onSuccess in the same turn
     // (test keys, cached passes). Nulling the token afterwards drops that
     // fresh token and the button stays on "Waiting for security check…".
+    captchaAutoResets.current = 0;
     syncCaptchaToken(null);
     setCaptchaStatus("loading");
     const widget = turnstileRef.current;
@@ -535,6 +559,16 @@ export default function Signin({ type }: SigninProps) {
   }, [type]);
 
   const captchaReady = !requiresCaptcha() || !!captchaToken;
+  const captchaWaiting =
+    requiresCaptcha() && !captchaToken && captchaStatus !== "error";
+
+  useEffect(() => {
+    if (!requiresCaptcha() || captchaToken || captchaStatus === "error") return;
+    const timer = window.setTimeout(() => {
+      if (!captchaTokenRef.current) noteCaptchaProblem();
+    }, 12_000);
+    return () => window.clearTimeout(timer);
+  }, [captchaToken, captchaStatus, noteCaptchaProblem]);
 
   const sendDataToBackend = useCallback(async () => {
     if (username.trim() === "" || password.trim() === "") {
@@ -991,13 +1025,18 @@ export default function Signin({ type }: SigninProps) {
                 turnstileRef={turnstileRef}
                 captchaTokenRef={captchaTokenRef}
                 onTokenChange={syncCaptchaToken}
-                onStatusChange={setCaptchaStatus}
+                onStatusChange={(next) => {
+                  if (next === "ready") captchaAutoResets.current = 0;
+                  setCaptchaStatus(next);
+                }}
+                onProblem={noteCaptchaProblem}
                 status={captchaStatus}
               />
               <CaptchaStatus
                 status={captchaStatus}
                 hasToken={!!captchaToken}
                 waitingOnSubmit={waitingForCaptcha}
+                onRetry={retryCaptcha}
               />
             </div>
           )}
@@ -1017,7 +1056,7 @@ export default function Signin({ type }: SigninProps) {
               <span className="relative z-10">
                 {isLoading
                   ? "Signing in…"
-                  : requiresCaptcha() && !captchaReady
+                  : captchaWaiting
                     ? "Waiting for security check…"
                     : "Sign in"}
               </span>
@@ -1038,7 +1077,7 @@ export default function Signin({ type }: SigninProps) {
                 <span className="relative z-10">
                   {isLoading
                     ? "Sending…"
-                    : requiresCaptcha() && !captchaReady
+                    : captchaWaiting
                       ? "Waiting for security check…"
                       : "Send code"}
                 </span>

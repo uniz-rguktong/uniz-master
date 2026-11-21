@@ -29,7 +29,6 @@ import AdminLayout from "./layout";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tile } from "@/components/ui/tile";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Avatar } from "@/components/ui/avatar";
 import { parseJwt } from "../../utils/security";
 import { resolveAdminPortalRole } from "../../utils/adminRole";
@@ -225,7 +224,6 @@ export default function Admin() {
   return (
     <AdminLayout>
       <header className="sticky top-0 z-30 flex h-16 items-center justify-end gap-2 border-b border-border bg-bg px-4 min-[821px]:px-10">
-        <ThemeToggle />
         <Button variant="ghost" size="icon" aria-label="Profile" onClick={() => navigate("/admin/profile")}>
           <UserCircle size={18} />
         </Button>

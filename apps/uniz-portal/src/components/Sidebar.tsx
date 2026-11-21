@@ -29,7 +29,6 @@ import {
 } from "./StudentPageSkeleton";
 import { NotificationBellButton } from "./NotificationBellButton";
 import { Lockup } from "@/components/brand/Mark";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -371,7 +370,6 @@ export default function Sidebar({ content }: MainContent) {
         </header>
 
         <header className="sticky top-0 z-30 hidden h-16 items-center justify-end gap-2 border-b border-border bg-bg px-10 min-[821px]:flex">
-          <ThemeToggle />
           <NotificationBellButton active={content === "notifications"} />
           <button
             type="button"

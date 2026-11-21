@@ -86,52 +86,6 @@
     color-scheme: light;
   }
 
-  .dark {
-    --bg: #070b14;
-    --surface: #0d1322;
-    --surface-2: #131a2c;
-    --border: #1f2840;
-    --border-strong: #2c3756;
-    --text: #f5f7fa;
-    --text-2: #b4bbc8;
-    --text-3: #8a93a5;
-    --primary: #ffffff;
-    --on-primary: #0b1b3a;
-    --primary-hover: #e6ebf5;
-    --primary-active: #c9d3ea;
-    --link: #8fa8dc;
-    --selected: #131a2c;
-    --ring: #8fa8dc;
-    --ring-soft: rgb(143 168 220 / 0.25);
-    --overlay: rgb(0 0 0 / 0.65);
-    --error: #f97066;
-    --success: #47cd89;
-    --warning: #fdb022;
-    --on-error: #0a0a0b;
-    --shadow-sm: none;
-    --shadow-md: none;
-    --shadow-lg: none;
-
-    --sb-border: #1f2840;
-
-    --panel: #0d1322;
-    --tile: #131a2c;
-    --head: #f5f7fa;
-    --tint-2: #131a2c;
-    --accent: #8fa8dc;
-    --ill-far: #131a2c;
-    --ill-ground: #0a0f1c;
-    --ill-cloud: #131a2c;
-    --ill-cloud-o: 1;
-    --ill-win-o: 0.5;
-
-    --background: var(--bg);
-    --foreground: var(--text);
-    --muted-foreground: var(--text-3);
-    --card: var(--surface);
-    color-scheme: dark;
-  }
-
   html {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
