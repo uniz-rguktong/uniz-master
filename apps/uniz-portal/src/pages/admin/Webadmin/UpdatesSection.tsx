@@ -220,7 +220,7 @@ export default function UpdatesSection() {
         icon={<Bell size={18} />}
         eyebrow="Campus"
         title="Campus Broadcasts"
-        subtitle="Distribute vital institutional news and media resources."
+        subtitle="News shown on the campus site."
         actions={
           <>
             <Button type="button" variant="ghost" size="icon" onClick={fetchUpdates} disabled={loading} title="Refresh Stream">

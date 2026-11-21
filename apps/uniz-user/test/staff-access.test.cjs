@@ -5,7 +5,9 @@ const {
   canReadStaffBatches,
   isDirectoryWebadmin,
   isDirectoryRole,
+  directoryPermissionWriteBlocked,
   sanitizeDirectoryPermissions,
+  WEBADMIN_PERMISSION_LOCK_MESSAGE,
 } = require("../dist/utils/staff-access");
 
 test("batch list is staff-only", () => {
@@ -50,6 +52,18 @@ test("directory reads include dean and director", () => {
   assert.equal(
     canReadAdminDirectory({ role: "webadmin", username: "dean" }),
     false,
+  );
+});
+
+test("webadmin permission writes are rejected", () => {
+  assert.equal(directoryPermissionWriteBlocked("webadmin"), true);
+  assert.equal(directoryPermissionWriteBlocked(" Webadmin "), true);
+  assert.equal(directoryPermissionWriteBlocked("dean"), false);
+  assert.equal(directoryPermissionWriteBlocked("director"), false);
+  assert.equal(directoryPermissionWriteBlocked(""), false);
+  assert.equal(
+    WEBADMIN_PERMISSION_LOCK_MESSAGE,
+    "The webadmin role cannot be edited",
   );
 });
 

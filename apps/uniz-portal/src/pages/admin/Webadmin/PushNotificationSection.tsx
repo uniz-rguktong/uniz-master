@@ -147,7 +147,7 @@ export default function PushNotificationSection() {
         icon={<Send size={18} />}
         eyebrow="Campus"
         title="Push & Alerts"
-        subtitle="Manage browser push subscriptions and broadcast instant system alerts."
+        subtitle="Push subscriptions and broadcasts."
         actions={
           <>
             <div className="relative">

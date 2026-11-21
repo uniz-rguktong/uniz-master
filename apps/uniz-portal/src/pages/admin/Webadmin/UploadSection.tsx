@@ -225,7 +225,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
     <div className={cn(adminPageWrapClass, "pb-20")}>
       <PageHeader
         title={type === "grades" ? "Grades upload" : "Attendance upload"}
-        meta={`Synchronize institutional ${type} records with the core system.`}
+        meta={type === "grades" ? "Upload a grades spreadsheet." : "Upload an attendance spreadsheet."}
         action={
           <Button type="button" variant="outline" size="compact" onClick={downloadTemplate}>
             <FileDown size={14} />

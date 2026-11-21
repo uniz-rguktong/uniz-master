@@ -517,7 +517,7 @@ export default function FacultyManagement({
         icon={<Users size={18} />}
         eyebrow="Management"
         title="Faculty Management"
-        subtitle="Strategic management of administrative and teaching assets."
+        subtitle="Faculty and staff accounts, roles and status."
         actions={
           <>
             <div className={adminSegmentWrapClass}>
@@ -1044,8 +1044,8 @@ export default function FacultyManagement({
               id: "user",
               header: "Staff",
               primary: true,
-              grow: true,
-              width: 160,
+              width: 240,
+              fixed: true,
               clip: false,
               title: (member: any) => [member.Name, member.Email].filter(Boolean).join(" · "),
               cell: (member: any) => (
@@ -1072,8 +1072,8 @@ export default function FacultyManagement({
               id: "designation",
               header: "Designation",
               meta: true,
-              width: 136,
-              fixed: true,
+              grow: true,
+              width: 220,
               title: (member: any) => member.Designation || member.Department || "Lecturer",
               cell: (member: any) => member.Designation || member.Department || "Lecturer",
             },

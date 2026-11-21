@@ -220,7 +220,7 @@ export default function SystemLogsSection() {
         icon={<Activity size={18} />}
         eyebrow="Management"
         title="System & Audit Logs"
-        subtitle="Institutional data synchronization and event history across all portals."
+        subtitle="Upload history and maintenance."
         actions={
           <>
             <div className="flex items-center gap-2">

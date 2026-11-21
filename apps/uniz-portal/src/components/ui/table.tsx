@@ -251,7 +251,8 @@ export function Table<T>({
                               maxWidth: grow ? undefined : pin.width,
                             }}
                             className={cn(
-                              "overflow-hidden border-b border-border bg-bg px-3 py-2 align-middle",
+                              "border-b border-border bg-bg px-3 py-2 align-middle",
+                              column.clip === false ? "overflow-visible" : "overflow-hidden",
                               column.numeric && "pl-3 pr-5 text-right tabular-nums",
                               !pin.pinned && (selected ? "bg-selected" : "group-hover:bg-tint"),
                               pin.pinned && "sticky z-20 bg-bg group-hover:bg-tint",
@@ -262,9 +263,9 @@ export function Table<T>({
                             <div
                               className={cn(
                                 "min-w-0",
-                                column.actions || column.clip !== false
-                                  ? "truncate whitespace-nowrap"
-                                  : "whitespace-normal",
+                                column.clip === false
+                                  ? "overflow-visible"
+                                  : "truncate whitespace-nowrap",
                                 column.numeric && "text-right",
                               )}
                             >

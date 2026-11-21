@@ -403,32 +403,43 @@ export default function RoleManagement() {
       id: "access",
       header: "Access",
       actions: true,
+      clip: false,
       width: 120,
       cell: (row) => {
         if (row.mode === "missing") {
           return <span className="text-small text-text-3">Not stored</span>;
         }
         const checked = draft.includes(row.id);
+        const locked = selectedProtected || saving;
         return (
           <button
             type="button"
             role="switch"
             aria-checked={checked}
+            aria-disabled={locked || undefined}
             aria-label={row.label}
-            disabled={selectedProtected || saving}
+            disabled={locked}
             onClick={(event) => {
               event.stopPropagation();
               togglePermission(row.id as PermissionId);
             }}
             className={cn(
-              "relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-[0.45]",
-              checked ? "bg-primary" : "bg-border-strong",
+              "relative inline-flex h-6 w-11 shrink-0 rounded-full border transition-colors",
+              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+              "disabled:cursor-not-allowed disabled:opacity-100",
+              locked
+                ? "border-dashed border-text-3 bg-surface"
+                : checked
+                  ? "border-primary bg-primary"
+                  : "border-transparent bg-border-strong",
             )}
           >
             <span
+              aria-hidden
               className={cn(
-                "absolute top-0.5 h-5 w-5 rounded-full bg-surface transition-transform",
-                checked ? "translate-x-5" : "translate-x-0.5",
+                "pointer-events-none absolute top-0.5 left-0.5 h-5 w-5 rounded-full border bg-white shadow-sm transition-transform",
+                checked ? "translate-x-5" : "translate-x-0",
+                locked ? "border-text-3" : "border-white",
               )}
             />
           </button>

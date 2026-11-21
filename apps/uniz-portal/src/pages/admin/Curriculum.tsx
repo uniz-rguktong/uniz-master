@@ -228,7 +228,7 @@ export default function CurriculumManager() {
       {/* Header Area */}
       <PageHeader
         title="Academic subjects"
-        meta={`Manage the core institutional curriculum (${totalRecords} records)`}
+        meta={`Subjects by department and semester (${totalRecords}).`}
         action={
           <Button type="button" onClick={() => handleOpenModal()}>
             <Plus size={16} /> New subject

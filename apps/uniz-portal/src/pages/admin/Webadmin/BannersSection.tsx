@@ -231,7 +231,7 @@ export default function BannersSection() {
     >
       <PageHeader
         title="Banner management"
-        meta="Create and control featured spotlight content for student portals."
+        meta="Banners on the student home."
         action={
           <Button type="button" onClick={() => setShowAddModal(true)}>
             <Plus size={16} /> New banner
