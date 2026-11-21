@@ -101,7 +101,7 @@ export function Header() {
             </button>
             <button
               type="button"
-              onClick={() => { setIsSearchOpen(true); setMenuSection(null); setMobileOpen(false); }}
+              onClick={() => setIsSearchOpen(true)}
               aria-label="Search"
               className={iconButton}
             >
@@ -115,7 +115,7 @@ export function Header() {
             </a>
             <button
               type="button"
-              onClick={() => { setMobileOpen(true); setMenuSection(null); setIsSearchOpen(false); }}
+              onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
               aria-expanded={mobileOpen}
               className={cn(iconButton, "min-[1100px]:hidden")}
