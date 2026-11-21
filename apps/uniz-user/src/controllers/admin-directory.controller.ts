@@ -260,9 +260,21 @@ export const deleteAdmin = async (req: AuthenticatedRequest, res: Response) => {
     if (!admin && !faculty) {
       return res.status(404).json({ success: false, msg: "Admin not found" });
     }
+    const target = (admin || faculty)!;
+    // This page manages directory roles only; faculty, HOD and other staff
+    // accounts are removed from their own screens.
+    if (
+      !isDirectoryRole(
+        resolveEffectiveRole({ role: target.role, username: target.username }),
+      )
+    ) {
+      return res
+        .status(403)
+        .json({ success: false, msg: "Only directory roles can be removed here" });
+    }
 
     const secret = (process.env.INTERNAL_SECRET || "uniz-core").trim();
-    const canonical = (admin || faculty)!.username;
+    const canonical = target.username;
     await axios.delete(
       `${AUTH_SERVICE_URL}/internal/user/${encodeURIComponent(canonical)}`,
       { headers: { "x-internal-secret": secret }, timeout: 8000 },
