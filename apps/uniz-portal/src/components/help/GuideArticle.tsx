@@ -1,5 +1,5 @@
-import type { Guide } from "@/content/webmasterGuides";
-import { groupTitle } from "@/content/webmasterGuides";
+import type { Guide } from "@/content/webadminGuides";
+import { groupTitle } from "@/content/webadminGuides";
 import { RichText } from "./RichText";
 
 export function GuideArticle({ guide }: { guide: Guide }) {

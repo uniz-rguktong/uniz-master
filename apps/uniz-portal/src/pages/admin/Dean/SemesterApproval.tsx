@@ -30,7 +30,7 @@ import {
   adminSectionTitleClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
-import RegistrationTracking from "../Webmaster/RegistrationTracking";
+import RegistrationTracking from "../Webadmin/RegistrationTracking";
 
 const BRANCHES = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"];
 

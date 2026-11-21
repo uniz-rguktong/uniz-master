@@ -79,7 +79,7 @@ export default function StudentDashboard({
 
   return (
     <div className="space-y-6 pb-10 font-sans">
-      {/* Redesigned Profile Hero (Matches Webmaster Overview) */}
+      {/* Redesigned Profile Hero (Matches Webadmin Overview) */}
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-4">

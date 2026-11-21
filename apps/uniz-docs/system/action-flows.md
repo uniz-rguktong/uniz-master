@@ -442,7 +442,7 @@ flowchart LR
 | Role | Portal shell |
 |------|----------------|
 | student | `/student` |
-| webadmin / coe | WebmasterDashboard |
+| webadmin / coe | WebadminDashboard |
 | dean | DeanDashboard (full) |
 | hod | DeanDashboard (slim) |
 | director | DirectorDashboard |

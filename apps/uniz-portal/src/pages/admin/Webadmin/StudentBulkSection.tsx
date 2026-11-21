@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useSetRecoilState } from "recoil";
-import { webmasterInstitutionAnalyticsAtom } from "../../../store/atoms";
+import { webadminInstitutionAnalyticsAtom } from "../../../store/atoms";
 import { Download, ChevronDown } from "lucide-react";
 import {
   ADMIN_STUDENT_UPLOAD,
@@ -28,7 +28,7 @@ import { ENGINEERING_BRANCHES } from "@/constants/branches";
 
 export default function StudentBulkSection() {
   const resetInstitutionAnalytics = useSetRecoilState(
-    webmasterInstitutionAnalyticsAtom,
+    webadminInstitutionAnalyticsAtom,
   );
   const [file, setFile] = useState<File | null>(null);
   const [uploadId, setUploadId] = useState<string | null>(null);

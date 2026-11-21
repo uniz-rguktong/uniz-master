@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import { accessRole } from "@uniz/shared";
 import { JwtPayload, JwtPayloadSchema } from "../shared/jwt.schema";
 import { ErrorCode } from "../shared/error-codes";
 
@@ -44,7 +45,10 @@ export const authMiddleware = (
         message: "Invalid token structure",
       });
     }
-    (req as AuthenticatedRequest).user = parsed.data;
+    (req as AuthenticatedRequest).user = {
+      ...parsed.data,
+      role: accessRole(parsed.data),
+    };
     next();
   } catch {
     return res.status(401).json({

@@ -21,7 +21,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import CurriculumManager from "../Curriculum";
 import SemesterBuilder from "./SemesterBuilder";
 import SecuritySection from "./SecuritySection";
-import WebmasterOverview from "./WebmasterOverview";
+import WebadminOverview from "./WebadminOverview";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
@@ -45,7 +45,7 @@ import HelpSection from "./HelpSection";
 import RoleManagement from "../RoleManagement";
 import { HowToButton } from "@/components/help/HowToButton";
 
-export default function WebmasterDashboard() {
+export default function WebadminDashboard() {
   useIsAuth();
 
   const username = (localStorage.getItem("username") || "Webadmin").replace(
@@ -244,7 +244,7 @@ export default function WebmasterDashboard() {
       default:
         return (
           <div className="animate-in fade-in duration-500">
-            <WebmasterOverview username={username} />
+            <WebadminOverview username={username} />
           </div>
         );
     }

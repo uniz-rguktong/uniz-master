@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { aliasWebadminRole, JwtPayloadSchema } from "@uniz/shared";
+import { isWebadmin, JwtPayloadSchema } from "@uniz/shared";
 import { DbAdminError } from "./errors";
 
 export interface Actor {
@@ -38,11 +38,10 @@ export function requireWebadmin(req: Request, res: Response, next: NextFunction)
       res.status(401).json({ success: false, message: "Sign in again to open the database editor." });
       return;
     }
-    const role = aliasWebadminRole(String(parsed.data.role));
-    if (role !== "webadmin") {
+    if (!isWebadmin(parsed.data)) {
       res.status(403).json({
         success: false,
-        message: "Only the webmaster can open the database editor.",
+        message: "Only the webadmin can open the database editor.",
       });
       return;
     }

@@ -2,6 +2,14 @@
  * Local semester registration E2E test — reports PASS/FAIL per stage.
  * Usage: node scripts/test-sem-registration-local.js
  */
+const webadminTestPassword = String(process.env.WEBADMIN_TEST_PASSWORD || "").trim();
+if (!webadminTestPassword) {
+  console.error(
+    "Missing WEBADMIN_TEST_PASSWORD. Set it to the webadmin test account password before running this script.",
+  );
+  process.exit(1);
+}
+
 const BASE_URL = process.env.API_URL || "http://localhost:3000/api/v1";
 const CAPTCHA = "uniz_dev_bypass_token_2026";
 const results = [];
@@ -50,8 +58,8 @@ async function run() {
   console.log(`API: ${BASE_URL}\n`);
 
   // --- AUTH ---
-  const wmToken = await login("webmaster", "password123", true);
-  log("Auth: Webmaster", wmToken ? "PASS" : "FAIL", wmToken ? "token acquired" : "login failed");
+  const wmToken = await login("webadmin", webadminTestPassword, true);
+  log("Auth: Webadmin", wmToken ? "PASS" : "FAIL", wmToken ? "token acquired" : "login failed");
 
   const deanToken = await login("dean", "password123", true);
   log("Auth: Dean", deanToken ? "PASS" : "FAIL", deanToken ? "token acquired" : "login failed");
@@ -67,7 +75,7 @@ async function run() {
   log("Auth: Student O210008", studentToken ? "PASS" : "FAIL", studentToken ? "token acquired" : "login failed");
 
   if (!wmToken) {
-    console.log("\n=== BLOCKED: cannot continue without webmaster ===");
+    console.log("\n=== BLOCKED: cannot continue without webadmin ===");
     return results;
   }
 
@@ -80,7 +88,7 @@ async function run() {
     log("Cleanup", "PASS", `deleted ${existingSems.length} existing semester(s)`);
   }
 
-  // --- WEBMASTER: init semester (CSE-only so one HOD advance opens registration) ---
+  // --- WEBADMIN: init semester (CSE-only so one HOD advance opens registration) ---
   const semLabel = `AY 2026-27 E3-SEM-1 TEST-${Date.now()}`;
   const initRes = await req(`${BASE_URL}/academics/semester/init`, {
     method: "POST",
@@ -89,13 +97,13 @@ async function run() {
   });
   const semId = initRes.body?.semester?.id;
   const initOk = initRes.status === 201 && semId;
-  log("Webmaster: init semester", initOk ? "PASS" : "FAIL", { status: initRes.status, semId, status_field: initRes.body?.semester?.status });
+  log("Webadmin: init semester", initOk ? "PASS" : "FAIL", { status: initRes.status, semId, status_field: initRes.body?.semester?.status });
 
   if (!semId) return results;
 
   // Verify allocations created
   const { body: cseAllocs } = await req(`${BASE_URL}/academics/dean/review/CSE?semesterId=${semId}`, { headers: auth(wmToken) });
-  log("Webmaster: branch allocations", Array.isArray(cseAllocs) && cseAllocs.length > 0 ? "PASS" : "FAIL", `CSE allocations: ${Array.isArray(cseAllocs) ? cseAllocs.length : "error"}`);
+  log("Webadmin: branch allocations", Array.isArray(cseAllocs) && cseAllocs.length > 0 ? "PASS" : "FAIL", `CSE allocations: ${Array.isArray(cseAllocs) ? cseAllocs.length : "error"}`);
 
   // Auth: student blocked from init
   const studentInit = await req(`${BASE_URL}/academics/semester/init`, {
@@ -261,10 +269,10 @@ async function run() {
 
   // --- Admin verification ---
   const regs = await req(`${BASE_URL}/academics/registrations?semesterId=${semId}&branch=all`, { headers: auth(wmToken) });
-  log("Webmaster: view registrations", Array.isArray(regs.body) ? "PASS" : "FAIL", `count=${Array.isArray(regs.body) ? regs.body.length : "n/a"}`);
+  log("Webadmin: view registrations", Array.isArray(regs.body) ? "PASS" : "FAIL", `count=${Array.isArray(regs.body) ? regs.body.length : "n/a"}`);
 
   const overview = await req(`${BASE_URL}/academics/semester/overview`, { headers: auth(wmToken) });
-  log("Webmaster: semester overview", overview.status === 200 ? "PASS" : "FAIL", overview.body?.semester?.name || overview.body);
+  log("Webadmin: semester overview", overview.status === 200 ? "PASS" : "FAIL", overview.body?.semester?.name || overview.body);
 
   console.log("\n=== SUMMARY ===");
   const pass = results.filter((r) => r.status === "PASS").length;
