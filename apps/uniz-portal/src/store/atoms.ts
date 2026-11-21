@@ -199,8 +199,8 @@ export const uploadHealthAnalyticsAtom = atom({
   },
 });
 
-export const webmasterInstitutionAnalyticsAtom = atom({
-  key: "webmasterInstitutionAnalyticsAtom",
+export const webadminInstitutionAnalyticsAtom = atom({
+  key: "webadminInstitutionAnalyticsAtom",
   default: {
     fetched: false,
     snapshot: null as Record<string, number | string | null> | null,

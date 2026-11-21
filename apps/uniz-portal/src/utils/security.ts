@@ -1,6 +1,7 @@
 export interface DecodedToken {
   username: string;
   role: string;
+  email?: string;
   department?: string;
   exp: number;
   iat: number;

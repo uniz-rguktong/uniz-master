@@ -1,7 +1,7 @@
 {
   "name": "uniz-dbadmin-service",
   "version": "1.0.0",
-  "description": "Webmaster database editor for UniZ",
+  "description": "Webadmin database editor for UniZ",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",

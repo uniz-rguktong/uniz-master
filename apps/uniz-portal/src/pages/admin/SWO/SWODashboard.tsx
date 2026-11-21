@@ -6,13 +6,13 @@ import {
   Lock,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
-import SecuritySection from "../Webmaster/SecuritySection";
+import SecuritySection from "../Webadmin/SecuritySection";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
 import RequestManagement from "./RequestManagement";
 import GrievanceList from "./GrievanceList";
-import WebmasterOverview from "../Webmaster/WebmasterOverview";
+import WebadminOverview from "../Webadmin/WebadminOverview";
 import { filterOutpassOutingTabs } from "@/config/featureFlags";
 
 export default function SWODashboard() {
@@ -70,7 +70,7 @@ export default function SWODashboard() {
       default:
         return (
           <div className="animate-in fade-in duration-500">
-            <WebmasterOverview username={username} />
+            <WebadminOverview username={username} />
           </div>
         );
     }

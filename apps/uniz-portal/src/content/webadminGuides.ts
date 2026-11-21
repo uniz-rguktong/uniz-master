@@ -1,4 +1,4 @@
-import raw from "./webmaster-guides.json";
+import raw from "./webadmin-guides.json";
 
 export type Guide = {
   id: string;
@@ -35,7 +35,7 @@ export type GuideBook = {
 
 export const guideBook = raw as GuideBook;
 
-export const WEBMASTER_SCREEN_LABELS: Record<string, string> = {
+export const WEBADMIN_SCREEN_LABELS: Record<string, string> = {
   dashboard: "Overview",
   student: "Student Details",
   student_bulk: "Student Bulk Ops",
@@ -55,7 +55,7 @@ export const WEBMASTER_SCREEN_LABELS: Record<string, string> = {
   help: "Help",
 };
 
-export const WEBMASTER_GUIDE_SCREENS = Object.keys(WEBMASTER_SCREEN_LABELS);
+export const WEBADMIN_GUIDE_SCREENS = Object.keys(WEBADMIN_SCREEN_LABELS);
 
 export function guidesForScreen(screen: string): Guide[] {
   return guideBook.guides.filter((guide) => guide.screens.includes(screen));
@@ -103,7 +103,7 @@ export function validateGuideBook(): string[] {
     if (guide.wrong.length === 0) problems.push(`${guide.id} has no wrong tips`);
     if (!guide.call.trim()) problems.push(`${guide.id} has no call line`);
   }
-  for (const screen of WEBMASTER_GUIDE_SCREENS) {
+  for (const screen of WEBADMIN_GUIDE_SCREENS) {
     if (!guideBook.guides.some((guide) => guide.screens.includes(screen))) {
       problems.push(`No guide for screen ${screen}`);
     }

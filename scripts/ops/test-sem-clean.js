@@ -1,6 +1,14 @@
 /**
- * Clean pipeline test — proper Webmaster → Dean → HOD → Student flow.
+ * Clean pipeline test — proper Webadmin → Dean → HOD → Student flow.
  */
+const webadminTestPassword = String(process.env.WEBADMIN_TEST_PASSWORD || "").trim();
+if (!webadminTestPassword) {
+  console.error(
+    "Missing WEBADMIN_TEST_PASSWORD. Set it to the webadmin test account password before running this script.",
+  );
+  process.exit(1);
+}
+
 const BASE = "http://localhost:3000/api/v1";
 const CAPTCHA = "uniz_dev_bypass_token_2026";
 
@@ -21,7 +29,7 @@ async function login(u, p, admin = false) {
 const auth = (t) => ({ Authorization: `Bearer ${t}` });
 
 (async () => {
-  const wm = await login("webmaster", "password123", true);
+  const wm = await login("webadmin", webadminTestPassword, true);
   const dean = await login("dean", "password123", true);
   const hod = (await login("hod_cse", "hod_cse@uniz", true)) || (await login("hod_cse", "password123", true));
   if (!hod) { console.error("BLOCKED: hod_cse login failed"); process.exit(1); }

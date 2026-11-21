@@ -2,6 +2,14 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 
+const webadminTestPassword = String(process.env.WEBADMIN_TEST_PASSWORD || "").trim();
+if (!webadminTestPassword) {
+  console.error(
+    "Missing WEBADMIN_TEST_PASSWORD. Set it to the webadmin test account password before running this script.",
+  );
+  process.exit(1);
+}
+
 // Colors for console output
 const colors = {
   reset: "\x1b[0m",
@@ -442,13 +450,13 @@ async function main() {
       });
     }
 
-    // 18. Webmaster adds new student
-    await runStep("Webmaster Login", async () => {
+    // 18. Webadmin adds new student
+    await runStep("Webadmin Login", async () => {
       const res = await axios.post("http://localhost:3001/login", {
-        username: "webmaster",
-        password: "webmaster@uniz",
+        username: "webadmin",
+        password: webadminTestPassword,
       });
-      state.tokens.webmaster = res.data.token;
+      state.tokens.webadmin = res.data.token;
       return {
         method: "post",
         url: "http://localhost:3001/login",
@@ -456,8 +464,8 @@ async function main() {
       };
     });
 
-    if (state.tokens.webmaster) {
-      await runStep("Webmaster adds new student o220002", async () => {
+    if (state.tokens.webadmin) {
+      await runStep("Webadmin adds new student o220002", async () => {
         // Should handle if user already exists
         try {
           const res = await axios.post("http://localhost:3001/signup", {
@@ -491,8 +499,8 @@ async function main() {
         }
       });
 
-      // 19. Webmaster publishes banner
-      await runStep("Webmaster publishes banner", async () => {
+      // 19. Webadmin publishes banner
+      await runStep("Webadmin publishes banner", async () => {
         const res = await axios.post(
           "http://localhost:3002/admin/banners",
           {
@@ -501,7 +509,7 @@ async function main() {
             imageUrl: "https://via.placeholder.com/800x400",
           },
           {
-            headers: { Authorization: `Bearer ${state.tokens.webmaster}` },
+            headers: { Authorization: `Bearer ${state.tokens.webadmin}` },
           },
         );
         return {
@@ -514,7 +522,7 @@ async function main() {
       // 20. Get banners
       await runStep("Get all banners", async () => {
         const res = await axios.get("http://localhost:3002/admin/banners", {
-          headers: { Authorization: `Bearer ${state.tokens.webmaster}` },
+          headers: { Authorization: `Bearer ${state.tokens.webadmin}` },
         });
         return {
           method: "get",

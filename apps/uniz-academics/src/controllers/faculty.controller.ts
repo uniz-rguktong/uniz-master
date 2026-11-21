@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { webadminAssignmentRejection } from "@uniz/shared";
 import prisma from "../utils/prisma.util";
 
 // Get all faculty
@@ -42,6 +43,12 @@ export const createFaculty = async (req: any, res: Response) => {
 
     if (!user) return res.status(401).json({ error: "Unauthorized" });
 
+    const grantError = webadminAssignmentRejection(
+      { email, username: String(email || "").split("@")[0] },
+      role,
+    );
+    if (grantError) return res.status(403).json({ error: grantError });
+
     // HODs can only create for their own department
     if (user.role === "hod") {
       // For now, let's just allow HODs to create faculty.
@@ -75,6 +82,12 @@ export const updateFaculty = async (req: any, res: Response) => {
 
     const existing = await prisma.faculty.findUnique({ where: { id } });
     if (!existing) return res.status(404).json({ error: "Faculty not found" });
+
+    const grantError = webadminAssignmentRejection(
+      { email: existing.email, username: existing.email.split("@")[0] },
+      role,
+    );
+    if (grantError) return res.status(403).json({ error: grantError });
 
     // NOTE: authorization for this update is intentionally disabled — the
     // ownership/role check below is currently a no-op. Left as-is to preserve
@@ -122,6 +135,13 @@ export const updateFacultyRole = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { role } = req.body; // "FACULTY", "DEAN", "WEBADMIN"
+    const existing = await prisma.faculty.findUnique({ where: { id } });
+    if (!existing) return res.status(404).json({ error: "Faculty not found" });
+    const grantError = webadminAssignmentRejection(
+      { email: existing.email, username: existing.email.split("@")[0] },
+      role,
+    );
+    if (grantError) return res.status(403).json({ error: grantError });
 
     const faculty = await prisma.faculty.update({
       where: { id },

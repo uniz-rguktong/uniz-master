@@ -14,22 +14,22 @@ import {
   CalendarClock,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
-import WebmasterOverview from "../Webmaster/WebmasterOverview";
-import SecuritySection from "../Webmaster/SecuritySection";
+import WebadminOverview from "../Webadmin/WebadminOverview";
+import SecuritySection from "../Webadmin/SecuritySection";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
-import StudentDetails from "../Webmaster/StudentDetails";
-import FacultyManagement from "../Webmaster/FacultyManagement";
-import UploadSection from "../Webmaster/UploadSection";
-import BannersSection from "../Webmaster/BannersSection";
-import UpdatesSection from "../Webmaster/UpdatesSection";
-import WebsiteUpdatesSection from "../Webmaster/WebsiteUpdatesSection";
-import PushNotificationSection from "../Webmaster/PushNotificationSection";
-import StudentBulkSection from "../Webmaster/StudentBulkSection";
-import SystemLogsSection from "../Webmaster/SystemLogsSection";
+import StudentDetails from "../Webadmin/StudentDetails";
+import FacultyManagement from "../Webadmin/FacultyManagement";
+import UploadSection from "../Webadmin/UploadSection";
+import BannersSection from "../Webadmin/BannersSection";
+import UpdatesSection from "../Webadmin/UpdatesSection";
+import WebsiteUpdatesSection from "../Webadmin/WebsiteUpdatesSection";
+import PushNotificationSection from "../Webadmin/PushNotificationSection";
+import StudentBulkSection from "../Webadmin/StudentBulkSection";
+import SystemLogsSection from "../Webadmin/SystemLogsSection";
 import CurriculumManager from "../Curriculum";
-import SemesterBuilder from "../Webmaster/SemesterBuilder";
+import SemesterBuilder from "../Webadmin/SemesterBuilder";
 
 export default function DirectorDashboard() {
   useIsAuth();
@@ -135,7 +135,7 @@ export default function DirectorDashboard() {
       default:
         return (
           <div className="animate-in fade-in duration-500">
-            <WebmasterOverview username={username} />
+            <WebadminOverview username={username} />
           </div>
         );
     }

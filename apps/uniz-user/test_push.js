@@ -1,5 +1,13 @@
 const https = require("https");
 
+const webadminTestPassword = String(process.env.WEBADMIN_TEST_PASSWORD || "").trim();
+if (!webadminTestPassword) {
+  console.error(
+    "Missing WEBADMIN_TEST_PASSWORD. Set it to the webadmin test account password before running this script.",
+  );
+  process.exit(1);
+}
+
 function req(method, path, data, token) {
   return new Promise((resolve, reject) => {
     const body = data ? JSON.stringify(data) : null;
@@ -41,12 +49,12 @@ function req(method, path, data, token) {
 
 async function main() {
   const login = await req("POST", "/api/v1/auth/login", {
-    username: "webmaster",
-    password: "webmaster@uniz",
+    username: "webadmin",
+    password: webadminTestPassword,
   });
   const token = login.body.token;
   console.log(
-    "Webmaster login:",
+    "Webadmin login:",
     login.status,
     token ? "✅ Token OK" : "❌ No token",
   );

@@ -2,7 +2,12 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import prisma from "../utils/prisma.util";
 import { ErrorCode } from "../shared/error-codes";
-import { resolveEffectiveRole, API_ATTRIBUTION } from "@uniz/shared";
+import {
+  accessRole,
+  resolveEffectiveRole,
+  isWebadmin,
+  API_ATTRIBUTION,
+} from "@uniz/shared";
 import axios from "axios";
 import * as ExcelJS from "exceljs";
 import { redis } from "../utils/redis.util";
@@ -314,10 +319,6 @@ const canonicalSubjectSemester = (
 
 const SEMESTER_ADMIN_ROLES = ["webadmin", "coe", "director"] as const;
 
-function isWebadmin(role?: string): boolean {
-  return role === "webadmin";
-}
-
 function maskEmail(email: string): string {
   const [local, domain] = email.split("@");
   if (!domain) return "***";
@@ -531,7 +532,7 @@ export const requestDirectPublishCode = async (
   res: Response,
 ) => {
   const user = req.user;
-  if (!user || !isWebadmin(user.role as string)) {
+  if (!user || !isWebadmin(user)) {
     return res
       .status(403)
       .json({ error: "Only webadmin can publish registrations directly" });
@@ -554,7 +555,7 @@ export const resendDirectPublishCode = async (
   res: Response,
 ) => {
   const user = req.user;
-  if (!user || !isWebadmin(user.role as string)) {
+  if (!user || !isWebadmin(user)) {
     return res
       .status(403)
       .json({ error: "Only webadmin can publish registrations directly" });
@@ -581,7 +582,7 @@ export const confirmDirectPublish = async (
   res: Response,
 ) => {
   const user = req.user;
-  if (!user || !isWebadmin(user.role as string)) {
+  if (!user || !isWebadmin(user)) {
     return res
       .status(403)
       .json({ error: "Only webadmin can publish registrations directly" });
@@ -928,7 +929,7 @@ export const uploadRegistrationSubjects = async (
     const role = req.user?.role as string;
     const forceApprove =
       approve === true || approve === "true"
-        ? isWebadmin(role) || role === "coe"
+        ? isWebadmin(req.user) || role === "coe"
         : false;
     const isDryRun = dryRun === true || dryRun === "true";
     const result = await upsertSemesterSubjectCatalog({
@@ -2496,7 +2497,7 @@ export const getRegistrations = async (
   const user = req.user;
   if (!user) return res.status(401).json({ error: "Unauthorized" });
 
-  const role = resolveEffectiveRole(user);
+  const role = accessRole(user);
   // Students use /academics/student/current for their own subjects.
   if (!canListRegistrations(role)) {
     return res.status(403).json({ error: "Not authorized" });
