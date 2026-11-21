@@ -12,6 +12,28 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
+// Public pages paint their own top bar (PublicHeader, or a redirect onto one).
+// The shell Navbar would stack a second navy bar, and its fixed offset leaves
+// a white gap between the two.
+function routePaintsOwnHeader(pathname: string): boolean {
+  const path =
+    pathname.length > 1 && pathname.endsWith("/")
+      ? pathname.slice(0, -1)
+      : pathname;
+  if (
+    path === "/" ||
+    path === "/privacy" ||
+    path === "/login" ||
+    path === "/signin" ||
+    path === "/student-project-management" ||
+    path === "/college-team-collaboration" ||
+    path === "/academic-task-tracker"
+  ) {
+    return true;
+  }
+  return path === "/blog" || path.startsWith("/blog/");
+}
+
 export function Layout({ children }: LayoutProps) {
   const location = useLocation();
 
@@ -26,6 +48,7 @@ export function Layout({ children }: LayoutProps) {
 
   const shouldHideNavbar =
     developersIsPublic ||
+    routePaintsOwnHeader(location.pathname) ||
     location.pathname.startsWith("/student") ||
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/faculty") ||
