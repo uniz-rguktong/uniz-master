@@ -260,7 +260,7 @@
 }
 ```
 
-**Response:** `{"success": true, "message": "OTP sent to registered email"}`
+**Response:** `{"success": true, "deliveryMethod": "email", "email": "o2*****@rguktong.ac.in", "message": "Security code sent to o2*****@rguktong.ac.in."}`
 
 ### 9. Verify OTP
 

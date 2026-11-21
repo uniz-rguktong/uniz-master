@@ -444,6 +444,7 @@ export default function Signin({ type }: SigninProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
+  const [otpEmail, setOtpEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [step, setStep] = useState<"signin" | "forgot" | "verifyOtp">("signin");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
@@ -744,7 +745,7 @@ export default function Signin({ type }: SigninProps) {
       const data = await apiClient<{
         success: boolean;
         message?: string;
-        deliveryMethod?: "push" | "email";
+        deliveryMethod?: "email";
         email?: string;
       }>(FORGOT_PASS_ENDPOINT, {
         method: "POST",
@@ -755,14 +756,17 @@ export default function Signin({ type }: SigninProps) {
       });
 
       if (data?.success) {
-        const channel =
-          data.deliveryMethod === "push"
-            ? "your registered device"
-            : "your registered email";
-        toast.success(`Check ${channel} for your security code.`, {
-          title: "Code sent",
-          autoClose: 6000,
-        });
+        const masked = data.email?.trim() || "";
+        setOtpEmail(masked);
+        toast.success(
+          masked
+            ? `We sent a 6-digit code to ${masked}.`
+            : "We sent a 6-digit code to your email.",
+          {
+            title: "Code sent",
+            autoClose: 6000,
+          },
+        );
         turnstileRef.current?.reset?.();
         syncCaptchaToken(null);
         setCaptchaStatus("loading");
@@ -791,6 +795,7 @@ export default function Signin({ type }: SigninProps) {
         success: boolean;
         message?: string;
         deliveryMethod?: "email";
+        email?: string;
       }>(REQUEST_OTP_EMAIL_ENDPOINT, {
         method: "POST",
         body: JSON.stringify({
@@ -800,10 +805,17 @@ export default function Signin({ type }: SigninProps) {
       });
 
       if (data?.success) {
-        toast.success("Check your email for the security code.", {
-          title: "Code sent",
-          autoClose: 6000,
-        });
+        const masked = data.email?.trim() || otpEmail;
+        if (data.email?.trim()) setOtpEmail(data.email.trim());
+        toast.success(
+          masked
+            ? `We sent a 6-digit code to ${masked}.`
+            : "We sent a 6-digit code to your email.",
+          {
+            title: "Code sent",
+            autoClose: 6000,
+          },
+        );
       } else {
         resetCaptchaAfterFailure();
       }
@@ -811,7 +823,7 @@ export default function Signin({ type }: SigninProps) {
       setIsLoading(false);
       setWaitingForCaptcha(false);
     }
-  }, [username, type, resetCaptchaAfterFailure]);
+  }, [username, type, otpEmail, resetCaptchaAfterFailure]);
 
   const handleVerifyOtp = useCallback(async () => {
     if (otp.trim().length !== 6) {
@@ -894,8 +906,10 @@ export default function Signin({ type }: SigninProps) {
         ? "Use your university ID or college email."
         : "Use your staff ID or email."
       : step === "forgot"
-        ? "We'll send a code to your registered email"
-        : "Check your mail or notifications";
+        ? "We'll send a 6-digit code to your email."
+        : otpEmail
+          ? `Code sent to ${otpEmail}`
+          : "Enter the code sent to your email.";
 
   const stepTitle =
     step === "signin"
@@ -1061,6 +1075,7 @@ export default function Signin({ type }: SigninProps) {
               <Button
                 className={loginBtnClass}
                 size="lg"
+                type="button"
                 isLoading={isLoading}
                 onClick={requestOtp}
                 disabled={
@@ -1098,6 +1113,7 @@ export default function Signin({ type }: SigninProps) {
                   <Button
                     className={loginBtnClass}
                     size="lg"
+                    type="button"
                     isLoading={isLoading}
                     onClick={handleVerifyOtp}
                   >
@@ -1106,8 +1122,20 @@ export default function Signin({ type }: SigninProps) {
 
                   <div className="space-y-3 rounded-lg border border-border bg-surface-2 p-4">
                     <p className="text-center text-small leading-relaxed text-text-2">
-                      Didn&apos;t get a push notification? Send the code to your
-                      registered college email instead.
+                      {otpEmail ? (
+                        <>
+                          We sent a 6-digit code to{" "}
+                          <span className="font-medium text-text">
+                            {otpEmail}
+                          </span>
+                          .
+                        </>
+                      ) : (
+                        "We sent a 6-digit code to your email."
+                      )}
+                    </p>
+                    <p className="text-center text-small leading-relaxed text-text-2">
+                      Didn&apos;t get the email? We can send the code again.
                     </p>
                     <button
                       type="button"
@@ -1116,7 +1144,7 @@ export default function Signin({ type }: SigninProps) {
                       disabled={isLoading}
                     >
                       <Mail className="w-4 h-4 shrink-0" />
-                      {isLoading ? "Sending to email…" : "Resend via Email"}
+                      {isLoading ? "Sending…" : "Resend code"}
                     </button>
                   </div>
                 </div>
@@ -1146,6 +1174,7 @@ export default function Signin({ type }: SigninProps) {
                   <Button
                     className={loginBtnClass}
                     size="lg"
+                    type="button"
                     isLoading={isLoading}
                     onClick={resetPassword}
                   >
