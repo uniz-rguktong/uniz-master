@@ -22,6 +22,9 @@ const NotificationDeepLink = lazy(() => import("./pages/NotificationDeepLink"));
 const AdminNotificationsPage = lazy(
   () => import("./pages/admin/AdminNotificationsPage"),
 );
+const WebmasterGuidePrint = lazy(
+  () => import("./pages/admin/Webmaster/HelpPrintPage"),
+);
 
 // Admin Components
 const AddStudents = lazy(() => import("./pages/admin/AddStudents"));
@@ -538,6 +541,15 @@ export default function App() {
             element={
               <PageTransition>
                 <AdminNotificationsPage />
+              </PageTransition>
+            }
+          />
+
+          <Route
+            path="/admin/help/print"
+            element={
+              <PageTransition>
+                <WebmasterGuidePrint />
               </PageTransition>
             }
           />

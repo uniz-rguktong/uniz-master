@@ -38,6 +38,8 @@ export interface AdminShellProps {
   sidebarFooter?: ReactNode;
   showSidebarProfile?: boolean;
   headerLeft?: ReactNode;
+  headerExtra?: ReactNode;
+  mobileHeaderExtra?: ReactNode;
   headerAlign?: "between" | "end";
   mobileNavItems?: AdminNavItem[];
   collapseBranding?: "hide" | "abbreviate";
@@ -62,6 +64,8 @@ export default function AdminShell({
   sidebarFooter,
   showSidebarProfile = false,
   headerLeft,
+  headerExtra,
+  mobileHeaderExtra,
   headerAlign = "end",
   collapseBranding = "hide",
   contentClassName,
@@ -133,6 +137,7 @@ export default function AdminShell({
         "flex h-full flex-col border-r border-[var(--sb-border)] bg-navy-900 text-navy-300",
         mobile ? "w-[280px]" : isSidebarOpen ? "w-[248px]" : "w-[72px]",
       )}
+      data-admin-chrome=""
     >
       <div
         className={cn(
@@ -287,7 +292,7 @@ export default function AdminShell({
       ) : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-[60px] items-center gap-2 bg-navy-900 px-3 text-white min-[821px]:hidden">
+        <header data-admin-chrome="" className="sticky top-0 z-30 flex h-[60px] items-center gap-2 bg-navy-900 px-3 text-white min-[821px]:hidden">
           <button
             type="button"
             className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10"
@@ -299,6 +304,7 @@ export default function AdminShell({
           <p className="min-w-0 flex-1 truncate text-[17px] font-semibold leading-6">
             {activeLabel || "Admin"}
           </p>
+          {mobileHeaderExtra}
           <ThemeToggle tone="chrome" />
           <button
             type="button"
@@ -310,6 +316,7 @@ export default function AdminShell({
         </header>
 
         <header
+          data-admin-chrome=""
           className={cn(
             "sticky top-0 z-30 hidden h-16 items-center gap-3 border-b border-border bg-bg px-10 min-[821px]:flex",
             headerAlign === "between" || headerLeft ? "justify-between" : "justify-end",
@@ -329,6 +336,7 @@ export default function AdminShell({
             {headerLeft}
           </div>
           <div className="ml-auto flex items-center gap-2">
+            {headerExtra}
             {searchSlot}
             <ThemeToggle />
             <button
