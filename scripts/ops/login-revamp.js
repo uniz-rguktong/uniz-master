@@ -693,11 +693,60 @@ async function clearStatusCache() {
   }
 }
 
+/** Dry-run only: students whose only mailbox is empty, invalid, or the id@rguktong.ac.in placeholder. */
+function studentMailboxReport(state) {
+  const profiles = lowerMap(state.students || [], "username");
+  const counts = { real: 0, empty: 0, placeholder: 0, invalid: 0 };
+  const missing = [];
+  for (const cred of state.credentials || []) {
+    if (String(cred.role || "").trim().toLowerCase() !== "student") continue;
+    if (accountKind(cred.username) !== "person") continue;
+    const id = String(cred.username || "").trim().toLowerCase();
+    const placeholder = `${id}@rguktong.ac.in`;
+    const candidates = [cred.realEmail, profiles.get(id) && profiles.get(id).email]
+      .map((value) => String(value || "").trim().toLowerCase())
+      .filter(Boolean);
+    const real = candidates.find((email) => isDeliverableEmail(email) && email !== placeholder);
+    if (real) {
+      counts.real += 1;
+      continue;
+    }
+    if (candidates.includes(placeholder)) counts.placeholder += 1;
+    else if (candidates.length) counts.invalid += 1;
+    else counts.empty += 1;
+    missing.push(id);
+  }
+  const flags = { mustChange: 0, bumped: 0 };
+  let webadmin = "missing";
+  for (const cred of state.credentials || []) {
+    const name = String(cred.username || "").trim().toLowerCase();
+    if (name === "webadmin") {
+      webadmin = `tokenVersion=${Number(cred.tokenVersion) || 0} mustChangePassword=${Boolean(cred.mustChangePassword)}`;
+    }
+    if (String(cred.role || "").trim().toLowerCase() !== "student") continue;
+    if (accountKind(cred.username) !== "person") continue;
+    if (cred.mustChangePassword) flags.mustChange += 1;
+    if ((Number(cred.tokenVersion) || 0) >= 1) flags.bumped += 1;
+  }
+  const mask = (id) => (id.length <= 4 ? "****" : `${id.slice(0, 3)}${"*".repeat(id.length - 4)}${id.slice(-1)}`);
+  return [
+    `# students_real_email=${counts.real}`,
+    `# students_no_real_email=${missing.length}`,
+    `# students_no_email_empty=${counts.empty}`,
+    `# students_no_email_placeholder=${counts.placeholder}`,
+    `# students_no_email_invalid=${counts.invalid}`,
+    `# students_must_change_password=${flags.mustChange}`,
+    `# students_token_version_bumped=${flags.bumped}`,
+    `# webadmin ${webadmin}`,
+    `# students_no_email_sample=${missing.slice(0, 10).map(mask).join(" ")}`,
+  ].join("\n") + "\n";
+}
+
 async function runLoginRevamp(options) {
   const mode = options.mode || "dry-run";
   const state = await loadState(options.authQuery, options.userQuery);
   const plan = planLoginRevamp(state);
-  if (mode !== "apply") return { plan, applied: null };
+  if (mode !== "apply") return { plan, applied: null, mailbox: studentMailboxReport(state) };
   if (options.confirm !== CONFIRM_PHRASE) {
     const error = new Error("confirm");
     error.code = "CONFIRM_REQUIRED";
@@ -756,6 +805,7 @@ async function main() {
     if (mode !== "apply") {
       const csv = renderCsv(result.plan);
       process.stdout.write("---LOGIN-REVAMP-CSV---\n");
+      process.stdout.write(result.mailbox || "");
       process.stdout.write(csv);
       process.stdout.write("---END-LOGIN-REVAMP-CSV---\n");
       if (process.env.LOGIN_REVAMP_CSV) {
