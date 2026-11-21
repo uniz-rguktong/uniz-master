@@ -1,0 +1,50 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["uniz_dbadmin"]
+}
+
+/// Append-only history of webmaster row edits. The runtime login may insert and read, not update or delete.
+model DbAdminChange {
+  id            String   @id
+  at            DateTime @default(now()) @db.Timestamptz(6)
+  actorId       String   @map("actor_id")
+  actorUsername String   @map("actor_username")
+  databaseName  String   @map("database_name")
+  schemaName    String   @map("schema_name")
+  tableName     String   @map("table_name")
+  primaryKey    Json?    @map("primary_key")
+  action        String
+  beforeJson    Json?    @map("before_json")
+  afterJson     Json?    @map("after_json")
+  sqlText       String   @map("sql_text")
+  reversesId    String?  @map("reverses_id")
+  undoable      Boolean  @default(true)
+
+  @@index([at])
+  @@index([reversesId])
+  @@map("changes")
+  @@schema("uniz_dbadmin")
+}
+
+/// One row per editor request. Insert-only for the runtime login.
+model DbAdminRequest {
+  id            String   @id
+  at            DateTime @default(now()) @db.Timestamptz(6)
+  actorId       String?  @map("actor_id")
+  actorUsername String?  @map("actor_username")
+  method        String
+  path          String
+  statusCode    Int?     @map("status_code")
+  ip            String?
+  kind          String
+
+  @@index([at])
+  @@map("requests")
+  @@schema("uniz_dbadmin")
+}

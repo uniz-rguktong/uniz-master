@@ -245,12 +245,21 @@ function GenericInstitutePage({ data, displayName }: { data: InstituteData; disp
 // ────────────────────────────────────────────────────────────
 //  Main export
 // ────────────────────────────────────────────────────────────
-export function InstitutePage() {
-  const { pageName } = useParams<{ pageName: string }>();
+export function InstitutePage({
+  page,
+  title,
+}: {
+  page?: string;
+  title?: string;
+} = {}) {
+  const params = useParams<{ pageName?: string }>();
+  const pageName = page ?? params.pageName;
   const [data, setData] = useState<InstituteData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const displayName = PAGE_NAMES[pageName?.toLowerCase() ?? ""] ?? (pageName?.replace(/([A-Z])/g, " $1").trim() ?? "");
+  const displayName = title
+    ?? PAGE_NAMES[pageName?.toLowerCase() ?? ""]
+    ?? (pageName?.replace(/([A-Z])/g, " $1").trim() ?? "");
   usePageTitle(`${displayName || "Institute"} · RGUKT Ongole`);
 
   useEffect(() => {

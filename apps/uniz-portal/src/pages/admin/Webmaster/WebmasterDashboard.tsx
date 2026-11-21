@@ -12,6 +12,9 @@ import {
   BookOpen,
   Globe,
   CalendarClock,
+  Database,
+  CircleHelp,
+  UserCog,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -35,6 +38,12 @@ import {
   enableOutingsAndOutpasses,
   filterOutpassOutingTabs,
 } from "@/config/featureFlags";
+import { parseJwt } from "@/utils/security";
+import { resolveAdminPortalRole } from "@/utils/adminRole";
+import DatabaseSection from "./database/DatabaseSection";
+import HelpSection from "./HelpSection";
+import RoleManagement from "../RoleManagement";
+import { HowToButton } from "@/components/help/HowToButton";
 
 export default function WebmasterDashboard() {
   useIsAuth();
@@ -47,6 +56,15 @@ export default function WebmasterDashboard() {
   const role = (localStorage.getItem("role") || "webadmin")
     .toLowerCase()
     .replace(/"/g, "");
+
+  const adminToken = (localStorage.getItem("admin_token") || "").replace(/"/g, "");
+  const portalRole = resolveAdminPortalRole(
+    adminToken ? parseJwt(adminToken) : null,
+    username,
+  );
+  const canUseDatabase = portalRole === "webadmin";
+  const canManageRoles = portalRole === "webadmin";
+  const showHelp = role === "webadmin" || portalRole === "webadmin";
 
   const allowedTabs = useMemo(
     () =>
@@ -70,8 +88,11 @@ export default function WebmasterDashboard() {
         "website_updates",
         "push_alerts",
         "security",
+        ...(canUseDatabase ? ["database"] : []),
+        ...(canManageRoles ? ["role_mgmt"] : []),
+        ...(showHelp ? ["help"] : []),
       ] as const),
-    [role],
+    [role, canUseDatabase, canManageRoles, showHelp],
   );
 
   const { activeTab, setActiveTab } = useAdminSectionRoute(allowedTabs);
@@ -151,9 +172,23 @@ export default function WebmasterDashboard() {
         ...(role === "webadmin" || role === "coe"
           ? [{ id: "system_logs", label: "System & Logs", icon: Activity }]
           : []),
+        ...(canManageRoles
+          ? [{ id: "role_mgmt", label: "Roles", icon: UserCog }]
+          : []),
+        ...(canUseDatabase
+          ? [{ id: "database", label: "Database", icon: Database }]
+          : []),
         { id: "security", label: "Security", icon: Lock },
       ],
     },
+    ...(showHelp
+      ? [
+          {
+            group: "Help",
+            items: [{ id: "help", label: "Help", icon: CircleHelp }],
+          },
+        ]
+      : []),
   ];
 
   const { logout } = useLogout();
@@ -194,6 +229,12 @@ export default function WebmasterDashboard() {
         return <SecuritySection username={username} />;
       case "website_updates":
         return <WebsiteUpdatesSection />;
+      case "database":
+        return <DatabaseSection />;
+      case "role_mgmt":
+        return <RoleManagement />;
+      case "help":
+        return <HelpSection />;
       case "grievances":
         return renderComingSoon("Grievance Redressal");
       case "outpass":
@@ -217,6 +258,10 @@ export default function WebmasterDashboard() {
       onLogout={logout}
       username={username}
       collapseBranding="hide"
+      headerExtra={showHelp ? <HowToButton screen={activeTab} /> : undefined}
+      mobileHeaderExtra={
+        showHelp ? <HowToButton screen={activeTab} tone="chrome" /> : undefined
+      }
     >
       {renderContent()}
     </AdminShell>

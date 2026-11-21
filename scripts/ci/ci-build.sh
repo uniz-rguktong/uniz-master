@@ -15,6 +15,7 @@ SERVICES=(
   uniz-notifications
   uniz-gateway
   uniz-cron
+  uniz-dbadmin
 )
 
 for dir in "${SERVICES[@]}"; do
@@ -27,4 +28,7 @@ for dir in "${SERVICES[@]}"; do
   fi
 
   npm run build -w "$name"
+  if node -e "const p=require('./$path/package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)"; then
+    npm test -w "$name"
+  fi
 done

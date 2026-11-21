@@ -1,0 +1,1699 @@
+{
+  "pages": {
+    "/administration/chancellor": {
+      "title": "Chancellor",
+      "eyebrow": "Administration",
+      "description": "Chancellor (in charge) of Rajiv Gandhi University of Knowledge Technologies, Andhra Pradesh.",
+      "kind": "people",
+      "people": [
+        {
+          "name": "Prof. K. Madhu Murthy",
+          "role": "Chancellor (I/c) & Chairman of the Andhra Pradesh State Council of Higher Education (APSCHE).",
+          "photo": "/media/kmadhumurthy-ful.webp",
+          "lines": [
+            "Email: chancellor@rgukt.in",
+            "phone: 08656235855"
+          ],
+          "bio": [
+            "Prof. (Dr.) Kotha Madhu Murthy assumed charge as Chancellor (FAC) on 18.04.2025. An accomplished academician and administrator, he is currently serving as the Chairman of the Andhra Pradesh State Council of Higher Education (APSCHE). With over 37 years of experience in Mechanical Engineering and Entrepreneurship, he has made significant contributions to higher education policy, research, and institutional development.",
+            "Prior to his current role, Prof. Murthy was a Professor (HAG) in the Department of Mechanical Engineering at the National Institute of Technology, Warangal (NITW), where he also served as a Member of the Board of Governors . His leadership roles at NITW included Dean (Faculty Welfare), Head of the Mechanical Engineering Department, and Registrar (Additional Charge). He also held the position of Registrar at NIT Delhi.",
+            "Prof. Murthy holds a Ph.D. in Mechanical Engineering from Regional Engineering College, Warangal (now NITW), an M.Tech. in IC Engines & Gas Turbines, a B.E. in Mechanical Engineering, and a PG Diploma in Business Administration. His research expertise encompasses IC engines, biofuels, solar energy, and rocket propellants, with numerous publications in reputed journals.",
+            "Beyond academia, he has contributed to national policy as an Advisor at the All India Council for Technical Education (AICTE), focusing on policy formulation, governance restructuring, and curriculum reforms. Internationally, he served as a LEDA Management Advisor for UNDP/ILO in Cambodia and collaborated with Samsung India Software Organization on HR and training initiatives.",
+            "A Fellow of The Institution of Engineers (India), Andhra Pradesh Akademi of Sciences, and the Indian Institution of Production Engineers, Prof. Murthy has been instrumental in entrepreneurship and skill development initiatives, establishing incubation centers, and enhancing campus placements. His accolades include the British Council TCTP Fellowship (1996) under the Indo-UK RECs Project, four Best Paper Awards, and a Lifetime Achievement Recognition for his impact on engineering education and entrepreneurship development.",
+            "As Chairman of APSCHE, Prof. Murthy is spearheading reforms in higher education policy, academic innovation, and industry-academia collaboration, aiming to build a robust, future-ready education system in Andhra Pradesh."
+          ]
+        }
+      ],
+      "address": [
+        "Rajiv Gandhi University of Knowledge Technologies (RGUKT-A.P.)",
+        "RK Valley Campus, Idupulapaya (Village),",
+        "Kadapa District,",
+        "Andhra Pradesh - 522501"
+      ],
+      "addressTitle": "Office address"
+    },
+    "/administration/vice-chancellor": {
+      "title": "Vice Chancellor",
+      "eyebrow": "Administration",
+      "description": "Vice-Chancellor (in charge) of RGUKT Andhra Pradesh.",
+      "kind": "people",
+      "people": [
+        {
+          "name": "Prof. Maddali Lakshmi Narayana Rao",
+          "role": "Vice-Chancellor (i/c) RGUKT - A.P.",
+          "photo": "/media/mlnrao.webp",
+          "lines": [
+            "Email: vc@rgukt.in",
+            "phone: 08656235855"
+          ],
+          "bio": [
+            "Prof. Maddali Lakshmi Narayana Rao (M.L.N. Rao) , Professor (HAG), Dept. of Chemistry, IIT Kanpur, has assumed charge as Vice Chancellor of RGUKT-AP."
+          ]
+        }
+      ],
+      "address": [
+        "Rajiv Gandhi University of Knowledge Technologies (RGUKT-A.P.)",
+        "RK Valley Campus, Idupulapaya (Village),",
+        "Kadapa District,",
+        "Andhra Pradesh - 522501"
+      ],
+      "addressTitle": "Office address"
+    },
+    "/administration/director": {
+      "title": "Director",
+      "eyebrow": "Administration",
+      "description": "Director of RGUKT Ongole Campus.",
+      "kind": "people",
+      "people": [
+        {
+          "name": "Prof. Amarendra Kumar Sandra",
+          "role": "",
+          "photo": "/media/1161503.webp",
+          "lines": [
+            "Email: director@rguktong.ac.in",
+            "phone: 08592-223133",
+            "Phone: 7997419507",
+            "Email: directorpeshi@rguktong.ac.in"
+          ],
+          "bio": [
+            "Prof. Amarendra Kumar Sandra is a distinguished academician and researcher in the field of Civil Engineering with specialization in Transportation Engineering. He completed his B.Tech in Civil Engineering from National Institute of Technology (NIT), Warangal in 2001, M.Tech in Transportation Engineering from Indian Institute of Technology (IIT), Kharagpur in association with TU-Darmstadt, Germany in 2003, and obtained his Ph.D. in Transportation Engineering from Birla Institute of Technology and Science (BITS), Pilani in 2008.",
+            "He has over 20 years of experience in teaching, research, consultancy, and industry. He is currently serving as Professor in the Department of Civil Engineering at Rajiv Gandhi University of Knowledge Technologies (RGUKT), Andhra Pradesh. Earlier, he worked in several reputed organizations including GMR Infrastructure, HBS Infra Engineering Pvt. Ltd., L&T-Ramboll Consulting Engineers, BITS Pilani, and Manipal University Dubai.",
+            "Prof. Amarendra Kumar Sandra has extensive expertise in pavement engineering, highway engineering, airport pavement design, transportation planning, pavement maintenance, and material characterization. He has successfully completed more than 50 consultancy projects related to highways, airports, and transportation infrastructure.\nHe is a recipient of the Dr. Shanker Dayal Sharma Gold Medal and Institute Silver Medal from IIT Kharagpur. He has published numerous research papers in reputed national and international journals and conferences. He has guided Ph.D. scholars, supervised more than 50 M.Tech projects, and actively contributes to research, consultancy, and faculty development activities.\n."
+          ]
+        },
+        {
+          "name": "Mr.K J Abilash",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Phone : 7997419507",
+            "Email : directorpeshi@rguktong.ac.in",
+            "The Director,",
+            "RGUKT Ongole Campus,",
+            "Kurnool Road,",
+            "Santhanuthalapadu(V&M),",
+            "Prakasam District,Andhra Pradesh -523225."
+          ],
+          "bio": []
+        }
+      ],
+      "address": [
+        "The Director,",
+        "RGUKT Ongole Campus,",
+        "Kurnool Road,",
+        "Santhanuthalapadu(V&M),",
+        "Prakasam District,Andhra Pradesh -523225."
+      ],
+      "addressTitle": "Office address"
+    },
+    "/administration/administrative-officer": {
+      "title": "Administrative officer",
+      "eyebrow": "Administration",
+      "description": "Administrative office of RGUKT Ongole Campus.",
+      "kind": "people",
+      "people": [
+        {
+          "name": "Mr. N. Chandra Shekar",
+          "role": "Administrative Officer RGUKT Ongole Campus-AP",
+          "photo": "/media/1161602.webp",
+          "lines": [
+            "Email: ao@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Dr. K. Varun Teja",
+          "role": "Deputy Administrative Officer RGUKT Ongole Campus-AP",
+          "photo": "/media/varunce.webp",
+          "lines": [
+            "Email: dao@rguktong.ac.in",
+            "Phone: 9912155890",
+            "Email: patoao@rguktong.ac.in",
+            "Email: aopeshi@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Mr.A Ramesh",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Phone : 9912155890",
+            "Email : patoao@rguktong.ac.in",
+            "Email : aopeshi@rguktong.ac.in",
+            "The Administrative Officer,",
+            "RGUKT Ongole Campus,",
+            "Kurnool Road,",
+            "Santhanuthalapadu(V&M),",
+            "Prakasam District,Andhra Pradesh -523225."
+          ],
+          "bio": []
+        }
+      ],
+      "address": [
+        "The Administrative Officer,",
+        "RGUKT Ongole Campus,",
+        "Kurnool Road,",
+        "Santhanuthalapadu(V&M),",
+        "Prakasam District,Andhra Pradesh -523225."
+      ],
+      "addressTitle": "Office address"
+    },
+    "/administration/dean-student-welfare": {
+      "title": "Dean student welfare",
+      "eyebrow": "Administration",
+      "description": "Dean of student welfare and the student welfare office.",
+      "kind": "people",
+      "people": [
+        {
+          "name": "Mr. R. Dilip",
+          "role": "Dean student Welfare IIIT-Ongole, RGUKT-AP",
+          "photo": null,
+          "lines": [
+            "Email: swo@rguktong.ac.in",
+            "phone: 08592-223135"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Mr.K Samuel",
+          "role": "",
+          "photo": "/media/2172004.webp",
+          "lines": [
+            "Associate Student welfare dean, Assistant Professor in the dept.of English",
+            "adsw1@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Mr. P. V. Bhaskar",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Warden, Assistant Physical Director",
+            "8688856281"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Ms. P. Lavanya",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Warden, Instructor in Physical Education",
+            "9949341386",
+            "swo@rguktong.ac.in"
+          ],
+          "bio": []
+        }
+      ],
+      "address": [
+        "The Dean student welfare,",
+        "RGUKT Ongole Campus,",
+        "Kurnool Road,",
+        "Santhanuthalapadu(V&M),",
+        "Prakasam District,Andhra Pradesh -523225."
+      ],
+      "addressTitle": "Office address"
+    },
+    "/administration/finance-officer": {
+      "title": "Finance officer",
+      "eyebrow": "Administration",
+      "description": "Finance office of RGUKT Ongole Campus.",
+      "kind": "people",
+      "people": [
+        {
+          "name": "Dr. Shaik Meeravali",
+          "role": "Finance Officer IIIT-Ongole, RGUKT-AP",
+          "photo": "/media/meeravali.webp",
+          "lines": [
+            "Email: fo.ongole@rgukt.in",
+            "Email: fo@rguktong.ac.in",
+            "phone: 08592-223188"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Mr.K Bhaskara Rao",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Accounts Officer",
+            "accountsofficer@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Ms.Pavani Akkala",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Nodal Offlcer Scholarship Assistant Professor in the dept.of Civil.",
+            "scholarship@rguktong.ac.in"
+          ],
+          "bio": []
+        }
+      ],
+      "address": [
+        "The Finance Officer,",
+        "RGUKT Ongole Campus,",
+        "Kurnool Road,",
+        "Santhanuthalapadu(V&M),",
+        "Prakasam District,Andhra Pradesh -523225."
+      ],
+      "addressTitle": "Office address"
+    },
+    "/administration/controller-of-examinations": {
+      "title": "Controller of Examinations",
+      "eyebrow": "Administration",
+      "description": "Examination section of RGUKT Ongole Campus.",
+      "kind": "people",
+      "people": [
+        {
+          "name": "Mr.Mallikarjuna Nandi",
+          "role": "Controller Of Examination Assistant Professor in the dept.of Computer Science and Engineering IIIT-Ongole, RGUKT-AP",
+          "photo": "/media/2171604.webp",
+          "lines": [
+            "Email: coe@rguktong.ac.in",
+            "phone: 08591-223122"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Ms. Bheema Shireesha",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Associate Controller of Examinations",
+            "Assistant Professor in the dept.of CSE",
+            "assocoe3@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Mrs.Nasreen",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Associate Controller of Examinations",
+            "Assistant Professor in the dept.of ECE",
+            "assocoe2@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Mr. G. Bala Nagireddy",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Associate Controller of Examinations",
+            "Assistant Professor in the dept.of ECE",
+            "assocoe4@rguktong.ac.in"
+          ],
+          "bio": []
+        }
+      ],
+      "address": [
+        "Controller Of examination",
+        "RGUKT Ongole Campus,",
+        "Kurnool Road,",
+        "Santhanuthalapadu(V&M),",
+        "Prakasam District,Andhra Pradesh -523225."
+      ],
+      "addressTitle": "Office address"
+    },
+    "/administration/coordinators": {
+      "title": "Coordinators",
+      "eyebrow": "Administration",
+      "description": "Campus coordinators published by RGUKT Ongole.",
+      "kind": "people",
+      "people": [
+        {
+          "name": "Mr. G. Srenivasa Rao",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Establishment section Co-ordinator Assistant Professor in the dept.of ECE",
+            "ebs@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "IT Infra Co-ordinator",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Assistant Professor in the dept. of CSE",
+            "itinfra@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Dr.L.Ramamohana Reddy",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Public Relations Officer Assistant Professor in the dept.of Mathematics",
+            "pro@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Dr.D.Ravi Chandra",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Research & Development Co-ordinator Assistant Professor in the dept.of Mech",
+            "mw_coord@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Ms. M.Sowmya",
+          "role": "",
+          "photo": "/media/swomya.webp",
+          "lines": [
+            "Higher Education Cell Co-ordinator Assistant Professor in the dept.of CSE",
+            "nss@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Mrs.A.Pavani Reddy",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Scholarship Co-Ordinator Assistant Professor in the dept.of Civil",
+            "scholarship@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Mr Mallikarjuna Nandi",
+          "role": "",
+          "photo": "/media/2171604.webp",
+          "lines": [
+            "Web Master Assistant Professor in the dept.of CSE",
+            "webadmin@rguktong.ac.in"
+          ],
+          "bio": []
+        }
+      ],
+      "address": [],
+      "addressTitle": "Office address"
+    },
+    "/academics/dean": {
+      "title": "Dean academics",
+      "eyebrow": "Academics",
+      "description": "Dean of academics and associate deans at RGUKT Ongole.",
+      "kind": "people",
+      "people": [
+        {
+          "name": "Dr M Rupas Kumar",
+          "role": "Dean Academics IIIT-Ongole, RGUKT-AP",
+          "photo": "/media/rupas-kumar.webp",
+          "lines": [
+            "Email: da@rguktong.ac.in",
+            "Mobile: 08592-223144"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Mrs.P. Sindhu",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Associate Dean Academics, Assistant Professor in the dept.of CSE",
+            "ada1@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Mr. G.V. Rajasekhar",
+          "role": "",
+          "photo": null,
+          "lines": [
+            "Associate Dean Academics Assistant Professor in the dept.of EEE",
+            "ada2@rguktong.ac.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Dr. B Tilak",
+          "role": "",
+          "photo": "/media/2172707.webp",
+          "lines": [
+            "Associate Dean Academics, Assistant Professor in the dept.of Physics",
+            "add.da@rguktong.ac.in"
+          ],
+          "bio": []
+        }
+      ],
+      "address": [
+        "The Dean academics,",
+        "IIIT Ongole, RGUKT-AP",
+        "Kurnool Road,",
+        "Santhanuthalapadu(V&M),",
+        "Prakasam District,Andhra Pradesh -523225."
+      ],
+      "addressTitle": "Office address"
+    },
+    "/administration": {
+      "title": "Administration",
+      "eyebrow": "Administration",
+      "description": "The Chancellor in charge, and previous chancellors, as published by RGUKT Ongole.",
+      "kind": "people",
+      "people": [
+        {
+          "name": "Prof. K. Madhu Murthy",
+          "role": "Chancellor (I/c)",
+          "photo": "/media/kmadhumurthy-ful.webp",
+          "lines": [
+            "chancellor@rgukt.in"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Prof. K.C.Reddy",
+          "role": "Previous",
+          "photo": "/media/kc-reddy.webp",
+          "lines": [
+            "From: 2019",
+            "To: 2024"
+          ],
+          "bio": []
+        },
+        {
+          "name": "Prof.D.Raj Reddy",
+          "role": "Previous",
+          "photo": "/media/rajreddy.webp",
+          "lines": [
+            "From: 2016",
+            "To: 2018"
+          ],
+          "bio": []
+        }
+      ],
+      "address": [],
+      "addressTitle": ""
+    },
+    "/information/contact": {
+      "title": "Contact Us",
+      "eyebrow": "Information",
+      "description": "RGUKT Ongole Campus, Kurnool Road, Santhanuthalapadu (V&M), Prakasam District, Andhra Pradesh — 523225.",
+      "kind": "contact",
+      "sections": [
+        {
+          "title": "Director",
+          "headers": [],
+          "rows": [
+            [
+              "Name:",
+              "Prof. Amarendra Kumar Sandra"
+            ],
+            [
+              "Phone:",
+              "08592-223133"
+            ],
+            [
+              "Email:",
+              "director@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        },
+        {
+          "title": "Director's Peshi",
+          "headers": [],
+          "rows": [
+            [
+              "Name:",
+              "Mr.K J Abilash"
+            ],
+            [
+              "Phone:",
+              "7997419507"
+            ],
+            [
+              "Email:",
+              "directorpeshi@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        },
+        {
+          "title": "Administrative Officer",
+          "headers": [],
+          "rows": [
+            [
+              "Name:",
+              "Mr. N. Chandra Sekhar"
+            ],
+            [
+              "Phone:",
+              "08592-223121"
+            ],
+            [
+              "Email:",
+              "ao@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        },
+        {
+          "title": "Deputy Administrative Officer",
+          "headers": [],
+          "rows": [
+            [
+              "Name:",
+              "Dr. K. Varun Teja"
+            ],
+            [
+              "Email:",
+              "dao@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        },
+        {
+          "title": "Administrative Officer's Peshi",
+          "headers": [],
+          "rows": [
+            [
+              "Name:",
+              "Mr.A Ramesh"
+            ],
+            [
+              "Phone:",
+              "9912155890"
+            ],
+            [
+              "Email:",
+              "patoao@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        },
+        {
+          "title": "Academic Office",
+          "headers": [
+            "Name",
+            "Designation",
+            "Phone",
+            "Email"
+          ],
+          "rows": [
+            [
+              "Dr. M.Rupas Kumar",
+              "Dean of Academics",
+              "08592-223144",
+              "da@rguktong.ac.in"
+            ],
+            [
+              "Mrs.P. Sindhu",
+              "Associate Dean Academics,",
+              "",
+              "ada1@rguktong.ac.in"
+            ],
+            [
+              "Mr. G.V. Rajasekhar",
+              "Associate Dean Academics,",
+              "",
+              "ada2@rguktong.ac.in"
+            ],
+            [
+              "Dr. B Tilak",
+              "Associate Dean Academics,",
+              "",
+              "add.da@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        },
+        {
+          "title": "Finance Office",
+          "headers": [
+            "Name",
+            "Designation",
+            "Phone",
+            "Email"
+          ],
+          "rows": [
+            [
+              "Dr.Shaik Meeravali",
+              "Finance Officer",
+              "08592-223188",
+              "fo@rguktong.ac.in"
+            ],
+            [
+              "---",
+              "Accounts Officer",
+              "",
+              "accountsofficer@rguktong.ac.in"
+            ],
+            [
+              "Ms.Pavani Akkala,",
+              "Nodal Offlcer Scholarship",
+              "",
+              "scholarship@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        },
+        {
+          "title": "Student Welfare Office",
+          "headers": [
+            "Name",
+            "Designation",
+            "Phone",
+            "Email"
+          ],
+          "rows": [
+            [
+              "Mr. R. Dilip",
+              "Dean student Welfare",
+              "08592-223135",
+              "dsw@rguktong.ac.in"
+            ],
+            [
+              "Mr.K.Samuel",
+              "Associate Student welfare dean",
+              "8142769252",
+              "adsw1@rguktong.ac.in"
+            ],
+            [
+              "Mr. P. V. Bhaskar",
+              "Deputy Warden",
+              "8688856281",
+              "swo@rguktong.ac.in"
+            ],
+            [
+              "Ms. P. Lavanya",
+              "Deputy Warden",
+              "9949341386",
+              "sw0@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        },
+        {
+          "title": "Examination Section",
+          "headers": [
+            "Name",
+            "Designation",
+            "Phone",
+            "Email"
+          ],
+          "rows": [
+            [
+              "Mr.Mallikarjuna Nandi",
+              "Controller of examinations",
+              "08592-223122",
+              "coe@rguktong.ac.in"
+            ],
+            [
+              "Ms. Bheema Shireesha",
+              "Associate COE",
+              "",
+              "acoe1@rguktong.ac.in"
+            ],
+            [
+              "Mrs.Nasreen",
+              "Associate COE",
+              "",
+              "acoe2@rguktong.ac.in"
+            ],
+            [
+              "Mr. G. Bala Nagireddy",
+              "Associate COE",
+              "",
+              "acoe3@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        },
+        {
+          "title": "Establishment section",
+          "headers": [
+            "Name",
+            "Designation",
+            "Phone",
+            "Email"
+          ],
+          "rows": [
+            [
+              "Mr. G. Srenivasa Rao",
+              "Establishment section",
+              "",
+              "ebs@rguktong.ac.in"
+            ],
+            [
+              "Dr.L.Ramamohana Reddy",
+              "Public Relations Officer",
+              "",
+              "pro@rguktong.ac.in"
+            ],
+            [
+              "---",
+              "NSS Coordinator",
+              "",
+              "nss@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        },
+        {
+          "title": "Engineering Head of the Department",
+          "headers": [
+            "Name",
+            "Designation",
+            "Phone",
+            "Email"
+          ],
+          "rows": [
+            [
+              "Dr. R G G Rohith Kiran",
+              "HoD Civil Engineering",
+              "",
+              "hodcivil@rguktong.ac.in"
+            ],
+            [
+              "Mrs. P Sindhu",
+              "HoD CSE",
+              "",
+              "hodcse@rguktong.ac.in"
+            ],
+            [
+              "Mr M.Vijayabhaskar",
+              "HoD ECE",
+              "",
+              "hodece@rguktong.ac.in"
+            ],
+            [
+              "Dr. M. Sriramulu Naik",
+              "HoD EEE",
+              "",
+              "hodeee@rguktong.ac.in"
+            ],
+            [
+              "Ms C.B.Priya",
+              "HoD Mechanical",
+              "",
+              "hodmech@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        },
+        {
+          "title": "Sciences and Humanities Head of the Department",
+          "headers": [
+            "Name",
+            "Designation",
+            "Phone",
+            "Email"
+          ],
+          "rows": [
+            [
+              "Mr.K Samuel",
+              "HoD Science and Humanaties",
+              "",
+              "hodsh@rguktong.ac.in"
+            ],
+            [
+              "Dr. V Prabhakar",
+              "HoD Chemistry",
+              "",
+              "hodchem@rguktong.ac.in"
+            ],
+            [
+              "Dr. B Tilak",
+              "HoD Physics",
+              "",
+              "hodphy@rguktong.ac.in"
+            ],
+            [
+              "Mr.K Chowdaiah",
+              "HoD Mathematics",
+              "",
+              "hodmaths@rguktong.ac.in"
+            ],
+            [
+              "Mr. Mulla Mehatab Hussain",
+              "HoD English",
+              "",
+              "hodeng@rguktong.ac.in"
+            ],
+            [
+              "Dr.T Sharmila Prathima",
+              "HoD Telugu",
+              "",
+              "hodtel@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        },
+        {
+          "title": "Engineering Works Coordinaters",
+          "headers": [
+            "Name",
+            "Designation",
+            "Phone",
+            "Email"
+          ],
+          "rows": [
+            [
+              "",
+              "Laptop Service",
+              "",
+              "lapservice@rguktong.ac.in"
+            ],
+            [
+              "Mr.Mallikarjuna Nandi",
+              "Web Master",
+              "8110001666",
+              "webadmin@rguktong.ac.in"
+            ],
+            [
+              "",
+              "E-Mail Support",
+              "8110001666",
+              "mailsupport@rguktong.ac.in"
+            ]
+          ],
+          "address": []
+        }
+      ]
+    },
+    "/about/gallery": {
+      "title": "Photo gallery",
+      "eyebrow": "About the institute",
+      "description": "Campus events and workshops published in the RGUKT Ongole photo gallery.",
+      "kind": "gallery",
+      "groups": [
+        {
+          "group": "Academics",
+          "note": null,
+          "items": [
+            {
+              "title": "“Har Ghar Tiranga” Celebrations at RGUKT Ongole Campus 15th August 2022",
+              "image": "/media/har-ghar-tiranga.webp",
+              "href": "https://rguktong.ac.in/info/gallery/August 15"
+            },
+            {
+              "title": "Inaguration of Dr APJ Abdul Kalam IIIT Ongole Campus, RGUKT AP on 02-10-19",
+              "image": null,
+              "href": "https://rguktong.ac.in/info/gallery/inaguration"
+            },
+            {
+              "title": "Two days ECE workshop on Polytranics on 09-10-19 & 10-09-19",
+              "image": "/media/2.webp",
+              "href": "https://rguktong.ac.in/info/gallery/eceworkshop"
+            },
+            {
+              "title": "Two days CSE workshop on IOT and Applications 01-11-19 & 02-11-19.",
+              "image": "/media/3.webp",
+              "href": "https://rguktong.ac.in/info/gallery/cseworkshop01-11-19"
+            },
+            {
+              "title": "One Week Civil workshop on AUTOCAD and Its applications in Civil Engineering 10-2-2020 to 22-2-2020",
+              "image": "/media/4.webp",
+              "href": "https://rguktong.ac.in/info/gallery/civilworkshop22-2-2020"
+            },
+            {
+              "title": "One day workshop on Latest Developments and Innovation in Engineering Education 28-06-2024",
+              "image": "/media/ws11.webp",
+              "href": "https://rguktong.ac.in/info/gallery/matlabworkshop"
+            }
+          ]
+        },
+        {
+          "group": "NSS",
+          "note": "Will be updated soon.",
+          "items": []
+        },
+        {
+          "group": "Sports",
+          "note": "Will be updated soon.",
+          "items": []
+        },
+        {
+          "group": "Fine arts",
+          "note": "Will be updated soon.",
+          "items": []
+        },
+        {
+          "group": "Others",
+          "note": "Will be updated soon.",
+          "items": []
+        }
+      ]
+    },
+    "/about/vision-mission": {
+      "title": "Vision and Mission",
+      "eyebrow": "About the institute",
+      "description": "Vision and mission of Rajiv Gandhi University of Knowledge Technologies, as published by the Ongole campus.",
+      "kind": "figure",
+      "image": "/media/vm.webp",
+      "imageAlt": "Vision and mission of RGUKT",
+      "paragraphs": []
+    },
+    "/about/organization": {
+      "title": "Organizational structure",
+      "eyebrow": "About the institute",
+      "description": "The organizational structure of RGUKT is published as a document on the official campus site.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "The Ongole campus menu points to the university organizational structure chart. That chart is published by Rajiv Gandhi University of Knowledge Technologies."
+        }
+      ],
+      "links": [
+        {
+          "label": "Organizational structure (PDF)",
+          "href": "https://rgukt.in/ver_new/pdfs/organizational_structure.pdf",
+          "external": true
+        }
+      ]
+    },
+    "/academics/examination-cell": {
+      "title": "Examination Cell",
+      "eyebrow": "Academics",
+      "description": "Results, schedules and examination services published by the Ongole examination cell.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "The academic menu opens the examination cell on its own site. Timetables that the campus publishes with the academic calendar are also listed here."
+        }
+      ],
+      "links": [
+        {
+          "label": "Examination cell",
+          "href": "http://examcell.rguktong.ac.in",
+          "external": true
+        },
+        {
+          "label": "Academic calendar and time table",
+          "href": "/academics/AcademicCalender",
+          "external": false
+        },
+        {
+          "label": "Controller of Examinations",
+          "href": "/administration/controller-of-examinations",
+          "external": false
+        }
+      ]
+    },
+    "/nexus/student-cell": {
+      "title": "Student Cell",
+      "eyebrow": "Nexus",
+      "description": "Student services hosted on the Nexus portal.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "The official site sends Student Cell to the Nexus login. Students of Ongole campus also use UniZ for results, attendance, registration and grievances."
+        }
+      ],
+      "links": [
+        {
+          "label": "Nexus student cell",
+          "href": "http://nexus.rguktong.ac.in/",
+          "external": true
+        },
+        {
+          "label": "Sign in to UniZ",
+          "href": "https://uniz.rguktong.in/student/signin",
+          "external": true
+        }
+      ]
+    },
+    "/nexus/placements": {
+      "title": "Placement Cell",
+      "eyebrow": "Nexus",
+      "description": "Career Development and Placement Cell of RGUKT Ongole.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "RGUKT Ongole has a dedicated Career Development and Placement Cell (CDPC) for its student community, which organizes campus placement and internship opportunities."
+        },
+        {
+          "heading": "",
+          "text": "On the official site the Placement Cell menu item has no published address. The campus home page points internships and placements at the CDPC site."
+        }
+      ],
+      "links": [
+        {
+          "label": "CDPC — internships and placements",
+          "href": "https://cdpc.RGUKTOng.ac.in/",
+          "external": true
+        },
+        {
+          "label": "Careers and recruitment notices",
+          "href": "/notifications/careers",
+          "external": false
+        }
+      ]
+    },
+    "/nexus/alumni": {
+      "title": "Alumni Cell",
+      "eyebrow": "Nexus",
+      "description": "Alumni of RGUKT Ongole.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "The official site opens the alumni cell on the alumni portal."
+        }
+      ],
+      "links": [
+        {
+          "label": "Alumni cell",
+          "href": "http://alumni.rguktong.ac.in/",
+          "external": true
+        }
+      ]
+    },
+    "/nexus/hho": {
+      "title": "HHO",
+      "eyebrow": "Nexus",
+      "description": "HHO, as listed on the official campus menu.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "The official Nexus menu lists HHO without a description or a working link. Nothing further is published on that item."
+        }
+      ],
+      "links": [
+        {
+          "label": "Contact the campus",
+          "href": "/information/contact",
+          "external": false
+        }
+      ]
+    },
+    "/information/info-center": {
+      "title": "Info-Center",
+      "eyebrow": "Information",
+      "description": "Information desk listed on the official campus menu.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "The official Info-Center item does not open a page. Campus contact details, notices and the RTI desk are the published information channels."
+        }
+      ],
+      "links": [
+        {
+          "label": "Contact us",
+          "href": "/information/contact",
+          "external": false
+        },
+        {
+          "label": "News and updates",
+          "href": "/notifications/news",
+          "external": false
+        },
+        {
+          "label": "RTI",
+          "href": "/institute/rtiinfo",
+          "external": false
+        }
+      ]
+    },
+    "/consultancy": {
+      "title": "Consultancy",
+      "eyebrow": "Consultancy",
+      "description": "Department consultancy services listed by RGUKT Ongole.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "The consultancy label in the top menu does not open a page. The campus still publishes a consultancy note that names services from Computer Science, Electronics and Communication, Mechanical Engineering, Civil Engineering, Chemical Engineering and MME, and a single WhatsApp contact."
+        },
+        {
+          "heading": "",
+          "text": "The same workshop line is repeated on every card on the official page, so it is not treated here as a separate service."
+        }
+      ],
+      "links": [
+        {
+          "label": "Consult on WhatsApp",
+          "href": "https://wa.link/b46zml",
+          "external": true
+        }
+      ]
+    },
+    "/admissions": {
+      "title": "Admissions",
+      "eyebrow": "Admissions",
+      "description": "Six-year integrated programme for gifted rural youth of Andhra Pradesh.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "RGUKT admits students after class 10 into a six-year integrated programme. Selection follows a local-best model so that high-performing rural students are not crowded out by statewide ranks."
+        },
+        {
+          "heading": "",
+          "text": "The Ongole site does not keep a separate admissions section in the top menu. Admission notices are published with campus news, and the university admissions portal carries the current application."
+        }
+      ],
+      "links": [
+        {
+          "label": "UG admissions portal",
+          "href": "https://www.admissions25.rgukt.in/",
+          "external": true
+        },
+        {
+          "label": "Academic programmes",
+          "href": "/academics/AcademicPrograms",
+          "external": false
+        },
+        {
+          "label": "News and updates",
+          "href": "/notifications/news",
+          "external": false
+        }
+      ]
+    },
+    "/about/executive-committee": {
+      "title": "Executive committee",
+      "eyebrow": "About the institute",
+      "description": "Executive committee, as linked from the campus quick links.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "The quick link labelled Executive Committee on the official home page returns the campus home. No separate committee roster is published there. The governing council page carries the published governing body."
+        }
+      ],
+      "links": [
+        {
+          "label": "Governing council",
+          "href": "/institute/govcouncil",
+          "external": false
+        }
+      ]
+    },
+    "/grievance/women-cell": {
+      "title": "Women Cell",
+      "eyebrow": "Grievance",
+      "description": "File a grievance with the Women Cell.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "On the official site, Women Cell asks you to log in at the Nexus student portal."
+        },
+        {
+          "heading": "",
+          "text": "Students can also raise and follow a grievance in UniZ, the Ongole campus portal."
+        }
+      ],
+      "links": [
+        {
+          "label": "Log in at Nexus",
+          "href": "http://nexus.rguktong.ac.in/Nexus/",
+          "external": true
+        },
+        {
+          "label": "Grievance on UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
+          "external": true
+        }
+      ]
+    },
+    "/grievance/anti-ragging": {
+      "title": "Anti Ragging Cell",
+      "eyebrow": "Grievance",
+      "description": "File a grievance with the Anti Ragging Cell.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "On the official site, Anti Ragging Cell asks you to log in at the Nexus student portal."
+        },
+        {
+          "heading": "",
+          "text": "Students can also raise and follow a grievance in UniZ, the Ongole campus portal."
+        }
+      ],
+      "links": [
+        {
+          "label": "Log in at Nexus",
+          "href": "http://nexus.rguktong.ac.in/Nexus/",
+          "external": true
+        },
+        {
+          "label": "Grievance on UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
+          "external": true
+        }
+      ]
+    },
+    "/grievance/hod": {
+      "title": "HOD",
+      "eyebrow": "Grievance",
+      "description": "File a grievance with the HOD.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "On the official site, HOD asks you to log in at the Nexus student portal."
+        },
+        {
+          "heading": "",
+          "text": "Students can also raise and follow a grievance in UniZ, the Ongole campus portal."
+        }
+      ],
+      "links": [
+        {
+          "label": "Log in at Nexus",
+          "href": "http://nexus.rguktong.ac.in/Nexus/",
+          "external": true
+        },
+        {
+          "label": "Grievance on UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
+          "external": true
+        }
+      ]
+    },
+    "/grievance/dean-academics": {
+      "title": "Dean Academics",
+      "eyebrow": "Grievance",
+      "description": "File a grievance with the Dean Academics.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "On the official site, Dean Academics asks you to log in at the Nexus student portal."
+        },
+        {
+          "heading": "",
+          "text": "Students can also raise and follow a grievance in UniZ, the Ongole campus portal."
+        }
+      ],
+      "links": [
+        {
+          "label": "Log in at Nexus",
+          "href": "http://nexus.rguktong.ac.in/Nexus/",
+          "external": true
+        },
+        {
+          "label": "Grievance on UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
+          "external": true
+        }
+      ]
+    },
+    "/grievance/student-welfare": {
+      "title": "Student Welfare Office",
+      "eyebrow": "Grievance",
+      "description": "File a grievance with the Student Welfare Office.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "On the official site, Student Welfare Office asks you to log in at the Nexus student portal."
+        },
+        {
+          "heading": "",
+          "text": "Students can also raise and follow a grievance in UniZ, the Ongole campus portal."
+        }
+      ],
+      "links": [
+        {
+          "label": "Log in at Nexus",
+          "href": "http://nexus.rguktong.ac.in/Nexus/",
+          "external": true
+        },
+        {
+          "label": "Grievance on UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
+          "external": true
+        }
+      ]
+    },
+    "/grievance/examination": {
+      "title": "Examination",
+      "eyebrow": "Grievance",
+      "description": "File a grievance with the Examination.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "On the official site, Examination asks you to log in at the Nexus student portal."
+        },
+        {
+          "heading": "",
+          "text": "Students can also raise and follow a grievance in UniZ, the Ongole campus portal."
+        }
+      ],
+      "links": [
+        {
+          "label": "Log in at Nexus",
+          "href": "http://nexus.rguktong.ac.in/Nexus/",
+          "external": true
+        },
+        {
+          "label": "Grievance on UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
+          "external": true
+        }
+      ]
+    },
+    "/grievance/it-infrastructure": {
+      "title": "IT Infrastructure",
+      "eyebrow": "Grievance",
+      "description": "File a grievance with the IT Infrastructure.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "On the official site, IT Infrastructure asks you to log in at the Nexus student portal."
+        },
+        {
+          "heading": "",
+          "text": "Students can also raise and follow a grievance in UniZ, the Ongole campus portal."
+        }
+      ],
+      "links": [
+        {
+          "label": "Log in at Nexus",
+          "href": "http://nexus.rguktong.ac.in/Nexus/",
+          "external": true
+        },
+        {
+          "label": "Grievance on UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
+          "external": true
+        }
+      ]
+    },
+    "/grievance/director": {
+      "title": "Director",
+      "eyebrow": "Grievance",
+      "description": "File a grievance with the Director.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "On the official site, Director asks you to log in at the Nexus student portal."
+        },
+        {
+          "heading": "",
+          "text": "Students can also raise and follow a grievance in UniZ, the Ongole campus portal."
+        }
+      ],
+      "links": [
+        {
+          "label": "Log in at Nexus",
+          "href": "http://nexus.rguktong.ac.in/Nexus/",
+          "external": true
+        },
+        {
+          "label": "Grievance on UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
+          "external": true
+        }
+      ]
+    },
+    "/grievance/vice-chancellor": {
+      "title": "Vice Chancellor",
+      "eyebrow": "Grievance",
+      "description": "File a grievance with the Vice Chancellor.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "On the official site, Vice Chancellor asks you to log in at the Nexus student portal."
+        },
+        {
+          "heading": "",
+          "text": "Students can also raise and follow a grievance in UniZ, the Ongole campus portal."
+        }
+      ],
+      "links": [
+        {
+          "label": "Log in at Nexus",
+          "href": "http://nexus.rguktong.ac.in/Nexus/",
+          "external": true
+        },
+        {
+          "label": "Grievance on UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
+          "external": true
+        }
+      ]
+    },
+    "/grievance/chancellor": {
+      "title": "Chancellor",
+      "eyebrow": "Grievance",
+      "description": "File a grievance with the Chancellor.",
+      "kind": "links",
+      "paragraphs": [
+        {
+          "heading": "",
+          "text": "On the official site, Chancellor asks you to log in at the Nexus student portal."
+        },
+        {
+          "heading": "",
+          "text": "Students can also raise and follow a grievance in UniZ, the Ongole campus portal."
+        }
+      ],
+      "links": [
+        {
+          "label": "Log in at Nexus",
+          "href": "http://nexus.rguktong.ac.in/Nexus/",
+          "external": true
+        },
+        {
+          "label": "Grievance on UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
+          "external": true
+        }
+      ]
+    },
+    "/academics/departments": {
+      "title": "Departments",
+      "eyebrow": "Academics",
+      "description": "Engineering, sciences, humanities and campus services at RGUKT Ongole.",
+      "kind": "departments",
+      "groups": [
+        {
+          "title": "Engineering",
+          "items": [
+            {
+              "label": "Computer Science Engineering",
+              "href": "/departments/CSE"
+            },
+            {
+              "label": "Civil Engineering",
+              "href": "/departments/CIVIL"
+            },
+            {
+              "label": "Electronics and Communication Engineering",
+              "href": "/departments/ECE"
+            },
+            {
+              "label": "Electrical and Electronics Engineering",
+              "href": "/departments/EEE"
+            },
+            {
+              "label": "Mechanical Engineering",
+              "href": "/departments/ME"
+            }
+          ]
+        },
+        {
+          "title": "Sciences",
+          "items": [
+            {
+              "label": "Mathematics Department",
+              "href": "/departments/MATHEMATICS"
+            },
+            {
+              "label": "Physics Department",
+              "href": "/departments/PHYSICS"
+            },
+            {
+              "label": "Chemistry Department",
+              "href": "/departments/CHEMISTRY"
+            },
+            {
+              "label": "Information Technology",
+              "href": "/departments/IT"
+            },
+            {
+              "label": "Biology Department",
+              "href": "/departments/BIOLOGY"
+            }
+          ]
+        },
+        {
+          "title": "Humanities",
+          "items": [
+            {
+              "label": "Management Studies",
+              "href": "/departments/MANAGEMENT"
+            },
+            {
+              "label": "Telugu Department",
+              "href": "/departments/TELUGU"
+            },
+            {
+              "label": "English Department",
+              "href": "/departments/ENGLISH"
+            }
+          ]
+        },
+        {
+          "title": "Library sciences",
+          "items": [
+            {
+              "label": "Central Library",
+              "href": "/departments/LIB"
+            }
+          ]
+        },
+        {
+          "title": "Physical education",
+          "items": [
+            {
+              "label": "Physical Education",
+              "href": "/departments/PED"
+            },
+            {
+              "label": "Yoga Studies",
+              "href": "/departments/YOGA"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "home": {
+    "carousel": [
+      {
+        "src": "/media/vrd.webp",
+        "alt": "Campus gathering at RGUKT Ongole"
+      },
+      {
+        "src": "/media/all.webp",
+        "alt": "Students and staff on the Ongole campus"
+      },
+      {
+        "src": "/media/sports.webp",
+        "alt": "Sports at RGUKT Ongole"
+      },
+      {
+        "src": "/media/cul.webp",
+        "alt": "Cultural programmes at RGUKT Ongole"
+      },
+      {
+        "src": "/media/swatch.webp",
+        "alt": "Swachh Bharat activity on campus"
+      },
+      {
+        "src": "/media/ws11-2.webp",
+        "alt": "Engineering education workshop"
+      },
+      {
+        "src": "/media/ws111.webp",
+        "alt": "Workshop session at RGUKT Ongole"
+      },
+      {
+        "src": "/media/ws22.webp",
+        "alt": "Workshop participants at RGUKT Ongole"
+      },
+      {
+        "src": "/media/ws222.webp",
+        "alt": "Hands-on workshop at RGUKT Ongole"
+      },
+      {
+        "src": "/media/ws.webp",
+        "alt": "Workshop group at RGUKT Ongole"
+      },
+      {
+        "src": "/media/apsche.webp",
+        "alt": "APSCHE programme at RGUKT Ongole"
+      },
+      {
+        "src": "/media/c26.webp",
+        "alt": "Campus event at RGUKT Ongole"
+      },
+      {
+        "src": "/media/ssn.webp",
+        "alt": "Students on the Ongole campus"
+      },
+      {
+        "src": "/media/independence.webp",
+        "alt": "Independence Day at RGUKT Ongole"
+      },
+      {
+        "src": "/media/workshop-rupas.webp",
+        "alt": "Academic workshop at RGUKT Ongole"
+      },
+      {
+        "src": "/media/badminton.webp",
+        "alt": "Badminton at RGUKT Ongole"
+      }
+    ],
+    "explore": [
+      {
+        "image": "/media/8libarary-min.webp",
+        "alt": "Central library reading room",
+        "href": "/departments/LIB",
+        "title": "Central Library",
+        "text": "Well equipped library with more than 20,000 books and 10,000 periodicals."
+      },
+      {
+        "image": "/media/2cse-min.webp",
+        "alt": "Computer science students at work",
+        "href": "/nexus/placements",
+        "title": "Internships and placements",
+        "text": "RGUKT Ongole has a dedicated Career Development and Placement Cell (CDPC) for its student community, which organizes campus placement and internship opportunities."
+      },
+      {
+        "image": "/media/1humanities-min.webp",
+        "alt": "Humanities block on the Ongole campus",
+        "href": "/institute/campuslife",
+        "title": "Resources and facilities",
+        "text": "State of the art infrastructure added with pristine greenery make RGUKT Ongole campus ideal for learning and continuous growth."
+      },
+      {
+        "image": "/media/sports2.svg",
+        "alt": "Sports on the Ongole campus",
+        "href": "/institute/campuslife",
+        "title": "Extra curricular activities",
+        "text": "We at RGUKT believe playing sports helps in maintaining physical coordination, enhancing body strength, improving mental power and, on a regular basis, builds the character and health of a person."
+      }
+    ],
+    "vision": "/media/vm.webp",
+    "apLogo": null,
+    "tagline": "Catering to the Educational Needs of Gifted Rural Youth",
+    "campuses": [
+      {
+        "label": "RGUKT",
+        "href": "http://www.rgukt.in/"
+      },
+      {
+        "label": "RK Valley",
+        "href": "http://www.rguktrkv.ac.in/"
+      },
+      {
+        "label": "Nuzvid",
+        "href": "http://www.rguktn.ac.in/"
+      },
+      {
+        "label": "Srikakulam",
+        "href": "http://www.rguktsklm.ac.in/"
+      }
+    ]
+  }
+}

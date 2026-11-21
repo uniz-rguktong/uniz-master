@@ -235,6 +235,11 @@ jobs:
           MAIL_DATABASE_URL: ${{ secrets.MAIL_DATABASE_URL }}
           NOTIFICATION_DATABASE_URL: ${{ secrets.NOTIFICATION_DATABASE_URL }}
           CRON_DATABASE_URL: ${{ secrets.CRON_DATABASE_URL }}
+          # Optional. Empty when the Actions secret is unset; the VPS then
+          # generates DBADMIN_DB_PASSWORD into the existing vault.
+          DBADMIN_DB_PASSWORD: ${{ secrets.DBADMIN_DB_PASSWORD }}
+          DBADMIN_BOOTSTRAP_DATABASE_URL: ${{ secrets.DBADMIN_BOOTSTRAP_DATABASE_URL }}
+          DBADMIN_MIGRATE_DATABASE_URL: ${{ secrets.DBADMIN_MIGRATE_DATABASE_URL }}
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_MAINTENANCE_MODE: ${{ secrets.VITE_MAINTENANCE_MODE }}
           VITE_ENABLE_OUTPASS_OUTING: ${{ secrets.VITE_ENABLE_OUTPASS_OUTING }}
