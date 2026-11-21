@@ -12,6 +12,7 @@ import {
   BookOpen,
   Globe,
   CalendarClock,
+  Database,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -35,6 +36,9 @@ import {
   enableOutingsAndOutpasses,
   filterOutpassOutingTabs,
 } from "@/config/featureFlags";
+import { parseJwt } from "@/utils/security";
+import { resolveAdminPortalRole } from "@/utils/adminRole";
+import DatabaseSection from "./database/DatabaseSection";
 
 export default function WebmasterDashboard() {
   useIsAuth();
@@ -47,6 +51,13 @@ export default function WebmasterDashboard() {
   const role = (localStorage.getItem("role") || "webadmin")
     .toLowerCase()
     .replace(/"/g, "");
+
+  const adminToken = (localStorage.getItem("admin_token") || "").replace(/"/g, "");
+  const portalRole = resolveAdminPortalRole(
+    adminToken ? parseJwt(adminToken) : null,
+    username,
+  );
+  const canUseDatabase = portalRole === "webadmin";
 
   const allowedTabs = useMemo(
     () =>
@@ -70,8 +81,9 @@ export default function WebmasterDashboard() {
         "website_updates",
         "push_alerts",
         "security",
+        ...(canUseDatabase ? ["database"] : []),
       ] as const),
-    [role],
+    [role, canUseDatabase],
   );
 
   const { activeTab, setActiveTab } = useAdminSectionRoute(allowedTabs);
@@ -151,6 +163,9 @@ export default function WebmasterDashboard() {
         ...(role === "webadmin" || role === "coe"
           ? [{ id: "system_logs", label: "System & Logs", icon: Activity }]
           : []),
+        ...(canUseDatabase
+          ? [{ id: "database", label: "Database", icon: Database }]
+          : []),
         { id: "security", label: "Security", icon: Lock },
       ],
     },
@@ -194,6 +209,8 @@ export default function WebmasterDashboard() {
         return <SecuritySection username={username} />;
       case "website_updates":
         return <WebsiteUpdatesSection />;
+      case "database":
+        return <DatabaseSection />;
       case "grievances":
         return renderComingSoon("Grievance Redressal");
       case "outpass":

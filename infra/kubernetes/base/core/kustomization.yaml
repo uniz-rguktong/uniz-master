@@ -26,6 +26,18 @@ resources:
   - redis.yaml
   - user-service.yaml
   - docs-service.yaml
+  - dbadmin-service.yaml
+  - adminer.yaml
+  - dbadmin-role-cronjob.yaml
   # PARKED replicas:0 — production landing on Cloudflare Pages.
   - landing.yaml
   # Legacy uniz-api monolith removed from cluster (traffic uses microservices).
+
+configMapGenerator:
+  - name: uniz-dbadmin-role-sql
+    files:
+      - ensure-dbadmin-role.sql=../../../../scripts/ops/ensure-dbadmin-role.sql
+      - ensure-dbadmin-role.sh=../../../../scripts/ops/ensure-dbadmin-role.sh
+
+generatorOptions:
+  disableNameSuffixHash: true

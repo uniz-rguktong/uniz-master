@@ -138,6 +138,9 @@ const serviceMap: Record<string, string> = {
     (process.env.NODE_ENV === "production"
       ? "http://uniz-docs-service.default.svc.cluster.local:3333"
       : "http://127.0.0.1:3333"),
+  dbadmin:
+    process.env.DBADMIN_SERVICE_URL ||
+    "http://uniz-dbadmin-service.default.svc.cluster.local:3010",
 };
 
 const landingApiTarget = (
@@ -220,7 +223,9 @@ interface HealthPayload {
 let inflightHealthRefresh: Promise<HealthPayload> | null = null;
 
 async function probeAllServices(): Promise<HealthPayload> {
-  const resultPromises = Object.entries(serviceMap).map(async ([name, url]) => {
+  const resultPromises = Object.entries(serviceMap)
+    .filter(([name]) => name !== "dbadmin")
+    .map(async ([name, url]) => {
     try {
       const start = performance.now();
       const probePath = "/health";
@@ -447,7 +452,8 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
     req.url.includes("/attendance") ||
     req.url.includes("/bootstrap") ||
     req.url.includes("/inbox") ||
-    req.url.includes("/notifications");
+    req.url.includes("/notifications") ||
+    service === "dbadmin";
 
   const isPublicCms =
     req.url.includes("/cms/notifications") ||
