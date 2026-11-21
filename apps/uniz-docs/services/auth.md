@@ -20,7 +20,7 @@ Issues JWTs and owns credential/OTP flows.
 |--------|----------------------|---------|
 | POST | `/login`, `/login/student`, `/login/admin` | Authenticate |
 | POST | `/signup` | Registration (if enabled) |
-| POST | `/otp/request`, `/otp/request-email`, `/otp/verify` | OTP |
+| POST | `/otp/request`, `/otp/request-email`, `/otp/verify` | Email OTP |
 | POST | `/password/reset`, `/password/change` | Password |
 | POST | `/admin/reset-password`, `/admin/global-reset-password`, `/admin/suspend` | Admin ops |
 | POST | `/logout` | Logout |

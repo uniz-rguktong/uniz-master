@@ -1,4 +1,5 @@
 import axios from "axios";
+import { chooseOtpEmail } from "./otp-delivery";
 import { enqueueNotificationJob } from "./queue.util";
 import { redis } from "./redis.util";
 
@@ -68,30 +69,21 @@ const sendPush = async (
   }
 };
 
-export const sendOtpPush = async (
+export async function resolveProfileEmail(
   username: string,
-  otp: string,
-): Promise<number> => {
-  return await sendPush(
-    username,
-    "UniZ Security Authentication",
-    `Your secure verification code is ${otp}. To maintain account security, this code will remain valid for exactly 10 minutes.`,
-    "OTP",
-  );
-};
-
-export async function resolveProfileEmail(username: string): Promise<string> {
+): Promise<string | null> {
   // A user's email rarely changes; cache it so repeated OTP requests don't fan
   // out up to 3 sequential user-service HTTP calls each time.
   const cacheKey = `otp:email:${username.toUpperCase()}`;
   try {
     const cached = await redis.get(cacheKey);
-    if (cached) return cached;
+    const chosen = cached ? chooseOtpEmail(cached, username) : null;
+    if (chosen) return chosen;
   } catch {
     /* Redis optional — fall through to live resolution */
   }
 
-  let email = `${username.toLowerCase()}@rguktong.ac.in`;
+  let stored: string | null = null;
   try {
     const rawUserUrl = (
       process.env.USER_SERVICE_URL || "http://localhost:3002"
@@ -117,8 +109,8 @@ export async function resolveProfileEmail(username: string): Promise<string> {
           userRes.data?.faculty ||
           userRes.data?.data ||
           userRes.data;
-        if (data?.email) {
-          email = data.email;
+        if (data?.email && String(data.email).trim()) {
+          stored = String(data.email);
           break;
         }
       } catch {
@@ -126,8 +118,12 @@ export async function resolveProfileEmail(username: string): Promise<string> {
       }
     }
   } catch {
-    // keep default campus email
+    // Profile lookup failed. chooseOtpEmail still returns the campus mailbox
+    // when the username can form one.
   }
+
+  const email = chooseOtpEmail(stored, username);
+  if (!email) return null;
 
   try {
     await redis.setex(cacheKey, 3600, email);
@@ -175,28 +171,6 @@ export const sendOtpEmail = async (
       console.error(`[AUTH] OTP email fallback also failed:`, err.message);
       return false;
     }
-  }
-};
-
-/** Queue push-first OTP delivery with email fallback in the notification worker. */
-export const queueOtpDelivery = async (
-  username: string,
-  otp: string,
-  email?: string,
-): Promise<boolean> => {
-  try {
-    await enqueueNotificationJob("OTP_DELIVER", {
-      username,
-      otp,
-      email: email || `${username.toLowerCase()}@rguktong.ac.in`,
-    });
-    return true;
-  } catch (error: any) {
-    console.error(
-      `[AUTH] Failed to queue OTP_DELIVER for ${username}:`,
-      error.message,
-    );
-    return false;
   }
 };
 

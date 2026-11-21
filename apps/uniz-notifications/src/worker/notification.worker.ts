@@ -3,6 +3,7 @@ import type IORedis from "ioredis";
 import { sendWebPush } from "../services/push.service";
 import { dispatchEmailByType } from "../mail/services/email-dispatch.service";
 import { activeMailProvider } from "../mail/services/email.service";
+import { isOtpNotificationJob, processOtpJob } from "./otp-job";
 import {
   getNotificationQueue,
   NOTIFICATION_QUEUE_NAME,
@@ -18,10 +19,23 @@ export const createNotificationWorker = (connection: IORedis) => {
       const jobType = job.name;
       const data = job.data as Record<string, any>;
 
-      if (jobType === "OTP_EMAIL" || jobType === "EMAIL") {
-        const type = String(
-          data.type || (jobType === "OTP_EMAIL" ? "otp" : ""),
-        );
+      if (isOtpNotificationJob(jobType)) {
+        const result = await processOtpJob(jobType, data, dispatchEmailByType);
+        if (result.deliveryMethod === "email") {
+          const provider = activeMailProvider();
+          console.log(
+            `[MAIL-JOB] id=${job.id} result=sent provider=${provider} type=otp to=${result.to}`,
+          );
+        } else {
+          console.warn(
+            `[NotificationWorker] Dropped ${jobType} job ${job.id}; OTP is email-only`,
+          );
+        }
+        return result;
+      }
+
+      if (jobType === "EMAIL") {
+        const type = String(data.type || "");
         const to = String(data.to || data.email || "");
         if (!type || !to) {
           throw new Error("EMAIL job requires type and to");
@@ -40,33 +54,7 @@ export const createNotificationWorker = (connection: IORedis) => {
         return { sent: true, type, to, provider };
       }
 
-      if (jobType === "OTP_DELIVER") {
-        const username = String(data.username || "");
-        const otp = String(data.otp || "");
-        const email =
-          String(data.email || "") ||
-          `${username.toLowerCase()}@rguktong.ac.in`;
-        if (!username || !otp) {
-          throw new Error("OTP_DELIVER requires username and otp");
-        }
-
-        const sent = await sendWebPush(username, {
-          title: "UniZ Security Authentication",
-          body: `Your secure verification code is ${otp}. To maintain account security, this code will remain valid for exactly 10 minutes.`,
-          rawBody: true,
-          data: { type: "OTP" },
-        });
-
-        if (sent > 0) {
-          return { deliveryMethod: "push", sent };
-        }
-
-        const ok = await dispatchEmailByType("otp", email, { username, otp });
-        if (!ok) throw new Error(`OTP email fallback failed for ${username}`);
-        return { deliveryMethod: "email", sent: 0 };
-      }
-
-      if (jobType === "PUSH" || jobType === "OTP_PUSH") {
+      if (jobType === "PUSH") {
         const username = String(data.username || "");
         if (!username) throw new Error("PUSH job requires username");
         const sent = await sendWebPush(username, {

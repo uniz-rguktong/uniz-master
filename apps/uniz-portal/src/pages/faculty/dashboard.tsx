@@ -830,6 +830,7 @@ function PasswordSection() {
   );
   const [currentPassword, setCurrentPassword] = useState("");
   const [otp, setOtp] = useState("");
+  const [otpEmail, setOtpEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [resetToken, setResetToken] = useState<string | null>(null);
@@ -854,10 +855,17 @@ function PasswordSection() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(data.message || "OTP sent to your devices");
+        const masked =
+          typeof data.email === "string" ? data.email.trim() : "";
+        if (masked) setOtpEmail(masked);
+        toast.success(
+          masked
+            ? `We sent a 6-digit code to ${masked}.`
+            : data.message || "We sent a 6-digit code to your email.",
+        );
         setStep("otp");
       } else {
-        toast.error(data.message || "Could not send OTP");
+        toast.error(data.message || "Could not send the code to your email");
       }
     } catch {
       toast.error("Network error");
@@ -1000,8 +1008,8 @@ function PasswordSection() {
             >
               <div className="p-4 bg-surface-2 rounded-xl border border-border">
                 <p className="text-sm text-text-2 font-medium">
-                  We'll send a one-time password to your registered devices to
-                  verify your identity.
+                  We&apos;ll email a one-time password to the address on your
+                  account.
                 </p>
               </div>
               <div className="space-y-2">
@@ -1019,7 +1027,7 @@ function PasswordSection() {
                   className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[15px] font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-[0.45]"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Send OTP to my Device
+                  Email me a code
                 </button>
                 <p className="text-center text-text-3 text-xs font-medium">
                   - or change with current password -
@@ -1081,7 +1089,9 @@ function PasswordSection() {
             >
               <div className="p-4 bg-surface-2 rounded-xl border border-border">
                 <p className="text-sm text-text-2 font-medium">
-                  Enter the 6-digit OTP sent to your registered devices.
+                  {otpEmail
+                    ? `Enter the 6-digit code sent to ${otpEmail}.`
+                    : "Enter the 6-digit code sent to your email."}
                 </p>
               </div>
               <div className="space-y-2">
@@ -1118,7 +1128,7 @@ function PasswordSection() {
                 disabled={loading}
                 className="w-full text-center text-xs text-text-3 hover:text-text font-medium transition-colors"
               >
-                Resend OTP
+                Resend code
               </button>
             </div>
           )}

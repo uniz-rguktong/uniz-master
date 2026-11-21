@@ -26,6 +26,8 @@ model OtpLog {
   id         String    @id @default(uuid()) @db.Uuid
   username   String
   otp        String
+  // email is the only channel that verify accepts.
+  channel    String    @default("email")
   expiresAt  DateTime
   createdAt  DateTime  @default(now())
   consumedAt DateTime?

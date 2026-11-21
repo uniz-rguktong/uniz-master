@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc && (test -d src/generated && cp -r src/generated dist/generated || true)",
-    "test": "tsc && node --test dist/mail/services/plain-notice.test.js dist/mail/middlewares/internal-auth.middleware.test.js",
+    "test": "tsc && node --test dist/mail/services/plain-notice.test.js dist/mail/middlewares/internal-auth.middleware.test.js dist/worker/otp-job.test.js",
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn src/index.ts",
     "prisma:generate": "prisma generate",

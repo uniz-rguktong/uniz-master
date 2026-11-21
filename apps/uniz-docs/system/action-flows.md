@@ -61,16 +61,17 @@ sequenceDiagram
 
   B->>GW: POST /auth/otp/request
   GW->>A: proxy
-  A->>A: store OTP in Postgres
-  A->>Q: enqueue OTP_DELIVER
-  A-->>B: 200 queued
-  Q->>N: worker
-  N->>N: try web push
-  alt no push devices
+  A->>A: store email OTP in Postgres
+  alt no email on file
+    A-->>B: 400 OTP_EMAIL_MISSING
+  else email on file
+    A->>Q: enqueue OTP email
+    A-->>B: 200 masked email
+    Q->>N: worker
     N->>SES: send OTP email
   end
   B->>GW: POST /auth/otp/verify
-  GW->>A: verify OTP
+  GW->>A: accept email OTP only
   B->>GW: POST /auth/password/reset
   GW->>A: update password hash
 ```

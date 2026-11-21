@@ -6,12 +6,17 @@ import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { redis } from "../utils/redis.util";
 import {
   sendOtpEmail,
-  sendOtpPush,
   sendLoginNotification,
   sendPasswordChangeNotification,
-  queueOtpDelivery,
   resolveProfileEmail,
 } from "../utils/email.util";
+import {
+  OTP_CHANNEL_EMAIL,
+  OTP_EMAIL_MISSING_MESSAGE,
+  OTP_TTL_MS,
+  deliverEmailOtp,
+  isEmailOtpAcceptable,
+} from "../utils/otp-delivery";
 import {
   comparePassword,
   comparePasswordForUser,
@@ -304,7 +309,7 @@ export const requestOtp = async (req: Request, res: Response) => {
   }
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + OTP_TTL_MS);
 
   try {
     const user = await prisma.authCredential.findFirst({
@@ -317,43 +322,37 @@ export const requestOtp = async (req: Request, res: Response) => {
       });
     }
 
-    await prisma.otpLog.create({
-      data: { username, otp, expiresAt },
-    });
-
-    // Queue push-first delivery with email fallback in the notification worker.
     const email = await resolveProfileEmail(username);
-    const queued = await queueOtpDelivery(username, otp, email);
-    if (!queued) {
-      // Last-resort inline path if Redis/queue is down.
-      const sentCount = await sendOtpPush(username, otp);
-      if (sentCount === 0) {
-        await sendOtpEmail(email, username, otp);
-        return res.json({
-          success: true,
-          deliveryMethod: "email",
-          email: email.replace(
-            /(.{2})(.*)(?=@)/,
-            (_m, a, b) => a + "*".repeat(b.length),
-          ),
-          message:
-            "Security code successfully dispatched to your registered email.",
-        });
-      }
-      return res.json({
-        success: true,
-        deliveryMethod: "push",
-        message: `Security code successfully pushed to ${sentCount} of your active devices.`,
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        code: "OTP_EMAIL_MISSING",
+        message: OTP_EMAIL_MISSING_MESSAGE,
       });
     }
 
-    console.log(`[AUTH] OTP queued for ${username} (push→email fallback).`);
+    await prisma.otpLog.create({
+      data: { username, otp, expiresAt, channel: OTP_CHANNEL_EMAIL },
+    });
+
+    const delivery = await deliverEmailOtp(
+      { email, username, otp },
+      sendOtpEmail,
+    );
+    if (!delivery.ok) {
+      return res.status(delivery.status).json({
+        success: false,
+        code: delivery.code,
+        message: delivery.message,
+      });
+    }
+
+    console.log(`[AUTH] OTP email queued for ${username}.`);
     return res.json({
       success: true,
-      deliveryMethod: "queued",
-      queued: true,
-      message:
-        "Security code is being delivered to your devices (or email if push is unavailable).",
+      deliveryMethod: "email",
+      email: delivery.email,
+      message: delivery.message,
     });
   } catch (error) {
     console.error("[AUTH] Security OTP Request Error:", error);
@@ -365,7 +364,7 @@ export const requestOtp = async (req: Request, res: Response) => {
   }
 };
 
-// Explicitly request OTP via email (Manual fallback)
+// Resend the active email code. Does not issue a new code or use push.
 export const requestOtpEmail = async (req: Request, res: Response) => {
   const rawIdentifier = String(req.body.username || "").trim();
   const allowEmail = rawIdentifier.includes("@");
@@ -384,18 +383,19 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
       });
     }
 
-    // Get the most recent unconsumed OTP
+    // Resend the active email code. Push-issued rows are not eligible.
     const lastOtp = await prisma.otpLog.findFirst({
       where: {
         // username stored already-normalized → exact match uses the index.
         username,
+        channel: OTP_CHANNEL_EMAIL,
         consumedAt: null,
         expiresAt: { gt: new Date() },
       },
       orderBy: { createdAt: "desc" },
     });
 
-    if (!lastOtp) {
+    if (!lastOtp || !isEmailOtpAcceptable(lastOtp, lastOtp.otp, new Date())) {
       return res.status(400).json({
         code: "VALIDATION_ERROR",
         message: "No active OTP found. Please request a new one first.",
@@ -405,14 +405,23 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
     // Active OTP session means the user already passed Turnstile on /otp/request.
     // Email resend is rate-limited separately and does not need a fresh captcha.
     const email = await resolveProfileEmail(username);
-    await sendOtpEmail(email, username, lastOtp.otp);
+    const delivery = await deliverEmailOtp(
+      { email, username, otp: lastOtp.otp },
+      sendOtpEmail,
+    );
+    if (!delivery.ok) {
+      return res.status(delivery.status).json({
+        success: false,
+        code: delivery.code,
+        message: delivery.message,
+      });
+    }
 
     return res.json({
       success: true,
       deliveryMethod: "email",
-      queued: true,
-      message:
-        "Security code successfully dispatched to your registered email.",
+      email: delivery.email,
+      message: delivery.message,
     });
   } catch (error) {
     console.error("[AUTH] OTP Email Request Error:", error);
@@ -432,19 +441,21 @@ export const verifyOtp = async (req: Request, res: Response) => {
     : rawIdentifier.toUpperCase();
 
   try {
+    const now = new Date();
     const validOtp = await prisma.otpLog.findFirst({
       where: {
         // username is stored already-normalized (uppercase id / resolved email),
         // so exact match uses @@index([username, createdAt]).
         username,
         otp,
-        expiresAt: { gt: new Date() },
+        channel: OTP_CHANNEL_EMAIL,
+        expiresAt: { gt: now },
         consumedAt: null,
       },
       orderBy: { createdAt: "desc" },
     });
 
-    if (!validOtp) {
+    if (!validOtp || !isEmailOtpAcceptable(validOtp, otp, now)) {
       return res.status(400).json({
         code: "VALIDATION_ERROR",
         message: "Invalid or expired OTP",

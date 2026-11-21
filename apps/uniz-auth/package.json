@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc && (test -d src/generated && cp -r src/generated dist/generated || true)",
+    "test": "tsc && node --test dist/utils/otp-delivery.test.js",
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn src/index.ts",
     "prisma:generate": "prisma generate",

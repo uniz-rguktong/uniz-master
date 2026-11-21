@@ -13,6 +13,7 @@
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "lint:hex": "node scripts/lint-hex.mjs",
+    "test": "node --test scripts/otp-copy.test.mjs",
     "guides:pdf": "node scripts/build-webadmin-pdf.mjs",
     "preview": "vite preview"
   },
