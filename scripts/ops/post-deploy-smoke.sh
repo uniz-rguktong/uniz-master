@@ -15,9 +15,22 @@ check() {
   local name="$1"
   local url="$2"
   local expect="${3:-200}"
+  local method="${4:-GET}"
+  local body="${5:-}"
   local code
-  code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 20 "$url" || echo "000")
-  if [[ "$code" == "$expect" ]] || [[ "$expect" == "*" && "$code" != "000" ]]; then
+  if [[ -n "$body" ]]; then
+    code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 20 \
+      -X "$method" -H "Content-Type: application/json" -d "$body" "$url" || echo "000")
+  else
+    code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 20 \
+      -X "$method" "$url" || echo "000")
+  fi
+  # A 5xx is a broken origin. Do not let expect='*' treat it as success.
+  # An explicit expected 5xx (outpass gated = 503) still passes.
+  if [[ "$code" =~ ^[0-9]+$ ]] && (( 10#$code >= 500 )) && [[ "$code" != "$expect" ]]; then
+    echo "FAIL $name (got $code, want $expect) $url"
+    FAIL=1
+  elif [[ "$code" == "$expect" ]] || [[ "$expect" == "*" && "$code" != "000" ]]; then
     echo "OK  $name ($code) $url"
   else
     echo "FAIL $name (got $code, want $expect) $url"
@@ -65,6 +78,12 @@ else
   echo "FAIL mail route (got $mail_code, want 403/400/401) $API_URL/mail/send"
   FAIL=1
 fi
+
+# DB-backed auth routes. 400/404 means Postgres answered; 500 means it did not.
+check "auth otp verify (db)" "$API_URL/auth/otp/verify" "400" POST \
+  '{"username":"SMOKENOUSER","otp":"000000"}'
+check "auth admin reset-password (db)" "$API_URL/auth/admin/reset-password" "404" POST \
+  '{"username":"smoke_no_user","password":"x","new_password":"xxxxxxx"}'
 
 if [[ "$FAIL" -ne 0 ]]; then
   echo

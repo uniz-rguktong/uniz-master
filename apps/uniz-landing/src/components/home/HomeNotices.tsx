@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getNotifications } from "@/types/api";
-import type { Notification } from "@/types/api";
+import type { Notification, NotificationType } from "@/types/api";
 import { formatNoticeDay, parseSafeDate } from "@/lib/notice-date";
 import { buttonVariants } from "../ui/button-variants";
 import { Wrap } from "../layout/Wrap";
@@ -48,13 +48,28 @@ function Row({ item }: { item: Notification }) {
   );
 }
 
-export function HomeNotices() {
+export function HomeNotices({
+  type = "news_updates",
+  heading = "Notices",
+  lede = "The latest from campus offices.",
+  href = "/notifications/news",
+  action = "All notices",
+  stacked = false,
+}: {
+  type?: NotificationType;
+  heading?: string;
+  lede?: string;
+  href?: string;
+  action?: string;
+  stacked?: boolean;
+}) {
   const [items, setItems] = useState<Notification[] | null>(null);
   const [failed, setFailed] = useState(false);
+  const headingId = heading.toLowerCase().replace(/[^a-z]+/g, "-") || "notices";
 
   useEffect(() => {
     let cancelled = false;
-    getNotifications("news_updates")
+    getNotifications(type)
       .then((data) => {
         if (cancelled) return;
         const sorted = [...data].sort((a, b) => {
@@ -73,26 +88,12 @@ export function HomeNotices() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [type]);
 
   const ready = items !== null || failed;
   const rows = items ?? [];
 
-  return (
-    <Wrap>
-      <section className="mt-[72px] min-[821px]:mt-[112px]" aria-labelledby="notices-heading">
-        <div className="grid grid-cols-1 gap-7 min-[821px]:grid-cols-[4fr_7fr] min-[821px]:gap-20">
-          <div>
-            <h2 id="notices-heading" className="u-section text-head">
-              Notices
-            </h2>
-            <p className="mt-2.5 mb-7 max-w-[320px] text-[17px] leading-[26px] text-text-2">
-              The latest from campus offices.
-            </p>
-            <Link to="/notifications/news" className={buttonVariants({ variant: "outline", size: "default" })}>
-              All notices
-            </Link>
-          </div>
+  const list = (
           <div className="min-w-0">
             {!ready &&
               Array.from({ length: 3 }).map((_, index) => (
@@ -107,8 +108,39 @@ export function HomeNotices() {
               </p>
             )}
             {ready && rows.map((item, index) => <Row key={`${item.date}-${index}`} item={item} />)}
-            {!ready && <span className="sr-only">Loading notices</span>}
+            {!ready && <span className="sr-only">Loading {heading}</span>}
           </div>
+  );
+
+  if (stacked) {
+    return (
+      <section aria-labelledby={headingId}>
+        <h2 id={headingId} className="u-h2 text-head">{heading}</h2>
+        <p className="mt-2 mb-5 max-w-[36ch] text-[15px] leading-6 text-text-2">{lede}</p>
+        <Link to={href} className={buttonVariants({ variant: "outline", size: "default" })}>
+          {action}
+        </Link>
+        <div className="mt-6">{list}</div>
+      </section>
+    );
+  }
+
+  return (
+    <Wrap>
+      <section className="mt-[72px] min-[821px]:mt-[112px]" aria-labelledby={headingId}>
+        <div className="grid grid-cols-1 gap-7 min-[821px]:grid-cols-[4fr_7fr] min-[821px]:gap-20">
+          <div>
+            <h2 id={headingId} className="u-section text-head">
+              {heading}
+            </h2>
+            <p className="mt-2.5 mb-7 max-w-[320px] text-[17px] leading-[26px] text-text-2">
+              {lede}
+            </p>
+            <Link to={href} className={buttonVariants({ variant: "outline", size: "default" })}>
+              {action}
+            </Link>
+          </div>
+          {list}
         </div>
       </section>
     </Wrap>
