@@ -71,7 +71,11 @@ const sendPush = async (
 
 export async function resolveProfileEmail(
   username: string,
+  realEmail?: string | null,
 ): Promise<string | null> {
+  const mailbox = chooseOtpEmail(null, "", realEmail);
+  if (mailbox) return mailbox;
+
   // A user's email rarely changes; cache it so repeated OTP requests don't fan
   // out up to 3 sequential user-service HTTP calls each time.
   const cacheKey = `otp:email:${username.toUpperCase()}`;

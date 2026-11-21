@@ -33,7 +33,14 @@ export function isDeliverableEmail(value: string | null | undefined): boolean {
 export function chooseOtpEmail(
   profileEmail: string | null | undefined,
   username: string,
+  realEmail?: string | null,
 ): string | null {
+  // The stored mailbox wins over a login address derived from the username.
+  // Faculty usernames are firstname.lastname, which is not a mailbox.
+  const storedReal = String(realEmail ?? "")
+    .trim()
+    .toLowerCase();
+  if (isDeliverableEmail(storedReal)) return storedReal;
   const profile = String(profileEmail ?? "")
     .trim()
     .toLowerCase();

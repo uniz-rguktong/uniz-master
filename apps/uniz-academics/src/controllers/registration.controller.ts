@@ -347,7 +347,9 @@ async function getStaffEmail(username: string): Promise<string> {
     }
   }
 
-  return `${username.toLowerCase()}@rguktong.ac.in`;
+  // Do not invent username@rguktong.ac.in. After a faculty rename that
+  // address is the login display name, not a mailbox.
+  return "";
 }
 
 async function sendPublishVerificationEmail(
@@ -513,6 +515,12 @@ async function issueDirectPublishCode(
   await redis.set(redisKey, otp, "EX", 600);
 
   const email = await getStaffEmail(user.username);
+  if (!email) {
+    res.status(400).json({
+      error: "No email address is on file for this account.",
+    });
+    return;
+  }
   await sendPublishVerificationEmail(email, user.username, otp);
 
   res.json({

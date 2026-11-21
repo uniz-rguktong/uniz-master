@@ -1,5 +1,6 @@
 import { toast } from "@/utils/toast-ref";
 import { ANALYTICS_KEY } from "./endpoints";
+import { setMustChangePassword } from "@/utils/portalSession";
 
 export enum ErrorCode {
   AUTH_UNAUTHORIZED = "AUTH_UNAUTHORIZED",
@@ -409,9 +410,20 @@ function handleHttpError(
   showToast: boolean,
   url = "",
 ) {
-  if (!showToast) return;
-
   const code = data.code || data.error?.code;
+  if (
+    status === 403 &&
+    (code === "PASSWORD_CHANGE_REQUIRED" ||
+      data.code === "PASSWORD_CHANGE_REQUIRED")
+  ) {
+    setMustChangePassword(true);
+    if (window.location.pathname !== "/set-password") {
+      window.location.assign("/set-password");
+    }
+    return;
+  }
+
+  if (!showToast) return;
   const message =
     extractApiErrorMessage(data) ||
     (typeof data.error === "string" ? data.error : undefined);

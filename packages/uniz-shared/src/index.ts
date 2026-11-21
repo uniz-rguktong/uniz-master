@@ -28,6 +28,16 @@ export {
 } from "./grievance-email";
 export { getInternalSecret, isValidInternalSecret } from "./internal-secret";
 export {
+  PASSWORD_CHANGE_REQUIRED,
+  AUTH_TOKEN_REVOKED,
+  isPasswordChangeExempt,
+  rejectStaleSession,
+  encodeCredentialStatus,
+  decodeCredentialStatus,
+  type SessionRejection,
+  type CredentialStatusSnapshot,
+} from "./session-gate";
+export {
   ENGINEERING_BRANCHES,
   BRANCH_NAME_MAP,
   normalizeBranchCode,

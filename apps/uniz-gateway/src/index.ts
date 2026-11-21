@@ -8,6 +8,7 @@ import Redis from "ioredis";
 import httpProxy from "http-proxy";
 import http from "http";
 import dotenv from "dotenv";
+import { enforceCredentialSession } from "./credential-session";
 dotenv.config({ override: true });
 
 function cacheIdentityKey(req: express.Request): string {
@@ -370,7 +371,7 @@ app.all("/api/v1/analytics/*path", (req: any, res: any) => {
 });
 
 // CMS split: `/api/*` → landing-backend (website pages); banners/notifications/admin → user-service
-app.all("/api/v1/cms/*path", (req: any, res: any) => {
+app.all("/api/v1/cms/*path", async (req: any, res: any) => {
   const subPath = proxyPathFromParams(req.params.path);
   const normalized = subPath.startsWith("/") ? subPath : `/${subPath}`;
   const queryStart = req.originalUrl.indexOf("?");
@@ -388,6 +389,12 @@ app.all("/api/v1/cms/*path", (req: any, res: any) => {
   if (!cmsTarget) {
     return res.status(503).json({ error: "CMS service unavailable" });
   }
+  const sessionClosed = await enforceCredentialSession(req, res, {
+    redis,
+    authBase: serviceMap.auth,
+    fetchStatus: (url, config) => internalClient.get(url, config),
+  });
+  if (sessionClosed) return;
   proxy.web(req, res, { target: cmsTarget, changeOrigin: true });
 });
 
@@ -397,6 +404,13 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
   const target = serviceMap[service];
 
   if (!target) return res.status(404).json({ error: "Service Not Found" });
+
+  const sessionClosed = await enforceCredentialSession(req, res, {
+    redis,
+    authBase: serviceMap.auth,
+    fetchStatus: (url, config) => internalClient.get(url, config),
+  });
+  if (sessionClosed) return;
 
   // Outpass/outing parked; grievance lives on user-service.
   // Admin SWO still calls /api/v1/requests/grievance/* — route those to user.

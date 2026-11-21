@@ -1,0 +1,91 @@
+# Manual faculty-username and campus-password revamp.
+# Dispatch only. A normal deploy does not apply this job.
+name: Login revamp
+
+permissions:
+  contents: read
+
+concurrency:
+  group: login-revamp
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "dry-run writes nothing. apply resets passwords."
+        required: true
+        type: choice
+        default: dry-run
+        options:
+          - dry-run
+          - apply
+      confirm:
+        description: "Type LOGIN-REVAMP to apply. Ignored for dry-run."
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  run:
+    name: Run login revamp
+    runs-on: [self-hosted, linux, uniz-vps]
+    timeout-minutes: 70
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Apply the one-off job
+        env:
+          LOGIN_REVAMP_MODE: ${{ inputs.mode }}
+          LOGIN_REVAMP_CONFIRM: ${{ inputs.confirm }}
+        run: |
+          set -euo pipefail
+          mode="${LOGIN_REVAMP_MODE:-dry-run}"
+          confirm="${LOGIN_REVAMP_CONFIRM:-}"
+          if [ "$mode" != "dry-run" ] && [ "$mode" != "apply" ]; then
+            echo "mode must be dry-run or apply"
+            exit 1
+          fi
+          if [ "$mode" = "apply" ] && [ "$confirm" != "LOGIN-REVAMP" ]; then
+            echo "apply requires confirm=LOGIN-REVAMP"
+            exit 1
+          fi
+          if ! command -v kubectl >/dev/null 2>&1; then
+            echo "kubectl is not available on this runner"
+            exit 1
+          fi
+
+          kubectl create configmap uniz-login-revamp-script \
+            --from-file=login-revamp.js=scripts/ops/login-revamp.js \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+          MODE="$mode" CONFIRM="$confirm" python3 -c 'import os, pathlib, sys; mode=os.environ["MODE"]; confirm=os.environ["CONFIRM"]; sys.exit("confirm must be a single line") if ("\n" in confirm or "\r" in confirm) else pathlib.Path("/tmp/uniz-login-revamp-job.yaml").write_text(pathlib.Path("infra/kubernetes/base/core/login-revamp-job.yaml").read_text().replace("__LOGIN_REVAMP_MODE__", mode).replace("__LOGIN_REVAMP_CONFIRM__", confirm))'
+
+          kubectl delete job uniz-login-revamp --ignore-not-found
+          kubectl apply -f /tmp/uniz-login-revamp-job.yaml
+          kubectl wait --for=condition=complete job/uniz-login-revamp --timeout=3600s
+
+      - name: Collect the dry-run report
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p login-revamp-artifact
+          kubectl logs job/uniz-login-revamp > login-revamp-artifact/job.log || true
+          awk '
+            /^---LOGIN-REVAMP-CSV---$/ { capture = 1; next }
+            /^---END-LOGIN-REVAMP-CSV---$/ { capture = 0; next }
+            capture { print }
+          ' login-revamp-artifact/job.log > login-revamp-artifact/login-revamp.csv
+          if [ ! -s login-revamp-artifact/login-revamp.csv ]; then
+            echo "kind,old_username,new_username,collision,action,detail" > login-revamp-artifact/login-revamp.csv
+            echo "No CSV markers in the job log. See job.log." >> login-revamp-artifact/login-revamp.csv
+          fi
+
+      - name: Upload dry-run CSV
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: login-revamp-report
+          path: login-revamp-artifact/
+          retention-days: 14
