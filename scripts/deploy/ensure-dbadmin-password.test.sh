@@ -61,6 +61,7 @@ if [ -s "$TMP/absent.err" ]; then
 fi
 grep -q '^JWT_SECURITY_KEY=kept$' "$VAULT"
 grep -q "^DBADMIN_DB_PASSWORD=${GEN}$" "$VAULT"
+grep -q '^DBADMIN_DB_PASSWORD_VERSION=2$' "$VAULT"
 [ "$(stat -c '%a' "$VAULT")" = "600" ]
 [ "$(stat -c '%u:%g' "$VAULT")" = "$OWNER" ]
 
@@ -75,16 +76,58 @@ COUNT="$(grep -c '^DBADMIN_DB_PASSWORD=' "$VAULT")"
 [ "$COUNT" = "1" ]
 grep -q '^OTHER=1$' "$VAULT"
 grep -q "^DBADMIN_DB_PASSWORD=${GEN}$" "$VAULT"
+grep -q '^DBADMIN_DB_PASSWORD_VERSION=2$' "$VAULT"
 
-# present: leave the file alone and do not call openssl
+# present at the current marker: leave the file alone and do not call openssl
 VAULT="$TMP/present.env"
-printf 'DBADMIN_DB_PASSWORD=%s\nOTHER=1\n' "$PASS_A" >"$VAULT"
+printf 'DBADMIN_DB_PASSWORD=%s\nDBADMIN_DB_PASSWORD_VERSION=2\nOTHER=1\n' "$PASS_A" >"$VAULT"
 chmod 600 "$VAULT"
 cp "$VAULT" "$TMP/present.before"
 OUT="$(run_ensure "$VAULT" DBADMIN_DB_PASSWORD= 2>"$TMP/present.err")"
 assert_stdout "$OUT" "present"
 assert_hidden "$OUT" "$PASS_A"
 cmp -s "$VAULT" "$TMP/present.before"
+
+# missing or older marker: rotate the existing password, ignore the env value
+VAULT="$TMP/rotate.env"
+printf 'DBADMIN_DB_PASSWORD=%s\nOTHER=1\n' "$PASS_A" >"$VAULT"
+chmod 600 "$VAULT"
+OWNER="$(stat -c '%u:%g' "$VAULT")"
+OUT="$(run_ensure "$VAULT" DBADMIN_DB_PASSWORD="$PASS_B" 2>"$TMP/rotate.err")"
+assert_stdout "$OUT" "generated DBADMIN_DB_PASSWORD (new)"
+assert_hidden "$OUT" "$PASS_A"
+assert_hidden "$OUT" "$PASS_B"
+assert_hidden "$OUT" "$GEN"
+if [ -s "$TMP/rotate.err" ]; then
+  echo "stderr was not empty for rotation" >&2
+  exit 1
+fi
+grep -q '^OTHER=1$' "$VAULT"
+grep -q "^DBADMIN_DB_PASSWORD=${GEN}$" "$VAULT"
+grep -q '^DBADMIN_DB_PASSWORD_VERSION=2$' "$VAULT"
+if grep -q "$PASS_A" "$VAULT" || grep -q "$PASS_B" "$VAULT"; then
+  echo "rotation kept the old password or the env value" >&2
+  exit 1
+fi
+[ "$(stat -c '%a' "$VAULT")" = "600" ]
+[ "$(stat -c '%u:%g' "$VAULT")" = "$OWNER" ]
+cp "$VAULT" "$TMP/rotate.after"
+OUT="$(run_ensure "$VAULT" DBADMIN_DB_PASSWORD="$PASS_B" 2>"$TMP/rotate2.err")"
+assert_stdout "$OUT" "present"
+cmp -s "$VAULT" "$TMP/rotate.after"
+
+VAULT="$TMP/old-version.env"
+printf 'DBADMIN_DB_PASSWORD=%s\nDBADMIN_DB_PASSWORD_VERSION=1\n' "$PASS_A" >"$VAULT"
+OUT="$(run_ensure "$VAULT" DBADMIN_DB_PASSWORD= 2>"$TMP/oldver.err")"
+assert_stdout "$OUT" "generated DBADMIN_DB_PASSWORD (new)"
+assert_hidden "$OUT" "$PASS_A"
+assert_hidden "$OUT" "$GEN"
+grep -q "^DBADMIN_DB_PASSWORD=${GEN}$" "$VAULT"
+grep -q '^DBADMIN_DB_PASSWORD_VERSION=2$' "$VAULT"
+if grep -q "$PASS_A" "$VAULT"; then
+  echo "older marker kept the old password" >&2
+  exit 1
+fi
 
 # Actions secret wins over generation when the vault line is empty
 VAULT="$TMP/from-env.env"
@@ -93,6 +136,7 @@ OUT="$(run_ensure "$VAULT" DBADMIN_DB_PASSWORD="$PASS_B" 2>"$TMP/env.err")"
 assert_stdout "$OUT" "generated DBADMIN_DB_PASSWORD (new)"
 assert_hidden "$OUT" "$PASS_B"
 grep -q "^DBADMIN_DB_PASSWORD=${PASS_B}$" "$VAULT"
+grep -q '^DBADMIN_DB_PASSWORD_VERSION=2$' "$VAULT"
 if grep -q "$GEN" "$VAULT"; then
   echo "generated a password while an env value was set" >&2
   exit 1
@@ -105,5 +149,6 @@ assert_stdout "$OUT" "generated DBADMIN_DB_PASSWORD (new)"
 [ -f "$VAULT" ]
 [ "$(stat -c '%a' "$VAULT")" = "600" ]
 grep -q "^DBADMIN_DB_PASSWORD=${GEN}$" "$VAULT"
+grep -q '^DBADMIN_DB_PASSWORD_VERSION=2$' "$VAULT"
 
-echo "ensure-dbadmin-password: absent, empty, present, env ok"
+echo "ensure-dbadmin-password: absent, empty, present, rotate, env ok"

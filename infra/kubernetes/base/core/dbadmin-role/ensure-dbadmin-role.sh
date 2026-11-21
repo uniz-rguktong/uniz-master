@@ -27,13 +27,14 @@ unset BOOTSTRAP
 TMP=$(mktemp)
 trap 'rm -f "$TMP"' EXIT
 set +e
+# Do not pass -e or -a. Those echo statements, including the password.
 psql "$CLEAN" -v ON_ERROR_STOP=1 -f "$SQL" >"$TMP" 2>&1
 rc=$?
 set -e
 unset CLEAN
-sed -E 's#postgres(ql)?://[^@[:space:]]+@#postgresql://***@#g' "$TMP"
+rm -f "$TMP"
 if [ "$rc" -ne 0 ]; then
-  echo "[dbadmin] Role setup failed. The connection string was not printed." >&2
+  echo "[dbadmin] role setup failed" >&2
   exit "$rc"
 fi
-echo "[dbadmin] Role uniz_dbadmin is ready."
+echo "[dbadmin] role ensured"
