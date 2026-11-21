@@ -28,7 +28,7 @@ import {
   studentContentSkeletonVariant,
 } from "./StudentPageSkeleton";
 import { NotificationBellButton } from "./NotificationBellButton";
-import { Lockup } from "@/components/brand/Mark";
+import { AppIcon, Lockup } from "@/components/brand/Mark";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -298,13 +298,16 @@ export default function Sidebar({ content }: MainContent) {
           collapsed ? "w-[72px]" : "w-[248px]",
         )}
       >
-        <div className="flex h-16 items-center border-b border-[var(--sb-div)] pl-5 pr-3">
+        <div
+          className={cn(
+            "flex h-16 items-center border-b border-[var(--sb-div)]",
+            collapsed ? "justify-center px-2" : "pl-5 pr-3",
+          )}
+        >
           {collapsed ? (
-            <span className="mx-auto text-white">
-              <Lockup mark={24} word={18} tone="chrome" className="[&_span]:hidden" />
-            </span>
+            <AppIcon title="uniZ" />
           ) : (
-            <Lockup mark={28} word={18} tone="chrome" />
+            <Lockup height={32} tone="chrome" title="uniZ" />
           )}
         </div>
         <nav className="flex-1 overflow-y-auto px-3 py-2" aria-label="Student">
@@ -353,7 +356,7 @@ export default function Sidebar({ content }: MainContent) {
       <div className={cn("flex min-h-screen flex-col", collapsed ? "min-[821px]:pl-[72px]" : "min-[821px]:pl-[248px]")}>
         <header className="sticky top-0 z-30 flex h-[60px] items-center justify-between bg-navy-900 px-4 text-white min-[821px]:hidden">
           <span className="text-white">
-            <Lockup mark={28} word={18} tone="chrome" className="[&_span]:sr-only" />
+            <AppIcon title="uniZ" />
           </span>
           <p className="truncate px-3 text-[17px] font-semibold leading-6">{pageName}</p>
           <div className="flex items-center gap-1">
