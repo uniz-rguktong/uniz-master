@@ -244,13 +244,17 @@ function LinksBody({ doc }: { doc: OfficialDoc }) {
           </p>
         ))}
       </div>
-      <div className="mt-6 flex flex-col items-start gap-3">
+      <div className={doc.plainLinks ? "mt-4 flex flex-col items-start" : "mt-6 flex flex-col items-start gap-3"}>
         {(doc.links ?? []).map((link) => (
           <ExternalLink
             key={link.href + link.label}
             href={link.href}
             label={link.label}
-            className={buttonVariants({ variant: link.external ? "outline" : "primary", size: "default" })}
+            className={
+              doc.plainLinks
+                ? "inline-flex min-h-11 items-center text-[15px] leading-6 text-link hover:underline"
+                : buttonVariants({ variant: link.external ? "outline" : "primary", size: "default" })
+            }
           />
         ))}
       </div>

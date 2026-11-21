@@ -8,6 +8,9 @@ class HomePageData(Base):
     announcements = Column(JSON, default=[])
     stats = Column(JSON, default=[])
     images = Column(JSON, default=[])
+    # Null until the first publish. Readers fill the current public copy.
+    hero = Column(JSON, nullable=True)
+    contact = Column(JSON, nullable=True)
 
 class InstitutePage(Base):
     __tablename__ = "institute_pages"

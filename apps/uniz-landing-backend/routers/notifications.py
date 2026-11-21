@@ -6,6 +6,7 @@ from typing import List
 from database import get_db
 import models
 import schemas
+from content_defaults import notification_read_categories, notification_write_category
 from dependencies import AdminRole
 
 router = APIRouter(prefix="/api/notifications", tags=["Notifications"])
@@ -15,7 +16,10 @@ async def get_notifications(
     type: str = Query(..., description="Select the category"),
     db: AsyncSession = Depends(get_db)
 ):
-    result = await db.execute(select(models.Notification).filter(models.Notification.category == type))
+    categories = notification_read_categories(type)
+    result = await db.execute(
+        select(models.Notification).filter(models.Notification.category.in_(categories))
+    )
     notifications = result.scalars().all()
     return notifications
 
@@ -35,12 +39,14 @@ async def sync_notifications(
     db: AsyncSession = Depends(get_db)
 ):
     try:
-        await db.execute(delete(models.Notification).where(models.Notification.category == type))
+        categories = notification_read_categories(type)
+        stored = notification_write_category(type)
+        await db.execute(delete(models.Notification).where(models.Notification.category.in_(categories)))
         
         new_records = []
         for item in data:
             new_record = models.Notification(
-                category=type,
+                category=stored,
                 title=item.title,
                 date=item.date,
                 links=[link.model_dump() for link in item.links]

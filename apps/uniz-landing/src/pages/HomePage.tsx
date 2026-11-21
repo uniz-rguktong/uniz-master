@@ -1,20 +1,20 @@
 import { usePageTitle } from "../lib/usePageTitle";
+import { AnnouncementTicker } from "../components/home/AnnouncementTicker";
+import { HomeBanners } from "../components/home/HomeBanners";
+import { HomeUpdates } from "../components/home/HomeUpdates";
 import { Masthead } from "../components/home/Masthead";
-import { ServiceIndex } from "../components/home/ServiceIndex";
 import { HomeNotices } from "../components/home/HomeNotices";
-import { HomeAnnouncements } from "../components/home/HomeAnnouncements";
-import { InstallPanel } from "../components/home/InstallPanel";
 
 export function HomePage() {
   usePageTitle("RGUKT Ongole");
 
   return (
     <>
+      <AnnouncementTicker />
+      <HomeBanners />
       <Masthead />
-      <HomeAnnouncements />
-      <ServiceIndex />
+      <HomeUpdates />
       <HomeNotices />
-      <InstallPanel />
     </>
   );
 }
