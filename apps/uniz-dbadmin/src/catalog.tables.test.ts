@@ -49,11 +49,16 @@ describe("table list for a non-owner", { timeout: 30_000 }, () => {
     return new Map(tables.map((table) => [table.name, table.estimatedRows]));
   }
 
-  before(async (t) => {
+  function requirePostgres(t: { skip: (message?: string) => void }): boolean {
+    if (prepared) return true;
+    t.skip("A local Postgres is not available on the test port.");
+    return false;
+  }
+
+  before(async () => {
     try {
       await admin.query("SELECT 1");
     } catch {
-      t.skip("A local Postgres is not available on the test port.");
       return;
     }
 
@@ -128,7 +133,8 @@ describe("table list for a non-owner", { timeout: 30_000 }, () => {
     await admin.end();
   });
 
-  it("lists unanalyzed and ungranted tables for a role that does not own them", async () => {
+  it("lists unanalyzed and ungranted tables for a role that does not own them", async (t) => {
+    if (!requirePostgres(t)) return;
     const who = await withReader(async (client) => {
       const current = await client.query<{ current_user: string }>("SELECT current_user");
       const tables = await listTables(client, "public");
@@ -149,7 +155,8 @@ describe("table list for a non-owner", { timeout: 30_000 }, () => {
     assert.equal(found.get("private_notes"), null);
   });
 
-  it("returns the table contract from the tables route", async () => {
+  it("returns the table contract from the tables route", async (t) => {
+    if (!requirePostgres(t)) return;
     const app = createApp();
     server = app.listen(0, "127.0.0.1");
     await new Promise<void>((resolve) => server?.once("listening", () => resolve()));
@@ -202,7 +209,8 @@ describe("table list for a non-owner", { timeout: 30_000 }, () => {
     assert.equal(found.has("blown_stats"), true);
   });
 
-  it("still lists tables when pg_class cannot be read", async () => {
+  it("still lists tables when pg_class cannot be read", async (t) => {
+    if (!requirePostgres(t)) return;
     const setup = new Pool({ connectionString: ADMIN_URL.replace(/\/postgres(\?|$)/, `/${DB_NAME}$1`) });
     try {
       await setup.query(`REVOKE ALL ON TABLE pg_catalog.pg_class FROM PUBLIC`);
