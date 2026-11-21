@@ -440,7 +440,7 @@ export default function WebsiteUpdatesSection() {
                 onClick={() => setSidebarOpen((o) => !o)}
                 className={cn(
                   adminGhostButtonClass,
-                  "w-9 px-0 shrink-0 lg:hidden",
+                  "w-10 px-0 shrink-0 lg:hidden",
                 )}
                 title="Toggle sidebar"
               >

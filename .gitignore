@@ -58,5 +58,8 @@ sem-reg/
 # Scratch / local tooling artifacts
 .tmp-diagrams/
 
+# Responsive audit screenshots and generated reports
+scripts/responsive-audit/out/
+
 # Local DB backups
 .backups/

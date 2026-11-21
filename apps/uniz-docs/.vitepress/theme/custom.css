@@ -28,3 +28,33 @@
   padding: 1rem;
   overflow-x: auto;
 }
+
+/* Keep wide tables and fenced code inside the column.
+   width:0 + min-width:100% stops a long line from growing the page. */
+.Layout,
+.VPContent,
+.VPDoc,
+.VPDoc .container,
+.VPDoc .content,
+.VPDoc .content-container,
+.vp-doc {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.vp-doc div[class*="language-"],
+.vp-doc pre,
+.vp-doc table,
+.vp-doc .mermaid {
+  display: block;
+  width: 0;
+  min-width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.VPLocalNav .menu,
+.VPLocalNav button,
+.VPDocAside .outline-link {
+  min-height: 40px;
+}

@@ -78,21 +78,21 @@ export function Footer() {
             {authorized ? (
               <EditableText region="contact-phone" value={contact.phone} />
             ) : (
-              <a href={`tel:${contact.phone.replace(/[^\d+]/g, "")}`} className="hover:underline">
+              <a href={`tel:${contact.phone.replace(/[^\d+]/g, "")}`} className="inline-flex min-h-10 items-center hover:underline">
                 {contact.phone}
               </a>
             )}
             {authorized ? (
               <EditableText region="contact-email" value={contact.email} />
             ) : (
-              <a href={`mailto:${contact.email}`} className="hover:underline">
+              <a href={`mailto:${contact.email}`} className="inline-flex min-h-10 items-center break-all hover:underline">
                 {contact.email}
               </a>
             )}
           </p>
           <p className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-[13px] leading-[18px]">
             {officialHome.campuses.map((campus) => (
-              <a key={campus.href} href={campus.href} target="_blank" rel="noopener noreferrer" className="text-chrome-link hover:underline">
+              <a key={campus.href} href={campus.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center text-chrome-link hover:underline">
                 {campus.label}
                 <span className="sr-only"> (opens in a new tab)</span>
               </a>

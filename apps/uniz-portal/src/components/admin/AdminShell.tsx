@@ -317,6 +317,7 @@ export default function AdminShell({
           <button
             type="button"
             aria-label="Account menu"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
             onClick={() => setMenuOpen((value) => !value)}
           >
             <Avatar size={32} src={profilePhoto} alt="" name={displayName} />
