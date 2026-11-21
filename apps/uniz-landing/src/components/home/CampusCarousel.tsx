@@ -15,7 +15,7 @@ export function CampusCarousel() {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-xl bg-tint-2 min-[821px]:rounded-hero dark:border dark:border-border" aria-roledescription="carousel" aria-label="Campus photographs">
+    <div className="relative h-full overflow-hidden rounded-xl bg-tint-2 min-[821px]:rounded-hero" aria-roledescription="carousel" aria-label="Campus photographs">
       <img
         src={slide.src}
         alt={slide.alt}
@@ -23,7 +23,7 @@ export function CampusCarousel() {
         height={800}
         decoding="async"
         fetchPriority={index === 0 ? "high" : "auto"}
-        className="aspect-[4/3] w-full object-cover min-[821px]:aspect-[5/4]"
+        className="h-full w-full object-cover"
       />
       <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-gradient-to-t from-navy-950/80 to-transparent p-3">
         <p className="text-[13px] leading-[18px] text-white">

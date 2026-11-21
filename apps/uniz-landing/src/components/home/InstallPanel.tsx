@@ -9,10 +9,10 @@ export function InstallPanel() {
         <div className="flex flex-col items-stretch justify-between gap-7 rounded-xl border border-border bg-panel px-6 py-8 min-[821px]:flex-row min-[821px]:items-center min-[821px]:gap-12 min-[821px]:px-16 min-[821px]:py-14">
           <div className="min-w-0">
             <h2 id="install-heading" className="font-serif text-[30px] font-normal leading-10 tracking-[-0.01em] text-head">
-              Use UniZ on your phone
+              The student portal on your phone
             </h2>
             <p className="mt-2.5 max-w-[520px] text-[17px] leading-[26px] text-text-2">
-              Add the portal to your home screen and open it like an app.
+              Add it to your home screen and open it like an app.
             </p>
           </div>
           <div className="flex w-full flex-col gap-3 min-[821px]:w-auto min-[821px]:flex-row">

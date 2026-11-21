@@ -20,76 +20,86 @@
 /*
  * U2 tokens. Raw scales and semantic colours stay on :root (light only).
  * Hex lives only in this file.
+ *
+ * Colours are the ones painted by https://rguktong.ac.in/ (fetched 2026-11-21):
+ * primary #C00404 — includes/main.css .header__topmenu, .announce-tag, .dropdown-item:hover
+ * secondary / header nav / footer #1b262c — main.css .navbar, .footer (class beats footer.css `footer`)
+ * header band #FFFFFF — css/navigation.css header
+ * title #0f3057 — main.css .title
+ * page #f9f9f9 — navigation.css body
+ * link #007bff — main.css .sall a
+ * nav hover #7195a8 — main.css .nav-item-back:hover .nav-link
+ * footer element token #002147 — css/footer.css footer (loses to .footer on the home page)
  */
 :root {
-  --navy-950: #070B14;
-  --navy-900: #0B1B3A;
-  --navy-800: #12264D;
-  --navy-700: #1B3366;
-  --navy-600: #24427F;
-  --navy-300: #8FA8DC;
-  --navy-100: #E6EBF5;
-  --navy-50: #F2F5FB;
+  --navy-950: #002147;
+  --navy-900: #1b262c;
+  --navy-800: #0f3057;
+  --navy-700: #002e5c;
+  --navy-600: #7195a8;
+  --navy-300: #c3d1d8;
+  --navy-100: #eff3f5;
+  --navy-50: #f9f9f9;
 
-  --black: #0A0A0B;
+  --black: #000000;
   --white: #FFFFFF;
 
-  --neutral-900: #111318;
-  --neutral-800: #1A1D24;
-  --neutral-700: #2A2E37;
-  --neutral-600: #464B55;
-  --neutral-500: #6B707A;
-  --neutral-400: #9A9EA6;
-  --neutral-300: #C9CCD2;
-  --neutral-200: #E3E5E9;
-  --neutral-100: #F1F2F4;
-  --neutral-50: #F8F9FA;
+  --neutral-900: #1b262c;
+  --neutral-800: #0f3057;
+  --neutral-700: #333333;
+  --neutral-600: #7195a8;
+  --neutral-500: #c0c0c0;
+  --neutral-400: #c3d1d8;
+  --neutral-300: #e7e7e7;
+  --neutral-200: #eff3f5;
+  --neutral-100: #f4f0eb;
+  --neutral-50: #f9f9f9;
 
-  --bg: #FFFFFF;
+  --bg: #f9f9f9;
   --surface: #FFFFFF;
-  --surface-2: #F8F9FA;
-  --border: #E3E5E9;
-  --border-strong: #C9CCD2;
-  --text: #0A0A0B;
-  --text-2: #464B55;
-  --text-3: #6B707A;
-  --primary: #0B1B3A;
+  --surface-2: #eff3f5;
+  --border: #c0c0c0;
+  --border-strong: #7195a8;
+  --text: #333333;
+  --text-2: #0f3057;
+  --text-3: #7195a8;
+  --primary: #C00404;
   --on-primary: #FFFFFF;
-  --primary-hover: #12264D;
-  --primary-active: #1B3366;
-  --link: #1B3366;
-  --selected: #F2F5FB;
-  --ring: #24427F;
-  --ring-soft: rgb(36 66 127 / .18);
-  --overlay: rgb(7 11 20 / .55);
-  --error: #B42318;
+  --primary-hover: #002147;
+  --primary-active: #1b262c;
+  --link: #007bff;
+  --selected: #f4f0eb;
+  --ring: #C00404;
+  --ring-soft: rgb(192 4 4 / .18);
+  --overlay: rgb(27 38 44 / .55);
+  --error: #C00404;
   --on-error: #FFFFFF;
   --success: #067647;
-  --warning: #B54708;
-  --input-focus: #24427F;
+  --warning: #f0c60f;
+  --input-focus: #007bff;
 
-  --panel: #F2F5FB;
+  --panel: #eff3f5;
   --tile: #FFFFFF;
-  --head: #0B1B3A;
-  --tint-2: #E6EBF5;
-  --accent: #24427F;
+  --head: #0f3057;
+  --tint-2: #f4f0eb;
+  --accent: #C00404;
 
-  --ill-far: #CBD4EA;
-  --ill-main: #1B3366;
-  --ill-roof: #12264D;
-  --ill-ground: #F2F5FB;
+  --ill-far: #c3d1d8;
+  --ill-main: #1b262c;
+  --ill-roof: #C00404;
+  --ill-ground: #f4f0eb;
   --ill-cloud: #FFFFFF;
   --ill-cloud-o: .65;
   --ill-win-o: 1;
 
-  --sb-bg: #0B1B3A;
-  --sb-border: #12264D;
-  --sb-text: #8FA8DC;
+  --sb-bg: #1b262c;
+  --sb-border: #0f3057;
+  --sb-text: #c3d1d8;
   --sb-text-hi: #FFFFFF;
-  --sb-sel: #12264D;
-  --sb-label: #8FA8DC;
-  --sb-div: #1B3366;
-  --chrome-link: #C9D3EA;
+  --sb-sel: #002147;
+  --sb-label: #c3d1d8;
+  --sb-div: #002e5c;
+  --chrome-link: #FFFFFF;
 
   --elevation-sm: 0 1px 2px rgb(10 10 11 / .06);
   --elevation-md: 0 4px 12px -2px rgb(10 10 11 / .08);

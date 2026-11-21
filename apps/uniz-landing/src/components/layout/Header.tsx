@@ -1,11 +1,9 @@
 import { useEffect, useId, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ArrowRight, ChevronDown, Menu, Search, X } from "lucide-react";
-import { Lockup } from "../brand/Lockup";
-import { portalPath } from "@/lib/portal";
+import { ArrowRight, Menu, Search, X } from "lucide-react";
+import { PORTAL_URL } from "@/lib/portal";
 import { cn } from "@/lib/utils";
 import { PRIMARY_NAV, searchDirectory } from "@/data/nav";
-import { officialHome } from "@/data/official";
 
 const DIRECTORY = searchDirectory();
 
@@ -14,10 +12,9 @@ const iconButton =
 
 export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [chrome, setChrome] = useState<{ path: string; section: string | null; mobile: boolean; search: boolean }>({
+  const [chrome, setChrome] = useState<{ path: string; section: string | null; search: boolean }>({
     path: "",
     section: null,
-    mobile: false,
     search: false,
   });
   const navigate = useNavigate();
@@ -25,65 +22,48 @@ export function Header() {
   const searchId = useId();
   const onThisPage = chrome.path === location.pathname;
   const menuSection = onThisPage ? chrome.section : null;
-  const mobileOpen = onThisPage ? chrome.mobile : false;
   const isSearchOpen = onThisPage ? chrome.search : false;
+  const menuOpen = menuSection !== null;
 
+  // Each opener writes the whole chrome record once. Calling both setters in one
+  // click lets the last write win and the panel never opens.
   const setMenuSection = (section: string | null) => {
-    setChrome({ path: location.pathname, section, mobile: false, search: false });
-  };
-  const setMobileOpen = (mobile: boolean) => {
-    setChrome({ path: location.pathname, section: null, mobile, search: false });
+    setChrome({ path: location.pathname, section, search: false });
   };
   const setIsSearchOpen = (search: boolean) => {
-    setChrome({ path: location.pathname, section: null, mobile: false, search });
+    setChrome({ path: location.pathname, section: null, search });
   };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setChrome((current) => ({ ...current, section: null, mobile: false, search: false }));
+        setChrome((current) => ({ ...current, section: null, search: false }));
       }
     };
-    const locked = isSearchOpen || mobileOpen || menuSection !== null;
-    if (locked) document.addEventListener("keydown", handleKeyDown);
-    document.body.style.overflow = mobileOpen || isSearchOpen ? "hidden" : "auto";
+    if (isSearchOpen || menuOpen) document.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = isSearchOpen || menuOpen ? "hidden" : "auto";
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "auto";
     };
-  }, [isSearchOpen, menuSection, mobileOpen]);
+  }, [isSearchOpen, menuOpen]);
 
   const filteredResults = DIRECTORY.filter((item) =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  const sections = menuSection === "all"
+    ? PRIMARY_NAV.filter((item) => item.children)
+    : PRIMARY_NAV.filter((item) => item.label === menuSection);
+
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-navy-900 text-white">
-        <div className="border-b border-navy-800">
-          <div className="mx-auto flex h-9 w-full max-w-[1232px] items-center justify-end gap-4 overflow-x-auto px-5 min-[821px]:px-10">
-            <span className="mr-auto text-[12px] leading-4 text-navy-300">Other campuses</span>
-            {officialHome.campuses.map((campus) => (
-              <a
-                key={campus.href}
-                href={campus.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="focus-chrome shrink-0 text-[12px] leading-4 text-chrome-link hover:underline"
-              >
-                {campus.label}
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-            ))}
-          </div>
-        </div>
-
+      <header className="sticky top-0 z-50 w-full border-b border-sb-border bg-navy-900 text-white">
         <div className="mx-auto flex h-[60px] w-full max-w-[1232px] items-center gap-3 px-5 min-[821px]:h-16 min-[821px]:px-10">
-          <Link to="/" className="focus-chrome inline-flex min-w-0 items-center gap-3 text-white">
-            <Lockup mark={32} word={20} />
-            <span className="hidden h-5 w-px shrink-0 bg-navy-700 min-[821px]:block" aria-hidden="true" />
-            <span className="hidden whitespace-nowrap text-[13px] font-medium leading-[18px] text-navy-300 min-[821px]:block">
+          <Link to="/" className="focus-chrome inline-flex min-w-0 items-center gap-2.5 text-white">
+            <img src="/rgukt-logo.png" alt="" width={36} height={42} className="h-9 w-auto" />
+            <span className="whitespace-nowrap font-serif text-[16px] font-semibold leading-none tracking-[-0.01em] min-[640px]:text-[20px]">
               RGUKT Ongole
             </span>
           </Link>
@@ -98,32 +78,30 @@ export function Header() {
               <Search size={20} strokeWidth={1.75} />
             </button>
             <a
-              href={portalPath("/student/signin")}
-              className="focus-chrome inline-flex h-11 items-center rounded-full bg-white px-5 text-[14px] font-semibold leading-5 text-navy-900 min-[640px]:h-[38px]"
+              href={PORTAL_URL}
+              className="focus-chrome inline-flex h-11 items-center whitespace-nowrap rounded-full bg-white px-3 text-[12px] font-semibold leading-5 text-navy-900 min-[640px]:h-[38px] min-[640px]:px-4 min-[640px]:text-[14px]"
             >
-              Sign in
+              Student Portal
             </a>
             <button
               type="button"
-              onClick={() => setMobileOpen(true)}
+              onClick={() => setMenuSection("all")}
               aria-label="Open menu"
-              aria-expanded={mobileOpen}
+              aria-expanded={menuSection === "all"}
               className={cn(iconButton, "min-[1100px]:hidden")}
             >
               <Menu size={20} strokeWidth={1.75} />
             </button>
           </div>
         </div>
-
-        <nav aria-label="Primary" className="hidden border-t border-navy-800 min-[1100px]:block">
-          <div className="mx-auto flex w-full max-w-[1232px] flex-wrap items-center gap-1 px-5 min-[821px]:px-8">
+        <nav aria-label="Primary" className="mx-auto hidden w-full max-w-[1232px] flex-wrap items-center gap-x-1 border-t border-navy-800 px-5 min-[1100px]:flex min-[821px]:px-8">
             {PRIMARY_NAV.map((item) => {
               if (!item.children) {
                 return (
                   <Link
                     key={item.label}
                     to={item.to || "/"}
-                    className="focus-chrome inline-flex h-11 items-center px-2.5 text-[14px] font-medium leading-5 text-chrome-link hover:text-white"
+                    className="focus-chrome inline-flex h-10 items-center rounded-md px-2 text-[14px] font-medium leading-5 text-chrome-link hover:bg-navy-600 hover:text-white"
                   >
                     {item.label}
                   </Link>
@@ -131,110 +109,81 @@ export function Header() {
               }
               const open = menuSection === item.label;
               return (
-                <div key={item.label} className="relative">
-                  <button
-                    type="button"
-                    className={cn(
-                      "focus-chrome inline-flex h-11 items-center gap-1 px-2.5 text-[14px] font-medium leading-5 text-chrome-link hover:text-white",
-                      open && "text-white",
-                    )}
-                    aria-expanded={open}
-                    aria-haspopup="true"
-                    onClick={() => setMenuSection(open ? null : item.label)}
-                  >
-                    {item.label}
-                    <ChevronDown size={14} strokeWidth={1.75} aria-hidden="true" className={cn(open && "rotate-180")} />
-                  </button>
-                  {open && (
-                    <div className="absolute left-0 top-full z-40 mt-1 min-w-64 rounded-xl border border-border bg-panel p-2 text-text shadow-md">
-                      <ul>
-                        {item.children.map((link) => (
-                          <li key={link.to}>
-                            <Link
-                              to={link.to}
-                              className="flex min-h-11 items-center rounded-lg px-3 text-[15px] leading-6 text-link hover:bg-tint-2 hover:underline"
-                              onClick={() => setMenuSection(null)}
-                            >
-                              {link.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                <button
+                  key={item.label}
+                  type="button"
+                  className={cn(
+                    "focus-chrome inline-flex h-10 items-center rounded-md px-2 text-[14px] font-medium leading-5 text-chrome-link hover:bg-navy-600 hover:text-white",
+                    open && "text-white",
                   )}
-                </div>
+                  aria-expanded={open}
+                  onClick={() => setMenuSection(open ? null : item.label)}
+                >
+                  {item.label}
+                </button>
               );
             })}
-          </div>
         </nav>
       </header>
 
-      {menuSection && (
-        <button
-          type="button"
-          aria-label="Close menu"
-          className="fixed inset-0 z-40 hidden cursor-default bg-transparent min-[1100px]:block"
-          onClick={() => setMenuSection(null)}
-        />
-      )}
-
-      {mobileOpen && (
+      {menuOpen && (
         <div
-          className="fixed inset-0 z-[80] overflow-y-auto bg-[var(--overlay)] px-4 py-4 min-[1100px]:hidden"
-          onClick={() => setMobileOpen(false)}
+          className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto bg-[var(--overlay)] px-4 py-4 min-[821px]:px-10 min-[821px]:pt-20"
+          onClick={() => setMenuSection(null)}
         >
           <div
             role="dialog"
             aria-modal="true"
-            aria-label="Menu"
-            className="menu-in relative z-10 w-full animate-[menu-in_200ms_ease-out_both] rounded-xl border border-border bg-panel p-4 text-text shadow-lg motion-reduce:animate-none"
+            aria-label={menuSection === "all" ? "Menu" : `${menuSection} menu`}
+            className="menu-in relative z-10 w-full max-w-[1232px] animate-[menu-in_200ms_ease-out_both] rounded-xl border border-border bg-panel p-6 text-text shadow-lg motion-reduce:animate-none min-[821px]:p-8"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="mb-2 flex items-center justify-between">
-              <p className="text-[15px] font-medium leading-6 text-head">Menu</p>
+            <div className="mb-6 flex items-center justify-between gap-4">
+              <p className="text-[15px] font-medium leading-6 text-head">
+                {menuSection === "all" ? "Menu" : menuSection}
+              </p>
               <button
                 type="button"
-                onClick={() => setMobileOpen(false)}
+                onClick={() => setMenuSection(null)}
                 aria-label="Close menu"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full text-text-2 hover:bg-tint-2"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full text-text-2 hover:bg-tint-2"
               >
                 <X size={20} strokeWidth={1.75} />
               </button>
             </div>
-            <nav aria-label="Mobile">
-              {PRIMARY_NAV.map((item) =>
-                item.children ? (
-                  <details key={item.label} className="border-t border-border">
-                    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-[15px] font-medium leading-6 text-head [&::-webkit-details-marker]:hidden">
-                      {item.label}
-                      <ChevronDown size={16} aria-hidden="true" />
-                    </summary>
-                    <ul className="pb-2">
-                      {item.children.map((link) => (
-                        <li key={link.to}>
-                          <Link
-                            to={link.to}
-                            onClick={() => setMobileOpen(false)}
-                            className="inline-flex min-h-11 items-center pl-3 text-[15px] leading-6 text-link hover:underline"
-                          >
-                            {link.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                ) : (
+            <div className={cn("grid gap-8", sections.length > 1 && "min-[821px]:grid-cols-2")}>
+              {menuSection === "all" && PRIMARY_NAV.filter((item) => !item.children).map((item) => (
+                <div key={item.label} className="min-[821px]:col-span-2">
                   <Link
-                    key={item.label}
                     to={item.to || "/"}
-                    onClick={() => setMobileOpen(false)}
-                    className="flex min-h-11 items-center border-t border-border text-[15px] font-medium leading-6 text-head"
+                    onClick={() => setMenuSection(null)}
+                    className="inline-flex min-h-11 items-center text-[15px] leading-6 text-link"
                   >
                     {item.label}
                   </Link>
-                ),
-              )}
-            </nav>
+                </div>
+              ))}
+              {sections.map((section) => (
+                <div key={section.label}>
+                  {menuSection === "all" && (
+                    <h2 className="mb-2 text-[15px] font-semibold leading-6 text-head">{section.label}</h2>
+                  )}
+                  <ul className="grid grid-cols-1 gap-x-8 min-[640px]:grid-cols-2">
+                    {section.children?.map((link) => (
+                      <li key={link.to}>
+                        <Link
+                          to={link.to}
+                          onClick={() => setMenuSection(null)}
+                          className="inline-flex min-h-11 items-center text-[15px] leading-6 text-link hover:underline"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -248,7 +197,7 @@ export function Header() {
             role="dialog"
             aria-modal="true"
             aria-label="Search"
-            className="menu-in relative z-10 flex w-full max-w-[640px] animate-[menu-in_200ms_ease-out_both] flex-col overflow-hidden rounded-xl border border-border bg-surface text-text shadow-lg motion-reduce:animate-none dark:shadow-none"
+            className="menu-in relative z-10 flex w-full max-w-[640px] animate-[menu-in_200ms_ease-out_both] flex-col overflow-hidden rounded-xl border border-border bg-surface text-text shadow-lg motion-reduce:animate-none"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="border-b border-border px-5 py-4">

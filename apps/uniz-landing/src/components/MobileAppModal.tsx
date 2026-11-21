@@ -8,7 +8,6 @@ import {
   OPEN_IOS_MODAL_EVENT,
 } from "../lib/mobile-app";
 import { PORTAL_URL } from "@/lib/portal";
-import { Lockup } from "./brand/Lockup";
 import { buttonVariants } from "./ui/button-variants";
 import { cn } from "@/lib/utils";
 
@@ -73,18 +72,21 @@ export function MobileAppModal() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="ios-install-title"
-        className="max-h-[92vh] w-full overflow-y-auto rounded-t-xl border border-border-strong bg-surface p-5 pb-[calc(24px+env(safe-area-inset-bottom))] text-text shadow-lg sm:max-w-[640px] sm:rounded-xl sm:p-8 dark:shadow-none"
+        className="max-h-[92vh] w-full overflow-y-auto rounded-t-xl border border-border-strong bg-surface p-5 pb-[calc(24px+env(safe-area-inset-bottom))] text-text shadow-lg sm:max-w-[640px] sm:rounded-xl sm:p-8"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-border-strong sm:hidden" aria-hidden="true" />
         <div className="flex items-start justify-between gap-4">
           <div>
-            <Lockup mark={32} word={20} className="text-head" />
+            <span className="inline-flex items-center gap-2 text-head">
+              <img src="/rgukt-logo.png" alt="" width={32} height={37} className="h-8 w-auto" />
+              <span className="font-serif text-[20px] font-semibold leading-none">RGUKT Ongole</span>
+            </span>
             <h2 id="ios-install-title" className="mt-4 font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head">
               Download iOS App
             </h2>
             <p className="mt-2 text-[15px] leading-6 text-text-2">
-              RGUKT Ongole · uniZ app
+              RGUKT Ongole student portal
             </p>
           </div>
           <button
@@ -126,7 +128,7 @@ export function MobileAppModal() {
                   1
                 </span>
                 <span>
-                  Open <strong className="font-semibold">uniz.rguktong.in</strong> in Safari and tap{" "}
+                  Open the <strong className="font-semibold">Student Portal</strong> in Safari and tap{" "}
                   <Share className="mx-0.5 inline h-4 w-4 text-accent" aria-hidden="true" />{" "}
                   <strong className="font-semibold">Share</strong>.
                 </span>
@@ -148,7 +150,7 @@ export function MobileAppModal() {
               className={cn(buttonVariants({ variant: "outline", size: "default" }), "mt-4 w-full")}
             >
               {copied ? <Check size={16} strokeWidth={1.75} aria-hidden="true" /> : <Copy size={16} strokeWidth={1.75} aria-hidden="true" />}
-              {copied ? "Copied uniz.rguktong.in" : "Copy Safari Portal Link"}
+              {copied ? "Copied the Student Portal link" : "Copy Student Portal link"}
             </button>
           </div>
 
