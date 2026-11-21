@@ -25,6 +25,7 @@ spec:
                     secretKeyRef:
                       name: uniz-secrets
                       key: DBADMIN_DB_PASSWORD
+                      optional: true
                 - name: USER_DATABASE_URL
                   valueFrom:
                     secretKeyRef:

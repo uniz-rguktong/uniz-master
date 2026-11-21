@@ -27,6 +27,7 @@ fi
 HOSTS=(
   "api-uniz.rguktong.in"
   "landing-api.rguktong.in"
+  "dbadmin.rguktong.in"
 )
 
 install_cloudflared() {

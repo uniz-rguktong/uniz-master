@@ -37,6 +37,7 @@ spec:
                 secretKeyRef:
                   name: uniz-secrets
                   key: DBADMIN_DB_PASSWORD
+                  optional: true
             - name: JWT_SECURITY_KEY
               valueFrom:
                 secretKeyRef:

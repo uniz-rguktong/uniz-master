@@ -579,7 +579,7 @@ deploy_logic() {
       echo "[Deploy] Updating $DEP -> $FULL_IMAGE"
       apply_ghcr_image_to_workload "$DEP" "$CON" "$FULL_IMAGE"
       if [ "$IMG" = "uniz-dbadmin-service" ]; then
-        apply_ghcr_image_to_workload "uniz-adminer" "access-proxy" "$FULL_IMAGE"
+        apply_ghcr_image_to_workload "uniz-adminer" "access-proxy" "$FULL_IMAGE" || true
       fi
     elif [ -n "$TAG" ]; then
       import_image_to_k3s "$IMG" "$TAG" || {
@@ -655,7 +655,8 @@ deploy_logic() {
       uniz-academics-service \
       uniz-notification-service \
       uniz-outpass-service \
-      uniz-gateway-api
+      uniz-gateway-api \
+      uniz-dbadmin-service
     do
       kubectl rollout restart "deployment/$dep" || true
       skip=false

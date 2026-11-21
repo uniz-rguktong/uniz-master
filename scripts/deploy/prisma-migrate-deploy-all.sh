@@ -137,7 +137,11 @@ for entry in "${SERVICES[@]}"; do
     export DBADMIN_MIGRATE_DATABASE_URL
   fi
   if ! migrate_one "$app" "$url_var" "${mode:-}"; then
-    failed=$((failed + 1))
+    if [ "$app" = "uniz-dbadmin" ]; then
+      echo "[Prisma] WARN: uniz-dbadmin migration failed — continuing so other services can deploy" >&2
+    else
+      failed=$((failed + 1))
+    fi
   fi
   cd "$ROOT"
 done
