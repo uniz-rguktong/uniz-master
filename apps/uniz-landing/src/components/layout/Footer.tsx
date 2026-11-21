@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Linkedin, Instagram, Youtube } from "lucide-react";
-import { Lockup } from "../brand/Lockup";
 import { Wrap } from "./Wrap";
-import { portalPath } from "@/lib/portal";
+import { portalPath, PORTAL_URL } from "@/lib/portal";
+import { officialHome } from "@/data/official";
 import { ANDROID_APK_FILENAME, ANDROID_APK_URL, openLandingIosModal } from "@/lib/mobile-app";
 
 const columns = [
@@ -61,11 +61,20 @@ export function Footer() {
     <footer className="mt-[72px] w-full bg-navy-900 text-white min-[821px]:mt-[120px] dark:border-t dark:border-sb-border">
       <Wrap className="grid grid-cols-2 gap-x-6 gap-y-9 py-12 pb-9 min-[821px]:grid-cols-[1.6fr_repeat(4,1fr)] min-[821px]:gap-12 min-[821px]:py-[72px] min-[821px]:pb-14">
         <div className="col-span-2 min-w-0 min-[821px]:col-span-1">
-          <Link to="/" className="focus-chrome inline-flex text-white">
-            <Lockup mark={40} word={24} />
+          <Link to="/" className="focus-chrome inline-flex items-center gap-3 text-white">
+            <img src="/rgukt-logo.png" alt="" width={40} height={46} className="h-10 w-auto brightness-0 invert" />
+            <span className="font-serif text-[22px] font-semibold leading-none tracking-[-0.01em]">RGUKT Ongole</span>
           </Link>
           <p className="mt-5 max-w-[360px] text-[14px] leading-[22px] text-chrome-link">
             Rajiv Gandhi University of Knowledge Technologies, Ongole. RGUKT Ongole Campus, Kurnool Road, Santhanuthalapadu (V&amp;M), Prakasam District, Andhra Pradesh — 523225.
+          </p>
+          <p className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-[13px] leading-[18px]">
+            {officialHome.campuses.map((campus) => (
+              <a key={campus.href} href={campus.href} target="_blank" rel="noopener noreferrer" className="text-chrome-link hover:underline">
+                {campus.label}
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            ))}
           </p>
         </div>
 
@@ -93,7 +102,7 @@ export function Footer() {
       <div className="border-t border-navy-700">
         <Wrap className="flex flex-col gap-4 py-[22px] min-[821px]:flex-row min-[821px]:items-center min-[821px]:justify-between">
           <p className="max-w-[520px] text-[13px] leading-[18px] text-navy-300">
-            © 2026 RGUKT Ongole · UniZ. The Rajiv Gandhi University of Knowledge Technologies has been constituted under A.P. Act No. 18 of 2008.
+            © RGUKT Ongole. The Rajiv Gandhi University of Knowledge Technologies has been constituted under A.P. Act No. 18 of 2008.
           </p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <a href={ANDROID_APK_URL} download={ANDROID_APK_FILENAME} className={barLink}>
@@ -114,6 +123,9 @@ export function Footer() {
                 <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
               </a>
             ))}
+            <a href={PORTAL_URL} className={barLink}>
+              Student Portal
+            </a>
             <a href={portalPath("/privacy")} className={barLink}>
               Privacy
             </a>

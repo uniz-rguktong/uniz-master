@@ -45,9 +45,9 @@ export default defineConfig([
 
 ## UniZ landing
 
-The public site uses the light U2 tokens in `src/index.css`. There is no theme toggle; a stored `uniz-landing-theme` value is ignored.
+The public site uses the light tokens in `src/index.css`, matched to the colours on https://rguktong.ac.in/. There is no theme toggle; a stored `uniz-landing-theme` value is ignored.
 
-`VITE_SHOW_OUTPASS` is optional and unset by default. Set it to `"true"` only when the portal outpass flow is enabled. That build inserts “outpasses,” in the home lede, shows an Outpass service, and drops Notices from the service index. The default build has no Outpass tile.
+`VITE_SHOW_OUTPASS` is optional and unset by default. Set it to `"true"` only when the portal outpass flow is enabled. That build shows an Outpass service and drops Notices from the service index. The default build has no Outpass tile.
 
 `npm run lint:hex` fails when a file under `src` contains a raw hex colour outside `src/index.css` and SVG logo sources. Wire it into CI next to the existing landing lint step, without editing the workflow in this change:
 
