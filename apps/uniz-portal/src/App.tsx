@@ -128,7 +128,6 @@ const AuthRedirect = () => {
   return <Navigate to="/" replace />;
 };
 
-import { InstallPWA } from "./components/InstallPWA";
 import { usePushNavigation } from "./hooks/usePushNavigation";
 
 function PushNavigationBridge() {
@@ -140,7 +139,6 @@ export default function App() {
   return (
     <>
       <PushNavigationBridge />
-      <InstallPWA />
       <Toaster defaultPosition="bottom-right" />
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
