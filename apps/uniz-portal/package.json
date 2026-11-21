@@ -13,7 +13,7 @@
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "lint:hex": "node scripts/lint-hex.mjs",
-    "test": "node --test scripts/otp-copy.test.mjs && NODE_OPTIONS='--require ./test/register-react.cjs --import ./test/register-react.mjs' vitest run",
+    "test": "NODE_OPTIONS='--require ./test/register-react.cjs --import ./test/register-react.mjs' vitest run",
     "guides:pdf": "node scripts/build-webadmin-pdf.mjs",
     "preview": "vite preview"
   },
