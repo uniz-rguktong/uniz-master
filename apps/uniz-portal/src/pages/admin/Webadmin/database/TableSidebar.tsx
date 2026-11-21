@@ -1,4 +1,5 @@
 import { adminInputClass, adminSelectClass } from "@/components/admin/admin-ui";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { cn } from "@/lib/utils";
 import type { TableSummary } from "./databaseApi";
@@ -13,6 +14,8 @@ export function TableSidebar({
   onQuery,
   tables,
   loading,
+  error,
+  onRetry,
   selected,
   onSelect,
 }: {
@@ -24,6 +27,8 @@ export function TableSidebar({
   onQuery: (query: string) => void;
   tables: TableSummary[];
   loading: boolean;
+  error: string;
+  onRetry: () => void;
   selected: string;
   onSelect: (table: string) => void;
 }) {
@@ -58,15 +63,34 @@ export function TableSidebar({
         />
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
-        {loading ? (
+        {loading || !schema ? (
           <div className="space-y-2 px-1 py-1">
             {Array.from({ length: 8 }, (_, index) => (
               <Skeleton key={index} className="h-8 w-full" />
             ))}
           </div>
         ) : null}
-        {!loading && shown.length === 0 ? (
-          <p className="px-2 py-6 text-center text-small text-text-2">{tables.length === 0 ? "No tables in this schema." : "No tables match that search."}</p>
+        {!loading && schema && error ? (
+          <div className="px-2 py-6 text-center">
+            <p role="alert" className="text-small text-error">
+              {error}
+            </p>
+            <Button type="button" variant="outline" size="compact" className="mt-3" onClick={onRetry}>
+              Retry
+            </Button>
+          </div>
+        ) : null}
+        {!loading && schema && !error && shown.length === 0 ? (
+          <div className="px-2 py-6 text-center text-small text-text-2">
+            {tables.length === 0 ? (
+              <>
+                <p>This schema has no tables.</p>
+                <p className="mt-1 text-text-3">Pick another schema from the list.</p>
+              </>
+            ) : (
+              <p>No tables match that search.</p>
+            )}
+          </div>
         ) : null}
         <ul className="space-y-0.5" aria-label="Tables">
           {shown.map((table) => {

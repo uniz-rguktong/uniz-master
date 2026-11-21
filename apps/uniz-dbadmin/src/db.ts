@@ -11,6 +11,12 @@ export interface DbTarget {
 
 const pools = new Map<string, Pool>();
 
+export async function closePools(): Promise<void> {
+  const open = [...pools.values()];
+  pools.clear();
+  await Promise.all(open.map((pool) => pool.end()));
+}
+
 export function loadTargets(): DbTarget[] {
   const raw = (process.env.DBADMIN_TARGETS || "").trim();
   if (!raw) {
