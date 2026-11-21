@@ -28,6 +28,7 @@ const SECTION_TO_PATH: Record<string, string> = {
   exam_seating: "exam-seating",
   roles: "roles",
   database: "database",
+  role_mgmt: "staff/roles",
   help: "help",
 };
 
