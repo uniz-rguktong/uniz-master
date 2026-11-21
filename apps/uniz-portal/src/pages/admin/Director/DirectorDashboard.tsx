@@ -28,7 +28,6 @@ import WebsiteUpdatesSection from "../Webmaster/WebsiteUpdatesSection";
 import PushNotificationSection from "../Webmaster/PushNotificationSection";
 import StudentBulkSection from "../Webmaster/StudentBulkSection";
 import SystemLogsSection from "../Webmaster/SystemLogsSection";
-import SubjectManagement from "../Webmaster/SubjectManagement";
 import CurriculumManager from "../Curriculum";
 import SemesterBuilder from "../Webmaster/SemesterBuilder";
 

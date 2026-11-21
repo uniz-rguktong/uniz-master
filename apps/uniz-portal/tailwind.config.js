@@ -1,148 +1,130 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{html,js,jsx,ts,tsx}"],
+  darkMode: "class",
 
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Google Sans"', "Inter", "system-ui", "sans-serif"],
-        body: ['"Google Sans Text"', "Inter", "system-ui", "sans-serif"],
-        condensed: ['"Cabin Condensed"', "sans-serif"],
+        sans: ['"Inter Variable"', "Inter", "system-ui", "sans-serif"],
+        serif: ['"Noto Serif Variable"', '"Noto Serif"', "Georgia", "serif"],
+        body: ['"Inter Variable"', "Inter", "system-ui", "sans-serif"],
       },
 
       fontSize: {
-        h1: [
-          "48px",
-          { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "600" },
-        ],
-        h2: [
-          "36px",
-          { lineHeight: "44px", letterSpacing: "-0.01em", fontWeight: "600" },
-        ],
+        display: ["54px", { lineHeight: "66px", letterSpacing: "-0.01em" }],
+        page: ["32px", { lineHeight: "40px", letterSpacing: "-0.01em" }],
+        h2: ["28px", { lineHeight: "36px", letterSpacing: "-0.01em" }],
         h3: [
-          "28px",
-          { lineHeight: "36px", letterSpacing: "-0.01em", fontWeight: "600" },
+          "18px",
+          { lineHeight: "26px", letterSpacing: "-0.01em", fontWeight: "600" },
         ],
-        h4: ["22px", { lineHeight: "30px", fontWeight: "500" }],
-
-        base: ["16px", { lineHeight: "24px", fontWeight: "400" }],
-        small: ["14px", { lineHeight: "20px", fontWeight: "400" }],
-        micro: ["12px", { lineHeight: "16px", fontWeight: "500" }],
+        lede: ["19px", { lineHeight: "30px" }],
+        body: ["15px", { lineHeight: "24px" }],
+        dense: ["14px", { lineHeight: "20px" }],
+        small: ["13px", { lineHeight: "18px" }],
+        caption: ["12px", { lineHeight: "16px" }],
       },
 
       colors: {
-        background: "#ffffff",
-        foreground: "#0f172a",
-
-        primary: {
-          DEFAULT: "var(--portal-navy, #0B2A47)",
-          foreground: "#ffffff",
-        },
-
-        muted: {
-          DEFAULT: "#f1f5f9",
-          foreground: "#64748b",
-        },
-
-        accent: {
-          DEFAULT: "#EDF5FB",
-          foreground: "#0B2A47",
-        },
-
-        portal: {
-          DEFAULT: "var(--portal-navy, #0B2A47)",
-          mid: "var(--portal-navy-mid, #0F3B63)",
-          deep: "var(--portal-navy-deep, #081E33)",
-          soft: "var(--portal-navy-soft, #1A4A73)",
-          muted: "var(--portal-navy-muted, #5A94B8)",
-          tint: "var(--portal-navy-tint, #EDF5FB)",
-          border: "var(--portal-navy-border, #D4E8F5)",
-        },
-
-        /* Remap default Tailwind blue → institutional navy (no indigo) */
-        blue: {
-          50: "#F7FAFD",
-          100: "#EDF5FB",
-          200: "#D4E8F5",
-          300: "#9BC0DC",
-          400: "#5A94B8",
-          500: "#2E7099",
-          600: "#1E5A8C",
-          700: "#16466F",
-          800: "#0F3B63",
-          900: "#0B2A47",
-          950: "#081E33",
-        },
-
         navy: {
+          950: "var(--navy-950)",
           900: "var(--navy-900)",
           800: "var(--navy-800)",
           700: "var(--navy-700)",
           600: "var(--navy-600)",
-          500: "var(--navy-500)",
-          400: "var(--navy-400)",
           300: "var(--navy-300)",
-          200: "var(--navy-200)",
           100: "var(--navy-100)",
           50: "var(--navy-50)",
         },
-
-        slate: {
-          50: "#f8fafc",
-          100: "#f1f5f9",
-          200: "#e2e8f0",
-          300: "#cbd5e1",
-          400: "#94a3b8",
-          490: "#222222",
-          500: "#64748b",
-          600: "#475569",
-          700: "#334155",
-          800: "#1e293b",
-          900: "#0f172a",
-          950: "#020617",
+        neutral: {
+          900: "var(--neutral-900)",
+          800: "var(--neutral-800)",
+          700: "var(--neutral-700)",
+          600: "var(--neutral-600)",
+          500: "var(--neutral-500)",
+          400: "var(--neutral-400)",
+          300: "var(--neutral-300)",
+          200: "var(--neutral-200)",
+          100: "var(--neutral-100)",
+          50: "var(--neutral-50)",
+        },
+        bg: "var(--bg)",
+        surface: {
+          DEFAULT: "var(--surface)",
+          2: "var(--surface-2)",
+        },
+        panel: "var(--panel)",
+        tile: "var(--tile)",
+        head: "var(--head)",
+        tint: "var(--tint-2)",
+        border: {
+          DEFAULT: "var(--border)",
+          strong: "var(--border-strong)",
+        },
+        text: {
+          DEFAULT: "var(--text)",
+          2: "var(--text-2)",
+          3: "var(--text-3)",
+        },
+        primary: {
+          DEFAULT: "var(--primary)",
+          foreground: "var(--on-primary)",
+          hover: "var(--primary-hover)",
+          active: "var(--primary-active)",
+        },
+        link: "var(--link)",
+        selected: "var(--selected)",
+        ring: "var(--ring)",
+        accent: "var(--accent)",
+        error: "var(--error)",
+        success: "var(--success)",
+        warning: "var(--warning)",
+        "on-error": "var(--on-error)",
+        overlay: "var(--overlay)",
+        background: "var(--bg)",
+        foreground: "var(--text)",
+        card: {
+          DEFAULT: "var(--surface)",
+          foreground: "var(--text)",
+        },
+        popover: {
+          DEFAULT: "var(--surface)",
+          foreground: "var(--text)",
+        },
+        muted: {
+          DEFAULT: "var(--surface-2)",
+          foreground: "var(--text-3)",
+        },
+        input: "var(--border-strong)",
+        destructive: {
+          DEFAULT: "var(--error)",
+          foreground: "var(--on-error)",
         },
       },
 
-      boxShadow: {
-        sm: "0 2px 8px -2px rgba(0,0,0,0.04), 0 1px 4px -1px rgba(0,0,0,0.02)",
-        DEFAULT:
-          "0 4px 12px -2px rgba(0,0,0,0.05), 0 2px 6px -1px rgba(0,0,0,0.03)",
-        md: "0 8px 24px -4px rgba(0,0,0,0.06), 0 4px 12px -2px rgba(0,0,0,0.04)",
-        lg: "0 16px 32px -8px rgba(0,0,0,0.08), 0 8px 16px -4px rgba(0,0,0,0.05)",
-        xl: "0 24px 48px -12px rgba(0,0,0,0.12), 0 12px 24px -6px rgba(0,0,0,0.06)",
-        "2xl":
-          "0 32px 64px -16px rgba(0,0,0,0.16), 0 16px 32px -8px rgba(0,0,0,0.08)",
-        inner: "inset 0 2px 4px 0 rgba(0,0,0,0.04)",
-        whisper: "0 1px 2px rgba(11, 42, 71, 0.04)",
-        "whisper-md": "0 4px 16px -6px rgba(11, 42, 71, 0.08)",
-        "whisper-lg": "0 20px 50px -24px rgba(11, 42, 71, 0.12)",
-        "whisper-navy": "0 1px 2px rgba(11, 42, 71, 0.16)",
-        "whisper-landing": "0 20px 40px -15px rgba(0, 0, 0, 0.12)",
-      },
-
       borderRadius: {
-        "portal-lg": "12px",
-        "portal-xl": "16px",
-        "portal-2xl": "20px",
+        sm: "8px",
+        md: "12px",
+        lg: "16px",
+        xl: "24px",
+        full: "9999px",
       },
 
-      spacing: {
-        portal: "32px",
+      boxShadow: {
+        sm: "var(--shadow-sm)",
+        DEFAULT: "var(--shadow-sm)",
+        md: "var(--shadow-md)",
+        lg: "var(--shadow-lg)",
       },
 
       transitionTimingFunction: {
-        spring: "cubic-bezier(0.175, 0.885, 0.32, 1.275)",
         smooth: "cubic-bezier(0.4, 0, 0.2, 1)",
       },
 
       transitionDuration: {
-        400: "400ms",
-        500: "500ms",
-      },
-
-      backgroundImage: {
-        "premium-gradient": "linear-gradient(to right, #ffffff, #ffffff)",
-        "portal-banner": "linear-gradient(to right, #0B2A47, #0F3B63)",
+        150: "150ms",
+        200: "200ms",
       },
 
       animation: {

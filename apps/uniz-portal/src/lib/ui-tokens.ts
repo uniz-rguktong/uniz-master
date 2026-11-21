@@ -1,9 +1,11 @@
 /**
  * UniZ design system — single import for token class strings.
  *
- * Portal surfaces (.portal-theme): import from portal-ui / student-ui
- * Landing / marketing: import from landing-ui
+ * Portal surfaces: import from portal-ui / student-ui
+ * Public pages: import from landing-ui
  * Admin: import from admin-ui (extends portal-ui)
+ *
+ * Appearance (light / dark / system) lives in hooks/usePortalTheme.
  */
 
 export * from "@/lib/portal-ui";

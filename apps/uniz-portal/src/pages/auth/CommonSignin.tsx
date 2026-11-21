@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Input } from "../../components/Input";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "../../components/Button";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { adminUsername, is_authenticated, resetTokenState } from "../../store";
@@ -92,6 +93,7 @@ interface SigninResponse {
   admin_token?: string;
   success?: boolean;
   role?: string;
+  username?: string;
 }
 
 // ─── OTP Input Component ──────────────────────────────────────
@@ -903,7 +905,10 @@ export default function Signin({ type }: SigninProps) {
         : "New password";
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-bg">
+      <div className="fixed bottom-4 right-4 z-20">
+        <ThemeToggle />
+      </div>
       <LoginScreen
         isLogin={step === "signin"}
         onBack={() => navigate("/")}

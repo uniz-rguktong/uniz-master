@@ -1,66 +1,59 @@
-import { AlertCircle } from "lucide-react";
-import {
- adminPrimaryButtonClass,
- adminGhostButtonClass,
- adminCardClass,
- adminModalTitleClass,
-} from "./admin/admin-ui";
-import { cn } from "../utils/cn";
+import { useEffect } from "react";
+import { Button } from "@/components/Button";
 
 interface ConfirmModalProps {
- open: boolean;
- onClose: () => void;
- onConfirm: () => void;
- message: string;
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  message: string;
 }
 
 export function ConfirmModal({
- open,
- onClose,
- onConfirm,
- message,
+  open,
+  onClose,
+  onConfirm,
+  message,
 }: ConfirmModalProps) {
- if (!open) return null;
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
 
- return (
- <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 animate-in fade-in duration-200">
- <div
- className={cn(adminCardClass, "w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200")}
- role="dialog"
- aria-modal="true"
- >
- <div className="p-6">
- <div className="flex flex-col items-center text-center gap-4">
- <div className="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100">
- <AlertCircle size={24} />
- </div>
- <div>
- <h3 className={cn(adminModalTitleClass, "text-center")}>
- Confirm action
- </h3>
- <p className="text-[13px] font-medium text-zinc-500 mt-2 leading-relaxed">
- {message}
- </p>
- </div>
- </div>
+  if (!open) return null;
 
- <div className="flex gap-3 mt-8">
- <button type="button" onClick={onClose} className={cn(adminGhostButtonClass, "flex-1")}>
- Cancel
- </button>
- <button
- type="button"
- onClick={() => {
- onConfirm();
- onClose();
- }}
- className={cn(adminPrimaryButtonClass, "flex-1")}
- >
- Confirm
- </button>
- </div>
- </div>
- </div>
- </div>
- );
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+      <button type="button" className="absolute inset-0 bg-overlay" aria-label="Close" onClick={onClose} />
+      <div
+        className="relative z-10 w-full max-w-[480px] rounded-t-xl border border-border bg-surface p-6 shadow-lg duration-200 dark:border-border-strong dark:shadow-none sm:rounded-xl sm:p-8"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-title"
+      >
+        <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-border-strong sm:hidden" />
+        <h3 id="confirm-title" className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head">
+          Confirm action
+        </h3>
+        <p className="mt-3 text-body leading-6 text-text-2">{message}</p>
+        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            type="button"
+            onClick={() => {
+              onConfirm();
+              onClose();
+            }}
+          >
+            Confirm
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }

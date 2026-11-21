@@ -216,8 +216,6 @@ export function DeptStaffEditor({
         <AnimatePresence initial={false}>
           {data.faculties.map((faculty, idx) => {
             const bio = faculty.bio ?? {};
-            const designation =
-              bioStr(bio, "Additional Responsibilities") || "Faculty";
             const specialization = bioStr(bio, "Specialization");
             const phone =
               bioStr(bio, "Phone") ||

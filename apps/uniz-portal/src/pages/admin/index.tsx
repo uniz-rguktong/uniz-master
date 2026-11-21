@@ -76,6 +76,7 @@ export default function Admin() {
   useIsAuth();
   useAdminname();
   const navigate = useNavigate();
+  const { logout } = useLogout();
   const username = (localStorage.getItem("username") || "Admin").replace(
     /"/g,
     "",
@@ -112,8 +113,6 @@ export default function Admin() {
   if (role === "security") {
     return <SecurityPortal />;
   }
-
-  const { logout } = useLogout();
 
   const handleLogout = () => {
     logout();

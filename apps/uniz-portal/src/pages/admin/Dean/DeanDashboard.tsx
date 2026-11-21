@@ -18,7 +18,6 @@ import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
 import StudentDetails from "../Webmaster/StudentDetails";
-import SubjectManagement from "../Webmaster/SubjectManagement";
 import UploadSection from "../Webmaster/UploadSection";
 import StudentBulkSection from "../Webmaster/StudentBulkSection";
 import SystemLogsSection from "../Webmaster/SystemLogsSection";

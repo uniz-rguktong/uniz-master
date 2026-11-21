@@ -9,22 +9,9 @@ import {
 
 /** Quiet card shell for marketing sections */
 export const landingCardClass =
-  "rounded-xl border border-navy-200/80 bg-white overflow-hidden transition-[border-color,box-shadow] duration-150";
+  "overflow-hidden rounded-xl border border-border bg-panel transition-[border-color] duration-150";
 
-export const landingCardHoverClass =
-  "hover:border-navy-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]";
-
-export function LandingMeshBackdrop({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn(
-        "pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-white",
-        className,
-      )}
-      aria-hidden
-    />
-  );
-}
+export const landingCardHoverClass = "hover:border-border-strong";
 
 export function LandingSection({
   children,
@@ -45,7 +32,7 @@ export function LandingSection({
 export function LandingDivider() {
   return (
     <div className="max-w-[1280px] mx-auto px-6">
-      <div className="h-px w-full bg-navy-200/80" />
+      <div className="h-px w-full bg-border" />
     </div>
   );
 }

@@ -1,107 +1,51 @@
-"use client";
-
-import * as React from "react";
 import { cn } from "@/lib/utils";
-import { cva, VariantProps } from "class-variance-authority";
-import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
-const avatarStatusVariants = cva(
- "flex items-center rounded-full size-2 border-2 border-background",
- {
- variants: {
- variant: {
- online: "bg-green-600",
- offline: "bg-zinc-600 dark:bg-zinc-300",
- busy: "bg-yellow-600",
- away: "bg-blue-600",
- },
- },
- defaultVariants: {
- variant: "online",
- },
- },
-);
+const sizes = {
+  32: "h-8 w-8 text-caption",
+  36: "h-9 w-9 text-small",
+  56: "h-14 w-14 text-dense",
+  96: "h-24 w-24 text-[18px]",
+} as const;
 
-function Avatar({
- className,
- ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Root>) {
- return (
- <AvatarPrimitive.Root
- data-slot="avatar"
- className={cn("relative flex shrink-0 size-10", className)}
- {...props}
- />
- );
+export type AvatarSize = keyof typeof sizes;
+
+function initials(name?: string) {
+  if (!name?.trim()) return "";
+  const parts = name.trim().split(/\s+/).slice(0, 2);
+  return parts.map((part) => part.charAt(0).toUpperCase()).join("");
 }
 
-function AvatarImage({
- className,
- ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Image>) {
- return (
- <div className={cn("relative overflow-hidden rounded-full", className)}>
- <AvatarPrimitive.Image
- data-slot="avatar-image"
- className={cn("aspect-square h-full w-full")}
- {...props}
- />
- </div>
- );
+/**
+ * Circle portrait. Photos keep their alt text. Empty photos show initials
+ * on navy-100 (surface-2 in dark).
+ */
+export function Avatar({
+  src,
+  alt,
+  name,
+  size = 36,
+  className,
+}: {
+  src?: string | null;
+  alt: string;
+  name?: string;
+  size?: AvatarSize;
+  className?: string;
+}) {
+  const letters = initials(name || alt);
+  return (
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-navy-100 font-semibold text-navy-900 dark:bg-surface-2 dark:text-text",
+        sizes[size],
+        className,
+      )}
+    >
+      {src ? (
+        <img src={src} alt={alt} className="h-full w-full object-cover" />
+      ) : (
+        <span aria-hidden={alt ? true : undefined}>{letters}</span>
+      )}
+    </span>
+  );
 }
-
-function AvatarFallback({
- className,
- ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
- return (
- <AvatarPrimitive.Fallback
- data-slot="avatar-fallback"
- className={cn(
- "flex h-full w-full items-center justify-center rounded-full border border-border bg-accent text-accent-foreground text-xs",
- className,
- )}
- {...props}
- />
- );
-}
-
-function AvatarIndicator({
- className,
- ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
- return (
- <div
- data-slot="avatar-indicator"
- className={cn(
- "absolute flex size-6 items-center justify-center",
- className,
- )}
- {...props}
- />
- );
-}
-
-function AvatarStatus({
- className,
- variant,
- ...props
-}: React.HTMLAttributes<HTMLDivElement> &
- VariantProps<typeof avatarStatusVariants>) {
- return (
- <div
- data-slot="avatar-status"
- className={cn(avatarStatusVariants({ variant }), className)}
- {...props}
- />
- );
-}
-
-export {
- Avatar,
- AvatarFallback,
- AvatarImage,
- AvatarIndicator,
- AvatarStatus,
- avatarStatusVariants,
-};
