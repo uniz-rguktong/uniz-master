@@ -11,6 +11,7 @@ import {
   toggleSuspension,
   getUserStatus,
   changePassword,
+  requestFirstLoginOtp,
   adminResetPassword,
   globalAdminResetPassword,
   deleteUserByUsername,
@@ -51,6 +52,7 @@ const PasswordChangeSchema = z.object({
   currentPassword: z.string().optional(),
   newPassword: z.string().min(8),
   confirmPassword: z.string().optional(),
+  otp: z.string().length(6).optional(),
 });
 
 const AdminResetPasswordSchema = z.object({
@@ -111,9 +113,28 @@ router.post(
   validateRequest(PasswordResetSchema),
   resetPassword,
 );
+function bindSessionUsername(req: Request, _res: Response, next: () => void) {
+  const username = (req as { user?: { username?: string } }).user?.username;
+  if (username) {
+    req.body = { ...(req.body || {}), username };
+  }
+  next();
+}
+
+router.post(
+  "/password/change/otp",
+  authMiddleware,
+  bindSessionUsername,
+  otpHourLimiter,
+  otpRequestLimiter,
+  requestFirstLoginOtp,
+);
 router.post(
   "/password/change",
   authMiddleware,
+  // Caps guesses at the first-login email code per account.
+  bindSessionUsername,
+  rateLimiter,
   validateRequest(PasswordChangeSchema),
   changePassword,
 );

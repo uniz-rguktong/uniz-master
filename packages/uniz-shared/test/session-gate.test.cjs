@@ -84,6 +84,16 @@ describe("session gate", () => {
       null,
     );
     assert.equal(isPasswordChangeExempt("GET", "/password/change"), false);
+    assert.equal(
+      rejectStaleSession({
+        jwtVersion: 3,
+        currentVersion: 3,
+        mustChangePassword: true,
+        method: "POST",
+        path: "/api/v1/auth/password/change/otp",
+      }),
+      null,
+    );
   });
 
   it("does not trust the legacy suspension cache for a version check", () => {
