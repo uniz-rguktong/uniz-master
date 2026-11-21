@@ -155,11 +155,9 @@ export default function AdminShell({
         )}
       >
         {!mobile && !isSidebarOpen ? (
-          <span className="text-white">
-            <Mark size={24} />
-          </span>
+          <Mark size={28} title="uniZ" className="text-white" />
         ) : (
-          <Lockup mark={28} word={18} tone="chrome" />
+          <Lockup height={32} tone="chrome" title="uniZ" />
         )}
         {mobile ? (
           <button

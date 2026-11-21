@@ -1,10 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="14" fill="#0B1B3A"/>
-  
-  <path d="M9.000 15.600V39.500A12.500 12.500 0 0 0 34.000 39.500V15.600H26.600V39.500A5.100 5.100 0 0 1 16.400 39.500V15.600Z" fill="#FFFFFF"/>
-  <rect x="6.480" y="12.000" width="11.180" height="3.600" fill="#FFFFFF"/>
-  <rect x="25.340" y="12.000" width="11.180" height="3.600" fill="#FFFFFF"/>
-  <path d="M39.000 12.000H55.000V19.400H39.000Z M39.000 44.600H55.000V52.000H39.000Z M51.678 14.070L58.322 17.330L42.322 49.930L35.678 46.670Z" fill="#FFFFFF"/>
-
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#0B1B3A"/><g fill="#FFFFFF" transform="translate(-41.639,19.012) scale(0.024420)"><path d="M0 1400.00V1156.00L612.29 244.00H0V0H1070.00L293.89 1156.00H1070.00V1400.00Z" transform="translate(2434.00 0)"/><path d="M3522.00 -238.00A75.00 75.00 0 1 1 3522.00 -88.00A75.00 75.00 0 1 1 3522.00 -238.00Z"/></g></svg>

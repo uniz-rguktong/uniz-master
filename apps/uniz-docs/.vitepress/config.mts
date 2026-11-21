@@ -49,6 +49,10 @@ export default defineConfig({
   ignoreDeadLinks: true,
   srcExclude: ['**/node_modules/**', 'README.md', 'AGENTS.md', 'CONTRIBUTING.md', '_sidebar.md'],
   themeConfig: {
+    logo: {
+      light: "/logo.svg",
+      dark: "/logo-white.svg",
+    },
     nav: [
       { text: 'Documentation', link: '/' },
       { text: 'API Reference', link: '/api/platform/gateway' },

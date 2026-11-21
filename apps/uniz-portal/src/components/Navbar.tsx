@@ -6,7 +6,7 @@ import { LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { prefetchTurnstile } from "../utils/prefetchTurnstile";
 import { hasPortalSession } from "@/utils/portalSession";
-import { Lockup } from "@/components/brand/Mark";
+import { Lockup, Mark } from "@/components/brand/Mark";
 import { Avatar } from "@/components/ui/avatar";
 
 function formatNavDisplayName(name?: string | null): string {
@@ -57,7 +57,8 @@ export default function Navbar() {
       )}
     >
       <button type="button" onClick={() => navigate("/")} className="text-white" aria-label="UniZ home">
-        <Lockup mark={32} word={20} tone="chrome" className="max-[820px]:[&_span]:sr-only" />
+        <Mark size={28} className="min-[821px]:hidden" />
+        <Lockup height={36} tone="chrome" className="hidden min-[821px]:block" />
       </button>
       <div className="ml-auto flex items-center gap-2">
         {!signedIn ? (
