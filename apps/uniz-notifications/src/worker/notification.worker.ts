@@ -58,7 +58,7 @@ export const createNotificationWorker = (connection: IORedis) => {
         const username = String(data.username || "");
         if (!username) throw new Error("PUSH job requires username");
         const sent = await sendWebPush(username, {
-          title: String(data.title || "UniZ Notification"),
+          title: String(data.title || "uniZ Notification"),
           body: String(data.body || ""),
           rawBody: Boolean(data.rawBody ?? true),
           image: data.image,
@@ -122,7 +122,7 @@ export const createNotificationWorker = (connection: IORedis) => {
       if (jobType === "RESULTS") {
         await sendWebPush(username, {
           title: "Examination Results Published",
-          body: `Results for ${semesterId} are now available on the UniZ portal.`,
+          body: `Results for ${semesterId} are now available on the uniZ portal.`,
           name: data.name,
           data: { type: "RESULTS", semesterId },
         });
@@ -142,7 +142,7 @@ export const createNotificationWorker = (connection: IORedis) => {
       // Legacy EMAIL job name that only pushed — keep push fallback
       if (jobType === "LEGACY_EMAIL_PUSH") {
         await sendWebPush(username, {
-          title: data.subject || "UniZ Academic Notification",
+          title: data.subject || "uniZ Academic Notification",
           body:
             data.body ||
             "A new academic update has been posted. Please review the details on the portal.",

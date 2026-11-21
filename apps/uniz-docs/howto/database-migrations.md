@@ -1,6 +1,6 @@
 ---
 title: "Database migrations"
-description: "How UniZ services apply Prisma/SQL migrations in production safely."
+description: "How uniZ services apply Prisma/SQL migrations in production safely."
 ---
 
 ## Pattern

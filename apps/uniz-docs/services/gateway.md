@@ -5,7 +5,7 @@ description: "Express L7 router — serviceMap, Redis GET cache, health aggregat
 
 ## Role
 
-Single public API process for UniZ. Traefik sends `api-uniz.rguktong.in` traffic here (`:3000`). The old nginx Deployment `uniz-gateway` is **parked at 0 replicas**.
+Single public API process for uniZ. Traefik sends `api-uniz.rguktong.in` traffic here (`:3000`). The old nginx Deployment `uniz-gateway` is **parked at 0 replicas**.
 
 | | |
 |--|--|

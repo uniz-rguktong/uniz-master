@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "UniZ",
-  "short_name": "UniZ",
+  "name": "uniZ",
+  "short_name": "uniZ",
   "description": "Campus platform for RGUKT Ongole — grades, attendance, outpass, and registration.",
   "start_url": "/",
   "scope": "/",

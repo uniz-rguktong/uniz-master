@@ -3,7 +3,7 @@ title: "Password"
 description: "Reset a forgotten password using an OTP reset token, or change a password while logged in."
 ---
 
-UniZ provides two password management endpoints:
+uniZ provides two password management endpoints:
 
 - **Reset** — for users who have forgotten their password. Requires a `resetToken` obtained through the [OTP verification](/api/auth/otp) flow. No active session needed.
 - **Change** — for logged-in users who want to update their current password. Requires a valid Bearer token.

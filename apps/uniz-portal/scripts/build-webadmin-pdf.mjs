@@ -103,7 +103,7 @@ const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>UniZ webadmin guide</title>
+  <title>uniZ webadmin guide</title>
   <style>
     @page { size: A4; margin: 16mm 16mm 18mm; }
     * { box-sizing: border-box; }
@@ -133,7 +133,7 @@ const html = `<!DOCTYPE html>
   </style>
 </head>
 <body>
-  <p class="kicker">RGUKT Ongole · UniZ</p>
+  <p class="kicker">RGUKT Ongole · uniZ</p>
   <h1>Webadmin guide</h1>
   <p class="lede">These steps are for the webadmin. One action per step. The bold words are the words on the button.</p>
   <p class="meta">

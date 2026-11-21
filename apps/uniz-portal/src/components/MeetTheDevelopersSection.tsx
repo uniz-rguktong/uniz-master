@@ -10,7 +10,7 @@ interface MeetTheDevelopersSectionProps {
 }
 
 export default function MeetTheDevelopersSection({
-  subtitle = "The minds behind UniZ.",
+  subtitle = "The minds behind uniZ.",
   className,
 }: MeetTheDevelopersSectionProps) {
   return (

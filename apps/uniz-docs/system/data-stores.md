@@ -28,7 +28,7 @@ flowchart LR
 | User | Profiles, CMS banners/notices, grievances, file metadata |
 | Academics | Grades, attendance, subjects, semester registration |
 | Notifications | Push subscriptions, inbox, mail attribution |
-| Landing backend | CMS on landing DB; analytics may query main UniZ DB via `DB_*` |
+| Landing backend | CMS on landing DB; analytics may query main uniZ DB via `DB_*` |
 
 Prisma schemas live per service under `apps/uniz-*/prisma/`. Migrations: [Database migrations](/howto/database-migrations).
 
@@ -53,4 +53,4 @@ Service URL (ConfigMap): `REDIS_URL=redis://uniz-redis:6379`.
 
 ## Landing dual-DB note
 
-Compose `apps/uniz-landing-backend/docker-compose.yml.vps` runs CMS Postgres on **`127.0.0.1:5433`**. Landing API publishes `127.0.0.1` + `10.42.0.1:8000`. Analytics may use main UniZ Postgres via `DB_HOST=10.42.0.1`.
+Compose `apps/uniz-landing-backend/docker-compose.yml.vps` runs CMS Postgres on **`127.0.0.1:5433`**. Landing API publishes `127.0.0.1` + `10.42.0.1:8000`. Analytics may use main uniZ Postgres via `DB_HOST=10.42.0.1`.

@@ -34,7 +34,7 @@ const faqs = [
   {
     question: "Is the student portal available as an app?",
     answer:
-      "Yes! You can install UniZ as a PWA by clicking 'Install App' in your browser menu on Android or 'Add to Home Screen' on iOS.",
+      "Yes! You can install uniZ as a PWA by clicking 'Install App' in your browser menu on Android or 'Add to Home Screen' on iOS.",
   },
 ];
 
@@ -45,7 +45,7 @@ const HelpSupport = () => {
     <div>
       <PageHeader
         title="Help and support"
-        meta="Everything you need to know about the UniZ student portal."
+        meta="Everything you need to know about the uniZ student portal."
       />
       <div className="divide-y divide-border border-y border-border">
         {faqs.map((faq, index) => {

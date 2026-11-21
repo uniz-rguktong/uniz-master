@@ -8,8 +8,8 @@
     <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="UniZ" />
-    <link rel="apple-touch-icon" href="/logo180.png" />
+    <meta name="apple-mobile-web-app-title" content="uniZ" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
       content="default"
@@ -87,12 +87,9 @@
       }
 
       #pwa-splash .pwa-splash-wordmark {
-        font-family: Georgia, "Times New Roman", serif;
-        font-weight: 600;
-        font-size: clamp(2rem, 8vw, 2.5rem);
-        line-height: 1;
-        letter-spacing: -0.01em;
-        color: #0b1b3a;
+        display: block;
+        height: clamp(52px, 14vw, 64px);
+        width: auto;
         margin: 0 0 0.25rem;
       }
 
@@ -188,18 +185,6 @@
       })();
     </script>
 
-    <script>
-      window.deferredPWAInstallPrompt = null;
-      window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        window.deferredPWAInstallPrompt = e;
-        console.log("[PWA] Early event capture successful");
-        window.dispatchEvent(
-          new CustomEvent("pwa-prompt-ready", { detail: e }),
-        );
-      });
-    </script>
-
     <!-- Global JSON-LD Schema -->
     <script type="application/ld+json">
       {
@@ -234,7 +219,13 @@
 
   <body>
     <div id="pwa-splash" role="status" aria-label="Loading uniZ">
-      <p class="pwa-splash-wordmark">uniZ.</p>
+      <img
+        class="pwa-splash-wordmark"
+        src="/brand/m1-wordmark-navy.svg"
+        alt=""
+        width="128"
+        height="64"
+      />
       <p class="pwa-splash-tagline">
         <span class="pwa-splash-tagline-line">__UNIZ_TAGLINE_LINE1__</span>
         <span class="pwa-splash-tagline-line pwa-splash-tagline-line--muted"

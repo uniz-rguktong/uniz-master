@@ -1,6 +1,6 @@
 ---
 title: "Search index — find anything"
-description: "Keyword map: search this page (Ctrl/Cmd+K) or skim the tables to jump to how UniZ is built and how to change it."
+description: "Keyword map: search this page (Ctrl/Cmd+K) or skim the tables to jump to how uniZ is built and how to change it."
 ---
 
 Use Mintlify search (**Ctrl/Cmd + K**) with the keywords below. Every row links to the page that explains **how it is implemented** and **what to change**.

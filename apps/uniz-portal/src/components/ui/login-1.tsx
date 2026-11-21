@@ -38,7 +38,18 @@ export default function LoginScreen({
     <div className="flex min-h-screen flex-col bg-bg text-text min-[821px]:flex-row">
       <aside className="flex flex-col bg-navy-900 text-white min-[821px]:min-h-screen min-[821px]:w-[41.666%] min-[821px]:px-14 min-[821px]:py-14">
         <div className="flex h-[60px] items-center px-5 min-[821px]:h-auto min-[821px]:px-0">
-          <Lockup mark={40} word={24} tone="chrome" className="max-[820px]:[&_svg]:h-7 max-[820px]:[&_svg]:w-7 max-[820px]:[&_span]:text-[18px]" />
+          <Lockup
+            height={32}
+            tone="chrome"
+            title="uniZ"
+            className="min-[821px]:hidden"
+          />
+          <Lockup
+            height={44}
+            tone="chrome"
+            title="uniZ"
+            className="hidden min-[821px]:block"
+          />
         </div>
         <div className="hidden flex-1 flex-col justify-end min-[821px]:flex">
           <h2 className="max-w-[16ch] font-serif text-[36px] font-normal leading-[46px] tracking-[-0.01em] text-white">
@@ -49,7 +60,7 @@ export default function LoginScreen({
           </p>
         </div>
         <p className="mt-auto hidden text-small text-navy-300 min-[821px]:block">
-          © 2026 UniZ · RGUKT Ongole
+          © 2026 uniZ · RGUKT Ongole
         </p>
       </aside>
 

@@ -56,9 +56,9 @@ describe("plain notice html", () => {
     assert.match(credentials, /user:pass@example\.com\/path/);
   });
 
-  it("uses a light navy UniZ Campus header", () => {
+  it("uses a light navy uniZ Campus header", () => {
     const html = renderPlainNoticeHtml("hello");
-    assert.match(html, /UniZ Campus/);
+    assert.match(html, /uniZ Campus/);
     assert.match(html, /#0B2A47/);
     assert.match(html, /#e6ebf5/);
   });
@@ -73,7 +73,7 @@ describe("plain notice validation", () => {
     assert.equal(notice.to, "person@example.com");
     assert.equal(notice.subject.length, 200);
     assert.equal(notice.text.length, 20000);
-    assert.match(notice.html, /UniZ Campus/);
+    assert.match(notice.html, /uniZ Campus/);
   });
 
   it("rejects a subject over 200 characters, newlines, or an empty subject", () => {
@@ -141,18 +141,18 @@ describe("plain notice validation", () => {
     }
   });
 
-  it("builds the UniZ Campus from address from SES_FROM_EMAIL", () => {
+  it("builds the uniZ Campus from address from SES_FROM_EMAIL", () => {
     assert.equal(
       plainNoticeFromAddress("ops@rguktong.in"),
-      '"UniZ Campus" <ops@rguktong.in>',
+      '"uniZ Campus" <ops@rguktong.in>',
     );
     assert.equal(
       plainNoticeFromAddress('"Other" <ops@rguktong.in>'),
-      '"UniZ Campus" <ops@rguktong.in>',
+      '"uniZ Campus" <ops@rguktong.in>',
     );
     assert.equal(
       plainNoticeFromAddress(""),
-      '"UniZ Campus" <no-reply@rguktong.in>',
+      '"uniZ Campus" <no-reply@rguktong.in>',
     );
   });
 });

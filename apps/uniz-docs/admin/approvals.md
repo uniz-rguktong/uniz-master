@@ -1,6 +1,6 @@
 ---
 title: "Approvals"
-description: "How caretakers, wardens, SWO, and directors review and act on student outpass and outing requests in UniZ."
+description: "How caretakers, wardens, SWO, and directors review and act on student outpass and outing requests in uniZ."
 ---
 
 Student outpass requests move through a fixed multi-level approval chain before the student is cleared to leave campus. Each admin role is responsible for a specific level in this chain.

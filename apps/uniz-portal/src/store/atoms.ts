@@ -177,12 +177,6 @@ export const resetTokenState = atom<string | null>({
   default: null,
 });
 
-export const pwaInstallAtom = atom<any | null>({
-  key: "pwaInstallAtom",
-  default: null,
-  dangerouslyAllowMutability: true,
-});
-
 export const systemUserAnalyticsAtom = atom({
   key: "systemUserAnalyticsAtom",
   default: {

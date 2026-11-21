@@ -1,9 +1,9 @@
 ---
 title: "Introduction"
-description: "What UniZ is — campus PWA for RGUKT academics, profiles, notices, grievances, and gated mobility features."
+description: "What uniZ is — campus PWA for RGUKT academics, profiles, notices, grievances, and gated mobility features."
 ---
 
-UniZ is the university administration platform for RGUKT. Students, faculty, and staff use one Progressive Web App for academics, profiles, campus notices, grievances, and (when enabled) outpass/outing workflows.
+uniZ is the university administration platform for RGUKT. Students, faculty, and staff use one Progressive Web App for academics, profiles, campus notices, grievances, and (when enabled) outpass/outing workflows.
 
 ## Product vs platform
 

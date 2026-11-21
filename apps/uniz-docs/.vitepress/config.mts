@@ -4,8 +4,8 @@ const SITE = 'https://api-uniz.rguktong.in/docs'
 const OG_IMAGE = `${SITE}/og.png`
 
 export default defineConfig({
-  title: 'UniZ',
-  description: 'UniZ system documentation — architecture, services, deploy, APIs',
+  title: 'uniZ',
+  description: 'uniZ system documentation — architecture, services, deploy, APIs',
   base: '/docs/',
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/docs/favicon.svg' }],
@@ -13,24 +13,24 @@ export default defineConfig({
     ['link', { rel: 'apple-touch-icon', href: '/docs/apple-touch-icon.png' }],
     ['link', { rel: 'manifest', href: '/docs/manifest.webmanifest' }],
     ['meta', { name: 'theme-color', content: '#0b1b3a' }],
-    ['meta', { property: 'og:site_name', content: 'UniZ Docs' }],
+    ['meta', { property: 'og:site_name', content: 'uniZ Docs' }],
     ['meta', { property: 'og:locale', content: 'en_IN' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:image', content: OG_IMAGE }],
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
     ['meta', { property: 'og:image:type', content: 'image/png' }],
-    ['meta', { property: 'og:image:alt', content: 'UniZ Docs — RGUKT Ongole' }],
+    ['meta', { property: 'og:image:alt', content: 'uniZ Docs — RGUKT Ongole' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:image', content: OG_IMAGE }],
   ],
   transformHead(context) {
     const pageTitle = context.pageData.title
-      ? `${context.pageData.title} | UniZ`
-      : 'UniZ Docs'
+      ? `${context.pageData.title} | uniZ`
+      : 'uniZ Docs'
     const description =
       context.pageData.description ||
-      'UniZ system documentation — architecture, services, deploy, APIs'
+      'uniZ system documentation — architecture, services, deploy, APIs'
     const relative = context.pageData.relativePath
       .replace(/\.md$/, '')
       .replace(/(^|\/)index$/, '')
@@ -49,6 +49,10 @@ export default defineConfig({
   ignoreDeadLinks: true,
   srcExclude: ['**/node_modules/**', 'README.md', 'AGENTS.md', 'CONTRIBUTING.md', '_sidebar.md'],
   themeConfig: {
+    logo: {
+      light: "/logo.svg",
+      dark: "/logo-white.svg",
+    },
     nav: [
       { text: 'Documentation', link: '/' },
       { text: 'API Reference', link: '/api/platform/gateway' },
