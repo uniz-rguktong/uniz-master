@@ -33,7 +33,6 @@ import {
   adminModalShellClass,
   adminModalTitleClass,
   adminModalDescClass,
-  adminModalCloseClass,
   adminLabelClass,
   adminInputClass,
   adminSelectClass,

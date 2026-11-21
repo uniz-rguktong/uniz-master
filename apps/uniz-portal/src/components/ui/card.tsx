@@ -27,9 +27,9 @@ const cardVariants = cva(
  {
  variants: {
  variant: {
- default: "rounded-portal-xl bg-card border border-border shadow-whisper",
- portal: cn(portalCardClass, "text-navy-900"),
- accent: "rounded-portal-xl bg-muted shadow-whisper p-1",
+ default: "rounded-xl border border-border bg-surface text-text",
+ portal: cn(portalCardClass, "text-text"),
+ accent: "rounded-xl bg-surface-2 p-1",
  },
  },
  defaultVariants: {
@@ -96,7 +96,7 @@ function Card({
  ...props
 }: React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof cardVariants>) {
  return (
- <CardContext.Provider value={{ variant: variant || "default" }}>
+ <CardContext.Provider value={{ variant: !variant || variant === "portal" ? "default" : variant }}>
  <div
  data-slot="card"
  className={cn(cardVariants({ variant }), className)}

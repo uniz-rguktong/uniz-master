@@ -14,7 +14,7 @@ export const PageTransition = ({ children, className }: TransitionProps) => {
  // We rely on simple CSS animations or no animation for sharpness.
  return (
  <div
- className={`animate-in fade-in duration-300 slide-in-from-bottom-2 ${className || ""}`}
+ className={`duration-200 ease-out motion-safe:animate-in motion-safe:fade-in ${className || ""}`}
  >
  {children}
  </div>
@@ -28,7 +28,7 @@ export const ListItemTransition = ({
  index?: number;
 }) => {
  return (
- <div className="animate-in fade-in slide-in-from-left-2 duration-300">
+ <div className="duration-150 ease-out motion-safe:animate-in motion-safe:fade-in">
  {children}
  </div>
  );

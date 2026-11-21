@@ -340,7 +340,8 @@ export default function FacultyManagement({
   const toggleSelect = (username: string) => {
     setSelectedUsernames((prev) => {
       const n = new Set(prev);
-      n.has(username) ? n.delete(username) : n.add(username);
+      if (n.has(username)) n.delete(username);
+      else n.add(username);
       return n;
     });
   };

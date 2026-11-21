@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import MeetTheDevelopersSection from "@/components/MeetTheDevelopersSection";
 import GlobeFeature from "@/components/ui/globe-feature-section";
-import { LandingMeshBackdrop } from "@/components/ui/landing-section";
 import { SEO } from "@/components/SEO";
 import { SiteLegalFooter } from "@/components/SiteLegalFooter";
 import { landingContainerClass, landingDividerClass } from "@/lib/landing-ui";
@@ -16,8 +15,6 @@ export default function Developers() {
         description="Meet the RGUKT Ongole student team behind the UniZ campus platform."
         canonical="https://uniz.rguktong.in/developers"
       />
-
-      <LandingMeshBackdrop />
 
       <div className={cn(landingContainerClass, "relative")}>
         <header className="flex items-center py-4 md:py-6">

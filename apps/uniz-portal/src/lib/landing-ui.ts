@@ -1,42 +1,39 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Marketing / landing design tokens — white institutional canvas.
- * Distinct from portal navy app chrome; used on marketing surfaces.
+ * Portal public-page tokens (home, privacy, developers).
+ * Same U2 palette as the signed-in portal.
  */
 
-export const landingPageClass = "min-h-screen bg-white text-black antialiased";
+export const landingPageClass = "min-h-screen bg-bg text-text antialiased";
 
 export const landingSectionYClass = "py-16 md:py-24";
 
-export const landingContainerClass = "max-w-[1280px] mx-auto px-4 sm:px-6";
+export const landingContainerClass = "mx-auto w-full max-w-[1232px] px-5 min-[821px]:px-10";
 
 export const landingCardClass =
-  "rounded-xl border border-navy-200/80 bg-white overflow-hidden transition-[border-color,box-shadow] duration-150";
+  "overflow-hidden rounded-xl border border-border bg-panel text-text";
 
-export const landingCardHoverClass =
-  "hover:border-navy-300 hover:shadow-whisper-landing";
+export const landingCardHoverClass = "hover:border-border-strong";
 
-export const landingEyebrowClass =
-  "inline-flex items-center gap-2 text-[12px] font-medium text-navy-500";
+export const landingEyebrowClass = "text-body text-text-2";
 
 export const landingDisplayClass =
-  "text-[clamp(1.85rem,4.5vw,3.25rem)] md:text-[clamp(2.25rem,5vw,3.75rem)] font-semibold text-navy-900 tracking-[-0.03em] leading-[1.05]";
+  "font-serif text-[34px] font-normal leading-[44px] tracking-[-0.01em] text-head min-[821px]:text-display min-[821px]:leading-[66px]";
 
-export const landingDisplayMutedClass = "text-navy-400 font-normal";
+export const landingDisplayMutedClass = "text-text-2 font-normal";
 
 export const landingLeadClass =
-  "text-[15px] md:text-[17px] text-navy-500 font-medium leading-relaxed max-w-xl";
+  "max-w-xl text-[17px] font-normal leading-[27px] text-text-2 min-[821px]:text-lede min-[821px]:leading-[30px]";
 
 export const landingPillClass =
-  "inline-flex items-center gap-2 px-2.5 py-1 rounded-md border border-navy-200 text-[11px] font-medium text-navy-700";
+  "inline-flex h-6 items-center gap-1.5 rounded-full bg-tint px-2.5 text-small font-medium text-text-2";
 
 export const landingCtaClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 px-7 rounded-lg bg-navy-900 text-white text-[14px] font-medium hover:bg-navy-800 transition-[color,background-color] duration-150";
+  "inline-flex h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-7 text-[16px] font-semibold leading-6 text-primary-foreground transition-[background-color] duration-150 ease-out hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
-export const landingDividerClass = "h-px w-full bg-navy-200/80";
+export const landingDividerClass = "h-px w-full bg-border";
 
-export const landingFeatureGridClass =
-  "grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4";
+export const landingFeatureGridClass = "grid grid-cols-1 gap-5 sm:grid-cols-2";
 
-export const landingStackClass = cn(landingContainerClass, "space-y-4 md:space-y-6");
+export const landingStackClass = cn(landingContainerClass, "space-y-6");
