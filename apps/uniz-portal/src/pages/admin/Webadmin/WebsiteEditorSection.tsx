@@ -362,12 +362,12 @@ export default function WebsiteEditorSection() {
           <p className="mt-2 text-[14px] leading-5 text-text-2">{loadError}. Refresh before publishing.</p>
         ) : null}
       </div>
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col min-[821px]:flex-row">
         <div className="min-w-0 flex-1 bg-surface-2 p-4">
           <div
             className={cn(
-              "mx-auto h-full overflow-hidden border border-border bg-surface",
-              viewport === "mobile" ? "w-[390px]" : "w-full",
+              "mx-auto h-full w-full max-w-full overflow-hidden border border-border bg-surface",
+              viewport === "mobile" && "max-w-[390px]",
             )}
           >
             <iframe
@@ -378,7 +378,7 @@ export default function WebsiteEditorSection() {
             />
           </div>
         </div>
-        <aside className="w-[320px] shrink-0 overflow-y-auto border-l border-border bg-surface px-4 py-4">
+        <aside className="w-full min-w-0 shrink-0 overflow-y-auto border-t border-border bg-surface px-4 py-4 min-[821px]:w-[320px] min-[821px]:border-l min-[821px]:border-t-0">
           {phase === "denied" && (
             <p className="text-[14px] leading-6 text-text-2">
               Preview editing needs a webadmin sign-in. Visitors never see these controls.

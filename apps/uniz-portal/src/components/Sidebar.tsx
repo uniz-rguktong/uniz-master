@@ -358,7 +358,12 @@ export default function Sidebar({ content }: MainContent) {
           <p className="truncate px-3 text-[17px] font-semibold leading-6">{pageName}</p>
           <div className="flex items-center gap-1">
             <NotificationBellButton tone="chrome" active={content === "notifications"} />
-            <button type="button" onClick={() => setMenuOpen((value) => !value)} aria-label="Account menu">
+            <button
+              type="button"
+              onClick={() => setMenuOpen((value) => !value)}
+              aria-label="Account menu"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+            >
               <Avatar
                 size={32}
                 src={userData?.profile_url}

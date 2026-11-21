@@ -47,6 +47,7 @@
     "sem-reg:import:local": "TS_NODE_TRANSPILE_ONLY=1 ts-node --compiler-options '{\"module\":\"commonjs\"}' scripts/ops/import-sem-reg.ts --apply --approve",
     "watch": "ssh -t -o StrictHostKeyChecking=no root@${VPS_HOST:-76.13.241.174} \"watch -n 1 'kubectl get hpa; echo; kubectl get pods'\"",
     "smoke": "bash ./scripts/ops/post-deploy-smoke.sh",
+    "audit:responsive": "node scripts/responsive-audit/audit.mjs",
     "hpa:drill": "CONFIRM=1 bash ./scripts/ops/test-hpa-autoscale.sh",
     "obs:apply": "bash ./scripts/ops/apply-observability.sh",
     "android:twa:phase-a": "bash apps/uniz-android-twa/phase-a-setup.sh",
@@ -68,6 +69,7 @@
   "devDependencies": {
     "concurrently": "^8.2.2",
     "dotenv": "^17.3.1",
+    "playwright": "^1.65.1",
     "prettier": "^3.8.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",

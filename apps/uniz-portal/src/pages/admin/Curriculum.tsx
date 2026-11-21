@@ -340,13 +340,13 @@ export default function CurriculumManager() {
                 <div className="flex gap-1">
                   <button
                     onClick={() => handleOpenModal(sub)}
-                    className="p-2 text-text-3 hover:text-text hover:bg-surface-2 rounded-lg transition-[color,background-color,border-color,opacity,transform,box-shadow]"
+                    className="inline-flex h-10 w-10 items-center justify-center text-text-3 hover:text-text hover:bg-surface-2 rounded-lg transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                   >
                     <Edit size={16} />
                   </button>
                   <button
                     onClick={() => handleDelete(sub.id)}
-                    className="p-2 text-text-3 hover:text-error hover:bg-tint rounded-lg transition-[color,background-color,border-color,opacity,transform,box-shadow]"
+                    className="inline-flex h-10 w-10 items-center justify-center text-text-3 hover:text-error hover:bg-tint rounded-lg transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                   >
                     <Trash2 size={16} />
                   </button>
