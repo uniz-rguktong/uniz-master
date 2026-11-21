@@ -20,26 +20,24 @@ A visitor who passes Access still has to log in to Adminer. Do not turn on an Ad
 
 ## Expected routing
 
-This follows `api-uniz.rguktong.in`. You create the DNS record. The deploy does not create it.
+This follows `api-uniz.rguktong.in`. Cloudflare terminates the public TLS. The tunnel hostname is `dbadmin.rguktong.in` (in `HOSTS` in `scripts/deploy/setup-cloudflare-tunnel.sh`), and its origin is `https://127.0.0.1:443` with TLS verification off. A separate `uniz-adminer-tls` certificate is not part of this path.
 
-1. In the `rguktong.in` zone, add `dbadmin` the same way `api-uniz` is published (proxied CNAME to the tunnel, or proxied A to the VPS). The cloud must be orange. A grey-cloud record never receives a `Cf-Access-Jwt-Assertion` header, and the proxy then refuses every request.
-2. If `api-uniz` is on the cloudflared tunnel, add `dbadmin.rguktong.in` to `HOSTS` in `scripts/deploy/setup-cloudflare-tunnel.sh` before the next tunnel sync. Origin stays `https://127.0.0.1:443`.
-3. Host nginx (`scripts/deploy/ensure-nginx-dbadmin.sh`, also called from `scripts/deploy/deploy.sh`) listens for `dbadmin.rguktong.in` and proxies to Traefik at `https://127.0.0.1:30620`, with the `Host` and `Cf-Access-Jwt-Assertion` headers kept. That is the same hop as `scripts/deploy/ensure-nginx-api-uniz.sh`. The certificate is Secret `uniz-adminer-tls` (cert-manager, DNS-01), not the shared API certificate.
-4. The Ingress `uniz-adminer` sends the request to Service `uniz-adminer` port 8080.
-5. That port is the access proxy, not Adminer. The proxy checks `Cf-Access-Jwt-Assertion` against the certs at `https://sweet-frost-287a.cloudflareaccess.com/cdn-cgi/access/certs` and requires the AUD above. A missing or invalid token gets `401`. Adminer is only reached on `127.0.0.1:8080` inside the pod.
+1. The record must stay proxied (orange cloud). A grey-cloud record never receives a `Cf-Access-Jwt-Assertion` header, and the sidecar then refuses every request.
+2. Tunnel ingress sends `dbadmin.rguktong.in` to `https://127.0.0.1:443`. Deploy adds that rule when the Cloudflare API token can read the tunnel, and the local cloudflared config includes the same host.
+3. Host nginx (`scripts/deploy/ensure-nginx-dbadmin.sh`) answers that hop with the origin certificate already used for `api-uniz` (`/etc/nginx/uniz-k8s-tls`, from Secret `uniz-tls-cert`). It proxies to Traefik at `https://127.0.0.1:30620` and keeps `Host` and `Cf-Access-Jwt-Assertion`. If that shared certificate is not on disk yet, the script warns and deploy continues.
+4. Ingress `uniz-adminer` uses the same `uniz-tls-cert` so Traefik accepts the HTTPS hop, and sends the request to Service `uniz-adminer` port 8080.
+5. That port is the access proxy, not Adminer. The proxy checks `Cf-Access-Jwt-Assertion` against `https://sweet-frost-287a.cloudflareaccess.com/cdn-cgi/access/certs`, issuer `https://sweet-frost-287a.cloudflareaccess.com`, and audience `f7f85a6370a5369a98b00fa3cdd47fe5d487317bad36bc70a52df6984e2f4ba0`. A missing or invalid token gets `401`. Adminer is only reached on `127.0.0.1:8080` inside the pod.
 
 ```text
 browser
   → Cloudflare Access (one-time PIN, webadmin@rguktong.ac.in)
-  → DNS for dbadmin.rguktong.in (you create this; same target as api-uniz, proxied)
-  → host nginx :443
+  → tunnel CNAME for dbadmin.rguktong.in
+  → cloudflared → host nginx :443 (shared origin cert)
   → Traefik :30620
   → Ingress uniz-adminer
-  → access proxy (Cf-Access-Jwt-Assertion)
+  → access proxy (Cf-Access-Jwt-Assertion for that AUD)
   → Adminer login (user uniz_dbadmin)
 ```
-
-After the certificate exists, rerun `bash scripts/deploy/ensure-nginx-dbadmin.sh` if the first deploy happened before DNS was in place.
 
 Confirm Access is in front: a logged-out browser must see the Cloudflare PIN page, not the Adminer form. Then confirm a request without the Access header is refused. From the VPS, this should be `401`:
 

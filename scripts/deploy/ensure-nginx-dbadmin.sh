@@ -1,24 +1,22 @@
 #!/usr/bin/env bash
 # Host nginx vhost for dbadmin.rguktong.in → Traefik, same hop as api-uniz.
-# The certificate is the dedicated cert-manager secret, not the shared API cert.
+#
+# Cloudflare terminates the public TLS in front of the tunnel. cloudflared
+# connects to https://127.0.0.1:443 with noTLSVerify, so this vhost reuses the
+# origin certificate already synced for api-uniz (secret uniz-tls-cert).
+# A separate uniz-adminer-tls certificate is not required.
+# Missing files or a rejected config warn and return success so deploy continues.
 set -euo pipefail
 
-K8S_CERT_DIR="/etc/nginx/uniz-dbadmin-tls"
-K8S_CERT="$K8S_CERT_DIR/fullchain.pem"
-K8S_KEY="$K8S_CERT_DIR/privkey.pem"
+K8S_CERT="/etc/nginx/uniz-k8s-tls/fullchain.pem"
+K8S_KEY="/etc/nginx/uniz-k8s-tls/privkey.pem"
 TRAEFIK_HTTPS="${TRAEFIK_HTTPS_UPSTREAM:-https://127.0.0.1:30620}"
 SITE="uniz-dbadmin"
-SECRET_NAME="${DBADMIN_TLS_SECRET_NAME:-uniz-adminer-tls}"
 
-if ! kubectl get secret "$SECRET_NAME" >/dev/null 2>&1; then
-  echo "[nginx-dbadmin] Secret/$SECRET_NAME is not ready yet. Create the DNS record, then rerun this script."
+if [[ ! -f "$K8S_CERT" || ! -f "$K8S_KEY" ]]; then
+  echo "[nginx-dbadmin] Shared origin cert is not on disk yet ($K8S_CERT). Cloudflare still terminates public TLS. Not blocking deploy." >&2
   exit 0
 fi
-
-mkdir -p "$K8S_CERT_DIR"
-kubectl get secret "$SECRET_NAME" -o jsonpath='{.data.tls\.crt}' | base64 -d >"$K8S_CERT"
-kubectl get secret "$SECRET_NAME" -o jsonpath='{.data.tls\.key}' | base64 -d >"$K8S_KEY"
-chmod 600 "$K8S_KEY"
 
 cat >"/etc/nginx/sites-available/$SITE" <<NGINX
 server {
@@ -61,6 +59,16 @@ server {
 NGINX
 
 ln -sfn "/etc/nginx/sites-available/$SITE" "/etc/nginx/sites-enabled/$SITE"
-nginx -t
-systemctl reload nginx
-echo "[nginx-dbadmin] Ensured $SITE → $TRAEFIK_HTTPS"
+
+if ! nginx -t; then
+  echo "[nginx-dbadmin] WARN: nginx rejected the dbadmin vhost; not reloading" >&2
+  rm -f "/etc/nginx/sites-enabled/$SITE"
+  exit 0
+fi
+
+if ! systemctl reload nginx; then
+  echo "[nginx-dbadmin] WARN: nginx reload failed" >&2
+  exit 0
+fi
+
+echo "[nginx-dbadmin] Ensured $SITE → $TRAEFIK_HTTPS (origin cert, Access header forwarded)"

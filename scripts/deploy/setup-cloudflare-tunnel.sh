@@ -166,28 +166,112 @@ sync_existing_tunnel() {
   return 0
 }
 
+# Token-mode tunnels keep ingress in Cloudflare, not in the local file.
+# Add dbadmin.rguktong.in when it is missing. Never print the API body.
+ensure_dbadmin_tunnel_ingress() {
+  [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]] && return 0
+  local account_id tunnel_id cfg result
+  account_id=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+    "https://api.cloudflare.com/client/v4/zones?name=${ZONE_NAME}" \
+    | python3 -c 'import json,sys
+try:
+    print(json.load(sys.stdin)["result"][0]["account"]["id"])
+except Exception:
+    raise SystemExit(1)') || {
+    echo "[tunnel] WARN: could not read the Cloudflare account; dbadmin ingress was not checked" >&2
+    return 0
+  }
+  tunnel_id=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+    "https://api.cloudflare.com/client/v4/accounts/${account_id}/cfd_tunnel?name=${TUNNEL_NAME}&is_deleted=false" \
+    | python3 -c 'import json,sys
+try:
+    rows = json.load(sys.stdin).get("result") or []
+    print(rows[0]["id"] if rows else "")
+except Exception:
+    raise SystemExit(1)') || {
+    echo "[tunnel] WARN: could not list tunnels; dbadmin ingress was not checked" >&2
+    return 0
+  }
+  [[ -n "$tunnel_id" ]] || return 0
+
+  cfg=$(curl -fsS -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+    "https://api.cloudflare.com/client/v4/accounts/${account_id}/cfd_tunnel/${tunnel_id}/configurations") || {
+    echo "[tunnel] WARN: could not read tunnel ingress" >&2
+    return 0
+  }
+
+  result=$(printf '%s' "$cfg" | TUNNEL_ORIGIN_URL="$ORIGIN_URL" python3 -c '
+import json, os, sys
+raw = json.load(sys.stdin)
+if not raw.get("success"):
+    print("skip")
+    raise SystemExit(0)
+config = (raw.get("result") or {}).get("config") or {}
+ingress = list(config.get("ingress") or [])
+if not ingress:
+    print("skip")
+    raise SystemExit(0)
+host = "dbadmin.rguktong.in"
+for rule in ingress:
+    if rule.get("hostname") == host:
+        print("present")
+        raise SystemExit(0)
+rule = {
+    "hostname": host,
+    "service": os.environ["TUNNEL_ORIGIN_URL"],
+    "originRequest": {"noTLSVerify": True},
+}
+if ingress and "hostname" not in ingress[-1]:
+    ingress.insert(-1, rule)
+else:
+    ingress.append(rule)
+    ingress.append({"service": "http_status:404"})
+config["ingress"] = ingress
+print(json.dumps({"config": config}))
+') || {
+    echo "[tunnel] WARN: could not prepare dbadmin ingress" >&2
+    return 0
+  }
+
+  if [[ "$result" == "present" ]]; then
+    echo "[tunnel] dbadmin.rguktong.in already in tunnel ingress → ${ORIGIN_URL}"
+    return 0
+  fi
+  if [[ "$result" == "skip" || -z "$result" ]]; then
+    echo "[tunnel] WARN: tunnel ingress was not updated" >&2
+    return 0
+  fi
+
+  curl -fsS -X PUT \
+    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+    -H "Content-Type: application/json" \
+    "https://api.cloudflare.com/client/v4/accounts/${account_id}/cfd_tunnel/${tunnel_id}/configurations" \
+    --data "$result" >/dev/null || {
+    echo "[tunnel] WARN: could not add dbadmin.rguktong.in to tunnel ingress" >&2
+    return 0
+  }
+  echo "[tunnel] Added dbadmin.rguktong.in ingress → ${ORIGIN_URL}"
+}
+
 main() {
   install_cloudflared
 
   if [[ -n "${CLOUDFLARE_TUNNEL_TOKEN:-}" ]]; then
     start_token_tunnel
     echo "[tunnel] Done (token mode). Configure public hostnames in Zero Trust dashboard if not already routed."
-    return 0
-  fi
-
-  if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
+  elif [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
     if sync_existing_tunnel; then
       echo "[tunnel] Done (sync mode)"
-      return 0
-    fi
-    if create_api_tunnel; then
+    elif create_api_tunnel; then
       echo "[tunnel] Done (API mode)"
-      return 0
     fi
+  else
+    echo "[tunnel] Skipped — set CLOUDFLARE_TUNNEL_TOKEN in /root/uniz-secrets.env (free, from Cloudflare Zero Trust → Tunnels)" >&2
+    exit 0
   fi
 
-  echo "[tunnel] Skipped — set CLOUDFLARE_TUNNEL_TOKEN in /root/uniz-secrets.env (free, from Cloudflare Zero Trust → Tunnels)" >&2
-  exit 0
+  ensure_dbadmin_tunnel_ingress || true
+  return 0
 }
 
 main "$@"
