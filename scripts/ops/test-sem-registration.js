@@ -1,3 +1,11 @@
+const webadminTestPassword = String(process.env.WEBADMIN_TEST_PASSWORD || "").trim();
+if (!webadminTestPassword) {
+  console.error(
+    "Missing WEBADMIN_TEST_PASSWORD. Set it to the webadmin test account password before running this script.",
+  );
+  process.exit(1);
+}
+
 const BASE_URL = "https://api-uniz.rguktong.in/api/v1";
 
 async function run() {
@@ -8,7 +16,7 @@ async function run() {
   const wmRes = await fetch(`${BASE_URL}/auth/login/admin`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username: "webadmin", password: "webadmin@uniz" }),
+    body: JSON.stringify({ username: "webadmin", password: webadminTestPassword }),
   }).then((r) => r.json());
   const wmToken = wmRes.token;
   console.log("  ✅ Webadmin token acquired.");

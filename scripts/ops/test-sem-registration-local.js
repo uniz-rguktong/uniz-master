@@ -2,6 +2,14 @@
  * Local semester registration E2E test — reports PASS/FAIL per stage.
  * Usage: node scripts/test-sem-registration-local.js
  */
+const webadminTestPassword = String(process.env.WEBADMIN_TEST_PASSWORD || "").trim();
+if (!webadminTestPassword) {
+  console.error(
+    "Missing WEBADMIN_TEST_PASSWORD. Set it to the webadmin test account password before running this script.",
+  );
+  process.exit(1);
+}
+
 const BASE_URL = process.env.API_URL || "http://localhost:3000/api/v1";
 const CAPTCHA = "uniz_dev_bypass_token_2026";
 const results = [];
@@ -50,7 +58,7 @@ async function run() {
   console.log(`API: ${BASE_URL}\n`);
 
   // --- AUTH ---
-  const wmToken = await login("webadmin", "password123", true);
+  const wmToken = await login("webadmin", webadminTestPassword, true);
   log("Auth: Webadmin", wmToken ? "PASS" : "FAIL", wmToken ? "token acquired" : "login failed");
 
   const deanToken = await login("dean", "password123", true);

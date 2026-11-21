@@ -14,6 +14,14 @@ try {
   // dotenv might not be available in some environments, fallback to manual if needed
 }
 
+const webadminTestPassword = String(process.env.WEBADMIN_TEST_PASSWORD || "").trim();
+if (!webadminTestPassword) {
+  console.error(
+    "Missing WEBADMIN_TEST_PASSWORD. Set it to the webadmin test account password before running this script.",
+  );
+  process.exit(1);
+}
+
 // Host-side URL mapping (uniz-postgres -> localhost)
 const mapToLocalhost = (url) => {
   if (!url) return url;
@@ -300,7 +308,7 @@ async function run() {
   log.step("Admin Infiltration (Webadmin)");
   const webRes = await request("POST", "/auth/login/admin", {
     username: "webadmin",
-    password: "webadmin@uniz",
+    password: webadminTestPassword,
   });
   if (webRes.status !== 200)
     log.fail(new Error("Webadmin login failed"), webRes.duration, webRes.data);

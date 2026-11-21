@@ -2,6 +2,14 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 
+const webadminTestPassword = String(process.env.WEBADMIN_TEST_PASSWORD || "").trim();
+if (!webadminTestPassword) {
+  console.error(
+    "Missing WEBADMIN_TEST_PASSWORD. Set it to the webadmin test account password before running this script.",
+  );
+  process.exit(1);
+}
+
 // Colors for console output
 const colors = {
   reset: "\x1b[0m",
@@ -446,7 +454,7 @@ async function main() {
     await runStep("Webadmin Login", async () => {
       const res = await axios.post("http://localhost:3001/login", {
         username: "webadmin",
-        password: "webadmin@uniz",
+        password: webadminTestPassword,
       });
       state.tokens.webadmin = res.data.token;
       return {
