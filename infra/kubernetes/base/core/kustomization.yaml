@@ -36,8 +36,8 @@ resources:
 configMapGenerator:
   - name: uniz-dbadmin-role-sql
     files:
-      - ensure-dbadmin-role.sql=../../../../scripts/ops/ensure-dbadmin-role.sql
-      - ensure-dbadmin-role.sh=../../../../scripts/ops/ensure-dbadmin-role.sh
+      - ensure-dbadmin-role.sql=dbadmin-role/ensure-dbadmin-role.sql
+      - ensure-dbadmin-role.sh=dbadmin-role/ensure-dbadmin-role.sh
 
 generatorOptions:
   disableNameSuffixHash: true
