@@ -2,7 +2,12 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { JwtPayload, JwtPayloadSchema } from "../shared/jwt.schema";
 import { ErrorCode } from "../shared/error-codes";
-import { accessRole } from "@uniz/shared";
+import {
+  accessRole,
+  decodeCredentialStatus,
+  encodeCredentialStatus,
+  rejectStaleSession,
+} from "@uniz/shared";
 import { prisma } from "../utils/prisma";
 import { redis } from "../utils/redis.util";
 
@@ -63,18 +68,20 @@ export const authMiddleware = async (
       });
     }
 
-    // --- SUSPENSION CHECK (OPTIMIZED WITH REDIS) ---
+    // Suspension, token generation, and the forced password change.
     const cacheKey = `user:status:${parsed.data.id}`;
-    let userStatus = await redis.get(cacheKey);
-    let isDisabled = false;
+    let status = decodeCredentialStatus(await redis.get(cacheKey).catch(() => null));
     let username = parsed.data.username;
 
-    if (userStatus) {
-      isDisabled = userStatus === "true";
-    } else {
+    if (!status) {
       const user = await prisma.authCredential.findUnique({
         where: { id: parsed.data.id },
-        select: { isDisabled: true, username: true },
+        select: {
+          isDisabled: true,
+          username: true,
+          tokenVersion: true,
+          mustChangePassword: true,
+        },
       });
 
       if (!user) {
@@ -86,13 +93,16 @@ export const authMiddleware = async (
           message: "Authentication record not found. Please log in again.",
         });
       }
-      isDisabled = user.isDisabled;
+      status = {
+        isDisabled: user.isDisabled,
+        tokenVersion: user.tokenVersion,
+        mustChangePassword: user.mustChangePassword,
+      };
       username = user.username;
-      // Cache for 10 minutes to reduce DB load
-      await redis.setex(cacheKey, 600, isDisabled ? "true" : "false");
+      await redis.setex(cacheKey, 60, encodeCredentialStatus(status));
     }
 
-    if (isDisabled) {
+    if (status.isDisabled) {
       console.warn(
         `[AUTH-CHECK] ⛔ Access denied for suspended user: ${username} (${parsed.data.id})`,
       );
@@ -100,6 +110,20 @@ export const authMiddleware = async (
         code: "AUTH_SUSPENDED",
         message:
           "Your account is currently suspended. Please contact the administrator for assistance.",
+      });
+    }
+
+    const rejection = rejectStaleSession({
+      jwtVersion: parsed.data.tokenVersion,
+      currentVersion: status.tokenVersion,
+      mustChangePassword: status.mustChangePassword,
+      method: req.method,
+      path: req.originalUrl || req.path,
+    });
+    if (rejection) {
+      return res.status(rejection.status).json({
+        code: rejection.code,
+        message: rejection.message,
       });
     }
     // ------------------------

@@ -23,6 +23,10 @@ import { motion } from "framer-motion";
 import { prepareStudentSession } from "../../utils/studentSessionCache";
 import { cn } from "@/lib/utils";
 import { getSafeReturnUrl } from "@/utils/returnUrl";
+import {
+  mustChangePassword,
+  setMustChangePassword,
+} from "@/utils/portalSession";
 import { TurnstileLoadingPlaceholder } from "../../components/ui/TurnstileLoadingPlaceholder";
 import { prefetchTurnstile } from "../../utils/prefetchTurnstile";
 import { Alert } from "@/components/ui/alert";
@@ -538,6 +542,10 @@ export default function Signin({ type }: SigninProps) {
       localStorage.getItem("faculty_token");
 
     if (authState.is_authenticated && hasToken) {
+      if (mustChangePassword()) {
+        navigate("/set-password", { replace: true });
+        return;
+      }
       const redirectPath =
         authState.type === "student"
           ? postLoginPath("student")
@@ -634,6 +642,19 @@ export default function Signin({ type }: SigninProps) {
       const token =
         data.student_token || data.admin_token || (data as any).token;
       const resolvedUsername = data.username || username.trim();
+      const goNext = (portal: "student" | "admin" | "faculty") => {
+        if ((data as { mustChangePassword?: boolean }).mustChangePassword) {
+          setMustChangePassword(true);
+          navigate("/set-password", { replace: true });
+          return;
+        }
+        setMustChangePassword(false);
+        if (portal === "admin") {
+          setTimeout(() => navigate(postLoginPath("admin"), { replace: true }), 100);
+          return;
+        }
+        navigate(postLoginPath(portal), { replace: true });
+      };
 
       if (type === "student" && token && data.role === "student") {
         localStorage.removeItem("admin_token");
@@ -645,7 +666,7 @@ export default function Signin({ type }: SigninProps) {
         toast.success(`Welcome back, ${resolvedUsername}.`, {
           title: "Signed in",
         });
-        navigate(postLoginPath("student"), { replace: true });
+        goNext("student");
       } else if (
         type === "admin" &&
         (data.role === "teacher" || data.role === "faculty") &&
@@ -660,7 +681,7 @@ export default function Signin({ type }: SigninProps) {
         toast.success(`Welcome, Professor ${resolvedUsername}.`, {
           title: "Signed in",
         });
-        navigate(postLoginPath("faculty"), { replace: true });
+        goNext("faculty");
       } else if (type === "admin" && (token || data.success)) {
         localStorage.removeItem("student_token");
         localStorage.removeItem("faculty_token");
@@ -681,10 +702,7 @@ export default function Signin({ type }: SigninProps) {
         toast.success("Your admin session is ready.", {
           title: "Signed in",
         });
-        setTimeout(
-          () => navigate(postLoginPath("admin"), { replace: true }),
-          100,
-        );
+        goNext("admin");
       } else if (type === "faculty" && token) {
         localStorage.removeItem("student_token");
         localStorage.removeItem("admin_token");
@@ -695,7 +713,7 @@ export default function Signin({ type }: SigninProps) {
         toast.success(`Welcome, Professor ${resolvedUsername}.`, {
           title: "Signed in",
         });
-        navigate(postLoginPath("faculty"), { replace: true });
+        goNext("faculty");
       } else {
         toast.error("Access denied: Invalid credentials for this portal.");
       }

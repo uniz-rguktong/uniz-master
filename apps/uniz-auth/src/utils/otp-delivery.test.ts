@@ -14,6 +14,17 @@ import {
 } from "./otp-delivery";
 
 describe("email OTP delivery", () => {
+  it("prefers the stored real mailbox over the username address", () => {
+    assert.equal(
+      chooseOtpEmail(null, "ravi.kumar", "Ravi.Kumar@gmail.com"),
+      "ravi.kumar@gmail.com",
+    );
+    assert.equal(
+      chooseOtpEmail("old.mailbox@rguktong.ac.in", "ravi.kumar", ""),
+      "old.mailbox@rguktong.ac.in",
+    );
+  });
+
   it("sends the code to the profile email and does not push", async () => {
     const pushes: string[] = [];
     const emails: Array<{ email: string; username: string; otp: string }> =

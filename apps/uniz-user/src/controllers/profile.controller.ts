@@ -997,8 +997,8 @@ export const getFacultyProfile = async (
   }
 
   try {
-    const profile = await prisma.facultyProfile.findUnique({
-      where: { username: targetUsername },
+    const profile = await prisma.facultyProfile.findFirst({
+      where: { username: { equals: targetUsername, mode: "insensitive" } },
     });
     if (!profile)
       return res.status(404).json({
@@ -1213,7 +1213,7 @@ export const createFacultyProfile = async (
     });
     // Sync with Auth Service
     const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
-    const defaultPassword = `${username.toLowerCase()}@uniz`;
+    const defaultPassword = `${username.toLowerCase()}@rguktong`;
 
     try {
       await axios.post(
@@ -1735,7 +1735,7 @@ export const updateFacultyProfile = async (
     if (updates.role || email || updates.username || true) {
       // Always sync to fix existing
       const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
-      const defaultPassword = `${targetUsername}@uniz`;
+      const defaultPassword = `${targetUsername.toLowerCase()}@rguktong`;
 
       try {
         await axios.post(
@@ -2363,7 +2363,7 @@ export const bulkCreateFaculty = async (
       });
 
       // Sync auth credentials
-      const defaultPassword = `${username}@uniz`;
+      const defaultPassword = `${username.toLowerCase()}@rguktong`;
       await axios
         .post(
           `${AUTH_SERVICE_URL}/signup`,
@@ -2498,7 +2498,7 @@ export const bulkUpdateFaculty = async (
             `${AUTH_SERVICE_URL}/signup`, // signup endpoint handles upsert/update of user entries
             {
               username: existing.username,
-              password: `${existing.username}@uniz`, // fallback password
+              password: `${existing.username.toLowerCase()}@rguktong`, // fallback password
               role: data.role,
               email: data.email || existing.email,
             },

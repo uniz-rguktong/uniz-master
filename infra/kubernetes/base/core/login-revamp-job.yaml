@@ -1,0 +1,65 @@
+# One-off login revamp. Not listed in kustomization.yaml, so a normal deploy
+# does not run it. Apply from .github/workflows/login-revamp.yml.
+# The workflow mounts scripts/ops/login-revamp.js as ConfigMap uniz-login-revamp-script.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: uniz-login-revamp
+  labels:
+    app: uniz-login-revamp
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 3600
+  ttlSecondsAfterFinished: 86400
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: login-revamp
+          image: node:20-alpine
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eu
+              cd /tmp/revamp
+              npm install --no-save --silent pg@8 bcryptjs@2 ioredis@5
+              node /opt/revamp/login-revamp.js
+          env:
+            - name: AUTH_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: uniz-secrets
+                  key: AUTH_DATABASE_URL
+            - name: USER_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: uniz-secrets
+                  key: USER_DATABASE_URL
+            - name: REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: uniz-config
+                  key: REDIS_URL
+            - name: LOGIN_REVAMP_MODE
+              value: "__LOGIN_REVAMP_MODE__"
+            - name: LOGIN_REVAMP_CONFIRM
+              value: "__LOGIN_REVAMP_CONFIRM__"
+            - name: LOGIN_REVAMP_IN_CLUSTER
+              value: "1"
+          volumeMounts:
+            - name: script
+              mountPath: /opt/revamp
+              readOnly: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+      volumes:
+        - name: script
+          configMap:
+            name: uniz-login-revamp-script

@@ -14,13 +14,16 @@ import {
   OTP_CHANNEL_EMAIL,
   OTP_EMAIL_MISSING_MESSAGE,
   OTP_TTL_MS,
+  chooseOtpEmail,
   deliverEmailOtp,
+  isDeliverableEmail,
   isEmailOtpAcceptable,
 } from "../utils/otp-delivery";
 import {
   comparePassword,
   comparePasswordForUser,
   hashPassword,
+  isIssuedPasswordTemplate,
 } from "../utils/password.util";
 import { ErrorCode } from "../shared/error-codes";
 import { UserRole, ADMIN_ROLES } from "../shared/roles.enum";
@@ -145,16 +148,64 @@ async function resolveDepartmentForLogin(
   return resolved;
 }
 
-async function resolveLoginIdentifier(
-  identifier: string,
-  allowEmailLogin: boolean,
-): Promise<string> {
-  const trimmed = identifier.trim();
-  if (!allowEmailLogin || !trimmed.includes("@")) {
-    return trimmed;
+const CAMPUS_MAIL_DOMAIN = "rguktong.ac.in";
+
+function deliveryEmailFor(user: {
+  username: string;
+  realEmail?: string | null;
+}): string {
+  return (
+    chooseOtpEmail(null, user.username, user.realEmail) ||
+    institutionalEmail(user.username)
+  );
+}
+
+async function clearCredentialCache(id: string, username?: string) {
+  try {
+    await redis.del(`user:status:${id}`);
+    if (username) await redis.del(`otp:email:${username.toUpperCase()}`);
+  } catch {
+    /* Redis optional */
   }
-  const resolved = await resolveUsernameFromEmail(trimmed);
-  return resolved || trimmed;
+}
+
+/**
+ * Login accepts the credential username, username@rguktong.ac.in, and the
+ * stored real mailbox. It does not keep a separate alias for a retired username.
+ */
+async function findCredentialByIdentifier(identifier: string) {
+  const trimmed = String(identifier || "").trim();
+  if (!trimmed) return null;
+
+  const direct = await prisma.authCredential.findFirst({
+    where: { username: { equals: trimmed, mode: "insensitive" } },
+  });
+  if (direct) return direct;
+  if (!trimmed.includes("@")) return null;
+
+  const lower = trimmed.toLowerCase();
+  const at = lower.lastIndexOf("@");
+  const local = lower.slice(0, at);
+  const domain = lower.slice(at + 1);
+  if (domain === CAMPUS_MAIL_DOMAIN && local) {
+    const byLocal = await prisma.authCredential.findFirst({
+      where: { username: { equals: local, mode: "insensitive" } },
+    });
+    if (byLocal) return byLocal;
+  }
+
+  if (isDeliverableEmail(lower)) {
+    const byReal = await prisma.authCredential.findFirst({
+      where: { realEmail: { equals: lower, mode: "insensitive" } },
+    });
+    if (byReal) return byReal;
+  }
+
+  const resolved = await resolveUsernameFromEmail(lower);
+  if (!resolved) return null;
+  return prisma.authCredential.findFirst({
+    where: { username: { equals: resolved, mode: "insensitive" } },
+  });
 }
 
 export const login = async (req: Request, res: Response) => {
@@ -169,10 +220,10 @@ export const login = async (req: Request, res: Response) => {
       : "Invalid staff ID, email, or password"
     : "Invalid username or password";
 
-  // Verify captcha and resolve username in parallel (Turnstile is the slow step).
-  const [isHuman, username] = await Promise.all([
+  // Verify captcha and resolve the account in parallel (Turnstile is the slow step).
+  const [isHuman, user] = await Promise.all([
     verifyTurnstileToken(captchaToken, req.ip),
-    resolveLoginIdentifier(req.body.username || "", allowEmailLogin),
+    findCredentialByIdentifier(req.body.username || ""),
   ]);
 
   if (!isHuman) {
@@ -183,10 +234,6 @@ export const login = async (req: Request, res: Response) => {
   }
 
   try {
-    const user = await prisma.authCredential.findFirst({
-      where: { username: { equals: username, mode: "insensitive" } },
-    });
-
     if (!user) {
       return res.status(401).json({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
@@ -219,6 +266,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const email = institutionalEmail(user.username);
+    const deliveryEmail = deliveryEmailFor(user);
     const grantedRole = accessRole({
       id: user.id,
       username: user.username,
@@ -232,6 +280,7 @@ export const login = async (req: Request, res: Response) => {
       role: grantedRole as UserRole,
       email,
       department,
+      tokenVersion: user.tokenVersion ?? 0,
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
     });
@@ -241,6 +290,7 @@ export const login = async (req: Request, res: Response) => {
       token,
       role: grantedRole,
       username: normalizedUsername,
+      mustChangePassword: Boolean(user.mustChangePassword),
     };
 
     if (user.role === UserRole.STUDENT) {
@@ -261,7 +311,7 @@ export const login = async (req: Request, res: Response) => {
 
     // Send login notification (Backgrounded for latency optimization)
     sendLoginNotification(
-      email,
+      deliveryEmail,
       normalizedUsername,
       req.ip || "Unknown IP",
       deviceInfo,
@@ -292,10 +342,6 @@ export const adminLogin = async (req: Request, res: Response) => {
 
 export const requestOtp = async (req: Request, res: Response) => {
   const rawIdentifier = String(req.body.username || "").trim();
-  const allowEmail = rawIdentifier.includes("@");
-  let username = allowEmail
-    ? (await resolveUsernameFromEmail(rawIdentifier)) || rawIdentifier
-    : rawIdentifier.toUpperCase();
   const captchaToken = req.body.captchaToken;
 
   // Cloudflare Turnstile Verification
@@ -312,17 +358,16 @@ export const requestOtp = async (req: Request, res: Response) => {
   const expiresAt = new Date(Date.now() + OTP_TTL_MS);
 
   try {
-    const user = await prisma.authCredential.findFirst({
-      where: { username: { equals: username, mode: "insensitive" } },
-    });
+    const user = await findCredentialByIdentifier(rawIdentifier);
     if (!user) {
       return res.status(404).json({
         code: ErrorCode.RESOURCE_NOT_FOUND,
         message: "User not found",
       });
     }
+    const username = user.username;
 
-    const email = await resolveProfileEmail(username);
+    const email = await resolveProfileEmail(username, user.realEmail);
     if (!email) {
       return res.status(400).json({
         success: false,
@@ -367,21 +412,16 @@ export const requestOtp = async (req: Request, res: Response) => {
 // Resend the active email code. Does not issue a new code or use push.
 export const requestOtpEmail = async (req: Request, res: Response) => {
   const rawIdentifier = String(req.body.username || "").trim();
-  const allowEmail = rawIdentifier.includes("@");
-  let username = allowEmail
-    ? (await resolveUsernameFromEmail(rawIdentifier)) || rawIdentifier
-    : rawIdentifier.toUpperCase();
 
   try {
-    const user = await prisma.authCredential.findFirst({
-      where: { username: { equals: username, mode: "insensitive" } },
-    });
+    const user = await findCredentialByIdentifier(rawIdentifier);
     if (!user) {
       return res.status(404).json({
         code: ErrorCode.RESOURCE_NOT_FOUND,
         message: "User not found",
       });
     }
+    const username = user.username;
 
     // Resend the active email code. Push-issued rows are not eligible.
     const lastOtp = await prisma.otpLog.findFirst({
@@ -404,7 +444,7 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
 
     // Active OTP session means the user already passed Turnstile on /otp/request.
     // Email resend is rate-limited separately and does not need a fresh captcha.
-    const email = await resolveProfileEmail(username);
+    const email = await resolveProfileEmail(username, user.realEmail);
     const delivery = await deliverEmailOtp(
       { email, username, otp: lastOtp.otp },
       sendOtpEmail,
@@ -435,17 +475,15 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
 export const verifyOtp = async (req: Request, res: Response) => {
   const { otp } = req.body;
   const rawIdentifier = String(req.body.username || "").trim();
-  const allowEmail = rawIdentifier.includes("@");
-  const username = allowEmail
-    ? (await resolveUsernameFromEmail(rawIdentifier)) || rawIdentifier
-    : rawIdentifier.toUpperCase();
+  const user = await findCredentialByIdentifier(rawIdentifier);
+  // Unknown accounts use the same 400 as a bad code. Smoke expects 400.
+  const username = user?.username || rawIdentifier;
 
   try {
     const now = new Date();
     const validOtp = await prisma.otpLog.findFirst({
       where: {
-        // username is stored already-normalized (uppercase id / resolved email),
-        // so exact match uses @@index([username, createdAt]).
+        // username is the credential's stored value, so exact match uses the index.
         username,
         otp,
         channel: OTP_CHANNEL_EMAIL,
@@ -487,10 +525,6 @@ export const verifyOtp = async (req: Request, res: Response) => {
 export const resetPassword = async (req: Request, res: Response) => {
   const { newPassword, resetToken } = req.body;
   const rawIdentifier = String(req.body.username || "").trim();
-  const allowEmail = rawIdentifier.includes("@");
-  const username = allowEmail
-    ? (await resolveUsernameFromEmail(rawIdentifier)) || rawIdentifier
-    : rawIdentifier;
 
   // Validate Reset Token First
   if (!resetToken) {
@@ -503,15 +537,17 @@ export const resetPassword = async (req: Request, res: Response) => {
   // Verify Token
   const decoded = verifyToken(resetToken);
 
-  if (!username) {
+  if (!rawIdentifier) {
     return res
       .status(400)
       .json({ code: "VALIDATION_ERROR", message: "Username is required." });
   }
 
+  const identified = await findCredentialByIdentifier(rawIdentifier);
   if (
     !decoded ||
-    decoded.username.toLowerCase() !== username.toLowerCase() ||
+    !identified ||
+    decoded.username.toLowerCase() !== identified.username.toLowerCase() ||
     decoded.role !== "system_reset_intent"
   ) {
     return res.status(403).json({
@@ -533,15 +569,12 @@ export const resetPassword = async (req: Request, res: Response) => {
   }
 
   try {
-    // Fetch canonical user to ensure update works with correct casing
-    const targetUser = await prisma.authCredential.findFirst({
-      where: { username: { equals: username, mode: "insensitive" } },
-    });
+    const targetUser = identified;
 
-    if (!targetUser) {
-      return res.status(404).json({
-        code: ErrorCode.RESOURCE_NOT_FOUND,
-        message: "User not found.",
+    if (isIssuedPasswordTemplate(newPassword, targetUser.username)) {
+      return res.status(400).json({
+        code: "VALIDATION_ERROR",
+        message: "Choose a password that is not the issued campus password.",
       });
     }
 
@@ -549,8 +582,13 @@ export const resetPassword = async (req: Request, res: Response) => {
 
     await prisma.authCredential.update({
       where: { id: targetUser.id },
-      data: { passwordHash: hashedPassword },
+      data: {
+        passwordHash: hashedPassword,
+        mustChangePassword: false,
+        tokenVersion: { increment: 1 },
+      },
     });
+    await clearCredentialCache(targetUser.id, targetUser.username);
 
     // Mark token as used in Redis
     if (jti) {
@@ -562,7 +600,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     }
 
     // Send password change notification email (Backgrounded for latency optimization)
-    const email = `${targetUser.username}@rguktong.ac.in`;
+    const email = deliveryEmailFor(targetUser);
     sendPasswordChangeNotification(email, targetUser.username).catch((err) => {
       console.error(
         "[AUTH] Background password change notification failed:",
@@ -583,7 +621,7 @@ export const changePassword = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { currentPassword, newPassword } = req.body;
+  const { currentPassword, newPassword, confirmPassword } = req.body;
   const user = req.user;
 
   if (!user || user.id === "internal") {
@@ -605,12 +643,35 @@ export const changePassword = async (
       });
     }
 
-    // Verify current password
-    const isValid = await comparePassword(
-      currentPassword,
-      targetUser.passwordHash,
-    );
-    if (!isValid) {
+    if (
+      confirmPassword !== undefined &&
+      confirmPassword !== newPassword
+    ) {
+      return res.status(400).json({
+        code: "VALIDATION_ERROR",
+        message: "New passwords do not match.",
+      });
+    }
+    if (isIssuedPasswordTemplate(newPassword, targetUser.username)) {
+      return res.status(400).json({
+        code: "VALIDATION_ERROR",
+        message: "Choose a password that is not the issued campus password.",
+      });
+    }
+
+    // The forced screen has no current-password field: the login just proved it.
+    if (currentPassword) {
+      const isValid = await comparePassword(
+        currentPassword,
+        targetUser.passwordHash,
+      );
+      if (!isValid) {
+        return res.status(401).json({
+          code: ErrorCode.AUTH_INVALID_CREDENTIALS,
+          message: "Incorrect current password.",
+        });
+      }
+    } else if (!targetUser.mustChangePassword) {
       return res.status(401).json({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
         message: "Incorrect current password.",
@@ -618,15 +679,40 @@ export const changePassword = async (
     }
 
     const hashedPassword = await hashPassword(newPassword);
+    const nextVersion = (targetUser.tokenVersion ?? 0) + 1;
 
     await prisma.authCredential.update({
       where: { id: targetUser.id },
-      data: { passwordHash: hashedPassword },
+      data: {
+        passwordHash: hashedPassword,
+        mustChangePassword: false,
+        tokenVersion: nextVersion,
+      },
+    });
+    await clearCredentialCache(targetUser.id, targetUser.username);
+
+    const email = institutionalEmail(targetUser.username);
+    const grantedRole = accessRole({
+      id: targetUser.id,
+      username: targetUser.username,
+      role: targetUser.role,
+      email,
+    });
+    const token = signToken({
+      id: targetUser.id,
+      username: targetUser.username.toUpperCase(),
+      role: grantedRole as UserRole,
+      email,
+      department: user.department,
+      tokenVersion: nextVersion,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
     });
 
-    // Send password change notification email
-    const email = `${targetUser.username.toLowerCase()}@rguktong.ac.in`;
-    sendPasswordChangeNotification(email, targetUser.username).catch((err) => {
+    sendPasswordChangeNotification(
+      deliveryEmailFor(targetUser),
+      targetUser.username,
+    ).catch((err) => {
       console.error(
         "[AUTH] Background password change notification failed:",
         err,
@@ -636,6 +722,8 @@ export const changePassword = async (
     return res.json({
       success: true,
       message: "Password updated successfully",
+      mustChangePassword: false,
+      token,
     });
   } catch (e) {
     console.error("[AUTH] Change Password Error:", e);
@@ -728,13 +816,19 @@ export const adminResetPassword = async (req: Request, res: Response) => {
     const hashedPassword = await hashPassword(new_password);
     await prisma.authCredential.update({
       where: { id: user.id },
-      data: { passwordHash: hashedPassword },
+      data: {
+        passwordHash: hashedPassword,
+        mustChangePassword: false,
+        tokenVersion: { increment: 1 },
+      },
     });
+    await clearCredentialCache(user.id, user.username);
 
     // Send password change notification email as a courtesy
     if (!username.startsWith("O") && !username.startsWith("o")) {
-      const email = `${user.username.toLowerCase()}@rguktong.ac.in`;
-      sendPasswordChangeNotification(email, user.username).catch(() => {});
+      sendPasswordChangeNotification(deliveryEmailFor(user), user.username).catch(
+        () => {},
+      );
     }
 
     return res.json({
@@ -781,11 +875,24 @@ export const signup = async (req: Request, res: Response) => {
         // For internal bulk-upload calls: NEVER reset the password of an
         // existing user. Only update the role if it changed.
         // Resetting the password would lock out students who already changed theirs.
-        if (role && role !== existing.role) {
+        const data: { role?: string; realEmail?: string } = {};
+        if (role && role !== existing.role) data.role = role;
+        const syncedEmail =
+          email && isDeliverableEmail(email)
+            ? String(email).trim().toLowerCase()
+            : "";
+        if (
+          syncedEmail &&
+          syncedEmail !== String(existing.realEmail || "").toLowerCase()
+        ) {
+          data.realEmail = syncedEmail;
+        }
+        if (Object.keys(data).length) {
           await prisma.authCredential.update({
             where: { id: existing.id },
-            data: { role },
+            data,
           });
+          await clearCredentialCache(existing.id, existing.username);
         }
         return res.json({
           success: true,
@@ -803,11 +910,19 @@ export const signup = async (req: Request, res: Response) => {
     // Only hash the password if we are actually creating a new credential
     const hashedPassword = await hashPassword(password);
 
+    const realEmail =
+      email && isDeliverableEmail(email)
+        ? String(email).trim().toLowerCase()
+        : "";
     const user = await prisma.authCredential.create({
       data: {
         username,
         passwordHash: hashedPassword,
         role: role || UserRole.STUDENT,
+        realEmail,
+        mustChangePassword:
+          String(username || "").trim().toLowerCase() !== "webadmin" &&
+          isIssuedPasswordTemplate(password, username),
       },
     });
 
@@ -909,15 +1024,24 @@ export const globalAdminResetPassword = async (
 
     await prisma.authCredential.update({
       where: { id: targetUser.id },
-      data: { passwordHash: hashedPassword },
+      data: {
+        passwordHash: hashedPassword,
+        tokenVersion: { increment: 1 },
+        mustChangePassword: isIssuedPasswordTemplate(
+          newPassword,
+          targetUser.username,
+        ),
+      },
     });
 
     // Invalidate status cache to be safe
-    await redis.del(`user:status:${targetUser.id}`);
+    await clearCredentialCache(targetUser.id, targetUser.username);
 
     // Send password change notification email (Silent failure if mail service unavailable)
-    const email = `${targetUser.username.toLowerCase()}@rguktong.ac.in`;
-    sendPasswordChangeNotification(email, targetUser.username).catch((err) => {
+    sendPasswordChangeNotification(
+      deliveryEmailFor(targetUser),
+      targetUser.username,
+    ).catch((err) => {
       console.error(
         `[AUTH] Background notification failed for ${targetUser.username}:`,
         err.message,
@@ -953,7 +1077,13 @@ export const getUserStatus = async (req: Request, res: Response) => {
   try {
     const user = await prisma.authCredential.findUnique({
       where: { id },
-      select: { isDisabled: true, role: true, username: true },
+      select: {
+        isDisabled: true,
+        role: true,
+        username: true,
+        tokenVersion: true,
+        mustChangePassword: true,
+      },
     });
 
     if (!user) {
@@ -974,6 +1104,8 @@ export const getUserStatus = async (req: Request, res: Response) => {
         username: user.username,
         role: user.role,
         isDisabled: user.isDisabled,
+        tokenVersion: user.tokenVersion,
+        mustChangePassword: user.mustChangePassword,
       },
     });
   } catch (error: any) {

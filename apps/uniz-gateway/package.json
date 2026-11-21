@@ -10,9 +10,11 @@
     "axios": "^1.18.1",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
+    "@uniz/shared": "*",
     "dotenv": "^16.4.7",
     "express": "^5.2.1",
     "http-proxy": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
     "http-proxy-middleware": "^3.0.5",
     "ioredis": "^5.10.0"
   },
@@ -21,6 +23,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/http-proxy": "^1.17.17",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.0.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.0.0"

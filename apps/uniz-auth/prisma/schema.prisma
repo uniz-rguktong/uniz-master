@@ -10,16 +10,21 @@ datasource db {
 }
 
 model AuthCredential {
-  id           String   @id @default(uuid()) @db.Uuid
-  username     String   @unique
-  passwordHash String
-  role         String   @default("student")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  isDisabled   Boolean  @default(false)
+  id                 String   @id @default(uuid()) @db.Uuid
+  username           String   @unique
+  passwordHash       String
+  role               String   @default("student")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  isDisabled         Boolean  @default(false)
+  mustChangePassword Boolean  @default(false)
+  tokenVersion       Int      @default(0)
+  // Real mailbox for OTP and mail. Login display may be username@rguktong.ac.in.
+  realEmail          String   @default("")
 
   // Overview summary GROUP BY role with an active/disabled filter.
   @@index([role, isDisabled])
+  @@index([realEmail])
 }
 
 model OtpLog {
