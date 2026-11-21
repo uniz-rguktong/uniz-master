@@ -18,17 +18,17 @@ export const rateLimiter = rateLimit({
   validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
 });
 
-// Push-First OTP Limiter (2/min per user)
-export const otpPushLimiter = rateLimit({
+// New email-code requests: 2 per minute per account.
+export const otpRequestLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 2,
   keyGenerator: (req: any) =>
-    `push_${req.body.username?.toString().toLowerCase() || req.ip}`,
+    `otp_${req.body.username?.toString().toLowerCase() || req.ip}`,
   message: {
     success: false,
     message:
-      "Security check: Please wait 60 seconds before requesting another push code.",
-    code: "OTP_PUSH_LIMIT",
+      "Security check: Please wait 60 seconds before requesting another email code.",
+    code: "OTP_REQUEST_LIMIT",
     attribution: API_ATTRIBUTION,
   },
   standardHeaders: true,
@@ -36,7 +36,7 @@ export const otpPushLimiter = rateLimit({
   validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
 });
 
-// Email-Manual OTP Limiter (More relaxed to allow resends/fallbacks)
+// Email resend limiter. The active code can be emailed again a few times.
 export const otpEmailLimiter = rateLimit({
   windowMs: 2 * 60 * 1000, // 2-minute cycle
   max: 4, // up to 4 email codes or resends
@@ -56,7 +56,7 @@ export const otpEmailLimiter = rateLimit({
 // Global Hourly Safeguard per User
 export const otpHourLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 15, // Total 15 across any channel per hour
+  max: 15, // Total 15 email-code requests per hour
   keyGenerator: (req: any) =>
     `hour_${req.body.username?.toString().toLowerCase() || req.ip}`,
   message: {
