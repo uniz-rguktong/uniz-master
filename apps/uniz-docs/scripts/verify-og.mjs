@@ -22,10 +22,10 @@ if (png.length > 300 * 1024) {
 }
 
 const pages = [
-  { file: "index.html", title: "UniZ Documentation | UniZ" },
-  { file: "introduction.html", title: "Introduction | UniZ" },
-  { file: "system/overview.html", title: "System overview | UniZ" },
-  { file: "api/auth/login.html", title: "Login | UniZ" },
+  { file: "index.html", title: "uniZ Documentation | uniZ" },
+  { file: "introduction.html", title: "Introduction | uniZ" },
+  { file: "system/overview.html", title: "System overview | uniZ" },
+  { file: "api/auth/login.html", title: "Login | uniZ" },
 ];
 
 function fileFor(urlPath) {
@@ -69,7 +69,7 @@ try {
     const tags = parseTags(html);
     const expect = [
       ["og:title", page.title],
-      ["og:site_name", "UniZ Docs"],
+      ["og:site_name", "uniZ Docs"],
       ["og:image", "https://api-uniz.rguktong.in/docs/og.png"],
       ["og:image:width", "1200"],
       ["og:image:height", "630"],

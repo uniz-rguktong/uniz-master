@@ -41,7 +41,7 @@ export default function SEOLanding() {
       ],
     },
     "/blog": {
-      title: "UniZ Academic Blog",
+      title: "uniZ Academic Blog",
       subtitle: "Discover insights about academic productivity and tools.",
       keywords: [
         "student productivity blog",
@@ -74,7 +74,7 @@ export default function SEOLanding() {
 
   return (
     <div className="min-h-screen bg-bg text-text">
-      <SEO title={`${pageData.title} | UniZ`} description={pageData.subtitle} />
+      <SEO title={`${pageData.title} | uniZ`} description={pageData.subtitle} />
       <PublicHeader signInTo="/signin" />
 
       <main className="mx-auto w-full max-w-[65ch] px-4 py-10 min-[821px]:px-0 min-[821px]:py-16">
@@ -95,7 +95,7 @@ export default function SEOLanding() {
               Overview of the platform
             </h2>
             <p className="mt-3 text-text">
-              UniZ is the campus portal for RGUKT Ongole. Use it to manage college
+              uniZ is the campus portal for RGUKT Ongole. Use it to manage college
               projects online, track academics, and collaborate with classmates. It
               works as a notion alternative for engineering students when you need
               shared project space on campus systems.
@@ -111,7 +111,7 @@ export default function SEOLanding() {
                 <tr className="border-b border-border-strong text-small font-semibold text-text-2">
                   <th className="py-3 pr-4 font-semibold">Feature</th>
                   <th className="py-3 pr-4 font-semibold">Traditional tools</th>
-                  <th className="py-3 font-semibold">UniZ</th>
+                  <th className="py-3 font-semibold">uniZ</th>
                 </tr>
               </thead>
               <tbody className="text-dense">

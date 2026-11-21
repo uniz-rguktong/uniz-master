@@ -1,15 +1,15 @@
 ---
 title: "Login"
-description: "How to access the UniZ portal (including Turnstile when enabled), manage your password, and install the app on your device."
+description: "How to access the uniZ portal (including Turnstile when enabled), manage your password, and install the app on your device."
 ---
 
-The UniZ portal is your central hub for academics, leave requests, and your student profile. Your login credentials are your RGUKT roll number and a password set by the administration.
+The uniZ portal is your central hub for academics, leave requests, and your student profile. Your login credentials are your RGUKT roll number and a password set by the administration.
 
 ## Sign in
 
   ### Open the portal
 
-Navigate to the UniZ student portal URL provided by your institution.
+Navigate to the uniZ student portal URL provided by your institution.
 
   ### Enter your credentials
 
@@ -142,13 +142,13 @@ The portal evaluates your new password in real time and shows a strength indicat
 
 ## Install as a PWA
 
-UniZ is a Progressive Web App (PWA). You can install it on your phone or desktop so it opens like a native app — no app store required.
+uniZ is a Progressive Web App (PWA). You can install it on your phone or desktop so it opens like a native app — no app store required.
 
   #### Android
 
 ### Open the portal in Chrome
 
-Navigate to the UniZ portal URL.
+Navigate to the uniZ portal URL.
 
       ### Tap the install prompt
 
@@ -181,12 +181,12 @@ Scroll down in the share sheet and tap **Add to Home Screen**, then tap
 
 ### Open the portal
 
-Navigate to the UniZ portal URL in Chrome or Edge.
+Navigate to the uniZ portal URL in Chrome or Edge.
 
       ### Click the install icon
 
 Look for an install icon in the address bar (a monitor with a download
-        arrow), or open the browser menu and select **Install UniZ**.
+        arrow), or open the browser menu and select **Install uniZ**.
 
       ### Confirm
 

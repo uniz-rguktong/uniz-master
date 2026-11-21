@@ -1,9 +1,9 @@
 ---
-title: UniZ Documentation
-description: Complete UniZ docs — architecture, services, deploy, APIs, and role guides for RGUKT.
+title: uniZ Documentation
+description: Complete uniZ docs — architecture, services, deploy, APIs, and role guides for RGUKT.
 ---
 
-# UniZ Documentation
+# uniZ Documentation
 
 Use search (**Ctrl/Cmd + K**) or the [Search index](/search-index) to find **how something is implemented** and **what to change**.
 

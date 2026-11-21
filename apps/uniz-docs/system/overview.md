@@ -1,9 +1,9 @@
 ---
 title: "System overview"
-description: "End-to-end UniZ architecture — Cloudflare Pages frontends, VPS K3s APIs, Postgres, Redis, with Mermaid diagrams."
+description: "End-to-end uniZ architecture — Cloudflare Pages frontends, VPS K3s APIs, Postgres, Redis, with Mermaid diagrams."
 ---
 
-UniZ is a campus platform for RGUKT. **Frontends are static SPAs on Cloudflare Pages.** **APIs, Postgres, and Redis run on a single K3s VPS.** This page is the map; deeper pages cover topology, request flow, and each service.
+uniZ is a campus platform for RGUKT. **Frontends are static SPAs on Cloudflare Pages.** **APIs, Postgres, and Redis run on a single K3s VPS.** This page is the map; deeper pages cover topology, request flow, and each service.
 
 ## Big picture
 

@@ -7,7 +7,7 @@ import {
   adminNavInactiveClass,
   adminSearchInputClass,
 } from "./admin-ui";
-import { Lockup, Mark } from "@/components/brand/Mark";
+import { AppIcon, Lockup } from "@/components/brand/Mark";
 import { Avatar } from "@/components/ui/avatar";
 import { rememberAdminProfile, useAdminProfile } from "@/api/adminProfile";
 
@@ -65,6 +65,7 @@ export interface AdminShellProps {
   mobileHeaderExtra?: ReactNode;
   headerAlign?: "between" | "end";
   mobileNavItems?: AdminNavItem[];
+  /** Accepted from existing dashboards. The collapsed rail always centers the app icon. */
   collapseBranding?: "hide" | "abbreviate";
   sidebarVariant?: "default" | "overlay-mobile";
   contentClassName?: string;
@@ -90,7 +91,6 @@ export default function AdminShell({
   headerExtra,
   mobileHeaderExtra,
   headerAlign = "end",
-  collapseBranding = "hide",
   contentClassName,
   navSpacing = "default",
   showHeaderMenuToggle = false,
@@ -151,15 +151,13 @@ export default function AdminShell({
       <div
         className={cn(
           "flex h-16 shrink-0 items-center border-b border-[var(--sb-div)] px-3",
-          !mobile && !isSidebarOpen && collapseBranding === "hide" && "justify-center",
+          !mobile && !isSidebarOpen && "justify-center",
         )}
       >
         {!mobile && !isSidebarOpen ? (
-          <span className="text-white">
-            <Mark size={24} />
-          </span>
+          <AppIcon title="uniZ" />
         ) : (
-          <Lockup mark={28} word={18} tone="chrome" />
+          <Lockup height={32} tone="chrome" title="uniZ" />
         )}
         {mobile ? (
           <button
@@ -311,6 +309,7 @@ export default function AdminShell({
           >
             <Menu size={18} strokeWidth={1.75} aria-hidden />
           </button>
+          <AppIcon title="uniZ" />
           <p className="min-w-0 flex-1 truncate text-[17px] font-semibold leading-6">
             {activeLabel || "Admin"}
           </p>

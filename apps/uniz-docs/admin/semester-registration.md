@@ -3,7 +3,7 @@ title: "Semester Registration"
 description: "How webadmins, deans, and HODs configure semesters, open registration, and track student enrollment."
 ---
 
-Semester registration in UniZ replaces external spreadsheets for subject enrollment. The full workflow runs inside the admin portal and academics API.
+Semester registration in uniZ replaces external spreadsheets for subject enrollment. The full workflow runs inside the admin portal and academics API.
 
 ---
 

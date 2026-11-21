@@ -39,7 +39,7 @@ export default function Developers() {
     <>
       <SEO
         title="Developers — uniZ"
-        description="Meet the RGUKT Ongole student team behind the UniZ campus platform."
+        description="Meet the RGUKT Ongole student team behind the uniZ campus platform."
         canonical="https://uniz.rguktong.in/developers"
       />
       {signedIn ? (

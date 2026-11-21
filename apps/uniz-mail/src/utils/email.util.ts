@@ -42,7 +42,7 @@ if (isProduction) {
   console.log("[Mail] Using Gmail Local Transporter");
 }
 
-const FROM_NAME = "UniZ Campus";
+const FROM_NAME = "uniZ Campus";
 const FROM_EMAIL = isProduction
   ? process.env.SES_FROM_EMAIL || "no-reply-ems@rguktong.in"
   : process.env.EMAIL_USER || "noreplycampusschield@gmail.com";
@@ -53,7 +53,7 @@ const SENDER = `"${FROM_NAME}" <${FROM_EMAIL}>`;
 const emailFooter = `
 
 Regards,
-UniZ Portal
+uniZ Portal
 Rajiv Gandhi University of Knowledge Technologies`;
 
 export const sendOtpEmail = async (
@@ -75,7 +75,7 @@ If you did not request this, please contact the administrator immediately.${emai
     await transporter.sendMail({
       from: SENDER,
       to: email,
-      subject: "UniZ - Password Reset OTP",
+      subject: "uniZ - Password Reset OTP",
       text,
     });
     console.log(`OTP email sent to ${email}`);
@@ -107,7 +107,7 @@ If this wasn't you, please reset your password immediately and contact the admin
     await transporter.sendMail({
       from: SENDER,
       to: email,
-      subject: "UniZ - Login Notification",
+      subject: "uniZ - Login Notification",
       text,
     });
     console.log(`Login notification sent to ${email}`);
@@ -140,7 +140,7 @@ If you did not make these changes, please contact the administrator immediately.
     await transporter.sendMail({
       from: SENDER,
       to: email,
-      subject: "UniZ - Profile Updated",
+      subject: "uniZ - Profile Updated",
       text,
     });
     console.log(`Profile update notification sent to ${email}`);
@@ -170,7 +170,7 @@ If you did not make this change, your account may be compromised. Please contact
     await transporter.sendMail({
       from: SENDER,
       to: email,
-      subject: "UniZ - Password Changed",
+      subject: "uniZ - Password Changed",
       text,
     });
     console.log(`Password change notification sent to ${email}`);
@@ -203,7 +203,7 @@ You will be notified once your request is reviewed.${emailFooter}`;
     await transporter.sendMail({
       from: SENDER,
       to: email,
-      subject: "UniZ - Outpass Request Submitted",
+      subject: "uniZ - Outpass Request Submitted",
       text,
     });
     console.log(`Outpass request notification sent to ${email}`);
@@ -236,7 +236,7 @@ You will be notified once your request is reviewed.${emailFooter}`;
     await transporter.sendMail({
       from: SENDER,
       to: email,
-      subject: "UniZ - Outing Request Submitted",
+      subject: "uniZ - Outing Request Submitted",
       text,
     });
     console.log(`Outing request notification sent to ${email}`);
@@ -274,7 +274,7 @@ ${
     await transporter.sendMail({
       from: SENDER,
       to: email,
-      subject: `UniZ - Outpass ${isApproved ? "Approved" : "Rejected"}`,
+      subject: `uniZ - Outpass ${isApproved ? "Approved" : "Rejected"}`,
       text,
     });
     console.log(`Outpass ${status} notification sent to ${email}`);
@@ -312,7 +312,7 @@ ${
     await transporter.sendMail({
       from: SENDER,
       to: email,
-      subject: `UniZ - Outing ${isApproved ? "Approved" : "Rejected"}`,
+      subject: `uniZ - Outing ${isApproved ? "Approved" : "Rejected"}`,
       text,
     });
     console.log(`Outing ${status} notification sent to ${email}`);

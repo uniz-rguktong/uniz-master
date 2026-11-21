@@ -129,7 +129,6 @@ const AuthRedirect = () => {
   return <Navigate to="/" replace />;
 };
 
-import { InstallPWA } from "./components/InstallPWA";
 import { usePushNavigation } from "./hooks/usePushNavigation";
 import { mustChangePassword } from "./utils/portalSession";
 
@@ -150,7 +149,6 @@ export default function App() {
   return (
     <>
       <PushNavigationBridge />
-      <InstallPWA />
       <Toaster defaultPosition="bottom-right" />
       <Suspense fallback={<LoadingFallback />}>
         <PasswordChangeGate>

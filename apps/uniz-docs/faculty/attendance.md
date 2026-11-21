@@ -1,12 +1,12 @@
 ---
 title: "Attendance"
-description: "Upload and manage student attendance records for your subjects on UniZ."
+description: "Upload and manage student attendance records for your subjects on uniZ."
 ---
 
 Use this guide to submit attendance records for your subjects, correct individual entries, and download attendance reports. Once you upload attendance, students can immediately see their attendance percentage per subject in their portal.
 
 ::: info
-You log in to UniZ with the same endpoint used by admins. Your `role` in the
+You log in to uniZ with the same endpoint used by admins. Your `role` in the
   login response determines your access level.
 :::
 
@@ -31,7 +31,7 @@ Send a `GET` request to `/academics/attendance/template` with query
     | `branch`      | `CSE`            | Department code                    |
     | `year`        | `E3`             | Batch year (E1–E4, P1–P2)          |
     | `semester`    | `SEM-1`          | Semester identifier                |
-    | `subjectCode` | `E3-SEM-1-CSE-1` | Subject code as registered in UniZ |
+    | `subjectCode` | `E3-SEM-1-CSE-1` | Subject code as registered in uniZ |
 
     The response is an `.xlsx` file download. Save it before filling it in.
 

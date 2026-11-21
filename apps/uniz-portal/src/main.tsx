@@ -59,8 +59,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-import { PWAListener } from "./components/PWAListener.tsx";
-
 function shouldShowPWASplash(): boolean {
   if (window.matchMedia("(min-width: 1024px)").matches) {
     const standalone =
@@ -85,7 +83,6 @@ function dismissPWASplash() {
 
 createRoot(document.getElementById("root")!).render(
   <RecoilRoot>
-    <PWAListener />
     <BrowserRouter>
       <Layout>
         <App />

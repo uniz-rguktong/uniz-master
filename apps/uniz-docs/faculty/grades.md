@@ -1,12 +1,12 @@
 ---
 title: "Grades"
-description: "Upload, manage, and publish student grades for your subjects on UniZ."
+description: "Upload, manage, and publish student grades for your subjects on uniZ."
 ---
 
 Use this guide to upload grades for your assigned subjects, correct individual records, and download grade reports. Grade results are visible to students only after the Director triggers a publish.
 
 ::: info
-You log in to UniZ with the same endpoint used by admins. Your `role` in the
+You log in to uniZ with the same endpoint used by admins. Your `role` in the
   login response determines your access level.
 :::
 
@@ -30,12 +30,12 @@ Send a `GET` request to `/academics/grades/template` with query parameters
     | `branch`      | `CSE`               | Department code                      |
     | `year`        | `E3`                | Batch year (E1–E4, P1–P2)            |
     | `semester`    | `SEM-1`             | Semester identifier                  |
-    | `subjectCode` | `E3-SEM-1-CSE-1`    | Subject code as registered in UniZ   |
+    | `subjectCode` | `E3-SEM-1-CSE-1`    | Subject code as registered in uniZ   |
 
     The response is an `.xlsx` file download. Save it locally before filling it in.
 
     ::: tip
-In the UniZ portal, you can download the template directly from the
+In the uniZ portal, you can download the template directly from the
       **Add Grades** page without writing the request manually.
 :::
 
@@ -240,7 +240,7 @@ verify grades before requesting publication, or to keep a local record.
   grades are ready for review and publication.
 :::
 
-When the Director publishes results for a semester, UniZ triggers a background
+When the Director publishes results for a semester, uniZ triggers a background
 job that sends report card emails to all students for that semester.
 
 You can monitor the publish progress at:

@@ -424,7 +424,7 @@ export default function BannersSection() {
                     onChange={(e) =>
                       setNewBanner({ ...newBanner, title: e.target.value })
                     }
-                    placeholder="e.g. UniZ v2.0 is Live!"
+                    placeholder="e.g. uniZ v2.0 is Live!"
                     className={adminInputClass}
                   />
                 </div>

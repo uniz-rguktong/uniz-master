@@ -51,7 +51,7 @@ describe("OTP notification jobs", () => {
       "OTP_PUSH",
       {
         username: "ada",
-        title: "UniZ Security Authentication",
+        title: "uniZ Security Authentication",
         body: "Your secure verification code is 123456.",
         type: "OTP",
       },

@@ -184,7 +184,7 @@ const emailTemplate = (title: string, content: string) => `
     <!-- Minimalist Branding -->
     <div style="margin-bottom: 40px; border-bottom: 2px solid #000000; padding-bottom: 12px;">
       <h1 style="margin: 0; color: #000000; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">
-        UniZ <span style="font-weight: 300; color: #666666;">Security Dispatch</span>
+        uniZ <span style="font-weight: 300; color: #666666;">Security Dispatch</span>
       </h1>
     </div>
     
@@ -218,7 +218,7 @@ const emailTemplate = (title: string, content: string) => `
     </div>
     
     <div style="margin-top: 30px; text-align: left;">
-      <p style="color: #cccccc; font-size: 10px;">&copy; 2026 UniZ Integrated Services. Document ID: SEC/${Date.now().toString(36).toUpperCase()}</p>
+      <p style="color: #cccccc; font-size: 10px;">&copy; 2026 uniZ Integrated Services. Document ID: SEC/${Date.now().toString(36).toUpperCase()}</p>
     </div>
   </div>
 </body>
@@ -245,9 +245,9 @@ export const sendOtpEmail = async (
     `;
 
     const success = await sendEmailUnified({
-      from: '"UniZ Official" <no-reply@rguktong.in>',
+      from: '"uniZ Official" <no-reply@rguktong.in>',
       to: email,
-      subject: `Your UniZ Access Code: ${otp}`,
+      subject: `Your uniZ Access Code: ${otp}`,
       html: emailTemplate("Verification Required", content),
     });
     return success;
@@ -268,13 +268,13 @@ export const sendLoginNotification = async (
     });
     const content = `
       <p>Dear <strong>${username}</strong>,</p>
-      <p>A new login was detected on your UniZ account.</p>
+      <p>A new login was detected on your uniZ account.</p>
       <div style="background-color: #fffaf0; border-left: 4px solid #ed8936; padding: 15px; margin: 20px 0;">
         <p style="margin: 0; font-size: 14px;"><strong>Time:</strong> ${timestamp}</p>
         ${ipAddress ? `<p style="margin: 5px 0 0 0; font-size: 14px;"><strong>IP Address:</strong> ${ipAddress}</p>` : ""}
         <p style="margin: 5px 0 0 0; font-size: 14px;"><strong>Device:</strong> Web Browser</p>
       </div>
-      <p style="color: #e53e3e; font-size: 13px; font-weight: 500;">If this was not you, please reset your password immediately via the UniZ portal.</p>
+      <p style="color: #e53e3e; font-size: 13px; font-weight: 500;">If this was not you, please reset your password immediately via the uniZ portal.</p>
     `;
 
     // Disabled per user policy: only OTP-on-demand uses email
@@ -524,7 +524,7 @@ export const sendNewRequestAlertToAdmin = async (
       <div style="background-color: #f7fafc; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #edf2f7;">
         <p style="margin: 0;"><strong>Details:</strong> ${reason}</p>
       </div>
-      <p>Please login to the UniZ Admin Portal to review and take action.</p>
+      <p>Please login to the uniZ Admin Portal to review and take action.</p>
     `;
 
     // Disabled per user policy: only OTP-on-demand uses email
@@ -610,7 +610,7 @@ export const sendGrievanceResolvedNotification = async (
       : `Grievance update: ${category}`;
 
     return await sendEmailUnified({
-      from: '"UniZ SWO" <no-reply@rguktong.in>',
+      from: '"uniZ SWO" <no-reply@rguktong.in>',
       to: email,
       subject,
       html: emailTemplate(emailTitle, content),
@@ -654,9 +654,9 @@ export const sendPasswordChangeNotification = async (
     });
     const content = `
       <p>Dear <strong>${username}</strong>,</p>
-      <p>Your UniZ account password has been changed successfully.</p>
+      <p>Your uniZ account password has been changed successfully.</p>
       <p style="margin-top: 20px;"><strong>Time:</strong> ${timestamp}</p>
-      <p style="color: #e53e3e; font-size: 13px; margin-top: 20px;">If you did not perform this action, please contact UniZ administration immediately.</p>
+      <p style="color: #e53e3e; font-size: 13px; margin-top: 20px;">If you did not perform this action, please contact uniZ administration immediately.</p>
     `;
 
     // Disabled per user policy: only OTP-on-demand uses email

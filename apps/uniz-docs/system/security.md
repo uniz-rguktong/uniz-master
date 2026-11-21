@@ -1,6 +1,6 @@
 ---
 title: "Security model"
-description: "JWT auth, internal service secrets, CORS, Turnstile, Cloudflare edge — how UniZ is locked down."
+description: "JWT auth, internal service secrets, CORS, Turnstile, Cloudflare edge — how uniZ is locked down."
 ---
 
 ## Trust boundaries

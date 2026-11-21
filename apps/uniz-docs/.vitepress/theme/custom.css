@@ -4,6 +4,24 @@
   --vp-c-brand-3: #7aab00;
 }
 
+/* The M1 wordmark is the nav mark. Keep the site name for the link, out of view. */
+.VPNavBarTitle .logo {
+  height: 32px;
+  width: auto;
+}
+
+.VPNavBarTitle .title > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .mermaid {
   background: #111;
   border-radius: 8px;

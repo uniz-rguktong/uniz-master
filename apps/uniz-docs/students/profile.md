@@ -3,7 +3,7 @@ title: "Profile"
 description: "View and update your personal details, manage your profile photo, and check your request history."
 ---
 
-Your profile page is the central view of your student record in UniZ. It shows your personal details, academic information, family details, and your outpass/outing history.
+Your profile page is the central view of your student record in uniZ. It shows your personal details, academic information, family details, and your outpass/outing history.
 
 ---
 

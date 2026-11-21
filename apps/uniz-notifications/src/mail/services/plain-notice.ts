@@ -75,7 +75,7 @@ export function plainNoticeFromAddress(sesFrom?: string): string {
   const wrapped = configured.match(/<([^<>\s]+)>/);
   const bare = (wrapped?.[1] || configured).trim();
   const email = isSingleEmailAddress(bare) ? bare : FALLBACK_FROM;
-  return `"UniZ Campus" <${email}>`;
+  return `"uniZ Campus" <${email}>`;
 }
 
 export function escapeHtml(value: string): string {
@@ -164,7 +164,7 @@ export function renderPlainNoticeHtml(text: string): string {
 <body style="margin:0;padding:0;background:#f2f5fb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0B2A47;">
   <div style="max-width:580px;margin:0 auto;padding:24px 16px;">
     <div style="background:#e6ebf5;border-bottom:3px solid #0B2A47;padding:14px 18px;">
-      <span style="color:#0B2A47;font-size:14px;font-weight:700;letter-spacing:0.04em;">UniZ Campus</span>
+      <span style="color:#0B2A47;font-size:14px;font-weight:700;letter-spacing:0.04em;">uniZ Campus</span>
     </div>
     <div style="background:#ffffff;padding:20px 18px;color:#1b2838;font-size:15px;line-height:1.6;">
       ${body}

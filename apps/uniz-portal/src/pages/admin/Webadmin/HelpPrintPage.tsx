@@ -28,7 +28,7 @@ export default function HelpPrintPage() {
         </Link>
       </div>
       <article className="help-sheet mx-auto w-full max-w-[800px] px-4 py-8 min-[821px]:px-10">
-        <p className="text-small font-medium text-text-2">RGUKT Ongole · UniZ</p>
+        <p className="text-small font-medium text-text-2">RGUKT Ongole · uniZ</p>
         <h1 className="mt-2 font-serif text-[32px] font-normal leading-10 tracking-[-0.01em] text-head">
           Webadmin guide
         </h1>

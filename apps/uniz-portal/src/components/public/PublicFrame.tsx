@@ -11,8 +11,8 @@ export function PublicHeader({
   return (
     <header className="border-b border-[var(--sb-border)] bg-navy-900">
       <div className="mx-auto flex h-16 w-full max-w-[1232px] items-center justify-between px-5 min-[821px]:px-10">
-        <Link to="/" aria-label="UniZ home" className="text-white">
-          <Lockup mark={32} word={20} tone="chrome" />
+        <Link to="/" aria-label="uniZ home" className="text-white">
+          <Lockup height={36} tone="chrome" />
         </Link>
         <Link
           to={signInTo}
@@ -30,7 +30,7 @@ export function PublicFooter() {
     <footer className="mt-16 border-t border-[var(--sb-border)] bg-navy-900 text-white">
       <div className="mx-auto flex w-full max-w-[1232px] flex-col gap-6 px-5 py-10 min-[821px]:flex-row min-[821px]:items-end min-[821px]:justify-between min-[821px]:px-10">
         <div>
-          <Lockup mark={40} word={24} tone="chrome" />
+          <Lockup height={40} tone="chrome" title="uniZ" />
           <p className="mt-4 max-w-[360px] text-dense leading-[22px] text-navy-300">
             Rajiv Gandhi University of Knowledge Technologies, Ongole.
           </p>
@@ -52,7 +52,7 @@ export function PublicFooter() {
       </div>
       <div className="border-t border-navy-700">
         <p className="mx-auto w-full max-w-[1232px] px-5 py-5 text-small text-navy-300 min-[821px]:px-10">
-          © {new Date().getFullYear()} UniZ · RGUKT Ongole
+          © {new Date().getFullYear()} uniZ · RGUKT Ongole
         </p>
       </div>
     </footer>
