@@ -7,7 +7,8 @@ import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { parseTags, pngSize } from "../../../scripts/og/html.mjs";
+// Vendored from scripts/og so the app-directory Docker context can build.
+import { parseTags, pngSize } from "./og/html.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dist = path.join(root, ".vitepress/dist");

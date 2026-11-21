@@ -5,7 +5,7 @@
  * have their own shells. Former /nexus/* URLs are 301 redirects, so this
  * map does not prerender Nexus paths or put UniZ branding in the cards.
  */
-import { normalizePath } from "../../../scripts/og/html.mjs";
+import { normalizePath } from "../scripts/og/html.mjs";
 
 export const SITE = "https://rguktong.in";
 export const SITE_NAME = "RGUKT Ongole";
