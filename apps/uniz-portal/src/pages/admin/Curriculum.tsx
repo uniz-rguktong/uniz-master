@@ -393,7 +393,6 @@ export default function CurriculumManager() {
                     {sub.credits} Credits
                   </span>
                 </div>
-                <div className="w-1.5 h-1.5 rounded-full bg-success"></div>
               </div>
             </motion.div>
           ))}

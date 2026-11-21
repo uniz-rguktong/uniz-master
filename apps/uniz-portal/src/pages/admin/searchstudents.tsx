@@ -726,7 +726,6 @@ export default function SearchStudents() {
                           <span className="text-primary-foreground font-semibold text-sm tracking-tighter">
                             {sem} Report
                           </span>
-                          <div className="w-1.5 h-1.5 bg-success rounded-full animate-pulse"></div>
                         </div>
                         <div className="flex gap-2">
                           <button
