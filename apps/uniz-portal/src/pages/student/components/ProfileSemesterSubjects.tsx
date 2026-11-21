@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
 import { GET_CURRENT_SUBJECTS } from "../../../api/endpoints";
+import { Skeleton } from "@/components/ui/Skeleton";
 import RegisteredSubjectsPanel, {
   type RegisteredSubjectRow,
 } from "./RegisteredSubjectsPanel";
@@ -75,8 +75,11 @@ export default function ProfileSemesterSubjects({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-10">
-        <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+      <div className="space-y-3" aria-hidden>
+        <Skeleton className="h-5 w-48" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
       </div>
     );
   }

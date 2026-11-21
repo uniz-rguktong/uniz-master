@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/utils/toast-ref";
+import { PageHeader } from "@/components/ui/page-header";
 
 type Variant = "default" | "success" | "error" | "warning";
 type Position =
@@ -47,82 +48,43 @@ export default function ToasterDemo() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-white min-h-screen">
-
-      <div className="space-y-6 max-w-2xl mx-auto">
-        <section>
-          <h2 className="text-2xl font-bold mb-4">Toast Variants</h2>
-          <div className="flex flex-wrap gap-4">
-            {(["default", "success", "error", "warning"] as Variant[]).map(
-              (variantKey) => (
-                <Button
-                  key={variantKey}
-                  variant="outline"
-                  onClick={() => showToastVariant(variantKey)}
-                  className={`border-${
-                    variantKey === "default"
-                      ? "border"
-                      : variantKey === "success"
-                        ? "green-600"
-                        : variantKey === "error"
-                          ? "red-600"
-                          : "amber-600"
-                  } text-${
-                    variantKey === "default"
-                      ? "foreground"
-                      : variantKey === "success"
-                        ? "green-600"
-                        : variantKey === "error"
-                          ? "red-600"
-                          : "amber-600"
-                  } hover:bg-${variantKey === "success" ? "green" : variantKey === "error" ? "red" : "amber"}-600/10`}
-                >
-                  {variantKey.charAt(0).toUpperCase() + variantKey.slice(1)}{" "}
-                  Toast
-                </Button>
-              ),
-            )}
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-4">Toast Positions</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {(
-              [
-                "top-left",
-                "top-center",
-                "top-right",
-                "bottom-left",
-                "bottom-center",
-                "bottom-right",
-              ] as Position[]
-            ).map((positionKey) => (
-              <Button
-                key={positionKey}
-                variant="outline"
-                onClick={() => showToastVariant("default")}
-                className="border-zinc-200 text-zinc-900 hover:bg-zinc-50"
-              >
-                {positionKey
-                  .replace("-", " ")
-                  .replace(/\b\w/g, (char) => char.toUpperCase())}
-              </Button>
-            ))}
-          </div>
-        </section>
-
-        <section className="pt-8 border-t">
-          <h2 className="text-2xl font-bold mb-4">Real‑World Example</h2>
-          <Button
-            variant="default"
-            onClick={simulateApiCall}
-            className="bg-zinc-900 text-white hover:bg-zinc-800 h-12 px-8 rounded-xl shadow-sm"
-          >
-            Schedule Meeting
-          </Button>
-        </section>
-      </div>
+    <div className="mx-auto max-w-2xl space-y-8">
+      <PageHeader title="Toast demo" meta="Developer route for the shared toast primitives." />
+      <section>
+        <h2 className="font-serif text-2xl font-normal leading-8 text-head">Toast variants</h2>
+        <div className="mt-4 flex flex-wrap gap-3">
+          {(["default", "success", "error", "warning"] as Variant[]).map((variantKey) => (
+            <Button key={variantKey} variant="outline" onClick={() => showToastVariant(variantKey)}>
+              {variantKey.charAt(0).toUpperCase() + variantKey.slice(1)} toast
+            </Button>
+          ))}
+        </div>
+      </section>
+      <section>
+        <h2 className="font-serif text-2xl font-normal leading-8 text-head">Toast positions</h2>
+        <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3">
+          {(
+            [
+              "top-left",
+              "top-center",
+              "top-right",
+              "bottom-left",
+              "bottom-center",
+              "bottom-right",
+            ] as Position[]
+          ).map((positionKey) => (
+            <Button key={positionKey} variant="outline" onClick={() => showToastVariant("default")}>
+              {positionKey.replace("-", " ").replace(/\b\w/g, (char) => char.toUpperCase())}
+            </Button>
+          ))}
+        </div>
+      </section>
+      <section className="border-t border-border pt-8">
+        <h2 className="font-serif text-2xl font-normal leading-8 text-head">Real-world example</h2>
+        <Button className="mt-4" onClick={simulateApiCall}>
+          Schedule Meeting
+        </Button>
+      </section>
     </div>
   );
 }

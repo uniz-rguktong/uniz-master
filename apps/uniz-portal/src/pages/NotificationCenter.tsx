@@ -1,14 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  Bell,
-  Check,
-  CheckCheck,
-  Loader2,
-  Trash2,
-  ArrowLeft,
-  RefreshCw,
-} from "lucide-react";
+import { ArrowLeft, Check, RefreshCw, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/api/apiClient";
 import {
@@ -19,7 +11,10 @@ import {
   NOTIFICATION_INBOX_READ_ALL,
 } from "@/api/endpoints";
 import { toast } from "@/utils/toast-ref";
-import { getNotificationTypeMeta } from "@/lib/notificationTypeMeta";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/Button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type InboxItem = {
   id: string;
@@ -166,193 +161,97 @@ export default function NotificationCenter({
     }
   };
 
-  const empty = !loading && items.length === 0;
-
-  const ActionButton = ({
-    onClick,
-    disabled,
-    children,
-    danger,
-  }: {
-    onClick: () => void;
-    disabled?: boolean;
-    children: React.ReactNode;
-    danger?: boolean;
-  }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className={cn(
-        "inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-md transition-colors disabled:opacity-40",
-        danger
-          ? "text-red-600 hover:bg-red-50"
-          : "text-zinc-600 hover:bg-zinc-100",
-      )}
-    >
-      {children}
-    </button>
-  );
-
   return (
-    <div
-      className={cn(
-        "mx-auto max-w-2xl px-4 pb-12",
-        isAdmin ? "pt-6" : "pt-1 md:pt-0",
-      )}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          {isAdmin && (
-            <button
-              type="button"
-              onClick={() => navigate(backPath)}
-              className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </button>
-          )}
-          <div className="flex items-center gap-2">
-            <Bell className="h-5 w-5 text-zinc-900" />
-            <h1 className="text-[16px] font-semibold text-zinc-900 tracking-tight">
-              Notifications
-            </h1>
-            {unreadCount > 0 && (
-              <span className="rounded-full bg-navy-900 px-2 py-0.5 text-[10px] font-bold text-white tabular-nums">
-                {unreadCount}
-              </span>
-            )}
-          </div>
-        </div>
+    <div className={cn("mx-auto max-w-3xl", isAdmin && "pt-2")}>
+      <PageHeader
+        title="Notifications"
+        meta={unreadCount > 0 ? `${unreadCount} unread` : "You are up to date"}
+        action={
+          <Button variant="outline" size="compact" onClick={load} disabled={loading} aria-label="Refresh">
+            <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} aria-hidden />
+            Refresh
+          </Button>
+        }
+      />
+      {isAdmin ? (
         <button
           type="button"
-          title="Refresh"
-          disabled={loading}
-          onClick={load}
-          className="p-2 rounded-md text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors disabled:opacity-40"
+          onClick={() => navigate(backPath)}
+          className="mb-4 inline-flex min-h-11 items-center gap-2 text-small font-medium text-link"
         >
-          <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+          <ArrowLeft className="h-4 w-4" aria-hidden />
+          Back
         </button>
-      </div>
-
-      {/* Action bar */}
-      <div className="flex items-center gap-0.5 mb-3 border-b border-zinc-200 pb-2">
-        <ActionButton
-          onClick={markAllRead}
-          disabled={busy || unreadCount === 0}
-        >
-          <CheckCheck className="h-3.5 w-3.5" /> Mark all read
-        </ActionButton>
-        <ActionButton onClick={clearRead} disabled={busy}>
-          <Trash2 className="h-3 w-3" /> Clear read
-        </ActionButton>
-        <ActionButton
-          onClick={clearAll}
-          disabled={busy || items.length === 0}
-          danger
-        >
+      ) : null}
+      <div className="flex flex-wrap gap-2 border-b border-border pb-3">
+        <Button variant="ghost" size="compact" onClick={markAllRead} disabled={busy || unreadCount === 0}>
+          Mark all read
+        </Button>
+        <Button variant="ghost" size="compact" onClick={clearRead} disabled={busy}>
+          Clear read
+        </Button>
+        <Button variant="ghost" size="compact" onClick={clearAll} disabled={busy || items.length === 0}>
           Clear all
-        </ActionButton>
+        </Button>
       </div>
-
-      {/* Content */}
       {loading ? (
-        <div className="flex justify-center py-20">
-          <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+        <div className="mt-6 space-y-3">
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-16 w-full" />
         </div>
-      ) : empty ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <Bell className="h-8 w-8 text-zinc-200 mb-3" />
-          <p className="text-[14px] font-medium text-zinc-500">All caught up</p>
-          <p className="text-[12px] text-zinc-400 mt-1">
-            New alerts will appear here.
-          </p>
-        </div>
+      ) : items.length === 0 ? (
+        <EmptyState title="All caught up" body="New alerts will appear here." />
       ) : (
-        <div className="rounded-lg border border-zinc-200 overflow-hidden divide-y divide-zinc-100">
+        <ul className="mt-2 border-b border-border">
           {items.map((item) => {
             const unread = !item.readAt;
             const highlighted = item.id === highlightId;
-            const meta = getNotificationTypeMeta(item.type, item.title);
-            const TypeIcon = meta.Icon;
             return (
-              <div
+              <li
                 key={item.id}
                 id={`notification-${item.id}`}
                 className={cn(
-                  "flex items-start gap-3 px-4 py-3 transition-colors group",
-                  unread ? "bg-blue-50/40" : "bg-white hover:bg-zinc-50/60",
-                  highlighted && "ring-2 ring-inset ring-navy-300",
+                  "flex items-start gap-3 border-b border-border px-3 py-4 last:border-b-0",
+                  (unread || highlighted) && "bg-selected",
                 )}
               >
-                {/* Unread dot */}
-                <div className="flex items-center justify-center w-4 pt-1.5 shrink-0">
-                  {unread && (
-                    <span className="h-2 w-2 rounded-full bg-navy-900" />
-                  )}
-                </div>
-
-                {/* Icon */}
-                <div
-                  className={cn(
-                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg mt-0.5",
-                    meta.bgClass,
-                  )}
-                  title={meta.label}
-                >
-                  <TypeIcon
-                    className={cn("h-4 w-4", meta.iconClass)}
-                  />
-                </div>
-
-                {/* Content */}
+                <span className="mt-2 flex w-2 shrink-0 justify-center" aria-hidden>
+                  {unread ? <span className="h-2 w-2 rounded-full bg-navy-600" /> : null}
+                </span>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline gap-2">
-                    <p
-                      className={cn(
-                        "text-[13px] leading-tight truncate",
-                        unread
-                          ? "font-semibold text-zinc-900"
-                          : "font-medium text-zinc-700",
-                      )}
-                    >
+                  <div className="flex items-baseline justify-between gap-3">
+                    <p className={cn("truncate text-dense", unread ? "font-semibold text-head" : "font-medium text-text")}>
                       {item.title}
                     </p>
-                    <span className="text-[11px] text-zinc-400 whitespace-nowrap shrink-0">
-                      {timeAgo(item.createdAt)}
-                    </span>
+                    <span className="shrink-0 text-small tabular-nums text-text-3">{timeAgo(item.createdAt)}</span>
                   </div>
-                  <p className="text-[12px] text-zinc-500 mt-0.5 line-clamp-2 leading-relaxed">
-                    {item.body}
-                  </p>
+                  <p className="mt-1 line-clamp-2 text-small leading-[18px] text-text-2">{item.body}</p>
                 </div>
-
-                {/* Actions */}
-                <div className="flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {unread && (
+                <div className="flex shrink-0 items-center">
+                  {unread ? (
                     <button
                       type="button"
-                      title="Mark read"
+                      aria-label="Mark read"
                       onClick={() => markRead(item.id)}
-                      className="p-1.5 rounded-md text-zinc-400 hover:text-navy-700 hover:bg-zinc-100 transition-colors"
+                      className="flex h-10 w-10 items-center justify-center rounded-full text-text-2 hover:bg-tint"
                     >
-                      <Check className="h-3.5 w-3.5" />
+                      <Check className="h-4 w-4" aria-hidden />
                     </button>
-                  )}
+                  ) : null}
                   <button
                     type="button"
-                    title="Delete"
+                    aria-label="Delete notification"
                     onClick={() => deleteOne(item.id)}
-                    className="p-1.5 rounded-md text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-text-2 hover:bg-tint"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Trash2 className="h-4 w-4" aria-hidden />
                   </button>
                 </div>
-              </div>
+              </li>
             );
           })}
-        </div>
+        </ul>
       )}
     </div>
   );

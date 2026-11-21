@@ -7,15 +7,12 @@ import { useStudentData } from "../../hooks/student_info";
 import { toast } from "@/utils/toast-ref";
 import { CHANGE_PASS_ENDPOINT } from "../../api/endpoints";
 import { apiClient } from "../../api/apiClient";
-import { Check, Lock, Shield } from "lucide-react";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  portalEyebrowClass,
-  portalLabelClass,
-  portalPrimaryButtonClass,
-  portalSubtitleClass,
-  portalTitleClass,
-} from "@/lib/portal-ui";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/Button";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 
 type Strength = { score: number; label: string; barClass: string };
 
@@ -25,10 +22,10 @@ function validatePassword(pwd: string): Strength {
   if (/[0-9]/.test(pwd)) score++;
   if (/[^A-Za-z0-9]/.test(pwd)) score++;
 
-  if (!pwd) return { score: 0, label: "", barClass: "bg-zinc-100" };
-  if (score <= 1) return { score, label: "Weak", barClass: "bg-rose-500" };
-  if (score === 2) return { score, label: "Fair", barClass: "bg-amber-500" };
-  return { score, label: "Strong", barClass: "bg-emerald-600" };
+  if (!pwd) return { score: 0, label: "", barClass: "bg-border" };
+  if (score <= 1) return { score, label: "Weak", barClass: "bg-error" };
+  if (score === 2) return { score, label: "Fair", barClass: "bg-warning" };
+  return { score, label: "Strong", barClass: "bg-success" };
 }
 
 const REQUIREMENTS = [
@@ -39,12 +36,6 @@ const REQUIREMENTS = [
     label: "Includes a symbol",
     test: (p: string) => /[^A-Za-z0-9]/.test(p),
   },
-] as const;
-
-const GUIDELINES = [
-  "Use at least 8 characters with numbers and symbols.",
-  "Choose a password you do not use on other sites.",
-  "Avoid personal details like your name or roll number.",
 ] as const;
 
 export default function Resetpassword() {
@@ -105,166 +96,93 @@ export default function Resetpassword() {
     }
   };
 
-  const passwordsMatch =
-    repassword.length > 0 && password === repassword;
-  const passwordsMismatch =
-    repassword.length > 0 && password !== repassword;
+  const passwordsMatch = repassword.length > 0 && password === repassword;
+  const passwordsMismatch = repassword.length > 0 && password !== repassword;
 
   return (
-    <div className="font-sans text-zinc-900">
-      <div className="mx-auto max-w-6xl px-4 pb-4 md:pb-10">
-        <header className="mb-2 flex flex-col gap-0.5 md:mb-6">
-          <p className={portalEyebrowClass}>Security</p>
-          <h1 className={cn(portalTitleClass, "mt-1")}>Change password</h1>
-          <p className={cn(portalSubtitleClass, "mt-2 max-w-md")}>
-            Use a strong password you do not use elsewhere. You will be signed
-            out on all devices after updating.
-          </p>
-        </header>
-
-        <div className="bg-transparent md:overflow-hidden md:rounded-xl md:border md:border-zinc-100 md:bg-white md:shadow-sm">
-          <div className="md:flex">
-            <div className="space-y-5 border-zinc-50 px-0 py-2 md:w-2/3 md:border-r md:space-y-6 md:p-10 md:py-6">
-              <Input
-                label="Current password"
-                type="password"
-                onchangeFunction={handleInputChange(setCurrentPassword)}
-                placeholder="Enter current password"
-                labelClassName={portalLabelClass}
-                icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
-              />
-
-              <div className="space-y-3">
-                <Input
-                  label="New password"
-                  type="password"
-                  onchangeFunction={handleInputChange(setPassword)}
-                  placeholder="Create a new password"
-                  labelClassName={portalLabelClass}
-                  icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
-                />
-
-                {password && (
-                  <div className="space-y-2 px-0.5">
-                    <div className="flex items-center gap-3">
-                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-100">
-                        <div
-                          className={cn(
-                            "h-full rounded-full transition-[color,background-color,border-color,opacity,transform] duration-300",
-                            passwordStrength.barClass,
-                          )}
-                          style={{
-                            width: `${Math.max(12, (passwordStrength.score / 3) * 100)}%`,
-                          }}
-                        />
-                      </div>
-                      <span className="shrink-0 text-[10px] font-bold tracking-normal text-zinc-400">
-                        {passwordStrength.label}
+    <div className="mx-auto max-w-[480px]">
+      <PageHeader
+        title="Change password"
+        meta="Use a strong password you do not use elsewhere. You will be signed out on all devices after updating."
+      />
+      <div className="space-y-5">
+        <Input
+          label="Current password"
+          type="password"
+          onchangeFunction={handleInputChange(setCurrentPassword)}
+          placeholder="Enter current password"
+        />
+        <div className="space-y-3">
+          <Input
+            label="New password"
+            type="password"
+            onchangeFunction={handleInputChange(setPassword)}
+            placeholder="Create a new password"
+          />
+          {password ? (
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-border">
+                  <div
+                    className={cn("h-full rounded-full", passwordStrength.barClass)}
+                    style={{ width: `${Math.max(12, (passwordStrength.score / 3) * 100)}%` }}
+                  />
+                </div>
+                {passwordStrength.label ? (
+                  <Badge
+                    tone={
+                      passwordStrength.score <= 1
+                        ? "error"
+                        : passwordStrength.score === 2
+                          ? "warning"
+                          : "success"
+                    }
+                  >
+                    {passwordStrength.label}
+                  </Badge>
+                ) : null}
+              </div>
+              <ul className="space-y-1.5">
+                {REQUIREMENTS.map((req) => {
+                  const met = req.test(password);
+                  return (
+                    <li
+                      key={req.id}
+                      className={cn("flex items-center gap-2 text-caption", met ? "text-text" : "text-text-3")}
+                    >
+                      <span
+                        className={cn(
+                          "flex h-5 w-5 items-center justify-center rounded-full border",
+                          met ? "border-head bg-primary text-primary-foreground" : "border-border bg-surface",
+                        )}
+                      >
+                        {met ? <Check className="h-3 w-3" strokeWidth={2} aria-hidden /> : null}
                       </span>
-                    </div>
-
-                    <ul className="grid gap-1.5 sm:grid-cols-1">
-                      {REQUIREMENTS.map((req) => {
-                        const met = req.test(password);
-                        return (
-                          <li
-                            key={req.id}
-                            className={cn(
-                              "flex items-center gap-2 text-[12px] font-medium transition-colors",
-                              met ? "text-zinc-800" : "text-zinc-400",
-                            )}
-                          >
-                            <span
-                              className={cn(
-                                "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border",
-                                met
-                                  ? "border-navy-900 bg-navy-900 text-white"
-                                  : "border-zinc-200 bg-white",
-                              )}
-                            >
-                              {met && <Check className="h-3 w-3" strokeWidth={3} />}
-                            </span>
-                            {req.label}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-1.5">
-                <Input
-                  label="Confirm new password"
-                  type="password"
-                  onchangeFunction={handleInputChange(setRePassword)}
-                  placeholder="Repeat new password"
-                  labelClassName={portalLabelClass}
-                  icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
-                  error={
-                    passwordsMismatch ? "Passwords do not match" : undefined
-                  }
-                />
-                {passwordsMatch && (
-                  <p className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700">
-                    <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
-                    Passwords match
-                  </p>
-                )}
-              </div>
-
-              <button
-                type="button"
-                onClick={handleResetPassword}
-                disabled={isLoading}
-                className={cn(portalPrimaryButtonClass, "w-full min-h-12 text-[15px]")}
-              >
-                {isLoading ? "Updating…" : "Update password"}
-              </button>
-
-              <div className="rounded-xl border border-zinc-100 bg-white p-4 shadow-sm md:hidden">
-                <div className="flex items-start gap-3">
-                  <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-900" strokeWidth={2} />
-                  <p className="text-[11px] font-medium leading-relaxed text-zinc-500">
-                    For your security, all active sessions are ended after a password
-                    change. Sign in again with your new password.
-                  </p>
-                </div>
-              </div>
+                      {req.label}
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
-
-            <div className="hidden flex-col justify-between bg-zinc-50/30 p-8 md:flex md:w-1/3">
-              <div>
-                <h3 className="mb-6 flex items-center gap-2 text-[10px] font-bold tracking-normal text-zinc-400">
-                  Password guidelines
-                </h3>
-
-                <div className="space-y-3 md:space-y-6">
-                  {GUIDELINES.map((text, index) => (
-                    <div key={text} className="flex items-start gap-4">
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-zinc-100 bg-white text-[10px] font-bold text-zinc-900 shadow-sm">
-                        {String(index + 1).padStart(2, "0")}
-                      </div>
-                      <p className="text-[13px] font-medium leading-relaxed text-zinc-500">
-                        {text}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-12 rounded-xl border border-zinc-100 bg-white p-5 shadow-sm">
-                <div className="flex items-start gap-3">
-                  <Shield size={16} className="mt-0.5 text-zinc-900" />
-                  <p className="text-[11px] font-medium leading-relaxed text-zinc-500">
-                    For your security, all active sessions are ended after a password
-                    change. Sign in again with your new password.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          ) : null}
         </div>
+        <Input
+          label="Confirm new password"
+          type="password"
+          onchangeFunction={handleInputChange(setRePassword)}
+          placeholder="Repeat new password"
+          error={passwordsMismatch ? "Passwords do not match" : undefined}
+        />
+        {passwordsMatch ? <Alert tone="success">Passwords match</Alert> : null}
+        <Button className="w-full" onClick={handleResetPassword} isLoading={isLoading} disabled={isLoading}>
+          {isLoading ? "Updating…" : "Update password"}
+        </Button>
+        <p className="text-body leading-6 text-text-2">
+          Use at least 8 characters with numbers and symbols. Choose a password you
+          do not use on other sites. Avoid personal details like your name or roll
+          number. For your security, all active sessions are ended after a password
+          change. Sign in again with your new password.
+        </p>
       </div>
     </div>
   );
