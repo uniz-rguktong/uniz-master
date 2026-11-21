@@ -12,16 +12,12 @@ import {
   CheckCircle2,
   BookOpen,
   LogOut,
-  Zap,
   RefreshCcw,
   Search,
   ScanLine,
-  LayoutGrid,
   UserCircle,
-  type LucideIcon,
 } from "lucide-react";
 import { useLogout } from "../../hooks/useLogout";
-import { motion } from "framer-motion";
 import WebmasterDashboard from "./Webmaster/WebmasterDashboard";
 import DeanDashboard from "./Dean/DeanDashboard";
 import SWODashboard from "./SWO/SWODashboard";
@@ -30,47 +26,14 @@ import WardenDashboard from "./Warden/WardenDashboard";
 import SecurityPortal from "./SecurityPortal";
 import DirectorDashboard from "./Director/DirectorDashboard";
 import AdminLayout from "./layout";
-import {
-  adminAvatarFallbackClass,
-  adminHeaderClass,
-  adminHubCardClass,
-  adminLogoutButtonClass,
-} from "@/components/admin/admin-ui";
+import { PageHeader } from "@/components/ui/page-header";
+import { Tile } from "@/components/ui/tile";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Avatar } from "@/components/ui/avatar";
 import { parseJwt } from "../../utils/security";
 import { resolveAdminPortalRole } from "../../utils/adminRole";
 import { enableOutingsAndOutpasses } from "@/config/featureFlags";
-
-const QuickActionButton = ({
-  onClick,
-  title,
-  subtitle,
-  Icon,
-}: {
-  onClick: () => void;
-  title: string;
-  subtitle: string;
-  Icon: LucideIcon;
-}) => (
-  <button
-    onClick={onClick}
-    className={`group relative flex flex-col items-start p-6 ${adminHubCardClass} text-left w-full overflow-hidden`}
-  >
-    <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity transform duration-500">
-      <Icon className="w-24 h-24 text-zinc-950" />
-    </div>
-    <div className="p-3 rounded-xl bg-zinc-50 text-zinc-700 mb-4 group-hover:bg-zinc-950 group-hover:text-white transition-colors duration-300 border border-zinc-100/80">
-      <Icon className="w-6 h-6" />
-    </div>
-    <div className="relative z-10">
-      <h3 className="font-bold text-zinc-950 text-lg leading-tight mb-1 group-hover:translate-x-0.5 transition-transform">
-        {title}
-      </h3>
-      <p className="text-xs font-medium text-zinc-400 tracking-wide group-hover:text-zinc-500 transition-colors">
-        {subtitle}
-      </p>
-    </div>
-  </button>
-);
 
 export default function Admin() {
   useIsAuth();
@@ -257,98 +220,62 @@ export default function Admin() {
     },
   ];
 
+  const roleTitle = role.replace(/_/g, " ");
+
   return (
-    <AdminLayout className="pb-20">
-      <header className={adminHeaderClass}>
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div
-              className={`w-10 h-10 ${adminAvatarFallbackClass} rounded-xl text-lg shadow-sm`}
-            >
-              {username[0].toUpperCase()}
-            </div>
-            <div>
-              <h1 className="text-xl font-bold leading-none text-zinc-950">
-                {username}
-              </h1>
-              <div className="flex items-center gap-1.5 mt-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                <p className="text-xs font-bold text-zinc-400">
-                  {role.replace("_", " ")} Dashboard
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/admin/profile")}
-              className="p-2.5 rounded-xl hover:bg-zinc-50 text-zinc-400 hover:text-zinc-950 transition-colors"
-              title="My Profile"
-            >
-              <UserCircle className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => navigate("/admin/settings")}
-              className="p-2.5 rounded-xl hover:bg-zinc-50 text-zinc-400 hover:text-zinc-950 transition-colors"
-            >
-              <Settings className="w-5 h-5" />
-            </button>
-            <button
-              onClick={handleLogout}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs  transition-[color,background-color,border-color,opacity,transform,box-shadow] ${adminLogoutButtonClass} !w-auto !h-auto hover:!bg-red-50`}
-            >
-              <LogOut className="w-4 h-4" /> LOGOUT
-            </button>
-          </div>
-        </div>
+    <AdminLayout>
+      <header className="sticky top-0 z-30 flex h-16 items-center justify-end gap-2 border-b border-border bg-bg px-4 min-[821px]:px-10">
+        <ThemeToggle />
+        <Button variant="ghost" size="icon" aria-label="Profile" onClick={() => navigate("/admin/profile")}>
+          <UserCircle size={18} />
+        </Button>
+        <Button variant="ghost" size="icon" aria-label="Settings" onClick={() => navigate("/admin/settings")}>
+          <Settings size={18} />
+        </Button>
+        <Avatar name={username} alt="" size={36} />
+        <Button variant="ghost" size="compact" onClick={handleLogout}>
+          <LogOut size={16} />
+          Log out
+        </Button>
       </header>
-
-      <div className="max-w-7xl mx-auto px-6 py-10 space-y-12 w-full">
-        {/* Priority Section */}
+      <div className="mx-auto w-full max-w-[1280px] space-y-10 px-4 py-6 min-[821px]:px-10 min-[821px]:py-8">
+        <PageHeader title={roleTitle} meta={`${username} · campus administration`} />
         {priorityActions.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <div className="flex items-center gap-2 mb-6 ml-1">
-              <Zap className="w-5 h-5 text-zinc-950 fill-zinc-950" />
-              <h2 className="text-lg font-semibold tracking-tight text-zinc-950">
-                Priority Actions
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {priorityActions.map((action, idx) => (
-                <QuickActionButton key={idx} {...action} />
+          <section className="space-y-5">
+            <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head">Priority</h2>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {priorityActions.map((action) => (
+                <Tile
+                  key={action.title}
+                  icon={action.Icon}
+                  label={action.title}
+                  line={action.subtitle}
+                  onClick={action.onClick}
+                />
               ))}
             </div>
-          </motion.div>
+          </section>
         )}
-
-        {/* Dynamic Sections */}
         {sections.map(
-          (section, idx) =>
+          (section) =>
             section.show &&
             section.items.length > 0 && (
-              <motion.div
-                key={section.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * (idx + 2) }}
-              >
-                <div className="flex items-center gap-2 mb-6 ml-1 border-b border-zinc-100/80 pb-2">
-                  <LayoutGrid className="w-4 h-4 text-zinc-400" />
-                  <h2 className="text-sm font-bold text-zinc-400">
-                    {section.title}
-                  </h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {section.items.map((item, i) => (
-                    <QuickActionButton key={i} {...item} />
+              <section key={section.title} className="space-y-5">
+                <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head">
+                  {section.title}
+                </h2>
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {section.items.map((item) => (
+                    <Tile
+                      key={item.title}
+                      icon={item.Icon}
+                      label={item.title}
+                      line={item.subtitle}
+                      onClick={item.onClick}
+                    />
                   ))}
                 </div>
-              </motion.div>
+              </section>
             ),
         )}
       </div>

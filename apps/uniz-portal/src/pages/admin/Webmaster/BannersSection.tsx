@@ -4,26 +4,17 @@ import {
   Image as ImageIcon,
   Plus,
   Loader2,
-  Eye,
-  EyeOff,
-  CheckCircle2,
-  X,
-  Edit3,
-  Trash2,
   Upload,
 } from "lucide-react";
 import { BANNERS_BASE, UPDATE_BANNER_VISIBILITY } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 import { useRecoilState } from "recoil";
 import { bannersAtom } from "../../../store/atoms";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-} from "@/components/ui/alert-dialog";
-import { SectionHeader } from "../../../components/admin/SectionHeader";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { AdminDialog } from "@/components/admin/AdminDialog";
 import {
   adminPageWrapClass,
   adminCardClass,
@@ -31,8 +22,6 @@ import {
   adminLabelClass,
   adminInputClass,
   adminTextareaClass,
-  adminPrimaryButtonClass,
-  adminGhostButtonClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
 import { uploadImage } from "../../../api/uploadImage";
@@ -244,18 +233,13 @@ export default function BannersSection() {
         "animate-in fade-in duration-700 pb-20",
       )}
     >
-      <SectionHeader
-        icon={<ImageIcon size={18} />}
-        eyebrow="Campus"
-        title="Banner Management"
-        subtitle="Create and control featured spotlight content for student portals."
-        actions={
-          <button
-            onClick={() => setShowAddModal(true)}
-            className={adminPrimaryButtonClass}
-          >
-            <Plus size={16} /> New Banner
-          </button>
+      <PageHeader
+        title="Banner management"
+        meta="Create and control featured spotlight content for student portals."
+        action={
+          <Button type="button" onClick={() => setShowAddModal(true)}>
+            <Plus size={16} /> New banner
+          </Button>
         }
       />
 
@@ -270,17 +254,17 @@ export default function BannersSection() {
                 "overflow-hidden flex flex-col animate-pulse",
               )}
             >
-              <div className="h-44 w-full bg-zinc-100 border-b border-zinc-200/70" />
+              <div className="h-44 w-full bg-surface-2 border-b border-border/70" />
               <div className="p-6 space-y-5">
                 <div className="space-y-3">
-                  <div className="h-5 w-3/4 bg-zinc-100 rounded-lg" />
-                  <div className="h-3 w-full bg-zinc-50 rounded-md" />
-                  <div className="h-3 w-5/6 bg-zinc-50 rounded-md" />
+                  <div className="h-5 w-3/4 bg-surface-2 rounded-lg" />
+                  <div className="h-3 w-full bg-surface-2 rounded-md" />
+                  <div className="h-3 w-5/6 bg-surface-2 rounded-md" />
                 </div>
                 <div className="pt-4 flex items-center gap-2">
-                  <div className="h-10 flex-1 bg-zinc-50 rounded-xl" />
-                  <div className="h-10 w-10 bg-zinc-50 rounded-xl" />
-                  <div className="h-10 w-10 bg-zinc-50 rounded-xl" />
+                  <div className="h-10 flex-1 bg-surface-2 rounded-xl" />
+                  <div className="h-10 w-10 bg-surface-2 rounded-xl" />
+                  <div className="h-10 w-10 bg-surface-2 rounded-xl" />
                 </div>
               </div>
             </div>
@@ -300,7 +284,7 @@ export default function BannersSection() {
                 )}
               >
                 {/* Preview Image */}
-                <div className="h-44 w-full bg-zinc-100 relative overflow-hidden shrink-0 border-b border-zinc-200/70">
+                <div className="h-44 w-full bg-surface-2 relative overflow-hidden shrink-0 border-b border-border/70">
                   {banner.imageUrl ? (
                     <img
                       src={banner.imageUrl}
@@ -308,59 +292,56 @@ export default function BannersSection() {
                       className="w-full h-full object-cover transition-transform duration-1000"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-zinc-300">
-                      <ImageIcon size={40} strokeWidth={1} />
+                    <div className="w-full h-full flex items-center justify-center text-text-3">
+                      <ImageIcon size={20} />
                     </div>
                   )}
 
                   {/* Status Badge */}
-                  <div
-                    className={`absolute top-3.5 right-3.5 px-2.5 py-1 rounded-md text-[10px] font-medium tracking-tight flex items-center gap-1.5 border backdrop-blur-md ${banner.isVisible ? "bg-white/90 text-zinc-700 border-zinc-200" : "bg-white/90 text-zinc-400 border-zinc-200"}`}
-                  >
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full ${banner.isVisible ? "bg-emerald-500" : "bg-zinc-300"}`}
-                    />
-                    {banner.isVisible ? "Active" : "Hidden"}
+                  <div className="absolute top-3.5 right-3.5">
+                    <Badge tone={banner.isVisible ? "success" : "neutral"}>
+                      {banner.isVisible ? "Active" : "Hidden"}
+                    </Badge>
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-1">
-                  <h3 className="font-semibold text-zinc-900 text-[15px] leading-tight mb-1.5 line-clamp-1">
+                  <h3 className="font-semibold text-text text-[15px] leading-tight mb-1.5 line-clamp-1">
                     {banner.title}
                   </h3>
-                  <p className="text-zinc-500 text-[13px] line-clamp-2 leading-relaxed mb-5">
+                  <p className="text-text-2 text-[13px] line-clamp-2 leading-relaxed mb-5">
                     {banner.text}
                   </p>
 
-                  <div className="mt-auto flex items-center gap-2">
-                    <button
+                  <div className="mt-auto flex flex-col gap-2 sm:flex-row">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="compact"
                       onClick={() => toggleVisibilityAction(banner)}
                       disabled={actionLoading === bannerId}
-                      className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl border border-zinc-200 bg-white text-zinc-600 text-[12px] font-semibold hover:text-zinc-900 hover:border-zinc-300 active:scale-[0.98] transition-[color,background-color,border-color,opacity,transform,box-shadow] disabled:opacity-50"
+                      isLoading={actionLoading === bannerId}
                     >
-                      {actionLoading === bannerId ? (
-                        <Loader2 size={13} className="animate-spin" />
-                      ) : banner.isVisible ? (
-                        <EyeOff size={13} />
-                      ) : (
-                        <Eye size={13} />
-                      )}
                       {banner.isVisible ? "Hide" : "Show"}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="compact"
                       onClick={() => handleEditClick(banner)}
-                      className="h-10 w-10 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:text-zinc-900 hover:border-zinc-300 border border-zinc-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95"
                     >
-                      <Edit3 size={14} />
-                    </button>
-                    <button
+                      Edit
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="compact"
                       onClick={() => deleteBanner(bannerId)}
                       disabled={actionLoading === bannerId}
-                      className="h-10 w-10 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-zinc-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95"
                     >
-                      <Trash2 size={14} />
-                    </button>
+                      Delete
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -368,38 +349,22 @@ export default function BannersSection() {
           })}
         </div>
       ) : (
-        <div
-          className={cn(
-            adminCardClass,
-            "py-24 flex flex-col items-center justify-center text-center space-y-6",
-          )}
-        >
-          <div className="w-16 h-16 bg-zinc-50 border border-zinc-200/70 rounded-2xl flex items-center justify-center text-zinc-300">
-            <ImageIcon size={32} strokeWidth={1.5} />
-          </div>
-          <div className="space-y-1.5">
-            <p className="text-[17px] font-semibold text-zinc-900 tracking-tight">
-              No Active Banners
-            </p>
-            <p className="text-zinc-500 max-w-sm text-[13px] leading-relaxed">
-              Bring your campus to life by creating featured banners for events,
-              announcements, or updates.
-            </p>
-          </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className={adminPrimaryButtonClass}
-          >
-            <Plus size={16} /> Add First Banner
-          </button>
-        </div>
+        <EmptyState
+          title="No active banners"
+          body="Create a featured banner for events, announcements, or updates."
+          action={
+            <Button type="button" onClick={() => setShowAddModal(true)}>
+              Add first banner
+            </Button>
+          }
+        />
       )}
 
-      <AlertDialog
+      <AdminDialog
         open={showAddModal}
         onOpenChange={(open: boolean) => {
+          setShowAddModal(open);
           if (!open) {
-            setShowAddModal(false);
             setEditingBanner(null);
             setNewBanner({
               title: "",
@@ -409,12 +374,18 @@ export default function BannersSection() {
             });
           }
         }}
-      >
-        <AlertDialogContent className="max-w-md p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl border border-navy-200/60">
-          <div className="relative">
-            {/* Close Button */}
-            <button
+        maxWidth="max-w-[640px]"
+        title={editingBanner ? "Edit banner" : "New banner"}
+        description={
+          editingBanner
+            ? "Update your featured spotlight content."
+            : "Configure a new spotlight for the student portal."
+        }
+        footer={
+          <>
+            <Button
               type="button"
+              variant="outline"
               onClick={() => {
                 setShowAddModal(false);
                 setEditingBanner(null);
@@ -425,24 +396,21 @@ export default function BannersSection() {
                   isVisible: true,
                 });
               }}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
             >
-              <X size={20} />
-            </button>
-
-            <form onSubmit={handleSaveBanner} className="p-8">
-              {/* Header */}
-              <AlertDialogHeader className="flex flex-col items-start text-left gap-1.5 mb-7">
-                <AlertDialogTitle className="text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]">
-                  {editingBanner ? "Edit Banner" : "New Banner"}
-                </AlertDialogTitle>
-                <AlertDialogDescription className="text-[13px] text-zinc-500 leading-relaxed">
-                  {editingBanner
-                    ? "Update your featured spotlight content."
-                    : "Configure a new spotlight for the student portal."}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              form="banner-editor-form"
+              disabled={!!actionLoading}
+              isLoading={actionLoading === "creating" || actionLoading === "updating"}
+            >
+              {editingBanner ? "Update banner" : "Launch banner"}
+            </Button>
+          </>
+        }
+      >
+            <form id="banner-editor-form" onSubmit={handleSaveBanner} className="space-y-5">
               <div className="space-y-5">
                 {/* Title */}
                 <div className="space-y-2">
@@ -482,7 +450,7 @@ export default function BannersSection() {
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={uploading}
-                      className="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-600 hover:text-zinc-900 transition-colors"
+                      className="flex items-center gap-1.5 text-caption font-semibold text-text-2 hover:text-text transition-colors"
                     >
                       {uploading ? (
                         <Loader2 size={12} className="animate-spin" />
@@ -514,7 +482,7 @@ export default function BannersSection() {
 
                 {/* Image Preview */}
                 {newBanner.imageUrl && (
-                  <div className="h-24 w-full rounded-xl overflow-hidden border border-zinc-200 relative group">
+                  <div className="h-24 w-full overflow-hidden rounded-lg border border-border">
                     <img
                       src={newBanner.imageUrl}
                       alt="preview"
@@ -524,53 +492,12 @@ export default function BannersSection() {
                           "https://placehold.co/600x400?text=Invalid+URL")
                       }
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <p className="text-[10px] font-semibold text-white">
-                        Current Selection
-                      </p>
-                    </div>
                   </div>
                 )}
               </div>
 
-              {/* Actions */}
-              <div className="flex gap-3 mt-8">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowAddModal(false);
-                    setEditingBanner(null);
-                    setNewBanner({
-                      title: "",
-                      text: "",
-                      imageUrl: "",
-                      isVisible: true,
-                    });
-                  }}
-                  className={cn(adminGhostButtonClass, "flex-1")}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={!!actionLoading}
-                  className={cn(adminPrimaryButtonClass, "flex-[2]")}
-                >
-                  {actionLoading === "creating" ||
-                  actionLoading === "updating" ? (
-                    <Loader2 className="animate-spin w-4 h-4" />
-                  ) : editingBanner ? (
-                    <CheckCircle2 size={16} />
-                  ) : (
-                    <Plus size={16} />
-                  )}
-                  {editingBanner ? "Update Banner" : "Launch Banner"}
-                </button>
-              </div>
             </form>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
+      </AdminDialog>
     </div>
   );
 }

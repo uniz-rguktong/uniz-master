@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   Loader2,
-  ChevronRight,
   ChevronDown,
   Lock,
   UserPlus,
@@ -27,6 +26,10 @@ import StudentPerformanceModal from "./StudentPerformanceModal";
 import StudentDashboard from "./StudentDashboard";
 import StudentEditModal from "./StudentEditModal";
 import { Pagination } from "../../../components/Pagination";
+import { Table, type TableColumn } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "../../../utils/cn";
 import { SectionHeader } from "../../../components/admin/SectionHeader";
 import { AdminDialog } from "../../../components/admin/AdminDialog";
@@ -39,7 +42,6 @@ import {
   adminPrimaryButtonClass,
   adminGhostButtonClass,
   adminChipClass,
-  adminNumsClass,
   adminDangerButtonClass,
 } from "../../../components/admin/admin-ui";
 import {
@@ -83,21 +85,21 @@ function avgAttendance(summary: Record<string, { percentage?: number }> | undefi
 function TableSkeleton() {
   return (
     <div className={cn(adminCardClass, "overflow-hidden p-0 animate-pulse")}>
-      <div className="h-11 bg-zinc-50 border-b border-zinc-200" />
+      <div className="h-11 bg-surface-2 border-b border-border" />
       {Array.from({ length: 8 }).map((_, i) => (
         <div
           key={i}
           className={cn(
-            "h-11 border-b border-zinc-200 flex gap-4 px-4 items-center",
-            i % 2 === 1 && "bg-zinc-50/40",
+            "h-11 border-b border-border flex gap-4 px-4 items-center",
+            i % 2 === 1 && "bg-surface-2/40",
           )}
         >
-          <div className="h-3 w-16 bg-zinc-100 rounded" />
-          <div className="h-3 w-32 bg-zinc-100 rounded" />
-          <div className="h-3 w-24 bg-zinc-100 rounded flex-1" />
+          <div className="h-3 w-16 bg-surface-2 rounded" />
+          <div className="h-3 w-32 bg-surface-2 rounded" />
+          <div className="h-3 w-24 bg-surface-2 rounded flex-1" />
         </div>
       ))}
-      <div className="h-14 bg-zinc-50/80 border-t border-zinc-200" />
+      <div className="h-14 bg-surface-2/80 border-t border-border" />
     </div>
   );
 }
@@ -162,92 +164,23 @@ const CATEGORY_OPTIONS = ["ALL", "GENERAL", "OBC", "SC", "ST", "EWS"];
 const CAMPUS_OPTIONS = ["ALL", "ONGOLE", "NIDADAVOLE"];
 
 /** Fixed widths so sticky `left` offsets stay aligned while scrolling. */
-const STICKY_W = {
-  checkbox: "w-10",
-  row: "w-12",
-  username: "w-[6.5rem]",
-  name: "w-[15rem]",
-} as const;
-
-const STICKY_COLS: Record<
-  string,
-  { left: string; z: string; leftNoCheckbox: string }
-> = {
-  checkbox: { left: "left-0", leftNoCheckbox: "left-0", z: "z-20" },
-  // checkbox 2.5rem -> #
-  row: { left: "left-10", leftNoCheckbox: "left-0", z: "z-20" },
-  // + row 3rem = 5.5rem (with checkbox) / 3rem (without)
-  username: {
-    left: "left-[5.5rem]",
-    leftNoCheckbox: "left-12",
-    z: "z-20",
-  },
-  // + username 6.5rem = 12rem (with) / 9.5rem (without)
-  name: {
-    left: "left-[12rem]",
-    leftNoCheckbox: "left-[9.5rem]",
-    z: "z-20",
-  },
-};
-
-function stickyCellClass(
-  key: string,
-  extra?: string,
-  opts?: {
-    isHeader?: boolean;
-    hideCheckbox?: boolean;
-    selected?: boolean;
-    striped?: boolean;
-  },
-) {
-  const sticky = STICKY_COLS[key];
-  if (!sticky) return extra;
-  const isHeader = Boolean(opts?.isHeader);
-  const bg = isHeader
-    ? "bg-zinc-50"
-    : opts?.selected
-      ? "bg-zinc-100"
-      : opts?.striped
-        ? "bg-zinc-50"
-        : "bg-white group-hover/row:bg-zinc-50";
-  return cn(
-    extra,
-    "sticky",
-    opts?.hideCheckbox ? sticky.leftNoCheckbox : sticky.left,
-    sticky.z,
-    // Solid fills keep the Branch column from bleeding through while scrolling.
-    bg,
-    isHeader && "z-40",
-    key === "name" &&
-      "shadow-[4px_0_8px_-2px_rgba(10,10,10,0.14)] border-r border-zinc-200",
-  );
-}
-
-const COLUMNS: { key: string; label: string; className?: string }[] = [
-  { key: "row", label: "#", className: cn(STICKY_W.row, "text-center") },
-  {
-    key: "username",
-    label: "Student ID",
-    className: STICKY_W.username,
-  },
-  {
-    key: "name",
-    label: "Name",
-    className: cn(STICKY_W.name, "max-w-[15rem]"),
-  },
-  { key: "branch", label: "Branch", className: "w-20 min-w-[5rem]" },
-  { key: "year", label: "Year", className: "w-16" },
-  { key: "batch", label: "Batch", className: "w-16" },
-  { key: "section", label: "Sec", className: "w-14" },
-  { key: "cgpa", label: "CGPA", className: "w-16 text-right" },
-  { key: "total_backlogs", label: "BL", className: "w-12 text-center" },
-  { key: "attendance_pct", label: "Att %", className: "w-16 text-right" },
-  { key: "phone_number", label: "Phone", className: "min-w-[110px]" },
-  { key: "gender", label: "Gender", className: "w-16" },
-  { key: "blood_group", label: "Blood", className: "w-14" },
-  { key: "roomno", label: "Room", className: "w-16" },
-  { key: "is_in_campus", label: "Campus", className: "w-20" },
-  { key: "is_suspended", label: "Status", className: "w-20" },
+const COLUMNS: { key: string; label: string }[] = [
+  { key: "row", label: "#" },
+  { key: "username", label: "Student ID" },
+  { key: "name", label: "Name" },
+  { key: "branch", label: "Branch" },
+  { key: "year", label: "Year" },
+  { key: "batch", label: "Batch" },
+  { key: "section", label: "Sec" },
+  { key: "cgpa", label: "CGPA" },
+  { key: "total_backlogs", label: "BL" },
+  { key: "attendance_pct", label: "Att %" },
+  { key: "phone_number", label: "Phone" },
+  { key: "gender", label: "Gender" },
+  { key: "blood_group", label: "Blood" },
+  { key: "roomno", label: "Room" },
+  { key: "is_in_campus", label: "Campus" },
+  { key: "is_suspended", label: "Status" },
 ];
 
 function cellValue(row: StudentRow, key: string, rowIndex: number) {
@@ -596,7 +529,6 @@ export default function StudentDetails() {
   const pageUsernames = rows.map((r) => r.username);
   const allPageSelected =
     pageUsernames.length > 0 && pageUsernames.every((id) => selectedIds.has(id));
-  const somePageSelected = pageUsernames.some((id) => selectedIds.has(id));
 
   const toggleSelectAll = () => {
     setSelectedIds((prev) => {
@@ -730,11 +662,11 @@ export default function StudentDetails() {
 
   const renderSortIcon = (key: string) => {
     if (!SORTABLE_KEYS.has(key)) return null;
-    if (sortBy !== key) return <ArrowUpDown size={11} className="text-zinc-300" />;
+    if (sortBy !== key) return <ArrowUpDown size={12} className="text-text-3" />;
     return sortDir === "asc" ? (
-      <ArrowUp size={11} className="text-zinc-700" />
+      <ArrowUp size={12} className="text-text" />
     ) : (
-      <ArrowDown size={11} className="text-zinc-700" />
+      <ArrowDown size={12} className="text-text" />
     );
   };
 
@@ -742,8 +674,8 @@ export default function StudentDetails() {
     if (isHodReadOnly) {
       return (
         <div className="flex flex-col gap-0.5 min-w-0">
-          <span className="truncate text-zinc-800 font-medium">{row.name || "—"}</span>
-          <span className="truncate text-[11px] text-zinc-500 font-normal">
+          <span className="truncate text-text font-medium">{row.name || "—"}</span>
+          <span className="truncate text-caption text-text-2 font-normal">
             {row.email || "—"}
           </span>
         </div>
@@ -771,9 +703,9 @@ export default function StudentDetails() {
               if (e.key === "Escape") cancelCellEdit();
             }}
             onClick={(e) => e.stopPropagation()}
-            className={cn(adminInputClass, "h-7 text-[11px] py-1")}
+            className={adminInputClass}
           />
-          <span className="truncate text-[11px] text-zinc-500 font-normal">
+          <span className="truncate text-caption text-text-2 font-normal">
             {row.email || "—"}
           </span>
         </div>
@@ -783,7 +715,7 @@ export default function StudentDetails() {
     if (isEditingEmail) {
       return (
         <div className="flex flex-col gap-1 min-w-0">
-          <span className="truncate text-zinc-800 font-medium">{row.name || "—"}</span>
+          <span className="truncate text-text font-medium">{row.name || "—"}</span>
           <input
             autoFocus
             type="text"
@@ -795,7 +727,7 @@ export default function StudentDetails() {
               if (e.key === "Escape") cancelCellEdit();
             }}
             onClick={(e) => e.stopPropagation()}
-            className={cn(adminInputClass, "h-7 text-[11px] py-1")}
+            className={adminInputClass}
           />
         </div>
       );
@@ -807,25 +739,25 @@ export default function StudentDetails() {
           className="inline-flex items-center gap-1 min-w-0 group/name cursor-text"
           onClick={(e) => startCellEdit(row, "name", e)}
         >
-          <span className="truncate text-zinc-800 font-medium">{row.name || "—"}</span>
+          <span className="truncate text-text font-medium">{row.name || "—"}</span>
           <Pencil
-            size={10}
-            className="opacity-0 group-hover/name:opacity-40 text-zinc-400 shrink-0"
+            size={12}
+            className="opacity-0 group-hover/name:opacity-40 text-text-3 shrink-0"
           />
-          {isSavingName && <Loader2 size={10} className="animate-spin text-zinc-400 shrink-0" />}
+          {isSavingName && <Loader2 size={12} className="animate-spin text-text-3 shrink-0" />}
         </span>
         <span
           className="inline-flex items-center gap-1 min-w-0 group/email cursor-text"
           onClick={(e) => startCellEdit(row, "email", e)}
         >
-          <span className="truncate text-[11px] text-zinc-500 font-normal">
+          <span className="truncate text-caption text-text-2 font-normal">
             {row.email || "—"}
           </span>
           <Pencil
-            size={10}
-            className="opacity-0 group-hover/email:opacity-40 text-zinc-400 shrink-0"
+            size={12}
+            className="opacity-0 group-hover/email:opacity-40 text-text-3 shrink-0"
           />
-          {isSavingEmail && <Loader2 size={10} className="animate-spin text-zinc-400 shrink-0" />}
+          {isSavingEmail && <Loader2 size={12} className="animate-spin text-text-3 shrink-0" />}
         </span>
       </div>
     );
@@ -849,7 +781,7 @@ export default function StudentDetails() {
               if (e.key === "Escape") cancelCellEdit();
             }}
             onClick={(e) => e.stopPropagation()}
-            className={cn(adminSelectClass, "h-7 text-[11px] min-w-[72px]")}
+            className={adminSelectClass}
           >
             {BRANCH_OPTIONS.filter((b) => b !== "ALL").map((b) => (
               <option key={b} value={b}>
@@ -871,7 +803,7 @@ export default function StudentDetails() {
               if (e.key === "Escape") cancelCellEdit();
             }}
             onClick={(e) => e.stopPropagation()}
-            className={cn(adminSelectClass, "h-7 text-[11px]")}
+            className={adminSelectClass}
           >
             {YEAR_OPTIONS.filter((y) => y !== "ALL").map((y) => (
               <option key={y} value={y}>
@@ -894,7 +826,7 @@ export default function StudentDetails() {
             if (e.key === "Escape") cancelCellEdit();
           }}
           onClick={(e) => e.stopPropagation()}
-          className={cn(adminInputClass, "h-7 text-[11px] py-1")}
+          className={adminInputClass}
         />
       );
     }
@@ -904,11 +836,11 @@ export default function StudentDetails() {
         {cellValue(row, col.key, 0)}
         {!isHodReadOnly && EDITABLE_KEYS.has(col.key) && (
           <Pencil
-            size={10}
-            className="opacity-0 group-hover/cell:opacity-40 text-zinc-400 shrink-0"
+            size={12}
+            className="opacity-0 group-hover/cell:opacity-40 text-text-3 shrink-0"
           />
         )}
-        {isSaving && <Loader2 size={10} className="animate-spin text-zinc-400" />}
+        {isSaving && <Loader2 size={12} className="animate-spin text-text-3" />}
       </span>
     );
   };
@@ -1175,7 +1107,7 @@ export default function StudentDetails() {
         <div className="flex flex-col lg:flex-row gap-3">
           <div className="flex-1 relative" ref={dropdownRef}>
             <Search
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-3"
               size={16}
             />
             <input
@@ -1188,7 +1120,7 @@ export default function StudentDetails() {
             {(loading || enriching) && (
               <Loader2
                 size={14}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-zinc-400"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-text-3"
               />
             )}
             <AnimatePresence>
@@ -1197,7 +1129,7 @@ export default function StudentDetails() {
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 6 }}
-                  className="absolute z-50 left-0 right-0 mt-1 bg-white border border-zinc-200 rounded-xl shadow-none overflow-hidden"
+                  className="absolute z-50 left-0 right-0 mt-1 bg-surface border border-border rounded-xl shadow-none overflow-hidden"
                 >
                   {recommendations.map((rec) => (
                     <button
@@ -1207,11 +1139,11 @@ export default function StudentDetails() {
                         setQuery(rec.username);
                         setRecommendations([]);
                       }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 text-left text-[13px]"
+                      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-surface-2 text-left text-[13px]"
                     >
-                      <span className="font-semibold text-zinc-900">{rec.username}</span>
-                      <span className="text-zinc-500 truncate">{rec.name}</span>
-                      <span className="ml-auto text-zinc-400 text-[11px]">{rec.branch}</span>
+                      <span className="font-semibold text-text">{rec.username}</span>
+                      <span className="text-text-2 truncate">{rec.name}</span>
+                      <span className="ml-auto text-text-3 text-caption">{rec.branch}</span>
                     </button>
                   ))}
                 </motion.div>
@@ -1225,13 +1157,13 @@ export default function StudentDetails() {
               className={cn(
                 adminGhostButtonClass,
                 "h-10",
-                showAdvancedFilters && "bg-zinc-100 border-zinc-300",
+                showAdvancedFilters && "bg-surface-2 border-border-strong",
               )}
             >
               <SlidersHorizontal size={14} />
               Filters
               {activeFilterCount > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 rounded-md bg-zinc-900 text-white text-[10px] font-semibold">
+                <span className="ml-1 px-1.5 py-0.5 rounded-md bg-primary text-primary-foreground text-caption font-semibold">
                   {activeFilterCount}
                 </span>
               )}
@@ -1298,8 +1230,7 @@ export default function StudentDetails() {
                   disabled={"locked" in f && f.locked}
                   className={cn(
                     adminSelectClass,
-                    "h-9 text-[11px]",
-                    "locked" in f && f.locked && "opacity-70 cursor-not-allowed bg-zinc-50",
+                    "locked" in f && f.locked && "opacity-70 cursor-not-allowed bg-surface-2",
                   )}
                 >
                   {(f.options as any[]).map((o) =>
@@ -1316,7 +1247,7 @@ export default function StudentDetails() {
                 </select>
                 <ChevronDown
                   size={12}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                 />
               </div>
             </div>
@@ -1327,14 +1258,14 @@ export default function StudentDetails() {
               <select
                 value={sortDir}
                 onChange={(e) => setSortDir(e.target.value as "asc" | "desc")}
-                className={cn(adminSelectClass, "h-9 text-[11px]")}
+                className={cn(adminSelectClass)}
               >
                 <option value="asc">Ascending</option>
                 <option value="desc">Descending</option>
               </select>
               <ChevronDown
                 size={12}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
               />
             </div>
           </div>
@@ -1348,7 +1279,7 @@ export default function StudentDetails() {
               exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden"
             >
-              <div className="pt-3 border-t border-zinc-100 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+              <div className="pt-3 border-t border-border grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
                 {[
                   {
                     label: "Remedials",
@@ -1414,7 +1345,7 @@ export default function StudentDetails() {
                     <select
                       value={f.value}
                       onChange={(e) => f.onChange(e.target.value)}
-                      className={cn(adminSelectClass, "h-9 text-[11px]")}
+                      className={cn(adminSelectClass)}
                     >
                       {(f.options as any[]).map((o) =>
                         typeof o === "string" ? (
@@ -1449,7 +1380,7 @@ export default function StudentDetails() {
                           [f.key]: e.target.value,
                         }))
                       }
-                      className={cn(adminInputClass, "h-9 text-[11px]")}
+                      className={adminInputClass}
                     />
                   </div>
                 ))}
@@ -1463,7 +1394,7 @@ export default function StudentDetails() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           {isHodReadOnly && (
-            <span className={cn(adminChipClass, "bg-sky-50 text-sky-800 border border-sky-100")}>
+            <span className={cn(adminChipClass, "bg-tint text-link border border-border")}>
               Read-only · {hodBranch}
             </span>
           )}
@@ -1471,18 +1402,18 @@ export default function StudentDetails() {
             {pagination.total.toLocaleString()} students
           </span>
           {rows.length > 0 && (
-            <span className="text-[12px] text-zinc-500 font-medium">
+            <span className="text-caption text-text-2 font-medium">
               Showing {rangeStart}–{rangeEnd}
               {enriching && (
-                <span className="ml-2 text-zinc-400 inline-flex items-center gap-1">
-                  <Loader2 size={11} className="animate-spin" /> loading attendance…
+                <span className="ml-2 text-text-3 inline-flex items-center gap-1">
+                  <Loader2 size={12} className="animate-spin" /> loading attendance…
                 </span>
               )}
             </span>
           )}
           {!isHodReadOnly && selectedIds.size > 0 && (
             <span className="inline-flex items-center gap-2">
-              <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-zinc-900 text-white text-[11px] font-semibold">
+              <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-primary text-primary-foreground text-caption font-semibold">
                 {selectedIds.size} selected
                 <button
                   type="button"
@@ -1492,194 +1423,152 @@ export default function StudentDetails() {
                   <X size={12} />
                 </button>
               </span>
-              <button
-                type="button"
-                onClick={openBulkDelete}
-                className={cn(
-                  adminDangerButtonClass,
-                  "h-8 px-3 text-[11px] border-rose-200 text-rose-600 hover:bg-rose-50",
-                )}
-              >
-                <Trash2 size={13} />
+              <Button type="button" variant="destructive" size="compact" onClick={openBulkDelete}>
+                <Trash2 size={16} />
                 Delete selected
-              </button>
+              </Button>
             </span>
           )}
         </div>
-        <p className="text-[11px] text-zinc-400">
+        <p className="text-caption text-text-3">
           {isHodReadOnly
             ? "Click row for profile · Double-click for charts"
             : "Click row for profile · Double-click for charts · Click cell to edit inline"}
         </p>
       </div>
 
-      {/* Spreadsheet */}
       {loading ? (
         <TableSkeleton />
-      ) : rows.length === 0 ? (
-        <div className={cn(adminCardClass, "py-16 text-center")}>
-          <FileSpreadsheet className="w-10 h-10 text-zinc-300 mx-auto mb-3" />
-          <p className="text-sm font-medium text-zinc-600">No students to display</p>
-          <p className="text-[12px] text-zinc-400 mt-1">Adjust filters or search by ID</p>
-        </div>
       ) : (
-        <div className={cn(adminCardClass, "overflow-hidden p-0")}>
-          <div className="overflow-x-auto custom-sidebar-scroll max-h-[calc(100vh-22rem)] border-b border-zinc-200">
-            <table className="w-full border-collapse text-[12px] min-w-[1280px]">
-              <thead className="sticky top-0 z-30">
-                <tr className="bg-zinc-50 border-b border-zinc-200">
-                  {!isHodReadOnly && (
-                  <th
-                    className={stickyCellClass(
-                      "checkbox",
-                      cn(STICKY_W.checkbox, "px-2 py-2.5 border-r border-zinc-200"),
-                      { isHeader: true },
-                    )}
-                  >
-                    <button
-                      type="button"
-                      onClick={toggleSelectAll}
-                      className="flex items-center justify-center w-full text-zinc-500 hover:text-zinc-900"
-                      title={allPageSelected ? "Deselect page" : "Select page"}
-                    >
-                      {allPageSelected ? (
-                        <CheckSquare size={15} />
-                      ) : somePageSelected ? (
-                        <CheckSquare size={15} className="text-zinc-400" />
-                      ) : (
-                        <Square size={15} />
-                      )}
-                    </button>
-                  </th>
-                  )}
-                  {COLUMNS.map((col) => (
-                    <th
-                      key={col.key}
-                      onClick={() => handleSort(col.key)}
-                      className={cn(
-                        stickyCellClass(
-                          col.key,
-                          "px-3 py-2.5 text-left text-[10px] font-semibold tracking-wide text-zinc-500 whitespace-nowrap border-r border-zinc-200 last:border-r-0",
-                          {
-                            isHeader: true,
-                            hideCheckbox: isHodReadOnly,
-                          },
-                        ),
-                        SORTABLE_KEYS.has(col.key) &&
-                          "cursor-pointer hover:bg-zinc-100 select-none",
-                        col.className,
-                      )}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        {col.label}
-                        {renderSortIcon(col.key)}
-                      </span>
-                    </th>
-                  ))}
-                  <th className="w-10 px-2 py-2.5 border-l border-zinc-200 bg-zinc-50" />
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row, idx) => {
-                  const isSelected = selectedIds.has(row.username);
-                  const isActive =
-                    selectedRow?.username === row.username && !isSelected;
-                  const isStriped = idx % 2 === 1 && !isSelected && !isActive;
-                  return (
-                  <tr
-                    key={row.username}
-                    onClick={() => openDetail(row)}
-                    onDoubleClick={() => handleOpenPerformance(row)}
-                    className={cn(
-                      "group/row border-b border-zinc-200 cursor-pointer transition-colors",
-                      isSelected && "bg-zinc-100",
-                      isActive && "bg-zinc-100",
-                      !isSelected && !isActive && "hover:bg-zinc-50",
-                      isStriped && "bg-zinc-50",
-                    )}
-                  >
-                    {!isHodReadOnly && (
-                    <td
-                      className={stickyCellClass(
-                        "checkbox",
-                        cn(STICKY_W.checkbox, "px-2 py-2 border-r border-zinc-200"),
-                        {
-                          selected: isSelected || isActive,
-                          striped: isStriped,
-                        },
-                      )}
-                      onClick={(e) => e.stopPropagation()}
-                    >
+        <Table
+          rows={rows}
+          getRowId={(row) => row.username}
+          selectedId={selectedRow?.username}
+          onRowClick={(row) => openDetail(row)}
+          onRowDoubleClick={(row) => handleOpenPerformance(row)}
+          empty={
+            <EmptyState
+              title="No students to display"
+              body="Adjust filters or search by ID."
+              icon={FileSpreadsheet}
+            />
+          }
+          footer={
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.total}
+              pageSize={PAGE_SIZE}
+              onPageChange={(p) => {
+                setSelectedIds(new Set());
+                fetchStudents(p);
+              }}
+            />
+          }
+          columns={[
+            ...(!isHodReadOnly
+              ? [
+                  {
+                    id: "select",
+                    header: (
                       <button
                         type="button"
-                        onClick={() => toggleRowSelect(row.username)}
-                        className="flex items-center justify-center w-full text-zinc-400 hover:text-zinc-900"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleSelectAll();
+                        }}
+                        className="text-text-2 hover:text-text"
+                        aria-label={allPageSelected ? "Deselect page" : "Select page"}
                       >
-                        {isSelected ? (
-                          <CheckSquare size={15} className="text-zinc-900" />
+                        {allPageSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+                      </button>
+                    ),
+                    label: "Select",
+                    cell: (row: StudentRow) => (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleRowSelect(row.username);
+                        }}
+                        onDoubleClick={(e) => e.stopPropagation()}
+                        className="text-text-2 hover:text-text"
+                        aria-label={selectedIds.has(row.username) ? "Deselect student" : "Select student"}
+                      >
+                        {selectedIds.has(row.username) ? (
+                          <CheckSquare size={16} className="text-text" />
                         ) : (
-                          <Square size={15} />
+                          <Square size={16} />
                         )}
                       </button>
-                    </td>
-                    )}
-                    {COLUMNS.map((col) => (
-                      <td
-                        key={col.key}
-                        onClick={(e) => {
-                          if (isHodReadOnly) return;
-                          if (col.key === "name") return;
-                          if (EDITABLE_KEYS.has(col.key)) startCellEdit(row, col.key, e);
-                        }}
-                        className={cn(
-                          stickyCellClass(
-                            col.key,
-                            "px-3 py-2.5 text-zinc-800 border-r border-zinc-200 last:border-r-0 font-medium align-top",
-                            {
-                              hideCheckbox: isHodReadOnly,
-                              selected: isSelected || isActive,
-                              striped: isStriped,
-                            },
-                          ),
-                          col.key !== "name" && "whitespace-nowrap",
-                          col.key === "name" && "overflow-hidden",
-                          col.key === "username" && "font-semibold text-zinc-900 tabular-nums",
-                          col.key === "branch" && "text-zinc-700",
-                          col.key === "cgpa" && adminNumsClass,
-                          col.key === "attendance_pct" && adminNumsClass,
-                          !isHodReadOnly &&
-                            (EDITABLE_KEYS.has(col.key) || col.key === "name") &&
-                            "hover:bg-zinc-100/60 hover:ring-1 hover:ring-inset hover:ring-zinc-300/80",
-                          col.className,
-                        )}
-                      >
-                        {col.key === "name"
-                          ? renderNameCell(row)
-                          : EDITABLE_KEYS.has(col.key)
-                            ? renderEditableCell(row, col)
-                            : cellValue(row, col.key, rangeStart + idx)}
-                      </td>
-                    ))}
-                    <td className="px-2 py-2.5 border-l border-zinc-200 text-zinc-300">
-                      <ChevronRight size={14} />
-                    </td>
-                  </tr>
+                    ),
+                  } satisfies TableColumn<StudentRow>,
+                ]
+              : []),
+            ...COLUMNS.map((col) => ({
+              id: col.key,
+              header: (
+                <button
+                  type="button"
+                  onClick={() => SORTABLE_KEYS.has(col.key) && handleSort(col.key)}
+                  className="inline-flex items-center gap-1"
+                >
+                  {col.label}
+                  {renderSortIcon(col.key)}
+                </button>
+              ),
+              label: col.label,
+              primary: col.key === "name",
+              meta: col.key === "username" || col.key === "branch",
+              numeric: col.key === "cgpa" || col.key === "attendance_pct" || col.key === "total_backlogs" || col.key === "row",
+              cell: (row: StudentRow) => {
+                if (col.key === "is_suspended") {
+                  return row.is_suspended ? <Badge tone="error">Suspended</Badge> : <Badge tone="success">Active</Badge>;
+                }
+                if (col.key === "name") {
+                  return (
+                    <span className="flex items-start gap-2">
+                      {!isHodReadOnly ? (
+                        <span
+                          role="checkbox"
+                          aria-checked={selectedIds.has(row.username)}
+                          className="mt-1 text-text-2 sm:hidden"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleRowSelect(row.username);
+                          }}
+                          onDoubleClick={(e) => e.stopPropagation()}
+                          aria-label={selectedIds.has(row.username) ? "Deselect student" : "Select student"}
+                        >
+                          {selectedIds.has(row.username) ? (
+                            <CheckSquare size={16} className="text-text" />
+                          ) : (
+                            <Square size={16} />
+                          )}
+                        </span>
+                      ) : null}
+                      {renderNameCell(row)}
+                    </span>
                   );
-                })}
-              </tbody>
-            </table>
-          </div>
-          <Pagination
-            currentPage={pagination.page}
-            totalPages={pagination.totalPages}
-            totalItems={pagination.total}
-            pageSize={PAGE_SIZE}
-            onPageChange={(p) => {
-              setSelectedIds(new Set());
-              fetchStudents(p);
-            }}
-          />
-        </div>
+                }
+                const index = rows.indexOf(row);
+                const body = EDITABLE_KEYS.has(col.key)
+                  ? renderEditableCell(row, col)
+                  : cellValue(row, col.key, rangeStart + index);
+                return (
+                  <span
+                    onClick={(e) => {
+                      if (isHodReadOnly) return;
+                      if (EDITABLE_KEYS.has(col.key)) startCellEdit(row, col.key, e);
+                    }}
+                  >
+                    {body}
+                  </span>
+                );
+              },
+            })),
+          ]}
+        />
       )}
 
       {/* Detail drawer */}
@@ -1690,7 +1579,7 @@ export default function StudentDetails() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[100] bg-zinc-900/30 backdrop-blur-sm"
+              className="fixed inset-0 z-[100] bg-primary/30 "
               onClick={() => {
                 if (resetModalOpen || editModalOpen || deleteModalOpen) return;
                 closeDrawer();
@@ -1701,14 +1590,14 @@ export default function StudentDetails() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 32, stiffness: 320 }}
-              className="fixed right-0 top-0 z-[101] h-full w-full max-w-2xl bg-[#fafafa] border border-navy-200/80 overflow-y-auto custom-sidebar-scroll"
+              className="fixed right-0 top-0 z-[101] h-full w-full max-w-2xl bg-surface border border-border/80 overflow-y-auto custom-sidebar-scroll"
             >
-              <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b border-zinc-200/70">
+              <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-surface border-b border-border/70">
                 <div>
-                  <p className="text-[10px] font-semibold tracking-wide text-zinc-400">
+                  <p className="text-caption font-semibold tracking-wide text-text-3">
                     Student profile
                   </p>
-                  <p className="text-lg font-semibold text-zinc-900">
+                  <p className="font-serif text-h3 font-normal text-head">
                     {drawerStudentName}
                   </p>
                 </div>
@@ -1723,7 +1612,7 @@ export default function StudentDetails() {
               <div className="p-4">
                 {detailLoading ? (
                   <div className="flex items-center justify-center py-20">
-                    <Loader2 className="animate-spin text-zinc-400" size={28} />
+                    <Loader2 className="animate-spin text-text-3" size={28} />
                   </div>
                 ) : detailData && detailData.username === selectedRow?.username ? (
                   <StudentDashboard
@@ -1788,7 +1677,7 @@ export default function StudentDetails() {
         <div className="space-y-2">
           <label className={adminLabelClass}>Temporary password</label>
           <div className="relative">
-            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" size={16} />
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-3" size={16} />
             <input
               type="text"
               value={resetPasswordValue}
@@ -1832,8 +1721,8 @@ export default function StudentDetails() {
         }
       >
         <div className="space-y-4">
-          <p className="text-[13px] text-zinc-600">
-            Type <span className="font-semibold text-zinc-900">{deleteTargetUser}</span> to confirm.
+          <p className="text-[13px] text-text-2">
+            Type <span className="font-semibold text-text">{deleteTargetUser}</span> to confirm.
           </p>
           <div className="space-y-2">
             <label className={adminLabelClass}>Student ID</label>
@@ -1887,21 +1776,21 @@ export default function StudentDetails() {
         }
       >
         <div className="space-y-4">
-          <p className="text-[13px] text-zinc-600">
+          <p className="text-[13px] text-text-2">
             You are about to delete{" "}
-            <span className="font-semibold text-zinc-900">{selectedIds.size}</span>{" "}
+            <span className="font-semibold text-text">{selectedIds.size}</span>{" "}
             student record(s). Type{" "}
-            <span className="font-semibold text-rose-600">
+            <span className="font-semibold text-error">
               Delete {selectedIds.size}
             </span>{" "}
             to confirm.
           </p>
-          <div className="max-h-32 overflow-y-auto rounded-xl border border-zinc-200 bg-zinc-50/80 p-3 text-[11px] font-mono text-zinc-600 space-y-0.5">
+          <div className="max-h-32 overflow-y-auto rounded-xl border border-border bg-surface-2/80 p-3 text-caption font-mono text-text-2 space-y-0.5">
             {[...selectedIds].slice(0, 12).map((id) => (
               <div key={id}>{id}</div>
             ))}
             {selectedIds.size > 12 && (
-              <div className="text-zinc-400">+ {selectedIds.size - 12} more…</div>
+              <div className="text-text-3">+ {selectedIds.size - 12} more…</div>
             )}
           </div>
           <div className="space-y-2">

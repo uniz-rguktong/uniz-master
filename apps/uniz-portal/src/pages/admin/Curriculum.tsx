@@ -9,16 +9,17 @@ import {
   GraduationCap,
   Trash2,
   Edit,
-  X,
-  CreditCard,
-  Hash,
   Loader2,
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
 import { toast } from "../../utils/toast-ref";
-import { motion, AnimatePresence } from "framer-motion";
-import { SectionHeader } from "../../components/admin/SectionHeader";
+import { motion } from "framer-motion";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+import { AdminDialog } from "@/components/admin/AdminDialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Badge } from "@/components/ui/badge";
 import {
   adminPageWrapClass,
   adminCardClass,
@@ -26,10 +27,6 @@ import {
   adminLabelClass,
   adminInputClass,
   adminSelectClass,
-  adminPrimaryButtonClass,
-  adminModalShellClass,
-  adminModalTitleClass,
-  adminModalDescClass,
 } from "../../components/admin/admin-ui";
 import { SubjectCode } from "../../components/admin/SubjectCode";
 import { cn } from "../../utils/cn";
@@ -229,26 +226,21 @@ export default function CurriculumManager() {
   return (
     <div className={cn(adminPageWrapClass, "animate-in fade-in duration-700")}>
       {/* Header Area */}
-      <SectionHeader
-        icon={<BookOpen size={18} />}
-        eyebrow="Academic"
-        title="Academic Subjects"
-        subtitle={`Manage the core institutional curriculum (${totalRecords} records)`}
-        actions={
-          <button
-            onClick={() => handleOpenModal()}
-            className={adminPrimaryButtonClass}
-          >
-            <Plus size={16} /> New Subject
-          </button>
+      <PageHeader
+        title="Academic subjects"
+        meta={`Manage the core institutional curriculum (${totalRecords} records)`}
+        action={
+          <Button type="button" onClick={() => handleOpenModal()}>
+            <Plus size={16} /> New subject
+          </Button>
         }
       />
 
       {/* Filters Area */}
-      <div className={cn(adminCardClass, "p-3 flex flex-col lg:flex-row gap-3")}>
+      <div className={cn(adminCardClass, "flex flex-col gap-3 p-3 sm:flex-row")}>
         <div className="relative flex-1">
           <Search
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-3"
             size={16}
           />
           <input
@@ -261,7 +253,7 @@ export default function CurriculumManager() {
           {refreshing && (
             <Loader2
               size={14}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-zinc-400"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-text-3"
             />
           )}
         </div>
@@ -269,7 +261,7 @@ export default function CurriculumManager() {
         <div className="flex flex-wrap gap-2">
           <div className="relative">
             <Filter
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none z-10"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none z-10"
               size={14}
             />
             <select
@@ -291,7 +283,7 @@ export default function CurriculumManager() {
 
           <div className="relative">
             <BookOpen
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none z-10"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none z-10"
               size={14}
             />
             <select
@@ -316,21 +308,16 @@ export default function CurriculumManager() {
       {/* Grid Area */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
-          <Loader2 className="animate-spin text-zinc-900" size={32} />
-          <p className="text-zinc-400 font-medium text-[12px]">
+          <Loader2 className="animate-spin text-text" size={32} />
+          <p className="text-text-3 font-medium text-[12px]">
             Loading curriculum…
           </p>
         </div>
       ) : subjects.length === 0 ? (
-        <div className={cn(adminCardClass, "text-center py-20 border-dashed border-zinc-300")}>
-          <GraduationCap size={48} strokeWidth={1.5} className="mx-auto text-zinc-200 mb-4" />
-          <h3 className="text-[16px] font-semibold tracking-tight text-zinc-900">
-            No subjects found
-          </h3>
-          <p className="text-zinc-500 text-[13px] mt-1">
-            Try adjusting your filters or search query.
-          </p>
-        </div>
+        <EmptyState
+          title="No subjects found"
+          body="Try adjusting your filters or search query."
+        />
       ) : (
         <div
           className={cn(
@@ -347,19 +334,19 @@ export default function CurriculumManager() {
             >
               {/* Card Header */}
               <div className="flex justify-between items-start mb-4">
-                <div className="w-10 h-10 bg-zinc-100 rounded-xl flex items-center justify-center text-zinc-600 ring-1 ring-inset ring-zinc-900/5 group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
+                <div className="w-10 h-10 bg-surface-2 rounded-xl flex items-center justify-center text-text-2 ring-1 ring-inset ring-ring/5 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
                   <GraduationCap size={20} />
                 </div>
                 <div className="flex gap-1">
                   <button
                     onClick={() => handleOpenModal(sub)}
-                    className="p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-lg transition-[color,background-color,border-color,opacity,transform,box-shadow]"
+                    className="p-2 text-text-3 hover:text-text hover:bg-surface-2 rounded-lg transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                   >
                     <Edit size={16} />
                   </button>
                   <button
                     onClick={() => handleDelete(sub.id)}
-                    className="p-2 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-[color,background-color,border-color,opacity,transform,box-shadow]"
+                    className="p-2 text-text-3 hover:text-error hover:bg-tint rounded-lg transition-[color,background-color,border-color,opacity,transform,box-shadow]"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -372,45 +359,41 @@ export default function CurriculumManager() {
                   code={sub.displayCode || sub.code}
                   academicCode={sub.academicCode}
                 />
-                <h3 className="text-[16px] font-semibold text-zinc-900 line-clamp-2 leading-tight">
+                <h3 className="text-[16px] font-semibold text-text line-clamp-2 leading-tight">
                   {sub.name}
                 </h3>
               </div>
 
               {/* Tags */}
-              <div className="flex flex-wrap gap-2 mb-6">
-                <span className="px-2.5 py-1 bg-zinc-900 text-white text-[10px] font-medium rounded-md tracking-wide">
-                  {sub.department}
-                </span>
-                <span className="px-2.5 py-1 bg-zinc-50 text-zinc-600 text-[10px] font-medium rounded-md tracking-wide border border-zinc-200">
-                  {semesterLabel(sub)}
-                </span>
+              <div className="mb-6 flex flex-wrap gap-2">
+                <Badge tone="neutral">{sub.department}</Badge>
+                <Badge tone="neutral">{semesterLabel(sub)}</Badge>
               </div>
 
               {/* Progress Bar (Weight) */}
               <div className="space-y-2">
-                <div className="flex justify-between items-center text-[10px] font-medium text-zinc-400">
+                <div className="flex justify-between items-center text-caption font-medium text-text-3">
                   <span>Academic Weight</span>
                   <span className="tabular-nums">{((sub.credits / 4) * 100).toFixed(0)}%</span>
                 </div>
-                <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
+                <div className="h-1.5 w-full bg-surface-2 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${(sub.credits / 4) * 100}%` }}
-                    className="h-full bg-zinc-900 rounded-full"
+                    className="h-full bg-primary rounded-full"
                   />
                 </div>
               </div>
 
               {/* Footer */}
-              <div className="mt-5 pt-4 border-t border-zinc-100 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-zinc-400">
+              <div className="mt-5 pt-4 border-t border-border flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-text-3">
                   <BookOpen size={14} />
-                  <span className="text-[10px] font-medium tabular-nums">
+                  <span className="text-caption font-medium tabular-nums">
                     {sub.credits} Credits
                   </span>
                 </div>
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-success"></div>
               </div>
             </motion.div>
           ))}
@@ -420,25 +403,25 @@ export default function CurriculumManager() {
       {/* Pagination Controls */}
       {!loading && totalRecords > 0 && (
         <div className={cn(adminCardClass, "flex flex-col md:flex-row items-center justify-between gap-4 px-6 py-4")}>
-          <div className="text-[11px] font-medium text-zinc-400">
-            Showing <span className="text-zinc-900">{subjects.length}</span> of{" "}
+          <div className="text-caption font-medium text-text-3">
+            Showing <span className="text-text">{subjects.length}</span> of{" "}
             {totalRecords} records
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="w-9 h-9 flex items-center justify-center bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition-[color,background-color,border-color,opacity,transform,box-shadow]"
+              className="w-9 h-9 flex items-center justify-center bg-surface border border-border rounded-lg text-text-2 hover:text-text hover:border-border-strong disabled:opacity-30 disabled:cursor-not-allowed transition-[color,background-color,border-color,opacity,transform,box-shadow]"
             >
               <ChevronLeft size={18} />
             </button>
-            <div className="px-3 text-[12px] font-semibold text-zinc-900 tabular-nums">
+            <div className="px-3 text-[12px] font-semibold text-text tabular-nums">
               Page {page} of {totalPages}
             </div>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="w-9 h-9 flex items-center justify-center bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition-[color,background-color,border-color,opacity,transform,box-shadow]"
+              className="w-9 h-9 flex items-center justify-center bg-surface border border-border rounded-lg text-text-2 hover:text-text hover:border-border-strong disabled:opacity-30 disabled:cursor-not-allowed transition-[color,background-color,border-color,opacity,transform,box-shadow]"
             >
               <ChevronRight size={18} />
             </button>
@@ -447,50 +430,26 @@ export default function CurriculumManager() {
       )}
 
       {/* Modal System */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-zinc-900/40 backdrop-blur-sm"
-            />
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className={cn("relative w-full max-w-lg overflow-hidden", adminModalShellClass)}
-            >
-              <div className="p-8">
-                <div className="flex justify-between items-start mb-7">
-                  <div className="space-y-1.5">
-                    <h2 className={adminModalTitleClass}>
-                      {editingSubject ? "Edit subject" : "Create subject"}
-                    </h2>
-                    <p className={adminModalDescClass}>
-                      Define metadata for the curriculum entry.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className="w-9 h-9 flex items-center justify-center bg-zinc-50 rounded-full text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-[color,background-color,border-color,opacity,transform,box-shadow]"
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
+      <AdminDialog
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        maxWidth="max-w-[640px]"
+        title={editingSubject ? "Edit subject" : "Create subject"}
+        description="Define metadata for the curriculum entry."
+        footer={
+          <>
+            <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" form="curriculum-subject-form">
+              {editingSubject ? "Update subject" : "Create subject"}
+            </Button>
+          </>
+        }
+      >
+                <form id="curriculum-subject-form" onSubmit={handleSubmit} className="mx-auto max-w-[640px] space-y-4">
+                    <div>
                       <label className={adminLabelClass}>Subject Code</label>
-                      <div className="relative">
-                        <Hash
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-300 z-10"
-                          size={16}
-                        />
                         <input
                           required
                           value={formData.code}
@@ -501,17 +460,11 @@ export default function CurriculumManager() {
                             })
                           }
                           placeholder="e.g. CSE-302"
-                          className={cn(adminInputClass, "pl-10")}
+                          className={adminInputClass}
                         />
-                      </div>
                     </div>
-                    <div className="space-y-2">
+                    <div>
                       <label className={adminLabelClass}>Credits</label>
-                      <div className="relative">
-                        <CreditCard
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-300 z-10"
-                          size={16}
-                        />
                         <input
                           type="number"
                           step="0.5"
@@ -525,11 +478,9 @@ export default function CurriculumManager() {
                               credits: Number(e.target.value),
                             })
                           }
-                          className={cn(adminInputClass, "pl-10")}
+                          className={adminInputClass}
                         />
-                      </div>
                     </div>
-                  </div>
 
                   <div className="space-y-2">
                     <label className={adminLabelClass}>Display Name</label>
@@ -544,8 +495,7 @@ export default function CurriculumManager() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
+                    <div>
                       <label className={adminLabelClass}>Department</label>
                       <select
                         value={formData.department}
@@ -566,7 +516,7 @@ export default function CurriculumManager() {
                         <option value="MECH">MECH</option>
                       </select>
                     </div>
-                    <div className="space-y-2">
+                    <div>
                       <label className={adminLabelClass}>Level (Semester)</label>
                       <select
                         value={formData.semester}
@@ -582,20 +532,8 @@ export default function CurriculumManager() {
                         ))}
                       </select>
                     </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className={cn(adminPrimaryButtonClass, "h-12 w-full")}
-                  >
-                    {editingSubject ? "Update Subject" : "Create Subject"}
-                  </button>
                 </form>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      </AdminDialog>
     </div>
   );
 }

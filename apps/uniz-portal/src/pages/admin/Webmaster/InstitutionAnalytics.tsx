@@ -8,10 +8,10 @@ import {
 import { useRecoilState } from "recoil";
 import { motion } from "framer-motion";
 import { DonutChart } from "../../../components/ui/donut-chart";
-import { Card } from "../../../components/ui/card";
 import { KPICard, KPICardSkeleton } from "../AnalyticsUI";
-import { cn } from "../../../utils/cn";
 import { formatDisplayText } from "@/utils/displayText";
+import { Badge } from "@/components/ui/badge";
+import { Panel } from "@/components/ui/panel";
 import {
   ANALYTICS_BRANCH_DISTRIBUTION,
   ANALYTICS_GRIEVANCE_SUMMARY,
@@ -25,37 +25,6 @@ function isProdHost() {
   return (
     window.location.hostname !== "localhost" &&
     window.location.hostname === "uniz.rguktong.in"
-  );
-}
-
-function AnalyticsCard({
-  title,
-  subtitle,
-  children,
-  className,
-}: {
-  title: string;
-  subtitle: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <Card
-      className={cn(
-        "p-6 w-full bg-white border border-zinc-200/70 shadow-[0_1px_2px_rgba(10,10,10,0.03)] rounded-2xl",
-        className,
-      )}
-    >
-      <div className="mb-5">
-        <h3 className="text-[15px] font-semibold text-zinc-900 tracking-[-0.01em]">
-          {title}
-        </h3>
-        <p className="text-[11px] font-medium text-zinc-400 mt-0.5">
-          {subtitle}
-        </p>
-      </div>
-      {children}
-    </Card>
   );
 }
 
@@ -170,12 +139,12 @@ export default function InstitutionAnalytics() {
       {
         label: "On campus",
         value: onCampus,
-        color: "#0B2A47",
+        color: "var(--navy-600)",
       },
       {
         label: "Off campus",
         value: Math.max(totalStudents - onCampus, 0),
-        color: "#d4d4d8",
+        color: "var(--navy-300)",
       },
     ],
     [onCampus, totalStudents],
@@ -210,16 +179,16 @@ export default function InstitutionAnalytics() {
   if (loading && !cached.fetched) {
     return (
       <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <KPICardSkeleton />
           <KPICardSkeleton />
           <KPICardSkeleton />
           <KPICardSkeleton />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="h-64 rounded-2xl bg-zinc-50 animate-pulse" />
-          <div className="h-64 rounded-2xl bg-zinc-50 animate-pulse" />
-          <div className="h-64 rounded-2xl bg-zinc-50 animate-pulse" />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="h-64 animate-pulse rounded-md bg-tint" />
+          <div className="h-64 animate-pulse rounded-md bg-tint" />
+          <div className="h-64 animate-pulse rounded-md bg-tint" />
         </div>
       </div>
     );
@@ -229,51 +198,47 @@ export default function InstitutionAnalytics() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <p className="text-[11px] font-semibold text-zinc-400">
-          Institution
-        </p>
-        <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
-          Campus & academic snapshot
-        </h2>
-      </div>
+      <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head min-[821px]:text-[28px] min-[821px]:leading-9">
+        Campus & academic snapshot
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Enrolled students"
           value={totalStudents.toLocaleString()}
           icon={Users}
           badge="Active"
-          iconColor="text-blue-600"
+          iconColor="text-link"
         />
         <KPICard
           title="On campus now"
           value={`${campusPct}%`}
           icon={Home}
           badge={`${onCampus.toLocaleString()} present`}
-          iconColor="text-emerald-600"
+          iconColor="text-success"
         />
         <KPICard
           title="Institution avg CGPA"
           value={Number(snapshot?.avg_cgpa || 0).toFixed(2)}
           icon={GraduationCap}
           badge={`${Number(snapshot?.with_backlogs || 0).toLocaleString()} with backlogs`}
-          iconColor="text-amber-600"
+          iconColor="text-warning"
         />
         <KPICard
           title="Open grievances"
           value={openGrievances.toLocaleString()}
           icon={MessageSquareWarning}
           badge={openGrievances > 0 ? "Needs review" : "Clear"}
-          iconColor={openGrievances > 0 ? "text-rose-600" : "text-emerald-600"}
+          iconColor={openGrievances > 0 ? "text-error" : "text-success"}
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
-        <AnalyticsCard title="Students by branch" subtitle="Top programmes">
-          <div className="space-y-3">
+      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-3">
+        <Panel title="Students by branch" className="h-full">
+          <p className="text-dense leading-5 text-text-2">Top programmes</p>
+          <div className="mt-4 space-y-3">
             {branches.length === 0 ? (
-              <p className="text-sm text-zinc-400">No branch data yet.</p>
+              <p className="text-dense text-text-2">No branch data yet.</p>
             ) : (
               branches.map((row, i) => {
                 const count = Number(row.count) || 0;
@@ -285,22 +250,18 @@ export default function InstitutionAnalytics() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.04 }}
                   >
-                    <div className="flex items-center justify-between text-[12px] mb-1.5">
-                      <span className="font-medium text-zinc-700">
+                    <div className="mb-1.5 flex items-center justify-between text-dense">
+                      <span className="font-medium text-head">
                         {formatDisplayText(row.branch)}
                       </span>
-                      <span className="tabular-nums font-semibold text-zinc-900">
+                      <span className="font-semibold tabular-nums text-head">
                         {count.toLocaleString()}
                       </span>
                     </div>
-                    <div className="h-1.5 rounded-full bg-zinc-100 overflow-hidden">
+                    <div className="h-2 overflow-hidden rounded-full bg-tint">
                       <div
-                        className="h-full rounded-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-700"
-                        style={{
-                          width: `${pct}%`,
-                          background:
-                            "linear-gradient(90deg, #0B2A47 0%, #0F3B63 100%)",
-                        }}
+                        className="h-full rounded-full bg-navy-600 transition-[width] duration-700"
+                        style={{ width: `${pct}%` }}
                       />
                     </div>
                   </motion.div>
@@ -308,10 +269,11 @@ export default function InstitutionAnalytics() {
               })
             )}
           </div>
-        </AnalyticsCard>
+        </Panel>
 
-        <AnalyticsCard title="Campus presence" subtitle="Live headcount split">
-          <div className="flex flex-col items-center gap-4">
+        <Panel title="Campus presence" className="h-full">
+          <p className="text-dense leading-5 text-text-2">Live headcount split</p>
+          <div className="mt-4 flex flex-col items-center gap-4">
             <DonutChart
               data={campusData}
               size={168}
@@ -319,62 +281,57 @@ export default function InstitutionAnalytics() {
               animationDuration={1}
               centerContent={
                 <div className="text-center">
-                  <p className="text-[10px] text-zinc-400 mb-0.5">
-                    On campus
-                  </p>
-                  <p className="text-2xl font-semibold text-zinc-900 tabular-nums">
+                  <p className="text-dense leading-5 text-text-2">On campus</p>
+                  <p className="font-sans text-[28px] font-semibold leading-9 text-head tabular-nums">
                     {campusPct}%
                   </p>
                 </div>
               }
             />
-            <div className="flex gap-6 text-[12px]">
+            <div className="flex gap-6 text-dense">
               {campusData.map((d) => (
                 <div key={d.label} className="flex items-center gap-2">
                   <span
-                    className="w-2 h-2 rounded-full"
+                    className="h-2 w-2 rounded-full"
                     style={{ background: d.color }}
                   />
-                  <span className="text-zinc-600">{d.label}</span>
-                  <span className="font-semibold text-zinc-900 tabular-nums">
+                  <span className="text-text-2">{d.label}</span>
+                  <span className="font-semibold tabular-nums text-head">
                     {d.value.toLocaleString()}
                   </span>
                 </div>
               ))}
             </div>
           </div>
-        </AnalyticsCard>
+        </Panel>
 
-        <AnalyticsCard title="Grievance pipeline" subtitle="By category">
-          <div className="space-y-2.5">
+        <Panel title="Grievance pipeline" className="h-full">
+          <p className="text-dense leading-5 text-text-2">By category</p>
+          <div className="mt-4 space-y-2.5">
             {grievanceByCategory.length === 0 ? (
-              <p className="text-sm text-zinc-400">No grievances recorded.</p>
+              <p className="text-dense text-text-2">No grievances recorded.</p>
             ) : (
               grievanceByCategory.map((g) => (
                 <div
                   key={g.category}
-                  className="flex items-center justify-between gap-3 py-2 border-b border-zinc-50 last:border-0"
+                  className="flex items-center justify-between gap-3 border-b border-border py-2 last:border-0"
                 >
-                  <span className="text-[13px] font-medium text-zinc-700">
+                  <span className="text-dense font-medium text-head">
                     {g.category}
                   </span>
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex shrink-0 items-center gap-2">
                     {g.pending > 0 && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-100">
-                        {g.pending} open
-                      </span>
+                      <Badge tone="warning">{g.pending} open</Badge>
                     )}
                     {g.resolved > 0 && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100">
-                        {g.resolved} done
-                      </span>
+                      <Badge tone="success">{g.resolved} done</Badge>
                     )}
                   </div>
                 </div>
               ))
             )}
           </div>
-        </AnalyticsCard>
+        </Panel>
       </div>
     </div>
   );

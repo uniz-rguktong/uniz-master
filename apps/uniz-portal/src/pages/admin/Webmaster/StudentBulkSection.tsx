@@ -2,15 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 import { webmasterInstitutionAnalyticsAtom } from "../../../store/atoms";
-import {
-  Upload,
-  Loader2,
-  CheckCircle2,
-  Download,
-  ChevronDown,
-  Users,
-  Zap,
-} from "lucide-react";
+import { Download, ChevronDown } from "lucide-react";
 import {
   ADMIN_STUDENT_UPLOAD,
   ADMIN_STUDENT_PROGRESS,
@@ -22,17 +14,14 @@ import { toast } from "@/utils/toast-ref";
 import { FileUploader } from "../../../components/ui/FileUploader";
 import { downloadFile } from "../../../api/apiClient";
 import StudentBulkActionsPanel from "./StudentBulkActionsPanel";
-import { SectionHeader } from "../../../components/admin/SectionHeader";
+import { PageHeader } from "@/components/ui/page-header";
+import { Panel } from "@/components/ui/panel";
+import { Tabs } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import {
   adminPageWrapClass,
-  adminCardClass,
   adminLabelClass,
   adminSelectClass,
-  adminPrimaryButtonClass,
-  adminGhostButtonClass,
-  adminSegmentWrapClass,
-  adminSegmentActiveClass,
-  adminSegmentInactiveClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
 import { ENGINEERING_BRANCHES } from "@/constants/branches";
@@ -237,107 +226,70 @@ export default function StudentBulkSection() {
 
   return (
     <div className={cn(adminPageWrapClass, "pb-20")}>
-      <SectionHeader
-        icon={<Users size={18} />}
-        eyebrow="Students"
-        title="Student Bulk Operations"
-        subtitle="Upload, export, and apply cohort-wide status changes."
-        actions={
-          <div className={adminSegmentWrapClass}>
-            <button
-              onClick={() => setActiveTab("upload")}
-              className={cn(
-                "flex items-center gap-2",
-                activeTab === "upload"
-                  ? adminSegmentActiveClass
-                  : adminSegmentInactiveClass,
-              )}
-            >
-              <Upload size={13} /> Bulk Upload
-            </button>
-            <button
-              onClick={() => setActiveTab("export")}
-              className={cn(
-                "flex items-center gap-2",
-                activeTab === "export"
-                  ? adminSegmentActiveClass
-                  : adminSegmentInactiveClass,
-              )}
-            >
-              <Download size={13} /> Batch Export
-            </button>
-            <button
-              onClick={() => setActiveTab("actions")}
-              className={cn(
-                "flex items-center gap-2",
-                activeTab === "actions"
-                  ? adminSegmentActiveClass
-                  : adminSegmentInactiveClass,
-              )}
-            >
-              <Zap size={13} /> Cohort Actions
-            </button>
-          </div>
-        }
+      <PageHeader
+        title="Student bulk operations"
+        meta="Upload, export, and apply cohort-wide status changes."
+      />
+      <Tabs
+        className="mb-6"
+        label="Bulk operations"
+        value={activeTab}
+        onChange={(id) => setActiveTab(id as typeof activeTab)}
+        tabs={[
+          { id: "upload", label: "Bulk upload" },
+          { id: "export", label: "Batch export" },
+          { id: "actions", label: "Cohort actions" },
+        ]}
       />
 
       {activeTab === "actions" ? (
         <StudentBulkActionsPanel onActionSuccess={refreshAnalytics} />
       ) : activeTab === "upload" ? (
-        <div className="w-full space-y-6">
-          <div className="flex justify-end gap-2">
-            <button
-              onClick={handleDownloadTemplate}
-              className={adminGhostButtonClass}
-            >
+        <Panel title="Student file">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <Button type="button" variant="outline" size="compact" onClick={handleDownloadTemplate}>
               <Download size={14} />
-              Download Template
-            </button>
+              Download template
+            </Button>
           </div>
-          <p className="text-[12px] text-zinc-500">
-            Use the template columns for student ID, name, email, branch, year,
-            section, and batch. Branch may be N/A until allocation is finalized.
-          </p>
-
-          <div className="w-full space-y-6">
-            <div className={cn(adminCardClass, "overflow-hidden border-dashed border-zinc-300 bg-zinc-50/40 p-6")}>
-              <FileUploader
-                onFileSelect={(f) => {
-                  setFile(f);
-                  setUploadSuccess(null);
-                  setProgress(0);
-                }}
-                label="Student Evidence"
-                description="Upload student data via XLSX/CSV protocols."
-                isUploading={loading || !!uploadId}
-                isSuccess={uploadSuccess === true}
-                isError={uploadSuccess === false}
-                progress={progress}
-              />
-            </div>
-
-            <button
+          <ul className="mb-6 space-y-2 text-dense text-text-2">
+            <li>Student ID</li>
+            <li>Name</li>
+            <li>Email</li>
+            <li>Branch (may be N/A until allocation is finalized)</li>
+            <li>Year</li>
+            <li>Section</li>
+            <li>Batch</li>
+          </ul>
+          <div className="rounded-lg border border-dashed border-border-strong bg-surface p-4">
+            <FileUploader
+              onFileSelect={(f) => {
+                setFile(f);
+                setUploadSuccess(null);
+                setProgress(0);
+              }}
+              label="Student file"
+              description="Upload student data as XLSX or CSV."
+              isUploading={loading || !!uploadId}
+              isSuccess={uploadSuccess === true}
+              isError={uploadSuccess === false}
+              progress={progress}
+            />
+          </div>
+          <div className="mt-6 flex justify-end">
+            <Button
+              type="button"
               onClick={handleUpload}
               disabled={!file || loading || !!uploadId}
-              className={cn(adminPrimaryButtonClass, "h-12 w-full")}
+              isLoading={loading || !!uploadId}
             >
-              {loading ? (
-                <Loader2 className="animate-spin w-4 h-4" />
-              ) : uploadId ? (
-                <div className="flex items-center gap-3">
-                  <Loader2 className="animate-spin w-4 h-4" />
-                  <span>Processing...</span>
-                </div>
-              ) : (
-                <CheckCircle2 size={16} />
-              )}
-              {!loading && !uploadId && "Start Uploading"}
-            </button>
+              {uploadId ? "Processing…" : "Start uploading"}
+            </Button>
           </div>
-        </div>
+        </Panel>
       ) : (
         <div className="w-full space-y-10">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="mx-auto grid max-w-[640px] grid-cols-1 gap-4">
             <div className="space-y-2">
               <label className={adminLabelClass}>Branch Focus</label>
               <div className="relative group">
@@ -359,7 +311,7 @@ export default function StudentBulkSection() {
                   )}
                 </select>
                 <ChevronDown
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                   size={14}
                 />
               </div>
@@ -381,7 +333,7 @@ export default function StudentBulkSection() {
                   ))}
                 </select>
                 <ChevronDown
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                   size={14}
                 />
               </div>
@@ -408,7 +360,7 @@ export default function StudentBulkSection() {
                   ))}
                 </select>
                 <ChevronDown
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                   size={14}
                 />
               </div>
@@ -426,44 +378,44 @@ export default function StudentBulkSection() {
                   onClick={() =>
                     setSelectedFields(Object.values(FIELD_GROUPS).flat())
                   }
-                  className="text-[11px] font-semibold text-zinc-700 hover:text-zinc-900 transition-colors"
+                  className="text-caption font-semibold text-text hover:text-text transition-colors"
                 >
                   Select All
                 </button>
                 <button
                   onClick={() => setSelectedFields(["username", "name"])}
-                  className="text-[11px] font-semibold text-zinc-400 hover:text-zinc-600 transition-colors"
+                  className="text-caption font-semibold text-text-3 hover:text-text-2 transition-colors"
                 >
                   Reset
                 </button>
               </div>
             </div>
 
-            <div className={cn(adminCardClass, "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-zinc-50/40 p-6")}>
+            <div className="grid grid-cols-1 gap-6 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2">
               {Object.entries(FIELD_GROUPS).map(([group, fields]) => (
                 <div key={group} className="space-y-3">
-                  <h4 className="text-[10px] font-semibold text-zinc-400 px-2 border-l-2 border-zinc-300">
+                  <h4 className="text-caption font-semibold text-text-3 px-2 border-l-2 border-border-strong">
                     {group}
                   </h4>
                   <div className="flex flex-col gap-1.5">
                     {fields.map((field) => (
                       <label
                         key={field}
-                        className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-[color,background-color,border-color,opacity,transform,box-shadow] border group ${
+                        className={`flex items-center gap-3 cursor-pointer rounded-lg border p-2.5 transition-colors ${
                           selectedFields.includes(field)
-                            ? "bg-white border-zinc-300 shadow-[0_1px_2px_rgba(10,10,10,0.04)]"
-                            : "bg-transparent border-transparent hover:bg-white/60"
+                            ? "border-border-strong bg-surface"
+                            : "border-transparent hover:bg-tint"
                         }`}
                       >
                         <div
                           className={`w-4 h-4 rounded-md border flex items-center justify-center transition-[color,background-color,border-color,opacity,transform,box-shadow] ${
                             selectedFields.includes(field)
-                              ? "bg-zinc-900 border-zinc-900"
-                              : "border-zinc-300 bg-white group-hover:border-zinc-400"
+                              ? "bg-primary border-head"
+                              : "border-border-strong bg-surface group-hover:border-border-strong"
                           }`}
                         >
                           {selectedFields.includes(field) && (
-                            <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                            <div className="w-1.5 h-1.5 bg-surface rounded-full" />
                           )}
                         </div>
                         <input
@@ -483,8 +435,8 @@ export default function StudentBulkSection() {
                         <span
                           className={`text-[12px] font-medium capitalize tracking-tight ${
                             selectedFields.includes(field)
-                              ? "text-zinc-900"
-                              : "text-zinc-500"
+                              ? "text-text"
+                              : "text-text-2"
                           }`}
                         >
                           {field.replace(/([A-Z])/g, " $1").trim()}
@@ -498,21 +450,11 @@ export default function StudentBulkSection() {
           </div>
 
           <div className="pt-2 space-y-5">
-            <button
-              onClick={handleExport}
-              disabled={loading}
-              className={cn(adminPrimaryButtonClass, "h-12 w-full")}
-            >
-              {loading ? (
-                <Loader2 className="animate-spin w-4 h-4" />
-              ) : (
-                <Download size={16} />
-              )}
-              Download the data
-            </button>
-            <p className="text-center text-zinc-300 text-[10px] font-medium">
-              Encrypted data streams active • Protocol 04-X
-            </p>
+            <div className="flex justify-end">
+              <Button type="button" onClick={handleExport} disabled={loading} isLoading={loading}>
+                Download the data
+              </Button>
+            </div>
           </div>
         </div>
       )}

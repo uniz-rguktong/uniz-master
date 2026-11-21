@@ -12,7 +12,7 @@ import {
 } from "../../api/endpoints";
 import { apiClient } from "../../api/apiClient";
 import { useState, useMemo } from "react";
-import { Button } from "../../components/Button";
+import { Button } from "@/components/ui/button";
 import { useIsAuth } from "../../hooks/is_authenticated";
 import {
   calculateDuration,
@@ -20,10 +20,14 @@ import {
   formatRequestTime,
 } from "../../utils/timeUtils";
 import { toast } from "@/utils/toast-ref";
-import { CheckCircle, Search, Ban, Forward, Inbox } from "lucide-react";
+import { CheckCircle, Search, Ban, Forward, ArrowLeft } from "lucide-react";
 import { Input } from "../../components/Input";
 import { formatDisplayText } from "@/utils/displayText";
 import { cn } from "../../utils/cn";
+import { PageHeader } from "@/components/ui/page-header";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { adminCardClass, adminPageWrapClass } from "../../components/admin/admin-ui";
 
 type ApproveProps = {
   type: "outing" | "outpass";
@@ -123,214 +127,174 @@ export default function ApproveComp({ type }: ApproveProps) {
     }
   };
 
-  return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
-      {/* Header / Filter */}
-      <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div>
-          <h2 className="text-2xl font-bold text-zinc-900 capitalize">
-            {type} Approvals
-          </h2>
-          <div className="flex items-center gap-2 mt-1">
-            <Button
-              variant="secondary"
-              size="sm"
-              className="h-7 px-2 text-xs"
-              onClick={() => window.history.back()}
-            >
-              ← Back
-            </Button>
-            <p className="text-zinc-500 text-sm">
-              Manage pending student requests
-            </p>
-          </div>
-        </div>
+  const title = type === "outing" ? "Outing approvals" : "Outpass approvals";
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-          <div className="w-full sm:w-80">
-            <Input
-              placeholder="Search by ID, Name or Reason..."
-              value={searchQuery}
-              onchangeFunction={(e: any) => setSearchQuery(e.target.value)}
-              icon={<Search className="w-4 h-4" />}
-            />
-          </div>
-          <div className="hidden sm:flex items-center justify-center px-4 bg-zinc-100 rounded-lg text-zinc-600 font-medium text-sm whitespace-nowrap border border-zinc-200">
-            {filteredRequests.length} Pending
-          </div>
+  return (
+    <div className={cn(adminPageWrapClass, "pb-16")}>
+      <Button variant="ghost" size="compact" onClick={() => window.history.back()}>
+        <ArrowLeft size={16} /> Back
+      </Button>
+
+      <PageHeader title={title} meta="Manage pending student requests" />
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="w-full sm:max-w-sm">
+          <Input
+            placeholder="Search by ID, Name or Reason..."
+            value={searchQuery}
+            onchangeFunction={(e: any) => setSearchQuery(e.target.value)}
+            icon={<Search className="w-4 h-4" />}
+          />
         </div>
+        <Badge tone="neutral">{filteredRequests.length} Pending</Badge>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredRequests.length === 0 ? (
-          <div className="col-span-full flex flex-col items-center justify-center py-24 text-center bg-white rounded-xl border border-zinc-200 border-dashed">
-            <div className="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center mb-4 text-zinc-400">
-              <Inbox className="w-8 h-8" />
-            </div>
-            <h3 className="text-lg font-semibold text-zinc-900">
-              No pending requests found
-            </h3>
-            <p className="text-zinc-500 max-w-sm mt-2">
-              Good job! You've cleared the queue. Check back later for new{" "}
-              {type} requests.
-            </p>
-          </div>
-        ) : (
-          filteredRequests.map((request: any) => (
+      {filteredRequests.length === 0 ? (
+        <EmptyState
+          title="No pending requests found"
+          body={`Good job! You've cleared the queue. Check back later for new ${type} requests.`}
+        />
+      ) : (
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {filteredRequests.map((request: any) => (
             <div
               key={request._id}
               className={cn(
-                "bg-white rounded-xl border border-zinc-200 p-6 flex flex-col shadow-sm transition-[color,background-color,border-color,opacity,transform,box-shadow] hover:shadow-md",
-                request.is_approved && "border-emerald-200 bg-emerald-50/10",
-                request.is_rejected && "border-red-200 bg-red-50/10",
+                adminCardClass,
+                "flex flex-col p-6",
+                request.is_approved && "border-success",
+                request.is_rejected && "border-error",
               )}
             >
-              <div className="flex justify-between items-start mb-6 pb-6 border-b border-zinc-100">
+              <div className="mb-6 flex items-start justify-between border-b border-border pb-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-700 font-bold text-lg">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-2 text-lg font-semibold text-text">
                     {request.username?.[0]?.toUpperCase()}
                   </div>
                   <div>
-                    <h3 className="font-bold text-zinc-900 text-lg leading-none">
+                    <h3 className="text-lg font-semibold leading-none text-text">
                       {request.username}
                     </h3>
-                    <p className="text-sm text-zinc-500 mt-1">
-                      {request.email}
-                    </p>
+                    <p className="mt-1 text-dense text-text-2">{request.email}</p>
                   </div>
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
-                  <div
-                    className={cn(
-                      "px-3 py-1 rounded-md text-xs font-bold tracking-wide border",
+                  <Badge
+                    tone={
                       request.is_approved
-                        ? "bg-emerald-100 text-emerald-800 border-emerald-200"
+                        ? "success"
                         : request.is_rejected
-                          ? "bg-red-100 text-red-800 border-red-200"
-                          : "bg-amber-100 text-amber-800 border-amber-200",
-                    )}
+                          ? "error"
+                          : "warning"
+                    }
                   >
                     {request.is_approved
                       ? "Approved"
                       : request.is_rejected
                         ? "Rejected"
                         : "Pending"}
-                  </div>
+                  </Badge>
                   {!request.is_approved &&
                     !request.is_rejected &&
                     request.current_level && (
-                      <span className="flex items-center gap-1 text-xs font-semibold text-zinc-900 bg-zinc-50 px-2 py-0.5 rounded border border-zinc-100">
+                      <Badge tone="neutral">
                         <Forward className="w-3 h-3" />{" "}
                         {formatDisplayText(request.current_level)}
-                      </span>
+                      </Badge>
                     )}
                 </div>
               </div>
 
-              <div className="space-y-5 flex-1">
-                <div className="bg-zinc-50 rounded-lg p-4 border border-zinc-100">
-                  <h4 className="text-xs font-semibold text-zinc-400 mb-2">
-                    Reason
-                  </h4>
-                  <p className="text-zinc-700 text-sm leading-relaxed font-medium">
+              <div className="flex-1 space-y-5">
+                <div className="rounded-lg border border-border bg-surface-2 p-4">
+                  <h4 className="mb-2 text-caption font-semibold text-text-3">Reason</h4>
+                  <p className="text-dense font-medium leading-relaxed text-text">
                     "{request.reason}"
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-zinc-400 font-semibold mb-1">
-                      From
-                    </p>
-                    <p className="text-zinc-900 font-medium">
+                    <p className="mb-1 text-caption font-semibold text-text-3">From</p>
+                    <p className="font-medium text-text">
                       {type === "outing" ? request.from_time : request.from_day}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-zinc-400 font-semibold mb-1">
-                      To
-                    </p>
-                    <p className="text-zinc-900 font-medium">
+                    <p className="mb-1 text-caption font-semibold text-text-3">To</p>
+                    <p className="font-medium text-text">
                       {type === "outing" ? request.to_time : request.to_day}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center text-sm pt-2">
+                <div className="flex items-center justify-between pt-2 text-dense">
                   <div>
-                    <span className="text-zinc-400 text-xs font-semibold">
-                      Duration
-                    </span>{" "}
+                    <span className="text-caption font-semibold text-text-3">Duration</span>
                     <br />
-                    <span className="font-medium text-zinc-700">
+                    <span className="font-medium text-text">
                       {formatDuration(
                         calculateDuration(
-                          type === "outing"
-                            ? request.from_time
-                            : request.from_day,
+                          type === "outing" ? request.from_time : request.from_day,
                           type === "outing" ? request.to_time : request.to_day,
                         ),
                       )}
                     </span>
                   </div>
                   <div className="text-right">
-                    <span className="text-zinc-400 text-xs font-semibold">
-                      Submitted
-                    </span>{" "}
+                    <span className="text-caption font-semibold text-text-3">Submitted</span>
                     <br />
-                    <span className="font-medium text-zinc-700">
+                    <span className="font-medium text-text">
                       {formatRequestTime(request.requested_time)}
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Actions */}
               {!request.is_approved &&
                 !request.is_rejected &&
                 !request.is_expired && (
-                  <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-zinc-100">
+                  <div className="mt-6 grid grid-cols-3 gap-3 border-t border-border pt-6">
                     <Button
-                      variant="primary"
-                      size="sm"
-                      className="w-full bg-emerald-600 hover:bg-emerald-700 border-emerald-700"
+                      variant="outline"
+                      size="compact"
+                      className="w-full"
                       onClick={() => handleAction("approve", request._id)}
                       isLoading={loadingId === request._id}
                     >
-                      <CheckCircle className="w-4 h-4 lg:mr-2" />{" "}
-                      <span className="hidden lg:inline">Approve</span>
+                      <CheckCircle className="w-4 h-4" />
+                      Approve
                     </Button>
                     <Button
-                      variant="danger"
-                      size="sm"
+                      variant="destructive"
+                      size="compact"
                       className="w-full"
                       onClick={() => handleAction("reject", request._id)}
                       isLoading={loadingId === request._id}
                     >
-                      <Ban className="w-4 h-4 lg:mr-2" />{" "}
-                      <span className="hidden lg:inline">Reject</span>
+                      <Ban className="w-4 h-4" />
+                      Reject
                     </Button>
                     {request.current_level !== "dsw" &&
                       request.current_level !== "swo" && (
                         <Button
-                          variant="secondary"
-                          size="sm"
+                          variant="outline"
+                          size="compact"
                           className="w-full"
                           onClick={() => handleAction("forward", request._id)}
                           isLoading={loadingId === request._id}
                         >
-                          <Forward className="w-4 h-4 lg:mr-2" />{" "}
-                          <span className="hidden lg:inline">Forward</span>
+                          <Forward className="w-4 h-4" />
+                          Forward
                         </Button>
                       )}
                   </div>
                 )}
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

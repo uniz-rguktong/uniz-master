@@ -20,6 +20,7 @@ export function Layout({ children }: LayoutProps) {
   const shouldHideNavbar =
     location.pathname.startsWith("/student") ||
     location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/faculty") ||
     ["/studyspace", "/campushub"].includes(location.pathname);
 
   if (shouldHideNavbar) {

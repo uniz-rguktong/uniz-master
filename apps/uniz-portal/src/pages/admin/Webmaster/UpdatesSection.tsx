@@ -24,7 +24,6 @@ import {
 import { SectionHeader } from "../../../components/admin/SectionHeader";
 import {
   adminPageWrapClass,
-  adminCardClass,
   adminLabelClass,
   adminInputClass,
   adminTextareaClass,
@@ -32,6 +31,10 @@ import {
   adminGhostButtonClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
+import { Table } from "@/components/ui/table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default function UpdatesSection() {
   const [updatesState, setUpdatesState] = useRecoilState(updatesAtom);
@@ -224,197 +227,117 @@ export default function UpdatesSection() {
         subtitle="Distribute vital institutional news and media resources."
         actions={
           <>
-            <button
-              onClick={fetchUpdates}
-              disabled={loading}
-              className={cn(adminGhostButtonClass, "w-11 px-0")}
-              title="Refresh Stream"
-            >
+            <Button type="button" variant="ghost" size="icon" onClick={fetchUpdates} disabled={loading} title="Refresh Stream">
               <Loader2 size={16} className={loading ? "animate-spin" : ""} />
-            </button>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className={adminPrimaryButtonClass}
-            >
+            </Button>
+            <Button type="button" onClick={() => setShowAddModal(true)}>
               <Plus size={16} /> New Update
-            </button>
+            </Button>
           </>
         }
       />
 
-      {/* Content Sections */}
-      <div className={cn(adminCardClass, "overflow-hidden")}>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-zinc-200/70">
-                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
-                  Broadcast Content
-                </th>
-                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
-                  Resource Link
-                </th>
-                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
-                  Visibility
-                </th>
-                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
-                  Distribution Date
-                </th>
-                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400 text-right">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {loading ? (
-                Array(7)
-                  .fill(0)
-                  .map((_, i) => (
-                    <tr key={i} className="animate-pulse">
-                      <td className="px-8 py-5">
-                        <div className="flex items-center gap-3.5">
-                          <div className="w-10 h-10 rounded-xl bg-zinc-100" />
-                          <div className="space-y-2">
-                            <div className="h-4 w-32 bg-zinc-100 rounded-lg" />
-                            <div className="h-2 w-48 bg-zinc-50 rounded" />
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="h-4 w-20 bg-zinc-50 rounded" />
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="h-6 w-16 bg-zinc-100 rounded-full" />
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="space-y-2">
-                          <div className="h-4 w-24 bg-zinc-100 rounded-lg" />
-                          <div className="h-2 w-16 bg-zinc-50 rounded" />
-                        </div>
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="flex justify-end gap-2">
-                          <div className="h-9 w-9 bg-zinc-50 rounded-xl border border-zinc-200/70" />
-                          <div className="h-9 w-9 bg-zinc-50 rounded-xl border border-zinc-200/70" />
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-              ) : updates && updates.length > 0 ? (
-                updates.map((update, idx) => (
-                  <tr
-                    key={update._id || update.id || idx}
-                    className="hover:bg-zinc-50/60 transition-colors group"
+      {loading ? (
+        <p className="text-body text-text-2">Loading broadcasts…</p>
+      ) : (
+        <Table
+          rows={updates || []}
+          getRowId={(update) => String(update._id || update.id || update.title)}
+          empty={
+            <EmptyState
+              title="No active broadcasts found."
+              icon={Bell}
+              action={
+                <Button type="button" variant="outline" onClick={() => setShowAddModal(true)}>
+                  <Plus size={16} /> Create First Update
+                </Button>
+              }
+            />
+          }
+          columns={[
+            {
+              id: "content",
+              header: "Broadcast",
+              primary: true,
+              cell: (update) => (
+                <span>
+                  <span className="block font-semibold text-head">{update.title}</span>
+                  <span className="mt-0.5 block text-small text-text-2 line-clamp-1">
+                    {update.description || update.content || "No description provided."}
+                  </span>
+                  <span className="mt-2 flex gap-2 sm:hidden">
+                    <Button type="button" variant="ghost" size="compact" onClick={() => handleEditClick(update)}>
+                      Edit
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="compact"
+                      disabled={actionLoading === (update._id || update.id)}
+                      onClick={() => deleteUpdate(update._id || update.id)}
+                    >
+                      Delete
+                    </Button>
+                  </span>
+                </span>
+              ),
+            },
+            {
+              id: "link",
+              header: "Link",
+              meta: true,
+              cell: (update) =>
+                update.link ? (
+                  <a href={update.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-small font-semibold text-link">
+                    Visit link <ExternalLink size={14} aria-hidden />
+                  </a>
+                ) : (
+                  "None"
+                ),
+            },
+            {
+              id: "visibility",
+              header: "Visibility",
+              meta: true,
+              cell: (update) =>
+                update.isVisible ? <Badge tone="success">Live</Badge> : <Badge tone="neutral">Draft</Badge>,
+            },
+            {
+              id: "date",
+              header: "Published",
+              cell: (update) => (
+                <span className="tabular-nums">
+                  {update.createdAt
+                    ? new Date(update.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+                    : "Today"}
+                </span>
+              ),
+            },
+            {
+              id: "actions",
+              header: "Actions",
+              label: "Actions",
+              cell: (update) => (
+                <span className="flex items-center gap-2">
+                  <Button type="button" variant="ghost" size="icon" aria-label="Edit broadcast" onClick={() => handleEditClick(update)}>
+                    <Edit3 size={16} />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    aria-label="Delete broadcast"
+                    disabled={actionLoading === (update._id || update.id)}
+                    onClick={() => deleteUpdate(update._id || update.id)}
                   >
-                    <td className="px-8 py-5">
-                      <div className="flex items-center gap-3.5">
-                        <div
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${update.isVisible ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-400"}`}
-                        >
-                          <Bell size={16} />
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <p className="font-semibold text-zinc-900 tracking-tight leading-tight mb-0.5 max-w-[300px] truncate">
-                            {update.title}
-                          </p>
-                          <p className="text-[12px] text-zinc-400 truncate max-w-[400px]">
-                            {update.description ||
-                              update.content ||
-                              "No description provided."}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-8 py-5">
-                      {update.link ? (
-                        <a
-                          href={update.link}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-zinc-600 hover:text-zinc-900 transition-colors"
-                        >
-                          Visit Link
-                          <ExternalLink size={12} />
-                        </a>
-                      ) : (
-                        <span className="text-[12px] text-zinc-300">None</span>
-                      )}
-                    </td>
-                    <td className="px-8 py-5">
-                      {update.isVisible ? (
-                        <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-md border border-zinc-200 w-fit">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          <span className="text-[11px] font-medium">Live</span>
-                        </div>
-                      ) : (
-                        <div className="inline-flex items-center gap-1.5 text-zinc-400 bg-zinc-50 px-2.5 py-1 rounded-md border border-zinc-200 w-fit">
-                          <span className="w-1.5 h-1.5 rounded-full bg-zinc-300" />
-                          <span className="text-[11px] font-medium">Draft</span>
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-8 py-5">
-                      <div className="flex flex-col">
-                        <p className="text-[13px] font-medium tracking-tight text-zinc-700 tabular-nums">
-                          {update.createdAt
-                            ? new Date(update.createdAt).toLocaleDateString(
-                                "en-GB",
-                                {
-                                  day: "2-digit",
-                                  month: "short",
-                                  year: "numeric",
-                                },
-                              )
-                            : "Today"}
-                        </p>
-                        <p className="text-[10px] font-medium text-zinc-400 mt-0.5">
-                          Publication
-                        </p>
-                      </div>
-                    </td>
-                    <td className="px-8 py-5">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleEditClick(update)}
-                          className="h-9 w-9 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:text-zinc-900 hover:border-zinc-300 border border-zinc-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95"
-                        >
-                          <Edit3 size={14} />
-                        </button>
-                        <button
-                          onClick={() => deleteUpdate(update._id || update.id)}
-                          disabled={actionLoading === (update._id || update.id)}
-                          className="h-9 w-9 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-zinc-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-95"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="py-20 text-center">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 flex items-center justify-center bg-zinc-50 rounded-2xl border border-zinc-200/70 text-zinc-300">
-                        <Bell size={32} strokeWidth={1.5} />
-                      </div>
-                      <p className="text-[14px] font-medium text-zinc-500 tracking-tight">
-                        No active broadcasts found.
-                      </p>
-                      <button
-                        onClick={() => setShowAddModal(true)}
-                        className={adminPrimaryButtonClass}
-                      >
-                        <Plus size={15} /> Create First Update
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                    <Trash2 size={16} />
+                  </Button>
+                </span>
+              ),
+            },
+          ]}
+        />
+      )}
 
       <AlertDialog
         open={showAddModal}
@@ -431,7 +354,7 @@ export default function UpdatesSection() {
           }
         }}
       >
-        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl border border-navy-200/60">
+        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-surface border-border rounded-lg border border-border/60">
           <div className="relative">
             {/* Close Button */}
             <button
@@ -445,16 +368,16 @@ export default function UpdatesSection() {
                   isVisible: true,
                 });
               }}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
+              className="absolute top-5 right-5 p-2 text-text-3 hover:text-text hover:bg-surface-2 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
             >
               <X size={20} />
             </button>
 
             <AlertDialogHeader className="p-8 pb-3 flex flex-col items-start text-left gap-1.5">
-              <AlertDialogTitle className="text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]">
+              <AlertDialogTitle className="font-serif text-[24px] font-normal leading-8 text-head">
                 {editingUpdate ? "Edit Broadcast" : "New Broadcast"}
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-[13px] text-zinc-500 leading-relaxed">
+              <AlertDialogDescription className="text-small text-text-2 leading-relaxed">
                 {editingUpdate
                   ? "Update institutional news for the student dashboard."
                   : "Publish vital news and resources to all students."}
@@ -511,8 +434,8 @@ export default function UpdatesSection() {
 
                 {/* Link Preview Hint */}
                 {newUpdate.link && (
-                  <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200/70">
-                    <p className="text-[12px] font-medium text-zinc-500 leading-relaxed">
+                  <div className="p-3.5 bg-surface-2 rounded-xl border border-border/70">
+                    <p className="text-caption font-medium text-text-2 leading-relaxed">
                       Students will be redirected to this link when they click
                       the broadcast.
                     </p>

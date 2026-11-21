@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
-import {
-  Upload,
-  FileDown,
-  AlertCircle,
-  Loader2,
-  ChevronDown,
-} from "lucide-react";
+import { FileDown, ChevronDown } from "lucide-react";
 import {
   UPLOAD_ATTENDANCE,
   UPLOAD_GRADES,
@@ -19,17 +13,15 @@ import {
 import { toast } from "@/utils/toast-ref";
 import { apiClient, downloadFile } from "../../../api/apiClient";
 import { FileUploader } from "../../../components/ui/FileUploader";
-import { SectionHeader } from "../../../components/admin/SectionHeader";
+import { PageHeader } from "@/components/ui/page-header";
+import { Panel } from "@/components/ui/panel";
+import { Tabs } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {
   adminPageWrapClass,
   adminLabelClass,
   adminSelectClass,
-  adminPrimaryButtonClass,
-  adminGhostButtonClass,
-  adminSegmentWrapClass,
-  adminSegmentActiveClass,
-  adminSegmentInactiveClass,
-  adminCardClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
 
@@ -231,25 +223,19 @@ export default function UploadSection({ type }: { type: UploadType }) {
 
   return (
     <div className={cn(adminPageWrapClass, "pb-20")}>
-      <SectionHeader
-        icon={<Upload size={18} />}
-        eyebrow="Academic Records"
-        title={<span className="capitalize">{type} Bulk Management</span>}
-        subtitle={`Synchronize institutional ${type} records with the core system.`}
-        actions={
-          type === "grades" ? (
-            <button onClick={downloadTemplate} className={adminGhostButtonClass}>
-              <FileDown size={14} />
-              <span className="capitalize">Download {type} Template</span>
-            </button>
-          ) : undefined
+      <PageHeader
+        title={type === "grades" ? "Grades upload" : "Attendance upload"}
+        meta={`Synchronize institutional ${type} records with the core system.`}
+        action={
+          <Button type="button" variant="outline" size="compact" onClick={downloadTemplate}>
+            <FileDown size={14} />
+            Download template
+          </Button>
         }
       />
 
-      <div className={cn(adminCardClass, "p-6")}>
-        <div
-          className={`grid grid-cols-1 md:grid-cols-3 ${type === "grades" ? "lg:grid-cols-7" : "lg:grid-cols-6"} gap-5 items-end`}
-        >
+      <Panel title="Filters">
+        <div className="mx-auto grid max-w-[640px] grid-cols-1 gap-4">
           <div className="space-y-2">
             <label className={adminLabelClass}>Branch</label>
             <div className="relative group">
@@ -268,7 +254,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 )}
               </select>
               <ChevronDown
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                 size={14}
               />
             </div>
@@ -290,7 +276,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 ))}
               </select>
               <ChevronDown
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                 size={14}
               />
             </div>
@@ -311,7 +297,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 ))}
               </select>
               <ChevronDown
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                 size={14}
               />
             </div>
@@ -333,7 +319,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 ))}
               </select>
               <ChevronDown
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                 size={14}
               />
             </div>
@@ -345,7 +331,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 <label className={adminLabelClass}>
                   Subject
                   {subjectsLoading && (
-                    <span className="ml-2 text-zinc-500 normal-case tracking-normal font-medium">
+                    <span className="ml-2 text-text-2 normal-case tracking-normal font-medium">
                       loading...
                     </span>
                   )}
@@ -371,59 +357,38 @@ export default function UploadSection({ type }: { type: UploadType }) {
                     ))}
                   </select>
                   <ChevronDown
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                     size={14}
                   />
                 </div>
               </div>
               <div className="space-y-2">
                 <label className={adminLabelClass}>Scope</label>
-                <div className={adminSegmentWrapClass}>
-                  <button
-                    onClick={() => setRemedialsOnly(false)}
-                    className={
-                      !remedialsOnly
-                        ? adminSegmentActiveClass
-                        : adminSegmentInactiveClass
-                    }
-                  >
-                    Regular
-                  </button>
-                  <button
-                    onClick={() => setRemedialsOnly(true)}
-                    className={
-                      remedialsOnly
-                        ? adminSegmentActiveClass
-                        : adminSegmentInactiveClass
-                    }
-                  >
-                    Remedial
-                  </button>
-                </div>
+                <Tabs
+                  label="Grade scope"
+                  value={remedialsOnly ? "remedial" : "regular"}
+                  onChange={(id) => setRemedialsOnly(id === "remedial")}
+                  tabs={[
+                    { id: "regular", label: "Regular" },
+                    { id: "remedial", label: "Remedial" },
+                  ]}
+                />
               </div>
             </>
           )}
 
-          {type === "attendance" && (
-            <div className="flex items-end lg:col-span-2">
-              <button
-                onClick={downloadTemplate}
-                className={cn(adminGhostButtonClass, "w-full whitespace-nowrap")}
-              >
-                <FileDown size={14} /> Download Template
-              </button>
-            </div>
-          )}
         </div>
-      </div>
 
-      <div className="space-y-6">
-        <div
-          className={cn(
-            adminCardClass,
-            "overflow-hidden border-dashed border-zinc-300 bg-zinc-50/40 p-6",
-          )}
-        >
+        <section className="mt-8 space-y-4 border-t border-border pt-8">
+          <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head">
+            File
+          </h2>
+        <ul className="mb-6 space-y-2 text-dense text-text-2">
+          <li>Accepted files: .xlsx, .xls, .csv</li>
+          <li>One row per student record</li>
+          <li>Download the template so the columns match the importer</li>
+        </ul>
+        <div className="rounded-lg border border-dashed border-border-strong bg-surface p-4">
           <FileUploader
             onFileSelect={(f) => {
               setFile(f);
@@ -431,7 +396,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
               setProgress(0);
               setUploadSuccess(null);
             }}
-            label={`Select ${type} Excel/CSV`}
+            label={`Select ${type} file`}
             description={`Drag and drop the official ${type} record file.`}
             isUploading={loading || !!uploadId}
             isSuccess={uploadSuccess === true}
@@ -440,36 +405,27 @@ export default function UploadSection({ type }: { type: UploadType }) {
           />
         </div>
 
-        <button
-          disabled={!file || loading || !!uploadId}
-          onClick={handleUpload}
-          className={cn(adminPrimaryButtonClass, "h-12 w-full capitalize")}
-        >
-          {loading ? (
-            <Loader2 className="animate-spin w-4 h-4" />
-          ) : uploadId ? (
-            <Loader2 className="animate-spin w-4 h-4" />
-          ) : (
-            <Upload size={16} />
-          )}
-          {uploadId ? "Synchronizing..." : `Process & Record ${type}`}
-        </button>
+        <div className="mt-6 flex justify-end">
+          <Button
+            type="button"
+            disabled={!file || loading || !!uploadId}
+            isLoading={loading || !!uploadId}
+            onClick={handleUpload}
+          >
+            {uploadId ? "Synchronizing…" : `Process ${type}`}
+          </Button>
+        </div>
 
         {/* Only show error result - success is communicated via the progress bar */}
         {result && !result.success && (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50/60 p-5">
-            <div className="mb-2 flex items-center gap-2.5">
-              <AlertCircle size={16} className="text-rose-500" />
-              <h3 className="text-[14px] font-semibold tracking-tight text-rose-900">
-                Sync Failed
-              </h3>
-            </div>
-            <p className="text-[13px] font-medium text-rose-700/80">
+          <div className="mt-4">
+            <Alert tone="error" title="Sync failed">
               {result.msg}
-            </p>
+            </Alert>
           </div>
         )}
-      </div>
+        </section>
+      </Panel>
     </div>
   );
 }

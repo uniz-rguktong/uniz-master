@@ -7,7 +7,6 @@ import {
   Inbox,
   Loader2,
   Forward,
-  TrendingUp,
 } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
 import {
@@ -21,6 +20,12 @@ import {
   FORWARD_OUTPASS,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { adminInputClass } from "@/components/admin/admin-ui";
 
 interface RequestManagementProps {
   type: "outing" | "outpass";
@@ -124,8 +129,8 @@ export default function RequestManagement({ type }: RequestManagementProps) {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center p-20 space-y-4">
-        <Loader2 className="w-10 h-10 text-zinc-900 animate-spin" />
-        <p className="text-zinc-500 font-medium">
+        <Loader2 className="w-10 h-10 text-text animate-spin" />
+        <p className="text-text-2 font-medium">
           Fetching pending applications...
         </p>
       </div>
@@ -133,87 +138,56 @@ export default function RequestManagement({ type }: RequestManagementProps) {
   }
 
   return (
-    <div className="p-6 space-y-8 animate-in fade-in duration-700 pb-20 max-w-7xl mx-auto">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-zinc-900 font-bold text-[10px]">
-            <TrendingUp size={14} />
-            Live Queue
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 capitalize">
-            {type} Management
-          </h1>
-          <p className="text-zinc-500 font-medium">
-            Review and process pending {type} requests for the student body.
-          </p>
-        </div>
-
-        <div className="relative group w-full md:w-96">
-          <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-zinc-900 transition-colors"
-            size={18}
-          />
-          <input
-            type="text"
-            placeholder="Search Student ID or Name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-4 bg-white border border-zinc-200 rounded-2xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-[color,background-color,border-color,opacity,transform,box-shadow] font-medium text-zinc-900 shadow-sm"
-          />
-        </div>
+    <div className="mx-auto max-w-[1280px] space-y-6 p-4 pb-20 sm:p-6">
+      <PageHeader
+        title={type === "outing" ? "Outing requests" : "Outpass requests"}
+        meta={`Review and process pending ${type} requests for the student body.`}
+      />
+      <div className="relative max-w-[640px]">
+        <Search
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-text-3"
+          size={16}
+        />
+        <input
+          type="text"
+          placeholder="Search student ID or name"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className={cn(adminInputClass, "pl-11")}
+        />
       </div>
 
       {filteredRequests.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-zinc-100 p-24 flex flex-col items-center justify-center text-center space-y-6 shadow-sm border-dashed min-h-[400px]">
-          <div className="w-20 h-20 bg-zinc-50 rounded-3xl flex items-center justify-center text-zinc-200">
-            <Inbox size={40} strokeWidth={1.5} />
-          </div>
-          <div className="space-y-2">
-            <p className="text-xl font-bold text-zinc-900">All clear!</p>
-            <p className="text-zinc-400 font-medium max-w-sm mx-auto leading-relaxed">
-              No pending {type} requests found. New applications will appear
-              here in real-time.
-            </p>
-          </div>
-        </div>
+        <EmptyState
+          icon={Inbox}
+          title="All clear"
+          body={`No pending ${type} requests found. New applications will appear here.`}
+        />
       ) : (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {filteredRequests.map((request) => (
             <div
               key={request._id}
-              className="bg-white rounded-3xl border border-zinc-100 p-8 shadow-sm hover:translate-y-[-2px] transition-[color,background-color,border-color,opacity,transform,box-shadow] group flex flex-col h-full"
+              className="flex h-full flex-col rounded-lg border border-border bg-surface p-5"
             >
-              {/* Card Top: Identity & Status */}
-              <div className="flex items-start justify-between mb-8">
-                <div className="flex items-center gap-5">
-                  <div className="w-16 h-16 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 font-bold text-2xl border-4 border-white shadow-sm ring-1 ring-zinc-100">
-                    {request.username?.[0]?.toUpperCase()}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-zinc-900 text-xl tracking-tight leading-none mb-2">
-                      {request.username}
-                    </h3>
-                    <p className="text-[12px] text-zinc-900 font-semibold">
-                      {request.studentId || "No ID"}
-                    </p>
-                  </div>
+              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <h3 className="text-dense font-medium text-head">{request.username}</h3>
+                  <p className="mt-1 text-small text-text-2">{request.studentId || "No ID"}</p>
                 </div>
-                <div className="bg-amber-50 text-amber-600 px-4 py-1.5 rounded-md text-[10px] font-semibold border border-amber-100">
-                  Pending
-                </div>
+                <Badge tone="warning">Pending</Badge>
               </div>
 
               {/* Content Divider */}
-              <div className="h-px bg-zinc-50 w-full mb-8" />
+              <div className="h-px bg-surface-2 w-full mb-8" />
 
               <div className="flex-1 space-y-6">
                 {/* Reason Section */}
-                <div className="bg-zinc-50/50 rounded-2xl p-6 border border-zinc-100">
-                  <span className="text-[10px] font-semibold text-zinc-400 block mb-3">
+                <div className="bg-surface-2/50 rounded-lg p-6 border border-border">
+                  <span className="text-caption font-semibold text-text-3 block mb-3">
                     Reason
                   </span>
-                  <p className="text-zinc-700 font-semibold text-[15px] leading-relaxed italic">
+                  <p className="text-text font-semibold text-[15px] leading-relaxed italic">
                     "{request.reason || "No reason specified."}"
                   </p>
                 </div>
@@ -221,22 +195,22 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 {/* Time Grid */}
                 <div className="grid grid-cols-2 gap-6 pb-2">
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-semibold text-zinc-400 block">
+                    <span className="text-caption font-semibold text-text-3 block">
                       From
                     </span>
                     <p
-                      className="text-zinc-900 font-bold text-[13px] truncate"
+                      className="text-text font-semibold text-[13px] truncate"
                       title={request.from_time || request.from_day}
                     >
                       {request.from_time || request.from_day}
                     </p>
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-semibold text-zinc-400 block">
+                    <span className="text-caption font-semibold text-text-3 block">
                       To
                     </span>
                     <p
-                      className="text-zinc-900 font-bold text-[13px] truncate"
+                      className="text-text font-semibold text-[13px] truncate"
                       title={request.to_time || request.to_day}
                     >
                       {request.to_time || request.to_day}
@@ -246,18 +220,18 @@ export default function RequestManagement({ type }: RequestManagementProps) {
 
                 <div className="grid grid-cols-2 gap-6 pb-2">
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-semibold text-zinc-400 block">
+                    <span className="text-caption font-semibold text-text-3 block">
                       Duration
                     </span>
-                    <p className="text-zinc-900 font-bold text-[13px]">
+                    <p className="text-text font-semibold text-[13px]">
                       {request.duration || "0 seconds"}
                     </p>
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-semibold text-zinc-400 block text-right">
+                    <span className="text-caption font-semibold text-text-3 block text-right">
                       Submitted
                     </span>
-                    <p className="text-zinc-900 font-bold text-[13px] text-right truncate">
+                    <p className="text-text font-semibold text-[13px] text-right truncate">
                       {request.requested_time}
                     </p>
                   </div>
@@ -265,46 +239,40 @@ export default function RequestManagement({ type }: RequestManagementProps) {
               </div>
 
               {/* Divider before actions */}
-              <div className="h-px bg-zinc-50 w-full my-8" />
+              <div className="h-px bg-surface-2 w-full my-8" />
 
               {/* Action Buttons */}
-              <div className="grid grid-cols-3 gap-3">
-                <button
-                  onClick={() => handleAction("approve", request._id)}
-                  disabled={!!actionLoading}
-                  className="h-12 bg-[#1a1f2e] text-white rounded-2xl font-bold text-[10px] hover:bg-[#252c41] active:scale-95 transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center justify-center gap-2 shadow-none"
-                >
-                  {actionLoading === request._id ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <CheckCircle2 size={16} />
-                  )}
-                  Approve
-                </button>
-                <button
-                  onClick={() => handleAction("reject", request._id)}
-                  disabled={!!actionLoading}
-                  className="h-12 bg-black text-white rounded-2xl font-bold text-[10px] hover:bg-zinc-800 active:scale-95 transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center justify-center gap-2"
-                >
-                  {actionLoading === request._id ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <Ban size={16} />
-                  )}
-                  Reject
-                </button>
-                <button
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="compact"
                   onClick={() => handleAction("forward", request._id)}
                   disabled={!!actionLoading}
-                  className="h-12 bg-zinc-50 text-zinc-900 border border-zinc-100 rounded-2xl font-bold text-[10px] hover:bg-zinc-100 active:scale-95 transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center justify-center gap-2"
                 >
-                  {actionLoading === request._id ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <Forward size={16} />
-                  )}
+                  <Forward size={16} />
                   Forward
-                </button>
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="compact"
+                  onClick={() => handleAction("reject", request._id)}
+                  disabled={!!actionLoading}
+                >
+                  <Ban size={16} />
+                  Reject
+                </Button>
+                <Button
+                  type="button"
+                  size="compact"
+                  onClick={() => handleAction("approve", request._id)}
+                  disabled={!!actionLoading}
+                  isLoading={actionLoading === request._id}
+                >
+                  <CheckCircle2 size={16} />
+                  Approve
+                </Button>
               </div>
             </div>
           ))}

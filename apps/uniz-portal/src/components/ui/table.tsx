@@ -4,7 +4,9 @@ import { cn } from "@/lib/utils";
 
 export type TableColumn<T> = {
   id: string;
-  header: string;
+  header: ReactNode;
+  /** Plain label for the stacked list when `header` is not a string. */
+  label?: string;
   /** Right-align and use tabular figures. */
   numeric?: boolean;
   cell: (row: T) => ReactNode;
@@ -22,6 +24,7 @@ export function Table<T>({
   rows,
   getRowId,
   onRowClick,
+  onRowDoubleClick,
   selectedId,
   toolbar,
   footer,
@@ -32,6 +35,7 @@ export function Table<T>({
   rows: T[];
   getRowId: (row: T) => string;
   onRowClick?: (row: T) => void;
+  onRowDoubleClick?: (row: T) => void;
   selectedId?: string;
   toolbar?: ReactNode;
   footer?: ReactNode;
@@ -40,6 +44,8 @@ export function Table<T>({
 }) {
   const primary = columns.find((column) => column.primary) ?? columns[0];
   const meta = columns.filter((column) => column.meta).slice(0, 2);
+  const columnLabel = (column: TableColumn<T>) =>
+    column.label ?? (typeof column.header === "string" ? column.header : column.id);
 
   return (
     <div className={className}>
@@ -74,6 +80,7 @@ export function Table<T>({
                     <tr
                       key={id}
                       onClick={onRowClick ? () => onRowClick(row) : undefined}
+                      onDoubleClick={onRowDoubleClick ? () => onRowDoubleClick(row) : undefined}
                       className={cn(
                         "h-14 border-b border-border text-dense text-text transition-colors duration-150",
                         onRowClick && "cursor-pointer",
@@ -108,7 +115,7 @@ export function Table<T>({
                     </span>
                     {meta.map((column) => (
                       <span key={column.id} className="mt-0.5 block text-small leading-[18px] text-text-2">
-                        {column.header}: {column.cell(row)}
+                        {columnLabel(column)}: {column.cell(row)}
                       </span>
                     ))}
                   </span>

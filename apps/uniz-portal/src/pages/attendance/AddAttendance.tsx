@@ -1,19 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Upload,
-  FileDown,
-  AlertCircle,
-  CheckCircle2,
-  ArrowLeft,
-  X,
-  FileSpreadsheet,
-} from "lucide-react";
+import { FileDown } from "lucide-react";
 import { BASE_URL, GET_ATTENDANCE_TEMPLATE } from "../../api/endpoints";
-import { Button } from "../../components/Button";
+import { Button } from "@/components/ui/button";
 import { downloadFile } from "../../api/apiClient";
-import { cn } from "../../utils/cn";
+import { PageHeader } from "@/components/ui/page-header";
+import { Panel } from "@/components/ui/panel";
+import { Alert } from "@/components/ui/alert";
 
 export default function AddAttendance() {
   const navigate = useNavigate();
@@ -79,142 +73,90 @@ export default function AddAttendance() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 space-y-8">
-      {/* Header */}
-      <div className="flex flex-col gap-6">
-        <button
-          onClick={() => navigate("/admin")}
-          className="self-start inline-flex items-center text-sm font-medium text-zinc-500 hover:text-zinc-800 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
-        </button>
+    <div className="mx-auto w-full max-w-[640px] px-4 py-8">
+      <PageHeader
+        title="Upload attendance"
+        meta="Bulk upload attendance records from a spreadsheet."
+        action={
+          <Button variant="outline" size="compact" onClick={downloadTemplate}>
+            <FileDown className="h-4 w-4" />
+            Template
+          </Button>
+        }
+      />
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold text-navy-900">
-              Upload Attendance
-            </h1>
-            <p className="text-zinc-500 mt-1">
-              Bulk upload attendance records via Excel.
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <Button variant="secondary" onClick={downloadTemplate} size="sm">
-              <FileDown className="w-4 h-4 mr-2" /> Template
-            </Button>
-          </div>
-        </div>
-      </div>
+      <Panel title="Upload sheet">
+        <ul className="mb-6 space-y-2 text-dense text-text-2">
+          <li>Accepted files: .xlsx, .xls, .csv</li>
+          <li>One row per student and subject</li>
+          <li>Use the template so the column order matches the importer</li>
+        </ul>
 
-      {/* Upload Area */}
-      {!file ? (
-        <div
-          className={cn(
-            "border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200",
-            error
-              ? "border-red-300 bg-red-50"
-              : "border-zinc-300 hover:border-zinc-900 hover:bg-zinc-50",
-          )}
-        >
-          <input
-            id="fileInput"
-            type="file"
-            accept=".csv,.xlsx,.xls"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) handleFile(f);
-            }}
-            className="hidden"
-          />
-          <label
-            htmlFor="fileInput"
-            className="cursor-pointer flex flex-col items-center gap-4"
-          >
-            <div className="w-16 h-16 bg-zinc-50 text-zinc-900 rounded-full flex items-center justify-center">
-              <Upload className="w-8 h-8" />
-            </div>
-            <div>
-              <p className="text-lg font-semibold text-zinc-900">
-                Click to upload excel sheet
-              </p>
-              <p className="text-zinc-500 text-sm mt-1">
-                Supports .xlsx, .xls, .csv
-              </p>
-            </div>
+        {!file ? (
+          <label className="flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-border-strong bg-surface px-4 py-8 text-center">
+            <input
+              id="fileInput"
+              type="file"
+              accept=".csv,.xlsx,.xls"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleFile(f);
+              }}
+              className="sr-only"
+            />
+            <p className="text-dense font-medium text-text">Drop an attendance sheet</p>
+            <p className="mt-1 text-small text-text-2">or click to choose a file</p>
           </label>
-          {error && (
-            <p className="text-red-600 font-medium mt-4 flex items-center justify-center gap-2">
-              <AlertCircle className="w-4 h-4" /> {error}
-            </p>
-          )}
-        </div>
-      ) : (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* File Info Bar */}
-          <div className="bg-zinc-900 text-white p-4 rounded-xl flex items-center justify-between shadow-lg shadow-zinc-100/20">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-zinc-800 rounded-lg">
-                <FileSpreadsheet className="w-6 h-6 text-green-400" />
-              </div>
-              <div>
-                <p className="font-semibold">{file?.name}</p>
-                <p className="text-xs text-zinc-400">Ready to upload</p>
-              </div>
+        ) : (
+          <div className="flex flex-col gap-3 rounded-lg border border-border bg-surface px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <p className="truncate text-dense font-medium text-text">{file.name}</p>
+              <p className="text-caption text-text-3">Ready to upload</p>
             </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={clearFile}
-                className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
-                title="Remove File"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-
-          <div className="flex justify-end">
-            <Button
-              onClick={handleUpload}
-              isLoading={uploading}
-              disabled={uploading}
-              className="bg-zinc-900 hover:bg-zinc-800 w-full md:w-auto"
-            >
-              <Upload className="w-4 h-4 mr-2" /> Process File
+            <Button type="button" variant="ghost" size="compact" onClick={clearFile}>
+              Remove
             </Button>
           </div>
+        )}
 
-          {success && (
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-green-800">
-              <div className="flex items-center gap-2 font-semibold">
-                <CheckCircle2 className="w-5 h-5" />
-                Upload Successful
-              </div>
-              <p className="mt-1 text-sm">
-                Processed {success.processed} records. Success:{" "}
-                {success.successCount}, Failed: {success.failCount}.
-              </p>
-              {success.errors && success.errors.length > 0 && (
-                <div className="mt-2 p-2 bg-white rounded border border-green-200 max-h-40 overflow-y-auto text-xs text-red-600">
-                  <p className="font-semibold text-zinc-700 mb-1">Errors:</p>
-                  {success.errors.map((e: string, i: number) => (
-                    <div key={i}>{e}</div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+        {error && (
+          <div className="mt-4">
+            <Alert tone="error" title="Upload failed">
+              {error}
+            </Alert>
+          </div>
+        )}
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-800">
-              <div className="flex items-center gap-2 font-semibold">
-                <AlertCircle className="w-5 h-5" />
-                Upload Failed
-              </div>
-              <p className="mt-1 text-sm">{error}</p>
-            </div>
-          )}
+        {success && (
+          <div className="mt-4 space-y-3">
+            <Alert tone="success" title="Upload successful">
+              Processed {success.processed} records. Success: {success.successCount},
+              Failed: {success.failCount}.
+            </Alert>
+            {success.errors && success.errors.length > 0 && (
+              <ul className="max-h-40 space-y-1 overflow-y-auto text-dense text-text-2">
+                {success.errors.map((e: string, i: number) => (
+                  <li key={i}>{e}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
+        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <Button type="button" variant="ghost" onClick={() => navigate("/admin")}>
+            Back
+          </Button>
+          <Button
+            type="button"
+            onClick={handleUpload}
+            isLoading={uploading}
+            disabled={!file || uploading}
+          >
+            Process file
+          </Button>
         </div>
-      )}
+      </Panel>
     </div>
   );
 }
