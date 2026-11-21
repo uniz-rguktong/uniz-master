@@ -430,8 +430,8 @@ export default function DatabaseBrowser({
             </div>
           ) : (
             <div className="flex shrink-0 flex-col gap-2 border-b border-border px-3 py-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="relative min-w-[180px] flex-1">
+              <div className="flex min-w-0 flex-col gap-2 min-[900px]:flex-row min-[900px]:flex-wrap min-[900px]:items-center">
+                <div className="relative min-w-0 w-full flex-1 min-[900px]:min-w-[180px]">
                   <input
                     className={cn(adminInputClass, "h-9 min-h-9 pr-8 text-small")}
                     value={search}
@@ -578,7 +578,7 @@ export default function DatabaseBrowser({
           )}
 
           {!sqlResult && table ? (
-            <footer className="flex h-12 shrink-0 flex-wrap items-center gap-3 border-t border-border px-3 text-small text-text-2">
+            <footer className="flex min-h-12 shrink-0 flex-wrap items-center gap-3 border-t border-border px-3 py-2 text-small text-text-2">
               <span className="tabular-nums">{total === 0 ? "0 rows" : `${from}–${to} of ${total}`}</span>
               {loading ? <span className="text-caption">Loading…</span> : null}
               <label className="ml-auto flex items-center gap-2">

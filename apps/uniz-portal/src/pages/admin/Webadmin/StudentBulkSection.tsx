@@ -289,7 +289,7 @@ export default function StudentBulkSection() {
         </Panel>
       ) : (
         <div className="w-full space-y-10">
-          <div className="mx-auto grid max-w-[640px] grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-4 min-[900px]:grid-cols-3">
             <div className="space-y-2">
               <label className={adminLabelClass}>Branch Focus</label>
               <div className="relative group">

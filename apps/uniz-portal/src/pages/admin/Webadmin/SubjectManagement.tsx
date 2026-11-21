@@ -193,7 +193,7 @@ export default function SubjectManagement() {
     <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-text">
       <PageHeader
         title="Academic subjects"
-        meta={`Manage the core institutional curriculum (${meta.total} records).`}
+        meta={`Subjects by department and semester (${meta.total}).`}
         action={
           <Button type="button" onClick={() => setShowAddModal(true)}>
             <Plus size={16} /> New subject

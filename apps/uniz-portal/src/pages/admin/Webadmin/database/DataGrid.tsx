@@ -250,7 +250,8 @@ export function DataGrid({
         <table
           className={cn("table-fixed border-separate border-spacing-0 text-left", loading && "opacity-60")}
           style={{
-            width:
+            width: "100%",
+            minWidth:
               84 +
               columns.reduce((sum, column) => sum + (widths[column.name] ?? defaultColumnWidth(column)), 0),
           }}
@@ -268,8 +269,9 @@ export function DataGrid({
                 />
               </th>
               <th className="sticky left-11 z-30 w-10 border-b border-r border-border bg-surface" />
-              {columns.map((column) => {
+              {columns.map((column, index) => {
                 const width = widths[column.name] ?? defaultColumnWidth(column);
+                const isLast = index === columns.length - 1;
                 const activeSort = sort?.column === column.name ? sort.direction : null;
                 return (
                   <th
@@ -277,9 +279,9 @@ export function DataGrid({
                     scope="col"
                     aria-sort={activeSort === "asc" ? "ascending" : activeSort === "desc" ? "descending" : "none"}
                     className="relative border-b border-r border-border bg-surface px-2 py-1.5 align-bottom"
-                    style={{ width, minWidth: width, maxWidth: width }}
+                    style={{ width: isLast ? undefined : width, minWidth: width, maxWidth: isLast ? undefined : width }}
                   >
-                    <button type="button" className="block w-full pr-6 text-left" onClick={() => onSort(column.name)}>
+                    <button type="button" className="block w-full pr-6 text-left" title={column.name} onClick={() => onSort(column.name)}>
                       <span className="block truncate whitespace-nowrap text-small font-medium text-head">{column.name}</span>
                       <span className="mt-0.5 flex items-center gap-1.5 whitespace-nowrap text-caption text-text-3">
                         <span className="truncate">{typeLabel(column)}</span>
@@ -347,6 +349,7 @@ export function DataGrid({
                   {columns.map((column, colIndex) => {
                     const shown = formatCell(row.values[column.name]);
                     const width = widths[column.name] ?? defaultColumnWidth(column);
+                    const isLast = colIndex === columns.length - 1;
                     const isFocus = focus?.row === rowIndex && focus.col === colIndex;
                     const isDirty = dirty.has(`${row.key}\u0000${column.name}`);
                     return (
@@ -359,7 +362,7 @@ export function DataGrid({
                           isDirty && "bg-[color-mix(in_srgb,var(--warning)_18%,var(--surface))]",
                           isFocus && "shadow-[inset_0_0_0_2px_var(--ring)]",
                         )}
-                        style={{ width, minWidth: width, maxWidth: width }}
+                        style={{ width: isLast ? undefined : width, minWidth: width, maxWidth: isLast ? undefined : width }}
                         onClick={(event) => {
                           setFocus({ row: rowIndex, col: colIndex });
                           scrollRef.current?.focus();
@@ -367,7 +370,7 @@ export function DataGrid({
                         }}
                         onDoubleClick={(event) => beginEdit(rowIndex, colIndex, event.currentTarget)}
                       >
-                        <span className={cn("block truncate", shown.muted && "italic text-text-3")} title={shown.text.length > 80 ? shown.text.slice(0, 300) : undefined}>
+                        <span className={cn("block truncate", shown.muted && "italic text-text-3")} title={shown.text.trim() ? shown.text : undefined}>
                           {shown.text || " "}
                         </span>
                       </td>

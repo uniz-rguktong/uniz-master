@@ -684,8 +684,8 @@ export default function StudentDetails() {
     if (isHodReadOnly) {
       return (
         <div className="flex min-w-0 flex-col gap-0.5 overflow-hidden">
-          <span className="truncate text-text font-medium">{row.name || "—"}</span>
-          <span className="truncate text-caption text-text-2 font-normal">
+          <span className="truncate text-text font-medium" title={row.name || undefined}>{row.name || "—"}</span>
+          <span className="truncate text-caption text-text-2 font-normal" title={row.email || undefined}>
             {placeholder(row.email)}
           </span>
         </div>
@@ -749,7 +749,7 @@ export default function StudentDetails() {
           className="flex min-w-0 items-center gap-1 group/name cursor-text"
           onClick={(e) => startCellEdit(row, "name", e)}
         >
-          <span className="min-w-0 flex-1 truncate text-text font-medium">{row.name || "—"}</span>
+          <span className="min-w-0 flex-1 truncate text-text font-medium" title={row.name || undefined}>{row.name || "—"}</span>
           <Pencil
             size={12}
             className="opacity-0 group-hover/name:opacity-40 text-text-3 shrink-0"
@@ -760,7 +760,7 @@ export default function StudentDetails() {
           className="flex min-w-0 items-center gap-1 group/email cursor-text"
           onClick={(e) => startCellEdit(row, "email", e)}
         >
-          <span className="min-w-0 flex-1 truncate text-caption text-text-2 font-normal">
+          <span className="min-w-0 flex-1 truncate text-caption text-text-2 font-normal" title={row.email || undefined}>
             {placeholder(row.email)}
           </span>
           <Pencil
@@ -1452,6 +1452,8 @@ export default function StudentDetails() {
         <TableSkeleton />
       ) : (
         <Table
+          sticky
+          stack="wide"
           rows={rows}
           getRowId={(row) => row.username}
           selectedId={selectedRow?.username}

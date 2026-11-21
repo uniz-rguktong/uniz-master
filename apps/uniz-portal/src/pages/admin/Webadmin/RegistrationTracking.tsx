@@ -192,11 +192,15 @@ export default function RegistrationTracking({
       id: "name",
       header: "Name",
       primary: true,
+      grow: true,
+      width: 220,
+      clip: false,
+      title: (row) => [row.name, row.email].filter(Boolean).join(" · ") || undefined,
       cell: (row) => (
         <span className="block min-w-0">
-          <span className="block truncate font-medium">{row.name || "—"}</span>
+          <span className="block truncate font-medium" title={row.name || undefined}>{row.name || "—"}</span>
           {row.email ? (
-            <span className="block truncate text-caption text-text-3">{row.email}</span>
+            <span className="block truncate text-caption text-text-3" title={row.email}>{row.email}</span>
           ) : null}
         </span>
       ),
@@ -397,17 +401,14 @@ export default function RegistrationTracking({
       </div>
 
       {/* Table */}
-      {loading && rows.length === 0 ? (
-        <div className="flex flex-col items-center py-16 text-text-3">
-          <Loader2 className="animate-spin mb-2" size={24} />
-          <p className="text-caption">Loading…</p>
-        </div>
-      ) : (
-        <Table
+      <Table
+          loading={loading && rows.length === 0}
+          sticky
+          stack="wide"
           columns={trackingColumns}
           rows={rows}
           getRowId={(row) => row.username}
-          empty={<EmptyState title="No students match these filters" />}
+          empty={<EmptyState title="No students match these filters" body="Adjust the branch, year, or search." />}
           footer={
             <Pagination
               currentPage={pagination.page}
@@ -418,7 +419,6 @@ export default function RegistrationTracking({
             />
           }
         />
-      )}
     </div>
   );
 }

@@ -37,6 +37,14 @@ export function isDirectoryRole(role: string): boolean {
   return (DIRECTORY_ROLES as readonly string[]).includes(role);
 }
 
+export const WEBADMIN_PERMISSION_LOCK_MESSAGE =
+  "The webadmin role cannot be edited";
+
+/** Webadmin's permission set is fixed. Dean and director can still be written. */
+export function directoryPermissionWriteBlocked(role: string | undefined): boolean {
+  return String(role || "").trim().toLowerCase() === "webadmin";
+}
+
 /** Returns the cleaned list, or null when any entry is not a known permission. */
 export function sanitizeDirectoryPermissions(input: unknown): string[] | null {
   if (!Array.isArray(input)) return null;
