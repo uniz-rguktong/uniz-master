@@ -8,7 +8,7 @@
     "start": "node dist/index.js",
     "start:access-proxy": "node dist/access-proxy.js",
     "dev": "ts-node-dev --respawn src/index.ts",
-    "test": "tsc && node --test dist/audit/logic.test.js",
+    "test": "tsc && node --test dist/audit/logic.test.js dist/catalog.tables.test.js",
     "prisma:generate": "prisma generate"
   },
   "dependencies": {
