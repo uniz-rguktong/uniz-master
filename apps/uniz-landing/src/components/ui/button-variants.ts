@@ -1,27 +1,23 @@
 import { cva } from "class-variance-authority";
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-sm text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold transition-[background-color,color,opacity,border-color] duration-150 ease-out disabled:pointer-events-none disabled:opacity-[0.45]",
   {
     variants: {
       variant: {
-        default: "bg-navy text-white hover:bg-navy-950",
-        destructive: "bg-crimson text-white hover:bg-crimson/90",
-        outline:
-          "border border-line bg-white hover:bg-paper hover:text-ink",
-        secondary: "bg-navy-900 text-white hover:bg-navy-600",
-        ghost: "hover:bg-paper hover:text-ink",
-        link: "text-crimson underline-offset-4 hover:underline",
+        primary: "bg-primary text-on-primary hover:bg-primary-hover active:bg-primary-active",
+        outline: "border border-head bg-transparent text-head hover:bg-tint-2",
+        ghost: "text-text-2 hover:bg-tint-2",
+        destructive: "bg-error text-on-error",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-sm px-3",
-        lg: "h-11 rounded-sm px-8",
-        icon: "h-10 w-10",
+        hero: "h-[52px] px-7 text-[16px] leading-6",
+        default: "h-11 px-6 text-[15px] leading-[22px]",
+        compact: "h-9 px-4 text-[14px] leading-5 max-[640px]:h-11",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "primary",
       size: "default",
     },
   },

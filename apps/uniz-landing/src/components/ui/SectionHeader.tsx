@@ -19,20 +19,20 @@ export function SectionHeader({
   return (
     <div
       className={cn(
-        "flex flex-col max-w-2xl",
-        align === "center" ? "mx-auto text-center items-center" : "text-left items-start",
+        "flex max-w-2xl flex-col",
+        align === "center" ? "mx-auto items-center text-center" : "items-start text-left",
         className
       )}
       {...props}
     >
       {pillText && (
-        <p className="text-sm text-ink-muted mb-3">{pillText}</p>
+        <p className="mb-3 text-[15px] leading-6 text-text-2">{pillText}</p>
       )}
-      <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-navy-900 leading-tight">
+      <h2 className="u-section text-head">
         {heading}
       </h2>
       {subtitle && (
-        <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed">
+        <p className="mt-4 max-w-[65ch] text-[17px] leading-[26px] text-text-2">
           {subtitle}
         </p>
       )}
