@@ -1,6 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, X, ArrowRight, Menu, ChevronDown } from "lucide-react";
+import { ArrowRight, Menu, Moon, Search, Sun, X } from "lucide-react";
+import { Lockup } from "../brand/Lockup";
+import { portalPath } from "@/lib/portal";
+import { useTheme } from "@/lib/theme";
+import { cn } from "@/lib/utils";
 
 const SEARCH_DIRECTORY = [
   { title: "Home", path: "/", category: "General" },
@@ -75,20 +79,25 @@ const MENU_SECTIONS = [
   },
 ];
 
+const iconButton =
+  "focus-chrome inline-flex h-11 w-11 items-center justify-center rounded-full text-white min-[640px]:h-10 min-[640px]:w-10";
+
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuSection, setMenuSection] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const { dark, toggle } = useTheme();
+  const menuOpen = menuSection !== null;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setIsSearchOpen(false);
-        setIsMenuOpen(false);
+        setMenuSection(null);
       }
     };
-    if (isSearchOpen || isMenuOpen) {
+    if (isSearchOpen || menuOpen) {
       document.addEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "hidden";
     }
@@ -96,193 +105,129 @@ export function Header() {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "auto";
     };
-  }, [isSearchOpen, isMenuOpen]);
+  }, [isSearchOpen, menuOpen]);
 
   const filteredResults = SEARCH_DIRECTORY.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const sections = menuSection === "all"
+    ? MENU_SECTIONS
+    : MENU_SECTIONS.filter((section) => section.title === menuSection);
+
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-white border-b border-line">
-        {/* Tier 1: Harvard/MIT-style Slim Institutional Utility Bar */}
-        <div className="bg-navy-850 text-white/80 border-b border-white/10">
-          <div className="w-full max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 flex h-8 items-center justify-between text-[11.5px] tracking-[0.03em]">
-            <div className="flex items-center gap-2 truncate">
-              <span className="font-semibold text-white/95">RGUKT ANDHRA PRADESH</span>
-              <span className="hidden sm:inline text-white/30">·</span>
-              <span className="hidden sm:inline text-white/75">
-                Catering to the Educational Needs of Gifted Rural Youth
-              </span>
-            </div>
-            <div className="flex items-center gap-4 shrink-0">
-              <Link to="/academics/AcademicCalender" className="hidden md:inline text-white/80 hover:text-white transition-colors">
-                Academic Calendar
-              </Link>
-              <Link to="/notifications/tenders" className="hidden md:inline text-white/80 hover:text-white transition-colors">
-                Tenders
-              </Link>
-              <a
-                href="https://uniz.rguktong.in/download/uniz.apk"
-                download="uniz-android.apk"
-                className="text-white/85 hover:text-white transition-colors"
-              >
-                Android App
-              </a>
-              <a
-                href="https://uniz.rguktong.in/ios"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/85 hover:text-white transition-colors"
-              >
-                iOS App
-              </a>
-              <a
-                href="https://uniz.rguktong.in/developers"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden sm:inline text-white/85 hover:text-white transition-colors"
-              >
-                Software Development Cell
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="w-full max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 flex h-[68px] items-center justify-between gap-6">
-
-          {/* Wordmark */}
-          <Link to="/" className="flex items-center shrink-0 gap-3 group">
-            <img
-              src="/rgukt-logo.png"
-              alt="RGUKT Ongole Campus"
-              className="h-10 w-10 md:h-11 md:w-11 object-contain"
-            />
-            <div className="hidden sm:flex flex-col justify-center">
-              <span className="font-serif text-[1.35rem] md:text-[1.5rem] font-semibold text-navy-900 tracking-tight leading-none">
-                RGUKT
-              </span>
-              <span className="mt-1 text-[11px] md:text-xs font-medium text-ink-muted">
-                Ongole campus
-              </span>
-            </div>
+      <header className="sticky top-0 z-50 w-full border-b border-sb-border bg-navy-900 text-white">
+        <div className="mx-auto flex h-[60px] w-full max-w-[1232px] items-center gap-3 px-5 min-[821px]:h-16 min-[821px]:px-10">
+          <Link to="/" className="focus-chrome inline-flex min-w-0 items-center gap-3 text-white">
+            <Lockup mark={32} word={20} />
+            <span className="hidden h-5 w-px shrink-0 bg-navy-700 min-[821px]:block" aria-hidden="true" />
+            <span className="hidden whitespace-nowrap text-[13px] font-medium leading-[18px] text-navy-300 min-[821px]:block">
+              RGUKT Ongole
+            </span>
           </Link>
 
-          {/* Primary nav (desktop) */}
-          <nav aria-label="Primary" className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+          <nav aria-label="Primary" className="ml-6 hidden items-center gap-7 min-[821px]:flex">
             {MENU_SECTIONS.map((section) => (
-              <div key={section.title} className="relative group">
-                <Link
-                  to={section.links[0].path}
-                  className="inline-flex items-center gap-1 h-10 px-3.5 rounded-md text-[15px] font-medium text-navy-900 hover:bg-surface-2 hover:text-navy transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
-                >
-                  {section.title}
-                  <ChevronDown className="w-3.5 h-3.5 text-ink-subtle transition-transform duration-150 group-hover:rotate-180 group-focus-within:rotate-180" />
-                </Link>
-                <div className="invisible opacity-0 translate-y-1 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-0 transition-[opacity,transform] duration-150 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none absolute left-1/2 -translate-x-1/2 top-full pt-2">
-                  <ul
-                    className={`rounded-lg border border-line bg-white p-2 shadow-[0_12px_32px_-12px_rgba(6,21,39,0.25)] ${
-                      section.links.length > 8 ? "grid grid-cols-2 w-[360px]" : "w-60"
-                    }`}
-                  >
-                    {section.links.map((link) => (
-                      <li key={link.path}>
-                        <Link
-                          to={link.path}
-                          className="block rounded-md px-3 py-2 text-[14px] text-ink hover:bg-surface-2 hover:text-navy transition-colors duration-150"
-                        >
-                          {link.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              <button
+                key={section.title}
+                type="button"
+                className={cn(
+                  "focus-chrome text-[14px] font-medium leading-5 text-chrome-link",
+                  menuSection === section.title && "text-white",
+                )}
+                aria-expanded={menuSection === section.title}
+                onClick={() => {
+                  setIsSearchOpen(false);
+                  setMenuSection((current) => (current === section.title ? null : section.title));
+                }}
+              >
+                {section.title === "Notifications" ? "Notices" : section.title}
+              </button>
             ))}
           </nav>
 
-          {/* Search + Menu */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5">
-            <a
-              href="https://uniz.rguktong.in/developers"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden xl:inline-flex items-center h-10 px-3 text-[14px] font-medium text-navy-900 hover:text-navy hover:bg-surface-2 rounded-md transition-colors duration-150"
-            >
-              Developers
-            </a>
-            <a
-              href="https://uniz.rguktong.in"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 h-10 px-4 bg-brand-red hover:bg-[#C81A20] text-white text-sm font-medium rounded-lg transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
-            >
-              <span>UniZ Portal</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </a>
+          <div className="ml-auto flex items-center gap-1">
             <button
-              onClick={() => { setIsSearchOpen(true); setIsMenuOpen(false); }}
-              aria-label="Search"
-              className="w-10 h-10 flex items-center justify-center rounded-md text-navy-900 hover:text-navy hover:bg-surface-2 transition-colors duration-150"
+              type="button"
+              onClick={toggle}
+              aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+              className={cn(iconButton, "hidden min-[821px]:inline-flex")}
             >
-              <Search className="w-5 h-5 stroke-[1.75]" />
+              {dark ? <Sun size={20} strokeWidth={1.75} /> : <Moon size={20} strokeWidth={1.75} />}
             </button>
             <button
-              onClick={() => { setIsMenuOpen(true); setIsSearchOpen(false); }}
-              aria-label="Open menu"
-              className="lg:hidden flex items-center gap-2 h-10 px-2 sm:px-3 rounded-md text-navy-900 hover:text-navy hover:bg-surface-2 transition-colors duration-150"
+              type="button"
+              onClick={() => { setIsSearchOpen(true); setMenuSection(null); }}
+              aria-label="Search"
+              className={iconButton}
             >
-              <span className="hidden sm:inline text-[14px] font-medium">Menu</span>
-              <Menu className="w-5 h-5 stroke-[1.75]" />
+              <Search size={20} strokeWidth={1.75} />
+            </button>
+            <a
+              href={portalPath("/student/signin")}
+              className="focus-chrome inline-flex h-11 items-center rounded-full bg-white px-5 text-[14px] font-semibold leading-5 text-navy-900 min-[640px]:h-[38px]"
+            >
+              Sign in
+            </a>
+            <button
+              type="button"
+              onClick={() => { setMenuSection("all"); setIsSearchOpen(false); }}
+              aria-label="Open menu"
+              className={cn(iconButton, "min-[821px]:hidden")}
+            >
+              <Menu size={20} strokeWidth={1.75} />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Full-screen menu panel */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-[100] bg-navy-950 text-white overflow-y-auto animate-[menu-in_200ms_cubic-bezier(0.2,0,0,1)_both] motion-reduce:animate-none">
-          <div className="max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 py-5 flex items-center justify-between border-b border-white/10">
-            <Link
-              to="/"
-              onClick={() => setIsMenuOpen(false)}
-              className="font-serif text-xl font-semibold tracking-tight"
-            >
-              RGUKT Ongole
-            </Link>
-            <button
-              onClick={() => setIsMenuOpen(false)}
-              aria-label="Close menu"
-              className="w-10 h-10 flex items-center justify-center text-white/80 hover:text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          <nav className="max-w-[90rem] mx-auto px-5 sm:px-8 lg:px-12 py-12 sm:py-16">
-            <div className="mb-10">
-              <Link
-                to="/"
-                onClick={() => setIsMenuOpen(false)}
-                className="font-serif text-3xl sm:text-4xl text-white hover:text-white/80 transition-colors"
+      {menuOpen && (
+        <div
+          className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto bg-[var(--overlay)] px-4 py-4 min-[821px]:px-10 min-[821px]:pt-20"
+          onClick={() => setMenuSection(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={menuSection === "all" ? "Menu" : `${menuSection} menu`}
+            className="menu-in relative z-10 w-full max-w-[1232px] animate-[menu-in_200ms_ease-out_both] rounded-xl border border-border bg-panel p-6 text-text shadow-lg motion-reduce:animate-none min-[821px]:p-8 dark:shadow-none"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-6 flex items-center justify-between gap-4">
+              <p className="text-[15px] font-medium leading-6 text-head">
+                {menuSection === "all" ? "Menu" : menuSection}
+              </p>
+              <button
+                type="button"
+                onClick={() => setMenuSection(null)}
+                aria-label="Close menu"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full text-text-2 hover:bg-tint-2"
               >
-                Home
-              </Link>
+                <X size={20} strokeWidth={1.75} />
+              </button>
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
-              {MENU_SECTIONS.map((section) => (
+            <div className={cn("grid gap-8", sections.length > 1 && "min-[821px]:grid-cols-2")}>
+              {menuSection === "all" && (
+                <div className="min-[821px]:col-span-2">
+                  <Link to="/" onClick={() => setMenuSection(null)} className="inline-flex min-h-11 items-center text-[15px] leading-6 text-link">
+                    Home
+                  </Link>
+                </div>
+              )}
+              {sections.map((section) => (
                 <div key={section.title}>
-                  <p className="text-xs font-medium text-white/55 mb-5">
-                    {section.title}
-                  </p>
-                  <ul className="flex flex-col gap-0.5">
+                  {menuSection === "all" && (
+                    <h2 className="mb-2 text-[15px] font-semibold leading-6 text-head">{section.title}</h2>
+                  )}
+                  <ul className="grid grid-cols-1 gap-x-8 min-[640px]:grid-cols-2">
                     {section.links.map((link) => (
                       <li key={link.path}>
                         <Link
                           to={link.path}
-                          onClick={() => setIsMenuOpen(false)}
-                          className="inline-flex min-h-[44px] items-center text-[17px] text-white/85 hover:text-white transition-colors duration-150"
+                          onClick={() => setMenuSection(null)}
+                          className="inline-flex min-h-11 items-center text-[15px] leading-6 text-link hover:underline"
                         >
                           {link.label}
                         </Link>
@@ -292,68 +237,89 @@ export function Header() {
                 </div>
               ))}
             </div>
-          </nav>
+            <div className="mt-6 flex items-center justify-between border-t border-border pt-4 min-[821px]:hidden">
+              <button
+                type="button"
+                onClick={toggle}
+                className="inline-flex min-h-11 items-center gap-2 text-[14px] font-medium leading-5 text-text-2"
+              >
+                {dark ? <Sun size={18} strokeWidth={1.75} aria-hidden="true" /> : <Moon size={18} strokeWidth={1.75} aria-hidden="true" />}
+                {dark ? "Light theme" : "Dark theme"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Search overlay */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-[100] bg-navy-900/50 backdrop-blur-sm flex items-start justify-center pt-20 sm:pt-28 px-4">
+        <div
+          className="fixed inset-0 z-[100] flex items-start justify-center bg-[var(--overlay)] px-4 pt-16 min-[821px]:pt-28"
+          onClick={() => setIsSearchOpen(false)}
+        >
           <div
-            className="absolute inset-0"
-            onClick={() => setIsSearchOpen(false)}
-          />
-
-          <div className="relative w-full max-w-2xl bg-white rounded-xl border border-line overflow-hidden flex flex-col shadow-[0_32px_80px_-20px_rgba(2,18,39,0.6)] animate-[menu-in_200ms_cubic-bezier(0.2,0,0,1)_both] motion-reduce:animate-none">
-            <div className="relative flex items-center border-b border-slate-200 px-5 py-4">
-              <Search className="w-5 h-5 text-navy" />
-              <input
-                autoFocus
-                type="text"
-                placeholder="Search campus directory…"
-                className="flex-1 bg-transparent border-none outline-none px-4 text-slate-800 text-lg placeholder:text-slate-400"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button
-                onClick={() => setIsSearchOpen(false)}
-                className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-colors"
-                aria-label="Close search"
-              >
-                <X className="w-4 h-4" />
-              </button>
+            role="dialog"
+            aria-modal="true"
+            aria-label="Search"
+            className="menu-in relative z-10 flex w-full max-w-[640px] animate-[menu-in_200ms_ease-out_both] flex-col overflow-hidden rounded-xl border border-border bg-surface text-text shadow-lg motion-reduce:animate-none dark:shadow-none"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="border-b border-border px-5 py-4">
+              <label htmlFor="site-search" className="text-[14px] font-medium leading-5 text-text">
+                Search
+              </label>
+              <div className="mt-2 flex items-center gap-2">
+                <Search className="shrink-0 text-text-3" size={18} strokeWidth={1.75} aria-hidden="true" />
+                <input
+                  id="site-search"
+                  autoFocus
+                  type="text"
+                  placeholder="Search campus directory…"
+                  className="h-12 w-full rounded-md border border-border-strong bg-surface px-4 text-[15px] leading-6 text-text placeholder:text-text-3"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsSearchOpen(false)}
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-text-2 hover:bg-tint-2"
+                  aria-label="Close search"
+                >
+                  <X size={18} strokeWidth={1.75} />
+                </button>
+              </div>
             </div>
 
             <div className="max-h-[60vh] overflow-y-auto px-3 py-3">
               {searchQuery.trim() === "" ? (
-                <div className="px-4 py-10 text-center text-slate-500">
-                  <p className="text-base">Search departments, academics, or notifications.</p>
-                  <p className="text-sm mt-2 text-ink-subtle">Try “CSE”, “Library”, or “Tenders”.</p>
+                <div className="px-4 py-10 text-center text-text-3">
+                  <p className="text-[15px] leading-6">Search departments, academics, or notifications.</p>
+                  <p className="mt-2 text-[13px] leading-[18px]">Try “CSE”, “Library”, or “Tenders”.</p>
                 </div>
               ) : filteredResults.length === 0 ? (
-                <div className="px-4 py-10 text-center text-slate-500">
-                  <p className="text-base">No results for “{searchQuery}”.</p>
+                <div className="px-4 py-10 text-center text-text-2">
+                  <p className="text-[15px] leading-6">No results for “{searchQuery}”.</p>
                 </div>
               ) : (
                 <div className="flex flex-col">
                   {filteredResults.map((item, idx) => (
                     <button
                       key={idx}
+                      type="button"
                       onClick={() => {
                         setIsSearchOpen(false);
                         navigate(item.path);
                       }}
-                      className="flex items-center justify-between w-full text-left px-4 py-3.5 hover:bg-slate-50 transition-colors group border-b border-slate-100 last:border-0"
+                      className="flex min-h-11 w-full items-center justify-between border-b border-border px-4 py-3 text-left last:border-0 hover:bg-tint-2"
                     >
-                      <div>
-                        <span className="block text-slate-900 font-medium group-hover:text-navy transition-colors">
+                      <span>
+                        <span className="block text-[15px] font-medium leading-6 text-text">
                           {item.title}
                         </span>
-                        <span className="block text-xs text-ink-subtle mt-0.5">
+                        <span className="mt-0.5 block text-[13px] leading-[18px] text-text-3">
                           {item.category}
                         </span>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-navy opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block" />
+                      </span>
+                      <ArrowRight className="hidden shrink-0 text-accent sm:block" size={16} strokeWidth={1.75} aria-hidden="true" />
                     </button>
                   ))}
                 </div>

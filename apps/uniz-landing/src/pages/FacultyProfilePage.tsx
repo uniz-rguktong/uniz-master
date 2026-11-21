@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getDepartmentStaff } from "../types/api";
 import type { FacultyMember, DeptCode } from "../types/api";
-import { Mail, ArrowLeft, BookOpen, Briefcase, FlaskConical, Award, FileText } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { PersonPhoto } from "../components/common/PersonPhoto";
 import { initials } from "../lib/initials";
 import { usePageTitle } from "../lib/usePageTitle";
 import { CampusBoot } from "../components/CampusBoot";
+import { Wrap } from "../components/layout/Wrap";
 
 const DEPT_NAMES: Record<string, string> = {
   CSE:         "Computer Science & Engineering",
@@ -28,12 +29,6 @@ const DEPT_NAMES: Record<string, string> = {
 };
 
 // Section icon hint map
-const SECTION_ICONS: Record<string, React.ReactNode> = {
-  "Specialization":            <FlaskConical className="w-4 h-4" />,
-  "Research Areas":            <BookOpen className="w-4 h-4" />,
-  "Experience":                <Briefcase className="w-4 h-4" />,
-  "Additional Responsibilities": <Award className="w-4 h-4" />,
-};
 
 function bioStr(bio: Record<string, unknown>, key: string): string {
   const v = bio?.[key];
@@ -63,7 +58,6 @@ function allBioEntries(bio: Record<string, unknown>) {
 
 export function FacultyProfilePage() {
   const { deptCode, facultyIndex } = useParams<{ deptCode: string; facultyIndex: string }>();
-  const navigate = useNavigate();
 
   const [faculty, setFaculty] = useState<FacultyMember | null>(null);
   const [loading, setLoading] = useState(true);
@@ -94,14 +88,12 @@ export function FacultyProfilePage() {
 
   if (!faculty) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-slate-500 text-lg font-semibold">Profile not found.</p>
-          <button onClick={() => navigate(-1)} className="mt-4 text-navy text-sm font-medium hover:underline">
-            Go Back
-          </button>
-        </div>
-      </div>
+      <Wrap className="py-20 text-center">
+        <p className="font-serif text-[22px] font-normal leading-[30px] text-head">Profile not found.</p>
+        <Link to={`/departments/${deptCode}`} className="mt-4 inline-flex min-h-11 items-center text-[15px] leading-6 text-link hover:underline">
+          Go back
+        </Link>
+      </Wrap>
     );
   }
 
@@ -112,115 +104,88 @@ export function FacultyProfilePage() {
   const role           = bioStr(bio, "Additional Responsibilities");
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* ── Top Nav Bar ── */}
-      <div className="border-b border-slate-100 bg-slate-50/50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <button
-            onClick={() => navigate(`/departments/${deptCode}`)}
-            className="inline-flex items-center gap-2 text-slate-500 hover:text-navy text-sm font-semibold transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to {deptName}
-          </button>
-          <span className="hidden sm:inline-block px-3 py-1 text-[10px] font-medium text-navy bg-navy/5 border border-navy/10 rounded-full">
-            RGUKT Ongole · {code}
-          </span>
-        </div>
-      </div>
+    <div>
+      <Wrap className="pt-8">
+        <Link
+          to={`/departments/${deptCode}`}
+          className="inline-flex min-h-11 items-center gap-2 text-[14px] font-medium leading-5 text-link hover:underline"
+        >
+          <ArrowLeft size={16} strokeWidth={1.75} aria-hidden="true" />
+          Back to {deptName}
+        </Link>
+      </Wrap>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* ── Profile Header ── */}
-        <div className="flex flex-col md:flex-row gap-8 items-start mb-12">
-          {/* Photo */}
-          <div className="w-full md:w-56 flex-shrink-0 bg-slate-50 rounded-2xl border border-slate-100 p-2 flex items-center justify-center overflow-hidden">
+      <Wrap className="py-8 pb-16">
+        <div className="flex flex-col items-start gap-6 sm:flex-row">
+          <div className="size-24 shrink-0 overflow-hidden rounded-full bg-navy-100 dark:bg-surface-2">
             <PersonPhoto
               src={faculty.photo}
               name={faculty.name}
-              className="w-full max-w-[200px] h-auto object-contain rounded-xl"
+              className="size-full object-cover object-top"
               fallback={
-                <div className="w-full aspect-square max-w-[200px] rounded-xl bg-navy-900 flex items-center justify-center text-white text-6xl font-medium shadow-sm">
-                {initials(faculty.name)}
-              </div>
+                <div className="flex size-full items-center justify-center text-[18px] font-medium text-navy-900 dark:text-text">
+                  {initials(faculty.name)}
+                </div>
               }
             />
           </div>
-
-          {/* Info */}
-          <div className="flex-1 pt-2">
-            <h1 className="text-3xl md:text-4xl font-medium text-slate-900 leading-tight mb-2 tracking-tight">
+          <div className="min-w-0">
+            <p className="text-[15px] leading-6 text-text-2">RGUKT Ongole · {code}</p>
+            <h1 className="u-page mt-2 text-head">
               {faculty.name}
             </h1>
             {role && (
-              <p className="text-lg text-navy font-semibold mb-6">{role}</p>
+              <p className="mt-3 text-[17px] leading-[26px] text-text-2">{role}</p>
             )}
-
-            <div className="space-y-4 max-w-2xl">
-              {specialization && (
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 p-1.5 rounded-md bg-slate-50 border border-slate-100 flex-shrink-0">
-                    <FlaskConical className="w-4 h-4 text-slate-500" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium tracking-normal text-ink-subtle mb-0.5">Specialization</p>
-                    <p className="text-slate-700 text-sm leading-relaxed">{specialization}</p>
-                  </div>
-                </div>
-              )}
-              
-              {experience && (
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 p-1.5 rounded-md bg-slate-50 border border-slate-100 flex-shrink-0">
-                    <Briefcase className="w-4 h-4 text-slate-500" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium tracking-normal text-ink-subtle mb-0.5">Experience</p>
-                    <p className="text-slate-700 text-sm">{experience} {experience.toLowerCase().includes('year') ? '' : 'years overall experience'}</p>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 p-1.5 rounded-md bg-rose-50 border border-rose-100 flex-shrink-0">
-                  <Mail className="w-4 h-4 text-navy" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium tracking-normal text-ink-subtle mb-0.5">Contact</p>
-                  <a href={`mailto:${faculty.email}`} className="text-navy text-sm font-semibold hover:underline">
-                    {faculty.email}
-                  </a>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* ── Bio Sections ── */}
+        <dl className="mt-10 max-w-[640px] border-t border-border">
+          {specialization && (
+            <div className="grid gap-1 border-b border-border py-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:gap-6">
+              <dt className="text-[14px] font-medium leading-5 text-text-2">Specialization</dt>
+              <dd className="text-[15px] leading-6 text-text">{specialization}</dd>
+            </div>
+          )}
+          {experience && (
+            <div className="grid gap-1 border-b border-border py-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:gap-6">
+              <dt className="text-[14px] font-medium leading-5 text-text-2">Experience</dt>
+              <dd className="text-[15px] leading-6 text-text">
+                {experience} {experience.toLowerCase().includes('year') ? '' : 'years overall experience'}
+              </dd>
+            </div>
+          )}
+          <div className="grid gap-1 border-b border-border py-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:gap-6">
+            <dt className="text-[14px] font-medium leading-5 text-text-2">Contact</dt>
+            <dd>
+              <a href={`mailto:${faculty.email}`} className="inline-flex min-h-11 items-center break-all text-[15px] leading-6 text-link hover:underline min-[640px]:min-h-0">
+                {faculty.email}
+              </a>
+            </dd>
+          </div>
+        </dl>
+
         {entries.length > 0 && (
-          <div className="border-t border-slate-100 pt-12">
-            <h2 className="text-xl font-medium text-slate-900 mb-8 tracking-tight">
-              Detailed Profile
+          <div className="mt-12 border-t border-border pt-10">
+            <h2 className="u-h2 text-head">
+              Detailed profile
             </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
+            <div className="mt-8 grid grid-cols-1 gap-x-12 gap-y-10 lg:grid-cols-2">
               {entries.map(({ key, items }) => (
-                <div key={key}>
-                  <h3 className="flex items-center gap-2 text-[11px] font-medium tracking-normal text-navy-900 mb-3 border-b border-slate-100 pb-2">
-                    <span className="text-navy/60">
-                      {SECTION_ICONS[key] ?? <FileText className="w-4 h-4" />}
-                    </span>
+                <div key={key} className="min-w-0">
+                  <h3 className="text-[18px] font-semibold leading-[26px] tracking-[-0.01em] text-head">
                     {key}
                   </h3>
                   {items.length === 1 && !items[0].match(/^[0-9]+\./) ? (
-                    <p className="text-slate-700 text-sm leading-relaxed">{items[0]}</p>
+                    <p className="mt-3 text-[15px] leading-6 text-text">{items[0]}</p>
                   ) : (
-                    <ul className="space-y-2.5">
+                    <ul className="mt-3 space-y-2">
                       {items.map((item, i) => {
                         // Strip leading manual list numbers like "1.", "1. ", "12."
                         const cleanItem = item.replace(/^[0-9]+\.\s*/, "");
                         return (
-                          <li key={i} className="flex items-start gap-2.5 text-sm text-slate-700 leading-relaxed">
-                            <span className="text-navy/40 font-medium mt-0.5 flex-shrink-0">•</span>
-                            <span>{cleanItem}</span>
+                          <li key={i} className="text-[15px] leading-6 text-text">
+                            {cleanItem}
                           </li>
                         );
                       })}
@@ -231,7 +196,7 @@ export function FacultyProfilePage() {
             </div>
           </div>
         )}
-      </div>
+      </Wrap>
     </div>
   );
 }
