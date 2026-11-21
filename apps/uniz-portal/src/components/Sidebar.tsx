@@ -28,7 +28,7 @@ import {
   studentContentSkeletonVariant,
 } from "./StudentPageSkeleton";
 import { NotificationBellButton } from "./NotificationBellButton";
-import { Lockup, Mark } from "@/components/brand/Mark";
+import { Lockup, Mark, MARK_SIZE } from "@/components/brand/Mark";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -305,7 +305,7 @@ export default function Sidebar({ content }: MainContent) {
           )}
         >
           {collapsed ? (
-            <Mark size={28} title="uniZ" className="text-white" />
+            <Mark size={MARK_SIZE} title="uniZ" className="text-white" />
           ) : (
             <Lockup height={32} tone="chrome" title="uniZ" />
           )}
@@ -356,7 +356,7 @@ export default function Sidebar({ content }: MainContent) {
       <div className={cn("flex min-h-screen flex-col", collapsed ? "min-[821px]:pl-[72px]" : "min-[821px]:pl-[248px]")}>
         <header className="sticky top-0 z-30 flex h-[60px] items-center justify-between bg-navy-900 px-4 text-white min-[821px]:hidden">
           <span className="text-white">
-            <Mark size={28} title="uniZ" />
+            <Mark size={MARK_SIZE} title="uniZ" />
           </span>
           <p className="truncate px-3 text-[17px] font-semibold leading-6">{pageName}</p>
           <div className="flex items-center gap-1">

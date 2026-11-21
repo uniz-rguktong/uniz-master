@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Lockup, Mark } from "@/components/brand/Mark";
+import { Lockup, Mark, MARK_SIZE } from "@/components/brand/Mark";
 
 type UnizLogoProps = {
   /** Sidebar collapsed — Z and dot, because the word does not read. */
@@ -30,7 +30,7 @@ export function UnizLogo({
   if (collapsed) {
     return (
       <span className={cn(tone === "chrome" ? "text-white" : "text-navy-900", className)}>
-        <Mark size={28} title="uniZ" />
+        <Mark size={MARK_SIZE} title="uniZ" />
       </span>
     );
   }

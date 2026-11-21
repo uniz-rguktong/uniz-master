@@ -7,7 +7,7 @@ import {
   adminNavInactiveClass,
   adminSearchInputClass,
 } from "./admin-ui";
-import { Lockup, Mark } from "@/components/brand/Mark";
+import { Lockup, Mark, MARK_SIZE } from "@/components/brand/Mark";
 import { Avatar } from "@/components/ui/avatar";
 import { rememberAdminProfile, useAdminProfile } from "@/api/adminProfile";
 
@@ -65,6 +65,7 @@ export interface AdminShellProps {
   mobileHeaderExtra?: ReactNode;
   headerAlign?: "between" | "end";
   mobileNavItems?: AdminNavItem[];
+  /** Accepted from existing dashboards. The collapsed rail always centers the Z+dot. */
   collapseBranding?: "hide" | "abbreviate";
   sidebarVariant?: "default" | "overlay-mobile";
   contentClassName?: string;
@@ -90,7 +91,6 @@ export default function AdminShell({
   headerExtra,
   mobileHeaderExtra,
   headerAlign = "end",
-  collapseBranding = "hide",
   contentClassName,
   navSpacing = "default",
   showHeaderMenuToggle = false,
@@ -151,11 +151,11 @@ export default function AdminShell({
       <div
         className={cn(
           "flex h-16 shrink-0 items-center border-b border-[var(--sb-div)] px-3",
-          !mobile && !isSidebarOpen && collapseBranding === "hide" && "justify-center",
+          !mobile && !isSidebarOpen && "justify-center",
         )}
       >
         {!mobile && !isSidebarOpen ? (
-          <Mark size={28} title="uniZ" className="text-white" />
+          <Mark size={MARK_SIZE} title="uniZ" className="text-white" />
         ) : (
           <Lockup height={32} tone="chrome" title="uniZ" />
         )}
@@ -309,6 +309,7 @@ export default function AdminShell({
           >
             <Menu size={18} strokeWidth={1.75} aria-hidden />
           </button>
+          <Mark size={MARK_SIZE} title="uniZ" />
           <p className="min-w-0 flex-1 truncate text-[17px] font-semibold leading-6">
             {activeLabel || "Admin"}
           </p>

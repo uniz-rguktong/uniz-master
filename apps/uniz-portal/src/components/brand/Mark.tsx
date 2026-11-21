@@ -58,11 +58,19 @@ export function Lockup({
 }
 
 /**
- * Z plus the floating dot. Used where the full M1 word does not read
- * (collapsed sidebar, narrow header). Colour is `currentColor`.
+ * Box size for the Z+dot. The favicon glyph lives in a 64 unit tile and
+ * the Z cap inside it is 1400 × 0.02442 units, so 38px is about a 20px cap.
+ * Smaller than that and the floating dot drops out.
+ */
+export const MARK_SIZE = 38;
+
+/**
+ * Z plus the floating dot, from the favicon geometry. Used where the full
+ * M1 word does not read (collapsed sidebar, narrow header). Colour is
+ * `currentColor`.
  */
 export function Mark({
-  size = 28,
+  size = MARK_SIZE,
   className,
   title,
 }: {
