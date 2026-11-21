@@ -1,5 +1,5 @@
 import axios from "axios";
-import { chooseOtpEmail } from "./otp-delivery";
+import { chooseOtpEmail, isDeliverableEmail } from "./otp-delivery";
 import { enqueueNotificationJob } from "./queue.util";
 import { redis } from "./redis.util";
 
@@ -69,25 +69,7 @@ const sendPush = async (
   }
 };
 
-export async function resolveProfileEmail(
-  username: string,
-  realEmail?: string | null,
-): Promise<string | null> {
-  const mailbox = chooseOtpEmail(null, "", realEmail);
-  if (mailbox) return mailbox;
-
-  // A user's email rarely changes; cache it so repeated OTP requests don't fan
-  // out up to 3 sequential user-service HTTP calls each time.
-  const cacheKey = `otp:email:${username.toUpperCase()}`;
-  try {
-    const cached = await redis.get(cacheKey);
-    const chosen = cached ? chooseOtpEmail(cached, username) : null;
-    if (chosen) return chosen;
-  } catch {
-    /* Redis optional — fall through to live resolution */
-  }
-
-  let stored: string | null = null;
+async function fetchProfileEmail(username: string): Promise<string | null> {
   try {
     const rawUserUrl = (
       process.env.USER_SERVICE_URL || "http://localhost:3002"
@@ -114,8 +96,7 @@ export async function resolveProfileEmail(
           userRes.data?.data ||
           userRes.data;
         if (data?.email && String(data.email).trim()) {
-          stored = String(data.email);
-          break;
+          return String(data.email);
         }
       } catch {
         // try next
@@ -125,6 +106,44 @@ export async function resolveProfileEmail(
     // Profile lookup failed. chooseOtpEmail still returns the campus mailbox
     // when the username can form one.
   }
+  return null;
+}
+
+/**
+ * Mailbox stored on the credential or the profile. Never invents
+ * username@rguktong.ac.in. First-login codes use this and stop when it is empty.
+ */
+export async function resolveStoredMailbox(
+  username: string,
+  realEmail?: string | null,
+): Promise<string | null> {
+  if (isDeliverableEmail(realEmail)) {
+    return String(realEmail).trim().toLowerCase();
+  }
+  const stored = await fetchProfileEmail(username);
+  if (stored && isDeliverableEmail(stored)) return stored.trim().toLowerCase();
+  return null;
+}
+
+export async function resolveProfileEmail(
+  username: string,
+  realEmail?: string | null,
+): Promise<string | null> {
+  const mailbox = chooseOtpEmail(null, "", realEmail);
+  if (mailbox) return mailbox;
+
+  // A user's email rarely changes; cache it so repeated OTP requests don't fan
+  // out up to 3 sequential user-service HTTP calls each time.
+  const cacheKey = `otp:email:${username.toUpperCase()}`;
+  try {
+    const cached = await redis.get(cacheKey);
+    const chosen = cached ? chooseOtpEmail(cached, username) : null;
+    if (chosen) return chosen;
+  } catch {
+    /* Redis optional — fall through to live resolution */
+  }
+
+  const stored = await fetchProfileEmail(username);
 
   const email = chooseOtpEmail(stored, username);
   if (!email) return null;

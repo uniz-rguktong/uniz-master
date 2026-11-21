@@ -20,7 +20,11 @@ export function isPasswordChangeExempt(method: string, path: string): boolean {
     .split("?")[0]
     .replace(/\/+$/, "")
     .toLowerCase();
-  return bare.endsWith("/password/change") || bare.endsWith("/logout");
+  return (
+    bare.endsWith("/password/change") ||
+    bare.endsWith("/password/change/otp") ||
+    bare.endsWith("/logout")
+  );
 }
 
 /**
