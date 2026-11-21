@@ -15,7 +15,7 @@
     "format:check": "prettier --check \"packages/uniz-shared/src/**/*.{ts,js}\" \"packages/uniz-shared/test/**/*.{cjs,js}\" --ignore-path .prettierignore",
     "lint": "npm run lint -w uniz-landing --if-present",
     "typecheck": "npm run typecheck -w uniz --if-present",
-    "test": "npm run test -w @uniz/shared --if-present",
+    "test": "npm run test -w @uniz/shared --if-present && npm run test -w uniz --if-present",
     "install:all": "npm install",
     "setup": "cp secrets.env.example secrets.env && npm run vault:sync",
     "dev": "concurrently -n \"GATEWAY,AUTH,USER,PORTAL\" -c \"cyan,magenta,blue,yellow\" \"npm run dev -w uniz-production-gateway\" \"npm run dev -w uniz-auth-service\" \"npm run dev -w uniz-user-service\" \"npm run dev -w uniz\"",
