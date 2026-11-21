@@ -12,6 +12,7 @@ import { useRecoilState } from "recoil";
 import { bannersAtom } from "../../../store/atoms";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
+import { RowActions } from "@/components/ui/row-actions";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { AdminDialog } from "@/components/admin/AdminDialog";
@@ -156,12 +157,6 @@ export default function BannersSection() {
   };
 
   const deleteBanner = async (id: string) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this banner permanently?",
-      )
-    )
-      return;
     setActionLoading(id);
     const token = getAuthToken();
     try {
@@ -236,7 +231,7 @@ export default function BannersSection() {
     >
       <PageHeader
         title="Banner management"
-        meta="Create and control featured spotlight content for student portals."
+        meta="Banners on the student home."
         action={
           <Button type="button" onClick={() => setShowAddModal(true)}>
             <Plus size={16} /> New banner
@@ -309,41 +304,42 @@ export default function BannersSection() {
 
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-1">
-                  <h3 className="font-semibold text-text text-[15px] leading-tight mb-1.5 line-clamp-1">
+                  <h3 className="font-semibold text-text text-[15px] leading-tight mb-1.5 line-clamp-1" title={banner.title}>
                     {banner.title}
                   </h3>
-                  <p className="text-text-2 text-[13px] line-clamp-2 leading-relaxed mb-5">
+                  <p className="text-text-2 text-[13px] line-clamp-2 leading-relaxed mb-5" title={banner.text}>
                     {banner.text}
                   </p>
 
-                  <div className="mt-auto flex flex-col gap-2 sm:flex-row">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="compact"
-                      onClick={() => toggleVisibilityAction(banner)}
-                      disabled={actionLoading === bannerId}
-                      isLoading={actionLoading === bannerId}
-                    >
-                      {banner.isVisible ? "Hide" : "Show"}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="compact"
-                      onClick={() => handleEditClick(banner)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="compact"
-                      onClick={() => deleteBanner(bannerId)}
-                      disabled={actionLoading === bannerId}
-                    >
-                      Delete
-                    </Button>
+                  <div className="mt-auto flex justify-end">
+                    <RowActions
+                      label={`Actions for ${banner.title}`}
+                      items={[
+                        {
+                          id: "visibility",
+                          label: banner.isVisible ? "Hide" : "Show",
+                          disabled: actionLoading === bannerId,
+                          onSelect: () => toggleVisibilityAction(banner),
+                        },
+                        {
+                          id: "edit",
+                          label: "Edit",
+                          onSelect: () => handleEditClick(banner),
+                        },
+                        {
+                          id: "delete",
+                          label: "Delete",
+                          destructive: true,
+                          disabled: actionLoading === bannerId,
+                          confirm: {
+                            title: "Delete this banner?",
+                            body: "The banner is removed from the student home. This cannot be undone.",
+                            confirmLabel: "Delete",
+                          },
+                          onSelect: () => deleteBanner(bannerId),
+                        },
+                      ]}
+                    />
                   </div>
                 </div>
               </div>

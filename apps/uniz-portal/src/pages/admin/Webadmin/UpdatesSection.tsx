@@ -35,6 +35,7 @@ import { Table } from "@/components/ui/table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { RowActions } from "@/components/ui/row-actions";
 import { WebsiteEditorLink } from "./WebsiteEditorLink";
 
 export default function UpdatesSection() {
@@ -190,12 +191,6 @@ export default function UpdatesSection() {
   };
 
   const deleteUpdate = async (id: string) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this broadcast permanently?",
-      )
-    )
-      return;
     setActionLoading(id);
     const token = getAuthToken();
     try {
@@ -225,7 +220,7 @@ export default function UpdatesSection() {
         icon={<Bell size={18} />}
         eyebrow="Campus"
         title="Campus Broadcasts"
-        subtitle="Distribute vital institutional news and media resources."
+        subtitle="News shown on the campus site."
         actions={
           <>
             <Button type="button" variant="ghost" size="icon" onClick={fetchUpdates} disabled={loading} title="Refresh Stream">
@@ -239,10 +234,10 @@ export default function UpdatesSection() {
       />
       <WebsiteEditorLink />
 
-      {loading ? (
-        <p className="text-body text-text-2">Loading broadcasts…</p>
-      ) : (
-        <Table
+      <Table
+          loading={loading}
+          sticky
+          stack="wide"
           rows={updates || []}
           getRowId={(update) => String(update._id || update.id || update.title)}
           empty={
@@ -261,25 +256,21 @@ export default function UpdatesSection() {
               id: "content",
               header: "Broadcast",
               primary: true,
+              grow: true,
+              width: 280,
+              clip: false,
+              title: (update) =>
+                [update.title, update.description || update.content].filter(Boolean).join(" · "),
               cell: (update) => (
-                <span>
-                  <span className="block font-semibold text-head">{update.title}</span>
-                  <span className="mt-0.5 block text-small text-text-2 line-clamp-1">
-                    {update.description || update.content || "No description provided."}
+                <span className="block min-w-0">
+                  <span className="block truncate font-semibold text-head" title={update.title}>
+                    {update.title}
                   </span>
-                  <span className="mt-2 flex gap-2 sm:hidden">
-                    <Button type="button" variant="ghost" size="compact" onClick={() => handleEditClick(update)}>
-                      Edit
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="compact"
-                      disabled={actionLoading === (update._id || update.id)}
-                      onClick={() => deleteUpdate(update._id || update.id)}
-                    >
-                      Delete
-                    </Button>
+                  <span
+                    className="mt-0.5 block truncate text-small text-text-2"
+                    title={update.description || update.content || "No description provided."}
+                  >
+                    {update.description || update.content || "No description provided."}
                   </span>
                 </span>
               ),
@@ -288,10 +279,13 @@ export default function UpdatesSection() {
               id: "link",
               header: "Link",
               meta: true,
+              width: 140,
+              fixed: true,
+              title: (update) => update.link || "None",
               cell: (update) =>
                 update.link ? (
-                  <a href={update.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-small font-semibold text-link">
-                    Visit link <ExternalLink size={14} aria-hidden />
+                  <a href={update.link} target="_blank" rel="noreferrer" title={update.link} className="inline-flex max-w-full items-center gap-1.5 text-small font-semibold text-link">
+                    <span className="truncate">Visit link</span> <ExternalLink size={14} aria-hidden />
                   </a>
                 ) : (
                   "None"
@@ -301,12 +295,16 @@ export default function UpdatesSection() {
               id: "visibility",
               header: "Visibility",
               meta: true,
+              width: 110,
+              fixed: true,
               cell: (update) =>
                 update.isVisible ? <Badge tone="success">Live</Badge> : <Badge tone="neutral">Draft</Badge>,
             },
             {
               id: "date",
               header: "Published",
+              width: 140,
+              fixed: true,
               cell: (update) => (
                 <span className="tabular-nums">
                   {update.createdAt
@@ -319,27 +317,36 @@ export default function UpdatesSection() {
               id: "actions",
               header: "Actions",
               label: "Actions",
+              actions: true,
               cell: (update) => (
-                <span className="flex items-center gap-2">
-                  <Button type="button" variant="ghost" size="icon" aria-label="Edit broadcast" onClick={() => handleEditClick(update)}>
-                    <Edit3 size={16} />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="icon"
-                    aria-label="Delete broadcast"
-                    disabled={actionLoading === (update._id || update.id)}
-                    onClick={() => deleteUpdate(update._id || update.id)}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                </span>
+                <RowActions
+                  label={`Actions for ${update.title}`}
+                  items={[
+                    {
+                      id: "edit",
+                      label: "Edit",
+                      icon: Edit3,
+                      onSelect: () => handleEditClick(update),
+                    },
+                    {
+                      id: "delete",
+                      label: "Delete",
+                      icon: Trash2,
+                      destructive: true,
+                      disabled: actionLoading === (update._id || update.id),
+                      confirm: {
+                        title: "Delete this broadcast?",
+                        body: "This removes the update from the student dashboard. This cannot be undone.",
+                        confirmLabel: "Delete",
+                      },
+                      onSelect: () => deleteUpdate(update._id || update.id),
+                    },
+                  ]}
+                />
               ),
             },
           ]}
         />
-      )}
 
       <AlertDialog
         open={showAddModal}

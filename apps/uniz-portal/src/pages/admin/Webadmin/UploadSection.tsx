@@ -225,7 +225,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
     <div className={cn(adminPageWrapClass, "pb-20")}>
       <PageHeader
         title={type === "grades" ? "Grades upload" : "Attendance upload"}
-        meta={`Synchronize institutional ${type} records with the core system.`}
+        meta={type === "grades" ? "Upload a grades spreadsheet." : "Upload an attendance spreadsheet."}
         action={
           <Button type="button" variant="outline" size="compact" onClick={downloadTemplate}>
             <FileDown size={14} />
@@ -235,7 +235,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
       />
 
       <Panel title="Filters">
-        <div className="mx-auto grid max-w-[640px] grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-4 min-[900px]:grid-cols-2">
           <div className="space-y-2">
             <label className={adminLabelClass}>Branch</label>
             <div className="relative group">
