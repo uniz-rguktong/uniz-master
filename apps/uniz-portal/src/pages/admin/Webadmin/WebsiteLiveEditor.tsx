@@ -793,6 +793,45 @@ export function WebsiteLiveEditor({
     if (sectionId === "home") {
       return (
         <div className="grid grid-cols-1 gap-6 min-[821px]:grid-cols-2">
+          <section className={cn(adminCardClass, "space-y-3 p-4")}>
+            <h3 className="text-sm font-semibold text-text">Hero</h3>
+            <LiveField
+              label="Eyebrow"
+              value={data.hero?.eyebrow ?? ""}
+              onChange={(v) => helpers.updateNestedData(["hero", "eyebrow"], v)}
+            />
+            <LiveField
+              label="Title"
+              value={data.hero?.title ?? ""}
+              onChange={(v) => helpers.updateNestedData(["hero", "title"], v)}
+              multiline
+            />
+            <LiveField
+              label="Subtitle"
+              value={data.hero?.subtitle ?? ""}
+              onChange={(v) => helpers.updateNestedData(["hero", "subtitle"], v)}
+              multiline
+            />
+          </section>
+          <section className={cn(adminCardClass, "space-y-3 p-4")}>
+            <h3 className="text-sm font-semibold text-text">Contact</h3>
+            <LiveField
+              label="Address"
+              value={data.contact?.address ?? ""}
+              onChange={(v) => helpers.updateNestedData(["contact", "address"], v)}
+              multiline
+            />
+            <LiveField
+              label="Phone"
+              value={data.contact?.phone ?? ""}
+              onChange={(v) => helpers.updateNestedData(["contact", "phone"], v)}
+            />
+            <LiveField
+              label="Email"
+              value={data.contact?.email ?? ""}
+              onChange={(v) => helpers.updateNestedData(["contact", "email"], v)}
+            />
+          </section>
           <AnnouncementsEditor
             items={Array.isArray(data.announcements) ? data.announcements : []}
             helpers={helpers}

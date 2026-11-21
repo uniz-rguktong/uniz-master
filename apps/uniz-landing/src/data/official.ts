@@ -41,6 +41,8 @@ export type OfficialDoc = {
   imageAlt?: string;
   paragraphs?: { heading?: string; text: string }[];
   links?: { label: string; href: string; external?: boolean }[];
+  /** Text links, the same weight as the rest of the page. */
+  plainLinks?: boolean;
 };
 
 export type CampusSlide = { src: string; alt: string };

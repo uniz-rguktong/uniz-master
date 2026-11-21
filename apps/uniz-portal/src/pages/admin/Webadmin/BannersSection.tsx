@@ -25,6 +25,7 @@ import {
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
 import { uploadImage } from "../../../api/uploadImage";
+import { WebsiteEditorLink } from "./WebsiteEditorLink";
 
 export default function BannersSection() {
   const [bannersState, setBannersState] = useRecoilState(bannersAtom);
@@ -242,6 +243,7 @@ export default function BannersSection() {
           </Button>
         }
       />
+      <WebsiteEditorLink />
 
       {/* Banners Grid */}
       {loading ? (

@@ -46,6 +46,7 @@ export const WEBADMIN_SCREEN_LABELS: Record<string, string> = {
   banners: "Home Banners",
   updates: "Campus Updates",
   website_updates: "Website Updates",
+  website_editor: "Website editor",
   push_alerts: "Push Alerts",
   faculty_mgmt: "Faculty Management",
   role_mgmt: "Roles",

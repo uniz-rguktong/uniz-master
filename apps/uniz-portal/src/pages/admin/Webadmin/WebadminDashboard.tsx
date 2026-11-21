@@ -11,6 +11,7 @@ import {
   Lock,
   BookOpen,
   Globe,
+  Monitor,
   CalendarClock,
   Database,
   CircleHelp,
@@ -31,6 +32,7 @@ import UploadSection from "./UploadSection";
 import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";
 import WebsiteUpdatesSection from "./WebsiteUpdatesSection";
+import WebsiteEditorSection from "./WebsiteEditorSection";
 import PushNotificationSection from "./PushNotificationSection";
 import StudentBulkSection from "./StudentBulkSection";
 import SystemLogsSection from "./SystemLogsSection";
@@ -86,13 +88,14 @@ export default function WebadminDashboard() {
         "banners",
         "updates",
         "website_updates",
+        ...(portalRole === "webadmin" ? ["website_editor"] : []),
         "push_alerts",
         "security",
         ...(canUseDatabase ? ["database"] : []),
         ...(canManageRoles ? ["role_mgmt"] : []),
         ...(showHelp ? ["help"] : []),
       ] as const),
-    [role, canUseDatabase, canManageRoles, showHelp],
+    [role, portalRole, canUseDatabase, canManageRoles, showHelp],
   );
 
   const { activeTab, setActiveTab } = useAdminSectionRoute(allowedTabs);
@@ -160,6 +163,9 @@ export default function WebadminDashboard() {
         { id: "banners", label: "Home Banners", icon: Layout },
         { id: "updates", label: "Campus Updates", icon: Bell },
         { id: "website_updates", label: "Website Updates", icon: Globe },
+        ...(portalRole === "webadmin"
+          ? [{ id: "website_editor", label: "Website editor", icon: Monitor }]
+          : []),
         { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
       ],
     },
@@ -229,6 +235,8 @@ export default function WebadminDashboard() {
         return <SecuritySection username={username} />;
       case "website_updates":
         return <WebsiteUpdatesSection />;
+      case "website_editor":
+        return <WebsiteEditorSection />;
       case "database":
         return <DatabaseSection />;
       case "role_mgmt":

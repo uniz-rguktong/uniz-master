@@ -35,6 +35,7 @@ import { Table } from "@/components/ui/table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { WebsiteEditorLink } from "./WebsiteEditorLink";
 
 export default function UpdatesSection() {
   const [updatesState, setUpdatesState] = useRecoilState(updatesAtom);
@@ -236,6 +237,7 @@ export default function UpdatesSection() {
           </>
         }
       />
+      <WebsiteEditorLink />
 
       {loading ? (
         <p className="text-body text-text-2">Loading broadcasts…</p>

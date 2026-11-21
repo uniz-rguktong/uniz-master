@@ -31,7 +31,7 @@ export default function App() {
           <Route path="departments/:deptCode" element={<DepartmentPage />} />
           <Route path="departments/:deptCode/faculty/:facultyIndex" element={<FacultyProfilePage />} />
           <Route path="notifications/:type" element={<NotificationsPage />} />
-          <Route path="nexus/:slug" element={<OfficialPage />} />
+          <Route path="uniz/:slug" element={<OfficialPage />} />
           <Route path="grievance/:slug" element={<OfficialPage />} />
           <Route path="information/:slug" element={<OfficialPage />} />
           <Route path="consultancy" element={<OfficialPage />} />

@@ -12,6 +12,7 @@ const SECTION_TO_PATH: Record<string, string> = {
   banners: "campus/banners",
   updates: "campus/updates",
   website_updates: "campus/website",
+  website_editor: "campus/editor",
   push_alerts: "campus/push-alerts",
   faculty_mgmt: "faculty",
   faculty: "faculty",

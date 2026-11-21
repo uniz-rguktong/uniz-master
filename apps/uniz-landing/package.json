@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint . && npm run lint:hex",
     "lint:hex": "node scripts/lint-hex.mjs",
+    "test": "node --experimental-strip-types --test test/*.test.ts",
     "preview": "vite preview"
   },
   "dependencies": {

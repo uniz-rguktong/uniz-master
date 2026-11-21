@@ -3,7 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from contextlib import asynccontextmanager
 from database import engine, Base
-from routers import home, institute, academics, departments, notifications, analytics
+from routers import home, institute, academics, departments, notifications, analytics, preview
+from home_migrate import ensure_home_copy_columns
+from content_defaults import DEFAULT_CONTACT, DEFAULT_HERO
+from sqlalchemy import select
+import models
+from database import AsyncSessionLocal
 
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
@@ -17,6 +22,8 @@ async def lifespan(app: FastAPI):
     print("Server starting up: Creating tables...")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    await ensure_home_copy_columns(engine)
+    await seed_missing_home_copy()
         
     # --- 2. APP IS RUNNING ---
     yield 
@@ -36,6 +43,8 @@ app.add_middleware(
         "https://www.rguktong.in",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -43,7 +52,26 @@ app.add_middleware(
 )
 
 # Include all the endpoints
+async def seed_missing_home_copy():
+    """Fill hero and contact only when those columns are still null."""
+    async with AsyncSessionLocal() as db:
+        result = await db.execute(select(models.HomePageData))
+        row = result.scalars().first()
+        if row is None:
+            return
+        changed = False
+        if row.hero is None:
+            row.hero = dict(DEFAULT_HERO)
+            changed = True
+        if row.contact is None:
+            row.contact = dict(DEFAULT_CONTACT)
+            changed = True
+        if changed:
+            await db.commit()
+
+
 app.include_router(home.router)
+app.include_router(preview.router)
 app.include_router(institute.router)
 app.include_router(academics.router)
 app.include_router(departments.router)

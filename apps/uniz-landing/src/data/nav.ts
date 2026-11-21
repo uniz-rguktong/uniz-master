@@ -51,15 +51,7 @@ export const PRIMARY_NAV: NavGroup[] = [
       { label: "Examination Cell", to: "/academics/examination-cell" },
     ],
   },
-  {
-    label: "Nexus",
-    children: [
-      { label: "Student Cell", to: "/nexus/student-cell" },
-      { label: "Placement Cell", to: "/nexus/placements" },
-      { label: "Alumni Cell", to: "/nexus/alumni" },
-      { label: "HHO", to: "/nexus/hho" },
-    ],
-  },
+  { label: "UniZ", to: "/uniz/student-cell" },
   { label: "Careers", to: "/notifications/careers" },
   {
     label: "Notifications",
@@ -90,6 +82,8 @@ export const PRIMARY_NAV: NavGroup[] = [
     label: "Information",
     children: [
       { label: "Contact Us", to: "/information/contact" },
+      { label: "Placements", to: "/information/placements" },
+      { label: "Alumni", to: "/information/alumni" },
       { label: "Info-Center", to: "/information/info-center" },
     ],
   },
@@ -104,9 +98,9 @@ export const QUICK_LINKS: NavLink[] = [
   { label: "Governing council", to: "/institute/govcouncil" },
   { label: "Departments", to: "/academics/departments" },
   { label: "Central library", to: "/departments/LIB" },
-  { label: "Student corner", to: "/nexus/student-cell" },
-  { label: "Placement cell", to: "/nexus/placements" },
-  { label: "Alumni cell", to: "/nexus/alumni" },
+  { label: "Student corner", to: "/uniz/student-cell" },
+  { label: "Placement cell", to: "/information/placements" },
+  { label: "Alumni cell", to: "/information/alumni" },
   { label: "Admissions", to: "/admissions" },
 ];
 

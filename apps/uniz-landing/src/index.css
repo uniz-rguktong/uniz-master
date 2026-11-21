@@ -365,3 +365,13 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+html[data-site-preview="1"] [data-edit] {
+  outline: 1px dashed transparent;
+  outline-offset: 4px;
+}
+
+html[data-site-preview="1"] [data-edit]:hover,
+html[data-site-preview="1"] [data-edit][data-active="true"] {
+  outline-color: var(--accent);
+}
