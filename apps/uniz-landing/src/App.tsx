@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import "./index.css";
 
 import { RootLayout } from "./components/layout/RootLayout";
@@ -31,11 +31,16 @@ export default function App() {
           <Route path="departments/:deptCode" element={<DepartmentPage />} />
           <Route path="departments/:deptCode/faculty/:facultyIndex" element={<FacultyProfilePage />} />
           <Route path="notifications/:type" element={<NotificationsPage />} />
-          <Route path="nexus/:slug" element={<OfficialPage />} />
+          <Route path="uniz/:slug" element={<OfficialPage />} />
           <Route path="grievance/:slug" element={<OfficialPage />} />
           <Route path="information/:slug" element={<OfficialPage />} />
           <Route path="consultancy" element={<OfficialPage />} />
           <Route path="admissions" element={<OfficialPage />} />
+          <Route path="nexus/student-cell" element={<Navigate to="/uniz/student-cell" replace />} />
+          <Route path="nexus/placements" element={<Navigate to="/information/placements" replace />} />
+          <Route path="nexus/alumni" element={<Navigate to="/information/alumni" replace />} />
+          <Route path="nexus/hho" element={<Navigate to="/" replace />} />
+          <Route path="nexus/*" element={<Navigate to="/uniz/student-cell" replace />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

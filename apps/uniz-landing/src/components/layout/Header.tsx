@@ -79,7 +79,7 @@ export function Header() {
             </button>
             <a
               href={PORTAL_URL}
-              className="focus-chrome inline-flex h-11 items-center whitespace-nowrap rounded-full bg-white px-3 text-[12px] font-semibold leading-5 text-navy-900 min-[640px]:h-[38px] min-[640px]:px-4 min-[640px]:text-[14px]"
+              className="focus-chrome inline-flex h-10 items-center whitespace-nowrap px-2 text-[13px] font-medium leading-5 text-chrome-link hover:text-white hover:underline min-[640px]:text-[14px]"
             >
               Student Portal
             </a>

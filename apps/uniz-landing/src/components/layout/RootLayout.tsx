@@ -4,9 +4,11 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { MobileAppModal } from "../MobileAppModal";
 import { CampusBoot } from "../CampusBoot";
+import { SiteContentProvider } from "../SiteContent";
 
 export function RootLayout() {
   return (
+    <SiteContentProvider>
     <div className="flex min-h-screen flex-col bg-bg text-text">
       <a href="#content" className="skip-link">
         Skip to content
@@ -20,5 +22,6 @@ export function RootLayout() {
       <Footer />
       <MobileAppModal />
     </div>
+    </SiteContentProvider>
   );
 }
