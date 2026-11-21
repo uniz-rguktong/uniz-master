@@ -804,8 +804,8 @@ deploy_logic() {
     bash "$(dirname "$0")/configure-cloudflare-portal-cdn.sh" || true
   fi
 
-  if [ -f "$(dirname "$0")/vps-storage-cleanup.sh" ]; then
-    bash "$(dirname "$0")/vps-storage-cleanup.sh" || true
+  if [ -f "$(dirname "$0")/../ops/vps-storage-cleanup.sh" ]; then
+    bash "$(dirname "$0")/../ops/vps-storage-cleanup.sh" || true
   fi
 
   if [ "$USE_GHCR" == "true" ] && [ -n "${PREV_SHA:-}" ] && [ -n "${NEW_HEAD:-}" ]; then

@@ -66,8 +66,8 @@ export default function RoleManagement() {
     setLoading(true);
     try {
       const [roleRes, adminRes] = await Promise.all([
-        fetch(`${BASE_URL}/admin/roles`, { headers }),
-        fetch(`${BASE_URL}/admin/getadmins`, { headers }),
+        fetch(`${BASE_URL}/profile/admin/roles`, { headers }),
+        fetch(`${BASE_URL}/profile/admin/getadmins`, { headers }),
       ]);
       const roleData = await roleRes.json();
       const adminData = await adminRes.json();
@@ -97,7 +97,7 @@ export default function RoleManagement() {
     if (!newAdmin.username || !newAdmin.password)
       return alert("All fields required");
     try {
-      const res = await fetch(`${BASE_URL}/admin/addadmin`, {
+      const res = await fetch(`${BASE_URL}/profile/admin/addadmin`, {
         method: "POST",
         headers,
         body: JSON.stringify(newAdmin),
@@ -118,10 +118,13 @@ export default function RoleManagement() {
   const deleteAdmin = async (username: string) => {
     if (!window.confirm(`Delete admin ${username}?`)) return;
     try {
-      const res = await fetch(`${BASE_URL}/admin/deleteadmin/${username}`, {
-        method: "DELETE",
-        headers,
-      });
+      const res = await fetch(
+        `${BASE_URL}/profile/admin/deleteadmin/${encodeURIComponent(username)}`,
+        {
+          method: "DELETE",
+          headers,
+        },
+      );
       const data = await res.json();
       alert(data.msg);
       if (data.success) fetchAll();
@@ -133,7 +136,7 @@ export default function RoleManagement() {
 
   const assignRole = async (username: string, role: Role) => {
     try {
-      const res = await fetch(`${BASE_URL}/admin/assign-role`, {
+      const res = await fetch(`${BASE_URL}/profile/admin/assign-role`, {
         method: "PUT",
         headers,
         body: JSON.stringify({ username, role }),
@@ -151,7 +154,7 @@ export default function RoleManagement() {
     if (!selectedRole) return;
     try {
       const res = await fetch(
-        `${BASE_URL}/admin/roles/${selectedRole}/permissions`,
+        `${BASE_URL}/profile/admin/roles/${selectedRole}/permissions`,
         {
           method: "PUT",
           headers,
@@ -172,7 +175,7 @@ export default function RoleManagement() {
     if (!query.trim()) return setFiltered(admins);
     try {
       const res = await fetch(
-        `${BASE_URL}/admin/searchadmin?q=${encodeURIComponent(query)}`,
+        `${BASE_URL}/profile/admin/searchadmin?q=${encodeURIComponent(query)}`,
         { headers },
       );
       const data = await res.json();

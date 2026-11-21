@@ -32,6 +32,15 @@ import {
   bulkStudentCohortAction,
   resolveLoginByEmail,
 } from "../controllers/profile.controller";
+import {
+  addAdmin,
+  assignAdminRole,
+  deleteAdmin,
+  getAdminRoles,
+  getAdmins,
+  searchAdmins,
+  updateAdminRolePermissions,
+} from "../controllers/admin-directory.controller";
 
 import multer from "multer";
 
@@ -328,5 +337,18 @@ router.post("/student/status", authMiddleware, updateStudentPresence); // Suppor
 
 router.get("/admin/me", authMiddleware, getAdminProfile);
 router.get("/admin/batches", authMiddleware, getAvailableBatches);
+
+// Role management. Gateway already proxies /api/v1/profile/* here.
+router.get("/admin/roles", authMiddleware, getAdminRoles);
+router.put(
+  "/admin/roles/:role/permissions",
+  authMiddleware,
+  updateAdminRolePermissions,
+);
+router.get("/admin/getadmins", authMiddleware, getAdmins);
+router.get("/admin/searchadmin", authMiddleware, searchAdmins);
+router.post("/admin/addadmin", authMiddleware, addAdmin);
+router.delete("/admin/deleteadmin/:username", authMiddleware, deleteAdmin);
+router.put("/admin/assign-role", authMiddleware, assignAdminRole);
 
 export default router;
