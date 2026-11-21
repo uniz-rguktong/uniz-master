@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Portal surfaces. Colours come from the U2 semantic tokens in index.css,
- * so `.dark` on `<html>` flips them. Radii: sm 8, md 12, lg 16, xl 24, full.
+ * Portal surfaces. Colours come from the light U2 semantic tokens in index.css.
+ * Radii: sm 8, md 12, lg 16, xl 24, full.
  */
 
 export const portalPageClass =

@@ -1,9 +1,10 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 // WebSocket side channel not deployed — polling handles refresh today.
 // import { useWebSocket } from "./hooks/useWebSocket";
 import { useAdminDesktopViewport } from "./hooks/useAdminDesktopViewport";
 import { useLocation } from "react-router-dom";
-import { usePortalTheme } from "./hooks/usePortalTheme";
+import { forceLightTheme } from "./lib/forceLightTheme";
+import { hasPortalSession } from "./utils/portalSession";
 
 const Navbar = React.lazy(() => import("./components/Navbar"));
 
@@ -13,11 +14,18 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const location = useLocation();
-  usePortalTheme();
+
+  useEffect(() => {
+    forceLightTheme();
+  }, []);
 
   useAdminDesktopViewport();
 
+  const developersIsPublic =
+    location.pathname === "/developers" && !hasPortalSession();
+
   const shouldHideNavbar =
+    developersIsPublic ||
     location.pathname.startsWith("/student") ||
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/faculty") ||

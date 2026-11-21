@@ -24,7 +24,7 @@ export function PageHeader({
       )}
     >
       <div className="min-w-0">
-        <h1 className="font-serif text-[26px] font-normal leading-[34px] tracking-[-0.01em] text-head min-[821px]:text-[32px] min-[821px]:leading-10">
+        <h1 className="break-words font-serif text-[26px] font-normal leading-[34px] tracking-[-0.01em] text-head min-[821px]:text-[32px] min-[821px]:leading-10">
           {title}
         </h1>
         {meta ? <p className="mt-2 text-body leading-6 text-text-2">{meta}</p> : null}

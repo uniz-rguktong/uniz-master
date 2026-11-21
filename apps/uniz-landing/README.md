@@ -45,7 +45,7 @@ export default defineConfig([
 
 ## UniZ landing
 
-The public site uses the U2 tokens in `src/index.css`. Theme follows the system preference and can be switched from the header (desktop) or the menu (narrow screens). The choice is stored as `uniz-landing-theme` (`light`, `dark`, or `system`).
+The public site uses the light U2 tokens in `src/index.css`. There is no theme toggle; a stored `uniz-landing-theme` value is ignored.
 
 `VITE_SHOW_OUTPASS` is optional and unset by default. Set it to `"true"` only when the portal outpass flow is enabled. That build inserts “outpasses,” in the home lede, shows an Outpass service, and drops Notices from the service index. The default build has no Outpass tile.
 

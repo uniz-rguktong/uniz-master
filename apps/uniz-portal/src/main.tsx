@@ -6,8 +6,10 @@ import { RecoilRoot } from "recoil";
 import { BrowserRouter } from "react-router-dom";
 import { initializeGlobalInterceptor } from "./api/networkInterceptor.ts";
 import { prefetchTurnstile } from "./utils/prefetchTurnstile.ts";
+import { forceLightTheme } from "./lib/forceLightTheme.ts";
 
 initializeGlobalInterceptor();
+forceLightTheme();
 // Start Turnstile download on first paint so login is not blocked waiting for the script.
 prefetchTurnstile();
 

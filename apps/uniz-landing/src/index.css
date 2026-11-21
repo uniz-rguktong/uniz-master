@@ -18,7 +18,7 @@
 }
 
 /*
- * U2 tokens. Raw scales stay on :root. Semantic colours flip under .dark.
+ * U2 tokens. Raw scales and semantic colours stay on :root (light only).
  * Hex lives only in this file.
  */
 :root {
@@ -96,51 +96,6 @@
   --elevation-lg: 0 16px 40px -8px rgb(10 10 11 / .18);
 
   color-scheme: light;
-}
-
-.dark {
-  --bg: #070B14;
-  --surface: #0D1322;
-  --surface-2: #131A2C;
-  --border: #1F2840;
-  --border-strong: #2C3756;
-  --text: #F5F7FA;
-  --text-2: #B4BBC8;
-  --text-3: #8A93A5;
-  --primary: #FFFFFF;
-  --on-primary: #0B1B3A;
-  --primary-hover: #E6EBF5;
-  --primary-active: #C9D3EA;
-  --link: #8FA8DC;
-  --selected: #131A2C;
-  --ring: #8FA8DC;
-  --ring-soft: rgb(143 168 220 / .25);
-  --overlay: rgb(0 0 0 / .65);
-  --error: #F97066;
-  --on-error: #0A0A0B;
-  --success: #47CD89;
-  --warning: #FDB022;
-  --input-focus: #8FA8DC;
-
-  --panel: #0D1322;
-  --tile: #131A2C;
-  --head: #F5F7FA;
-  --tint-2: #131A2C;
-  --accent: #8FA8DC;
-
-  --ill-far: #131A2C;
-  --ill-ground: #0A0F1C;
-  --ill-cloud: #131A2C;
-  --ill-cloud-o: 1;
-  --ill-win-o: .5;
-
-  --sb-border: #1F2840;
-
-  --elevation-sm: none;
-  --elevation-md: none;
-  --elevation-lg: none;
-
-  color-scheme: dark;
 }
 
 @theme {

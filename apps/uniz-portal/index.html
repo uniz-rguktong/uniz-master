@@ -21,12 +21,16 @@
     />
     <link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin />
     <link rel="dns-prefetch" href="https://challenges.cloudflare.com" />
-    <link
-      rel="preload"
-      href="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-      as="script"
-      crossorigin
-    />
+    <script>
+      window.onloadTurnstileCallback = window.onloadTurnstileCallback || function () {};
+    </script>
+    <script
+      id="cf-turnstile-script"
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit"
+      async
+      defer
+      crossorigin="anonymous"
+    ></script>
     <meta name="robots" content="index, follow" />
     <meta
       name="description"
@@ -63,13 +67,10 @@
 
     <script>
       (function () {
+        document.documentElement.classList.remove("dark");
+        document.documentElement.style.colorScheme = "light";
         try {
-          var pref = localStorage.getItem("uniz-theme");
-          var dark =
-            pref === "dark" ||
-            (pref !== "light" &&
-              window.matchMedia("(prefers-color-scheme: dark)").matches);
-          if (dark) document.documentElement.classList.add("dark");
+          localStorage.removeItem("uniz-theme");
         } catch (e) {}
       })();
     </script>

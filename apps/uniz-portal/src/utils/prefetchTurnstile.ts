@@ -1,8 +1,10 @@
 /** Early-load Cloudflare Turnstile so the login widget is ready sooner. */
 
 const SCRIPT_ID = "cf-turnstile-script";
+// Same URL the Turnstile React widget injects, including its onload name.
+// A different query string makes the browser download the API twice.
 const SCRIPT_SRC =
-  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+  "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit";
 
 export function prefetchTurnstile(): void {
   if (typeof document === "undefined") return;

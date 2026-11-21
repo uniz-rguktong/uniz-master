@@ -5,7 +5,7 @@
  * Public pages: import from landing-ui
  * Admin: import from admin-ui (extends portal-ui)
  *
- * Appearance (light / dark / system) lives in hooks/usePortalTheme.
+ * The portal is light only. forceLightTheme() strips a stored dark preference.
  */
 
 export * from "@/lib/portal-ui";

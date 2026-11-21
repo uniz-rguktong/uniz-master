@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { Lockup } from "@/components/brand/Mark";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface LoginScreenProps {
   isLogin?: boolean;
@@ -55,9 +54,6 @@ export default function LoginScreen({
       </aside>
 
       <div className="relative flex flex-1 flex-col">
-        <div className="absolute right-4 top-4 min-[821px]:right-8 min-[821px]:top-6">
-          <ThemeToggle />
-        </div>
         <div className="flex flex-1 items-center justify-center px-5 py-10 min-[821px]:px-10">
           <div className="w-full max-w-[400px]">
             {onBack ? (
