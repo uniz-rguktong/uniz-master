@@ -5,6 +5,7 @@ import type { DepartmentData, FacultyMember, DeptCode } from "../types/api";
 import { Mail, Phone, Users } from "lucide-react";
 import { PersonPhoto } from "../components/common/PersonPhoto";
 import { initials } from "../lib/initials";
+import { splitFacultyName } from "../lib/facultyName";
 import { usePageTitle } from "../lib/usePageTitle";
 import { PageHero } from "../components/layout/PageHero";
 import { Wrap } from "../components/layout/Wrap";
@@ -73,6 +74,7 @@ function FacultyCard({ faculty, href }: { faculty: FacultyMember; href: string }
   const specialization = bioStr(bio, "Specialization");
   const phone = bioStr(bio, "Phone") || bioStr(bio, "Mobile") || bioStr(bio, "Contact");
   const hasFullProfile = allBioEntries(bio).length > 0;
+  const { name, qualification } = splitFacultyName(faculty.name);
 
   return (
     <article className="flex min-w-0 gap-4 border-t border-border py-6">
@@ -82,8 +84,13 @@ function FacultyCard({ faculty, href }: { faculty: FacultyMember; href: string }
       {/* ── Info ── */}
       <div className="min-w-0 flex-1">
         <h3 className="break-words text-[17px] font-semibold leading-6 text-head">
-          {faculty.name}
+          {name}
         </h3>
+        {qualification && (
+          <p className="mt-0.5 break-words text-[14px] leading-5 text-text-2">
+            {qualification}
+          </p>
+        )}
         <p className="mt-1 text-[14px] leading-5 text-text-2">
           {designation}
         </p>

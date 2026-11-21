@@ -5,6 +5,7 @@ import type { FacultyMember, DeptCode } from "../types/api";
 import { ArrowLeft } from "lucide-react";
 import { PersonPhoto } from "../components/common/PersonPhoto";
 import { initials } from "../lib/initials";
+import { splitFacultyName } from "../lib/facultyName";
 import { usePageTitle } from "../lib/usePageTitle";
 import { CampusBoot } from "../components/CampusBoot";
 import { Wrap } from "../components/layout/Wrap";
@@ -64,8 +65,9 @@ export function FacultyProfilePage() {
 
   const code = deptCode?.toUpperCase() ?? "";
   const deptName = DEPT_NAMES[code] ?? code;
+  const { name, qualification } = splitFacultyName(faculty?.name ?? "");
   usePageTitle(
-    faculty ? `${faculty.name} · ${deptName}` : `${deptName} · RGUKT Ongole`,
+    faculty ? `${name} · ${deptName}` : `${deptName} · RGUKT Ongole`,
   );
 
   useEffect(() => {
@@ -132,8 +134,11 @@ export function FacultyProfilePage() {
           <div className="min-w-0">
             <p className="text-[15px] leading-6 text-text-2">RGUKT Ongole · {code}</p>
             <h1 className="u-page mt-2 text-head">
-              {faculty.name}
+              {name}
             </h1>
+            {qualification && (
+              <p className="mt-2 text-[15px] leading-6 text-text-2">{qualification}</p>
+            )}
             {role && (
               <p className="mt-3 text-[17px] leading-[26px] text-text-2">{role}</p>
             )}
