@@ -17,6 +17,7 @@
     { "id": "website", "title": "Public website" },
     { "id": "messages", "title": "Messages to students" },
     { "id": "staff", "title": "Staff" },
+    { "id": "roles", "title": "Roles" },
     { "id": "database", "title": "Database" },
     { "id": "account", "title": "Your login" }
   ],
@@ -83,7 +84,7 @@
       "summary": "The dark menu on the left is how you move.",
       "steps": [
         "After you sign in, you are on Overview.",
-        "The left menu has these words: Overview, Student Details, Student Bulk Ops, Attendance Upload, Grades Upload, Manage Subjects, Semester Registration, Home Banners, Campus Updates, Website Updates, Push Alerts, Faculty Management, System & Logs, Database, Security, and Help.",
+        "The left menu has these words: Overview, Student Details, Student Bulk Ops, Attendance Upload, Grades Upload, Manage Subjects, Semester Registration, Home Banners, Campus Updates, Website Updates, Push Alerts, Faculty Management, System & Logs, Roles, Database, Security, and Help.",
         "Press the name of the job you want. The page on the right changes.",
         "On a phone, press the menu icon at the top left. Then press the name.",
         "If the menu is only icons, press **Expand** at the bottom of the dark menu.",
@@ -92,7 +93,7 @@
         "Press **Help** in the left menu to search every guide."
       ],
       "wrong": [
-        "If you do not see Database, you are not signed in as the webmaster. Sign out and sign in with the webmaster staff ID.",
+        "If you do not see Database or Roles, you are not signed in as the webmaster. Sign out and sign in with the webmaster staff ID.",
         "If a name is missing, press **Expand** so the menu is wide enough to read."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
@@ -345,22 +346,29 @@
       "title": "Add many students from a file",
       "group": "students",
       "screens": ["student_bulk", "student"],
-      "summary": "Upload a spreadsheet of new students.",
+      "summary": "Upload a spreadsheet of new students. Year and branch are columns in the file. There is no Year, Semester, or Branch button on this page.",
       "steps": [
         "Press **Student Bulk Ops**.",
         "Press the tab **Bulk upload**.",
         "Press **Download template**.",
-        "Open the file. The columns are Student ID, Name, Email, Branch, Year, Section, and Batch.",
-        "Fill one row per student. Do not rename the columns.",
-        "Save the file as Excel or CSV.",
+        "Open the file. Do not type year, semester, or branch anywhere except inside this file.",
+        "Leave the top row as it is. The columns are Student ID, Name, Email, Gender, Branch, Year, Section, Batch, Room No, Is In Campus, and Phone.",
+        "Delete the sample row, or replace it. The sample branch says N/A. That row will be rejected.",
+        "Student ID is the letter S or O, then 6 digits. An example is S240001.",
+        "Branch must be one of CSE, ECE, EEE, MECH, CIVIL, CHEM, MME, or AI/ML. Do not type N/A.",
+        "Year must be E1, E2, E3, or E4. There is no semester column.",
+        "Fill Name, Email, and Section on every row. One row is one student.",
+        "Save the file.",
         "Back on the page, press the box that says Click to select.",
         "Choose your file.",
         "Press **Start uploading**.",
-        "Wait until the page says the upload finished. Do not close the tab while it says Processing."
+        "If the button says Processing, wait. Do not close the tab."
       ],
       "wrong": [
-        "If the upload fails, download a fresh template and copy your rows into it. A renamed column is the usual problem.",
-        "Branch may be N/A until the office assigns a department. That is allowed.",
+        "If a message lists a missing column or a bad row, fix the file and upload it again. No students are added from a rejected file.",
+        "Do not rename the top row. If you are unsure, press **Download template** again and copy your rows into that file.",
+        "The short list on the page is not the full file. Trust the downloaded template.",
+        "If the page title is Add Students, you are on the other upload page. It also has no Year, Semester, or Branch button. Press **Template**, press the box that says Click to upload spreadsheet, then press **Confirm & Upload**. Press **Back** to leave.",
         "From Student Details you can also press **Cohort Actions**. That opens the group tools, not the upload."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
@@ -884,24 +892,27 @@
       "title": "Change a student-portal banner",
       "group": "messages",
       "screens": ["banners"],
-      "summary": "Spotlight cards for the student portal. This is not the public website.",
+      "summary": "Spotlight cards for the student portal. Show and Hide change whether students can see a card. This is not the public website.",
       "steps": [
         "Press **Home Banners**.",
         "Press **New banner**. If the page is empty, the button may say **Add first banner**.",
         "Type Banner Title.",
         "Type Body Content.",
-        "Add a picture in Banner Image if you have one.",
-        "Press **Launch banner** for a new one.",
+        "Add a picture in Banner Image. Press **Upload file**, or paste an image address.",
+        "Press **Launch banner** for a new one. A new banner starts as Active, so students can see it.",
         "Press **Update banner** if you are editing.",
         "Press **Cancel** to close without saving.",
-        "A card marked Active is allowed to show. A card marked Hidden is not.",
-        "Press **Hide** to hide an active banner. Press **Show** to bring a hidden one back.",
-        "Press **Edit** to change the words.",
-        "Press **Delete** to remove it. The browser asks if you want to delete this banner permanently. Press **OK** only if you mean it."
+        "A card marked Active is showing. A card marked Hidden is not.",
+        "Press **Hide** to stop showing an active banner. The card stays in the list and the mark changes to Hidden.",
+        "Press **Show** to show a hidden banner again.",
+        "Press **Edit** to change the words or the picture.",
+        "Press **Delete** only when you want the card gone. The browser asks if you want to delete this banner permanently. Press **OK** only if you mean it."
       ],
       "wrong": [
         "These banners are not the home announcements on rguktong.ac.in. Use Website Updates for those.",
-        "If students do not see a banner, check that the card says Active, not Hidden."
+        "If students do not see a banner, check that the card says Active, not Hidden. Then press **Show**.",
+        "**Hide** does not delete the banner. **Delete** does.",
+        "If the buttons say **Publish** and **Unpublish**, and the mark says Published or Draft, that is the other banner page. **Publish** means show. **Unpublish** means hide. Press **Back** and use **Home Banners** in the left menu."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
     },
@@ -982,6 +993,7 @@
       ],
       "wrong": [
         "This login is not the public department card. To show them on the website, also use Dept Staff under Website Updates.",
+        "Roles in the left menu is a different list. It is only for webmaster, dean, and director. A teacher belongs here, in Faculty Management.",
         "If the email is rejected, it may already exist. Search the registry first.",
         "The refresh icon tip says **Refresh**."
       ],
@@ -1033,7 +1045,8 @@
       ],
       "wrong": [
         "Delete does not remove their public website card. Remove that under Dept Staff if the page should change too.",
-        "Do not delete your own webmaster row."
+        "Do not delete your own webmaster row.",
+        "Do not use Roles to remove a teacher. Roles can remove only a webmaster, a dean, or a director."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
     },
@@ -1058,6 +1071,124 @@
       "wrong": [
         "If the preview is empty, the file needs a header row. Use the template.",
         "A failed row does not always stop the whole file. Read the result before you upload the same file again."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "see-roles",
+      "title": "See who is a dean, director, or webmaster",
+      "group": "roles",
+      "screens": ["role_mgmt"],
+      "summary": "The Roles page lists only those three kinds of account. Teachers are on Faculty Management.",
+      "steps": [
+        "Press **Roles**.",
+        "The title is Role Management.",
+        "Stay on the tab **Admins Overview**.",
+        "The list shows Admin User and Assigned Role.",
+        "The role is one of webadmin, dean, or director.",
+        "To find one person, type in the box that says Find admin by username.",
+        "The line on the right says how many people match.",
+        "Press **Back to Dashboard** when you want Overview again."
+      ],
+      "wrong": [
+        "If the list is empty, clear the search box. An empty search shows everyone on this page.",
+        "A teacher, warden, or other staff login is not here. Look in Faculty Management.",
+        "If you do not see **Roles** in the left menu, you are not signed in as the webmaster."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "add-role-account",
+      "title": "Add a dean, director, or webmaster",
+      "group": "roles",
+      "screens": ["role_mgmt"],
+      "summary": "Create a login that is only a webmaster, a dean, or a director.",
+      "steps": [
+        "Press **Roles**.",
+        "Press the tab **Add New Admin**.",
+        "The heading is Create New Admin.",
+        "Type Username. Use letters and numbers. A dot, a dash, or an underscore is allowed. At least 3 characters.",
+        "Type Password. It needs at least 6 characters. Tell the person in person or on a call. Do not put the password in a notice.",
+        "Set Initial Role. The choices are webadmin, dean, and director.",
+        "Pick webadmin only when this person should have your full access.",
+        "Press **Create Admin Account**.",
+        "A message box appears. If it says Admin added, press **OK**.",
+        "The page returns to Admins Overview. Look for the new name."
+      ],
+      "wrong": [
+        "If the message says All fields required, fill Username, Password, and Initial Role, then press **Create Admin Account** again.",
+        "If the message says Admin already exists, that username is taken. Pick another, or change the existing person instead.",
+        "If the message says Access denied, sign out and sign in as the webmaster. Only the webmaster can add these accounts.",
+        "This page does not add a teacher. Use Faculty Management for that."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "change-role",
+      "title": "Change a dean, director, or webmaster role",
+      "group": "roles",
+      "screens": ["role_mgmt"],
+      "summary": "Move one of these accounts between webadmin, dean, and director.",
+      "steps": [
+        "Press **Roles**.",
+        "Stay on **Admins Overview**.",
+        "Find the person. Use the search box if the list is long.",
+        "Open the box under Assigned Role.",
+        "Pick webadmin, dean, or director.",
+        "The change saves as soon as you pick. A message box says Role updated. Press **OK**.",
+        "Look at the row again and check the role you picked."
+      ],
+      "wrong": [
+        "This does not change a teacher's job. A teacher is changed under Faculty Management, in System Privileges.",
+        "Picking webadmin gives that person your full access, including the database. Do that only when the office asks.",
+        "If the message says Access denied, only the webmaster can change these roles.",
+        "If the message says Admin not found, search again. The name must match the row."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "remove-role-account",
+      "title": "Remove a dean, director, or webmaster",
+      "group": "roles",
+      "screens": ["role_mgmt"],
+      "summary": "Delete removes only a webmaster, dean, or director account. It does not remove teachers.",
+      "steps": [
+        "Press **Roles**.",
+        "Stay on **Admins Overview**.",
+        "Find the person.",
+        "Press the trash icon on that row. Its tip says **Delete Admin**.",
+        "The browser asks Delete admin and then the username. Press **OK** only if you mean it.",
+        "A message box says Admin removed. Press **OK**.",
+        "The name leaves the list."
+      ],
+      "wrong": [
+        "You cannot remove your own account. The message says You cannot remove your own account. Press **OK** and stop.",
+        "If the message says Only directory roles can be removed here, this person is not a webmaster, dean, or director. Remove a teacher from Faculty Management.",
+        "Press **Cancel** on the question if you picked the wrong name. Nothing is deleted.",
+        "Deleting here does not remove a public website card. That is under Website Updates."
+      ],
+      "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
+    },
+    {
+      "id": "change-role-permissions",
+      "title": "Change what a role is allowed to do",
+      "group": "roles",
+      "screens": ["role_mgmt"],
+      "summary": "Tick what webadmin, dean, or director may do. Only the webmaster can save this.",
+      "steps": [
+        "Press **Roles**.",
+        "Press the tab **Permission Sets**.",
+        "Under Select Role, press webadmin, dean, or director.",
+        "The heading shows that role and the word Permissions.",
+        "Press a line to tick it or clear it. The lines are Manage Banners, Send Notifications, Assign Roles, Manage Users, Manage Curriculum, and View Reports.",
+        "Press **Save Changes**.",
+        "A message box says Permissions updated. Press **OK**."
+      ],
+      "wrong": [
+        "If you have not pressed a role, the page says No Role Selected. Press webadmin, dean, or director first.",
+        "If the message says Access denied, you are not signed in as the webmaster.",
+        "These ticks do not add or remove a person. Use Add New Admin or Admins Overview for that.",
+        "Do not clear every tick on webadmin unless the office has asked. You can lock yourself out of a job."
       ],
       "call": "Call the Director's office on 08592-223133. If there is no answer, call the Administrative Officer on 08592-223121."
     },

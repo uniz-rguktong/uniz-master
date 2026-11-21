@@ -32,6 +32,7 @@ const screenIds = [
   "website_updates",
   "push_alerts",
   "faculty_mgmt",
+  "role_mgmt",
   "system_logs",
   "database",
   "security",

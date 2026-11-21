@@ -48,6 +48,7 @@ export const WEBMASTER_SCREEN_LABELS: Record<string, string> = {
   website_updates: "Website Updates",
   push_alerts: "Push Alerts",
   faculty_mgmt: "Faculty Management",
+  role_mgmt: "Roles",
   system_logs: "System & Logs",
   database: "Database",
   security: "Security",
