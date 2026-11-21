@@ -45,7 +45,7 @@ export default function LoginScreen({
           <h2 className="max-w-[16ch] font-serif text-[36px] font-normal leading-[46px] tracking-[-0.01em] text-white">
             {statements[role]}
           </h2>
-          <p className="mt-4 max-w-[28ch] text-[17px] leading-[26px] text-[#C9D3EA]">
+          <p className="mt-4 max-w-[28ch] text-[17px] leading-[26px] text-navy-300">
             Results, attendance, registration and notices.
           </p>
         </div>

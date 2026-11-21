@@ -306,7 +306,7 @@ function StatsEditor({
                 onChange={(e) =>
                   helpers.updateNestedData(["stats", idx.toString(), "value"], e.target.value)
                 }
-                className="w-full bg-transparent border-none outline-none focus:ring-0 p-0"
+                className="w-full bg-transparent border-none p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 placeholder="0"
               />
             </p>
@@ -316,7 +316,7 @@ function StatsEditor({
               onChange={(e) =>
                 helpers.updateNestedData(["stats", idx.toString(), "label"], e.target.value)
               }
-              className="w-full text-xs text-text-2 bg-transparent border-none outline-none"
+              className="w-full text-caption text-text-2 bg-transparent border-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               placeholder="Stat label"
             />
           </div>

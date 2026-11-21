@@ -411,7 +411,7 @@ function ProfileSection({
               <input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-ring/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
               />
             ) : (
               <p className="font-semibold text-text text-base">
@@ -431,7 +431,7 @@ function ProfileSection({
                 onChange={(e) =>
                   setForm({ ...form, designation: e.target.value })
                 }
-                className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-ring/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
               />
             ) : (
               <p className="font-semibold text-text text-base">
@@ -451,7 +451,7 @@ function ProfileSection({
                 value={form.contact}
                 onChange={(e) => setForm({ ...form, contact: e.target.value })}
                 placeholder="Your phone number"
-                className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-ring/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
               />
             ) : (
               <p className="font-semibold text-text text-base">
@@ -473,7 +473,7 @@ function ProfileSection({
                   setForm({ ...form, profileUrl: e.target.value })
                 }
                 placeholder="https://example.com/photo.jpg"
-                className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-ring/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
               />
             ) : (
               <p className="font-semibold text-text text-base truncate">
@@ -524,7 +524,7 @@ function ProfileSection({
                     }}
                     placeholder={`Enter ${key} (one per line)`}
                     rows={4}
-                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-xl font-medium text-text outline-none focus:ring-2 focus:ring-ring/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150 text-sm leading-relaxed"
+                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-xl font-medium text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150 text-sm leading-relaxed"
                   />
                 ) : values.length > 0 ? (
                   <ul className="space-y-2">
@@ -1018,14 +1018,14 @@ function PasswordSection() {
                     placeholder="Current password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-ring/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
                   />
                   <input
                     type="password"
                     placeholder="New password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-ring/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
                   />
                   {newPassword && (
                     <div className="flex items-center gap-3">
@@ -1082,7 +1082,7 @@ function PasswordSection() {
                   placeholder="• • • • • •"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                  className="w-full px-4 py-4 bg-surface-2 border border-border rounded-lg font-semibold text-2xl text-center text-navy-900 outline-none focus:ring-2 focus:ring-ring/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                  className="w-full px-4 py-4 bg-surface-2 border border-border rounded-lg font-semibold text-2xl text-center text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
                 />
               </div>
               <div className="flex gap-3 pt-2">
@@ -1132,7 +1132,7 @@ function PasswordSection() {
                     placeholder="Enter new password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-ring/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
                   />
                   {newPassword && (
                     <div className="flex items-center gap-3 mt-2">
@@ -1166,7 +1166,7 @@ function PasswordSection() {
                     placeholder="Re-enter new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 outline-none focus:ring-2 focus:ring-ring/10 focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
+                    className="w-full px-4 py-3 bg-surface-2 border border-border rounded-lg font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-navy-700 transition-[border-color,box-shadow] duration-150"
                   />
                   {confirmPassword && (
                     <p

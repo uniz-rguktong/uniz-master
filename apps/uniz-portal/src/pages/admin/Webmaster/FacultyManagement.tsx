@@ -658,7 +658,7 @@ export default function FacultyManagement({
                     value={csvText}
                     onChange={(e) => setCsvText(e.target.value)}
                     rows={8}
-                    className="w-full px-4 py-3 bg-surface border border-border rounded-xl font-mono text-caption text-text outline-none focus:ring-2 focus:ring-ring/5 focus:border-border-strong transition-[color,background-color,border-color,opacity,transform,box-shadow] resize-none"
+                    className="w-full px-4 py-3 bg-surface border border-border rounded-xl font-mono text-caption text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus:border-border-strong transition-[color,background-color,border-color,opacity,transform,box-shadow] resize-none"
                     placeholder={`username,name,email,department,designation,role\nktejokiran,K Tejo Kiran,ktejokiran@rguktong.ac.in,CSE,Lecturer,teacher`}
                   />
                 </div>
