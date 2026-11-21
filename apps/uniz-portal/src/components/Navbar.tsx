@@ -1,10 +1,13 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import { is_authenticated, student } from "../store";
 import { useStudentData } from "../hooks/student_info";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LogOut, User as UserIcon } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { prefetchTurnstile } from "../utils/prefetchTurnstile";
+import { Lockup } from "@/components/brand/Mark";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Avatar } from "@/components/ui/avatar";
 
 function formatNavDisplayName(name?: string | null): string {
   if (!name?.trim()) {
@@ -43,74 +46,52 @@ export default function Navbar() {
   return (
     <header
       className={cn(
-        "fixed z-[100]",
-        isHome
-          ? "top-3 inset-x-0 flex justify-center px-4"
-          : "top-0 inset-x-0 border-b border-navy-200 bg-white",
+        "fixed inset-x-0 top-0 z-[100] flex h-16 items-center border-b border-[var(--sb-border)] bg-navy-900 px-4 text-white min-[821px]:px-10",
+        isHome && "max-[820px]:h-[60px]",
       )}
     >
-      <div
-        className={cn(
-          "flex items-center justify-between",
-          isHome
-            ? "h-12 w-full max-w-3xl rounded-2xl border border-navy-200/80 bg-white/80 px-4 shadow-[0_8px_24px_rgba(11,42,71,0.06)] backdrop-blur-md sm:px-5"
-            : "mx-auto h-14 w-full max-w-7xl px-6",
-        )}
-      >
-        <Link
-          to="/"
-          className="uniz-logo-wordmark text-2xl text-navy-900 transition-opacity duration-300 hover:opacity-80"
-        >
-          uniZ.
-        </Link>
-
-        <div className="flex items-center gap-1">
-          {!isAuthenticated ? (
+      <button type="button" onClick={() => navigate("/")} className="text-white" aria-label="UniZ home">
+        <Lockup mark={32} word={20} tone="chrome" className="max-[820px]:[&_span]:sr-only" />
+      </button>
+      <div className="ml-auto flex items-center gap-2">
+        <ThemeToggle tone="chrome" />
+        {!isAuthenticated ? (
+          <button
+            type="button"
+            onMouseEnter={prefetchTurnstile}
+            onFocus={prefetchTurnstile}
+            onClick={() => navigate("/student/signin")}
+            className="inline-flex h-[38px] items-center rounded-full bg-white px-5 text-dense font-semibold text-navy-900 transition-colors duration-150 hover:bg-navy-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            Sign in
+          </button>
+        ) : (
+          <>
             <button
               type="button"
-              onMouseEnter={prefetchTurnstile}
-              onFocus={prefetchTurnstile}
-              onClick={() => navigate("/student/signin")}
-              className="rounded-lg bg-navy-900 px-4 py-2 text-sm font-semibold text-white transition-[color,background-color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-navy-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-900 active:scale-[0.98]"
+              onClick={() => navigate("/student")}
+              className="flex items-center gap-2 rounded-full py-1 pl-1 pr-3 text-white hover:bg-white/10"
             >
-              Get started
+              <Avatar
+                size={32}
+                src={user?.profile_url}
+                alt={user?.name ? `${user.name} profile photo` : "Profile photo"}
+                name={formatNavDisplayName(user?.name)}
+              />
+              <span className="hidden text-dense font-medium sm:inline">
+                {formatNavDisplayName(user?.name)}
+              </span>
             </button>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={() => navigate("/student")}
-                className="flex items-center gap-2.5 rounded-full py-1 pl-1 pr-3 transition-colors duration-300 hover:bg-navy-50"
-              >
-                <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full bg-navy-50 ring-1 ring-navy-200">
-                  {user?.profile_url ? (
-                    <img
-                      src={user.profile_url}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <span className="flex h-full w-full items-center justify-center text-navy-500">
-                      <UserIcon size={15} />
-                    </span>
-                  )}
-                </div>
-                <span className="text-sm font-medium text-navy-800">
-                  {formatNavDisplayName(user?.name)}
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={logout}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-navy-400 transition-colors duration-300 hover:bg-navy-50 hover:text-navy-800"
-                title="Sign out"
-                aria-label="Sign out"
-              >
-                <LogOut size={17} strokeWidth={2} />
-              </button>
-            </>
-          )}
-        </div>
+            <button
+              type="button"
+              onClick={logout}
+              className="flex h-10 w-10 items-center justify-center rounded-full text-white hover:bg-white/10"
+              aria-label="Sign out"
+            >
+              <LogOut size={18} strokeWidth={1.75} aria-hidden />
+            </button>
+          </>
+        )}
       </div>
     </header>
   );

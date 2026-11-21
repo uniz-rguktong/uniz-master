@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Download, Share } from "lucide-react";
+import { Download, Share } from "lucide-react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { is_authenticated, pwaInstallAtom } from "../store";
 
@@ -100,54 +100,34 @@ export const InstallPWA = () => {
  initial={{ y: 20, opacity: 0, scale: 0.95 }}
  animate={{ y: 0, opacity: 1, scale: 1 }}
  exit={{ y: 10, opacity: 0, scale: 0.98 }}
- className="fixed bottom-6 right-6 z-[9999] w-[320px] md:w-[380px]"
+ className="fixed inset-x-4 bottom-4 z-[9999] min-[821px]:inset-x-auto min-[821px]:right-6 min-[821px]:w-[420px]"
  >
- <div className="relative overflow-hidden bg-white border border-white/40 shadow-[0_15px_40px_rgba(0,0,0,0.12)] rounded-xl p-4 font-sans">
- {/* Subtle timer line */}
- <motion.div
- initial={{ width: "100%" }}
- animate={{ width: "0%" }}
- transition={{ duration: 5, ease: "linear" }}
- className="absolute top-0 left-0 h-[2px] bg-zinc-900/40"
- />
-
- <div className="flex items-center justify-between gap-4">
- <div className="flex-1 min-w-0">
- <div className="flex items-center gap-2 mb-0.5">
- <h3 className="uniz-logo-wordmark text-xl text-zinc-800 leading-none">
- uniZ
- </h3>
- <span className="text-[11px] font-medium text-zinc-900 bg-zinc-50 px-1.5 py-0.5 rounded">
- App
- </span>
- </div>
- <h4 className="text-zinc-900 font-bold text-[13px] truncate">
+ <div className="rounded-xl border border-border bg-panel p-6 font-sans shadow-none">
+ <h2 className="font-serif text-[22px] font-normal leading-[30px] text-head">
  Install app to enjoy full services.
- </h4>
- </div>
-
- <div className="flex items-center gap-2">
+ </h2>
+ <div className="mt-5 flex flex-col gap-3 min-[821px]:flex-row min-[821px]:justify-end">
  <button
- onClick={handleInstallClick}
- className="bg-zinc-900 hover:bg-black text-white px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1.5 transition-[color,background-color,border-color,box-shadow,transform] duration-150 shadow-sm active:scale-95"
+ type="button"
+ onClick={handleDismiss}
+ className="inline-flex h-11 items-center justify-center rounded-full px-4 text-[15px] font-semibold text-text-2 hover:bg-tint"
  >
- <Download size={13} />
+ Dismiss
+ </button>
+ <button
+ type="button"
+ onClick={handleInstallClick}
+ className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-primary px-6 text-[15px] font-semibold text-primary-foreground hover:bg-primary-hover"
+ >
+ <Download size={16} strokeWidth={1.75} aria-hidden />
  Install
  </button>
- <button
- onClick={handleDismiss}
- className="p-1 rounded-md hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors"
- >
- <X size={16} />
- </button>
  </div>
- </div>
-
  {isIOS && (
- <div className="mt-3 pt-2 border-t border-zinc-100 flex items-center gap-1.5 text-[9px] text-zinc-400 font-medium italic">
- <Share size={10} className="text-zinc-900" />
- <span>Safari: Tap 'Share' then 'Add to Home Screen'</span>
- </div>
+ <p className="mt-4 flex items-center gap-2 text-small text-text-2">
+ <Share size={16} strokeWidth={1.75} aria-hidden />
+ Safari: Tap Share then Add to Home Screen
+ </p>
  )}
  </div>
  </motion.div>

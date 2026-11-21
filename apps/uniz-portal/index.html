@@ -2,24 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/icons/icon-192.png" type="image/png" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="uniZ" />
-    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <meta name="apple-mobile-web-app-title" content="UniZ" />
+    <link rel="apple-touch-icon" href="/logo180.png" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
       content="default"
     />
-    <meta name="theme-color" content="#fafafa" />
+    <meta name="theme-color" content="#0B1B3A" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin />
     <link rel="dns-prefetch" href="https://challenges.cloudflare.com" />
     <link
@@ -62,21 +61,18 @@
       content="https://res.cloudinary.com/diipfzmyj/image/upload/w_1200,h_630,c_fill,f_jpg,q_auto/v1772885809/signIn_ojzi3w.png"
     />
 
-    <!-- Preload fonts -->
-    <link
-      rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Great+Vibes&family=Outfit:wght@400;700;900&family=Pattaya&display=swap"
-      as="style"
-      onload="
-        this.onload = null;
-        this.rel = 'stylesheet';
-      "
-    />
-    <noscript
-      ><link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Great+Vibes&family=Outfit:wght@400;700;900&family=Pattaya&display=swap"
-    /></noscript>
+    <script>
+      (function () {
+        try {
+          var pref = localStorage.getItem("uniz-theme");
+          var dark =
+            pref === "dark" ||
+            (pref !== "light" &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) document.documentElement.classList.add("dark");
+        } catch (e) {}
+      })();
+    </script>
 
     <title>uniZ — Campus platform for RGUKT students</title>
 
@@ -90,7 +86,7 @@
         align-items: center;
         justify-content: center;
         gap: 0.625rem;
-        background: linear-gradient(165deg, #fafafa 0%, #f4f4f5 48%, #fafafa 100%);
+        background: #ffffff;
         transition:
           opacity 0.4s ease,
           visibility 0.4s ease;
@@ -103,10 +99,12 @@
       }
 
       #pwa-splash .pwa-splash-wordmark {
-        font-family: "Pattaya", "Georgia", "Times New Roman", cursive;
-        font-size: clamp(2.5rem, 10vw, 3.25rem);
+        font-family: Georgia, "Times New Roman", serif;
+        font-weight: 600;
+        font-size: clamp(2rem, 8vw, 2.5rem);
         line-height: 1;
-        color: #0b2a47;
+        letter-spacing: -0.01em;
+        color: #0b1b3a;
         margin: 0 0 0.25rem;
       }
 
@@ -122,7 +120,7 @@
       }
 
       #pwa-splash .pwa-splash-tagline-line {
-        font-family: "Pattaya", "Georgia", "Times New Roman", cursive;
+        font-family: Georgia, "Times New Roman", serif;
         font-size: clamp(1.125rem, 4.8vw, 1.5rem);
         line-height: 1.25;
         color: #27272a;

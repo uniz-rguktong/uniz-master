@@ -4,49 +4,52 @@ import { cn } from "@/lib/utils";
 import { useNotificationUnread } from "@/hooks/useNotificationUnread";
 
 type Props = {
- active?: boolean;
- size?: "sm" | "md";
- className?: string;
- to?: string;
+  active?: boolean;
+  size?: "sm" | "md";
+  className?: string;
+  to?: string;
+  /** `chrome` is the white control on a navy bar. */
+  tone?: "default" | "chrome";
 };
 
 export function NotificationBellButton({
- active = false,
- size = "md",
- className,
- to = "/student/notifications",
+  active = false,
+  size = "md",
+  className,
+  to = "/student/notifications",
+  tone = "default",
 }: Props) {
- const navigate = useNavigate();
- const { unreadCount } = useNotificationUnread();
+  const navigate = useNavigate();
+  const { unreadCount } = useNotificationUnread();
+  const dim = size === "sm" ? "h-9 w-9" : "h-10 w-10";
 
- const dim = size === "sm" ? "h-9 w-9" : "h-10 w-10";
- const icon = size === "sm" ? 17 : 18;
-
- return (
- <button
- type="button"
- title="Notifications"
- aria-label={
- unreadCount > 0
- ? `Notifications, ${unreadCount} unread`
- : "Notifications"
- }
- onClick={() => navigate(to)}
- className={cn(
- "relative flex shrink-0 items-center justify-center rounded-full border transition-all",
- dim,
- active
- ? "border-navy-300 bg-navy-50 text-navy-900"
- : "border-zinc-100 bg-white text-navy-500 shadow-sm hover:border-navy-200 hover:bg-navy-50/80 hover:text-navy-800",
- className,
- )}
- >
- <Bell size={icon} strokeWidth={2} />
- {unreadCount > 0 && (
- <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-navy-900 px-1 text-[11px] font-medium text-white ring-2 ring-white">
- {unreadCount > 9 ? "9+" : unreadCount}
- </span>
- )}
- </button>
- );
+  return (
+    <button
+      type="button"
+      aria-label={
+        unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"
+      }
+      onClick={() => navigate(to)}
+      className={cn(
+        "relative flex shrink-0 items-center justify-center rounded-full transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+        dim,
+        tone === "chrome"
+          ? "text-white hover:bg-white/10"
+          : active
+            ? "bg-tint text-head"
+            : "text-text-2 hover:bg-tint",
+        className,
+      )}
+    >
+      <Bell size={18} strokeWidth={1.75} aria-hidden />
+      {unreadCount > 0 ? (
+        <span
+          className={cn(
+            "absolute right-2 top-2 h-2 w-2 rounded-full",
+            tone === "chrome" ? "bg-white" : "bg-navy-600",
+          )}
+        />
+      ) : null}
+    </button>
+  );
 }

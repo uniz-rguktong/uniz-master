@@ -34,9 +34,8 @@ export function SubjectCode({ code, academicCode, className }: SubjectCodeProps)
       title={displayCode}
       aria-label={`Subject code: ${displayCode}`}
       className={cn(
-        "block w-fit max-w-full rounded-md border border-zinc-200 bg-zinc-50 px-2 py-1",
-        "font-mono text-[10px] font-semibold leading-4 tracking-normal text-zinc-600",
-        "whitespace-nowrap overflow-hidden text-ellipsis",
+        "block w-fit max-w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-sm border border-border bg-surface-2 px-2 py-1",
+        "font-sans text-caption font-medium tabular-nums text-text-2",
         className,
       )}
     >

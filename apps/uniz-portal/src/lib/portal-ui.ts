@@ -1,125 +1,110 @@
 import { cn } from "@/lib/utils";
 
 /**
- * UniZ portal design system — navy + white institutional palette.
- * Used by student, admin, faculty, and auth surfaces (.portal-theme).
- *
- * Spacing rhythm: 4 / 8 / 12 / 16 / 24 / 32 (Tailwind 1–8)
- * Radii: portal-lg (12) · portal-xl (16) · portal-2xl (20)
+ * Portal surfaces. Colours come from the U2 semantic tokens in index.css,
+ * so `.dark` on `<html>` flips them. Radii: sm 8, md 12, lg 16, xl 24, full.
  */
 
-/* ── Page & layout ───────────────────────────────────────────── */
-
 export const portalPageClass =
-  "min-h-screen bg-white text-navy-900 selection:bg-navy-100 selection:text-navy-900";
+  "min-h-screen bg-bg text-text selection:bg-navy-100 selection:text-navy-900";
 
-export const portalPageWrapClass = "px-4 py-6 md:px-8 md:py-8 space-y-6 md:space-y-8";
+export const portalPageWrapClass =
+  "mx-auto w-full max-w-[1280px] space-y-6 px-4 py-6 md:px-6 md:py-8 min-[821px]:px-10";
 
-export const portalSectionGapClass = "space-y-4 md:space-y-6";
+export const portalSectionGapClass = "space-y-6";
 
 export const portalSafeBottomClass = "pb-[max(1rem,env(safe-area-inset-bottom))]";
 
-/* ── Surfaces ────────────────────────────────────────────────── */
-
 export const portalCardClass =
-  "rounded-portal-2xl border border-navy-200 bg-white shadow-whisper";
+  "rounded-xl border border-border bg-panel text-text";
 
 export const portalCardHoverClass =
-  "transition-[border-color,box-shadow] duration-150 hover:border-navy-300 hover:shadow-whisper-md";
+  "transition-[border-color,background-color] duration-150 ease-out hover:border-border-strong";
 
 export const portalCardInteractiveClass = cn(portalCardClass, portalCardHoverClass);
 
 export const portalInsetPanelClass =
-  "rounded-portal-xl border border-navy-200 bg-navy-50/60 p-4 md:p-5";
+  "rounded-lg border border-border bg-tile p-4 md:p-6";
 
 export const portalBannerGradientClass = "bg-navy-900 text-white";
 
-/* ── Typography ──────────────────────────────────────────────── */
-
-export const portalEyebrowClass =
-  "text-[12px] font-medium text-navy-500";
+export const portalEyebrowClass = "text-small font-medium text-text-2";
 
 export const portalTitleClass =
-  "text-[clamp(1.35rem,3vw,1.875rem)] font-semibold tracking-[-0.02em] text-navy-900 leading-tight";
+  "font-serif text-[26px] font-normal leading-[34px] tracking-[-0.01em] text-head min-[821px]:text-page min-[821px]:leading-[40px]";
 
-export const portalSubtitleClass = "text-sm text-navy-500 leading-relaxed";
+export const portalSubtitleClass = "text-body leading-6 text-text-2";
 
 export const portalSectionTitleClass =
-  "text-[15px] font-semibold tracking-[-0.01em] text-navy-900";
+  "font-sans text-h3 font-semibold tracking-[-0.01em] text-head";
 
-export const portalBodyClass = "text-[14px] font-medium text-navy-700 leading-relaxed";
+export const portalBodyClass = "text-body font-normal leading-6 text-text";
 
-export const portalMutedClass = "text-[12px] text-navy-400";
+export const portalMutedClass = "text-caption text-text-3";
 
-/* ── Buttons (min 44px touch targets) ──────────────────────── */
+const buttonBase =
+  "inline-flex items-center justify-center gap-2 rounded-full font-sans font-semibold transition-[background-color,color,border-color,opacity,transform] duration-150 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-[0.45]";
 
-export const portalPrimaryButtonClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 px-5 rounded-lg bg-navy-900 text-white text-[13px] font-medium hover:bg-navy-800 active:scale-[0.98] transition-[color,background-color,transform] duration-150 disabled:opacity-40 disabled:cursor-not-allowed";
+export const portalPrimaryButtonClass = cn(
+  buttonBase,
+  "h-11 min-h-11 bg-primary px-6 text-[15px] leading-[22px] text-primary-foreground hover:bg-primary-hover active:bg-primary-active",
+);
 
-export const portalSecondaryButtonClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 px-5 rounded-lg border border-navy-900 bg-white text-navy-900 text-[13px] font-medium hover:bg-navy-900 hover:text-white active:scale-[0.98] transition-[color,background-color,border-color,transform] duration-150 disabled:opacity-40 disabled:cursor-not-allowed";
+export const portalSecondaryButtonClass = cn(
+  buttonBase,
+  "h-11 min-h-11 border border-head bg-transparent px-6 text-[15px] leading-[22px] text-head hover:bg-tint",
+);
 
-export const portalGhostButtonClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded-lg bg-white border border-navy-200 text-navy-600 text-[13px] font-medium hover:text-navy-900 hover:border-navy-300 hover:bg-navy-50 active:scale-[0.98] transition-[color,background-color,border-color,transform] duration-150 disabled:opacity-40 disabled:cursor-not-allowed";
+export const portalGhostButtonClass = cn(
+  buttonBase,
+  "h-11 min-h-11 bg-transparent px-4 text-[15px] leading-[22px] text-text-2 hover:bg-tint",
+);
 
-export const portalDangerButtonClass =
-  "inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded-lg bg-white border border-navy-200 text-navy-500 text-[13px] font-medium hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 active:scale-[0.98] transition-[color,background-color,border-color,transform] duration-150";
+export const portalDangerButtonClass = cn(
+  buttonBase,
+  "h-11 min-h-11 bg-error px-6 text-[15px] leading-[22px] text-on-error hover:opacity-90",
+);
 
-/* ── Forms ───────────────────────────────────────────────────── */
-
-export const portalLabelClass =
-  "block text-[12px] font-medium text-navy-500 mb-1.5";
+export const portalLabelClass = "mb-2 block text-dense font-medium text-text";
 
 export const portalInputClass =
-  "w-full min-h-11 px-3.5 bg-white border border-navy-200 rounded-lg text-[15px] font-medium text-navy-900 placeholder:text-navy-300 focus:outline-none focus:border-navy-700 focus:ring-2 focus:ring-navy-900/10 transition-[border-color,box-shadow] duration-150";
+  "h-11 min-h-11 w-full rounded-md border border-border-strong bg-surface px-4 text-body text-text placeholder:text-text-3 transition-[border-color,box-shadow] duration-150 focus:border-navy-600 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ring focus:shadow-[0_0_0_3px_var(--ring-soft)] disabled:opacity-[0.45] dark:focus:border-navy-300 max-[639px]:h-12";
 
 export const portalTextareaClass =
-  "w-full min-h-[88px] px-3.5 py-3 bg-white border border-navy-200 rounded-lg text-[14px] font-medium text-navy-900 placeholder:text-navy-300 focus:outline-none focus:border-navy-700 focus:ring-2 focus:ring-navy-900/10 transition-[border-color,box-shadow] duration-150 resize-none";
+  "min-h-[120px] w-full resize-y rounded-md border border-border-strong bg-surface px-4 py-3 text-body text-text placeholder:text-text-3 transition-[border-color,box-shadow] duration-150 focus:border-navy-600 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ring focus:shadow-[0_0_0_3px_var(--ring-soft)] dark:focus:border-navy-300";
 
 export const portalSelectClass =
-  "w-full min-h-11 pl-3.5 pr-10 bg-white border border-navy-200 rounded-lg text-[13px] font-medium text-navy-900 appearance-none cursor-pointer focus:outline-none focus:border-navy-700 focus:ring-2 focus:ring-navy-900/10 transition-[border-color,box-shadow] duration-150 disabled:opacity-50";
-
-/* ── Navigation & chrome ─────────────────────────────────────── */
+  "h-11 min-h-11 w-full cursor-pointer appearance-none rounded-md border border-border-strong bg-surface pl-4 pr-10 text-body text-text transition-[border-color,box-shadow] duration-150 focus:border-navy-600 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ring focus:shadow-[0_0_0_3px_var(--ring-soft)] disabled:opacity-[0.45] dark:focus:border-navy-300 max-[639px]:h-12";
 
 export const portalHeaderClass =
-  "sticky top-0 z-40 h-14 flex items-center bg-white border-b border-navy-200";
+  "sticky top-0 z-40 flex h-16 items-center border-b border-border bg-bg";
 
-export const portalNavActiveClass =
-  "bg-navy-900 text-white";
+export const portalNavActiveClass = "bg-navy-800 text-white";
 
-export const portalNavInactiveClass =
-  "text-navy-400 hover:text-navy-700 hover:bg-navy-50";
+export const portalNavInactiveClass = "text-navy-300 hover:bg-white/5 hover:text-white";
 
-export const portalTabActiveClass =
-  "text-navy-900 border-b-2 border-navy-900";
+export const portalTabActiveClass = "border-b-2 border-head text-head";
 
 export const portalTabInactiveClass =
-  "text-navy-400 hover:text-navy-600 border-b-2 border-transparent";
-
-/* ── Pills & badges ──────────────────────────────────────────── */
+  "border-b-2 border-transparent text-text-2 hover:text-head";
 
 export const portalPillClass =
-  "inline-flex items-center gap-1.5 rounded-md border border-navy-200 bg-navy-50 px-2 py-0.5 text-[11px] font-medium text-navy-700";
+  "inline-flex h-6 items-center gap-1.5 rounded-full bg-tint px-2.5 text-small font-medium text-text-2";
 
-export const portalLivePillClass =
-  "inline-flex items-center gap-2 rounded-md border border-navy-200 bg-navy-50 px-2.5 py-1 text-[11px] font-medium text-navy-800";
+export const portalLivePillClass = portalPillClass;
 
 export const portalChipClass =
-  "inline-flex items-center gap-1.5 rounded-md border border-navy-200 bg-white px-2 py-0.5 text-[11px] font-medium text-navy-500";
-
-/* ── Modals ──────────────────────────────────────────────────── */
+  "inline-flex h-6 items-center gap-1.5 rounded-sm bg-tint px-2 text-caption font-medium text-text-2";
 
 export const portalModalShellClass =
-  "overflow-hidden bg-white border border-navy-200 rounded-portal-2xl shadow-whisper-lg";
+  "rounded-xl border border-border bg-surface text-text shadow-lg dark:border-border-strong dark:shadow-none";
 
 export const portalModalTitleClass =
-  "text-[20px] font-semibold text-navy-900 tracking-[-0.02em]";
+  "font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head";
 
-export const portalModalDescClass = "text-[13px] text-navy-500 leading-relaxed";
-
-/* ── Utilities ─────────────────────────────────────────────── */
+export const portalModalDescClass = "text-body leading-6 text-text-2";
 
 export const portalNumsClass = "tabular-nums [font-feature-settings:'tnum']";
 
 export const portalIconTileClass =
-  "w-10 h-10 rounded-portal-xl bg-navy-50 text-navy-700 flex items-center justify-center border border-navy-200";
+  "inline-flex items-center justify-center text-accent";

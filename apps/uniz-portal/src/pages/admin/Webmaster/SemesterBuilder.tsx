@@ -18,7 +18,6 @@ import {
   ShieldCheck,
   Sparkles,
   CircleDot,
-  PlayCircle,
   StopCircle,
   Hourglass,
   Search,
@@ -164,7 +163,7 @@ function suggestCustomSubjectCode(opts: {
   const semNum = getSemNumberFromName(semesterName);
   const prefix = `${dept}-${year}-SEM-${semNum}`;
   const allCodes = existingSubjects.map((s) => s.code);
-  const { maxSlot, variantsBySlot } = parseSubjectCodeSlots(allCodes, prefix);
+  const { maxSlot } = parseSubjectCodeSlots(allCodes, prefix);
 
   if (subjectType === "OPEN_ELECTIVE") {
     const groupKey = electiveGroupCode?.trim().toUpperCase() ?? "";

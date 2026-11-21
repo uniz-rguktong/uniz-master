@@ -13,7 +13,7 @@ type Position =
   | "bottom-right";
 
 export default function ToasterDemo() {
-  const showToastVariant = (variant: Variant, position: Position = "bottom-right") => {
+  const showToastVariant = (variant: Variant, _position: Position = "bottom-right") => {
     toast.show({
       title: `${variant.charAt(0).toUpperCase() + variant.slice(1)}`,
       message: `This is a ${variant} notification.`,

@@ -34,7 +34,7 @@ export function useAdminSectionRoute<T extends string>(
   }, [location.pathname, allowedTabs, defaultTab, navigate]);
 
   const setActiveTab = useCallback(
-    (tab: T) => {
+    (tab: string) => {
       navigate(getAdminSectionPath(tab));
     },
     [navigate],

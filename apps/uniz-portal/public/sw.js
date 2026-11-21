@@ -66,8 +66,8 @@ self.addEventListener("push", function (event) {
   const title = data.title || "UniZ Notification";
   const options = {
     body: data.body || "You have a new update.",
-    icon: "/assets/ongole_logo.png",
-    badge: "/assets/ongole_logo.png",
+    icon: "/assets/uniz-logo.png",
+    badge: "/assets/uniz-logo.png",
     image: data.image || undefined,
     vibrate: [200, 100, 200, 100, 200],
     // 'tag' groups notifications - same tag replaces the old one instead of stacking

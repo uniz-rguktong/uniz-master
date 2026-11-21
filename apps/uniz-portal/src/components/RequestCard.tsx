@@ -11,8 +11,6 @@ import {
 import {
   adminCardClass,
   adminChipClass,
-  adminLabelClass,
-  adminSectionTitleClass,
 } from "./admin/admin-ui";
 import { cn } from "../utils/cn";
 

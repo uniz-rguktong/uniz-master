@@ -1,27 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef, useEffect, type ReactNode } from "react";
-import { LogOut, Search, ChevronLeft, Menu, type LucideIcon } from "lucide-react";
-import { motion } from "framer-motion";
+import { LogOut, Search, Menu, X, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { LandingMeshBackdrop } from "@/components/ui/landing-section";
 import ProfilePopup from "@/pages/admin/ProfilePopup";
 import {
-  adminPageClass,
-  adminSidebarClass,
-  adminSidebarOpenWidth,
-  adminSidebarClosedWidth,
-  adminSidebarToggleClass,
   adminNavGroupLabelClass,
   adminNavInactiveClass,
-  adminNavIconActiveClass,
-  adminNavIconInactiveClass,
-  adminHeaderClass,
-  adminAvatarButtonClass,
-  adminAvatarFallbackClass,
-  adminLogoutButtonClass,
   adminSearchInputClass,
 } from "./admin-ui";
-import { UnizLogo } from "./UnizLogo";
+import { Lockup, Mark } from "@/components/brand/Mark";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Avatar } from "@/components/ui/avatar";
 
 export interface AdminNavItem {
   id: string;
@@ -75,14 +63,14 @@ export default function AdminShell({
   showSidebarProfile = false,
   headerLeft,
   headerAlign = "end",
-  mobileNavItems,
   collapseBranding = "hide",
-  sidebarVariant = "default",
   contentClassName,
   navSpacing = "default",
   showHeaderMenuToggle = false,
 }: AdminShellProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
@@ -94,7 +82,7 @@ export default function AdminShell({
   const [activeAnchor, setActiveAnchor] =
     useState<React.RefObject<HTMLButtonElement | null>>(headerAvatarRef);
 
-  const initial = (profileName || username)[0]?.toUpperCase() ?? "A";
+  const displayName = profileName || username;
 
   useEffect(() => {
     const token = (localStorage.getItem("admin_token") || "").replace(/"/g, "");
@@ -131,340 +119,251 @@ export default function AdminShell({
   const openProfile = (ref: React.RefObject<HTMLButtonElement | null>) => {
     setActiveAnchor(ref);
     setProfilePopupOpen(true);
+    setMenuOpen(false);
   };
 
-  const renderSearch = () => {
-    if (searchSlot) return searchSlot;
-    if (!enableNavSearch) return null;
-
-    return (
-      <div className="px-5 py-4 space-y-3">
-        <div className="relative group">
-          <Search
-            className={cn(
-              "absolute top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-zinc-600 transition-colors",
-              isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2",
-            )}
-            size={16}
-          />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={isSidebarOpen ? "Search operations..." : ""}
-            className={cn(
-              adminSearchInputClass,
-              isSidebarOpen ? "pl-10 pr-8" : "px-0 text-center",
-            )}
-          />
-          {isSidebarOpen && (
-            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-zinc-200/60 rounded text-[9px] font-bold text-zinc-400">
-              /
-            </div>
-          )}
-        </div>
-        {searchExtra && isSidebarOpen && searchExtra}
-      </div>
-    );
+  const selectTab = (id: string) => {
+    onTabChange(id);
+    setMobileOpen(false);
   };
 
-  const sidebarWidth = isSidebarOpen
-    ? adminSidebarOpenWidth
-    : adminSidebarClosedWidth;
-
-  const isOverlayMobile = sidebarVariant === "overlay-mobile";
-
-  return (
-    <div className={adminPageClass}>
-      <LandingMeshBackdrop />
-
-      <aside
+  const sidebar = (mobile: boolean) => (
+    <aside
+      className={cn(
+        "flex h-full flex-col border-r border-[var(--sb-border)] bg-navy-900 text-navy-300",
+        mobile ? "w-[280px]" : isSidebarOpen ? "w-[248px]" : "w-[72px]",
+      )}
+    >
+      <div
         className={cn(
-          adminSidebarClass,
-          isOverlayMobile
-            ? cn(
-                "flex fixed md:sticky top-0 z-[70]",
-                isSidebarOpen
-                  ? "translate-x-0 w-72"
-                  : "-translate-x-full md:translate-x-0 w-72 md:w-20",
-              )
-            : cn("hidden md:flex sticky top-0", sidebarWidth),
+          "flex h-16 items-center border-b border-[var(--sb-div)] px-3",
+          !mobile && !isSidebarOpen && collapseBranding === "hide" && "justify-center",
         )}
       >
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className={adminSidebarToggleClass}
-          aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        {!mobile && !isSidebarOpen ? (
+          <span className="text-white">
+            <Mark size={24} />
+          </span>
+        ) : (
+          <Lockup mark={28} word={18} tone="chrome" />
+        )}
+        {mobile ? (
+          <button
+            type="button"
+            className="ml-auto flex h-10 w-10 items-center justify-center rounded-full text-white hover:bg-white/10"
+            aria-label="Close menu"
+            onClick={() => setMobileOpen(false)}
           >
-            <path d={isSidebarOpen ? "m15 18-6-6 6-6" : "m9 18 6-6-6-6"} />
-          </svg>
-        </button>
+            <X size={18} strokeWidth={1.75} aria-hidden />
+          </button>
+        ) : null}
+      </div>
 
-        <div
-          className={cn(
-            "px-4 pt-5 pb-3 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300",
-            collapseBranding === "hide" &&
-              !isSidebarOpen &&
-              "h-0 overflow-hidden pt-0 pb-0 opacity-0",
-          )}
-        >
-          <UnizLogo
-            collapsed={!isSidebarOpen}
-            abbreviate={collapseBranding === "abbreviate"}
-          />
+      {enableNavSearch && (mobile || isSidebarOpen) ? (
+        <div className="px-3 py-3">
+          <div className="relative">
+            <Search
+              size={16}
+              strokeWidth={1.75}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-300"
+              aria-hidden
+            />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search"
+              aria-label="Search sections"
+              className={cn(adminSearchInputClass, "bg-navy-800 pl-9 text-white placeholder:text-navy-300")}
+            />
+          </div>
+          {searchExtra}
         </div>
+      ) : null}
 
-        {renderSearch()}
-
-        <nav
-          className={cn(
-            "flex-1 overflow-y-auto custom-sidebar-scroll",
-            isSidebarOpen ? "px-3" : "px-3",
-            navSpacing === "default" ? "py-4 space-y-5" : "py-2 space-y-4",
-          )}
-        >
-          {filteredGroups.length === 0 && searchQuery ? (
-            <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="w-12 h-12 bg-zinc-50 rounded-full flex items-center justify-center mb-3">
-                <Search size={20} className="text-zinc-300" />
-              </div>
-              <p className="text-[11px] font-bold text-zinc-400 px-4">
-                No operations found
-              </p>
-            </div>
-          ) : (
-            filteredGroups.map((group, gIdx) => (
-              <div
-                key={gIdx}
-                className={navSpacing === "default" ? "space-y-1" : "space-y-0.5"}
-              >
-                {group.group && isSidebarOpen && (
-                  <h4 className={adminNavGroupLabelClass}>{group.group}</h4>
-                )}
+      <nav
+        className={cn(
+          "flex-1 overflow-y-auto px-3",
+          navSpacing === "default" ? "py-2" : "py-1",
+        )}
+        aria-label="Administration"
+      >
+        {filteredGroups.length === 0 && searchQuery ? (
+          <p className="px-3 py-6 text-small text-navy-300">No sections found</p>
+        ) : (
+          filteredGroups.map((group, gIdx) => (
+            <div key={gIdx}>
+              {group.group && (mobile || isSidebarOpen) ? (
+                <h4 className={adminNavGroupLabelClass}>{group.group}</h4>
+              ) : null}
+              <div className="flex flex-col gap-0.5">
                 {group.items.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
-
                   return (
                     <button
                       key={item.id}
-                      onClick={() => onTabChange(item.id)}
-                      title={!isSidebarOpen ? item.label : ""}
+                      type="button"
+                      onClick={() => selectTab(item.id)}
+                      title={!mobile && !isSidebarOpen ? item.label : undefined}
                       className={cn(
-                        "w-full flex items-center py-2.5 rounded-lg text-left transition-colors duration-150 group relative",
-                        isSidebarOpen
-                          ? "space-x-3 px-3"
-                          : "justify-center px-0",
-                        isActive ? "text-white" : adminNavInactiveClass,
+                        "flex h-10 w-full items-center gap-3 rounded-md px-3 text-left text-dense transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                        !mobile && !isSidebarOpen && "justify-center px-0",
+                        isActive
+                          ? "bg-navy-800 font-semibold text-white"
+                          : adminNavInactiveClass,
                       )}
                     >
-                      {isActive && (
-                        <motion.div
-                          layoutId="adminActiveTabGlow"
-                          className="absolute inset-0 bg-navy-900 rounded-lg shadow-whisper-navy"
-                          initial={false}
-                          transition={{ type: "spring", stiffness: 420, damping: 38 }}
-                        />
-                      )}
-                      <div className="flex items-center justify-center min-w-[20px] relative z-10">
-                        <Icon
-                          size={18}
-                          strokeWidth={2}
-                          className={cn(
-                            "shrink-0 transition-colors",
-                            isActive
-                              ? adminNavIconActiveClass
-                              : adminNavIconInactiveClass,
-                          )}
-                        />
-                      </div>
-                      {isSidebarOpen && (
-                        <span
-                          className={cn(
-                            "relative z-10 text-[13px] whitespace-nowrap tracking-[-0.01em] leading-none",
-                            isActive ? "font-semibold" : "font-medium",
-                          )}
-                        >
-                          {item.label}
-                        </span>
-                      )}
+                      <Icon size={18} strokeWidth={1.75} aria-hidden className="shrink-0" />
+                      {mobile || isSidebarOpen ? (
+                        <span className="truncate">{item.label}</span>
+                      ) : null}
                     </button>
                   );
                 })}
               </div>
-            ))
-          )}
-
-          <div className="pt-3 mt-1 border-t border-zinc-200/60">
-            <button
-              onClick={onLogout}
-              title={!isSidebarOpen ? "Logout" : ""}
-              className={cn(
-                "w-full flex items-center py-2.5 rounded-lg text-left transition-colors duration-150 group hover:bg-rose-50 hover:text-rose-600 text-zinc-500",
-                isSidebarOpen ? "space-x-3 px-3" : "justify-center px-0",
-              )}
-            >
-              <div className="flex items-center justify-center min-w-[20px]">
-                <LogOut
-                  size={18}
-                  strokeWidth={2}
-                  className="text-zinc-400 group-hover:text-rose-600 transition-colors"
-                />
-              </div>
-              {isSidebarOpen && (
-                <span className="text-[13px] font-medium whitespace-nowrap tracking-[-0.01em] leading-none">
-                  Logout
-                </span>
-              )}
-            </button>
-          </div>
-        </nav>
-
-        <div className="mt-auto border-t border-zinc-100/80 p-3 pb-5 space-y-3">
-          {sidebarFooter}
-          {showSidebarProfile && (
-            <div
-              onClick={() => openProfile(avatarBtnRef)}
-              className={cn(
-                "flex items-center py-1.5 hover:bg-zinc-50 rounded-xl transition-colors cursor-pointer group",
-                isSidebarOpen ? "justify-start px-2" : "justify-center",
-              )}
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <button
-                  ref={avatarBtnRef}
-                  className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-zinc-100 flex items-center justify-center shadow-sm ring-1 ring-zinc-200/60 transition-transform"
-                >
-                  {profilePhoto ? (
-                    <img
-                      src={profilePhoto}
-                      className="w-full h-full object-cover"
-                      alt=""
-                    />
-                  ) : (
-                    <span className="text-zinc-600 font-bold text-[11px]">
-                      {initial}
-                    </span>
-                  )}
-                </button>
-                {isSidebarOpen && (
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-bold text-zinc-900 truncate leading-tight">
-                      {profileName || username}
-                    </p>
-                    {roleLabel && (
-                      <p className="text-[9px] font-bold text-zinc-400 truncate mt-0.5">
-                        {roleLabel}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
             </div>
-          )}
-
-          {isSidebarOpen && (
-            <div className="px-2 pt-2 space-y-2">
-              <div className="rounded-xl bg-gradient-to-br from-navy-900 to-navy-800 p-3.5 text-white">
-                <p className="text-[10px] font-bold text-white/50">
-                  Platform
-                </p>
-                <p className="text-[13px] font-semibold mt-1 leading-tight">
-                  uniZ Admin Console
-                </p>
-                <p className="text-[10px] text-white/40 font-medium mt-1.5 leading-relaxed">
-                  RGUKT Ongole &middot; Microservices v1.3
-                </p>
-              </div>
-            </div>
-          )}
-          {!isSidebarOpen && (
-            <div className="flex justify-center">
-              <UnizLogo collapsed abbreviate={false} />
-            </div>
-          )}
-        </div>
-      </aside>
-
-      <main
-        className={cn(
-          "flex-1 overflow-y-auto max-h-screen flex flex-col",
-          isOverlayMobile && "w-full",
+          ))
         )}
-      >
+      </nav>
+
+      <div className="mt-auto border-t border-[var(--sb-div)] p-3">
+        {sidebarFooter}
+        <div className={cn("flex items-center gap-3", !mobile && !isSidebarOpen && "flex-col")}>
+          <button
+            ref={avatarBtnRef}
+            type="button"
+            className="rounded-full"
+            aria-label="Profile"
+            onClick={() => showSidebarProfile && openProfile(avatarBtnRef)}
+          >
+            <Avatar
+              size={36}
+              src={profilePhoto}
+              alt={displayName ? `${displayName} profile photo` : "Profile photo"}
+              name={displayName}
+            />
+          </button>
+          {mobile || isSidebarOpen ? (
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-dense font-semibold text-white">{displayName}</p>
+              <p className="truncate text-small text-navy-300">
+                {roleLabel || headerSubtitle || profileEmail || username}
+              </p>
+            </div>
+          ) : null}
+          <button type="button" onClick={onLogout} className="flex h-10 w-10 items-center justify-center rounded-full text-navy-300 hover:bg-white/[0.06] hover:text-white" aria-label="Log out">
+            <LogOut size={18} strokeWidth={1.75} aria-hidden />
+          </button>
+        </div>
+        {mobile ? null : (
+          <button
+            type="button"
+            onClick={() => setIsSidebarOpen((value) => !value)}
+            className="mt-2 flex h-10 w-full items-center justify-center rounded-md text-small font-medium text-navy-300 hover:bg-white/[0.06] hover:text-white"
+            aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+          >
+            {isSidebarOpen ? "Collapse" : "Expand"}
+          </button>
+        )}
+      </div>
+    </aside>
+  );
+
+  return (
+    <div className="flex min-h-screen bg-bg text-text">
+      <div className="sticky top-0 hidden h-screen min-[821px]:flex">{sidebar(false)}</div>
+
+      {mobileOpen ? (
+        <div className="fixed inset-0 z-50 min-[821px]:hidden">
+          <button
+            type="button"
+            className="absolute inset-0 bg-overlay"
+            aria-label="Close menu"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="absolute bottom-0 left-0 top-0">{sidebar(true)}</div>
+        </div>
+      ) : null}
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-30 flex h-[60px] items-center gap-2 bg-navy-900 px-3 text-white min-[821px]:hidden">
+          <button
+            type="button"
+            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10"
+            aria-label="Open menu"
+            onClick={() => setMobileOpen(true)}
+          >
+            <Menu size={18} strokeWidth={1.75} aria-hidden />
+          </button>
+          <p className="min-w-0 flex-1 truncate text-[17px] font-semibold leading-6">
+            {activeLabel || "Admin"}
+          </p>
+          <ThemeToggle tone="chrome" />
+          <button
+            type="button"
+            aria-label="Account menu"
+            onClick={() => setMenuOpen((value) => !value)}
+          >
+            <Avatar size={32} src={profilePhoto} alt="" name={displayName} />
+          </button>
+        </header>
+
         <header
           className={cn(
-            adminHeaderClass,
-            headerAlign === "between" || showHeaderMenuToggle || headerLeft
-              ? "justify-between"
-              : "justify-end",
+            "sticky top-0 z-30 hidden h-16 items-center gap-3 border-b border-border bg-bg px-10 min-[821px]:flex",
+            headerAlign === "between" || headerLeft ? "justify-between" : "justify-end",
           )}
         >
-          <div className="flex items-center gap-4">
-            {showHeaderMenuToggle && (
+          <div className="flex min-w-0 items-center gap-3">
+            {showHeaderMenuToggle ? (
               <button
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="w-10 h-10 flex items-center justify-center bg-zinc-50 border border-zinc-100 rounded-xl hover:bg-white hover:border-navy-200 transition-[color,background-color,border-color,opacity,transform,box-shadow] text-zinc-400 hover:text-zinc-950 active:scale-95"
-                aria-label="Toggle sidebar"
+                type="button"
+                className="flex h-10 w-10 items-center justify-center rounded-full text-text-2 hover:bg-tint"
+                aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+                onClick={() => setIsSidebarOpen((value) => !value)}
               >
-                {isSidebarOpen ? <ChevronLeft size={18} /> : <Menu size={18} />}
+                <Menu size={18} strokeWidth={1.75} aria-hidden />
               </button>
-            )}
+            ) : null}
             {headerLeft}
-            {showHeaderMenuToggle && !isSidebarOpen && activeLabel && (
-              <h1 className="font-bold text-zinc-900 text-[15px] hidden md:block">
-                {activeLabel}
-              </h1>
-            )}
           </div>
-          <div className="flex items-center gap-3.5 ml-auto pt-1.5">
-            <div className="text-right hidden sm:block">
-              <p className="text-[13.5px] font-semibold text-zinc-900 tracking-[-0.01em] leading-snug">
-                {profileName || username}
-              </p>
-              <p className="text-[11px] text-zinc-400 font-medium mt-1 lowercase leading-normal">
-                {headerSubtitle ||
-                  profileEmail ||
-                  `${username}@rguktong.ac.in`}
-              </p>
-            </div>
-
+          <div className="ml-auto flex items-center gap-2">
+            {searchSlot}
+            <ThemeToggle />
             <button
               ref={headerAvatarRef}
+              type="button"
+              className="rounded-full"
+              aria-label="Account menu"
+              aria-expanded={profilePopupOpen}
               onClick={() => openProfile(headerAvatarRef)}
-              title="Profile"
-              className={adminAvatarButtonClass}
             >
-              {profilePhoto ? (
-                <img
-                  src={profilePhoto}
-                  className="w-full h-full object-cover"
-                  alt=""
-                />
-              ) : (
-                <div className={adminAvatarFallbackClass}>{initial}</div>
-              )}
-            </button>
-
-            <button
-              onClick={onLogout}
-              title="Sign out"
-              className={adminLogoutButtonClass}
-            >
-              <LogOut size={18} />
+              <Avatar
+                size={36}
+                src={profilePhoto}
+                alt={displayName ? `${displayName} profile photo` : "Profile photo"}
+                name={displayName}
+              />
             </button>
           </div>
         </header>
+
+        {menuOpen ? (
+          <div className="fixed right-3 top-16 z-50 w-56 rounded-lg border border-border bg-surface p-2 shadow-md dark:shadow-none min-[821px]:hidden">
+            <p className="px-3 py-2 text-dense font-semibold text-head">{displayName}</p>
+            <p className="px-3 pb-2 text-small text-text-2">
+              {headerSubtitle || profileEmail || username}
+            </p>
+            <button
+              type="button"
+              className="flex h-10 w-full items-center rounded-sm px-3 text-left text-dense font-medium text-text-2 hover:bg-tint"
+              onClick={onLogout}
+            >
+              Log out
+            </button>
+          </div>
+        ) : null}
 
         <ProfilePopup
           username={username}
@@ -480,46 +379,10 @@ export default function AdminShell({
           initialPhoto={profilePhoto}
         />
 
-        <div className={cn("w-full px-6 md:px-10 flex-1", contentClassName)}>
+        <div className={cn("w-full flex-1 px-4 py-6 min-[821px]:px-10 min-[821px]:py-8", contentClassName)}>
           {children}
         </div>
-
-        {mobileNavItems && mobileNavItems.length > 0 && (
-          <div className="md:hidden h-16 bg-white/90 backdrop-blur-xl border-t border-zinc-100 flex items-center justify-around px-2 sticky bottom-0 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
-            {mobileNavItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => onTabChange(item.id)}
-                  className={cn(
-                    "flex flex-col items-center justify-center h-full flex-1 gap-1 transition-[color,background-color,border-color,opacity,transform,box-shadow]",
-                    isActive ? "text-zinc-950" : "text-zinc-400",
-                  )}
-                >
-                  <div
-                    className={cn(
-                      "p-1.5 rounded-xl transition-[color,background-color,border-color,opacity,transform,box-shadow]",
-                      isActive && "bg-zinc-100",
-                    )}
-                  >
-                    <Icon size={isActive ? 20 : 18} />
-                  </div>
-                  <span
-                    className={cn(
-                      "text-[9px] font-bold ",
-                      isActive ? "opacity-100" : "opacity-60",
-                    )}
-                  >
-                    {item.label.split(" ")[0]}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </main>
+      </div>
     </div>
   );
 }
