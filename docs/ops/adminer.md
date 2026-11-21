@@ -92,7 +92,7 @@ bash scripts/deploy/prisma-migrate-deploy-all.sh
 kubectl create job --from=cronjob/uniz-dbadmin-role uniz-dbadmin-role-manual
 ```
 
-`scripts/ops/ensure-dbadmin-role.sh` does the same grants when `psql` is on the machine. It is safe to run again. Deploy also starts a one-off job from CronJob `uniz-dbadmin-role` after applying manifests, and the CronJob repeats the grants at 02:15 so tables added later stay covered.
+`infra/kubernetes/base/core/dbadmin-role/ensure-dbadmin-role.sh` does the same grants when `psql` is on the machine. It is safe to run again. Deploy also starts a one-off job from CronJob `uniz-dbadmin-role` after applying manifests, and the CronJob repeats the grants at 02:15 so tables added later stay covered.
 
 Migration: `20261121120000_dbadmin_audit` in `apps/uniz-dbadmin`. It creates schema `uniz_dbadmin` and the history tables.
 
@@ -108,10 +108,10 @@ The service reads `DBADMIN_DB_PASSWORD` and the existing `JWT_SECURITY_KEY` from
 
 `scripts/deploy/deploy.sh` applies `infra/kubernetes/base/core`, which includes the editor, Adminer, and the grant CronJob. Image rebuilds are selected like the other services (`[rebuild dbadmin]`).
 
-To apply only these objects:
+To apply only these objects (the overlay reads files from `base/core`, so it needs the relaxed load restrictor):
 
 ```bash
-kubectl apply -k infra/kubernetes/overlays/adminer
+kubectl kustomize --load-restrictor LoadRestrictionsNone infra/kubernetes/overlays/adminer | kubectl apply -f -
 ```
 
 The production overlay rewrites `uniz-dbadmin-service` to the GHCR tag. The Adminer container stays `adminer:4.8.1`.
