@@ -4,7 +4,7 @@
  * admin, notification deep links — gets one generic card. The generic card
  * has no path, id, or account data in the title, description, or URL.
  */
-import { normalizePath } from "../../../scripts/og/html.mjs";
+import { normalizePath } from "../scripts/og/html.mjs";
 
 export const SITE = "https://uniz.rguktong.in";
 export const SITE_NAME = "uniZ";
