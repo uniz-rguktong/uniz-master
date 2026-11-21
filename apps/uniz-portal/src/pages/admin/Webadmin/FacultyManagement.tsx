@@ -658,7 +658,7 @@ export default function FacultyManagement({
                         }
                       }}
                       label="Registry Asset"
-                      description="CSV format. Default password = username@uniz"
+                      description="CSV format. Default password = username@rguktong"
                     />
                   </div>
                 </div>

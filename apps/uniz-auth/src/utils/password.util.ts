@@ -25,6 +25,15 @@ export function defaultCampusPassword(username: string): string {
   return `${username.trim().toLowerCase()}${DEFAULT_CAMPUS_PASSWORD_SUFFIX}`;
 }
 
+/** Issued student and faculty password, including firstname.lastname@rguktong. */
+export function isIssuedPasswordTemplate(
+  password: string,
+  username: string,
+): boolean {
+  const issued = defaultCampusPassword(username);
+  return Boolean(issued) && password.trim().toLowerCase() === issued;
+}
+
 /**
  * Login compare only. Custom passwords (after student reset) are checked as-is.
  * Default campus passwords accept upper/lower ID letter case for legacy hashes.

@@ -1,5 +1,5 @@
 import { Suspense, lazy, type ReactElement } from "react";
-import { Route, Routes, Link, useNavigate, Navigate } from "react-router-dom";
+import { Route, Routes, Link, useNavigate, Navigate, useLocation } from "react-router-dom";
 import "./App.css";
 import "./index.css";
 import { PageTransition } from "./components/Transition";
@@ -13,6 +13,7 @@ import { CampusIllustration } from "./components/public/PublicFrame";
 // Lazy imports
 const Home = lazy(() => import("./pages/home"));
 const Signin = lazy(() => import("./pages/auth/CommonSignin"));
+const SetPassword = lazy(() => import("./pages/auth/SetPassword"));
 const Admin = lazy(() => import("./pages/admin/index"));
 const Sidebar = lazy(() => import("./components/Sidebar"));
 const SEOLanding = lazy(() => import("./pages/seo-landing"));
@@ -130,6 +131,15 @@ const AuthRedirect = () => {
 
 import { InstallPWA } from "./components/InstallPWA";
 import { usePushNavigation } from "./hooks/usePushNavigation";
+import { mustChangePassword } from "./utils/portalSession";
+
+function PasswordChangeGate({ children }: { children: ReactElement }) {
+  const location = useLocation();
+  if (mustChangePassword() && location.pathname !== "/set-password") {
+    return <Navigate to="/set-password" replace />;
+  }
+  return children;
+}
 
 function PushNavigationBridge() {
   usePushNavigation();
@@ -143,6 +153,7 @@ export default function App() {
       <InstallPWA />
       <Toaster defaultPosition="bottom-right" />
       <Suspense fallback={<LoadingFallback />}>
+        <PasswordChangeGate>
         <Routes>
           {/* Public & Auth */}
           <Route
@@ -220,6 +231,14 @@ export default function App() {
           />
 
           {/* Institutional and Academic routes deleted */}
+          <Route
+            path="/set-password"
+            element={
+              <PageTransition>
+                <SetPassword />
+              </PageTransition>
+            }
+          />
           <Route
             path="/login"
             element={<Navigate to="/student/signin" replace />}
@@ -584,6 +603,7 @@ export default function App() {
             }
           />
         </Routes>
+        </PasswordChangeGate>
       </Suspense>
     </>
   );

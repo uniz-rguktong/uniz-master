@@ -48,8 +48,9 @@ const PasswordResetSchema = z.object({
 });
 
 const PasswordChangeSchema = z.object({
-  currentPassword: z.string(),
-  newPassword: z.string().min(6),
+  currentPassword: z.string().optional(),
+  newPassword: z.string().min(8),
+  confirmPassword: z.string().optional(),
 });
 
 const AdminResetPasswordSchema = z.object({

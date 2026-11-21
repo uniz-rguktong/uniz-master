@@ -1,6 +1,13 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { JwtPayload, JwtPayloadSchema, accessRole } from "@uniz/shared";
+import {
+  JwtPayload,
+  JwtPayloadSchema,
+  accessRole,
+  decodeCredentialStatus,
+  encodeCredentialStatus,
+  rejectStaleSession,
+} from "@uniz/shared";
 import { ErrorCode } from "../shared/error-codes";
 import axios from "axios";
 import { redis } from "../utils/redis.util";
@@ -78,14 +85,12 @@ export const authMiddleware = async (
     }
 
     // --- INTERNAL API SUSPENSION CHECK (OPTIMIZED WITH REDIS) ---
+    // Suspension, token generation, and the forced password change.
     const cacheKey = `user:status:${parsed.data.id}`;
     try {
-      let isDisabled = false;
-      let cachedStatus = await redis.get(cacheKey);
+      let status = decodeCredentialStatus(await redis.get(cacheKey));
 
-      if (cachedStatus) {
-        isDisabled = cachedStatus === "true";
-      } else {
+      if (!status) {
         const response = await axios.get(
           `${AUTH_SERVICE_URL}/internal/user/status/${parsed.data.id}`,
           {
@@ -95,12 +100,16 @@ export const authMiddleware = async (
         );
 
         const data = response.data?.data || {};
-        isDisabled = data.isDisabled;
-        // Cache for 10 minutes
-        await redis.setex(cacheKey, 600, isDisabled ? "true" : "false");
+        status = {
+          isDisabled: Boolean(data.isDisabled),
+          tokenVersion: Number(data.tokenVersion ?? 0),
+          mustChangePassword: Boolean(data.mustChangePassword),
+        };
+        // Cache for 10 minutes (now 60 seconds, so a sign-out or forced password change lands fast)
+        await redis.setex(cacheKey, 60, encodeCredentialStatus(status));
       }
 
-      if (isDisabled) {
+      if (status.isDisabled) {
         console.warn(
           `[AUTH-CHECK] ⛔ Access denied for suspended user: ${parsed.data.username} (${parsed.data.id})`,
         );
@@ -108,6 +117,20 @@ export const authMiddleware = async (
           code: "AUTH_SUSPENDED",
           message:
             "Your account is currently suspended. Please contact the administrator for assistance.",
+        });
+      }
+
+      const rejection = rejectStaleSession({
+        jwtVersion: parsed.data.tokenVersion,
+        currentVersion: status.tokenVersion,
+        mustChangePassword: status.mustChangePassword,
+        method: req.method,
+        path: req.originalUrl || req.path,
+      });
+      if (rejection) {
+        return res.status(rejection.status).json({
+          code: rejection.code,
+          message: rejection.message,
         });
       }
     } catch (apiError: any) {
