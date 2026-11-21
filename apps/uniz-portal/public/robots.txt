@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /og/private.html
+Disallow: /og/private
+Disallow: /og/private/
 
 Sitemap: https://uniz.rguktong.in/sitemap.xml

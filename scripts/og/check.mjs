@@ -5,7 +5,7 @@
  */
 import { createServer } from "node:http";
 import { mkdtemp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { existsSync, statSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { MARK_END, MARK_START, matchRule, normalizePath, parseTags, pngSize } from "./html.mjs";
@@ -48,14 +48,36 @@ function isRedirectStatus(status) {
   return status === 301 || status === 302 || status === 303 || status === 307 || status === 308;
 }
 
+function isFile(file) {
+  return existsSync(file) && statSync(file).isFile();
+}
+
+function fileForTarget(dist, target) {
+  const bare = String(target || "/").split("?")[0].split("#")[0];
+  const pathname = bare.startsWith("/") ? bare : `/${bare}`;
+  if (pathname === "/") return path.join(dist, "index.html");
+  const trimmed = pathname.length > 1 && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+  const relative = trimmed.slice(1);
+  const candidates = [
+    path.join(dist, relative),
+    path.join(dist, `${relative}.html`),
+    path.join(dist, relative, "index.html"),
+  ];
+  return candidates.find((file) => isFile(file)) || null;
+}
+
 function redirectFile(dist, pathname, rules) {
   for (const rule of rules) {
     if (!matchRule(rule.from, pathname)) continue;
     if (isRedirectStatus(rule.status || 200)) continue;
-    const file = path.join(dist, rule.to.replace(/^\//, ""));
-    if (existsSync(file)) return file;
+    const file = fileForTarget(dist, rule.to);
+    if (file) return file;
   }
   return null;
+}
+
+function targetEndsWithHtml(target) {
+  return String(target).split("?")[0].split("#")[0].endsWith(".html");
 }
 
 export function resolveHtml(dist, urlPath, rules, mode) {
@@ -250,6 +272,11 @@ function assertWrittenRedirects(text, rules, failures) {
     const found = written.find((item) => item.from === rule.from);
     if (!found || found.to !== rule.to || found.status !== rule.status) {
       failures.push(`_redirects missing ${rule.from} ${rule.to} ${rule.status}`);
+    }
+  }
+  for (const rule of written) {
+    if (targetEndsWithHtml(rule.to)) {
+      failures.push(`_redirects target ends in .html: ${rule.from} -> ${rule.to}`);
     }
   }
 }
