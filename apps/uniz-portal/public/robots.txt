@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /og/
 
 Sitemap: https://uniz.rguktong.in/sitemap.xml
