@@ -1,4 +1,4 @@
-import { resolveEffectiveRole } from "@uniz/shared";
+import { accessRole, isWebadmin, resolveEffectiveRole } from "@uniz/shared";
 
 export const DIRECTORY_ROLES = ["webadmin", "dean", "director"] as const;
 
@@ -11,7 +11,12 @@ export const DIRECTORY_PERMISSIONS = [
   "view_reports",
 ] as const;
 
-type RoleUser = { role?: string; username?: string };
+type RoleUser = {
+  id?: string;
+  role?: string;
+  username?: string;
+  email?: string | null;
+};
 
 export function canReadStaffBatches(user: RoleUser | undefined): boolean {
   if (!user) return false;
@@ -19,14 +24,13 @@ export function canReadStaffBatches(user: RoleUser | undefined): boolean {
 }
 
 export function isDirectoryWebadmin(user: RoleUser | undefined): boolean {
-  if (!user) return false;
-  return resolveEffectiveRole(user) === "webadmin";
+  return isWebadmin(user);
 }
 
 /** Role management page is linked for director-level admins. Reads stay with that set. */
 export function canReadAdminDirectory(user: RoleUser | undefined): boolean {
   if (!user) return false;
-  return isDirectoryRole(resolveEffectiveRole(user));
+  return isDirectoryRole(accessRole(user));
 }
 
 export function isDirectoryRole(role: string): boolean {

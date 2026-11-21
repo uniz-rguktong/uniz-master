@@ -3,15 +3,15 @@ const BASE_URL = "https://api-uniz.rguktong.in/api/v1";
 async function run() {
   console.log("🚀 Starting Semester Registration E2E Flow...\n");
 
-  // 1. Webmaster logs in
-  console.log("[1] Webmaster Login...");
+  // 1. Webadmin logs in
+  console.log("[1] Webadmin Login...");
   const wmRes = await fetch(`${BASE_URL}/auth/login/admin`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username: "webmaster", password: "webmaster@uniz" }),
+    body: JSON.stringify({ username: "webadmin", password: "webadmin@uniz" }),
   }).then((r) => r.json());
   const wmToken = wmRes.token;
-  console.log("  ✅ Webmaster token acquired.");
+  console.log("  ✅ Webadmin token acquired.");
 
   console.log("\n[2] Fetching active semesters...");
   const semsRes = await fetch(`${BASE_URL}/academics/semester`, {
@@ -104,8 +104,8 @@ async function run() {
     console.log(`  ✅ Approval API says:`, approveRes);
   }
 
-  // 6.5 Webmaster formally opens registration event for all students
-  console.log("\n[6.5] Webmaster Opening Registration Window...");
+  // 6.5 Webadmin formally opens registration event for all students
+  console.log("\n[6.5] Webadmin Opening Registration Window...");
   const statusRes = await fetch(
     `${BASE_URL}/academics/semester/status/${activeSem.id}`,
     {

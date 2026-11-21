@@ -56,6 +56,8 @@ export default function RoleManagement() {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [customPerms, setCustomPerms] = useState<Permission[]>([]);
 
+  const assignableRoles = roles.filter((role) => role !== "webadmin");
+
   const token = localStorage.getItem("admin_token");
   const headers = {
     Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
@@ -224,7 +226,10 @@ export default function RoleManagement() {
       id: "role",
       header: "Assigned Role",
       meta: true,
-      cell: (admin) => (
+      cell: (admin) =>
+        admin.role === "webadmin" ? (
+          <span className="capitalize">webadmin</span>
+        ) : (
         <div className="relative inline-block w-full max-w-[220px]" onClick={(e) => e.stopPropagation()}>
           <select
             value={admin.role}
@@ -232,7 +237,7 @@ export default function RoleManagement() {
             onClick={(e) => e.stopPropagation()}
             className={adminSelectClass}
           >
-            {roles.map((r) => (
+            {assignableRoles.map((r) => (
               <option key={r} value={r} className="capitalize">
                 {r}
               </option>
@@ -243,7 +248,7 @@ export default function RoleManagement() {
             className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-text-3"
           />
         </div>
-      ),
+        ),
     },
     {
       id: "actions",
@@ -366,7 +371,7 @@ export default function RoleManagement() {
                     }
                     className={adminSelectClass}
                   >
-                    {roles.map((r) => (
+                    {assignableRoles.map((r) => (
                       <option key={r} value={r} className="capitalize">
                         {r}
                       </option>
@@ -408,7 +413,7 @@ export default function RoleManagement() {
                   >
                     Select a role...
                   </button>
-                  {roles.map((r) => (
+                  {assignableRoles.map((r) => (
                     <button
                       key={r}
                       onClick={() => {

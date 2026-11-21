@@ -35,7 +35,7 @@ For each feature you will find: what it is, who can use it, how to open it (navi
 | SWO / DSW | Student Welfare | Grievances; outing/outpass when enabled |
 | Dean | Academic dean | Broad academic + campus admin shell |
 | Director | Institution director | Broad academic + campus admin shell |
-| Webadmin / COE | Platform / exam admin | Full webmaster shell including bulk ops & logs |
+| Webadmin / COE | Platform / exam admin | Full webadmin shell including bulk ops & logs |
 | Security | Gate staff | Check-in/check-out terminal |
 
 Source of truth for authorization semantics: [https://api-uniz.rguktong.in/docs/roles](https://api-uniz.rguktong.in/docs/roles).
@@ -497,7 +497,7 @@ Source of truth for authorization semantics: [https://api-uniz.rguktong.in/docs/
 
 **Who.** All admin portal roles using AdminShell
 
-**Entry path.** Any `/admin` section rendered by Webmaster/Dean/Director/SWO/Warden/Caretaker/Security shells
+**Entry path.** Any `/admin` section rendered by Webadmin/Dean/Director/SWO/Warden/Caretaker/Security shells
 
 **Actions.**
 
@@ -540,7 +540,7 @@ Source of truth for authorization semantics: [https://api-uniz.rguktong.in/docs/
 - **Quick action cards** — Navigate to approve outing/outpass, security, grades, attendance, curriculum, faculty, students, search, settings, roles, banners, etc., based on role gates.
 - **Logout** — Ends session.
 
-> Most production roles resolve to specialized dashboards (Webmaster, Dean, SWO, Warden, Caretaker, Director, Security).
+> Most production roles resolve to specialized dashboards (Webadmin, Dean, SWO, Warden, Caretaker, Director, Security).
 
 ### Add students (legacy page)
 
@@ -674,7 +674,7 @@ Source of truth for authorization semantics: [https://api-uniz.rguktong.in/docs/
 
 **Docs.** [https://api-uniz.rguktong.in/docs/admin/overview](https://api-uniz.rguktong.in/docs/admin/overview)
 
-> Live screenshot pending test account. Component: WebmasterOverview (+ analytics panels).
+> Live screenshot pending test account. Component: WebadminOverview (+ analytics panels).
 
 ### Student details
 

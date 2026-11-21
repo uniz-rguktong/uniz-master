@@ -36,7 +36,7 @@ function greeting() {
   return "Good evening";
 }
 
-export default function WebmasterOverview({ username }: { username: string }) {
+export default function WebadminOverview({ username }: { username: string }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);

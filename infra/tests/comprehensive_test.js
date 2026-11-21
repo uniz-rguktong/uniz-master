@@ -44,7 +44,7 @@ const GW_STATUS_URL =
 
 // State Management
 let studentToken = "";
-let webmasterToken = "";
+let webadminToken = "";
 let deanToken = "";
 let directorToken = "";
 let swoToken = "";
@@ -203,7 +203,7 @@ async function uploadFile(url, fieldName, filePath, token = null) {
   try {
     const form = new FormData();
     form.append(fieldName, fs.createReadStream(filePath));
-    form.append("attribution", "WEBMASTER"); // Satisfy integrity checks
+    form.append("attribution", "WEBADMIN"); // Satisfy integrity checks
     form.append("integrityToken", process.env.INTERNAL_SECRET);
 
     const config = {
@@ -297,14 +297,14 @@ async function run() {
   // PRE-FLIGHT SANITIZATION
   log.phase("Pre-Flight - Data Neutralization");
 
-  log.step("Admin Infiltration (Webmaster)");
+  log.step("Admin Infiltration (Webadmin)");
   const webRes = await request("POST", "/auth/login/admin", {
-    username: "webmaster",
-    password: "webmaster@uniz",
+    username: "webadmin",
+    password: "webadmin@uniz",
   });
   if (webRes.status !== 200)
-    log.fail(new Error("Webmaster login failed"), webRes.duration, webRes.data);
-  webmasterToken = webRes.data.token;
+    log.fail(new Error("Webadmin login failed"), webRes.duration, webRes.data);
+  webadminToken = webRes.data.token;
   log.pass(webRes.duration, "TOKEN_ACQUIRED");
 
   log.step("Sanitizing Outpass Database (Hard Reset)");
@@ -360,7 +360,7 @@ async function run() {
       isPresent: true,
       isPending: false,
     },
-    webmasterToken,
+    webadminToken,
   );
   if (resetProfileRes.status !== 200) {
     log.info(
@@ -947,7 +947,7 @@ async function run() {
     "GET",
     "/academics/subjects",
     null,
-    webmasterToken,
+    webadminToken,
   );
   if (subRes.status !== 200)
     log.fail(
@@ -1038,7 +1038,7 @@ async function run() {
 
   for (const t of ingestionTests) {
     log.step(`${t.name}: Initializing Upload`);
-    const upRes = await uploadFile(t.url, "file", t.file, webmasterToken);
+    const upRes = await uploadFile(t.url, "file", t.file, webadminToken);
 
     // Direct upload to port 3004 via uploadFile utility uses the implementation we fixed
     if (upRes.status !== 202 && upRes.status !== 200) {
@@ -1056,7 +1056,7 @@ async function run() {
       uploadId,
       t.progressUrl,
       t.name,
-      webmasterToken,
+      webadminToken,
     );
 
     if (result.success) {
@@ -1094,7 +1094,7 @@ async function run() {
       imageUrl: "https://example.com/banner.png",
       isVisible: true,
     },
-    webmasterToken,
+    webadminToken,
   );
   log.pass(bannerRes.duration, "BANNER_CREATED");
 
@@ -1107,7 +1107,7 @@ async function run() {
       content: "UniZ will be undergoing maintenance.",
       isVisible: true,
     },
-    webmasterToken,
+    webadminToken,
   );
   log.pass(updateRes.duration, "UPDATE_CREATED");
 
@@ -1122,7 +1122,7 @@ async function run() {
       deadline: new Date(Date.now() + 86400000 * 7).toISOString(),
       isVisible: true,
     },
-    webmasterToken,
+    webadminToken,
   );
   log.pass(tenderRes.duration, "TENDER_CREATED");
 
@@ -1156,7 +1156,7 @@ async function run() {
       department: "CSE",
       semester: "E2-SEM-1",
     },
-    webmasterToken,
+    webadminToken,
   );
   log.pass(subAdd.duration, "SUBJECT_ADDED");
 
@@ -1165,7 +1165,7 @@ async function run() {
     "GET",
     "/academics/grades/batch?year=E2&branch=CSE",
     null,
-    webmasterToken,
+    webadminToken,
   );
   log.pass(batchGrades.duration, "BATCH_RESULTS_LOADED");
   log.data(batchGrades.data.summary);
@@ -1175,7 +1175,7 @@ async function run() {
     "GET",
     "/academics/grades/download/E2-SEM-1?studentId=O210008",
     null,
-    webmasterToken,
+    webadminToken,
   );
   if (
     downloadGradesRes.status === 200 &&
@@ -1219,7 +1219,7 @@ async function run() {
     "GET",
     "/academics/attendance/download/E2-SEM-1?studentId=O210008",
     null,
-    webmasterToken,
+    webadminToken,
   );
   if (
     downloadAttRes.status === 200 &&

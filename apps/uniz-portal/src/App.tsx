@@ -22,8 +22,8 @@ const NotificationDeepLink = lazy(() => import("./pages/NotificationDeepLink"));
 const AdminNotificationsPage = lazy(
   () => import("./pages/admin/AdminNotificationsPage"),
 );
-const WebmasterGuidePrint = lazy(
-  () => import("./pages/admin/Webmaster/HelpPrintPage"),
+const WebadminGuidePrint = lazy(
+  () => import("./pages/admin/Webadmin/HelpPrintPage"),
 );
 
 // Admin Components
@@ -549,12 +549,12 @@ export default function App() {
             path="/admin/help/print"
             element={
               <PageTransition>
-                <WebmasterGuidePrint />
+                <WebadminGuidePrint />
               </PageTransition>
             }
           />
 
-          {/* Admin shell sections (webmaster, dean, director, etc.) */}
+          {/* Admin shell sections (webadmin, dean, director, etc.) */}
           <Route
             path="/admin/*"
             element={

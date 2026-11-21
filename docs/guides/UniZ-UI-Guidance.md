@@ -39,7 +39,7 @@ For each feature you get: a short description, the audience, the entry path (men
 | SWO / DSW | Student Welfare | Grievances; outing/outpass when enabled |
 | Dean | Academic dean | Broad academic + campus admin shell |
 | Director | Institution director | Broad academic + campus admin shell (no semester approvals tab) |
-| Webadmin / COE | Platform / exam admin | Full webmaster shell including bulk ops & logs |
+| Webadmin / COE | Platform / exam admin | Full webadmin shell including bulk ops & logs |
 | Security | Gate staff | Check-in/check-out terminal |
 
 Source of truth for authorization semantics: [https://api-uniz.rguktong.in/docs/roles](https://api-uniz.rguktong.in/docs/roles).
@@ -57,7 +57,7 @@ Source of truth for authorization semantics: [https://api-uniz.rguktong.in/docs/
 | SWO / DSW | `/admin (SWODashboard)` | Overview; Grievances; Security; Outing/Outpass request management when flag on |
 | Dean | `/admin (DeanDashboard)` | Overview; Student Details; Student Bulk Ops; Attendance; Grades; Subjects; Semester Registration; Semester Approvals; Campus (banners, updates, website, push); Faculty Management; System & Logs; Security |
 | Director | `/admin (DirectorDashboard)` | Same campus/academic breadth as Dean without Semester Approvals tab |
-| Webadmin / COE | `/admin (WebmasterDashboard)` | Overview; Student Details; Student Bulk Ops; Attendance; Grades; Subjects; Semester Registration; Campus tools; Faculty Management; System & Logs; Security |
+| Webadmin / COE | `/admin (WebadminDashboard)` | Overview; Student Details; Student Bulk Ops; Attendance; Grades; Subjects; Semester Registration; Campus tools; Faculty Management; System & Logs; Security |
 | Security | `/admin/security (SecurityPortal)` | Overview; Check-In / Check-Out; Search Directory; Activity Logs |
 
 Admin tab → URL mapping is defined in `apps/uniz-portal/src/utils/adminSectionRoutes.ts`. Backend approval chains: [https://api-uniz.rguktong.in/docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows).
@@ -537,7 +537,7 @@ Admin tab → URL mapping is defined in `apps/uniz-portal/src/utils/adminSection
 
 **Who.** All admin portal roles using AdminShell
 
-**Entry path.** Any `/admin` section rendered by Webmaster/Dean/Director/SWO/Warden/Caretaker/Security shells
+**Entry path.** Any `/admin` section rendered by Webadmin/Dean/Director/SWO/Warden/Caretaker/Security shells
 
 **Actions.**
 
@@ -580,7 +580,7 @@ Admin tab → URL mapping is defined in `apps/uniz-portal/src/utils/adminSection
 - **Quick action cards** — Navigate to approve outing/outpass, security, grades, attendance, curriculum, faculty, students, search, settings, roles, banners, etc., based on role gates.
 - **Logout** — Ends session.
 
-> Most production roles resolve to specialized dashboards (Webmaster, Dean, SWO, Warden, Caretaker, Director, Security).
+> Most production roles resolve to specialized dashboards (Webadmin, Dean, SWO, Warden, Caretaker, Director, Security).
 
 ### Add students (legacy page)
 
@@ -714,7 +714,7 @@ Admin tab → URL mapping is defined in `apps/uniz-portal/src/utils/adminSection
 
 **Docs.** [https://api-uniz.rguktong.in/docs/admin/overview](https://api-uniz.rguktong.in/docs/admin/overview)
 
-> Live screenshot pending test account. Component: WebmasterOverview (+ analytics panels).
+> Live screenshot pending test account. Component: WebadminOverview (+ analytics panels).
 
 ### Student details
 

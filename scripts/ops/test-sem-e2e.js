@@ -32,9 +32,9 @@ function authHeader(token) {
 async function runTest() {
   console.log("=== STARTING SEMESTER REGISTRATION COMPLETE PIPELINE TEST ===");
 
-  // 1. WEBMASTER: Login & Clean DB
-  console.log("\n[1] Webmaster Login and cleanup...");
-  const wmAuth = await loginUser("webmaster", "webmaster@uniz", "admin");
+  // 1. WEBADMIN: Login & Clean DB
+  console.log("\n[1] Webadmin Login and cleanup...");
+  const wmAuth = await loginUser("webadmin", "webadmin@uniz", "admin");
   const wmToken = wmAuth.token;
 
   // Get active semesters and delete them
@@ -51,8 +51,8 @@ async function runTest() {
     }
   }
 
-  // 2. WEBMASTER: Create new Registration Event
-  console.log("\n[2] Webmaster creating NEW registration event...");
+  // 2. WEBADMIN: Create new Registration Event
+  console.log("\n[2] Webadmin creating NEW registration event...");
   const branches = ["CSE", "ECE", "EEE", "MECH", "CIVIL"];
   const newSemRes = await makeRequest(`${BASE_URL}/academics/semester/init`, {
     method: "POST",
@@ -65,7 +65,7 @@ async function runTest() {
   console.log("  ✅ Semester initialized:", newSemRes);
   const activeSemId = newSemRes.semester.id;
 
-  // 3. DEAN: Login and Approve webmaster request
+  // 3. DEAN: Login and Approve webadmin request
   console.log("\n[3] Dean Login and global review...");
   const deanAuth = await loginUser("dean", "dean@uniz", "admin");
   const deanToken = deanAuth.token;
@@ -231,9 +231,9 @@ async function runTest() {
     }
   }
 
-  // 6. ADMINISTRATIVE VERIFICATION: Check registrations as Webmaster
+  // 6. ADMINISTRATIVE VERIFICATION: Check registrations as Webadmin
   console.log(
-    "\n[6] Verification: Checking global registrations as Webmaster...",
+    "\n[6] Verification: Checking global registrations as Webadmin...",
   );
   const regs = await makeRequest(
     `${BASE_URL}/academics/registrations?semesterId=${activeSemId}&branch=all`,

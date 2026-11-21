@@ -24,7 +24,6 @@ router.use(authMiddleware);
 // faculty photos on behalf of another user).
 const ADMIN_UPLOAD_ROLES = new Set([
   "webadmin",
-  "webmaster",
   "dean",
   "director",
   "coe",

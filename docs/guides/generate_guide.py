@@ -394,7 +394,7 @@ ADMIN_SHARED = [
         "Admin shell chrome",
         "Shared layout for role dashboards: collapsible sidebar, nav search, avatar profile popup, logout.",
         "All admin portal roles using AdminShell",
-        "Any `/admin` section rendered by Webmaster/Dean/Director/SWO/Warden/Caretaker/Security shells",
+        "Any `/admin` section rendered by Webadmin/Dean/Director/SWO/Warden/Caretaker/Security shells",
         [
             ("Collapse / expand sidebar", "Toggles nav width."),
             ("Search operations", "Filters sidebar nav labels."),
@@ -425,11 +425,11 @@ ADMIN_SHARED = [
             ("Quick action cards", "Navigate to approve outing/outpass, security, grades, attendance, curriculum, faculty, students, search, settings, roles, banners, etc., based on role gates."),
             ("Logout", "Ends session."),
         ],
-        note="Most production roles resolve to specialized dashboards (Webmaster, Dean, SWO, Warden, Caretaker, Director, Security).",
+        note="Most production roles resolve to specialized dashboards (Webadmin, Dean, SWO, Warden, Caretaker, Director, Security).",
     ),
 ]
 
-# Shared section features reused across webmaster/dean/director
+# Shared section features reused across webadmin/dean/director
 SECTION_FEATURES = [
     feat(
         "Overview",
@@ -443,7 +443,7 @@ SECTION_FEATURES = [
             ("Analytics panels (read)", "Show institutional counts where loaded."),
         ],
         docs=f"{DOCS_BASE}/admin/overview",
-        note="Live screenshot pending test account. Component: WebmasterOverview (+ analytics panels).",
+        note="Live screenshot pending test account. Component: WebadminOverview (+ analytics panels).",
     ),
     feat(
         "Student details",
@@ -853,7 +853,7 @@ ROLE_OVERVIEW = [
     ("SWO / DSW", "Student Welfare", "Grievances; outing/outpass when enabled"),
     ("Dean", "Academic dean", "Broad academic + campus admin shell"),
     ("Director", "Institution director", "Broad academic + campus admin shell (no semester approvals tab)"),
-    ("Webadmin / COE", "Platform / exam admin", "Full webmaster shell including bulk ops & logs"),
+    ("Webadmin / COE", "Platform / exam admin", "Full webadmin shell including bulk ops & logs"),
     ("Security", "Gate staff", "Check-in/check-out terminal"),
 ]
 
@@ -906,7 +906,7 @@ ROLE_NAV_MATRIX = [
     ),
     (
         "Webadmin / COE",
-        "/admin (WebmasterDashboard)",
+        "/admin (WebadminDashboard)",
         "Overview; Student Details; Student Bulk Ops; Attendance; Grades; Subjects; Semester Registration; Campus tools; Faculty Management; System & Logs; Security",
     ),
     (
