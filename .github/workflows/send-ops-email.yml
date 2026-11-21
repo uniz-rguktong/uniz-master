@@ -1,0 +1,238 @@
+# Manual operational email. Same self-hosted runner labels as deploy.yml.
+# Reads INTERNAL_SECRET from Secret/uniz-secrets, masks it, and POSTs one
+# plain_notice to uniz-notification-service:3007 through kubectl port-forward.
+# Prints the HTTP status, job id, delivery result, and provider only.
+name: Send operational email
+
+permissions:
+  contents: read
+
+concurrency:
+  group: send-ops-email
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      to:
+        description: "Single recipient. Must be on OPS_EMAIL_ALLOWLIST."
+        required: true
+        type: string
+      subject:
+        description: "Subject (max 200 characters, one line)"
+        required: true
+        type: string
+      body:
+        description: "Plain-text body (max 20000 characters; line breaks are kept)"
+        required: true
+        type: string
+
+jobs:
+  send:
+    name: Send plain notice
+    runs-on: [self-hosted, linux, uniz-vps]
+    timeout-minutes: 10
+    steps:
+      - name: Send plain_notice in-cluster
+        env:
+          OPS_TO: ${{ inputs.to }}
+          OPS_SUBJECT: ${{ inputs.subject }}
+          OPS_BODY: ${{ inputs.body }}
+          OPS_EMAIL_ALLOWLIST: ${{ vars.OPS_EMAIL_ALLOWLIST }}
+        run: |
+          set +x
+          set -euo pipefail
+          # Do not enable xtrace. It would print INTERNAL_SECRET.
+
+          if ! command -v kubectl >/dev/null 2>&1; then
+            echo "kubectl is not available on this runner"
+            exit 1
+          fi
+          if ! command -v jq >/dev/null 2>&1; then
+            echo "jq is not available on this runner"
+            exit 1
+          fi
+          if ! command -v curl >/dev/null 2>&1; then
+            echo "curl is not available on this runner"
+            exit 1
+          fi
+          if ! command -v python3 >/dev/null 2>&1; then
+            echo "python3 is not available on this runner"
+            exit 1
+          fi
+
+          to_trimmed="$(printf '%s' "$OPS_TO" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          if ! printf '%s' "$to_trimmed" | grep -Eq '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'; then
+            echo "to must be exactly one email address"
+            exit 1
+          fi
+
+          allowlist="${OPS_EMAIL_ALLOWLIST:-sreecharan309@gmail.com}"
+          to_key="$(printf '%s' "$to_trimmed" | tr '[:upper:]' '[:lower:]')"
+          allowed=0
+          IFS=',' read -ra entries <<<"$allowlist"
+          for entry in "${entries[@]}"; do
+            item="$(printf '%s' "$entry" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | tr '[:upper:]' '[:lower:]')"
+            if [ -n "$item" ] && [ "$item" = "$to_key" ]; then
+              allowed=1
+              break
+            fi
+          done
+          if [ "$allowed" -ne 1 ]; then
+            echo "recipient is not on OPS_EMAIL_ALLOWLIST"
+            exit 1
+          fi
+
+          subject_trimmed="$(printf '%s' "$OPS_SUBJECT" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          if [ -z "$subject_trimmed" ]; then
+            echo "subject is empty"
+            exit 1
+          fi
+          if printf '%s' "$subject_trimmed" | grep -q $'[\r\n]'; then
+            echo "subject must be a single line"
+            exit 1
+          fi
+          if [ "${#subject_trimmed}" -gt 200 ]; then
+            echo "subject is longer than 200 characters"
+            exit 1
+          fi
+          if [ -z "$(printf '%s' "$OPS_BODY" | tr -d '[:space:]')" ]; then
+            echo "body is empty"
+            exit 1
+          fi
+          if [ "${#OPS_BODY}" -gt 20000 ]; then
+            echo "body is longer than 20000 characters"
+            exit 1
+          fi
+
+          umask 077
+          payload_file="$(mktemp)"
+          response_file="$(mktemp)"
+          curl_config="$(mktemp)"
+          pf_pid=""
+          cleanup() {
+            if [ -n "${pf_pid}" ]; then
+              kill "$pf_pid" >/dev/null 2>&1 || true
+              wait "$pf_pid" 2>/dev/null || true
+            fi
+            rm -f "$payload_file" "$response_file" "$curl_config"
+            unset INTERNAL_SECRET
+          }
+          trap cleanup EXIT
+
+          jq -n \
+            --arg to "$to_trimmed" \
+            --arg subject "$subject_trimmed" \
+            --arg text "$OPS_BODY" \
+            '{type:"plain_notice", to:$to, data:{subject:$subject, text:$text}}' \
+            >"$payload_file"
+
+          export KUBECONFIG="${KUBECONFIG:-/etc/rancher/k3s/k3s.yaml}"
+          namespace="${NAMESPACE:-default}"
+
+          secret_b64="$(kubectl get secret uniz-secrets -n "$namespace" -o 'jsonpath={.data.INTERNAL_SECRET}')"
+          if [ -z "$secret_b64" ]; then
+            echo "INTERNAL_SECRET is not set in secret/uniz-secrets"
+            exit 1
+          fi
+          INTERNAL_SECRET="$(printf '%s' "$secret_b64" | base64 -d | tr -d '\n\r')"
+          unset secret_b64
+          if [ -z "$INTERNAL_SECRET" ]; then
+            echo "INTERNAL_SECRET is empty"
+            exit 1
+          fi
+          export INTERNAL_SECRET
+          mask="$(printf '%s' "$INTERNAL_SECRET" | sed 's/%/%25/g')"
+          echo "::add-mask::${mask}"
+          unset mask
+
+          port="$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1]); s.close()')"
+          kubectl -n "$namespace" port-forward svc/uniz-notification-service "${port}:3007" >/tmp/uniz-ops-mail-pf.log 2>&1 &
+          pf_pid=$!
+
+          ready=0
+          for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+            if curl -sf --connect-timeout 1 --max-time 2 "http://127.0.0.1:${port}/health" >/dev/null; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$pf_pid" 2>/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            echo "notification service port-forward did not become ready"
+            exit 1
+          fi
+
+          export MAIL_URL="http://127.0.0.1:${port}/send"
+          export PAYLOAD_FILE="$payload_file"
+          export CURL_CONFIG="$curl_config"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          def q(value: str) -> str:
+              return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+          secret = os.environ["INTERNAL_SECRET"]
+          lines = [
+              f"url = {q(os.environ['MAIL_URL'])}",
+              'request = "POST"',
+              'header = "Content-Type: application/json"',
+              f"header = {q('x-internal-secret: ' + secret)}",
+              f"data-binary = {q('@' + os.environ['PAYLOAD_FILE'])}",
+              "silent",
+          ]
+          path = Path(os.environ["CURL_CONFIG"])
+          path.write_text("\n".join(lines) + "\n")
+          os.chmod(path, 0o600)
+          PY
+
+          http_status="$(curl --config "$curl_config" --output "$response_file" --write-out '%{http_code}' --connect-timeout 5 --max-time 30 || true)"
+          if [ -z "$http_status" ]; then
+            http_status="000"
+          fi
+          job_id="$(jq -r '.jobId // empty' "$response_file" 2>/dev/null || true)"
+          if ! printf '%s' "$job_id" | grep -Eq '^[A-Za-z0-9_-]+$'; then
+            job_id=""
+          fi
+          echo "http_status=${http_status}"
+          echo "job_id=${job_id}"
+          if [ "$http_status" != "202" ] || [ -z "$job_id" ]; then
+            echo "result=failed"
+            echo "provider=unknown"
+            exit 1
+          fi
+
+          result="unknown"
+          provider="unknown"
+          # Queue retries use a 5s exponential backoff (up to 5 attempts). Keep
+          # polling through retries, and only treat a failure as final when the
+          # worker says so. Do not print the log lines: they can contain the
+          # recipient address.
+          for _ in $(seq 1 40); do
+            logs="$(kubectl -n "$namespace" logs -l app=uniz-notification-service --tail=400 --since=15m --prefix 2>/dev/null || true)"
+            sent_line="$(printf '%s\n' "$logs" | grep -F "[MAIL-JOB] id=${job_id} result=sent" | tail -n 1 || true)"
+            if [ -n "$sent_line" ]; then
+              result="sent"
+              provider="$(printf '%s\n' "$sent_line" | sed -n 's/.*provider=\([A-Za-z0-9_-]*\).*/\1/p')"
+              provider="${provider:-unknown}"
+              break
+            fi
+            fail_line="$(printf '%s\n' "$logs" | grep -F "Job ${job_id} (" | grep -F "failed" | grep -F "final=yes" | tail -n 1 || true)"
+            if [ -n "$fail_line" ]; then
+              result="failed"
+              provider="$(printf '%s\n' "$fail_line" | sed -n 's/.*provider=\([A-Za-z0-9_-]*\).*/\1/p')"
+              provider="${provider:-unknown}"
+              break
+            fi
+            sleep 3
+          done
+          unset logs sent_line fail_line
+          echo "result=${result}"
+          echo "provider=${provider}"
+          if [ "$result" != "sent" ]; then
+            exit 1
+          fi

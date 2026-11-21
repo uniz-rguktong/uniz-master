@@ -11,6 +11,10 @@ import {
   formatStudentDisplayName,
   isActionableGrievanceDescription,
 } from "@uniz/shared";
+import {
+  plainNoticeFromAddress,
+  type PreparedPlainNotice,
+} from "./plain-notice";
 
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
@@ -64,21 +68,37 @@ if (isProduction && !forceGmail) {
 }
 
 // --- GMAIL SETUP (Local / Fallback) ---
-const localGmailTransporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER || "noreplycampusschield@gmail.com",
-    pass: (process.env.EMAIL_PASS || "acix rfbi kujh xwtj").replace(/\s/g, ""),
-  },
-});
+// Gmail is the non-production fallback. Without EMAIL_PASS it stays disabled;
+// production uses SES and does not substitute a built-in password.
+const gmailPass = (process.env.EMAIL_PASS || "").replace(/\s/g, "");
+const localGmailTransporter: nodemailer.Transporter | null =
+  gmailPass.length > 0
+    ? nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER || "noreplycampusschield@gmail.com",
+          pass: gmailPass,
+        },
+      })
+    : null;
 
-const getTransporter = () => {
+const getTransporter = (): nodemailer.Transporter | null => {
   if (sesTransporter) return sesTransporter;
   return localGmailTransporter;
 };
 
+export function activeMailProvider(): "SES" | "GMAIL" | "NONE" {
+  if (sesTransporter) return "SES";
+  if (localGmailTransporter) return "GMAIL";
+  return "NONE";
+}
+
 console.log(`[MAIL] Transporter Initialized.`);
-console.log(`[MAIL] Active Provider: ${sesTransporter ? "AWS SES" : "Gmail"}`);
+console.log(
+  `[MAIL] Active Provider: ${
+    sesTransporter ? "AWS SES" : localGmailTransporter ? "Gmail" : "none"
+  }`,
+);
 
 // --- RESEND SETUP ---
 // --- EMAIL DELIVERY SETUP ---
@@ -88,11 +108,19 @@ const sendEmailUnified = async (options: {
   to: string;
   subject: string;
   html: string;
+  text?: string;
   attachments?: any[];
 }): Promise<boolean> => {
-  const provider = sesTransporter ? "SES" : "GMAIL";
+  const provider = activeMailProvider();
+  const transporter = getTransporter();
+  if (!transporter) {
+    console.error(
+      `[MAIL-ERROR] [${provider}] Delivery failed for ${options.to}: no mail provider configured`,
+    );
+    return false;
+  }
   try {
-    const info = await getTransporter().sendMail({
+    const info = await transporter.sendMail({
       ...options,
       headers: {
         "X-Entity-Ref-ID": `uniz-${Date.now()}`,
@@ -130,6 +158,18 @@ const sendEmailUnified = async (options: {
 };
 
 // Logic moved to simplified sendEmailUnified above
+
+export async function sendPlainNoticeEmail(
+  notice: PreparedPlainNotice,
+): Promise<boolean> {
+  return sendEmailUnified({
+    from: plainNoticeFromAddress(),
+    to: notice.to,
+    subject: notice.subject,
+    html: notice.html,
+    text: notice.text,
+  });
+}
 
 // Super professional minimalist email template (No gradients, high clarity)
 const emailTemplate = (title: string, content: string) => `

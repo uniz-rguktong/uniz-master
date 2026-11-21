@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { enqueueNotificationJob } from "../../utils/queue.util";
+import { preparePlainNotice } from "../services/plain-notice";
 
 export const sendEmail = async (req: Request, res: Response) => {
   const { type, to, data } = req.body;
@@ -9,6 +10,16 @@ export const sendEmail = async (req: Request, res: Response) => {
     return res
       .status(400)
       .json({ success: false, message: "type and to are required" });
+  }
+
+  if (type === "plain_notice") {
+    try {
+      preparePlainNotice(to, data || {});
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Invalid plain notice";
+      return res.status(400).json({ success: false, message });
+    }
   }
 
   try {

@@ -5,10 +5,17 @@ export const internalAuthMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  const internalSecret = req.headers["x-internal-secret"];
-  const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+  const configured = process.env.INTERNAL_SECRET?.trim() ?? "";
+  if (!configured) {
+    return res.status(503).json({
+      success: false,
+      message: "Mail service is not configured",
+    });
+  }
 
-  if (!internalSecret || internalSecret !== SECRET) {
+  const header = req.headers["x-internal-secret"];
+  const provided = Array.isArray(header) ? header[0] : header;
+  if (!provided || provided.trim() !== configured) {
     return res.status(403).json({
       success: false,
       message: "Forbidden: Internal service access only",
