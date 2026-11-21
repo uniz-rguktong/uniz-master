@@ -15,10 +15,34 @@ class StatItem(BaseModel):
     label: str
     value: str
 
+class HeroContent(BaseModel):
+    eyebrow: str = ""
+    title: str = ""
+    subtitle: str = ""
+
+
+class ContactContent(BaseModel):
+    address: str = ""
+    phone: str = ""
+    email: str = ""
+
+
 class HomePageResponse(BaseModel):
     announcements: List[AnnouncementItem]
     stats: List[StatItem]
     images: List[str]
+    hero: HeroContent
+    contact: ContactContent
+
+
+class HomePageWrite(BaseModel):
+    """Omitted blocks are left as stored. An explicit list replaces that list."""
+
+    announcements: Optional[List[AnnouncementItem]] = None
+    stats: Optional[List[StatItem]] = None
+    images: Optional[List[str]] = None
+    hero: Optional[HeroContent] = None
+    contact: Optional[ContactContent] = None
 
 # --- INSTITUTE SCHEMAS ---
 class InstituteSection(BaseModel):

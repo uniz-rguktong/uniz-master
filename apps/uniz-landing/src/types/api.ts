@@ -1,7 +1,10 @@
 import { apiData } from "../data/apiData";
+import { DEFAULT_CONTACT, DEFAULT_HERO } from "@/lib/site-defaults";
+import type { ContactCopy, HeroCopy } from "@/lib/preview-protocol";
 
 // Same-origin in prod (rguktong.in/api → landing backend via ingress). Override for local dev.
 const BASE_URL = import.meta.env.VITE_LANDING_API_URL ?? "";
+const PORTAL_API = import.meta.env.VITE_PORTAL_API_URL ?? "https://uniz.rguktong.in/api/v1";
 
 const institutePages = apiData.institute as unknown as Record<string, InstituteData>;
 const departmentPages = apiData.departments as unknown as Record<string, DepartmentData>;
@@ -11,9 +14,14 @@ const notificationPages = apiData.notifications as unknown as Record<
   Notification[]
 >;
 
+function resolveUrl(endpoint: string) {
+    if (/^https?:\/\//i.test(endpoint)) return endpoint;
+    return `${BASE_URL}${endpoint}`;
+}
+
 async function fetchJson<T>(endpoint: string): Promise<T | null> {
     try {
-        const res = await fetch(`${BASE_URL}${endpoint}`, {
+        const res = await fetch(resolveUrl(endpoint), {
             headers: { accept: "application/json" }
         });
         if (!res.ok) {
@@ -51,7 +59,25 @@ export interface HomeData {
     announcements: Announcement[];
     stats: Stat[];
     images: string[];
+    hero: HeroCopy;
+    contact: ContactCopy;
     explore_campus?: ExploreCampusCard[];
+}
+
+export interface PublicBanner {
+    id?: string;
+    title: string;
+    text: string;
+    imageUrl: string;
+    isVisible?: boolean;
+}
+
+export interface CampusUpdate {
+    id?: string;
+    title: string;
+    content: string;
+    link?: string | null;
+    isVisible?: boolean;
 }
 
 export interface FeedItem {
@@ -61,19 +87,57 @@ export interface FeedItem {
     links?: NotificationLink[];
 }
 
-function homeFromSnapshot(): HomeData {
-    const home = apiData.home;
+function textOr(value: string | undefined, fallback: string) {
+    return typeof value === "string" ? value : fallback;
+}
+
+export function normalizeHome(data: Partial<HomeData> | null | undefined): HomeData {
+    const home = data ?? {};
     return {
-        announcements: home.announcements.map((a) => ({ ...a })),
-        stats: home.stats.map((s) => ({ ...s })),
-        images: [...home.images],
+        announcements: Array.isArray(home.announcements) ? home.announcements.map((item) => ({ ...item })) : [],
+        stats: Array.isArray(home.stats) ? home.stats.map((item) => ({ ...item })) : [],
+        images: Array.isArray(home.images) ? [...home.images] : [],
+        hero: {
+            eyebrow: textOr(home.hero?.eyebrow, DEFAULT_HERO.eyebrow),
+            title: textOr(home.hero?.title, DEFAULT_HERO.title),
+            subtitle: textOr(home.hero?.subtitle, DEFAULT_HERO.subtitle),
+        },
+        contact: {
+            address: textOr(home.contact?.address, DEFAULT_CONTACT.address),
+            phone: textOr(home.contact?.phone, DEFAULT_CONTACT.phone),
+            email: textOr(home.contact?.email, DEFAULT_CONTACT.email),
+        },
     };
 }
 
+function homeFromSnapshot(): HomeData {
+    const home = apiData.home;
+    return normalizeHome({
+        announcements: home.announcements.map((a) => ({ ...a })),
+        stats: home.stats.map((s) => ({ ...s })),
+        images: [...home.images],
+    });
+}
+
 export async function getHomeData(): Promise<HomeData> {
-    const data = await fetchJson<HomeData>("/api/home/");
-    if (data) return data;
+    const data = await fetchJson<Partial<HomeData>>("/api/home/");
+    if (data) return normalizeHome(data);
     return homeFromSnapshot();
+}
+
+export async function getPublicBanners(): Promise<PublicBanner[]> {
+    const data = await fetchJson<{ banners?: PublicBanner[] }>(`${PORTAL_API}/cms/banners/public`);
+    if (!data || !Array.isArray(data.banners)) return [];
+    return data.banners.filter((banner) => banner && banner.isVisible !== false && banner.imageUrl);
+}
+
+export async function getCampusUpdates(): Promise<CampusUpdate[]> {
+    const data = await fetchJson<{ notifications?: { updates?: CampusUpdate[] } }>(
+        `${PORTAL_API}/cms/notifications`,
+    );
+    const updates = data?.notifications?.updates;
+    if (!Array.isArray(updates)) return [];
+    return updates.filter((item) => item && item.isVisible !== false && item.title);
 }
 
 // ─── NOTIFICATIONS ───────────────────────────────────────────────

@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getNotifications } from "@/types/api";
-import type { Notification, NotificationType } from "@/types/api";
+import type { NoticeCopy } from "@/lib/preview-protocol";
 import { formatNoticeDay, parseSafeDate } from "@/lib/notice-date";
+import { useSiteContent } from "@/components/site-context";
+import { EditRegion } from "../preview/EditRegion";
 import { buttonVariants } from "../ui/button-variants";
 import { Wrap } from "../layout/Wrap";
 
-function noticeHref(item: Notification) {
+function noticeHref(item: NoticeCopy) {
   const link = item.links?.find((entry) => entry.url);
   if (link?.url) return { href: link.url, external: true };
   return { href: "/notifications/news", external: false };
@@ -19,7 +19,7 @@ function dateLabel(date?: string) {
   return date?.trim() ?? "";
 }
 
-function Row({ item }: { item: Notification }) {
+function Row({ item }: { item: NoticeCopy }) {
   const target = noticeHref(item);
   const className =
     "grid grid-cols-[1fr_20px] gap-x-5 border-t border-border py-[18px] no-underline last:border-b min-[821px]:grid-cols-[96px_minmax(0,1fr)_24px] min-[821px]:items-baseline min-[821px]:py-[22px]";
@@ -49,49 +49,30 @@ function Row({ item }: { item: Notification }) {
 }
 
 export function HomeNotices({
-  type = "news_updates",
   heading = "Notices",
   lede = "The latest from campus offices.",
   href = "/notifications/news",
   action = "All notices",
   stacked = false,
 }: {
-  type?: NotificationType;
   heading?: string;
   lede?: string;
   href?: string;
   action?: string;
   stacked?: boolean;
 }) {
-  const [items, setItems] = useState<Notification[] | null>(null);
-  const [failed, setFailed] = useState(false);
+  const { notices, ready } = useSiteContent();
   const headingId = heading.toLowerCase().replace(/[^a-z]+/g, "-") || "notices";
-
-  useEffect(() => {
-    let cancelled = false;
-    getNotifications(type)
-      .then((data) => {
-        if (cancelled) return;
-        const sorted = [...data].sort((a, b) => {
-          const left = parseSafeDate(a.date);
-          const right = parseSafeDate(b.date);
-          if (left && right) return right.getTime() - left.getTime();
-          if (left) return -1;
-          if (right) return 1;
-          return 0;
-        });
-        setItems(sorted.slice(0, 3));
-      })
-      .catch(() => {
-        if (!cancelled) setFailed(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [type]);
-
-  const ready = items !== null || failed;
-  const rows = items ?? [];
+  const rows = [...notices]
+    .sort((a, b) => {
+      const left = parseSafeDate(a.date);
+      const right = parseSafeDate(b.date);
+      if (left && right) return right.getTime() - left.getTime();
+      if (left) return -1;
+      if (right) return 1;
+      return 0;
+    })
+    .slice(0, 3);
 
   const list = (
           <div className="min-w-0">
@@ -120,7 +101,9 @@ export function HomeNotices({
         <Link to={href} className={buttonVariants({ variant: "outline", size: "default" })}>
           {action}
         </Link>
-        <div className="mt-6">{list}</div>
+        <div className="mt-6">
+          <EditRegion region="notices" blockNavigation>{list}</EditRegion>
+        </div>
       </section>
     );
   }
@@ -140,7 +123,7 @@ export function HomeNotices({
               {action}
             </Link>
           </div>
-          {list}
+          <EditRegion region="notices" blockNavigation>{list}</EditRegion>
         </div>
       </section>
     </Wrap>

@@ -30,6 +30,7 @@ import { cn } from "../../../utils/cn";
 import { DeptStaffEditor } from "./DeptStaffEditor";
 import { WebsiteLiveEditor } from "./WebsiteLiveEditor";
 import { uploadImage } from "../../../api/uploadImage";
+import { WebsiteEditorLink } from "./WebsiteEditorLink";
 
 const PAGE_LABELS: Record<string, string> = {
   aboutrgukt: "About RGUKT",
@@ -43,7 +44,7 @@ const PAGE_LABELS: Record<string, string> = {
   AcademicRegulations: "Academic Regulations",
   curicula: "Curricula",
   careers: "Careers",
-  newsupdates: "News Updates",
+  news_updates: "News Updates",
   tenders: "Tenders",
 };
 
@@ -119,7 +120,7 @@ const SECTIONS = [
     description: "News, careers, and official tenders.",
     icon: Bell,
     endpoint: "/api/notifications/",
-    pages: ["careers", "newsupdates", "tenders"],
+    pages: ["careers", "news_updates", "tenders"],
   },
 ];
 
@@ -369,6 +370,7 @@ export default function WebsiteUpdatesSection() {
           title="Website content"
           meta="Edit the live RGUKT landing site — changes publish automatically."
         />
+        <WebsiteEditorLink />
         <Tabs
           label="Website sections"
           value={activeSectionId}

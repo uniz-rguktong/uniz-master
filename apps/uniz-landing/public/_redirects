@@ -1,1 +1,6 @@
+/nexus/student-cell /uniz/student-cell 301
+/nexus/placements /information/placements 301
+/nexus/alumni /information/alumni 301
+/nexus/hho / 301
+/nexus/* /uniz/student-cell 301
 /*    /index.html   200

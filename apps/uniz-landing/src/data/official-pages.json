@@ -1005,33 +1005,29 @@
         }
       ]
     },
-    "/nexus/student-cell": {
-      "title": "Student Cell",
-      "eyebrow": "Nexus",
-      "description": "Student services hosted on the Nexus portal.",
+    "/uniz/student-cell": {
+      "title": "Student cell",
+      "eyebrow": "UniZ",
+      "description": "Results, attendance, registration and grievances.",
       "kind": "links",
+      "plainLinks": true,
       "paragraphs": [
         {
           "heading": "",
-          "text": "The official site sends Student Cell to the Nexus login. Results, attendance, registration and grievances are on the student portal."
+          "text": "UniZ is the examination cell and attendance system for RGUKT Ongole. Results, attendance, registration and grievances are on UniZ."
         }
       ],
       "links": [
         {
-          "label": "Nexus student cell",
-          "href": "http://nexus.rguktong.ac.in/",
-          "external": true
-        },
-        {
-          "label": "Student Portal",
+          "label": "UniZ",
           "href": "https://uniz.rguktong.in",
           "external": true
         }
       ]
     },
-    "/nexus/placements": {
+    "/information/placements": {
       "title": "Placement Cell",
-      "eyebrow": "Nexus",
+      "eyebrow": "Information",
       "description": "Career Development and Placement Cell of RGUKT Ongole.",
       "kind": "links",
       "paragraphs": [
@@ -1057,9 +1053,9 @@
         }
       ]
     },
-    "/nexus/alumni": {
+    "/information/alumni": {
       "title": "Alumni Cell",
-      "eyebrow": "Nexus",
+      "eyebrow": "Information",
       "description": "Alumni of RGUKT Ongole.",
       "kind": "links",
       "paragraphs": [
@@ -1073,25 +1069,6 @@
           "label": "Alumni cell",
           "href": "http://alumni.rguktong.ac.in/",
           "external": true
-        }
-      ]
-    },
-    "/nexus/hho": {
-      "title": "HHO",
-      "eyebrow": "Nexus",
-      "description": "HHO, as listed on the official campus menu.",
-      "kind": "links",
-      "paragraphs": [
-        {
-          "heading": "",
-          "text": "The official Nexus menu lists HHO without a description or a working link. Nothing further is published on that item."
-        }
-      ],
-      "links": [
-        {
-          "label": "Contact the campus",
-          "href": "/information/contact",
-          "external": false
         }
       ]
     },
@@ -1207,25 +1184,17 @@
       "paragraphs": [
         {
           "heading": "",
-          "text": "On the official site, Women Cell asks you to log in at the Nexus student portal."
-        },
-        {
-          "heading": "",
-          "text": "Students can also raise and follow a grievance on the student portal."
+          "text": "Students file this grievance on UniZ."
         }
       ],
       "links": [
         {
-          "label": "Log in at Nexus",
-          "href": "http://nexus.rguktong.ac.in/Nexus/",
-          "external": true
-        },
-        {
-          "label": "Student Portal",
-          "href": "https://uniz.rguktong.in",
+          "label": "UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
           "external": true
         }
-      ]
+      ],
+      "plainLinks": true
     },
     "/grievance/anti-ragging": {
       "title": "Anti Ragging Cell",
@@ -1235,25 +1204,17 @@
       "paragraphs": [
         {
           "heading": "",
-          "text": "On the official site, Anti Ragging Cell asks you to log in at the Nexus student portal."
-        },
-        {
-          "heading": "",
-          "text": "Students can also raise and follow a grievance on the student portal."
+          "text": "Students file this grievance on UniZ."
         }
       ],
       "links": [
         {
-          "label": "Log in at Nexus",
-          "href": "http://nexus.rguktong.ac.in/Nexus/",
-          "external": true
-        },
-        {
-          "label": "Student Portal",
-          "href": "https://uniz.rguktong.in",
+          "label": "UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
           "external": true
         }
-      ]
+      ],
+      "plainLinks": true
     },
     "/grievance/hod": {
       "title": "HOD",
@@ -1263,25 +1224,17 @@
       "paragraphs": [
         {
           "heading": "",
-          "text": "On the official site, HOD asks you to log in at the Nexus student portal."
-        },
-        {
-          "heading": "",
-          "text": "Students can also raise and follow a grievance on the student portal."
+          "text": "Students file this grievance on UniZ."
         }
       ],
       "links": [
         {
-          "label": "Log in at Nexus",
-          "href": "http://nexus.rguktong.ac.in/Nexus/",
-          "external": true
-        },
-        {
-          "label": "Student Portal",
-          "href": "https://uniz.rguktong.in",
+          "label": "UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
           "external": true
         }
-      ]
+      ],
+      "plainLinks": true
     },
     "/grievance/dean-academics": {
       "title": "Dean Academics",
@@ -1291,25 +1244,17 @@
       "paragraphs": [
         {
           "heading": "",
-          "text": "On the official site, Dean Academics asks you to log in at the Nexus student portal."
-        },
-        {
-          "heading": "",
-          "text": "Students can also raise and follow a grievance on the student portal."
+          "text": "Students file this grievance on UniZ."
         }
       ],
       "links": [
         {
-          "label": "Log in at Nexus",
-          "href": "http://nexus.rguktong.ac.in/Nexus/",
-          "external": true
-        },
-        {
-          "label": "Student Portal",
-          "href": "https://uniz.rguktong.in",
+          "label": "UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
           "external": true
         }
-      ]
+      ],
+      "plainLinks": true
     },
     "/grievance/student-welfare": {
       "title": "Student Welfare Office",
@@ -1319,25 +1264,17 @@
       "paragraphs": [
         {
           "heading": "",
-          "text": "On the official site, Student Welfare Office asks you to log in at the Nexus student portal."
-        },
-        {
-          "heading": "",
-          "text": "Students can also raise and follow a grievance on the student portal."
+          "text": "Students file this grievance on UniZ."
         }
       ],
       "links": [
         {
-          "label": "Log in at Nexus",
-          "href": "http://nexus.rguktong.ac.in/Nexus/",
-          "external": true
-        },
-        {
-          "label": "Student Portal",
-          "href": "https://uniz.rguktong.in",
+          "label": "UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
           "external": true
         }
-      ]
+      ],
+      "plainLinks": true
     },
     "/grievance/examination": {
       "title": "Examination",
@@ -1347,25 +1284,17 @@
       "paragraphs": [
         {
           "heading": "",
-          "text": "On the official site, Examination asks you to log in at the Nexus student portal."
-        },
-        {
-          "heading": "",
-          "text": "Students can also raise and follow a grievance on the student portal."
+          "text": "Students file this grievance on UniZ."
         }
       ],
       "links": [
         {
-          "label": "Log in at Nexus",
-          "href": "http://nexus.rguktong.ac.in/Nexus/",
-          "external": true
-        },
-        {
-          "label": "Student Portal",
-          "href": "https://uniz.rguktong.in",
+          "label": "UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
           "external": true
         }
-      ]
+      ],
+      "plainLinks": true
     },
     "/grievance/it-infrastructure": {
       "title": "IT Infrastructure",
@@ -1375,25 +1304,17 @@
       "paragraphs": [
         {
           "heading": "",
-          "text": "On the official site, IT Infrastructure asks you to log in at the Nexus student portal."
-        },
-        {
-          "heading": "",
-          "text": "Students can also raise and follow a grievance on the student portal."
+          "text": "Students file this grievance on UniZ."
         }
       ],
       "links": [
         {
-          "label": "Log in at Nexus",
-          "href": "http://nexus.rguktong.ac.in/Nexus/",
-          "external": true
-        },
-        {
-          "label": "Student Portal",
-          "href": "https://uniz.rguktong.in",
+          "label": "UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
           "external": true
         }
-      ]
+      ],
+      "plainLinks": true
     },
     "/grievance/director": {
       "title": "Director",
@@ -1403,25 +1324,17 @@
       "paragraphs": [
         {
           "heading": "",
-          "text": "On the official site, Director asks you to log in at the Nexus student portal."
-        },
-        {
-          "heading": "",
-          "text": "Students can also raise and follow a grievance on the student portal."
+          "text": "Students file this grievance on UniZ."
         }
       ],
       "links": [
         {
-          "label": "Log in at Nexus",
-          "href": "http://nexus.rguktong.ac.in/Nexus/",
-          "external": true
-        },
-        {
-          "label": "Student Portal",
-          "href": "https://uniz.rguktong.in",
+          "label": "UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
           "external": true
         }
-      ]
+      ],
+      "plainLinks": true
     },
     "/grievance/vice-chancellor": {
       "title": "Vice Chancellor",
@@ -1431,25 +1344,17 @@
       "paragraphs": [
         {
           "heading": "",
-          "text": "On the official site, Vice Chancellor asks you to log in at the Nexus student portal."
-        },
-        {
-          "heading": "",
-          "text": "Students can also raise and follow a grievance on the student portal."
+          "text": "Students file this grievance on UniZ."
         }
       ],
       "links": [
         {
-          "label": "Log in at Nexus",
-          "href": "http://nexus.rguktong.ac.in/Nexus/",
-          "external": true
-        },
-        {
-          "label": "Student Portal",
-          "href": "https://uniz.rguktong.in",
+          "label": "UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
           "external": true
         }
-      ]
+      ],
+      "plainLinks": true
     },
     "/grievance/chancellor": {
       "title": "Chancellor",
@@ -1459,25 +1364,17 @@
       "paragraphs": [
         {
           "heading": "",
-          "text": "On the official site, Chancellor asks you to log in at the Nexus student portal."
-        },
-        {
-          "heading": "",
-          "text": "Students can also raise and follow a grievance on the student portal."
+          "text": "Students file this grievance on UniZ."
         }
       ],
       "links": [
         {
-          "label": "Log in at Nexus",
-          "href": "http://nexus.rguktong.ac.in/Nexus/",
-          "external": true
-        },
-        {
-          "label": "Student Portal",
-          "href": "https://uniz.rguktong.in",
+          "label": "UniZ",
+          "href": "https://uniz.rguktong.in/student/grievance",
           "external": true
         }
-      ]
+      ],
+      "plainLinks": true
     },
     "/academics/departments": {
       "title": "Departments",
@@ -1655,7 +1552,7 @@
       {
         "image": "/media/2cse-min.webp",
         "alt": "Computer science students at work",
-        "href": "/nexus/placements",
+        "href": "/information/placements",
         "title": "Internships and placements",
         "text": "RGUKT Ongole has a dedicated Career Development and Placement Cell (CDPC) for its student community, which organizes campus placement and internship opportunities."
       },
