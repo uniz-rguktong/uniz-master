@@ -50,6 +50,8 @@ model StudentProfile {
 
   @@index([branch, year, batch])
   @@index([cgpa, totalBacklogs])
+  // Overview summary COUNT FILTER (isSuspended, isPresentInCampus).
+  @@index([isSuspended, isPresentInCampus])
 }
 
 model FacultyProfile {
@@ -161,4 +163,6 @@ model Grievance {
 
   @@index([status])
   @@index([createdAt])
+  // Overview summary GROUP BY category, status.
+  @@index([category, status])
 }

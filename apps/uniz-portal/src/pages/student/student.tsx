@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRecoilValue } from "recoil";
 import { useSearchParams } from "react-router-dom";
-import { AlertTriangle, Camera, Loader2 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { student, studentAuthLoading, studentProfileError } from "../../store";
+import { Camera, Loader2 } from "lucide-react";
+import { student, studentProfileError } from "../../store";
 import { useIsAuth } from "../../hooks/is_authenticated";
 import { useStudentData } from "../../hooks/student_info";
 import { apiClient } from "../../api/apiClient";
@@ -26,10 +25,9 @@ import SeatingArrangement, {
   fetchSeatingOnce,
 } from "./components/SeatingArrangement";
 import NoticeBoard from "../../components/NoticeBoard";
-import { Attendance, Grade, Student } from "../../types";
+import { Student } from "../../types";
 import { InlineError } from "../../components/feedback/InlineError";
 import { enableOutingsAndOutpasses } from "@/config/featureFlags";
-import { asAttendanceList, asGradeList } from "../../utils/bootstrapNormalize";
 import { Button } from "@/components/Button";
 import { Input, Textarea } from "../../components/Input";
 import { Avatar } from "@/components/ui/avatar";
@@ -38,7 +36,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Panel } from "@/components/ui/panel";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { StatTile } from "@/components/ui/tile";
+import StudentHomeOverview from "./components/StudentHomeOverview";
 import { Tabs } from "@/components/ui/tabs";
 
 export { enableOutingsAndOutpasses } from "@/config/featureFlags";
@@ -50,69 +48,6 @@ const STUDENT_LOCKED_PROFILE_FIELDS = new Set([
 
 const sectionTitleClass =
   "font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head min-[821px]:text-h2 min-[821px]:leading-9";
-
-type DashTile = {
-  key: string;
-  label: string;
-  value: string;
-  line?: string;
-  status?: "warning";
-  icon?: LucideIcon;
-};
-
-function buildStatTiles(user: Student | any): DashTile[] {
-  const tiles: DashTile[] = [];
-  const attendanceRows = asAttendanceList(user?.attendance) as Attendance[];
-  const totalClasses = attendanceRows.reduce(
-    (sum, row) => sum + (Number(row.totalClasses) || 0),
-    0,
-  );
-  const attendedClasses = attendanceRows.reduce(
-    (sum, row) => sum + (Number(row.attendedClasses) || 0),
-    0,
-  );
-  if (totalClasses > 0) {
-    const pct = (attendedClasses / totalClasses) * 100;
-    const low = pct < 75;
-    tiles.push({
-      key: "attendance",
-      label: "Attendance",
-      value: `${pct.toFixed(1)}%`,
-      line: low ? "Below 75%" : "Recorded classes",
-      status: low ? "warning" : undefined,
-      icon: low ? AlertTriangle : undefined,
-    });
-  }
-
-  const gradeRows = asGradeList(user?.grades) as Grade[];
-  const points = gradeRows
-    .map((row) => Number(row.grade))
-    .filter((point) => Number.isFinite(point));
-  if (points.length > 0) {
-    const avg = points.reduce((sum, point) => sum + point, 0) / points.length;
-    tiles.push({
-      key: "grades",
-      label: "Grade points",
-      value: avg.toFixed(1),
-      line: `${points.length} ${points.length === 1 ? "subject" : "subjects"}`,
-    });
-  }
-
-  const identity: DashTile[] = [
-    { key: "year", label: "Year", value: user?.year || "—" },
-    { key: "branch", label: "Branch", value: user?.branch || "—" },
-    { key: "section", label: "Section", value: user?.section || "A" },
-    { key: "room", label: "Room", value: user?.roomno || "N/A" },
-  ];
-
-  if (tiles.length === 0) return identity;
-
-  for (const item of [identity[2], identity[3], identity[0], identity[1]]) {
-    if (tiles.length >= 4) break;
-    tiles.push(item);
-  }
-  return tiles.slice(0, 4);
-}
 
 // ─────────────────────────────────────────────────────────────────
 // Profile Skeleton
@@ -157,7 +92,6 @@ export default function StudentProfilePage() {
   useIsAuth();
   const { refetch } = useStudentData();
   const user = useRecoilValue<Student | any>(student);
-  const authLoading = useRecoilValue(studentAuthLoading);
   const profileError = useRecoilValue(studentProfileError);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -508,11 +442,12 @@ export default function StudentProfilePage() {
 
   const hasToken = !!localStorage.getItem("student_token");
 
-  if (authLoading) return <ProfileSkeleton />;
+  const home = <StudentHomeOverview onEdit={() => setIsEditing(true)} />;
 
   if (hasToken && !user?._id && profileError) {
     return (
-      <div className="pt-6">
+      <div className="w-full space-y-8 pt-6">
+        {home}
         {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
         <InlineError
           title="Profile unavailable"
@@ -523,7 +458,14 @@ export default function StudentProfilePage() {
     );
   }
 
-  if (!user?._id) return <ProfileSkeleton />;
+  if (!user?._id) {
+    return (
+      <div className="w-full space-y-8">
+        {home}
+        <ProfileSkeleton />
+      </div>
+    );
+  }
 
   const fullName = String(user?.name || "").trim();
   const firstName = fullName.split(/\s+/)[0] || fullName;
@@ -603,7 +545,8 @@ export default function StudentProfilePage() {
   ];
 
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full min-w-0 space-y-8">
+      {home}
       {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
       {/* Profile Header */}
       <PageHeader
@@ -725,19 +668,6 @@ export default function StudentProfilePage() {
           ))}
         </dl>
       </Panel>
-
-      <div className="grid grid-cols-2 gap-3 min-[821px]:grid-cols-4">
-        {buildStatTiles(user).map((tile) => (
-          <StatTile
-            key={tile.key}
-            label={tile.label}
-            value={<span className="font-sans tabular-nums">{tile.value}</span>}
-            line={tile.line}
-            status={tile.status}
-            icon={tile.icon}
-          />
-        ))}
-      </div>
 
       <section>
         <h2 className={sectionTitleClass}>This semester</h2>

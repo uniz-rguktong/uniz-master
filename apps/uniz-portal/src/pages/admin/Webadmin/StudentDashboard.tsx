@@ -108,8 +108,8 @@ export default function StudentDashboard({
               <h2 className="font-serif text-[26px] font-normal leading-[34px] tracking-[-0.01em] text-head">
                 {student.name}
               </h2>
-              <p className="mt-1 break-all text-body leading-6 text-text-2">
-                {student.email}
+              <p className="mt-1 text-dense text-text-2">
+                {[student.username, student.branch, student.year].filter(Boolean).join(" · ") || "—"}
               </p>
               <div className="mt-2">
                 <Badge tone={student.is_suspended ? "error" : "success"}>
@@ -119,6 +119,25 @@ export default function StudentDashboard({
             </div>
           </div>
         </div>
+
+        <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <SummaryFact label="ID" value={student.username || "—"} />
+          <SummaryFact label="Branch" value={student.branch || "—"} />
+          <SummaryFact label="Year" value={student.year || "—"} />
+          <SummaryFact label="Attendance" value={overallAttendance(student.attendance_summary)} />
+          <SummaryFact
+            label="CGPA"
+            value={
+              student.cgpa !== null && student.cgpa !== undefined && Number(student.cgpa) > 0
+                ? Number(student.cgpa).toFixed(2)
+                : "—"
+            }
+          />
+          <SummaryFact
+            label="Contact"
+            value={contactLine(student.phone_number, student.email)}
+          />
+        </dl>
 
         {!readOnly && (
           <div className="flex flex-wrap gap-2">
@@ -238,6 +257,32 @@ export default function StudentDashboard({
           </p>
         </Panel>
       </div>
+    </div>
+  );
+}
+
+function overallAttendance(summary: Record<string, { percentage?: number }> | undefined) {
+  const values = Object.values(summary || {})
+    .map((row) => Number(row?.percentage))
+    .filter((value) => Number.isFinite(value));
+  if (!values.length) return "—";
+  const avg = values.reduce((sum, value) => sum + value, 0) / values.length;
+  return `${avg.toFixed(1)}%`;
+}
+
+function contactLine(phone?: string, email?: string) {
+  const trimmed = (phone || "").trim();
+  if (trimmed && !/^n\/?a$/i.test(trimmed) && trimmed !== "—") return trimmed;
+  return email || "—";
+}
+
+function SummaryFact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 rounded-lg border border-border bg-tile px-4 py-3">
+      <dt className="text-dense leading-5 text-text-2">{label}</dt>
+      <dd className="mt-1 break-words font-sans text-body font-semibold tabular-nums text-head">
+        {value}
+      </dd>
     </div>
   );
 }

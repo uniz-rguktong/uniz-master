@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type ReactNode } from "react";
+import { useState, useRef, type ReactNode } from "react";
 import { LogOut, Search, Menu, X, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ProfilePopup from "@/pages/admin/ProfilePopup";
@@ -9,6 +9,30 @@ import {
 } from "./admin-ui";
 import { Lockup, Mark } from "@/components/brand/Mark";
 import { Avatar } from "@/components/ui/avatar";
+import { rememberAdminProfile, useAdminProfile } from "@/api/adminProfile";
+
+function AccountLine({
+  value,
+  className,
+}: {
+  value: string;
+  className?: string;
+}) {
+  const at = value.indexOf("@");
+  if (at <= 0) {
+    return (
+      <p className={cn("break-words", className)} title={value}>
+        {value}
+      </p>
+    );
+  }
+  return (
+    <p className={className} title={value}>
+      <span className="block">{value.slice(0, at + 1)}</span>
+      <span className="block break-all">{value.slice(at + 1)}</span>
+    </p>
+  );
+}
 
 export interface AdminNavItem {
   id: string;
@@ -75,9 +99,15 @@ export default function AdminShell({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
-  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
-  const [profileName, setProfileName] = useState<string | null>(null);
-  const [profileEmail, setProfileEmail] = useState<string | null>(null);
+  const { profile } = useAdminProfile();
+  const [profileOverride, setProfileOverride] = useState<{
+    profile_url?: string | null;
+    name?: string | null;
+    email?: string | null;
+  } | null>(null);
+  const profilePhoto = profileOverride?.profile_url ?? profile?.profile_url ?? null;
+  const profileName = profileOverride?.name ?? profile?.name ?? null;
+  const profileEmail = profileOverride?.email ?? profile?.email ?? null;
   const [searchQuery, setSearchQuery] = useState("");
 
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
@@ -86,26 +116,6 @@ export default function AdminShell({
     useState<React.RefObject<HTMLButtonElement | null>>(headerAvatarRef);
 
   const displayName = profileName || username;
-
-  useEffect(() => {
-    const token = (localStorage.getItem("admin_token") || "").replace(/"/g, "");
-    if (token) {
-      import("@/api/endpoints").then(({ BASE_URL }) => {
-        fetch(`${BASE_URL}/profile/admin/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.success && data.data) {
-              setProfilePhoto(data.data.profile_url ?? null);
-              setProfileName(data.data.name ?? null);
-              setProfileEmail(data.data.email ?? null);
-            }
-          })
-          .catch(() => {});
-      });
-    }
-  }, []);
 
   const allNavItems = navGroups.flatMap((g) => g.items);
   const activeLabel = allNavItems.find((i) => i.id === activeTab)?.label;
@@ -251,9 +261,10 @@ export default function AdminShell({
           {mobile || isSidebarOpen ? (
             <div className="min-w-0 flex-1">
               <p className="truncate text-dense font-semibold text-white">{displayName}</p>
-              <p className="truncate text-small text-navy-300">
-                {roleLabel || headerSubtitle || profileEmail || username}
-              </p>
+              <AccountLine
+                className="text-small leading-4 text-navy-300"
+                value={roleLabel || headerSubtitle || profileEmail || username}
+              />
             </div>
           ) : null}
           <button type="button" onClick={onLogout} className="flex h-10 w-10 items-center justify-center rounded-full text-navy-300 hover:bg-white/[0.06] hover:text-white" aria-label="Log out">
@@ -357,9 +368,10 @@ export default function AdminShell({
         {menuOpen ? (
           <div className="fixed right-3 top-16 z-50 w-56 rounded-lg border border-border bg-surface p-2 shadow-md dark:shadow-none min-[821px]:hidden">
             <p className="px-3 py-2 text-dense font-semibold text-head">{displayName}</p>
-            <p className="px-3 pb-2 text-small text-text-2">
-              {headerSubtitle || profileEmail || username}
-            </p>
+            <AccountLine
+              className="px-3 pb-2 text-small leading-4 text-text-2"
+              value={headerSubtitle || profileEmail || username}
+            />
             <button
               type="button"
               className="flex h-10 w-full items-center rounded-sm px-3 text-left text-dense font-medium text-text-2 hover:bg-tint"
@@ -376,15 +388,22 @@ export default function AdminShell({
           open={profilePopupOpen}
           onClose={() => setProfilePopupOpen(false)}
           onProfileUpdate={(p) => {
-            setProfilePhoto(p.profile_url ?? null);
-            setProfileName(p.name ?? null);
-            setProfileEmail(p.email ?? null);
+            setProfileOverride({
+              profile_url: p.profile_url ?? null,
+              name: p.name ?? null,
+              email: p.email ?? null,
+            });
+            rememberAdminProfile({
+              profile_url: p.profile_url,
+              name: p.name,
+              email: p.email,
+            });
           }}
           onLogout={onLogout}
           initialPhoto={profilePhoto}
         />
 
-        <div className={cn("w-full flex-1 px-4 py-6 min-[821px]:px-10 min-[821px]:py-8", contentClassName)}>
+        <div className={cn("min-w-0 w-full flex-1 px-4 py-6 min-[821px]:px-10 min-[821px]:py-8", contentClassName)}>
           {children}
         </div>
       </div>
