@@ -1,179 +1,93 @@
-import { motion, AnimatePresence } from "framer-motion";
+import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
-import { UnizLogo } from "@/components/admin/UnizLogo";
+import { Lockup } from "@/components/brand/Mark";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface LoginScreenProps {
- isLogin?: boolean;
- onToggleMode?: () => void;
- onBack?: () => void;
- title?: string;
- subtitle?: string;
- children?: React.ReactNode;
- heroTitle?: string;
- bottomText?: string;
- role?: "student" | "admin" | "faculty";
- stepKey?: string;
+  isLogin?: boolean;
+  onToggleMode?: () => void;
+  onBack?: () => void;
+  title?: string;
+  subtitle?: string;
+  children?: ReactNode;
+  heroTitle?: string;
+  bottomText?: string;
+  role?: "student" | "admin" | "faculty";
+  stepKey?: string;
 }
 
-const roleMeta: Record<
- NonNullable<LoginScreenProps["role"]>,
- { label: string; hint: string }
-> = {
- student: { label: "Student portal", hint: "Grades, attendance, outpass" },
- admin: { label: "Staff portal", hint: "Campus operations & records" },
- faculty: { label: "Faculty portal", hint: "Classes, marks & attendance" },
+const statements: Record<NonNullable<LoginScreenProps["role"]>, string> = {
+  student: "RGUKT Ongole's student portal.",
+  admin: "RGUKT Ongole's staff portal.",
+  faculty: "RGUKT Ongole's staff portal.",
 };
 
 export default function LoginScreen({
- isLogin = true,
- onToggleMode,
- onBack,
- title,
- subtitle,
- children,
- heroTitle,
- bottomText,
- role = "student",
- stepKey,
+  title,
+  subtitle,
+  children,
+  role = "student",
+  onBack,
 }: LoginScreenProps) {
- const meta = roleMeta[role];
+  const other =
+    role === "student"
+      ? { href: "/admin/signin", label: "Faculty and admin sign in" }
+      : { href: "/student/signin", label: "Student sign in" };
 
- return (
- <div className="w-full min-h-screen overflow-x-hidden flex bg-white font-sans selection:bg-[#D4E8F5] selection:text-[#0B2A47]">
- {/* Left — cinematic hero */}
- <div className="hidden lg:flex flex-1 relative overflow-hidden">
- <div className="absolute inset-0">
- <img
- src="https://res.cloudinary.com/diipfzmyj/image/upload/v1772885809/signIn_ojzi3w.png"
- alt=""
- className="h-full w-full object-cover scale-[1.02]"
- />
- </div>
- <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
- <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent" />
+  return (
+    <div className="flex min-h-screen flex-col bg-bg text-text min-[821px]:flex-row">
+      <aside className="flex flex-col bg-navy-900 text-white min-[821px]:min-h-screen min-[821px]:w-[41.666%] min-[821px]:px-14 min-[821px]:py-14">
+        <div className="flex h-[60px] items-center px-5 min-[821px]:h-auto min-[821px]:px-0">
+          <Lockup mark={40} word={24} tone="chrome" className="max-[820px]:[&_svg]:h-7 max-[820px]:[&_svg]:w-7 max-[820px]:[&_span]:text-[18px]" />
+        </div>
+        <div className="hidden flex-1 flex-col justify-end min-[821px]:flex">
+          <h2 className="max-w-[16ch] font-serif text-[36px] font-normal leading-[46px] tracking-[-0.01em] text-white">
+            {statements[role]}
+          </h2>
+          <p className="mt-4 max-w-[28ch] text-[17px] leading-[26px] text-[#C9D3EA]">
+            Results, attendance, registration and notices.
+          </p>
+        </div>
+        <p className="mt-auto hidden text-small text-navy-300 min-[821px]:block">
+          © 2026 UniZ · RGUKT Ongole
+        </p>
+      </aside>
 
- <div className="relative z-10 flex flex-1 flex-col p-10 xl:p-14">
- {onBack && (
- <button
- type="button"
- onClick={onBack}
- className="inline-flex w-fit items-center gap-1 rounded-portal-lg px-2 py-1.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white min-h-11"
- >
- <ChevronLeft className="h-4 w-4" />
- Back
- </button>
- )}
-
- {heroTitle ? (
- <h1 className="mt-auto text-white text-5xl xl:text-6xl font-semibold leading-[1.05] tracking-[-0.04em] max-w-lg">
- {heroTitle}
- </h1>
- ) : (
- <div className="mt-auto max-w-md">
- <p className="text-[2.35rem] xl:text-[2.85rem] font-semibold text-white tracking-[-0.04em] leading-[1.08]">
- One login.
- </p>
- <p className="mt-2 text-xl xl:text-2xl font-light text-white/55 tracking-[-0.02em]">
- Your whole campus.
- </p>
- </div>
- )}
-
- {bottomText && (
- <motion.p
- className="mt-10 text-[12px] font-medium tracking-[0.01em] text-white/50"
- initial={{ opacity: 0 }}
- animate={{ opacity: 1 }}
- transition={{ delay: 0.35, duration: 0.5 }}
- >
- {bottomText}
- </motion.p>
- )}
- </div>
- </div>
-
- {/* Right — form */}
- <div className="flex min-w-0 flex-1 flex-col min-h-screen overflow-x-hidden">
- {onBack && (
- <div className="lg:hidden px-5 pt-5">
- <button
- type="button"
- onClick={onBack}
- className="inline-flex items-center gap-1 rounded-portal-lg px-2 py-1.5 text-sm font-medium text-navy-600 transition-colors hover:bg-navy-50 hover:text-navy-900 min-h-11"
- >
- <ChevronLeft className="h-4 w-4" />
- Back
- </button>
- </div>
- )}
-
- <div className="flex flex-1 items-center justify-center px-4 py-8 sm:px-10 sm:py-10 lg:px-14 xl:px-20">
- <div className="w-full min-w-0 max-w-[420px]">
- <motion.div
- initial={{ opacity: 0, y: 8 }}
- animate={{ opacity: 1, y: 0 }}
- transition={{ duration: 0.4 }}
- className="mb-7"
- >
- <UnizLogo size="lg" variant="auth" portalLabel={meta.label} />
- <p className="mt-2 text-[12px] text-zinc-400 font-medium">
- {meta.hint}
- </p>
- </motion.div>
-
- <div className="rounded-portal-2xl border border-navy-200 bg-white p-5 shadow-whisper sm:p-7">
- <AnimatePresence mode="wait">
- <motion.div
- key={stepKey || title}
- initial={{ opacity: 0, y: 8 }}
- animate={{ opacity: 1, y: 0 }}
- exit={{ opacity: 0, y: -6 }}
- transition={{ duration: 0.25 }}
- className="mb-6"
- >
- <h1 className="text-[1.625rem] font-semibold text-navy-900 tracking-[-0.03em] leading-tight">
- {title || (isLogin ? "Sign in" : "Create account")}
- </h1>
- {subtitle && (
- <p className="mt-1.5 text-[14px] text-zinc-500 leading-relaxed">
- {subtitle}
- </p>
- )}
- </motion.div>
- </AnimatePresence>
-
- <AnimatePresence mode="wait">
- <motion.div
- key={stepKey || "form"}
- initial={{ opacity: 0 }}
- animate={{ opacity: 1 }}
- exit={{ opacity: 0 }}
- transition={{ duration: 0.2 }}
- >
- {children}
- </motion.div>
- </AnimatePresence>
- </div>
-
- {onToggleMode && (
- <div className="mt-8 text-center text-[14px] text-zinc-500">
- {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
- <button
- type="button"
- onClick={onToggleMode}
- className="text-navy-900 font-semibold hover:underline underline-offset-4 transition-colors min-h-11 inline-flex items-center"
- >
- {isLogin ? "Sign up" : "Sign in"}
- </button>
- </div>
- )}
-
- <p className="mt-6 text-center text-[12px] text-zinc-400 lg:hidden">
- {meta.hint}
- </p>
- </div>
- </div>
- </div>
- </div>
- );
+      <div className="relative flex flex-1 flex-col">
+        <div className="absolute right-4 top-4 min-[821px]:right-8 min-[821px]:top-6">
+          <ThemeToggle />
+        </div>
+        <div className="flex flex-1 items-center justify-center px-5 py-10 min-[821px]:px-10">
+          <div className="w-full max-w-[400px]">
+            {onBack ? (
+              <button
+                type="button"
+                onClick={onBack}
+                className="mb-6 inline-flex min-h-11 items-center gap-1 text-small font-medium text-text-2 hover:text-head"
+              >
+                <ChevronLeft className="h-4 w-4" aria-hidden />
+                Back
+              </button>
+            ) : null}
+            <h1 className="font-serif text-[28px] font-normal leading-9 tracking-[-0.01em] text-head min-[821px]:text-[32px] min-[821px]:leading-10">
+              {title || "Sign in"}
+            </h1>
+            {subtitle ? (
+              <p className="mt-2 text-body leading-6 text-text-2">{subtitle}</p>
+            ) : null}
+            <div className="mt-8">{children}</div>
+            <div className="mt-8 border-t border-border pt-6">
+              <Link
+                to={other.href}
+                className="text-dense font-medium text-link underline-offset-[1px] hover:underline"
+              >
+                {other.label}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

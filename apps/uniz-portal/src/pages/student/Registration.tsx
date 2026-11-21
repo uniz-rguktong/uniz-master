@@ -12,7 +12,7 @@ export default function Registration() {
   ).replace(/"/g, "");
 
   return (
-    <div className="max-w-5xl mx-auto pb-24">
+    <div className="mx-auto max-w-5xl">
       <MySubjects
         studentId={studentId}
         branch={userData?.branch || userData?.department || ""}

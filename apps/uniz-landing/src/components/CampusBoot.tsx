@@ -1,3 +1,5 @@
+import { cn } from "@/lib/utils";
+
 type CampusBootProps = {
   label?: string;
   className?: string;
@@ -5,32 +7,26 @@ type CampusBootProps = {
 
 export function CampusBoot({
   label = "Loading campus",
-  className = "min-h-screen",
+  className = "min-h-[50vh]",
 }: CampusBootProps) {
   return (
     <div
-      className={`relative flex w-full flex-col items-center justify-center bg-white text-ink ${className}`}
+      className={cn("w-full", className)}
       role="status"
       aria-live="polite"
       aria-busy="true"
     >
-      <div className="flex items-center gap-3">
-        <img src="/rgukt-logo.png" alt="" className="h-11 w-11 object-contain" />
-        <div className="flex flex-col">
-          <span className="font-serif text-[1.5rem] font-semibold leading-none tracking-tight text-navy-900">
-            RGUKT
-          </span>
-          <span className="mt-1 text-xs font-medium text-ink-muted">
-            Ongole campus
-          </span>
+      <span className="sr-only">{label}</span>
+      <div className="mx-auto w-full max-w-[1232px] px-5 py-12 min-[821px]:px-10">
+        <div className="skeleton h-8 w-56 max-w-full" />
+        <div className="skeleton mt-4 h-4 w-80 max-w-full" />
+        <div className="mt-10 max-w-[65ch] space-y-3">
+          <div className="skeleton h-4 w-full" />
+          <div className="skeleton h-4 w-11/12" />
+          <div className="skeleton h-4 w-4/5" />
+          <div className="skeleton h-4 w-2/3" />
         </div>
       </div>
-      <div
-        className="mt-8 h-10 w-10 animate-spin rounded-full border-2 border-navy border-t-transparent motion-reduce:animate-none"
-        aria-hidden="true"
-      />
-      <p className="mt-4 text-sm text-ink-muted">{label}</p>
-      <div className="absolute inset-x-0 bottom-0 h-0.5 bg-brand-red" aria-hidden="true" />
     </div>
   );
 }

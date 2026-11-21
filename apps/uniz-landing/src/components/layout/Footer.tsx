@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Twitter, Linkedin, Instagram, Youtube, ArrowUp, MapPin } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Instagram, Youtube } from "lucide-react";
+import { Lockup } from "../brand/Lockup";
+import { Wrap } from "./Wrap";
+import { portalPath } from "@/lib/portal";
+import { ANDROID_APK_FILENAME, ANDROID_APK_URL, openLandingIosModal } from "@/lib/mobile-app";
 
 const columns = [
   {
@@ -42,63 +45,40 @@ const columns = [
   },
 ];
 
+const socials = [
+  { Icon: Facebook, url: "https://www.facebook.com/RGUKTOfficial/", label: "Facebook" },
+  { Icon: Twitter, url: "https://x.com/RGUKT_ONGOLE", label: "X" },
+  { Icon: Linkedin, url: "https://in.linkedin.com/company/rguktongole", label: "LinkedIn" },
+  { Icon: Instagram, url: "https://www.instagram.com/rgukt__ongole", label: "Instagram" },
+  { Icon: Youtube, url: "https://www.youtube.com/@Rgukt-Ongole", label: "YouTube" },
+];
+
+const barLink = "focus-chrome inline-flex min-h-11 items-center text-[13px] leading-[18px] text-chrome-link hover:underline min-[640px]:min-h-0";
+
 export function Footer() {
-  const [showTop, setShowTop] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setShowTop(window.scrollY > 640);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <footer className="relative w-full overflow-hidden bg-navy-850 text-white">
-      <div className="h-0.5 w-full bg-brand-red" aria-hidden="true" />
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative py-16 lg:py-24 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-12 border-b border-white/10">
-
-        <div className="col-span-2 flex flex-col gap-5">
-          <Link to="/" className="flex items-center gap-3">
-            <img
-              src="/rgukt-logo.png"
-              alt="RGUKT Ongole"
-              className="w-12 h-12 rounded-lg bg-white p-1.5 object-contain shadow-sm ring-1 ring-white/20"
-            />
-            <div className="flex flex-col leading-none">
-              <span className="font-serif text-2xl font-medium text-white tracking-tight">
-                RGUKT
-              </span>
-              <span className="mt-1 text-xs text-white/50">
-                Ongole campus
-              </span>
-            </div>
+    <footer className="mt-[72px] w-full bg-navy-900 text-white min-[821px]:mt-[120px] dark:border-t dark:border-sb-border">
+      <Wrap className="grid grid-cols-2 gap-x-6 gap-y-9 py-12 pb-9 min-[821px]:grid-cols-[1.6fr_repeat(4,1fr)] min-[821px]:gap-12 min-[821px]:py-[72px] min-[821px]:pb-14">
+        <div className="col-span-2 min-w-0 min-[821px]:col-span-1">
+          <Link to="/" className="focus-chrome inline-flex text-white">
+            <Lockup mark={40} word={24} />
           </Link>
-          <p className="text-white/70 text-[15px] leading-relaxed max-w-sm">
-            Empowering gifted rural youth through world-class technical education in Andhra Pradesh.
+          <p className="mt-5 max-w-[360px] text-[14px] leading-[22px] text-chrome-link">
+            Rajiv Gandhi University of Knowledge Technologies, Ongole. RGUKT Ongole Campus, Kurnool Road, Santhanuthalapadu (V&amp;M), Prakasam District, Andhra Pradesh — 523225.
           </p>
-          <div className="flex gap-3 text-sm text-white/65 mt-1 rounded-lg border border-white/10 bg-white/[0.03] p-4 max-w-sm">
-            <MapPin className="w-4 h-4 mt-0.5 text-white/75 flex-shrink-0" />
-            <div className="flex flex-col gap-0.5 leading-relaxed">
-              <span className="text-sm font-medium text-white/70 mb-1">
-                Contact
-              </span>
-              <span>RGUKT Ongole Campus,</span>
-              <span>Kurnool Road, Santhanuthalapadu (V&amp;M),</span>
-              <span>Prakasam District, Andhra Pradesh — 523225.</span>
-            </div>
-          </div>
         </div>
 
         {columns.map((col) => (
-          <div key={col.title}>
-            <p className="text-sm font-medium text-white/70 mb-5">
+          <div key={col.title} className="min-w-0">
+            <h2 className="text-[14px] font-semibold leading-5 text-white">
               {col.title}
-            </p>
-            <ul className="flex flex-col gap-3">
+            </h2>
+            <ul className="mt-3 flex flex-col gap-3">
               {col.links.map((lk) => (
                 <li key={lk.p}>
                   <Link
                     to={lk.p}
-                    className="inline-block text-sm text-white/65 hover:text-white hover:translate-x-0.5 transition-[color,transform] duration-150"
+                    className="focus-chrome inline-flex min-h-11 items-center text-[14px] leading-5 text-chrome-link hover:underline min-[640px]:min-h-0"
                   >
                     {lk.n}
                   </Link>
@@ -107,68 +87,39 @@ export function Footer() {
             </ul>
           </div>
         ))}
-      </div>
+      </Wrap>
 
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-12 py-6 flex flex-col sm:flex-row justify-between items-center gap-5">
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-[11px] tracking-wide text-white/60 text-center sm:text-left">
-          <p>© {new Date().getFullYear()} RGUKT Ongole. All rights reserved.</p>
-          <span className="hidden sm:inline text-white/20">·</span>
-          <a
-            href="https://uniz.rguktong.in"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white/70 hover:text-white underline-offset-4 hover:underline"
-          >
-            UniZ Portal
-          </a>
-          <span className="hidden sm:inline text-white/20">·</span>
-          <a
-            href="https://uniz.rguktong.in/developers"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white/70 hover:text-white underline-offset-4 hover:underline"
-          >
-            Developed by Software Development Cell (Developers)
-          </a>
-        </div>
-        <div className="flex gap-3">
-          {[
-            { Icon: Facebook, url: "https://www.facebook.com/RGUKTOfficial/" },
-            { Icon: Twitter, url: "https://x.com/RGUKT_ONGOLE" },
-            { Icon: Linkedin, url: "https://in.linkedin.com/company/rguktongole" },
-            { Icon: Instagram, url: "https://www.instagram.com/rgukt__ongole" },
-            { Icon: Youtube, url: "https://www.youtube.com/@Rgukt-Ongole" },
-          ].map(({ Icon, url }, i) => (
-            <a
-              key={i}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Social Link"
-              className="w-10 h-10 flex items-center justify-center rounded-md border border-white/15 bg-white/[0.04] text-white/75 hover:bg-brand-red hover:border-brand-red hover:text-white transition-colors duration-150"
-            >
-              <Icon className="w-4 h-4" />
+      <div className="border-t border-navy-700">
+        <Wrap className="flex flex-col gap-4 py-[22px] min-[821px]:flex-row min-[821px]:items-center min-[821px]:justify-between">
+          <p className="text-[13px] leading-[18px] text-navy-300">© 2026 UniZ · RGUKT Ongole</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <a href={ANDROID_APK_URL} download={ANDROID_APK_FILENAME} className={barLink}>
+              Android
             </a>
-          ))}
-        </div>
+            <button type="button" onClick={openLandingIosModal} className={barLink}>
+              iOS
+            </button>
+            {socials.map(({ Icon, url, label }) => (
+              <a
+                key={label}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="focus-chrome inline-flex h-11 w-11 items-center justify-center text-navy-300"
+              >
+                <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
+              </a>
+            ))}
+            <a href={portalPath("/privacy")} className={barLink}>
+              Privacy
+            </a>
+            <a href={portalPath("/developers")} className={barLink}>
+              Developers
+            </a>
+          </div>
+        </Wrap>
       </div>
-
-      <div className="border-t border-white/5 py-10 sm:py-12 text-center select-none">
-        <p className="font-serif text-3xl sm:text-4xl font-medium tracking-tight text-white/20">
-          RGUKT Ongole
-        </p>
-      </div>
-
-      {showTop && (
-        <button
-          type="button"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Scroll to top"
-          className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 w-11 h-11 rounded-lg bg-navy text-white border border-white/15 hover:bg-brand-red flex items-center justify-center transition-colors duration-150"
-        >
-          <ArrowUp className="w-5 h-5" />
-        </button>
-      )}
     </footer>
   );
 }

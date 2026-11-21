@@ -1,25 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRecoilValue } from "recoil";
 import { useSearchParams } from "react-router-dom";
-import {
-  User,
-  Droplets,
-  Phone,
-  GraduationCap,
-  IdCard,
-  History as HistoryIcon,
-  Clock,
-  Calendar,
-  MapPin,
-  Mail,
-  Briefcase,
-  Award,
-  LayoutGrid,
-  Loader2,
-  Camera,
-  Pencil,
-  BadgeCheck,
-} from "lucide-react";
+import { AlertTriangle, Camera, Loader2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { student, studentAuthLoading, studentProfileError } from "../../store";
 import { useIsAuth } from "../../hooks/is_authenticated";
 import { useStudentData } from "../../hooks/student_info";
@@ -31,7 +14,6 @@ import {
   REQUEST_OUTING,
   REQUEST_OUTPASS,
 } from "../../api/endpoints";
-import { motion, AnimatePresence } from "framer-motion";
 import RequestCard from "../../components/RequestCard";
 import { toast } from "@/utils/toast-ref";
 import { Pagination } from "../../components/Pagination";
@@ -43,21 +25,21 @@ import ProfileSemesterSubjects from "./components/ProfileSemesterSubjects";
 import SeatingArrangement, {
   fetchSeatingOnce,
 } from "./components/SeatingArrangement";
-import {
-  studentCancelButtonClass,
-  studentEditButtonClass,
-  studentInfoGridClass,
-  studentSaveButtonClass,
-  studentTabBarClass,
-  studentTabButtonActiveClass,
-  studentTabButtonInactiveClass,
-} from "@/lib/student-ui";
 import NoticeBoard from "../../components/NoticeBoard";
-import { cn } from "@/lib/utils";
-import { Student } from "../../types";
-import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
+import { Attendance, Grade, Student } from "../../types";
 import { InlineError } from "../../components/feedback/InlineError";
 import { enableOutingsAndOutpasses } from "@/config/featureFlags";
+import { asAttendanceList, asGradeList } from "../../utils/bootstrapNormalize";
+import { Button } from "@/components/Button";
+import { Input, Textarea } from "../../components/Input";
+import { Avatar } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { Panel } from "@/components/ui/panel";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { StatTile } from "@/components/ui/tile";
+import { Tabs } from "@/components/ui/tabs";
 
 export { enableOutingsAndOutpasses } from "@/config/featureFlags";
 const STUDENT_LOCKED_PROFILE_FIELDS = new Set([
@@ -66,70 +48,102 @@ const STUDENT_LOCKED_PROFILE_FIELDS = new Set([
   "dateOfBirth",
 ]);
 
+const sectionTitleClass =
+  "font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head min-[821px]:text-h2 min-[821px]:leading-9";
+
+type DashTile = {
+  key: string;
+  label: string;
+  value: string;
+  line?: string;
+  status?: "warning";
+  icon?: LucideIcon;
+};
+
+function buildStatTiles(user: Student | any): DashTile[] {
+  const tiles: DashTile[] = [];
+  const attendanceRows = asAttendanceList(user?.attendance) as Attendance[];
+  const totalClasses = attendanceRows.reduce(
+    (sum, row) => sum + (Number(row.totalClasses) || 0),
+    0,
+  );
+  const attendedClasses = attendanceRows.reduce(
+    (sum, row) => sum + (Number(row.attendedClasses) || 0),
+    0,
+  );
+  if (totalClasses > 0) {
+    const pct = (attendedClasses / totalClasses) * 100;
+    const low = pct < 75;
+    tiles.push({
+      key: "attendance",
+      label: "Attendance",
+      value: `${pct.toFixed(1)}%`,
+      line: low ? "Below 75%" : "Recorded classes",
+      status: low ? "warning" : undefined,
+      icon: low ? AlertTriangle : undefined,
+    });
+  }
+
+  const gradeRows = asGradeList(user?.grades) as Grade[];
+  const points = gradeRows
+    .map((row) => Number(row.grade))
+    .filter((point) => Number.isFinite(point));
+  if (points.length > 0) {
+    const avg = points.reduce((sum, point) => sum + point, 0) / points.length;
+    tiles.push({
+      key: "grades",
+      label: "Grade points",
+      value: avg.toFixed(1),
+      line: `${points.length} ${points.length === 1 ? "subject" : "subjects"}`,
+    });
+  }
+
+  const identity: DashTile[] = [
+    { key: "year", label: "Year", value: user?.year || "—" },
+    { key: "branch", label: "Branch", value: user?.branch || "—" },
+    { key: "section", label: "Section", value: user?.section || "A" },
+    { key: "room", label: "Room", value: user?.roomno || "N/A" },
+  ];
+
+  if (tiles.length === 0) return identity;
+
+  for (const item of [identity[2], identity[3], identity[0], identity[1]]) {
+    if (tiles.length >= 4) break;
+    tiles.push(item);
+  }
+  return tiles.slice(0, 4);
+}
+
 // ─────────────────────────────────────────────────────────────────
 // Profile Skeleton
 // ─────────────────────────────────────────────────────────────────
 function ProfileSkeleton() {
   return (
-    <div className="font-sans text-zinc-900 relative">
-      <BackgroundIconCloud />
-      <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2">
-        {/* Avatar + name skeleton */}
-        <div className="flex flex-col items-center justify-center mb-8">
-          <div className="mt-4">
-            {/* Avatar ring */}
-            <div
-              className="relative p-[4px] rounded-full mb-4 mx-auto w-fit"
-              style={{ background: "#e2e8f0" }}
-            >
-              <div className="bg-zinc-100 p-[3px] rounded-full">
-                <div className="w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-zinc-200 rounded-full" />
-              </div>
-            </div>
-            {/* Name */}
-            <div className="flex flex-col items-center gap-3">
-              <div className="h-7 w-44 bg-zinc-200 rounded-xl" />
-              <div className="h-4 w-56 bg-zinc-100 rounded-lg" />
-              <div className="flex items-center gap-2 mt-1">
-                <div className="h-5 w-20 bg-zinc-100 rounded" />
-                <div className="w-1 h-1 rounded-full bg-zinc-200" />
-                <div className="h-5 w-24 bg-zinc-100 rounded" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Tab bar skeleton */}
-        <div className="border-b border-zinc-100 mb-6">
-          <div className="flex gap-8">
-            {[72, 80, 64, 56].map((w, i) => (
-              <div key={i} className="pb-3">
-                <div
-                  className={`h-3 bg-zinc-100 rounded-full`}
-                  style={{ width: w }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Info cards skeleton */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {Array(5)
-            .fill(0)
-            .map((_, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-2xl border border-zinc-100 p-5 shadow-sm"
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-4 h-4 bg-zinc-100 rounded-full" />
-                  <div className="h-2.5 w-20 bg-zinc-100 rounded-full" />
-                </div>
-                <div className="h-5 w-28 bg-zinc-200 rounded-lg" />
-              </div>
-            ))}
-        </div>
+    <div className="space-y-8" aria-hidden>
+      {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
+      {/* Avatar + name skeleton */}
+      {/* Avatar ring */}
+      <div className="space-y-3">
+        <Skeleton className="h-10 w-72" />
+        <Skeleton className="h-5 w-48" />
+      </div>
+      <div className="flex items-center gap-4">
+        {/* Name */}
+        <Skeleton className="h-14 w-14 rounded-full" />
+        <Skeleton className="h-5 w-56" />
+      </div>
+      <div className="grid grid-cols-2 gap-3 min-[821px]:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-36 rounded-lg" />
+        ))}
+      </div>
+      {/* Tab bar skeleton */}
+      <Skeleton className="h-11 w-full" />
+      {/* Info cards skeleton */}
+      <div className="grid grid-cols-1 gap-3 min-[821px]:grid-cols-2">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-14 w-full" />
+        ))}
       </div>
     </div>
   );
@@ -467,43 +481,28 @@ export default function StudentProfilePage() {
     if (!upcoming) return null;
 
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-zinc-900 rounded-2xl p-6 text-white shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-white/10"
-      >
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-sm text-zinc-300">
-            <Calendar size={24} />
-          </div>
-          <div>
-            <p className="text-[10px] font-bold tracking-normal text-zinc-400">
-              Upcoming Examination
-            </p>
-            <h3 className="text-lg font-bold leading-tight pt-1">
-              {upcoming.subjectName}
-            </h3>
-            <p className="text-xs text-zinc-300 font-medium">
-              {upcoming.examName} •{" "}
+      <div className="flex flex-col gap-3 border-b border-border py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-dense font-medium text-text-2">Upcoming examination</p>
+          <p className="mt-1 text-body font-medium text-head">{upcoming.subjectName}</p>
+          <p className="mt-1 text-small text-text-2">
+            {upcoming.examName} ·{" "}
+            <span className="font-sans tabular-nums">
               {new Date(upcoming.date).toLocaleDateString("en-GB")}
-            </p>
-          </div>
+            </span>
+            {" · Hall "}
+            <span className="font-sans tabular-nums">{upcoming.room}</span>
+          </p>
         </div>
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="flex-1 md:flex-none px-5 py-3 bg-white/10 rounded-2xl text-center border border-white/5">
-            <p className="text-[9px] font-bold tracking-normal text-zinc-400 mb-0.5">
-              Hall
-            </p>
-            <p className="text-xl font-semibold">{upcoming.room}</p>
-          </div>
-          <button
-            onClick={() => setActiveTab("seating")}
-            className="flex-1 md:flex-none px-6 py-4 bg-zinc-900 hover:bg-zinc-800 rounded-2xl font-bold text-xs tracking-normal transition-[color,background-color,border-color,opacity,transform]"
-          >
-            View Full Plan
-          </button>
-        </div>
-      </motion.div>
+        <Button
+          type="button"
+          variant="outline"
+          size="compact"
+          onClick={() => setActiveTab("seating")}
+        >
+          View seating
+        </Button>
+      </div>
     );
   };
 
@@ -513,688 +512,469 @@ export default function StudentProfilePage() {
 
   if (hasToken && !user?._id && profileError) {
     return (
-      <div className="font-sans text-zinc-900 relative">
-        <BackgroundIconCloud />
-        <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-12 pb-20">
-          <InlineError
-            title="Profile unavailable"
-            message={profileError}
-            onRetry={() => refetch()}
-          />
-        </div>
+      <div className="pt-6">
+        {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
+        <InlineError
+          title="Profile unavailable"
+          message={profileError}
+          onRetry={() => refetch()}
+        />
       </div>
     );
   }
 
   if (!user?._id) return <ProfileSkeleton />;
 
-  const personalFields = [
-    {
-      icon: <User className="w-4 h-4" />,
-      label: "Full Name",
-      name: "name",
-      editable: false,
-    },
-    {
-      icon: <User className="w-4 h-4" />,
-      label: "Gender",
-      name: "gender",
-      editable: false,
-      type: "select",
-      options: [
-        { v: "M", l: "Male" },
-        { v: "F", l: "Female" },
-        { v: "Other", l: "Other" },
-      ],
-    },
+  const fullName = String(user?.name || "").trim();
+  const firstName = fullName.split(/\s+/)[0] || fullName;
+  const metaBits = [user?.branch, user?.year].filter(Boolean);
 
-    {
-      icon: <Droplets className="w-4 h-4" />,
-      label: "Blood Group",
-      name: "bloodGroup",
-      editable: true,
-      type: "select",
-      options: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "N/A"].map(
-        (v) => ({ v, l: v }),
-      ),
-    },
-    {
-      icon: <Phone className="w-4 h-4" />,
-      label: "Phone",
-      name: "phoneNumber",
-      editable: true,
-    },
-    {
-      icon: <Calendar className="w-4 h-4" />,
-      label: "Date of Birth",
-      name: "dateOfBirth",
-      editable: false,
-      type: "date",
-    },
+  const bloodOptions = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "N/A"].map(
+    (v) => ({ v, l: v }),
+  );
+  const genderOptions = [
+    { v: "M", l: "Male" },
+    { v: "F", l: "Female" },
+    { v: "Other", l: "Other" },
   ];
 
-  const academicFields = [
+  const profileRows = [
+    { label: "Name", name: "name", value: fields.name, editable: false },
+    { label: "ID", name: "username", value: user?.username, editable: false },
+    { label: "Branch", name: "branch", value: user?.branch, editable: false },
     {
-      icon: <IdCard className="w-4 h-4" />,
-      label: "Student ID",
-      name: "username",
-      value: user?.username,
-    },
-    {
-      icon: <GraduationCap className="w-4 h-4" />,
-      label: "Year",
-      name: "year",
-      value: user?.year,
-    },
-    {
-      icon: <Award className="w-4 h-4" />,
-      label: "Branch",
-      name: "branch",
-      value: user?.branch,
-    },
-    {
-      icon: <LayoutGrid className="w-4 h-4" />,
       label: "Section",
       name: "section",
       value: user?.section || "A",
+      editable: false,
     },
     {
-      icon: <MapPin className="w-4 h-4" />,
-      label: "Room No",
+      label: "Room",
       name: "roomno",
       value: user?.roomno || "N/A",
+      editable: false,
+    },
+    {
+      label: "Blood group",
+      name: "bloodGroup",
+      value: fields.bloodGroup,
+      editable: true,
+      type: "select",
+      options: bloodOptions,
+    },
+    {
+      label: "Phone",
+      name: "phoneNumber",
+      value: fields.phoneNumber,
+      editable: true,
+    },
+    {
+      label: "Gender",
+      name: "gender",
+      value: fields.gender,
+      editable: false,
+      type: "select",
+      options: genderOptions,
+    },
+    {
+      label: "Date of birth",
+      name: "dateOfBirth",
+      value: fields.dateOfBirth,
+      editable: false,
+      type: "date",
+    },
+    {
+      label: "Address",
+      name: "address",
+      value: fields.address,
+      editable: true,
+      fullWidth: true,
     },
   ];
 
-  return (
-    <div className="font-sans text-navy-900 relative overflow-x-hidden">
-      {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
-      <BackgroundIconCloud />
+  const dashboardTabs = [
+    { id: "personal", label: "Personal" },
+    { id: "academic", label: "Academic" },
+    /* "seating", */
+    { id: "family", label: "Family" },
+    ...(enableOutingsAndOutpasses
+      ? [{ id: "permissions", label: "Permissions" }]
+      : []),
+  ];
 
-      <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2 overflow-x-hidden">
-        {/* Profile Header */}
-        <div className="flex flex-col items-center justify-center relative mb-8">
-          {/* Actions - Top Right Absolute Position (Desktop Only) */}
-          <div className="hidden md:flex absolute top-0 right-0 gap-2 shrink-0 z-20">
-            {isEditing && (
+  return (
+    <div className="w-full space-y-8">
+      {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
+      {/* Profile Header */}
+      <PageHeader
+        className="mb-0"
+        title={firstName ? `Welcome back, ${firstName}` : "Welcome back"}
+        meta={metaBits.length ? metaBits.join(" · ") : undefined}
+        action={
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Actions - Top Right Absolute Position (Desktop Only) */}
+            {/* Mobile Actions */}
+            {isEditing ? (
               <>
-                <button
+                <Button
+                  type="button"
+                  variant="outline"
                   onClick={() => {
                     setIsEditing(false);
                     refetch();
                   }}
-                  className={studentCancelButtonClass}
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
+                  type="button"
+                  variant="primary"
+                  isLoading={isSubmitting}
                   onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className={cn(studentSaveButtonClass, "h-auto")}
                 >
-                  {isSubmitting && (
-                    <Loader2 className="w-3 h-3 animate-spin mr-1" />
-                  )}{" "}
                   Save
-                </button>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit profile
+                </Button>
+                {enableOutingsAndOutpasses ? (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    disabled={Boolean(user?.has_pending_requests)}
+                    onClick={() => setRequestType("outing")}
+                  >
+                    Request outing
+                  </Button>
+                ) : null}
               </>
             )}
           </div>
+        }
+      />
 
-          {/* Centered Avatar and Info */}
-          <div className="flex flex-col items-center mt-4">
-            {/* Avatar with upload state */}
-            <div className="relative">
-              <div
-                className="relative p-[4px] md:p-[5px] rounded-full mb-4"
-                style={{
-                  background: "#2ebd59",
-                  boxShadow: "0 0 0 1px rgba(46, 189, 89, 0.1)",
-                }}
-              >
-                <div className="relative bg-zinc-50 p-[3px] rounded-full">
-                  <div className="relative w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-[#004e43] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
-                    {/* Profile image or initial */}
-                    {user?.profile_url ? (
-                      <img
-                        src={user.profile_url}
-                        alt="Profile"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : user?.name ? (
-                      <span className="text-4xl md:text-5xl font-semibold tracking-tight leading-none">
-                        {user?.name?.[0]?.toUpperCase() || "S"}
-                      </span>
-                    ) : (
-                      <span className="text-4xl md:text-5xl font-semibold tracking-tight leading-none">
-                        S
-                      </span>
-                    )}
-
-                    {/* Dark blurry overlay - contained fully inside the circle */}
-                    <AnimatePresence>
-                      {isUploadingImage && (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="absolute inset-0 rounded-full flex items-center justify-center"
-                          style={{
-                            background: "rgba(0, 0, 0, 0.55)",
-                            backdropFilter: "blur(6px)",
-                            WebkitBackdropFilter: "blur(6px)",
-                          }}
-                        >
-                          <Loader2
-                            className="w-9 h-9 text-white animate-spin"
-                            strokeWidth={2}
-                          />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-
-                {/* Camera Icon Button */}
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploadingImage}
-                  className="absolute bottom-[-1px] right-2 w-8 h-8 bg-zinc-100 border-[1.5px] border-zinc-900 rounded-full flex items-center justify-center text-zinc-800 hover:bg-zinc-200 transition-[color,background-color,border-color,opacity,transform] z-20 cursor-pointer shadow-sm hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Update Profile Photo"
-                >
-                  <Camera
-                    className="w-[18px] h-[18px] overflow-hidden"
-                    strokeWidth={2.5}
-                  />
-                </button>
-
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-2.5 w-full max-w-xl px-3 mb-1.5 mt-1">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-[-0.01em] text-[#1f2122] leading-snug text-center w-full text-balance [overflow-wrap:anywhere]">
-                {user?.name}
-              </h1>
-              {!isEditing && (
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  className={studentEditButtonClass}
-                  title="Edit Profile"
-                >
-                  <Pencil className="w-3.5 h-3.5 shrink-0" strokeWidth={2.25} />
-                  Edit profile
-                </button>
-              )}
-            </div>
-            <p className="text-[#3c4043] font-medium text-[13px] tracking-tight text-center relative mb-3.5 flex items-center justify-center gap-1">
-              {user?.email || user?.username + "@rguktong.ac.in"}
-              <BadgeCheck
-                className="w-[15px] h-[15px] text-[#2ebd59]"
-                fill="#2ebd59"
-                fillOpacity={0.15}
-                strokeWidth={2.5}
-              />
-            </p>
-
-            {/* Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] md:text-xs font-medium text-zinc-500 mt-1">
-              <span className="text-zinc-900 font-bold tracking-normal px-2 py-1 bg-zinc-50 border border-zinc-100 rounded">
-                {user?.username}
-              </span>
-              <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
-              <span className="tracking-normal font-bold text-zinc-600">
-                {user?.branch} • {user?.year}
-              </span>
-              {user?.has_pending_requests && (
-                <>
-                  <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
-                  <span className="text-amber-600 px-2 py-1 bg-amber-50 border border-amber-100 rounded text-[10px] font-bold tracking-normal flex items-center gap-1.5">
-                    <Clock className="w-3 h-3" /> Pending action
-                  </span>
-                </>
-              )}
-            </div>
-            {/* Mobile Actions */}
-            {isEditing && (
-              <div className="md:hidden flex flex-col items-center mt-6 w-full">
-                <div className="flex gap-3 w-full justify-center mb-3">
-                  <button
-                    onClick={() => {
-                      setIsEditing(false);
-                      refetch();
-                    }}
-                    className={cn(
-                      studentCancelButtonClass,
-                      "flex-1 max-w-[140px]",
-                    )}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className={cn(
-                      studentSaveButtonClass,
-                      "flex-1 max-w-[160px]",
-                    )}
-                  >
-                    {isSubmitting && (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    )}
-                    Save Changes
-                  </button>
-                </div>
-                <p className="text-[10px] font-bold text-red-500 text-center tracking-normal">
-                  Update the details below and click save changes
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <NoticeBoard className="mb-8" />
-
-        {/* Tab Navigation */}
-        <div className={cn(studentTabBarClass, "mb-6")}>
-          <div className="flex gap-6 md:gap-8 min-w-max">
-            {[
-              "personal",
-              "academic",
-              /* "seating", */
-              "family",
-              enableOutingsAndOutpasses ? "permissions" : "",
-            ]
-              .filter(Boolean)
-              .map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab || "personal")}
-                  className={
-                    activeTab === tab
-                      ? studentTabButtonActiveClass
-                      : studentTabButtonInactiveClass
-                  }
-                >
-                  {tab}
-                  {activeTab === tab && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-navy-900 rounded-t-full"
-                    />
-                  )}
-                </button>
-              ))}
-          </div>
-        </div>
-
-        {/* Tab Content */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            transition={{ duration: 0.15 }}
+      {/* Centered Avatar and Info */}
+      <div className="flex items-center gap-4">
+        {/* Avatar with upload state */}
+        <div className="relative" aria-busy={isUploadingImage || undefined}>
+          {/* Profile image or initial */}
+          <Avatar
+            size={56}
+            src={user?.profile_url}
+            alt={user?.name ? `${user.name} profile photo` : "Profile photo"}
+            name={user?.name || "Student"}
+          />
+          {/* Dark blurry overlay - contained fully inside the circle */}
+          {isUploadingImage ? (
+            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-surface/80">
+              <Loader2 className="h-5 w-5 animate-spin text-head" aria-hidden />
+            </span>
+          ) : null}
+          {/* Camera Icon Button */}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploadingImage}
+            title="Update Profile Photo"
+            aria-label="Update Profile Photo"
+            className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border border-border-strong bg-surface text-head hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {activeTab === "personal" && (
-              <div className="space-y-6">
-                <SeatingSummaryWidget />
-                <div className={studentInfoGridClass}>
-                  {personalFields.map((f) => (
-                    <InfoCard
-                      key={f.name}
-                      {...f}
-                      value={fields[f.name]}
-                      isEditing={isEditing}
-                      isLoading={isLoading}
-                      onValueChange={handleFieldChange}
-                    />
+            <Camera className="h-4 w-4" strokeWidth={1.75} />
+          </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*"
+            onChange={handleImageUpload}
+          />
+        </div>
+        <div className="min-w-0">
+          <p className="truncate text-body text-text-2">
+            {user?.email || user?.username + "@rguktong.ac.in"}
+          </p>
+          {/* Badges */}
+          {user?.has_pending_requests ? (
+            <div className="mt-2">
+              <Badge tone="warning">Pending action</Badge>
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      <Panel
+        title="Profile"
+        lede={isEditing ? "Update the details below, then save." : undefined}
+      >
+        <dl className="grid grid-cols-1 min-[821px]:grid-cols-2 min-[821px]:gap-x-8">
+          {profileRows.map((row) => (
+            <InfoCard
+              key={row.name}
+              {...row}
+              isEditing={isEditing}
+              isLoading={isLoading}
+              onValueChange={handleFieldChange}
+            />
+          ))}
+        </dl>
+      </Panel>
+
+      <div className="grid grid-cols-2 gap-3 min-[821px]:grid-cols-4">
+        {buildStatTiles(user).map((tile) => (
+          <StatTile
+            key={tile.key}
+            label={tile.label}
+            value={<span className="font-sans tabular-nums">{tile.value}</span>}
+            line={tile.line}
+            status={tile.status}
+            icon={tile.icon}
+          />
+        ))}
+      </div>
+
+      <section>
+        <h2 className={sectionTitleClass}>This semester</h2>
+        <div className="mt-4">
+          {user?.username ? (
+            <ProfileSemesterSubjects studentId={user.username} />
+          ) : null}
+        </div>
+      </section>
+
+      <NoticeBoard />
+
+      {/* Tab Navigation */}
+      <Tabs
+        tabs={dashboardTabs}
+        value={activeTab}
+        onChange={setActiveTab}
+        label="Profile sections"
+      />
+
+      {/* Tab Content */}
+      <div
+        id={`panel-${activeTab}`}
+        role="tabpanel"
+        aria-labelledby={`tab-${activeTab}`}
+      >
+        {activeTab === "personal" && (
+          <div>
+            <SeatingSummaryWidget />
+            {/* Modern Analytics Section integrated into Personal view */}
+            {user?.username &&
+              /* <StudentAnalytics studentId={user.username} /> */
+              null}
+          </div>
+        )}
+
+        {activeTab === "academic" && (
+          <div className="space-y-8">
+            {/* AcademicRecord will render its own grid/tables if data exists */}
+            <AcademicRecord student={user} />
+          </div>
+        )}
+
+        {activeTab === "seating" && <SeatingArrangement />}
+
+        {activeTab === "family" && (
+          <div className="grid gap-8 min-[821px]:grid-cols-2">
+            <div>
+              <h2 className={sectionTitleClass}>Father&apos;s details</h2>
+              <dl className="mt-2">
+                <InfoCard
+                  key="fatherName"
+                  label="Name"
+                  name="fatherName"
+                  value={fields.fatherName}
+                  isEditing={isEditing}
+                  onValueChange={handleFieldChange}
+                  editable
+                />
+                <InfoCard
+                  key="fatherOccupation"
+                  label="Occupation"
+                  name="fatherOccupation"
+                  value={fields.fatherOccupation}
+                  isEditing={isEditing}
+                  onValueChange={handleFieldChange}
+                  editable
+                />
+                <InfoCard
+                  key="fatherEmail"
+                  label="Email"
+                  name="fatherEmail"
+                  type="email"
+                  value={fields.fatherEmail}
+                  isEditing={isEditing}
+                  onValueChange={handleFieldChange}
+                  editable
+                />
+              </dl>
+            </div>
+            <div>
+              <h2 className={sectionTitleClass}>Mother&apos;s details</h2>
+              <dl className="mt-2">
+                <InfoCard
+                  key="motherName"
+                  label="Name"
+                  name="motherName"
+                  value={fields.motherName}
+                  isEditing={isEditing}
+                  onValueChange={handleFieldChange}
+                  editable
+                />
+                <InfoCard
+                  key="motherOccupation"
+                  label="Occupation"
+                  name="motherOccupation"
+                  value={fields.motherOccupation}
+                  isEditing={isEditing}
+                  onValueChange={handleFieldChange}
+                  editable
+                />
+                <InfoCard
+                  key="motherEmail"
+                  label="Email"
+                  name="motherEmail"
+                  type="email"
+                  value={fields.motherEmail}
+                  isEditing={isEditing}
+                  onValueChange={handleFieldChange}
+                  editable
+                />
+              </dl>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "permissions" && (
+          <div className="space-y-8">
+            <div className="flex flex-wrap gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setRequestType("outing")}
+                disabled={user.has_pending_requests}
+              >
+                Request outing
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setRequestType("outpass")}
+                disabled={user.has_pending_requests}
+              >
+                Request outpass
+              </Button>
+            </div>
+
+            <h2 className={sectionTitleClass}>Request history</h2>
+
+            {isHistoryLoading ? (
+              <div className="space-y-3" aria-hidden>
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
+              </div>
+            ) : history.length > 0 ? (
+              <>
+                <div>
+                  {history.map((req: any) => (
+                    <RequestCard key={req._id} request={req} type={req.type} />
                   ))}
                 </div>
-                {/* Modern Analytics Section integrated into Personal view */}
-                {user?.username &&
-                  /* <StudentAnalytics studentId={user.username} /> */
-                  null}
-              </div>
+                <Pagination
+                  currentPage={historyPagination.page}
+                  totalPages={historyPagination.totalPages}
+                  onPageChange={(p) => fetchHistory(p)}
+                  className="mt-6"
+                />
+              </>
+            ) : (
+              <EmptyState
+                title="No history found"
+                body="Your past requests will appear here."
+              />
             )}
-
-            {activeTab === "academic" && (
-              <div className="space-y-10">
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3">
-                    <div className="h-6 w-1.5 bg-zinc-900 rounded-full"></div>
-                    <h3 className="text-[17px] font-semibold tracking-tight text-zinc-900">
-                      Academic Overview
-                    </h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {academicFields.map((f) => (
-                      <InfoCard
-                        key={f.name}
-                        {...f}
-                        value={f.value}
-                        isEditing={false}
-                        isLoading={isLoading}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-6 w-1.5 bg-zinc-900 rounded-full" />
-                    <h3 className="text-[17px] font-semibold tracking-tight text-zinc-900">
-                      Current semester subjects
-                    </h3>
-                  </div>
-                  {user?.username && (
-                    <ProfileSemesterSubjects studentId={user.username} />
-                  )}
-                </div>
-
-                <div className="space-y-6">
-                  {/* AcademicRecord will render its own grid/tables if data exists */}
-                  <AcademicRecord student={user} />
-                </div>
-              </div>
-            )}
-
-            {activeTab === "seating" && <SeatingArrangement />}
-
-            {activeTab === "family" && (
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 border-b border-zinc-100 pb-2">
-                    <h3 className="text-[17px] font-semibold tracking-tight text-zinc-900">
-                      Father's Details
-                    </h3>
-                  </div>
-                  <div className="space-y-3">
-                    <InfoCard
-                      key="fatherName"
-                      label="Name"
-                      name="fatherName"
-                      icon={<User className="w-3 h-3" />}
-                      value={fields.fatherName}
-                      isEditing={isEditing}
-                      onValueChange={handleFieldChange}
-                      editable
-                    />
-                    <InfoCard
-                      key="fatherOccupation"
-                      label="Occupation"
-                      name="fatherOccupation"
-                      icon={<Briefcase className="w-3 h-3" />}
-                      value={fields.fatherOccupation}
-                      isEditing={isEditing}
-                      onValueChange={handleFieldChange}
-                      editable
-                    />
-
-                    <InfoCard
-                      key="fatherEmail"
-                      label="Email"
-                      name="fatherEmail"
-                      type="email"
-                      icon={<Mail className="w-3 h-3" />}
-                      value={fields.fatherEmail}
-                      isEditing={isEditing}
-                      onValueChange={handleFieldChange}
-                      editable
-                    />
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 border-b border-zinc-100 pb-2">
-                    <h3 className="text-[17px] font-semibold tracking-tight text-zinc-900">
-                      Mother's Details
-                    </h3>
-                  </div>
-                  <div className="space-y-3">
-                    <InfoCard
-                      key="motherName"
-                      label="Name"
-                      name="motherName"
-                      icon={<User className="w-3 h-3" />}
-                      value={fields.motherName}
-                      isEditing={isEditing}
-                      onValueChange={handleFieldChange}
-                      editable
-                    />
-                    <InfoCard
-                      key="motherOccupation"
-                      label="Occupation"
-                      name="motherOccupation"
-                      icon={<Briefcase className="w-3 h-3" />}
-                      value={fields.motherOccupation}
-                      isEditing={isEditing}
-                      onValueChange={handleFieldChange}
-                      editable
-                    />
-
-                    <InfoCard
-                      key="motherEmail"
-                      label="Email"
-                      name="motherEmail"
-                      type="email"
-                      icon={<Mail className="w-3 h-3" />}
-                      value={fields.motherEmail}
-                      isEditing={isEditing}
-                      onValueChange={handleFieldChange}
-                      editable
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "permissions" && (
-              <div className="space-y-8 pb-24 md:pb-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                  <button
-                    onClick={() => setRequestType("outing")}
-                    disabled={user.has_pending_requests}
-                    className="group relative overflow-hidden bg-white hover:bg-zinc-900 rounded-xl p-6 transition-[color,background-color,border-color,opacity,transform] duration-300 border border-zinc-100 hover:border-zinc-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md h-[120px] md:h-auto"
-                  >
-                    <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
-                      <div className="text-zinc-900 group-hover:text-white transition-colors duration-300">
-                        <Clock size={22} />
-                      </div>
-                      <div>
-                        <h3 className="text-[16px] font-bold text-zinc-900 group-hover:text-white mb-1 transition-colors leading-none">
-                          Request Outing
-                        </h3>
-                        <p className="font-medium text-[12px] text-zinc-400 group-hover:text-zinc-500 transition-colors">
-                          Short duration leaves
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => setRequestType("outpass")}
-                    disabled={user.has_pending_requests}
-                    className="group relative overflow-hidden bg-white hover:bg-zinc-900 rounded-xl p-6 transition-[color,background-color,border-color,opacity,transform] duration-300 border border-zinc-100 hover:border-zinc-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md h-[120px] md:h-auto"
-                  >
-                    <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
-                      <div className="text-zinc-900 group-hover:text-white transition-colors duration-300">
-                        <Calendar size={22} />
-                      </div>
-                      <div>
-                        <h3 className="text-[16px] font-bold text-zinc-900 group-hover:text-white mb-1 transition-colors leading-none">
-                          Request Outpass
-                        </h3>
-                        <p className="font-medium text-[12px] text-zinc-400 group-hover:text-zinc-500 transition-colors">
-                          Overnight/Multi-day leaves
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-                </div>
-
-                <div>
-                  <div className="text-zinc-900">
-                    <HistoryIcon size={18} />
-                  </div>
-                  <h3 className="text-[17px] font-semibold text-zinc-900 tracking-tight">
-                    Request History Audit
-                  </h3>
-                </div>
-
-                <div className="space-y-3">
-                  {isHistoryLoading ? (
-                    <div className="text-center py-10 text-zinc-300 text-[10px] font-bold tracking-normal">
-                      Fetching Records...
-                    </div>
-                  ) : history.length > 0 ? (
-                    <>
-                      {history.map((req: any) => (
-                        <RequestCard
-                          key={req._id}
-                          request={req}
-                          type={req.type}
-                        />
-                      ))}
-                      <Pagination
-                        currentPage={historyPagination.page}
-                        totalPages={historyPagination.totalPages}
-                        onPageChange={(p) => fetchHistory(p)}
-                        className="mt-6"
-                      />
-                    </>
-                  ) : (
-                    <div className="text-center py-10 bg-zinc-50/50 rounded-xl border border-zinc-100">
-                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 border border-zinc-100 shadow-sm">
-                        <HistoryIcon className="w-5 h-5 text-zinc-200" />
-                      </div>
-                      <p className="text-zinc-900 font-semibold text-sm tracking-normal">
-                        No history found
-                      </p>
-                      <p className="text-zinc-400 text-xs mt-1 font-medium">
-                        Your past requests will appear here
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Modals placed inside main content area to avoid z-index issues */}
-        <AnimatePresence>
-          {requestType && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-white rounded-xl p-6 md:p-10 max-w-lg w-full shadow-sm overflow-hidden relative"
-              >
-                <div className="flex items-center gap-5 mb-8">
-                  <div className="text-cyan-900">
-                    {requestType === "outpass" ? (
-                      <Calendar className="w-8 h-8" />
-                    ) : (
-                      <Clock className="w-8 h-8" />
-                    )}
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-semibold capitalize tracking-tight text-zinc-900">
-                      New {requestType} Snapshot
-                    </h2>
-                    <p className="text-[13px] font-medium text-zinc-400">
-                      Submit your leave authorization details
-                    </p>
-                  </div>
-                </div>
-
-                <form onSubmit={handleRequestSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold tracking-normal text-zinc-400 ml-1">
-                      Reason
-                    </label>
-                    <textarea
-                      className="w-full bg-zinc-50 p-4 rounded-xl border border-zinc-200 focus:border-zinc-100 focus:ring-1 focus:ring-zinc-900 focus:outline-none min-h-[120px] font-bold text-[15px] text-zinc-900 placeholder:text-zinc-300 placeholder:font-normal resize-none transition-[color,background-color,border-color,opacity,transform]"
-                      placeholder="Please explain why you need to leave..."
-                      value={requestForm.reason}
-                      onChange={(e) =>
-                        setRequestForm({
-                          ...requestForm,
-                          reason: e.target.value,
-                        })
-                      }
-                      required
-                      autoFocus
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold tracking-normal text-zinc-400 ml-1">
-                        From
-                      </label>
-                      <input
-                        type={requestType === "outpass" ? "date" : "time"}
-                        className="w-full bg-zinc-50 p-4 rounded-xl border border-zinc-100 focus:border-zinc-100 focus:ring-1 focus:ring-zinc-900 focus:outline-none font-semibold text-lg text-zinc-900 transition-[color,background-color,border-color,opacity,transform]"
-                        value={requestForm.from}
-                        onChange={(e) =>
-                          setRequestForm({
-                            ...requestForm,
-                            from: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold tracking-normal text-zinc-400 ml-1">
-                        To
-                      </label>
-                      <input
-                        type={requestType === "outpass" ? "date" : "time"}
-                        className="w-full bg-zinc-50 p-4 rounded-xl border border-zinc-100 focus:border-zinc-100 focus:ring-1 focus:ring-zinc-900 focus:outline-none font-semibold text-lg text-zinc-900 transition-[color,background-color,border-color,opacity,transform]"
-                        value={requestForm.to}
-                        onChange={(e) =>
-                          setRequestForm({ ...requestForm, to: e.target.value })
-                        }
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="pt-4 flex gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setRequestType(null)}
-                      className="flex-1 h-[52px] font-bold text-sm text-zinc-400 hover:text-zinc-600 transition-[color,background-color,border-color,opacity,transform]"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={requestLoading}
-                      className="flex-[2] h-[52px] bg-zinc-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-[color,background-color,border-color,opacity,transform] shadow-sm active:scale-[0.98]"
-                    >
-                      {requestLoading ? (
-                        <Loader2 className="w-5 h-5 animate-spin mx-auto" />
-                      ) : (
-                        `Request ${requestType}`
-                      )}
-                    </button>
-                  </div>
-                </form>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
+          </div>
+        )}
       </div>
+
+      {/* Modals placed inside main content area to avoid z-index issues */}
+      {requestType && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="leave-request-title"
+            className="max-h-[90vh] w-full max-w-[640px] overflow-y-auto rounded-xl border border-border bg-panel p-6 min-[821px]:p-8"
+          >
+            <h2 id="leave-request-title" className={sectionTitleClass}>
+              Request {requestType}
+            </h2>
+            <p className="mt-2 text-body text-text-2">
+              Submit your leave authorization details
+            </p>
+            <form onSubmit={handleRequestSubmit} className="mt-6 space-y-4">
+              <Textarea
+                label="Reason"
+                placeholder="Please explain why you need to leave..."
+                value={requestForm.reason}
+                onChange={(e) =>
+                  setRequestForm({
+                    ...requestForm,
+                    reason: e.target.value,
+                  })
+                }
+                required
+                autoFocus
+              />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Input
+                  label="From"
+                  type={requestType === "outpass" ? "date" : "time"}
+                  value={requestForm.from}
+                  onChange={(e) =>
+                    setRequestForm({
+                      ...requestForm,
+                      from: e.target.value,
+                    })
+                  }
+                  required
+                />
+                <Input
+                  label="To"
+                  type={requestType === "outpass" ? "date" : "time"}
+                  value={requestForm.to}
+                  onChange={(e) =>
+                    setRequestForm({ ...requestForm, to: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setRequestType(null)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" isLoading={requestLoading}>
+                  Submit
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

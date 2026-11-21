@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getDepartmentStaff } from "../types/api";
 import type { DepartmentData, FacultyMember, DeptCode } from "../types/api";
-import { Mail, Phone, Users, ChevronRight } from "lucide-react";
+import { Mail, Phone, Users } from "lucide-react";
 import { PersonPhoto } from "../components/common/PersonPhoto";
 import { initials } from "../lib/initials";
 import { usePageTitle } from "../lib/usePageTitle";
 import { PageHero } from "../components/layout/PageHero";
+import { Wrap } from "../components/layout/Wrap";
+import { buttonVariants } from "../components/ui/button-variants";
 
 // ── Full department names ──────────────────────────────────────────
 const DEPT_NAMES: Record<string, string> = {
@@ -47,8 +49,25 @@ function allBioEntries(bio: Record<string, unknown>) {
     .filter(e => e.display && e.display.toLowerCase() !== "null");
 }
 
+function FacultyPortrait({ faculty }: { faculty: FacultyMember }) {
+  return (
+    <div className="size-14 shrink-0 overflow-hidden rounded-full bg-navy-100 dark:bg-surface-2">
+      <PersonPhoto
+        src={faculty.photo}
+        name={faculty.name}
+        className="size-full object-cover object-top"
+        fallback={
+          <div className="flex size-full items-center justify-center text-[13px] font-medium text-navy-900 dark:text-text">
+            {initials(faculty.name)}
+          </div>
+        }
+      />
+    </div>
+  );
+}
+
 // ── Faculty card — reference-style: photo left, info right ─────────
-function FacultyCard({ faculty, onOpen }: { faculty: FacultyMember; onOpen: () => void }) {
+function FacultyCard({ faculty, href }: { faculty: FacultyMember; href: string }) {
   const bio = faculty.bio as Record<string, unknown> ?? {};
   const designation   = bioStr(bio, "Additional Responsibilities") || "Faculty";
   const specialization = bioStr(bio, "Specialization");
@@ -56,76 +75,42 @@ function FacultyCard({ faculty, onOpen }: { faculty: FacultyMember; onOpen: () =
   const hasFullProfile = allBioEntries(bio).length > 0;
 
   return (
-    <div className="relative bg-white rounded-lg border border-line shadow-xs hover:border-navy-200 hover:shadow-[0_12px_32px_-16px_rgba(10,37,64,0.35)] hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 transition-[box-shadow,transform,border-color] duration-200 ease-[cubic-bezier(0.2,0,0,1)] group flex gap-0 overflow-hidden">
-
+    <article className="flex min-w-0 gap-4 border-t border-border py-6">
       {/* ── Photo ── */}
-      <div className="w-28 sm:w-36 flex-shrink-0 bg-gradient-to-b from-surface-2 to-navy-200/40 flex items-center justify-center relative overflow-hidden border-r border-line" style={{ minHeight: "150px" }}>
-        <PersonPhoto
-              src={faculty.photo}
-              name={faculty.name}
-              className="w-full h-full object-contain" style={{ maxHeight: "150px" }}
-              fallback={
-                <div className="w-full h-full flex items-center justify-center">
-            <div className="w-16 h-16 rounded-full bg-navy text-white ring-4 ring-white flex items-center justify-center text-2xl font-medium">
-              {initials(faculty.name)}
-            </div>
-          </div>
-              }
-            />
-        {/* Subtle left border accent */}
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-brand-red opacity-0 group-hover:opacity-100 transition-opacity" />
-      </div>
+      <FacultyPortrait faculty={faculty} />
 
       {/* ── Info ── */}
-      <div className="flex-1 px-5 py-4 flex flex-col justify-between min-w-0 min-h-[130px]">
-        <div>
-          {/* Name */}
-          <h3 className="font-medium text-ink text-base leading-snug mb-0.5 group-hover:text-navy transition-colors">
-            {faculty.name}
-          </h3>
-
-          {/* Designation */}
-          <p className="inline-flex max-w-full rounded-full bg-navy-200/50 px-2 py-0.5 text-navy text-[11px] font-semibold mb-3 mt-1">
-            {designation}
+      <div className="min-w-0 flex-1">
+        <h3 className="break-words text-[17px] font-semibold leading-6 text-head">
+          {faculty.name}
+        </h3>
+        <p className="mt-1 text-[14px] leading-5 text-text-2">
+          {designation}
+        </p>
+        {specialization && (
+          <p className="mt-2 text-[14px] leading-5 text-text-2">
+            {specialization}
           </p>
-
-          {/* Specialization */}
-          {specialization && (
-            <p className="text-ink-muted text-xs mb-3 line-clamp-2">
-              {specialization}
+        )}
+        <div className="mt-3 space-y-1">
+          <a href={`mailto:${faculty.email}`} className="inline-flex min-h-11 items-center gap-2 break-all text-[14px] leading-5 text-link hover:underline min-[640px]:min-h-0">
+            <Mail className="shrink-0 text-accent" size={16} strokeWidth={1.75} aria-hidden="true" />
+            {faculty.email}
+          </a>
+          {phone && (
+            <p className="flex items-center gap-2 text-[14px] leading-5 text-text-2">
+              <Phone className="shrink-0 text-accent" size={16} strokeWidth={1.75} aria-hidden="true" />
+              <span>{phone}</span>
             </p>
           )}
-
-          {/* Contact info */}
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-ink-muted">
-              <Mail className="w-3.5 h-3.5 text-navy flex-shrink-0" />
-              <a href={`mailto:${faculty.email}`} className="hover:text-navy hover:underline truncate">
-                {faculty.email}
-              </a>
-            </div>
-            {phone && (
-              <div className="flex items-center gap-2 text-xs text-ink-muted">
-                <Phone className="w-3.5 h-3.5 text-ink-subtle flex-shrink-0" />
-                <span>{phone}</span>
-              </div>
-            )}
-          </div>
         </div>
-
-        {/* Action */}
         {hasFullProfile && (
-          <div className="mt-3 pt-3 border-t border-line">
-            <button
-              onClick={onOpen}
-              className="inline-flex min-h-[32px] items-center gap-1 rounded-md bg-navy px-3 text-[12px] font-semibold text-white hover:bg-brand-red transition-colors duration-150"
-            >
-              View Profile <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          <Link to={href} className={`${buttonVariants({ variant: "outline", size: "compact" })} mt-4`}>
+            View profile
+          </Link>
         )}
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -134,7 +119,6 @@ export function DepartmentPage() {
   const { deptCode } = useParams<{ deptCode: string }>();
   const [data, setData] = useState<DepartmentData | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   const code     = deptCode?.toUpperCase() ?? "";
   const deptName = DEPT_NAMES[code] ?? `Department of ${code}`;
@@ -154,24 +138,24 @@ export function DepartmentPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] w-full bg-surface cursor-wait" aria-busy="true">
-        <div className="bg-navy-950 h-56 sm:h-64 flex items-end">
-          <p className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-16 text-sm font-medium text-white/70">
-            Loading {deptName}
-          </p>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="flex h-36 overflow-hidden rounded-lg border border-line bg-white shadow-xs">
-              <div className="w-28 sm:w-36 bg-surface-2 animate-pulse motion-reduce:animate-none" />
-              <div className="flex-1 p-5 space-y-3">
-                <div className="h-3 w-1/2 rounded bg-surface-2" />
-                <div className="h-3 w-1/3 rounded bg-surface-2" />
-                <div className="h-3 w-2/3 rounded bg-surface-2" />
+      <div className="w-full" aria-busy="true">
+        <span className="sr-only">Loading {deptName}</span>
+        <Wrap className="py-12">
+          <div className="skeleton h-8 w-72 max-w-full" />
+          <div className="skeleton mt-4 h-4 w-48" />
+          <div className="mt-10 grid grid-cols-1 gap-x-10 md:grid-cols-2">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex gap-4 border-t border-border py-6">
+                <div className="skeleton size-14 rounded-full" />
+                <div className="flex-1 space-y-3">
+                  <div className="skeleton h-4 w-1/2" />
+                  <div className="skeleton h-3 w-1/3" />
+                  <div className="skeleton h-3 w-2/3" />
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </Wrap>
       </div>
     );
   }
@@ -179,8 +163,7 @@ export function DepartmentPage() {
   const faculties = data?.faculties ?? [];
 
   return (
-    <div className="min-h-screen bg-surface">
-
+    <div>
       <PageHero
         eyebrow={`RGUKT Ongole · ${code}`}
         title={deptName}
@@ -192,32 +175,32 @@ export function DepartmentPage() {
       />
 
       {/* ── Faculty List ── */}
-      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-8">
+      <Wrap className="pb-16">
         {faculties.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-lg border border-line shadow-xs">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-navy-200/50 ring-8 ring-surface-2 flex items-center justify-center">
-              <Users className="w-8 h-8 text-navy-400" />
+          <div className="py-16 text-center">
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-tint-2">
+              <Users className="text-accent" size={32} strokeWidth={1.5} aria-hidden="true" />
             </div>
-            <p className="text-ink font-semibold text-lg">No Faculty Information Available</p>
-            <p className="text-ink-subtle text-sm mt-2">Faculty details for this department will be updated soon.</p>
+            <p className="mt-6 font-serif text-[22px] font-normal leading-[30px] tracking-[-0.01em] text-head">No faculty information available</p>
+            <p className="mx-auto mt-3 max-w-[380px] text-[15px] leading-6 text-text-2">Faculty details for this department will be updated soon.</p>
           </div>
         ) : (
           <>
-            <h2 className="text-base font-medium text-navy mb-6">
+            <h2 className="u-h2 mt-8 text-head">
               Faculty
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 md:gap-x-12">
               {faculties.map((faculty, index) => (
                 <FacultyCard
                   key={index}
                   faculty={faculty}
-                  onOpen={() => navigate(`/departments/${deptCode}/faculty/${index}`)}
+                  href={`/departments/${deptCode}/faculty/${index}`}
                 />
               ))}
             </div>
           </>
         )}
-      </div>
+      </Wrap>
     </div>
   );
 }

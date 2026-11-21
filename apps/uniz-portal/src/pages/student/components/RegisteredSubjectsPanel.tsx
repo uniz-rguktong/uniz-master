@@ -1,8 +1,11 @@
 import { formatStatus } from "@/utils/displayText";
-import { GraduationCap, AlertCircle, Download, Info } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Download } from "lucide-react";
 import { downloadFile } from "@/api/apiClient";
 import { DOWNLOAD_REGISTRATION } from "@/api/endpoints";
+import { Button } from "@/components/Button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Table, type TableColumn } from "@/components/ui/table";
 
 export type RegisteredSubjectRow = {
   id: string;
@@ -41,10 +44,10 @@ export default function RegisteredSubjectsPanel({
 }) {
   if (!semester) {
     return (
-      <div className="bg-zinc-50/50 border border-zinc-100 rounded-xl p-10 text-center">
-        <GraduationCap className="w-10 h-10 text-zinc-300 mx-auto mb-3" />
-        <p className="text-sm font-medium text-zinc-600">No active semester</p>
-      </div>
+      <EmptyState
+        title="No active semester"
+        body="There is no semester to show subjects for."
+      />
     );
   }
 
@@ -53,168 +56,101 @@ export default function RegisteredSubjectsPanel({
     0,
   );
 
-  if (subjects.length === 0) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-end justify-between border-b border-zinc-100 pb-4">
-          <div>
-            <span className="text-[10px] font-bold tracking-normal text-zinc-400 block mb-1">
-              Current semester
-            </span>
-            <h2 className="text-[17px] font-semibold tracking-tight text-zinc-900">
-              {semester.name}
-            </h2>
-          </div>
-          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-bold tracking-normal">
-            {formatStatus(semester.status)}
+  const columns: TableColumn<RegisteredSubjectRow>[] = [
+    {
+      id: "code",
+      header: "Code",
+      meta: true,
+      cell: (row) => (
+        <span className="font-sans tabular-nums">{row.subject?.code || "—"}</span>
+      ),
+    },
+    {
+      id: "subject",
+      header: "Subject",
+      primary: true,
+      cell: (row) => row.subject?.name || "—",
+    },
+    {
+      id: "credits",
+      header: "Credits",
+      numeric: true,
+      meta: true,
+      cell: (row) =>
+        row.subject?.credits != null ? (
+          <span className="font-sans tabular-nums">
+            {Number(row.subject.credits).toFixed(1)}
           </span>
-        </div>
-        <div className="bg-zinc-50 rounded-xl p-8 text-center border border-zinc-200">
-          <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm border border-zinc-100">
-            <AlertCircle size={28} className="text-zinc-400" />
-          </div>
-          <h3 className="text-lg font-bold mb-2 text-zinc-900">
-            No registered subjects yet
-          </h3>
-          <p className="text-zinc-500 font-medium text-sm max-w-md mx-auto">
-            You have not completed registration for {semester.name}. Use the
-            Register tab when enrollment is open.
-          </p>
-        </div>
-      </div>
-    );
+        ) : (
+          "—"
+        ),
+    },
+  ];
+
+  if (!compact) {
+    columns.splice(2, 0, {
+      id: "department",
+      header: "Department",
+      cell: (row) => row.subject?.department || "—",
+    });
+    columns.push({
+      id: "registered",
+      header: "Registered",
+      numeric: true,
+      cell: (row) => (
+        <span className="font-sans tabular-nums">
+          {formatRegisteredDate(row.submittedAt)}
+        </span>
+      ),
+    });
   }
 
   return (
-    <div
-      className={cn(
-        "-mx-4 md:mx-0 space-y-0 md:space-y-4",
-        compact && "mx-0 space-y-3",
-      )}
-    >
-      <div
-        className={cn(
-          "flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-zinc-100",
-          compact ? "pb-3 px-0" : "px-4 md:px-0 pb-4 pt-1",
-        )}
-      >
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <span className="text-[10px] font-bold tracking-normal text-zinc-400 block mb-1">
-            Current semester
-          </span>
-          <h2
-            className={cn(
-              "font-semibold tracking-tight text-zinc-900",
-              compact ? "text-[15px]" : "text-[17px]",
-            )}
-          >
-            {semester.name}
-          </h2>
-          <div className="flex flex-wrap items-center gap-2 mt-2">
-            <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-bold tracking-normal">
-              {formatStatus(semester.status)}
-            </span>
-            <span className="text-[11px] font-semibold text-zinc-400 tabular-nums">
-              {subjects.length} subjects · {totalCredits} credits
+          <p className="text-body font-medium text-head">{semester.name}</p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <Badge tone="neutral">{formatStatus(semester.status)}</Badge>
+            <span className="text-small text-text-2">
+              <span className="font-sans tabular-nums">{subjects.length}</span> subjects ·{" "}
+              <span className="font-sans tabular-nums">{totalCredits}</span> credits
             </span>
           </div>
         </div>
 
-        {!compact && (
-          <button
+        {!compact && subjects.length > 0 && (
+          <Button
             type="button"
+            variant="outline"
+            size="compact"
             onClick={() =>
               downloadFile(
                 DOWNLOAD_REGISTRATION(semester.id),
                 `REGISTRATION_${semester.id}.pdf`,
               )
             }
-            className="h-10 px-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg font-bold text-xs transition-[color,background-color,border-color,opacity,transform] flex items-center gap-2 shadow-sm shrink-0 self-start sm:self-auto"
           >
-            <Download size={14} />
+            <Download size={16} strokeWidth={1.75} aria-hidden />
             Download PDF
-          </button>
+          </Button>
         )}
       </div>
 
-      <div
-        className={cn(
-          "md:bg-white md:rounded-xl overflow-hidden md:border md:border-zinc-100 md:shadow-sm bg-transparent",
-          compact && "md:rounded-lg",
-        )}
-      >
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[560px]">
-            <thead>
-              <tr className="border-b border-zinc-200 md:bg-zinc-50/50 bg-transparent">
-                <th className="px-4 py-3 text-left text-[10px] font-bold tracking-normal text-zinc-500 w-[18%]">
-                  Code
-                </th>
-                <th className="px-4 py-3 text-left text-[10px] font-bold tracking-normal text-zinc-500 w-[34%]">
-                  Subject
-                </th>
-                <th className="px-4 py-3 text-left text-[10px] font-bold tracking-normal text-zinc-500 w-[16%]">
-                  Department
-                </th>
-                <th className="px-4 py-3 text-center text-[10px] font-bold tracking-normal text-zinc-500 w-[14%]">
-                  Credits
-                </th>
-                <th className="px-4 py-3 text-right text-[10px] font-bold tracking-normal text-zinc-500 w-[18%]">
-                  Registered
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {subjects.map((row) => (
-                <tr
-                  key={row.id}
-                  className="group hover:bg-zinc-50/50 transition-colors"
-                >
-                  <td className="px-4 py-3">
-                    <span className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700 text-[10px] font-bold tracking-normal">
-                      {row.subject?.code || "—"}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 font-bold text-xs text-zinc-900 leading-snug">
-                    {row.subject?.name || "—"}
-                  </td>
-                  <td className="px-4 py-3 text-zinc-500 font-medium text-xs">
-                    {row.subject?.department || "—"}
-                  </td>
-                  <td className="px-4 py-3 text-center text-zinc-600 font-medium text-xs tabular-nums">
-                    {row.subject?.credits != null
-                      ? Number(row.subject.credits).toFixed(1)
-                      : "—"}
-                  </td>
-                  <td className="px-4 py-3 text-right text-zinc-400 font-semibold text-[11px] tabular-nums whitespace-nowrap">
-                    {formatRegisteredDate(row.submittedAt)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {subjects.length === 0 ? (
+        <EmptyState
+          title="No registered subjects yet"
+          body={`You have not completed registration for ${semester.name}. Use the Register tab when enrollment is open.`}
+        />
+      ) : (
+        <Table columns={columns} rows={subjects} getRowId={(row) => row.id} />
+      )}
 
-        {!compact && (
-          <div className="px-4 md:px-6 py-4 border-t border-zinc-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-zinc-50/40">
-            <p className="text-[11px] font-semibold text-zinc-400 tracking-normal">
-              Total load
-            </p>
-            <p className="text-sm font-semibold text-zinc-900 tabular-nums">
-              {subjects.length} subjects · {totalCredits} credits
-            </p>
-          </div>
-        )}
-      </div>
-
-      {!compact && (
-        <div className="flex items-start gap-3 px-4 md:px-0 pt-2 md:pt-0">
-          <Info className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
-          <p className="text-xs text-zinc-500 leading-relaxed">
-            Official enrollment record — these are your confirmed subjects for
-            this semester. Contact Academic Affairs if anything looks incorrect.
-          </p>
-        </div>
+      {!compact && subjects.length > 0 && (
+        <p className="text-small text-text-2">
+          Official enrollment record. These are your confirmed subjects for this
+          semester. Contact Academic Affairs if anything looks incorrect.
+        </p>
       )}
     </div>
   );

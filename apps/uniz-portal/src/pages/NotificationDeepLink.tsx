@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { signInWithReturn } from "@/utils/returnUrl";
-import { Spinner } from "@/components/ui/ios-spinner";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 /**
  * Entry route from push notification clicks (`/notifications?n=...`).
@@ -34,8 +34,12 @@ export default function NotificationDeepLink() {
   }, [navigate, searchParams]);
 
   return (
-    <div className="flex min-h-[50vh] items-center justify-center">
-      <Spinner size="lg" />
+    <div className="min-h-screen bg-bg px-4 py-10">
+      <div className="mx-auto max-w-md space-y-3">
+        <Skeleton className="h-8 w-40" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-2/3" />
+      </div>
     </div>
   );
 }

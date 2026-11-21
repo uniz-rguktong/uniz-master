@@ -5,9 +5,12 @@ import { MobileAppModal } from "../MobileAppModal";
 
 export function RootLayout() {
   return (
-    <div className="flex min-h-screen flex-col bg-white text-slate-900">
+    <div className="flex min-h-screen flex-col bg-bg text-text">
+      <a href="#content" className="skip-link">
+        Skip to content
+      </a>
       <Header />
-      <main className="flex-1 w-full bg-white">
+      <main id="content" className="w-full flex-1">
         <Outlet />
       </main>
       <Footer />

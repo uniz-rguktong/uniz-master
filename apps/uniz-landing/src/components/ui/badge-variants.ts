@@ -1,24 +1,21 @@
 import { cva } from "class-variance-authority";
 
 export const badgeVariants = cva(
-  "inline-flex items-center justify-center border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex h-6 items-center justify-center gap-1.5 rounded-full px-2.5 text-[13px] font-medium leading-[18px]",
   {
     variants: {
       variant: {
-        default: "border-transparent bg-navy text-white",
-        secondary: "border-transparent bg-ink text-white",
-        pill: "border-transparent bg-paper text-ink",
-        date: "border-transparent bg-crimson text-white",
-        outline: "text-ink border-line",
+        neutral: "bg-tint-2 text-text-2",
+        success: "bg-[color-mix(in_srgb,var(--success)_8%,var(--surface))] text-success",
+        warning: "bg-[color-mix(in_srgb,var(--warning)_8%,var(--surface))] text-warning",
+        error: "bg-[color-mix(in_srgb,var(--error)_8%,var(--surface))] text-error",
       },
       size: {
-        default: "px-3 py-1 text-sm",
-        sm: "px-2.5 py-0.5 text-xs",
-        lg: "px-4 py-1.5 text-base",
+        default: "h-6 px-2.5 text-[13px]",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "neutral",
       size: "default",
     },
   },

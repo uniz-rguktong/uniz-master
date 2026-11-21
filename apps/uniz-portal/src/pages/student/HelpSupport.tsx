@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Mail, Users } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "../../utils/cn";
+import { PageHeader } from "@/components/ui/page-header";
+import { Panel } from "@/components/ui/panel";
 
 const faqs = [
   {
@@ -38,130 +39,66 @@ const faqs = [
 ];
 
 const HelpSupport = () => {
-  const [activeTab, setActiveTab] = useState<"faq" | "contact">("faq");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <div className="max-w-4xl mx-auto pb-20 px-2 lg:px-0">
-      <div className="flex flex-col items-start mb-8 text-left">
-        <h1 className="text-3xl font-bold text-zinc-900 mb-2 font-display">
-          Help & Support
-        </h1>
-        <p className="text-zinc-500 font-medium tracking-tight max-w-sm">
-          Everything you need to know about the UniZ student portal.
-        </p>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex justify-start mb-8 p-1.5 bg-zinc-100/50 backdrop-blur-sm rounded-2xl w-fit border border-zinc-200/50">
-        <button
-          onClick={() => setActiveTab("faq")}
-          className={cn(
-            "px-6 py-2.5 rounded-xl text-xs font-semibold transition-[color,background-color,border-color,opacity,transform] duration-300",
-            activeTab === "faq"
-              ? "bg-white text-zinc-900 shadow-sm"
-              : "text-zinc-400 hover:text-zinc-600",
-          )}
-        >
-          FAQs
-        </button>
-        <button
-          onClick={() => setActiveTab("contact")}
-          className={cn(
-            "px-6 py-2.5 rounded-xl text-xs font-semibold transition-[color,background-color,border-color,opacity,transform] duration-300",
-            activeTab === "contact"
-              ? "bg-white text-zinc-900 shadow-sm"
-              : "text-zinc-400 hover:text-zinc-600",
-          )}
-        >
-          Contact us
-        </button>
-      </div>
-
-      <AnimatePresence mode="wait">
-        {activeTab === "faq" ? (
-          <motion.div
-            key="faq"
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 10 }}
-            className="space-y-3"
-          >
-            {faqs.map((faq, index) => (
-              <div
-                key={index}
-                className="bg-white border border-black rounded-xl overflow-hidden transition-[color,background-color,border-color,opacity,transform]"
+    <div>
+      <PageHeader
+        title="Help and support"
+        meta="Everything you need to know about the UniZ student portal."
+      />
+      <div className="divide-y divide-border border-y border-border">
+        {faqs.map((faq, index) => {
+          const open = openFaq === index;
+          return (
+            <div key={faq.question}>
+              <button
+                type="button"
+                onClick={() => setOpenFaq(open ? null : index)}
+                className="flex w-full items-center justify-between gap-4 py-4 text-left"
+                aria-expanded={open}
               >
-                <button
-                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full px-5 py-4 flex items-center justify-between text-left"
+                <span className="text-body font-medium text-head">{faq.question}</span>
+                <ChevronDown
+                  className={cn("h-4 w-4 shrink-0 text-text-2 transition-transform duration-150", open && "rotate-180")}
+                  aria-hidden
+                />
+              </button>
+              {open ? (
+                <p className="pb-4 text-dense leading-5 text-text-2">{faq.answer}</p>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-6">
+        <Panel title="Contact us">
+          <dl className="divide-y divide-border">
+            <div className="pb-4">
+              <dt className="text-dense text-text-2">Contact for support</dt>
+              <dd className="mt-1">
+                <a
+                  href="mailto:webadmin@rguktong.ac.in"
+                  className="text-body font-medium text-head underline-offset-[1px] hover:underline"
                 >
-                  <span className="font-bold text-zinc-900 tracking-tight text-[13px]">
-                    {faq.question}
-                  </span>
-                  <ChevronDown
-                    className={cn(
-                      "w-4 h-4 text-black transition-transform duration-300",
-                      openFaq === index && "rotate-180",
-                    )}
-                  />
-                </button>
-                <motion.div
-                  initial={false}
-                  animate={{ height: openFaq === index ? "auto" : 0 }}
-                  className="overflow-hidden"
-                >
-                  <div className="px-5 pb-5 text-[13px] text-zinc-600 font-medium leading-relaxed border-t border-zinc-100 pt-4">
-                    {faq.answer}
-                  </div>
-                </motion.div>
-              </div>
-            ))}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="contact"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-4"
-          >
-            <a
-              href="mailto:webadmin@rguktong.ac.in"
-              className="flex items-center gap-4 bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:border-zinc-300 hover:shadow-md transition-[color,background-color,border-color,opacity,transform] group"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center shrink-0">
-                <Mail className="w-5 h-5 text-white" />
-              </div>
-              <div className="text-left min-w-0">
-                <p className="text-sm font-medium text-zinc-500 mb-0.5">
-                  Contact for support
-                </p>
-                <p className="text-[15px] font-semibold text-zinc-900 group-hover:text-zinc-700 truncate">
                   webadmin@rguktong.ac.in
-                </p>
-              </div>
-            </a>
-
-            <Link
-              to="/developers"
-              className="flex items-center gap-4 bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:border-zinc-300 hover:shadow-md transition-[color,background-color,border-color,opacity,transform] group"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center shrink-0 group-hover:bg-zinc-200 transition-colors">
-                <Users className="w-5 h-5 text-zinc-900" />
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-medium text-zinc-500 mb-0.5">
-                  Meet the developers
-                </p>
-                <p className="text-[15px] font-semibold text-zinc-900 group-hover:text-zinc-700">
+                </a>
+              </dd>
+            </div>
+            <div className="pt-4">
+              <dt className="text-dense text-text-2">Meet the developers</dt>
+              <dd className="mt-1">
+                <Link
+                  to="/developers"
+                  className="text-body font-medium text-head underline-offset-[1px] hover:underline"
+                >
                   View developers page →
-                </p>
-              </div>
-            </Link>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                </Link>
+              </dd>
+            </div>
+          </dl>
+        </Panel>
+      </div>
     </div>
   );
 };
