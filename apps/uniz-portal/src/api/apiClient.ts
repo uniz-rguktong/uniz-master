@@ -40,6 +40,8 @@ export type ApiResult<T> =
       code?: string;
       errors?: Array<{ row?: number; studentId?: string; field?: string; message: string }>;
       errorCount?: number;
+      maskedEmail?: string;
+      retryAfterSeconds?: number;
     };
 
 export async function apiClient<T = any>(
@@ -176,6 +178,17 @@ export async function apiRequest<T = any>(
         code: data.code || (data as any).error?.code,
         errors: (data as any).errors,
         errorCount: (data as any).errorCount,
+        maskedEmail:
+          typeof (data as unknown as { maskedEmail?: unknown }).maskedEmail ===
+          "string"
+            ? (data as unknown as { maskedEmail: string }).maskedEmail
+            : undefined,
+        retryAfterSeconds:
+          typeof (data as unknown as { retryAfterSeconds?: unknown })
+            .retryAfterSeconds === "number"
+            ? (data as unknown as { retryAfterSeconds: number })
+                .retryAfterSeconds
+            : undefined,
       };
     }
 

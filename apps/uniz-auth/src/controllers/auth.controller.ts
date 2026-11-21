@@ -9,6 +9,7 @@ import {
   sendLoginNotification,
   sendPasswordChangeNotification,
   resolveProfileEmail,
+  resolveStoredMailbox,
 } from "../utils/email.util";
 import {
   OTP_CHANNEL_EMAIL,
@@ -18,7 +19,13 @@ import {
   deliverEmailOtp,
   isDeliverableEmail,
   isEmailOtpAcceptable,
+  maskEmailAddress,
 } from "../utils/otp-delivery";
+import {
+  assessFirstLoginPasswordChange,
+  FIRST_LOGIN_EMAIL_MISSING_MESSAGE,
+  firstLoginOtpCooldownSeconds,
+} from "../utils/first-login-otp";
 import {
   comparePassword,
   comparePasswordForUser,
@@ -617,11 +624,107 @@ export const resetPassword = async (req: Request, res: Response) => {
   }
 };
 
+export const requestFirstLoginOtp = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user || user.id === "internal") {
+    return res.status(401).json({
+      code: ErrorCode.AUTH_UNAUTHORIZED,
+      message: "Please login to change your password.",
+    });
+  }
+
+  try {
+    const credential = await prisma.authCredential.findUnique({
+      where: { id: user.id },
+    });
+    if (!credential || !credential.mustChangePassword) {
+      return res.status(400).json({
+        code: "VALIDATION_ERROR",
+        message: "A code is only sent when a new password is required.",
+      });
+    }
+
+    const email = await resolveStoredMailbox(
+      credential.username,
+      credential.realEmail,
+    );
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        code: "OTP_EMAIL_MISSING",
+        message: FIRST_LOGIN_EMAIL_MISSING_MESSAGE,
+      });
+    }
+
+    const now = new Date();
+    const latest = await prisma.otpLog.findFirst({
+      where: {
+        username: credential.username,
+        channel: OTP_CHANNEL_EMAIL,
+        consumedAt: null,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    const retryAfterSeconds = firstLoginOtpCooldownSeconds(
+      latest?.createdAt,
+      now,
+    );
+    if (retryAfterSeconds > 0) {
+      return res.status(429).json({
+        success: false,
+        code: "OTP_REQUEST_LIMIT",
+        message: "Wait a minute before requesting another code.",
+        maskedEmail: maskEmailAddress(email),
+        retryAfterSeconds,
+      });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(now.getTime() + OTP_TTL_MS);
+    await prisma.otpLog.create({
+      data: {
+        username: credential.username,
+        otp,
+        expiresAt,
+        channel: OTP_CHANNEL_EMAIL,
+      },
+    });
+    const delivery = await deliverEmailOtp(
+      { email, username: credential.username, otp },
+      sendOtpEmail,
+    );
+    if (!delivery.ok) {
+      return res.status(delivery.status).json({
+        success: false,
+        code: delivery.code,
+        message: delivery.message,
+      });
+    }
+
+    return res.json({
+      success: true,
+      maskedEmail: delivery.maskedEmail,
+      retryAfterSeconds: 60,
+      expiresInMinutes: 10,
+      message: delivery.message,
+    });
+  } catch (error) {
+    console.error("[AUTH] First-login OTP error");
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Could not send the email code. Please try again.",
+    });
+  }
+};
+
 export const changePassword = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { currentPassword, newPassword, confirmPassword } = req.body;
+  const { currentPassword, newPassword, confirmPassword, otp } = req.body;
   const user = req.user;
 
   if (!user || user.id === "internal") {
@@ -659,6 +762,28 @@ export const changePassword = async (
       });
     }
 
+    let firstLoginOtpId: string | null = null;
+    if (targetUser.mustChangePassword) {
+      const latestOtp = await prisma.otpLog.findFirst({
+        where: { username: targetUser.username, channel: OTP_CHANNEL_EMAIL },
+        orderBy: { createdAt: "desc" },
+      });
+      const decision = assessFirstLoginPasswordChange({
+        otp,
+        row: latestOtp,
+        now: new Date(),
+        newPassword,
+        username: targetUser.username,
+      });
+      if (!decision.ok) {
+        return res.status(400).json({
+          code: decision.code,
+          message: decision.message,
+        });
+      }
+      firstLoginOtpId = latestOtp?.id ?? null;
+    }
+
     // Verify current password
     // The forced screen has no current-password field: the login just proved it.
     if (currentPassword) {
@@ -691,6 +816,12 @@ export const changePassword = async (
       },
     });
     await clearCredentialCache(targetUser.id, targetUser.username);
+    if (firstLoginOtpId) {
+      await prisma.otpLog.update({
+        where: { id: firstLoginOtpId },
+        data: { consumedAt: new Date() },
+      });
+    }
 
     const email = institutionalEmail(targetUser.username);
     const grantedRole = accessRole({
