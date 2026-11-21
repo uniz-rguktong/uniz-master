@@ -11,11 +11,23 @@ import {
   Search,
   X,
   FileSpreadsheet,
+  ArrowLeft,
 } from "lucide-react";
 import { BASE_URL } from "../../api/endpoints";
-import { Button } from "../../components/Button";
+import { Button } from "@/components/ui/button";
 import { Input } from "../../components/Input";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Badge } from "@/components/ui/badge";
+import { Table, type TableColumn } from "@/components/ui/table";
 import { apiClient, downloadFile } from "../../api/apiClient";
+import {
+  adminCardClass,
+  adminLabelClass,
+  adminPageWrapClass,
+  adminSelectClass,
+} from "../../components/admin/admin-ui";
+import { cn } from "../../utils/cn";
 
 export default function AddStudents() {
   const navigate = useNavigate();
@@ -130,52 +142,53 @@ export default function AddStudents() {
     );
   }, [rows, search]);
 
+  const primaryHeader =
+    headers.find((header) => /name/i.test(header)) ?? headers[0];
+  const metaHeaders = headers.filter((header) => header !== primaryHeader).slice(0, 2);
+
+  const columns: TableColumn<any>[] = headers.map((header) => ({
+    id: header,
+    header,
+    primary: header === primaryHeader,
+    meta: metaHeaders.includes(header),
+    cell: (row) => row[header] ?? "—",
+  }));
+
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
-      {/* Header */}
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-zinc-900">Add Students</h1>
-            <div className="flex items-center gap-2 mt-1">
-              <Button
-                variant="secondary"
-                size="sm"
-                className="h-7 px-2 text-xs"
-                onClick={() => navigate("/admin")}
-              >
-                ← Back
-              </Button>
-              <p className="text-zinc-500 text-sm">
-                Import student records via bulk spreadsheet upload.
-              </p>
-            </div>
-          </div>
+    <div className={cn(adminPageWrapClass, "pb-16")}>
+      <Button
+        variant="ghost"
+        size="compact"
+        onClick={() => navigate("/admin")}
+      >
+        <ArrowLeft size={16} /> Back
+      </Button>
 
-          <div className="flex gap-3">
-            <Button variant="secondary" onClick={downloadTemplate} size="sm">
-              <FileDown className="w-4 h-4 mr-2" /> Template
-            </Button>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        title="Add Students"
+        meta="Import student records via bulk spreadsheet upload."
+        action={
+          <Button variant="outline" onClick={downloadTemplate}>
+            <FileDown className="w-4 h-4" /> Template
+          </Button>
+        }
+      />
 
-      {/* Configuration Bar */}
-      <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className={cn(adminCardClass, "grid grid-cols-1 gap-6 p-6 md:grid-cols-3")}>
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-zinc-500 tracking-wide">
-            Year
-          </label>
-          <div className="flex bg-zinc-100 p-1 rounded-lg">
+          <label className={adminLabelClass}>Year</label>
+          <div className="flex rounded-lg bg-surface-2 p-1">
             {["E1", "E2", "E3", "E4"].map((y) => (
               <button
                 key={y}
+                type="button"
                 onClick={() => setYear(y)}
-                className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] ${
+                className={cn(
+                  "flex-1 rounded-md py-2 text-dense font-medium transition-colors",
                   year === y
-                    ? "bg-white text-zinc-900 shadow-sm"
-                    : "text-zinc-500 hover:text-zinc-700"
-                }`}
+                    ? "bg-surface text-text"
+                    : "text-text-2 hover:text-text",
+                )}
               >
                 {y}
               </button>
@@ -184,13 +197,11 @@ export default function AddStudents() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-zinc-500 tracking-wide">
-            Semester
-          </label>
+          <label className={adminLabelClass}>Semester</label>
           <select
             value={sem}
             onChange={(e) => setSem(e.target.value)}
-            className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm rounded-lg focus:ring-zinc-900 focus:border-zinc-100 block p-2.5"
+            className={adminSelectClass}
           >
             <option value="Sem - 1">Semester 1</option>
             <option value="Sem - 2">Semester 2</option>
@@ -198,13 +209,11 @@ export default function AddStudents() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-zinc-500 tracking-wide">
-            Branch
-          </label>
+          <label className={adminLabelClass}>Branch</label>
           <select
             value={branch}
             onChange={(e) => setBranch(e.target.value)}
-            className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm rounded-lg focus:ring-zinc-900 focus:border-zinc-100 block p-2.5"
+            className={adminSelectClass}
           >
             {["CSE", "ECE", "EEE", "CIVIL", "MECH"].map((b) => (
               <option key={b} value={b}>
@@ -215,13 +224,14 @@ export default function AddStudents() {
         </div>
       </div>
 
-      {/* Upload Area */}
       {!rows.length ? (
         <div
-          className={`
-                border-2 border-dashed rounded-xl p-12 text-center transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-200
-                ${error ? "border-black border-2 bg-zinc-50" : "border-zinc-300 hover:border-black hover:bg-zinc-50"}
-            `}
+          className={cn(
+            "rounded-xl border-2 border-dashed p-12 text-center transition-colors",
+            error
+              ? "border-error bg-surface-2"
+              : "border-border-strong hover:border-head hover:bg-surface-2",
+          )}
         >
           <input
             id="fileInput"
@@ -234,142 +244,111 @@ export default function AddStudents() {
             htmlFor="fileInput"
             className="cursor-pointer flex flex-col items-center gap-4"
           >
-            <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
               <Upload className="w-8 h-8" />
             </div>
             <div>
-              <p className="text-lg font-semibold text-zinc-900">
-                Click to upload spreadsheet
-              </p>
-              <p className="text-zinc-500 text-sm mt-1">
-                Supports .xlsx, .xls, .csv
-              </p>
+              <p className="text-h3 text-text">Click to upload spreadsheet</p>
+              <p className="mt-1 text-dense text-text-2">Supports .xlsx, .xls, .csv</p>
             </div>
           </label>
           {error && (
-            <p className="text-red-600 font-medium mt-4 flex items-center justify-center gap-2">
+            <p className="mt-4 flex items-center justify-center gap-2 font-medium text-error">
               <AlertCircle className="w-4 h-4" /> {error}
             </p>
           )}
         </div>
       ) : (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* File Info Bar */}
-          <div className="bg-zinc-900 text-white p-4 rounded-xl flex items-center justify-between shadow-none">
+          <div className="flex items-center justify-between rounded-xl bg-primary p-4 text-primary-foreground">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-zinc-800 rounded-lg">
-                <FileSpreadsheet className="w-6 h-6 text-green-400" />
+              <div className="rounded-lg bg-primary-hover p-2">
+                <FileSpreadsheet className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
                 <p className="font-semibold">{file?.name}</p>
-                <p className="text-xs text-zinc-400">
+                <p className="text-caption text-primary-foreground/80">
                   {rows.length} records found
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={clearFile}
-                className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
-                title="Remove File"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={clearFile}
+              title="Remove File"
+              className="text-primary-foreground hover:bg-primary-hover hover:text-primary-foreground"
+            >
+              <X className="w-5 h-5" />
+            </Button>
           </div>
 
-          {/* Table Preview */}
-          <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
-            <div className="p-4 border-b border-zinc-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-              <h3 className="font-semibold text-zinc-900">Data Preview</h3>
-              <div className="w-full sm:w-72">
-                <Input
-                  placeholder="Filter records..."
-                  value={search}
-                  onchangeFunction={(e: any) => setSearch(e.target.value)}
-                  icon={<Search className="w-4 h-4" />}
-                />
-              </div>
-            </div>
-            <div className="overflow-x-auto max-h-[500px]">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-zinc-500 bg-zinc-50 sticky top-0 z-10">
-                  <tr>
-                    {headers.map((h, i) => (
-                      <th
-                        key={i}
-                        className="px-6 py-3 font-semibold border-b border-zinc-200"
-                      >
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-100">
-                  {filteredRows.map((r) => (
-                    <tr
-                      key={r.id}
-                      className="bg-white hover:bg-zinc-50 transition-colors"
-                    >
-                      {headers.map((h, i) => (
-                        <td
-                          key={i}
-                          className="px-6 py-3 whitespace-nowrap text-zinc-700"
-                        >
-                          {r[h]}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex justify-end">
-              <Button
-                onClick={handleUpload}
-                isLoading={uploading}
-                disabled={uploading}
-                className="bg-black hover:bg-zinc-800 rounded-none border-2 border-black"
-              >
-                <Upload className="w-4 h-4 mr-2" /> Confirm & Upload
+          <Table
+            columns={columns}
+            rows={filteredRows}
+            getRowId={(row) => String(row.id)}
+            toolbar={
+              <>
+                <h3 className="font-semibold text-text">Data Preview</h3>
+                <div className="w-full sm:w-72">
+                  <Input
+                    placeholder="Filter records..."
+                    value={search}
+                    onchangeFunction={(e: any) => setSearch(e.target.value)}
+                    icon={<Search className="w-4 h-4" />}
+                  />
+                </div>
+              </>
+            }
+            empty={
+              <EmptyState
+                title="No records match"
+                body="Try a different filter, or clear the search to see every imported row."
+              />
+            }
+            footer={
+              <Button onClick={handleUpload} isLoading={uploading} disabled={uploading}>
+                <Upload className="w-4 h-4" /> Confirm & Upload
               </Button>
-            </div>
-          </div>
+            }
+          />
+          {error && (
+            <p className="flex items-center gap-2 font-medium text-error">
+              <AlertCircle className="w-4 h-4" /> {error}
+            </p>
+          )}
         </div>
       )}
 
-      {/* Progress Display */}
       {progress && (
-        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-right-10 duration-500">
-          <div className="bg-white rounded-xl border border-navy-200/80 p-6 border border-zinc-100 w-80">
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-semibold text-zinc-900">
-                Upload Status
-              </span>
-              <span
-                className={`text-xs font-semibold  px-2 py-1 rounded-md ${progress.status === "completed" ? "bg-black text-white" : "bg-zinc-200 text-zinc-700"}`}
-              >
+        <div className="fixed bottom-6 right-6 z-50 w-80 animate-in slide-in-from-right-10 duration-500">
+          <div className={cn(adminCardClass, "p-6")}>
+            <div className="mb-2 flex items-center justify-between">
+              <span className="font-semibold text-text">Upload Status</span>
+              <Badge tone={progress.status === "completed" ? "success" : "neutral"}>
                 {progress.status === "completed" ? "Completed" : "Processing"}
-              </span>
+              </Badge>
             </div>
 
             {progress.status === "completed" ? (
-              <div className="flex items-center gap-3 text-green-600 mb-2">
+              <div className="mb-2 flex items-center gap-3 text-success">
                 <CheckCircle2 className="w-5 h-5" />
-                <span className="text-sm font-medium">
-                  Successfully processed
-                </span>
+                <span className="text-dense font-medium">Successfully processed</span>
               </div>
             ) : (
-              <div className="flex items-center gap-3 text-black mb-2 font-semibold">
+              <div className="mb-2 flex items-center gap-3 font-semibold text-text">
                 <Loader2 className="w-5 h-5 animate-spin" />
-                <span className="text-sm font-medium">Uploading data...</span>
+                <span className="text-dense font-medium">Uploading data...</span>
               </div>
             )}
 
-            <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-surface-2">
               <div
-                className={`h-full rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-500 ${progress.status === "completed" ? "bg-black" : "bg-zinc-400"}`}
+                className={cn(
+                  "h-full rounded-md transition-all duration-500",
+                  progress.status === "completed" ? "bg-primary" : "bg-text-3",
+                )}
                 style={{ width: `${progress.percentage}%` }}
               />
             </div>

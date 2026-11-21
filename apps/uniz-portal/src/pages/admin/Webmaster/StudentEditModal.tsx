@@ -1,33 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
-import { Loader2, Save } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-} from "@/components/ui/alert-dialog";
 import { ADMIN_STUDENT_CREATE, ADMIN_UPDATE_STUDENT } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 import { cn } from "../../../utils/cn";
 import {
-  adminModalShellClass,
-  adminModalTitleClass,
-  adminModalDescClass,
-  adminModalCloseClass,
   adminLabelClass,
   adminInputClass,
   adminSelectClass,
   adminTextareaClass,
-  adminPrimaryButtonClass,
-  adminGhostButtonClass,
-  adminSegmentWrapClass,
-  adminSegmentActiveClass,
-  adminSegmentInactiveClass,
-  adminSectionTitleClass,
 } from "../../../components/admin/admin-ui";
-import { X } from "lucide-react";
+import { AdminDialog } from "@/components/admin/AdminDialog";
+import { Button } from "@/components/ui/button";
+import { Tabs } from "@/components/ui/tabs";
 import { ENGINEERING_BRANCHES } from "@/constants/branches";
 
 interface StudentEditModalProps {
@@ -42,6 +26,9 @@ interface StudentEditModalProps {
 const BRANCHES = [...ENGINEERING_BRANCHES];
 const YEARS = ["E1", "E2", "E3", "E4"];
 const SECTIONS = ["primary", "academic", "family"] as const;
+
+const sectionTitleClass =
+  "font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head";
 
 const emptyForm = () => ({
   username: "",
@@ -202,140 +189,112 @@ export default function StudentEditModal({
   if (!isOpen) return null;
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent
-        overlayClassName={cn(
-          elevated && "z-[110]",
-          elevated && "bg-zinc-900/40 backdrop-blur-sm",
-        )}
-        className={cn(
-          "max-w-3xl max-h-[90vh] flex flex-col",
-          adminModalShellClass,
-          elevated && "z-[110]",
-        )}
-      >
-        <button type="button" onClick={onClose} className={adminModalCloseClass}>
-          <X size={20} />
-        </button>
+    <AdminDialog
+      open={isOpen}
+      onOpenChange={(open) => !open && onClose()}
+      elevated={elevated}
+      maxWidth="max-w-[640px]"
+      className="max-h-[90vh] overflow-y-auto"
+      title={isEdit ? "Edit student" : "Add student"}
+      description={
+        isEdit
+          ? `Update profile for ${student.username}`
+          : "Create a new student record in the registry."
+      }
+      footer={
+        <>
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            form="student-edit-form"
+            isLoading={loading}
+          >
+            {isEdit ? "Save changes" : "Create student"}
+          </Button>
+        </>
+      }
+    >
+      <form id="student-edit-form" onSubmit={handleSubmit} className="space-y-6">
+        <Tabs
+          label="Student sections"
+          value={activeSection}
+          onChange={(id) => setActiveSection(id as (typeof SECTIONS)[number])}
+          tabs={[
+            { id: "primary", label: "Identity" },
+            { id: "academic", label: "Academic" },
+            { id: "family", label: "Family" },
+          ]}
+        />
 
-        <AlertDialogHeader className="p-8 pb-4 flex flex-col items-start text-left gap-1.5 shrink-0">
-          <AlertDialogTitle className={adminModalTitleClass}>
-            {isEdit ? "Edit student" : "Add student"}
-          </AlertDialogTitle>
-          <AlertDialogDescription className={adminModalDescClass}>
-            {isEdit
-              ? `Update profile for ${student.username}`
-              : "Create a new student record in the registry."}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-
-        <div className="px-8 pb-4 shrink-0">
-          <div className={adminSegmentWrapClass}>
-            {(
-              [
-                ["primary", "Identity"],
-                ["academic", "Academic"],
-                ["family", "Family"],
-              ] as const
-            ).map(([id, label]) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setActiveSection(id)}
-                className={
-                  activeSection === id
-                    ? adminSegmentActiveClass
-                    : adminSegmentInactiveClass
-                }
-              >
-                {label}
-              </button>
-            ))}
+        {activeSection === "primary" && (
+          <div className="space-y-4">
+            <Field label="Student ID" name="username" value={formData.username} onChange={handleChange} required disabled={isEdit} />
+            <Field label="Full name" name="name" value={formData.name} onChange={handleChange} required />
+            <Field label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required />
+            <Field label="Phone" name="phone" value={formData.phone} onChange={handleChange} />
+            <SelectField label="Gender" name="gender" value={formData.gender} onChange={handleChange} options={[{ v: "M", l: "Male" }, { v: "F", l: "Female" }, { v: "Other", l: "Other" }]} />
+            <Field label="Date of birth" name="dateOfBirth" type="date" value={formData.dateOfBirth} onChange={handleChange} />
+            <SelectField label="Blood group" name="bloodGroup" value={formData.bloodGroup} onChange={handleChange} options={["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "N/A"].map((v) => ({ v, l: v }))} />
           </div>
-        </div>
+        )}
 
-        <form
-          onSubmit={handleSubmit}
-          className="flex-1 overflow-y-auto px-8 pb-8 space-y-6 custom-sidebar-scroll"
-        >
-          {activeSection === "primary" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Student ID" name="username" value={formData.username} onChange={handleChange} required disabled={isEdit} />
-              <Field label="Full name" name="name" value={formData.name} onChange={handleChange} required />
-              <Field label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required />
-              <Field label="Phone" name="phone" value={formData.phone} onChange={handleChange} />
-              <SelectField label="Gender" name="gender" value={formData.gender} onChange={handleChange} options={[{ v: "M", l: "Male" }, { v: "F", l: "Female" }, { v: "Other", l: "Other" }]} />
-              <Field label="Date of birth" name="dateOfBirth" type="date" value={formData.dateOfBirth} onChange={handleChange} />
-              <SelectField label="Blood group" name="bloodGroup" value={formData.bloodGroup} onChange={handleChange} options={["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "N/A"].map((v) => ({ v, l: v }))} />
-            </div>
-          )}
-
-          {activeSection === "academic" && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <SelectField label="Branch" name="branch" value={formData.branch} onChange={handleChange} options={BRANCHES.map((b) => ({ v: b, l: b }))} />
-                <SelectField label="Year" name="year" value={formData.year} onChange={handleChange} options={YEARS.map((y) => ({ v: y, l: y }))} />
-                <SelectField label="Semester" name="semester" value={formData.semester} onChange={handleChange} options={[{ v: "SEM-1", l: "SEM-1" }, { v: "SEM-2", l: "SEM-2" }]} />
-                <Field label="Section" name="section" value={formData.section} onChange={handleChange} />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Field label="Batch" name="batch" value={formData.batch} onChange={handleChange} />
-                <Field label="Room" name="roomno" value={formData.roomno} onChange={handleChange} />
-                <Field label="Campus" name="campus" value={formData.campus} onChange={handleChange} />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Field label="CGPA" name="cgpa" type="number" step="0.01" value={formData.cgpa} onChange={handleChange} />
-                <Field label="Backlogs" name="totalBacklogs" type="number" value={formData.totalBacklogs} onChange={handleChange} />
-                <Field label="Category" name="category" value={formData.category} onChange={handleChange} />
-              </div>
-              <div className="space-y-2">
+        {activeSection === "academic" && (
+          <div className="space-y-8">
+            <section className="space-y-4">
+              <h2 className={sectionTitleClass}>Placement</h2>
+              <SelectField label="Branch" name="branch" value={formData.branch} onChange={handleChange} options={BRANCHES.map((b) => ({ v: b, l: b }))} />
+              <SelectField label="Year" name="year" value={formData.year} onChange={handleChange} options={YEARS.map((y) => ({ v: y, l: y }))} />
+              <SelectField label="Semester" name="semester" value={formData.semester} onChange={handleChange} options={[{ v: "SEM-1", l: "SEM-1" }, { v: "SEM-2", l: "SEM-2" }]} />
+              <Field label="Section" name="section" value={formData.section} onChange={handleChange} />
+              <Field label="Batch" name="batch" value={formData.batch} onChange={handleChange} />
+              <Field label="Room" name="roomno" value={formData.roomno} onChange={handleChange} />
+              <Field label="Campus" name="campus" value={formData.campus} onChange={handleChange} />
+            </section>
+            <section className="space-y-4 border-t border-border pt-8">
+              <h2 className={sectionTitleClass}>Record</h2>
+              <Field label="CGPA" name="cgpa" type="number" step="0.01" value={formData.cgpa} onChange={handleChange} />
+              <Field label="Backlogs" name="totalBacklogs" type="number" value={formData.totalBacklogs} onChange={handleChange} />
+              <Field label="Category" name="category" value={formData.category} onChange={handleChange} />
+              <div>
                 <label className={adminLabelClass}>Motivation note</label>
                 <textarea name="motivation" value={formData.motivation} onChange={handleChange} rows={2} className={adminTextareaClass} />
               </div>
-              <div className="flex flex-wrap gap-6 pt-2">
+              <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
                 <Toggle label="On campus" checked={formData.isPresentInCampus} onChange={() => setFormData((p: any) => ({ ...p, isPresentInCampus: !p.isPresentInCampus }))} />
                 <Toggle label="Suspended" checked={formData.isSuspended} onChange={() => setFormData((p: any) => ({ ...p, isSuspended: !p.isSuspended }))} danger />
               </div>
-            </div>
-          )}
-
-          {activeSection === "family" && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <h4 className={adminSectionTitleClass}>Father</h4>
-                <Field label="Name" name="fatherName" value={formData.fatherName} onChange={handleChange} />
-                <Field label="Occupation" name="fatherOccupation" value={formData.fatherOccupation} onChange={handleChange} />
-                <Field label="Email" name="fatherEmail" type="email" value={formData.fatherEmail} onChange={handleChange} />
-                <div className="space-y-2">
-                  <label className={adminLabelClass}>Address</label>
-                  <textarea name="fatherAddress" value={formData.fatherAddress} onChange={handleChange} rows={2} className={adminTextareaClass} />
-                </div>
-              </div>
-              <div className="space-y-4">
-                <h4 className={adminSectionTitleClass}>Mother</h4>
-                <Field label="Name" name="motherName" value={formData.motherName} onChange={handleChange} />
-                <Field label="Occupation" name="motherOccupation" value={formData.motherOccupation} onChange={handleChange} />
-                <Field label="Email" name="motherEmail" type="email" value={formData.motherEmail} onChange={handleChange} />
-                <div className="space-y-2">
-                  <label className={adminLabelClass}>Address</label>
-                  <textarea name="motherAddress" value={formData.motherAddress} onChange={handleChange} rows={2} className={adminTextareaClass} />
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="flex gap-3 pt-4 border-t border-zinc-200/70">
-            <button type="button" onClick={onClose} className={cn(adminGhostButtonClass, "flex-1")}>
-              Cancel
-            </button>
-            <button type="submit" disabled={loading} className={cn(adminPrimaryButtonClass, "flex-[2]")}>
-              {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-              {isEdit ? "Save changes" : "Create student"}
-            </button>
+            </section>
           </div>
-        </form>
-      </AlertDialogContent>
-    </AlertDialog>
+        )}
+
+        {activeSection === "family" && (
+          <div className="space-y-8">
+            <section className="space-y-4">
+              <h2 className={sectionTitleClass}>Father</h2>
+              <Field label="Name" name="fatherName" value={formData.fatherName} onChange={handleChange} />
+              <Field label="Occupation" name="fatherOccupation" value={formData.fatherOccupation} onChange={handleChange} />
+              <Field label="Email" name="fatherEmail" type="email" value={formData.fatherEmail} onChange={handleChange} />
+              <div>
+                <label className={adminLabelClass}>Address</label>
+                <textarea name="fatherAddress" value={formData.fatherAddress} onChange={handleChange} rows={2} className={adminTextareaClass} />
+              </div>
+            </section>
+            <section className="space-y-4 border-t border-border pt-8">
+              <h2 className={sectionTitleClass}>Mother</h2>
+              <Field label="Name" name="motherName" value={formData.motherName} onChange={handleChange} />
+              <Field label="Occupation" name="motherOccupation" value={formData.motherOccupation} onChange={handleChange} />
+              <Field label="Email" name="motherEmail" type="email" value={formData.motherEmail} onChange={handleChange} />
+              <div>
+                <label className={adminLabelClass}>Address</label>
+                <textarea name="motherAddress" value={formData.motherAddress} onChange={handleChange} rows={2} className={adminTextareaClass} />
+              </div>
+            </section>
+          </div>
+        )}
+      </form>
+    </AdminDialog>
   );
 }
 
@@ -350,7 +309,7 @@ function Field({
   step,
 }: any) {
   return (
-    <div className="space-y-2">
+    <div>
       <label className={adminLabelClass}>{label}</label>
       <input
         name={name}
@@ -360,7 +319,7 @@ function Field({
         onChange={onChange}
         required={required}
         disabled={disabled}
-        className={cn(adminInputClass, disabled && "opacity-50")}
+        className={cn(adminInputClass, disabled && "opacity-[0.45]")}
       />
     </div>
   );
@@ -368,7 +327,7 @@ function Field({
 
 function SelectField({ label, name, value, onChange, options }: any) {
   return (
-    <div className="space-y-2">
+    <div>
       <label className={adminLabelClass}>{label}</label>
       <select name={name} value={value} onChange={onChange} className={adminSelectClass}>
         {options.map((opt: { v: string; l: string }) => (
@@ -393,24 +352,20 @@ function Toggle({
   danger?: boolean;
 }) {
   return (
-    <label className="flex items-center gap-2.5 cursor-pointer text-[13px] font-medium text-zinc-700">
+    <label className="flex cursor-pointer items-center gap-2.5 text-dense font-medium text-text">
       <button
         type="button"
         role="switch"
         aria-checked={checked}
         onClick={onChange}
         className={cn(
-          "w-10 h-6 rounded-full relative transition-colors",
-          checked
-            ? danger
-              ? "bg-rose-500"
-              : "bg-zinc-900"
-            : "bg-zinc-200",
+          "relative h-6 w-10 rounded-full transition-colors",
+          checked ? (danger ? "bg-error" : "bg-primary") : "bg-tint",
         )}
       >
         <span
           className={cn(
-            "absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-[color,background-color,border-color,opacity,transform,box-shadow]",
+            "absolute top-1 h-4 w-4 rounded-full bg-surface transition-transform",
             checked ? "left-5" : "left-1",
           )}
         />

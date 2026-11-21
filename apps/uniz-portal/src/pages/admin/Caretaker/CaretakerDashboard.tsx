@@ -1,22 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo } from "react";
-import {
-  CheckCircle2,
-  RefreshCcw,
-  LayoutDashboard,
-  Users,
-  GraduationCap,
-  CalendarClock,
-  BookOpen,
-} from "lucide-react";
+import { CheckCircle2, RefreshCcw, LayoutDashboard } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
-import { adminHubCardClass } from "@/components/admin/admin-ui";
+import { PageHeader } from "@/components/ui/page-header";
+import { StatTile, Tile } from "@/components/ui/tile";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
 import ApproveComp from "../approve-comp";
 import UpdateStatus from "../../../components/UpdateStudentStatus";
-import { KPICard } from "../AnalyticsUI";
 import { useAdminDashboardStats } from "../../../hooks/useAdminDashboardStats";
 import {
   enableOutingsAndOutpasses,
@@ -90,16 +82,7 @@ export default function CaretakerDashboard() {
   const { data: academicStats } = useAdminDashboardStats("caretaker");
 
   const searchExtra = (
-    <div className="flex flex-col animate-in fade-in duration-500">
-      <span className="font-semibold text-zinc-900 text-[19px] tracking-tight leading-none">
-        Ongole
-      </span>
-      <span
-        className={`text-[10px]  ${isMale ? "text-zinc-700/80" : "text-navy-400/80"} font-semibold mt-1.5 px-0.5`}
-      >
-        {portalLabel}
-      </span>
-    </div>
+    <p className="px-1 pt-2 text-small text-navy-300">{portalLabel}</p>
   );
 
   const renderContent = () => {
@@ -112,62 +95,32 @@ export default function CaretakerDashboard() {
         return <UpdateStatus />;
       default:
         return (
-          <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
-            <div className="bg-gradient-to-br from-navy-950 to-navy-800 rounded-3xl py-6 px-10 text-white border border-navy-200/80 relative overflow-hidden group">
-              <div className="relative z-10 space-y-2.5">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-md border border-white/10 backdrop-blur-md">
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full ${isMale ? "bg-blue-400" : "bg-navy-300"}`}
-                  />
-                  <span
-                    className={`text-[8px] font-bold  ${isMale ? "text-blue-400" : "text-navy-300"}`}
-                  >
-                    {systemLabel}
-                  </span>
-                </div>
-                <div>
-                  <h1 className="text-3xl font-semibold tracking-[-0.03em] mb-1.5 leading-none">
-                    Welcome, {username}
-                  </h1>
-                  <p className="text-zinc-400 font-medium text-[15px] opacity-90 max-w-lg leading-relaxed">
-                    Hostel Management Terminal. Oversee student movement and
-                    maintain residential security with precision.
-                  </p>
-                </div>
+          <div className="space-y-6">
+            <PageHeader
+              title={`Welcome, ${username}`}
+              meta={`${systemLabel}. Oversee student movement and residential security.`}
+            />
+            {academicStats ? (
+              <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
+                <StatTile label="Total students" value={academicStats.totalStudents.toLocaleString()} line="Enrolled" />
+                <StatTile
+                  label="Average attendance"
+                  value={academicStats.avgAttendancePct != null ? `${academicStats.avgAttendancePct}%` : "—"}
+                  line="Institution"
+                />
+                <StatTile label="Active semesters" value={academicStats.activeSemesters} line="Running" />
+                <StatTile label="Faculty" value={academicStats.totalFaculty} line="On record" />
               </div>
-              <div className="absolute right-0 bottom-0 opacity-[0.03] translate-x-1/4 translate-y-1/4 transition-transform duration-1000">
-                <LayoutDashboard size={280} />
-              </div>
-            </div>
-
-            {academicStats && (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <KPICard title="Total Students" value={academicStats.totalStudents.toLocaleString()} icon={Users} badge="Enrolled" />
-                <KPICard title="Avg Attendance" value={academicStats.avgAttendancePct != null ? `${academicStats.avgAttendancePct}%` : "—"} icon={BookOpen} badge="Institution" />
-                <KPICard title="Active Semesters" value={academicStats.activeSemesters} icon={CalendarClock} badge="Running" />
-                <KPICard title="Faculty" value={academicStats.totalFaculty} icon={GraduationCap} badge="On Record" />
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            ) : null}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               {navItems.slice(1).map((item) => (
-                <button
+                <Tile
                   key={item.id}
+                  icon={item.icon}
+                  label={item.label}
+                  line="Open this section"
                   onClick={() => setActiveTab(item.id)}
-                  className={`${adminHubCardClass} p-5 text-left group flex flex-col justify-between min-h-[150px]`}
-                >
-                  <div className="p-3.5 rounded-2xl bg-zinc-50 text-zinc-400 mb-4 inline-block transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300">
-                    <item.icon size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-zinc-900 text-[14px] mb-1 leading-tight">
-                      {item.label}
-                    </h3>
-                    <p className="text-[8px] text-zinc-400 font-semibold opacity-60 group-hover:text-zinc-700 transition-colors">
-                      Initialize Module
-                    </p>
-                  </div>
-                </button>
+                />
               ))}
             </div>
           </div>

@@ -14,7 +14,6 @@ import {
 import { SectionHeader } from "../../../components/admin/SectionHeader";
 import {
   adminPageWrapClass,
-  adminCardClass,
   adminLabelClass,
   adminInputClass,
   adminSelectClass,
@@ -24,6 +23,10 @@ import {
   adminChipClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
+import { Table } from "@/components/ui/table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 type SubscriberRow = {
   id: string;
@@ -149,7 +152,7 @@ export default function PushNotificationSection() {
           <>
             <div className="relative">
               <Search
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-3"
                 size={15}
               />
               <input
@@ -157,22 +160,18 @@ export default function PushNotificationSection() {
                 placeholder="Search by ID, name, or email…"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className={cn(adminInputClass, "pl-10 w-[280px]")}
+                className={cn(adminInputClass, "pl-10 w-full sm:w-72")}
               />
               {refreshing && (
                 <Loader2
                   size={14}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-zinc-400"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-text-3"
                 />
               )}
             </div>
-            <button
-              type="button"
-              onClick={() => setShowSendModal(true)}
-              className={adminPrimaryButtonClass}
-            >
+            <Button type="button" onClick={() => setShowSendModal(true)}>
               <Send size={15} /> Send Broadcast
-            </button>
+            </Button>
           </>
         }
       />
@@ -191,174 +190,86 @@ export default function PushNotificationSection() {
         )}
       </div>
 
-      <div className={cn(adminCardClass, "overflow-hidden")}>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[900px]">
-            <thead>
-              <tr className="border-b border-zinc-200/70 bg-zinc-50/50">
-                <th className="px-6 py-3.5 text-[10px] font-semibold text-zinc-500">
-                  Person
-                </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold text-zinc-500">
-                  Student ID
-                </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold text-zinc-500">
-                  Academic
-                </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold text-zinc-500">
-                  Device
-                </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold text-zinc-500">
-                  Status
-                </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold text-zinc-500">
-                  Registered
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {loading ? (
-                Array(6)
-                  .fill(0)
-                  .map((_, i) => (
-                    <tr key={i} className="animate-pulse">
-                      <td className="px-6 py-4" colSpan={6}>
-                        <div className="h-10 bg-zinc-100 rounded-lg" />
-                      </td>
-                    </tr>
-                  ))
-              ) : subscribers.length > 0 ? (
-                subscribers.map((sub) => {
-                  const displayName = sub.displayName || sub.username;
-                  const initials = (displayName || "U").slice(0, 1).toUpperCase();
-                  return (
-                    <tr
-                      key={sub.id}
-                      className="hover:bg-zinc-50/60 transition-colors"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3 min-w-[200px]">
-                          <div className="w-9 h-9 rounded-lg bg-zinc-900 text-white flex items-center justify-center font-semibold text-[12px] shrink-0">
-                            {initials}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="font-semibold text-zinc-900 text-[13px] truncate">
-                              {displayName}
-                            </p>
-                            {sub.email && (
-                              <p className="text-[11px] text-zinc-500 truncate max-w-[220px]">
-                                {sub.email}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-[12px] font-semibold text-zinc-800 tabular-nums">
-                          {sub.username}
-                        </p>
-                      </td>
-                      <td className="px-6 py-4">
-                        {sub.branch || sub.year || sub.batch ? (
-                          <div className="flex flex-wrap gap-1">
-                            {sub.branch && (
-                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700">
-                                {sub.branch}
-                              </span>
-                            )}
-                            {sub.year && (
-                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700">
-                                {sub.year}
-                              </span>
-                            )}
-                            {sub.batch && (
-                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700">
-                                {sub.batch}
-                              </span>
-                            )}
-                          </div>
-                        ) : (
-                          <span className="text-[12px] text-zinc-400">—</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-1.5 text-zinc-500 max-w-[160px]">
-                          <Smartphone size={13} className="shrink-0" />
-                          <span
-                            className="text-[11px] font-mono truncate"
-                            title={sub.endpoint}
-                          >
-                            {shortEndpoint(sub.endpoint)}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100 w-fit">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          <span className="text-[11px] font-medium">Active</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-[12px] font-medium text-zinc-700 tabular-nums">
-                          {new Date(sub.createdAt).toLocaleDateString("en-GB", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </p>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan={6} className="py-20 text-center">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 flex items-center justify-center bg-zinc-50 rounded-2xl border border-zinc-200/70 text-zinc-300">
-                        <Bell size={32} strokeWidth={1.5} />
-                      </div>
-                      <p className="text-[14px] font-medium text-zinc-500">
-                        {debouncedSearch.trim()
-                          ? "No subscribers match your search."
-                          : "No active push subscribers found."}
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {subscribers.length > 0 && (
-          <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-200/70 flex items-center justify-between gap-4">
-            <p className="text-[11px] font-medium text-zinc-500">
-              Showing {(page - 1) * 50 + 1}–{Math.min(page * 50, total)} of {total}
-            </p>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                disabled={page === 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="h-8 px-3.5 border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 bg-white hover:border-zinc-300 disabled:opacity-30 disabled:pointer-events-none"
-              >
-                Prev
-              </button>
-              <span className="text-[12px] font-semibold text-zinc-900 tabular-nums px-2">
-                {page} / {totalPages}
-              </span>
-              <button
-                type="button"
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="h-8 px-3.5 border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 bg-white hover:border-zinc-300 disabled:opacity-30 disabled:pointer-events-none"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      {loading ? (
+        <p className="text-body text-text-2">Loading subscribers…</p>
+      ) : (
+        <Table
+          rows={subscribers}
+          getRowId={(sub) => sub.id}
+          empty={
+            <EmptyState
+              title={
+                debouncedSearch.trim()
+                  ? "No subscribers match your search."
+                  : "No active push subscribers found."
+              }
+              icon={Bell}
+            />
+          }
+          footer={
+            subscribers.length > 0 ? (
+              <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-small text-text-2 tabular-nums">
+                  Showing {(page - 1) * 50 + 1}–{Math.min(page * 50, total)} of {total}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button type="button" variant="outline" size="compact" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+                    Previous
+                  </Button>
+                  <span className="text-small tabular-nums text-text">{page} / {totalPages}</span>
+                  <Button type="button" variant="outline" size="compact" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
+                    Next
+                  </Button>
+                </div>
+              </div>
+            ) : null
+          }
+          columns={[
+            {
+              id: "person",
+              header: "Person",
+              primary: true,
+              cell: (sub) => (
+                <span>
+                  <span className="block font-semibold text-head">{sub.displayName || sub.username}</span>
+                  {sub.email ? <span className="mt-0.5 block text-small text-text-2">{sub.email}</span> : null}
+                </span>
+              ),
+            },
+            { id: "id", header: "Student ID", meta: true, cell: (sub) => sub.username },
+            {
+              id: "academic",
+              header: "Academic",
+              meta: true,
+              cell: (sub) => [sub.branch, sub.year, sub.batch].filter(Boolean).join(" · ") || "—",
+            },
+            {
+              id: "device",
+              header: "Device",
+              cell: (sub) => (
+                <span className="inline-flex max-w-full items-center gap-1.5 text-small text-text-2">
+                  <Smartphone size={14} aria-hidden />
+                  <span className="truncate">{shortEndpoint(sub.endpoint)}</span>
+                </span>
+              ),
+            },
+            {
+              id: "status",
+              header: "Status",
+              cell: () => <Badge tone="success">Active</Badge>,
+            },
+            {
+              id: "registered",
+              header: "Registered",
+              cell: (sub) => (
+                <span className="tabular-nums">
+                  {new Date(sub.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                </span>
+              ),
+            },
+          ]}
+        />
+      )}
 
       <AlertDialog
         open={showSendModal}
@@ -369,7 +280,7 @@ export default function PushNotificationSection() {
           }
         }}
       >
-        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl border border-navy-200/60">
+        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-surface border-border rounded-lg border border-border/60">
           <div className="relative">
             <button
               type="button"
@@ -377,16 +288,16 @@ export default function PushNotificationSection() {
                 setShowSendModal(false);
                 setBroadcast({ target: "all", title: "", body: "", image: "" });
               }}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
+              className="absolute top-5 right-5 p-2 text-text-3 hover:text-text hover:bg-surface-2 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
             >
               <X size={20} />
             </button>
 
             <AlertDialogHeader className="p-8 pb-3 flex flex-col items-start text-left gap-1.5">
-              <AlertDialogTitle className="text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]">
+              <AlertDialogTitle className="font-serif text-[24px] font-normal leading-8 text-head">
                 Push Broadcast
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-[13px] text-zinc-500 leading-relaxed">
+              <AlertDialogDescription className="text-small text-text-2 leading-relaxed">
                 Send an instant pulse alert to campus devices.
               </AlertDialogDescription>
             </AlertDialogHeader>

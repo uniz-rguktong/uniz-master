@@ -5,16 +5,9 @@ import { apiClient } from "../../api/apiClient";
 import { BASE_URL } from "../../api/endpoints";
 import { uploadImage } from "../../api/uploadImage";
 import {
-  Trash2,
-  PlusCircle,
-  Eye,
   GripVertical,
   Image as ImageIcon,
-  LayoutDashboard,
-  ArrowLeft,
   Upload,
-  EyeOff,
-  X,
 } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import {
@@ -32,15 +25,15 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "../../utils/cn";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { AdminDialog } from "@/components/admin/AdminDialog";
 import {
-  adminModalShellClass,
-  adminModalTitleClass,
-  adminModalDescClass,
   adminLabelClass,
   adminInputClass,
   adminTextareaClass,
-  adminPrimaryButtonClass,
-  adminGhostButtonClass,
 } from "../../components/admin/admin-ui";
 
 type Banner = {
@@ -72,9 +65,9 @@ function SortableBannerCard({
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative bg-white border border-zinc-200 shadow-sm hover:shadow-md rounded-xl overflow-hidden transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-200"
+      className="group relative overflow-hidden rounded-lg border border-border bg-surface"
     >
-      <div className="relative aspect-video bg-zinc-100">
+      <div className="relative aspect-video bg-surface-2">
         <img
           src={banner.imageUrl}
           alt={banner.title}
@@ -83,59 +76,42 @@ function SortableBannerCard({
         <div
           {...attributes}
           {...listeners}
-          className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm p-1.5 rounded-lg cursor-grab shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white text-zinc-600"
+          className="absolute top-3 left-3 cursor-grab rounded-lg bg-surface p-1.5 text-text-2 opacity-0 transition-opacity group-hover:opacity-100"
         >
           <GripVertical className="w-5 h-5" />
         </div>
         <div className="absolute top-3 right-3">
-          <span
-            className={cn(
-              "px-2 py-1 text-xs font-bold tracking-wide rounded-md backdrop-blur-md shadow-sm border",
-              banner.isPublished
-                ? "bg-emerald-500/90 text-white border-emerald-400"
-                : "bg-zinc-500/90 text-white border-zinc-400",
-            )}
-          >
+          <Badge tone={banner.isPublished ? "success" : "neutral"}>
             {banner.isPublished ? "Published" : "Draft"}
-          </span>
+          </Badge>
         </div>
       </div>
 
       <div className="p-4">
-        <h3 className="text-lg font-bold text-zinc-900 mb-1 line-clamp-1">
+        <h3 className="text-lg font-semibold text-text mb-1 line-clamp-1">
           {banner.title}
         </h3>
-        <p className="text-zinc-500 text-sm line-clamp-2 min-h-[40px]">
+        <p className="text-text-2 text-sm line-clamp-2 min-h-[40px]">
           {banner.text}
         </p>
 
-        <div className="flex gap-2 mt-4 pt-4 border-t border-zinc-100">
-          <button
+        <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4 sm:flex-row">
+          <Button
+            type="button"
+            variant="outline"
+            size="compact"
             onClick={() => publishBanner(banner.id, !banner.isPublished)}
-            className={cn(
-              "flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors border",
-              banner.isPublished
-                ? "bg-zinc-50 text-zinc-700 border-zinc-200 hover:bg-zinc-100"
-                : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100",
-            )}
           >
-            {banner.isPublished ? (
-              <>
-                <EyeOff className="w-4 h-4" /> Unpublish
-              </>
-            ) : (
-              <>
-                <Eye className="w-4 h-4" /> Publish
-              </>
-            )}
-          </button>
-          <button
+            {banner.isPublished ? "Unpublish" : "Publish"}
+          </Button>
+          <Button
+            type="button"
+            variant="destructive"
+            size="compact"
             onClick={() => deleteBanner(banner.id)}
-            className="flex items-center justify-center p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            title="Delete Banner"
           >
-            <Trash2 className="w-4 h-4" />
-          </button>
+            Delete
+          </Button>
         </div>
       </div>
     </div>
@@ -247,89 +223,72 @@ export default function BannerManager() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
       {/* Header */}
-      <div className="flex flex-col gap-6">
-        <button
-          onClick={() => navigate("/admin")}
-          className="self-start inline-flex items-center text-sm font-medium text-zinc-500 hover:text-zinc-800 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
-        </button>
-
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-zinc-900">
-              Banner Management
-            </h1>
-            <p className="text-zinc-500 mt-1">
-              Create and manage homepage banners and announcements.
-            </p>
+      <PageHeader
+        title="Banner management"
+        meta="Create and manage homepage banners and announcements."
+        action={
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button type="button" variant="outline" onClick={() => navigate("/admin")}>
+              Back
+            </Button>
+            <Button type="button" onClick={() => setShowAddModal(true)}>
+              New banner
+            </Button>
           </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-semibold text-[10px] hover:bg-black transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center gap-3 shadow-none"
-          >
-            <PlusCircle size={16} /> New Banner
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Add Banner Modal */}
-      {showAddModal && (
-        <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm"
-          onClick={() => setShowAddModal(false)}
-        >
-          <div
-            className={cn("w-full max-w-md relative", adminModalShellClass)}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
+      <AdminDialog
+        open={showAddModal}
+        onOpenChange={setShowAddModal}
+        maxWidth="max-w-[640px]"
+        title="Create new banner"
+        description="Upload an image and add descriptive content for the homepage carousel."
+        footer={
+          <>
+            <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>
+              Cancel
+            </Button>
+            <Button
               type="button"
-              onClick={() => setShowAddModal(false)}
-              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-[color,background-color,border-color,opacity,transform,box-shadow] z-10"
+              onClick={addBanner}
+              disabled={loading || !title || !image}
+              isLoading={loading}
             >
-              <X size={20} />
-            </button>
-            <div className="p-8">
-              <h3 className={cn(adminModalTitleClass, "mb-1")}>
-                Create new banner
-              </h3>
-              <p className={cn(adminModalDescClass, "mb-6")}>
-                Upload an image and add descriptive content for the homepage
-                carousel.
-              </p>
-
+              {loading ? "Uploading…" : "Create banner"}
+            </Button>
+          </>
+        }
+      >
               <div className="flex flex-col gap-6">
                 {/* Dropzone */}
                 <div className="w-full">
                   <div
                     {...getRootProps()}
                     className={cn(
-                      "h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer transition-[color,background-color,border-color,opacity,transform,box-shadow] bg-zinc-50",
-                      isDragActive
-                        ? "border-zinc-100 bg-zinc-50"
-                        : "border-zinc-300 hover:border-zinc-400 hover:bg-zinc-100",
-                      image && "border-emerald-500 bg-emerald-50",
+                      "flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-border-strong bg-surface p-4 text-center",
+                      isDragActive && "border-head bg-tint",
                     )}
                   >
                     <input {...getInputProps()} />
                     {image ? (
-                      <div className="text-emerald-700">
+                      <div className="text-text">
                         <ImageIcon className="w-6 h-6 mx-auto mb-1.5" />
-                        <p className="font-bold text-[10px] truncate max-w-[250px]">
+                        <p className="font-semibold text-caption truncate max-w-[250px]">
                           {image.name}
                         </p>
-                        <p className="text-[9px] opacity-70 mt-0.5 font-semibold">
+                        <p className="text-caption opacity-70 mt-0.5 font-semibold">
                           Click to change
                         </p>
                       </div>
                     ) : (
-                      <div className="text-zinc-500">
-                        <Upload className="w-6 h-6 mx-auto mb-1.5 text-zinc-400" />
-                        <p className="font-bold text-[10px]">
+                      <div className="text-text-2">
+                        <Upload className="w-6 h-6 mx-auto mb-1.5 text-text-3" />
+                        <p className="font-semibold text-caption">
                           Select Banner Image
                         </p>
-                        <p className="text-[9px] opacity-60 mt-0.5 font-semibold">
+                        <p className="text-caption opacity-60 mt-0.5 font-semibold">
                           Drop or click
                         </p>
                       </div>
@@ -364,31 +323,11 @@ export default function BannerManager() {
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-8">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className={cn(adminGhostButtonClass, "flex-1")}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={addBanner}
-                  disabled={loading || !title || !image}
-                  className={cn(adminPrimaryButtonClass, "flex-[2]")}
-                >
-                  {loading ? "Uploading…" : "Create banner"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      </AdminDialog>
 
       {/* Banners Grid */}
       <div>
-        <h3 className="text-lg font-bold text-zinc-900 mb-4 px-1">
+        <h3 className="text-lg font-semibold text-text mb-4 px-1">
           Active Banners
         </h3>
         <DndContext
@@ -412,13 +351,10 @@ export default function BannerManager() {
                 ))}
               </div>
             ) : (
-              <div className="bg-zinc-50 border border-dashed border-zinc-200 rounded-xl p-12 text-center text-zinc-500">
-                <LayoutDashboard className="w-10 h-10 mx-auto mb-3 opacity-50" />
-                <p className="font-medium">No banners created yet</p>
-                <p className="text-sm">
-                  Use the form above to add your first banner.
-                </p>
-              </div>
+              <EmptyState
+                title="No banners yet"
+                body="Create a banner to feature it on the homepage."
+              />
             )}
           </SortableContext>
         </DndContext>

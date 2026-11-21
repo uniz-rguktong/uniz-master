@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Button } from "../../components/Button";
+import { Button } from "@/components/ui/button";
 import { Input } from "../../components/Input";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
@@ -7,20 +7,18 @@ import { adminUsername } from "../../store";
 import { useIsAuth } from "../../hooks/is_authenticated";
 import { toast } from "@/utils/toast-ref";
 import { ADMIN_RESET_PASS } from "../../api/endpoints";
-import {
-  ArrowLeft,
-  CheckCircle,
-  XCircle,
-  ShieldCheck,
-  Lock,
-  AlertTriangle,
-} from "lucide-react";
-import { cn } from "../../utils/cn";
+import { CheckCircle, AlertTriangle } from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
+import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 
 interface ResetPasswordResponse {
   success: boolean;
   msg: string;
 }
+
+const sectionTitleClass =
+  "font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head";
 
 export default function Settings() {
   useIsAuth();
@@ -56,11 +54,11 @@ export default function Settings() {
     switch (score) {
       case 0:
       case 1:
-        return { score, label: "Weak", color: "bg-red-500" };
+        return { score, label: "Weak", color: "bg-error" };
       case 2:
-        return { score, label: "Moderate", color: "bg-amber-500" };
+        return { score, label: "Moderate", color: "bg-warning" };
       case 3:
-        return { score, label: "Strong", color: "bg-emerald-500" };
+        return { score, label: "Strong", color: "bg-success" };
       default:
         return { score: 0, label: "", color: "" };
     }
@@ -142,149 +140,108 @@ export default function Settings() {
     }
   };
 
+  const strengthTone =
+    passwordStrength.score === 3
+      ? "success"
+      : passwordStrength.score === 2
+        ? "warning"
+        : "error";
+
   return (
-    <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-6">
-      <div className="max-w-4xl w-full">
-        <button
-          onClick={() => navigateTo("/admin")}
-          className="mb-8 inline-flex items-center text-sm font-medium text-zinc-500 hover:text-zinc-800 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
-        </button>
+    <div className="min-h-screen bg-bg px-4 py-8">
+      <div className="mx-auto w-full max-w-[640px]">
+        <PageHeader
+          title="Reset password"
+          meta="Enhance your account security with a strong password."
+          action={
+            <Button variant="outline" onClick={() => navigateTo("/admin")}>
+              Back
+            </Button>
+          }
+        />
 
-        <div className="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden flex flex-col md:flex-row">
-          {/* Form Section */}
-          <div className="md:w-3/5 p-8 lg:p-12">
-            <div className="mb-8">
-              <div className="h-12 w-12 bg-zinc-100 rounded-full flex items-center justify-center mb-4 text-zinc-900">
-                <Lock className="w-6 h-6" />
-              </div>
-              <h1 className="text-2xl font-bold text-zinc-900">
-                Reset Password
-              </h1>
-              <p className="text-zinc-500 mt-1">
-                Enhance your account security with a strong password.
-              </p>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <Input
-                  label="Current Password"
-                  type="password"
-                  onchangeFunction={handleInputChange(setOldPassword)}
-                  placeholder="Enter current password"
-                />
-              </div>
-
-              <div>
-                <Input
-                  label="New Password"
-                  type="password"
-                  onchangeFunction={handleInputChange(setPassword)}
-                  placeholder="Enter new password"
-                />
-                {password && (
-                  <div className="mt-2.5">
-                    <div className="flex items-center justify-between text-xs mb-1">
-                      <span className="text-zinc-500 font-medium">
-                        Strength
-                      </span>
-                      <span
-                        className={cn(
-                          "font-bold capitalize",
-                          passwordStrength.score === 3
-                            ? "text-emerald-600"
-                            : passwordStrength.score === 2
-                              ? "text-amber-600"
-                              : "text-red-500",
-                        )}
-                      >
-                        {passwordStrength.label}
-                      </span>
-                    </div>
-                    <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
-                      <div
-                        className={cn(
-                          "h-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300",
-                          passwordStrength.color,
-                        )}
-                        style={{
-                          width: `${(passwordStrength.score / 3) * 100}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <Input
-                  label="Confirm New Password"
-                  type="password"
-                  onchangeFunction={handleInputChange(setRePassword)}
-                  placeholder="Re-enter new password"
-                />
-                {password && repassword && (
-                  <div className="mt-2 flex items-center text-xs font-medium">
-                    {password === repassword ? (
-                      <span className="text-emerald-600 flex items-center gap-1.5">
-                        <CheckCircle className="w-3.5 h-3.5" /> Passwords match
-                      </span>
-                    ) : (
-                      <span className="text-red-500 flex items-center gap-1.5">
-                        <XCircle className="w-3.5 h-3.5" /> Passwords do not
-                        match
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <div className="pt-4">
-                <Button
-                  value="Reset Password"
-                  loading={isLoading}
-                  onclickFunction={sendDataToBackend}
-                  className="w-full bg-zinc-900 hover:bg-zinc-800"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Sidebar Info */}
-          <div className="md:w-2/5 bg-zinc-50 border-t md:border-t-0 md:border-l border-zinc-200 p-8 lg:p-12 flex flex-col justify-between">
+        <div className="space-y-8">
+          <section className="space-y-4">
+            <h2 className={sectionTitleClass}>Credentials</h2>
+            <Input
+              label="Current password"
+              type="password"
+              onchangeFunction={handleInputChange(setOldPassword)}
+              placeholder="Enter current password"
+            />
             <div>
-              <h3 className="font-semibold text-zinc-900 flex items-center gap-2 mb-6">
-                <ShieldCheck className="w-5 h-5 text-zinc-900" /> Security
-                Requirements
-              </h3>
-
-              <ul className="space-y-4">
-                <RequirementItem
-                  met={password.length >= 8}
-                  text="At least 8 characters long"
-                />
-                <RequirementItem
-                  met={/[0-9]/.test(password)}
-                  text="Include at least one number"
-                />
-                <RequirementItem
-                  met={/[^A-Za-z0-9]/.test(password)}
-                  text="Include one special character"
-                />
-              </ul>
+              <Input
+                label="New password"
+                type="password"
+                onchangeFunction={handleInputChange(setPassword)}
+                placeholder="Enter new password"
+              />
+              {password && (
+                <div className="mt-3 space-y-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-dense font-medium text-text-2">Strength</span>
+                    <Badge tone={strengthTone}>{passwordStrength.label}</Badge>
+                  </div>
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
+                    <div
+                      className="h-full bg-primary transition-all duration-300"
+                      style={{
+                        width: `${(passwordStrength.score / 3) * 100}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
-
-            <div className="bg-zinc-50/50 rounded-xl p-4 border border-zinc-100 mt-8">
-              <div className="flex gap-3">
-                <AlertTriangle className="w-5 h-5 text-zinc-900 shrink-0 mt-0.5" />
-                <p className="text-sm text-zinc-800 leading-relaxed">
-                  For security reasons, you will be automatically logged out
-                  after successfully changing your password.
-                </p>
-              </div>
+            <div>
+              <Input
+                label="Confirm new password"
+                type="password"
+                onchangeFunction={handleInputChange(setRePassword)}
+                placeholder="Re-enter new password"
+              />
+              {password && repassword && (
+                <div className="mt-3">
+                  {password === repassword ? (
+                    <Badge tone="success">Passwords match</Badge>
+                  ) : (
+                    <Badge tone="error">Passwords do not match</Badge>
+                  )}
+                </div>
+              )}
             </div>
+          </section>
+
+          <section className="space-y-4 border-t border-border pt-8">
+            <h2 className={sectionTitleClass}>Requirements</h2>
+            <ul className="space-y-3">
+              <RequirementItem
+                met={password.length >= 8}
+                text="At least 8 characters long"
+              />
+              <RequirementItem
+                met={/[0-9]/.test(password)}
+                text="Include at least one number"
+              />
+              <RequirementItem
+                met={/[^A-Za-z0-9]/.test(password)}
+                text="Include one special character"
+              />
+            </ul>
+            <Alert tone="warning" title="You will be signed out" icon={AlertTriangle}>
+              For security reasons, you will be automatically logged out after
+              successfully changing your password.
+            </Alert>
+          </section>
+
+          <div className="flex justify-end border-t border-border pt-8">
+            <Button
+              type="button"
+              loading={isLoading}
+              onclickFunction={sendDataToBackend}
+            >
+              Reset password
+            </Button>
           </div>
         </div>
       </div>
@@ -294,29 +251,15 @@ export default function Settings() {
 
 function RequirementItem({ met, text }: { met: boolean; text: string }) {
   return (
-    <li className="flex items-start gap-3">
-      <div
-        className={cn(
-          "w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-colors",
-          met
-            ? "bg-emerald-100 text-emerald-600"
-            : "bg-zinc-200 text-zinc-400",
-        )}
-      >
-        {met ? (
-          <CheckCircle className="w-3.5 h-3.5" />
-        ) : (
-          <div className="w-2 h-2 rounded-full bg-zinc-400" />
-        )}
-      </div>
-      <span
-        className={cn(
-          "text-sm font-medium transition-colors",
-          met ? "text-zinc-900" : "text-zinc-500",
-        )}
-      >
-        {text}
-      </span>
+    <li className="flex items-center gap-3 text-dense text-text">
+      {met ? (
+        <Badge tone="success" icon={CheckCircle}>
+          Met
+        </Badge>
+      ) : (
+        <Badge>Needed</Badge>
+      )}
+      <span>{text}</span>
     </li>
   );
 }

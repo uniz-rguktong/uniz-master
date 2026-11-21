@@ -10,8 +10,6 @@ import {
   Building,
   LogOut,
   Pencil,
-  Check,
-  Ban,
   User,
   Shield,
 } from "lucide-react";
@@ -19,7 +17,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "@/utils/toast-ref";
 import { BASE_URL } from "../../api/endpoints";
 import { uploadImage } from "../../api/uploadImage";
-import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
+import { Button } from "@/components/ui/button";
+import { adminInputClass, adminLabelClass } from "@/components/admin/admin-ui";
 
 interface Profile {
   name?: string;
@@ -200,8 +199,8 @@ export default function ProfilePopup({
 
           <motion.div
             ref={popupRef}
-            style={{ top: position.top, right: position.right }}
-            className="fixed z-[9999] w-[380px] bg-white rounded-xl border border-zinc-100 overflow-hidden shadow-none"
+            style={{ top: position.top, right: Math.max(12, position.right) }}
+            className="fixed z-[9999] w-[min(380px,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-border bg-surface"
             initial={{ opacity: 0, y: -12, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.97 }}
@@ -212,66 +211,48 @@ export default function ProfilePopup({
               mass: 0.8,
             }}
           >
-            {/* Background Decorative Illustrations */}
-            <BackgroundIconCloud className="scale-[1.5]" />
-
             {/* ── Top bar: email (centered) + close ── */}
-            <div className="relative flex items-center justify-center px-5 py-3 border-b border-zinc-100">
-              <p className="text-[12.5px] font-semibold text-zinc-600 truncate lowercase">
-                {(profile?.email || `${username}@rguktong.ac.in`).toLowerCase()}
+            <div className="relative flex items-center justify-center border-b border-border px-5 py-3">
+              <p className="truncate text-small text-text-2">
+                {profile?.email || `${username}@rguktong.ac.in`}
               </p>
               <button
+                type="button"
                 onClick={onClose}
-                className="absolute right-3 p-1.5 rounded-xl hover:bg-zinc-100 text-zinc-400 hover:text-zinc-700 transition-colors shadow-none"
+                className="absolute right-3 rounded-full p-1.5 text-text-3 hover:bg-tint hover:text-text"
+                aria-label="Close"
               >
-                <X size={15} />
+                <X size={16} />
               </button>
             </div>
 
             {/* ── Avatar + Name + Edit button ── */}
-            <div className="flex flex-col items-center px-6 pt-6 pb-5">
-              {/* Avatar with gradient ring */}
+            <div className="flex flex-col items-center px-6 pb-5 pt-6">
               <div className="relative mb-4">
-                <div
-                  className="w-[88px] h-[88px] rounded-full p-[3px]"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #4285F4 0%, #34A853 33%, #FBBC04 66%, #EA4335 100%)",
-                  }}
-                >
-                  <div className="w-full h-full rounded-full bg-white p-[2px]">
-                    <div className="w-full h-full rounded-full overflow-hidden bg-zinc-800 flex items-center justify-center shadow-none">
-                      {loading && !initialPhoto ? (
-                        <Loader2
-                          size={24}
-                          className="animate-spin text-blue-300"
-                        />
-                      ) : profile?.profile_url || initialPhoto ? (
-                        <img
-                          src={profile?.profile_url || initialPhoto!}
-                          className="w-full h-full object-cover"
-                          alt=""
-                        />
-                      ) : (
-                        <span className="text-xl font-semibold text-white">
-                          {initial}
-                        </span>
-                      )}
-                      {isUploading && (
-                        <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center">
-                          <Loader2
-                            size={20}
-                            className="animate-spin text-white"
-                          />
-                        </div>
-                      )}
+                <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-surface-2">
+                  {loading && !initialPhoto ? (
+                    <Loader2 size={20} className="animate-spin text-text-2" />
+                  ) : profile?.profile_url || initialPhoto ? (
+                    <img
+                      src={profile?.profile_url || initialPhoto!}
+                      className="h-full w-full object-cover"
+                      alt=""
+                    />
+                  ) : (
+                    <span className="text-dense font-medium text-text">{initial}</span>
+                  )}
+                  {isUploading && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-bg/70">
+                      <Loader2 size={18} className="animate-spin text-text" />
                     </div>
-                  </div>
+                  )}
                 </div>
                 {/* Camera button */}
                 <button
+                  type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0.5 right-0.5 w-7 h-7 bg-zinc-700 text-white rounded-full flex items-center justify-center border-2 border-white hover:bg-zinc-900 transition-[color,background-color,border-color,opacity,transform,box-shadow] active:scale-90 shadow-none"
+                  className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground"
+                  aria-label="Change photo"
                 >
                   <Camera size={12} />
                 </button>
@@ -285,31 +266,20 @@ export default function ProfilePopup({
               </div>
 
               {/* Hi, Name */}
-              <h2 className="text-[22px] font-semibold text-zinc-900 tracking-tight mb-0.5">
+              <h2 className="text-[22px] font-medium leading-[30px] tracking-[-0.01em] text-head">
                 Hi, {firstName}!
               </h2>
               {profile?.role && (
-                <p className="text-[11px] text-zinc-400 font-medium mb-4">
-                  {profile.role}
-                </p>
+                <p className="mb-4 mt-1 text-caption text-text-3">{profile.role}</p>
               )}
 
               {/* Edit Profile / Save / Cancel button */}
               {isEditing ? (
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl border-2 border-zinc-100 text-zinc-950 text-[12px] font-semibold hover:bg-zinc-50 transition-[color,background-color,border-color,opacity,transform,box-shadow] disabled:opacity-60 shadow-none"
-                  >
-                    {isSaving ? (
-                      <Loader2 size={13} className="animate-spin" />
-                    ) : (
-                      <Check size={13} />
-                    )}
-                    Save Changes
-                  </button>
-                  <button
+                <div className="flex flex-col-reverse gap-2 sm:flex-row">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="compact"
                     onClick={() => {
                       setIsEditing(false);
                       setFormData({
@@ -320,57 +290,66 @@ export default function ProfilePopup({
                         department: profile?.department || "",
                       });
                     }}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-zinc-200 text-zinc-500 text-[12px] font-semibold hover:bg-zinc-50 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none"
                   >
-                    <Ban size={12} />
                     Cancel
-                  </button>
+                  </Button>
+                  <Button
+                    type="button"
+                    size="compact"
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    isLoading={isSaving}
+                  >
+                    Save changes
+                  </Button>
                 </div>
               ) : (
-                <button
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="compact"
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 px-6 py-2 rounded-xl border border-zinc-200 text-zinc-700 text-[13px] font-medium hover:bg-zinc-50 hover:border-zinc-300 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none"
                 >
-                  <Pencil size={13} className="text-zinc-500" />
-                  Edit Profile
-                </button>
+                  <Pencil size={14} />
+                  Edit profile
+                </Button>
               )}
             </div>
 
             {/* ── Divider ── */}
-            <div className="border-t border-zinc-100 mx-0" />
+            <div className="border-t border-border mx-0" />
 
             {/* ── Profile Details ── */}
             <div className="px-4 py-3 space-y-1">
               {loading ? (
                 <div className="flex justify-center py-5">
-                  <Loader2 size={20} className="animate-spin text-blue-400" />
+                  <Loader2 size={20} className="animate-spin text-text-2" />
                 </div>
               ) : (
                 <>
                   <DetailRow
-                    icon={<User size={14} className="text-zinc-500" />}
+                    icon={<User size={14} className="text-text-2" />}
                     label="Full Name"
                     value={formData.name || username}
                     editable={isEditing}
                     onChange={(v) => setFormData({ ...formData, name: v })}
                   />
                   <DetailRow
-                    icon={<Mail size={14} className="text-zinc-500" />}
+                    icon={<Mail size={14} className="text-text-2" />}
                     label="Email"
                     value={formData.email || `${username}@rguktong.ac.in`}
                     editable={isEditing}
                     onChange={(v) => setFormData({ ...formData, email: v })}
                   />
                   <DetailRow
-                    icon={<Phone size={14} className="text-zinc-500" />}
+                    icon={<Phone size={14} className="text-text-2" />}
                     label="Contact"
                     value={formData.contact || "-"}
                     editable={isEditing}
                     onChange={(v) => setFormData({ ...formData, contact: v })}
                   />
                   <DetailRow
-                    icon={<Briefcase size={14} className="text-zinc-500" />}
+                    icon={<Briefcase size={14} className="text-text-2" />}
                     label="Designation"
                     value={formData.designation || "Webadmin"}
                     editable={isEditing}
@@ -379,7 +358,7 @@ export default function ProfilePopup({
                     }
                   />
                   <DetailRow
-                    icon={<Building size={14} className="text-zinc-500" />}
+                    icon={<Building size={14} className="text-text-2" />}
                     label="Department"
                     value={formData.department || "Administration"}
                     editable={isEditing}
@@ -388,7 +367,7 @@ export default function ProfilePopup({
                     }
                   />
                   <DetailRow
-                    icon={<Shield size={14} className="text-zinc-500" />}
+                    icon={<Shield size={14} className="text-text-2" />}
                     label="Username"
                     value={username}
                     editable={false}
@@ -398,26 +377,24 @@ export default function ProfilePopup({
             </div>
 
             {/* ── Divider ── */}
-            <div className="border-t border-zinc-100" />
+            <div className="border-t border-border" />
 
             {/* ── Sign out ── */}
-            <button
-              onClick={() => {
-                onClose();
-                onLogout();
-              }}
-              className="w-full flex items-center gap-3 px-5 py-3.5 text-[13px] font-semibold text-zinc-700 hover:bg-zinc-50 transition-colors group"
-            >
-              <div className="w-8 h-8 rounded-xl bg-zinc-100 flex items-center justify-center group-hover:bg-red-50 transition-colors shadow-none">
-                <LogOut
-                  size={15}
-                  className="text-zinc-500 group-hover:text-red-500 transition-colors"
-                />
-              </div>
-              <span className="group-hover:text-red-500 transition-colors">
+            <div className="px-4 py-3">
+              <Button
+                type="button"
+                variant="destructive"
+                size="compact"
+                className="w-full"
+                onClick={() => {
+                  onClose();
+                  onLogout();
+                }}
+              >
+                <LogOut size={15} />
                 Sign out
-              </span>
-            </button>
+              </Button>
+            </div>
           </motion.div>
         </>
       )}
@@ -441,27 +418,21 @@ function DetailRow({
   onChange?: (v: string) => void;
 }) {
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50 transition-colors">
-      <div className="w-8 h-8 rounded-xl bg-zinc-100 flex items-center justify-center shrink-0 shadow-none">
-        {icon}
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-[9.5px] font-bold text-zinc-400 leading-none mb-0.5">
-          {label}
+    <div className="px-1 py-2">
+      <p className={adminLabelClass}>{label}</p>
+      {editable && onChange ? (
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={adminInputClass}
+        />
+      ) : (
+        <p className="flex items-center gap-2 text-dense text-text">
+          <span className="text-text-3">{icon}</span>
+          <span className="min-w-0 truncate">{value}</span>
         </p>
-        {editable && onChange ? (
-          <input
-            type="text"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            className="text-[13px] font-medium text-zinc-900 bg-transparent border-b border-zinc-100 focus:outline-none w-full"
-          />
-        ) : (
-          <p className="text-[13px] font-medium text-zinc-900 truncate">
-            {value}
-          </p>
-        )}
-      </div>
+      )}
     </div>
   );
 }
