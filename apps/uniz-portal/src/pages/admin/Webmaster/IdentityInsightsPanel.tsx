@@ -1,9 +1,8 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { Shield, UserCheck, Users } from "lucide-react";
-import { Card } from "../../../components/ui/card";
-import { cn } from "../../../utils/cn";
+import { AlertCircle, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { formatDisplayText } from "@/utils/displayText";
+import { Panel } from "@/components/ui/panel";
 
 const STAFF_ROLES = new Set([
   "webadmin",
@@ -15,9 +14,6 @@ const STAFF_ROLES = new Set([
   "director",
   "coe",
 ]);
-
-const PORTAL_NAVY = "#0B2A47";
-const PORTAL_NAVY_MID = "#0F3B63";
 
 type RoleRow = {
   role?: string;
@@ -90,41 +86,23 @@ export default function IdentityInsightsPanel({
   const staffMax = Math.max(...staffRoles.map((r) => r.value), 1);
 
   return (
-    <Card className="p-7 w-full h-full flex flex-col bg-white border border-zinc-200/70 shadow-[0_1px_2px_rgba(10,10,10,0.03)] rounded-2xl transition-colors duration-300 hover:border-zinc-300">
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
-        <div>
-          <h2 className="text-[15px] font-semibold text-zinc-900 tracking-[-0.01em]">
-            Access landscape
-          </h2>
-          <p className="text-[11px] font-medium text-zinc-400 mt-0.5">
-            Staff roles, enablement & student share
-          </p>
-        </div>
-        <div className="flex items-center gap-2 rounded-md border border-emerald-100 bg-emerald-50/80 px-3 py-1">
-          <UserCheck size={13} className="text-emerald-600" />
-          <span className="text-[11px] font-semibold text-emerald-700 tabular-nums">
-            {enablementPct.toFixed(1)}% enabled
-          </span>
-        </div>
-      </div>
+    <Panel title="Access landscape" className="h-full w-full">
+      <p className="text-dense leading-5 text-text-2">
+        Staff roles, enablement & student share
+      </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-7">
+      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
         <InsightStat
-          icon={Users}
           label="Students"
           value={studentCount.toLocaleString()}
           hint={`${studentShare.toFixed(1)}% of accounts`}
-          accent="text-blue-600"
         />
         <InsightStat
-          icon={Shield}
           label="Staff & admin"
           value={staffCount.toLocaleString()}
           hint={`${staffShare.toFixed(1)}% of accounts`}
-          accent="text-navy-900"
         />
         <InsightStat
-          icon={UserCheck}
           label="Restricted"
           value={totalDisabled.toLocaleString()}
           hint={
@@ -132,18 +110,18 @@ export default function IdentityInsightsPanel({
               ? "No disabled accounts"
               : `${(100 - enablementPct).toFixed(1)}% restricted`
           }
-          accent={totalDisabled > 0 ? "text-rose-600" : "text-emerald-600"}
+          status={totalDisabled > 0 ? "error" : "success"}
         />
       </div>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
+      <div className="mt-6 grid min-h-0 flex-1 grid-cols-1 gap-6 lg:grid-cols-2">
         <div>
-          <p className="text-[10px] font-semibold text-zinc-400 mb-3">
+          <p className="mb-3 text-dense leading-5 text-text-2">
             Staff & admin by role
           </p>
           <div className="space-y-3">
             {staffRoles.length === 0 ? (
-              <p className="text-sm text-zinc-400">No staff role data.</p>
+              <p className="text-dense text-text-2">No staff role data.</p>
             ) : (
               staffRoles.map((row, i) => {
                 const pct = Math.round((row.value / staffMax) * 100);
@@ -154,21 +132,16 @@ export default function IdentityInsightsPanel({
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.05 }}
                   >
-                    <div className="flex items-center justify-between text-[12px] mb-1.5">
-                      <span className="font-medium text-zinc-700">
-                        {row.label}
-                      </span>
-                      <span className="tabular-nums font-semibold text-zinc-900">
+                    <div className="mb-1.5 flex items-center justify-between text-dense">
+                      <span className="font-medium text-head">{row.label}</span>
+                      <span className="font-semibold tabular-nums text-head">
                         {row.value.toLocaleString()}
                       </span>
                     </div>
-                    <div className="h-2 rounded-full bg-zinc-100 overflow-hidden">
+                    <div className="h-2 overflow-hidden rounded-full bg-tint">
                       <div
-                        className="h-full rounded-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-700"
-                        style={{
-                          width: `${pct}%`,
-                          background: `linear-gradient(90deg, ${PORTAL_NAVY}, ${PORTAL_NAVY_MID})`,
-                        }}
+                        className="h-full rounded-full bg-navy-600 transition-[width] duration-700"
+                        style={{ width: `${pct}%` }}
                       />
                     </div>
                   </motion.div>
@@ -179,71 +152,65 @@ export default function IdentityInsightsPanel({
         </div>
 
         <div className="flex flex-col justify-center">
-          <p className="text-[10px] font-semibold text-zinc-400 mb-3">
+          <p className="mb-3 text-dense leading-5 text-text-2">
             Account enablement
           </p>
-          <div className="rounded-2xl border border-zinc-100 bg-zinc-50/50 p-5 space-y-4">
+          <div className="space-y-4">
             <div className="flex items-end justify-between gap-4">
               <div>
-                <p className="text-4xl font-semibold text-zinc-900 tracking-tighter tabular-nums leading-none">
+                <p className="font-sans text-[28px] font-semibold leading-9 tracking-[-0.01em] text-head tabular-nums">
                   {totalActive.toLocaleString()}
                 </p>
-                <p className="text-[12px] font-medium text-zinc-500 mt-1.5">
+                <p className="mt-3 text-dense leading-5 text-text-2">
                   active of {totalUsers.toLocaleString()} total
                 </p>
               </div>
-              <p
-                className={cn(
-                  "text-2xl font-semibold tabular-nums",
-                  enablementPct >= 99 ? "text-emerald-600" : "text-amber-600",
+              <p className="flex items-center gap-1.5 text-dense leading-5 text-text-2">
+                {enablementPct >= 99 ? (
+                  <CheckCircle2 size={16} strokeWidth={1.75} className="text-success" aria-hidden />
+                ) : (
+                  <AlertTriangle size={16} strokeWidth={1.75} className="text-warning" aria-hidden />
                 )}
-              >
                 {enablementPct.toFixed(1)}%
               </p>
             </div>
 
-            <div className="h-3 rounded-full bg-zinc-200/80 overflow-hidden flex">
+            <div className="flex h-2 overflow-hidden rounded-full bg-tint">
               <div
-                className="h-full rounded-l-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-700"
-                style={{
-                  width: `${enablementPct}%`,
-                  background: `linear-gradient(90deg, ${PORTAL_NAVY}, ${PORTAL_NAVY_MID})`,
-                }}
+                className="h-full bg-navy-600 transition-[width] duration-700"
+                style={{ width: `${enablementPct}%` }}
               />
               {totalDisabled > 0 && (
                 <div
-                  className="h-full bg-rose-300 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-700"
+                  className="h-full bg-text-3 transition-[width] duration-700"
                   style={{ width: `${100 - enablementPct}%` }}
                 />
               )}
             </div>
 
-            <div className="flex flex-wrap gap-4 text-[11px] font-medium text-zinc-500">
+            <div className="flex flex-wrap gap-4 text-dense text-text-2">
               <span className="inline-flex items-center gap-1.5">
-                <span
-                  className="w-2 h-2 rounded-full"
-                  style={{ background: PORTAL_NAVY }}
-                />
+                <span className="h-2 w-2 rounded-full bg-navy-600" />
                 {totalActive.toLocaleString()} enabled
               </span>
               {totalDisabled > 0 && (
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-rose-400" />
+                  <span className="h-2 w-2 rounded-full bg-text-3" />
                   {totalDisabled.toLocaleString()} restricted
                 </span>
               )}
             </div>
 
-            <div className="pt-3 border-t border-zinc-200/70">
-              <div className="flex items-center justify-between text-[12px] mb-2">
-                <span className="text-zinc-600">Student share</span>
-                <span className="font-semibold text-zinc-900 tabular-nums">
+            <div className="border-t border-border pt-3">
+              <div className="mb-2 flex items-center justify-between text-dense">
+                <span className="text-text-2">Student share</span>
+                <span className="font-semibold tabular-nums text-head">
                   {studentShare.toFixed(1)}%
                 </span>
               </div>
-              <div className="h-1.5 rounded-full bg-zinc-200 overflow-hidden">
+              <div className="h-2 overflow-hidden rounded-full bg-tint">
                 <div
-                  className="h-full rounded-full bg-blue-500 transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-700"
+                  className="h-full rounded-full bg-navy-300 transition-[width] duration-700"
                   style={{ width: `${studentShare}%` }}
                 />
               </div>
@@ -251,33 +218,39 @@ export default function IdentityInsightsPanel({
           </div>
         </div>
       </div>
-    </Card>
+    </Panel>
   );
 }
 
 function InsightStat({
-  icon: Icon,
   label,
   value,
   hint,
-  accent,
+  status,
 }: {
-  icon: typeof Users;
   label: string;
   value: string;
   hint: string;
-  accent: string;
+  status?: "success" | "error";
 }) {
+  const StatusIcon = status === "error" ? AlertCircle : status === "success" ? CheckCircle2 : null;
   return (
-    <div className="rounded-xl border border-zinc-100 bg-zinc-50/40 px-4 py-3">
-      <div className="flex items-center gap-2 mb-2">
-        <Icon size={14} className={accent} />
-        <span className="text-[11px] font-semibold text-zinc-500">{label}</span>
-      </div>
-      <p className="text-xl font-semibold text-zinc-900 tabular-nums leading-none">
+    <div className="flex min-h-[148px] flex-col rounded-lg border border-border bg-tile p-6">
+      <p className="text-dense leading-5 text-text-2">{label}</p>
+      <p className="mt-3 font-sans text-[28px] font-semibold leading-9 tracking-[-0.01em] text-head tabular-nums">
         {value}
       </p>
-      <p className="text-[10px] font-medium text-zinc-400 mt-1.5">{hint}</p>
+      <p className="mt-3 flex items-center gap-1.5 text-dense leading-5 text-text-2">
+        {StatusIcon ? (
+          <StatusIcon
+            size={16}
+            strokeWidth={1.75}
+            aria-hidden
+            className={status === "error" ? "text-error" : "text-success"}
+          />
+        ) : null}
+        {hint}
+      </p>
     </div>
   );
 }

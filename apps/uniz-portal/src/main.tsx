@@ -34,9 +34,9 @@ prefetchTurnstile();
 //     const logSignature = () => {
 //         const isWide = window.innerWidth > 900;
 //         if (isWide) {
-//             console.log(`%c${wideSignature}`, "color: #ffffff; font-weight: bold; font-family: monospace; line-height: 1.2;");
+//             console.log(`%c${wideSignature}`, "color: white; font-weight: bold; font-family: monospace; line-height: 1.2;");
 //         } else {
-//             console.log(`%c${compactSignature}`, "color: #ffffff; font-weight: bold; font-family: monospace; line-height: 1.2;");
+//             console.log(`%c${compactSignature}`, "color: white; font-weight: bold; font-family: monospace; line-height: 1.2;");
 //         }
 //     };
 

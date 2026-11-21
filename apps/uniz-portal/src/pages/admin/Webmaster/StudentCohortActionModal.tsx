@@ -1,23 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { Loader2, ShieldAlert } from "lucide-react";
 import {
   ADMIN_STUDENT_COHORT_ACTION,
   GET_AVAILABLE_BATCHES,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
-import { cn } from "../../../utils/cn";
 import { AdminDialog } from "../../../components/admin/AdminDialog";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import {
   adminLabelClass,
   adminSelectClass,
-  adminPrimaryButtonClass,
-  adminGhostButtonClass,
-  adminWarningBannerClass,
-  adminWarningTitleClass,
-  adminWarningTextClass,
   adminDangerInputClass,
-  adminDangerButtonClass,
 } from "../../../components/admin/admin-ui";
 import { ENGINEERING_BRANCH_OPTIONS } from "@/constants/branches";
 import {
@@ -113,9 +107,6 @@ export default function StudentCohortActionModal({
   };
 
   const canSubmit = confirmText.toLowerCase() === confirmPhrase && !loading;
-  const SubmitIcon = action.icon;
-  const submitClass =
-    action.tone === "danger" ? adminDangerButtonClass : adminPrimaryButtonClass;
 
   return (
     <AdminDialog
@@ -123,50 +114,60 @@ export default function StudentCohortActionModal({
       onOpenChange={(open) => !open && onClose()}
       title={action.title}
       description={action.description}
-      maxWidth="max-w-lg"
+      maxWidth="max-w-[640px]"
+      footer={
+        <>
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            form="cohort-action-form"
+            variant={action.tone === "danger" ? "destructive" : "primary"}
+            disabled={!canSubmit}
+            isLoading={loading}
+          >
+            {action.submitLabel}
+          </Button>
+        </>
+      }
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className={adminWarningBannerClass}>
-          <ShieldAlert size={18} className="text-amber-600 shrink-0 mt-0.5" />
-          <div>
-            <p className={adminWarningTitleClass}>{action.warningTitle}</p>
-            <p className={adminWarningTextClass}>{action.warningText}</p>
-          </div>
-        </div>
+      <form id="cohort-action-form" onSubmit={handleSubmit} className="mx-auto max-w-[640px] space-y-4">
+        <Alert tone="warning" title={action.warningTitle}>
+          {action.warningText}
+        </Alert>
 
         {action.filterMode === "promote" ? (
           <>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <label className={adminLabelClass}>From year</label>
-                <select
-                  value={fromYear}
-                  onChange={(e) => setFromYear(e.target.value)}
-                  className={adminSelectClass}
-                >
-                  {PROMOTE_YEARS.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className={adminLabelClass}>To year</label>
-                <select
-                  value={toYear}
-                  onChange={(e) => setToYear(e.target.value)}
-                  className={adminSelectClass}
-                >
-                  {PROMOTE_YEARS.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div>
+              <label className={adminLabelClass}>From year</label>
+              <select
+                value={fromYear}
+                onChange={(e) => setFromYear(e.target.value)}
+                className={adminSelectClass}
+              >
+                {PROMOTE_YEARS.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="space-y-2">
+            <div>
+              <label className={adminLabelClass}>To year</label>
+              <select
+                value={toYear}
+                onChange={(e) => setToYear(e.target.value)}
+                className={adminSelectClass}
+              >
+                {PROMOTE_YEARS.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label className={adminLabelClass}>Department</label>
               <select
                 value={branch}
@@ -180,7 +181,7 @@ export default function StudentCohortActionModal({
                 ))}
               </select>
             </div>
-            <div className="space-y-2">
+            <div>
               <label className={adminLabelClass}>Batch (optional)</label>
               <select
                 value={batch}
@@ -197,8 +198,8 @@ export default function StudentCohortActionModal({
             </div>
           </>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="space-y-2">
+          <>
+            <div>
               <label className={adminLabelClass}>Department</label>
               <select
                 value={branch}
@@ -212,7 +213,7 @@ export default function StudentCohortActionModal({
                 ))}
               </select>
             </div>
-            <div className="space-y-2">
+            <div>
               <label className={adminLabelClass}>Year</label>
               <select
                 value={year}
@@ -226,7 +227,7 @@ export default function StudentCohortActionModal({
                 ))}
               </select>
             </div>
-            <div className="space-y-2">
+            <div>
               <label className={adminLabelClass}>Batch</label>
               <select
                 value={batch}
@@ -241,13 +242,11 @@ export default function StudentCohortActionModal({
                 ))}
               </select>
             </div>
-          </div>
+          </>
         )}
 
-        <div className="space-y-2">
-          <label className={cn(adminLabelClass, "text-rose-500")}>
-            Type {confirmPhrase} to confirm
-          </label>
+        <div>
+          <label className={adminLabelClass}>Type {confirmPhrase} to confirm</label>
           <input
             type="text"
             value={confirmText}
@@ -256,28 +255,6 @@ export default function StudentCohortActionModal({
             className={adminDangerInputClass}
             autoComplete="off"
           />
-        </div>
-
-        <div className="flex gap-3 pt-1">
-          <button
-            type="button"
-            onClick={onClose}
-            className={cn(adminGhostButtonClass, "flex-1")}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className={cn(submitClass, "flex-[2]")}
-          >
-            {loading ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <SubmitIcon size={16} />
-            )}
-            {action.submitLabel}
-          </button>
         </div>
       </form>
     </AdminDialog>

@@ -1,14 +1,16 @@
 import { useState, useCallback, useMemo } from "react";
-import { Check, Lock, Shield, Loader2 } from "lucide-react";
+import { Check, AlertTriangle } from "lucide-react";
 import { toast } from "@/utils/toast-ref";
 import { ADMIN_RESET_PASS } from "../../../api/endpoints";
 import { cn } from "@/lib/utils";
 import { Input } from "../../../components/Input";
-import { SectionHeader } from "../../../components/admin/SectionHeader";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import {
   adminPageWrapClass,
   adminLabelClass,
-  adminPrimaryButtonClass,
 } from "../../../components/admin/admin-ui";
 
 type Strength = { score: number; label: string; barClass: string };
@@ -19,10 +21,10 @@ function validatePassword(pwd: string): Strength {
   if (/[0-9]/.test(pwd)) score++;
   if (/[^A-Za-z0-9]/.test(pwd)) score++;
 
-  if (!pwd) return { score: 0, label: "", barClass: "bg-zinc-100" };
-  if (score <= 1) return { score, label: "Weak", barClass: "bg-rose-500" };
-  if (score === 2) return { score, label: "Fair", barClass: "bg-amber-500" };
-  return { score, label: "Strong", barClass: "bg-emerald-600" };
+  if (!pwd) return { score: 0, label: "", barClass: "bg-surface-2" };
+  if (score <= 1) return { score, label: "Weak", barClass: "bg-error" };
+  if (score === 2) return { score, label: "Fair", barClass: "bg-warning" };
+  return { score, label: "Strong", barClass: "bg-success" };
 }
 
 const REQUIREMENTS = [
@@ -108,27 +110,33 @@ export default function SecuritySection({ username }: { username: string }) {
   const passwordsMismatch =
     repassword.length > 0 && password !== repassword;
 
+  const strengthTone =
+    passwordStrength.score >= 3
+      ? "success"
+      : passwordStrength.score === 2
+        ? "warning"
+        : "error";
+
   return (
     <div className={cn(adminPageWrapClass, "animate-in fade-in duration-500 pb-20")}>
-      <SectionHeader
-        icon={<Lock size={18} />}
-        eyebrow="Management"
-        title="Security & Authentication"
-        subtitle="Update your access credentials to maintain account integrity."
-      />
+      <div className="mx-auto max-w-[640px]">
+        <PageHeader
+          title="Security"
+          meta="Update your access credentials to maintain account integrity."
+        />
 
-      <div className="bg-transparent md:overflow-hidden md:rounded-xl md:border md:border-zinc-100 md:bg-white md:shadow-sm">
-        <div className="md:flex">
-          <div className="space-y-5 border-zinc-50 px-0 py-2 md:w-2/3 md:border-r md:space-y-6 md:p-10 md:py-6">
+        <div className="space-y-8">
+          <section className="space-y-4">
+            <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head">
+              Password
+            </h2>
             <Input
               label="Current password"
               type="password"
               onchangeFunction={handleInputChange(setCurrentPassword)}
               placeholder="Enter current password"
               labelClassName={adminLabelClass}
-              icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
             />
-
             <div className="space-y-3">
               <Input
                 label="New password"
@@ -136,49 +144,33 @@ export default function SecuritySection({ username }: { username: string }) {
                 onchangeFunction={handleInputChange(setPassword)}
                 placeholder="Create a new password"
                 labelClassName={adminLabelClass}
-                icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
               />
-
               {password && (
-                <div className="space-y-2 px-0.5">
-                  <div className="flex items-center gap-3">
-                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-100">
-                      <div
-                        className={cn(
-                          "h-full rounded-full transition-[color,background-color,border-color,opacity,transform,box-shadow] duration-300",
-                          passwordStrength.barClass,
-                        )}
-                        style={{
-                          width: `${Math.max(12, (passwordStrength.score / 3) * 100)}%`,
-                        }}
-                      />
-                    </div>
-                    <span className="shrink-0 text-[10px] font-bold text-zinc-400">
-                      {passwordStrength.label}
-                    </span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-dense font-medium text-text-2">Strength</span>
+                    {passwordStrength.label ? (
+                      <Badge tone={strengthTone}>{passwordStrength.label}</Badge>
+                    ) : null}
                   </div>
-
-                  <ul className="grid gap-1.5">
+                  <div className="h-1.5 overflow-hidden rounded-full bg-surface-2">
+                    <div
+                      className="h-full rounded-full bg-primary transition-all duration-300"
+                      style={{
+                        width: `${Math.max(12, (passwordStrength.score / 3) * 100)}%`,
+                      }}
+                    />
+                  </div>
+                  <ul className="space-y-2">
                     {REQUIREMENTS.map((req) => {
                       const met = req.test(password);
                       return (
-                        <li
-                          key={req.id}
-                          className={cn(
-                            "flex items-center gap-2 text-[12px] font-medium transition-colors",
-                            met ? "text-zinc-800" : "text-zinc-400",
+                        <li key={req.id} className="flex items-center gap-2 text-dense text-text">
+                          {met ? (
+                            <Badge tone="success" icon={Check}>Met</Badge>
+                          ) : (
+                            <Badge>Needed</Badge>
                           )}
-                        >
-                          <span
-                            className={cn(
-                              "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border",
-                              met
-                                ? "border-navy-900 bg-navy-900 text-white"
-                                : "border-zinc-200 bg-white",
-                            )}
-                          >
-                            {met && <Check className="h-3 w-3" strokeWidth={3} />}
-                          </span>
                           {req.label}
                         </li>
                       );
@@ -187,83 +179,36 @@ export default function SecuritySection({ username }: { username: string }) {
                 </div>
               )}
             </div>
+            <Input
+              label="Confirm new password"
+              type="password"
+              onchangeFunction={handleInputChange(setRePassword)}
+              placeholder="Repeat new password"
+              labelClassName={adminLabelClass}
+              error={passwordsMismatch ? "Passwords do not match" : undefined}
+            />
+            {passwordsMatch && <Badge tone="success">Passwords match</Badge>}
+          </section>
 
-            <div className="space-y-1.5">
-              <Input
-                label="Confirm new password"
-                type="password"
-                onchangeFunction={handleInputChange(setRePassword)}
-                placeholder="Repeat new password"
-                labelClassName={adminLabelClass}
-                icon={<Lock className="h-4 w-4 text-navy-400" strokeWidth={2} />}
-                error={
-                  passwordsMismatch ? "Passwords do not match" : undefined
-                }
-              />
-              {passwordsMatch && (
-                <p className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700">
-                  <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
-                  Passwords match
-                </p>
-              )}
-            </div>
+          <section className="space-y-4 border-t border-border pt-8">
+            <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head">
+              Guidelines
+            </h2>
+            <ul className="space-y-3 text-dense leading-6 text-text-2">
+              {GUIDELINES.map((text) => (
+                <li key={text}>{text}</li>
+              ))}
+            </ul>
+            <Alert tone="warning" title="You will be signed out" icon={AlertTriangle}>
+              For your security, all active sessions are ended after a password
+              change. Sign in again with your new password on every device.
+            </Alert>
+          </section>
 
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className={cn(
-                adminPrimaryButtonClass,
-                "w-full min-h-12 py-3.5 text-[15px] md:py-4",
-              )}
-            >
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : null}
+          <div className="flex justify-end border-t border-border pt-8">
+            <Button type="button" onClick={handleSubmit} disabled={isLoading} isLoading={isLoading}>
               {isLoading ? "Updating…" : "Update password"}
-            </button>
-
-            <div className="rounded-xl border border-zinc-100 bg-white p-4 shadow-sm md:hidden">
-              <div className="flex items-start gap-3">
-                <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-900" strokeWidth={2} />
-                <p className="text-[11px] font-medium leading-relaxed text-zinc-500">
-                  You will be signed out of this session after a successful
-                  password update. Sign in again with your new password.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="hidden flex-col justify-between bg-zinc-50/30 p-8 md:flex md:w-1/3">
-            <div>
-              <h3 className="mb-6 flex items-center gap-2 text-[10px] font-bold text-zinc-400">
-                Password guidelines
-              </h3>
-
-              <div className="space-y-3 md:space-y-6">
-                {GUIDELINES.map((text, index) => (
-                  <div key={text} className="flex items-start gap-4">
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-zinc-100 bg-white text-[10px] font-bold text-zinc-900 shadow-sm">
-                      {String(index + 1).padStart(2, "0")}
-                    </div>
-                    <p className="text-[13px] font-medium leading-relaxed text-zinc-500">
-                      {text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-12 rounded-xl border border-zinc-100 bg-white p-5 shadow-sm">
-              <div className="flex items-start gap-3">
-                <Shield size={16} className="mt-0.5 text-zinc-900" />
-                <p className="text-[11px] font-medium leading-relaxed text-zinc-500">
-                  For your security, all active sessions are ended after a
-                  password change. Sign in again with your new password on every
-                  device.
-                </p>
-              </div>
-            </div>
+            </Button>
           </div>
         </div>
       </div>

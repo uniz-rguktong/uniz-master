@@ -8,6 +8,7 @@ import {
   Filter,
   ChevronDown,
   Download,
+  CheckCircle2,
 } from "lucide-react";
 import { ADMIN_UPLOAD_HISTORY, TRIGGER_CRON } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
@@ -15,18 +16,18 @@ import { cn } from "@/utils/cn";
 import { useRecoilState } from "recoil";
 import { systemLogsAtom } from "../../../store/atoms";
 
-import { Skeleton } from "@/components/ui/Skeleton";
 import { Activity } from "lucide-react";
 import { SectionHeader } from "../../../components/admin/SectionHeader";
 import {
   adminPageWrapClass,
-  adminCardClass,
   adminInputClass,
   adminSelectClass,
-  adminSegmentWrapClass,
-  adminSegmentInactiveClass,
 } from "../../../components/admin/admin-ui";
 import { formatDisplayText } from "@/utils/displayText";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Table, type TableColumn } from "@/components/ui/table";
 
 export default function SystemLogsSection() {
   const [logsState, setLogsState] = useRecoilState(systemLogsAtom);
@@ -102,6 +103,109 @@ export default function SystemLogsSection() {
     currentPage * itemsPerPage,
   );
 
+  const logColumns: TableColumn<any>[] = [
+    {
+      id: "activity",
+      header: "Activity & Resource",
+      primary: true,
+      cell: (log) => {
+        const errorsJson =
+          typeof log.errors === "string" ? JSON.parse(log.errors) : log.errors;
+        const downloadUrl =
+          log.fileUrl ||
+          errorsJson?.fileUrl ||
+          (log.filename?.startsWith("http") ? log.filename : null);
+        const displayFilename =
+          errorsJson?.originalName ||
+          (log.filename?.startsWith("http") ? "Uploaded_File" : log.filename);
+        return (
+          <span className="block min-w-0">
+            <span className="flex items-center gap-2">
+              <span className="truncate text-dense font-semibold text-text" title={displayFilename}>
+                {displayFilename || "Automated sync"}
+              </span>
+              {downloadUrl ? (
+                <a
+                  href={downloadUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Download Source File"
+                  onClick={(e) => e.stopPropagation()}
+                  className="rounded-lg border border-border p-1.5 text-text-3 hover:text-text"
+                >
+                  <Download size={14} />
+                </a>
+              ) : null}
+            </span>
+            <span className="mt-1 inline-flex">
+              <Badge tone="neutral">{formatDisplayText(log.type, "None")}</Badge>
+            </span>
+          </span>
+        );
+      },
+    },
+    {
+      id: "metrics",
+      header: "Data Metrics",
+      meta: true,
+      numeric: true,
+      cell: (log) => (
+        <span className="block">
+          <span className="text-dense font-semibold tabular-nums text-text">
+            {log.totalRows || 0} Rows
+          </span>
+          <span className="mt-1 flex items-center gap-3">
+            <span className="inline-flex items-center gap-1 text-caption font-medium text-success tabular-nums">
+              <CheckCircle2 size={14} aria-hidden />
+              {log.successCount || 0}
+            </span>
+            <span className="inline-flex items-center gap-1 text-caption font-medium text-error tabular-nums">
+              <AlertCircle size={14} aria-hidden />
+              {log.failCount || 0}
+            </span>
+          </span>
+        </span>
+      ),
+    },
+    {
+      id: "status",
+      header: "Status",
+      cell: (log) => {
+        const tone =
+          log.status === "COMPLETED"
+            ? "success"
+            : /fail|error/i.test(String(log.status || ""))
+              ? "error"
+              : "warning";
+        return (
+          <Badge tone={tone}>
+            {log.status === "COMPLETED"
+              ? "Completed"
+              : formatDisplayText(log.status, "Processing")}
+          </Badge>
+        );
+      },
+    },
+    {
+      id: "time",
+      header: "Timestamp",
+      meta: true,
+      cell: (log) => (
+        <span className="tabular-nums text-dense text-text">
+          {new Date(log.createdAt).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })}{" "}
+          {new Date(log.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </span>
+      ),
+    },
+  ];
+
   return (
     <div className={cn(adminPageWrapClass, "animate-in fade-in duration-700 pb-20")}>
       <SectionHeader
@@ -111,35 +215,25 @@ export default function SystemLogsSection() {
         subtitle="Institutional data synchronization and event history across all portals."
         actions={
           <>
-            <div className={adminSegmentWrapClass}>
-              <button
-                onClick={fetchHistory}
-                title="Refresh Logs"
-                className={cn(
-                  adminSegmentInactiveClass,
-                  "px-2.5 py-1.5",
-                  loading && "animate-spin",
-                )}
-              >
-                <RefreshCw size={16} />
-              </button>
-              <button
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="ghost" size="icon" onClick={fetchHistory} title="Refresh Logs">
+                <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
                 onClick={triggerMaintenance}
                 disabled={isMaintenanceLoading}
                 title="Trigger Maintenance"
-                className={cn(
-                  adminSegmentInactiveClass,
-                  "px-2.5 py-1.5 hover:!text-rose-600",
-         isMaintenanceLoading && "",
-                )}
               >
                 <AlertTriangle size={16} />
-              </button>
+              </Button>
             </div>
 
             <div className="relative">
               <Filter
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none z-10"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none z-10"
                 size={13}
               />
               <select
@@ -148,7 +242,7 @@ export default function SystemLogsSection() {
                   setFilterType(e.target.value);
                   setCurrentPage(1);
                 }}
-                className={cn(adminSelectClass, "pl-9 w-[160px]")}
+                className={cn(adminSelectClass, "w-full pl-10 sm:w-44")}
               >
                 <option value="ALL">All Assets</option>
                 <option value="STUDENTS">Students</option>
@@ -156,14 +250,14 @@ export default function SystemLogsSection() {
                 <option value="GRADES">Grades</option>
               </select>
               <ChevronDown
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-3 pointer-events-none"
                 size={14}
               />
             </div>
 
             <div className="relative">
               <Search
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-3"
                 size={15}
               />
               <input
@@ -174,241 +268,42 @@ export default function SystemLogsSection() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className={cn(adminInputClass, "pl-10 w-[240px]")}
+                className={cn(adminInputClass, "w-full pl-10 sm:w-60")}
               />
             </div>
           </>
         }
       />
 
-      <div className={cn(adminCardClass, "overflow-hidden")}>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-zinc-200/70">
-                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
-                  Activity & Resource
-                </th>
-                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
-                  Data Metrics
-                </th>
-                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
-                  Status
-                </th>
-                <th className="px-8 py-4 text-[10px] font-semibold text-zinc-400">
-                  Timestamp
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {loading ? (
-                Array(itemsPerPage)
-                  .fill(0)
-                  .map((_, i) => (
-                    <tr key={i}>
-                      <td className="px-8 py-5">
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-40" />
-                          <Skeleton className="h-3 w-20 opacity-50" />
-                        </div>
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="space-y-2">
-                          <Skeleton className="h-5 w-12 rounded-lg" />
-                          <Skeleton className="h-2 w-16 opacity-50" />
-                        </div>
-                      </td>
-                      <td className="px-8 py-5">
-                        <Skeleton className="h-7 w-20 rounded-full" />
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-24" />
-                          <Skeleton className="h-2 w-16 opacity-50" />
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-              ) : paginatedHistory.length > 0 ? (
-                paginatedHistory.map((log: any, idx: number) => {
-                  const errorsJson =
-                    typeof log.errors === "string"
-                      ? JSON.parse(log.errors)
-                      : log.errors;
-                  const downloadUrl =
-                    log.fileUrl ||
-                    errorsJson?.fileUrl ||
-                    (log.filename?.startsWith("http") ? log.filename : null);
-                  const displayFilename =
-                    errorsJson?.originalName ||
-                    (log.filename?.startsWith("http")
-                      ? "Uploaded_File"
-                      : log.filename);
-
-                  return (
-                    <tr
-                      key={log.id || idx}
-                      className="hover:bg-zinc-50/60 transition-colors group"
-                    >
-                      <td className="px-8 py-5">
-                        <div className="flex flex-col gap-1.5">
-                          <div className="flex items-center gap-2">
-                            <p
-                              className="text-[13px] font-semibold text-zinc-800 tracking-tight truncate max-w-[200px]"
-                              title={displayFilename}
-                            >
-                              {displayFilename || "Automated sync"}
-                            </p>
-                            {downloadUrl && (
-                              <a
-                                href={downloadUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                title="Download Source File"
-                                className="text-zinc-400 hover:text-zinc-900 transition-colors bg-white hover:border-zinc-300 p-1.5 rounded-lg border border-zinc-200"
-                              >
-                                <Download size={14} />
-                              </a>
-                            )}
-                          </div>
-                          <span className="px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded-md text-[10px] font-medium tracking-wide w-fit">
-                            {formatDisplayText(log.type, "None")}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-2">
-                            <p className="text-[14px] font-semibold text-zinc-900 tabular-nums">
-                              {log.totalRows || 0}
-                            </p>
-                            <span className="text-[10px] text-zinc-400 font-medium">
-                              Rows
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className="text-[11px] font-medium text-emerald-600 flex items-center gap-1 tabular-nums">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>{" "}
-                              {log.successCount || 0}
-                            </span>
-                            <span className="text-[11px] font-medium text-rose-500 flex items-center gap-1 tabular-nums">
-                              <span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span>{" "}
-                              {log.failCount || 0}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="w-fit">
-                          {log.status === "COMPLETED" ? (
-                            <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-md border border-zinc-200">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                              <span className="text-[11px] font-medium">
-                                Completed
-                              </span>
-                            </div>
-                          ) : (
-                            <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-md border border-zinc-200">
-                              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
-                              <span className="text-[11px] font-medium">
-                                {formatDisplayText(log.status, "Processing")}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="flex flex-col">
-                          <p className="text-[13px] font-medium tracking-tight text-zinc-700 tabular-nums">
-                            {new Date(log.createdAt).toLocaleDateString(
-                              "en-GB",
-                              {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                              },
-                            )}
-                          </p>
-                          <p className="text-[10px] font-medium text-zinc-400 mt-0.5 tabular-nums">
-                            {new Date(log.createdAt).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan={5} className="py-20 text-center">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 flex items-center justify-center bg-zinc-50 rounded-2xl border border-zinc-200/70 text-zinc-300">
-                        <AlertCircle size={32} strokeWidth={1.5} />
-                      </div>
-                      <p className="text-[14px] font-medium text-zinc-500 tracking-tight">
-                        No logs found matching your criteria.
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination bar */}
-        {filteredHistory.length > 0 && (
-          <div className="px-8 py-4 bg-zinc-50/50 border-t border-zinc-200/70 flex items-center justify-between">
-            <p className="text-[11px] font-medium text-zinc-400">
-              Showing{" "}
-              <span className="text-zinc-900">
-                {Math.min(
-                  filteredHistory.length,
-                  (currentPage - 1) * itemsPerPage + 1,
-                )}
-                -{Math.min(filteredHistory.length, currentPage * itemsPerPage)}
-              </span>{" "}
-              of {filteredHistory.length}
-            </p>
-            <div className="flex items-center gap-2">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="h-8 px-3.5 border border-zinc-200 bg-white rounded-lg text-[12px] font-semibold text-zinc-600 hover:text-zinc-900 hover:border-zinc-300 transition-[color,background-color,border-color,opacity,transform,box-shadow] disabled:opacity-30 disabled:pointer-events-none"
-              >
-                Previous
-              </button>
-              <div className="flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  .map((num) => (
-                    <button
-                      key={num}
-                      onClick={() => setCurrentPage(num)}
-                      className={`w-8 h-8 rounded-lg text-[12px] font-semibold tabular-nums transition-[color,background-color,border-color,opacity,transform,box-shadow] ${currentPage === num ? "bg-zinc-900 text-white" : "text-zinc-500 hover:bg-zinc-100"}`}
-                    >
-                      {num}
-                    </button>
-                  ))
-                  .slice(
-                    Math.max(0, currentPage - 3),
-                    Math.min(totalPages, currentPage + 2),
-                  )}
+      {loading ? (
+        <p className="text-body text-text-2">Loading logs…</p>
+      ) : (
+        <Table
+          rows={paginatedHistory}
+          getRowId={(log: any) => String(log.id || log.createdAt || log.filename)}
+          empty={<EmptyState title="No logs found matching your criteria." icon={AlertCircle} />}
+          footer={
+            filteredHistory.length > 0 ? (
+              <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-small text-text-2 tabular-nums">
+                  Showing {Math.min(filteredHistory.length, (currentPage - 1) * itemsPerPage + 1)}–
+                  {Math.min(filteredHistory.length, currentPage * itemsPerPage)} of {filteredHistory.length}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button type="button" variant="outline" size="compact" disabled={currentPage === 1} onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}>
+                    Previous
+                  </Button>
+                  <span className="text-small tabular-nums text-text">{currentPage} / {totalPages}</span>
+                  <Button type="button" variant="outline" size="compact" disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}>
+                    Next
+                  </Button>
+                </div>
               </div>
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
-                className="h-8 px-3.5 border border-zinc-200 bg-white rounded-lg text-[12px] font-semibold text-zinc-600 hover:text-zinc-900 hover:border-zinc-300 transition-[color,background-color,border-color,opacity,transform,box-shadow] disabled:opacity-30 disabled:pointer-events-none"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+            ) : null
+          }
+          columns={logColumns}
+        />
+      )}
     </div>
   );
 }

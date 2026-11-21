@@ -46,10 +46,8 @@ export function AdminDialog({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent
-        overlayClassName={cn(
-          elevated && ADMIN_DIALOG_ELEVATED_Z,
-          elevated && "bg-zinc-900/40 backdrop-blur-sm",
-        )}
+        onOverlayClick={() => onOpenChange(false)}
+        overlayClassName={cn(elevated && ADMIN_DIALOG_ELEVATED_Z)}
         className={cn(
           maxWidth,
           adminModalShellClass,
@@ -80,7 +78,7 @@ export function AdminDialog({
 
           {children && <div className="px-8 pb-8">{children}</div>}
           {footer && (
-            <div className="px-8 py-5 border-t border-zinc-200/70 bg-zinc-50/50 flex flex-wrap items-center justify-end gap-3">
+            <div className="flex flex-col-reverse gap-3 px-8 pb-8 pt-6 sm:flex-row sm:justify-end max-[639px]:px-0">
               {footer}
             </div>
           )}

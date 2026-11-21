@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getAcademicPage } from "../types/api";
 import type { AcademicSection, AcademicPageType } from "../types/api";
-import { Download, ExternalLink, FileText, GraduationCap } from "lucide-react";
+import { FileText } from "lucide-react";
 import { PageHero } from "../components/layout/PageHero";
 import { usePageTitle } from "../lib/usePageTitle";
 import { CampusBoot } from "../components/CampusBoot";
+import { Wrap } from "../components/layout/Wrap";
 
 // ── Page metadata ──────────────────────────────────────────────────
 const PAGE_META: Record<string, {
@@ -57,15 +58,28 @@ function LinkRow({ label, url }: { label: string; url: string | null }) {
     <a
       href={url ?? "#"}
       target={url ? "_blank" : "_self"}
-      rel="noreferrer"
-      className="flex items-center justify-between gap-4 px-4 py-3 rounded-xl bg-navy-900/5 hover:bg-navy text-navy-900 hover:text-white font-semibold text-sm transition-all duration-200 group"
+      rel="noopener noreferrer"
+      className="flex min-h-11 items-center text-[15px] leading-6 text-link hover:underline"
     >
-      <span className="flex items-center gap-2">
-        <Download className="w-4 h-4 flex-shrink-0" />
-        {cleanLabel}
-      </span>
-      <ExternalLink className="w-3.5 h-3.5 flex-shrink-0 opacity-60 group-hover:opacity-100" />
+      {cleanLabel}
     </a>
+  );
+}
+
+function SectionBlock({ section }: { section: AcademicSection }) {
+  return (
+    <section className="border-t border-border py-8">
+      <h2 className="u-h2 text-head">
+        {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
+      </h2>
+      <ul className="mt-4 max-w-[65ch]">
+        {section.links.map((link, i) => (
+          <li key={i}>
+            <LinkRow label={link.label} url={link.url} />
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -74,23 +88,9 @@ function CalendarLayout({ sections }: { sections: AcademicSection[] }) {
   const years = sections.filter(s => s.links && s.links.length > 0);
 
   return (
-    <div className="space-y-6">
+    <div>
       {years.map((section, idx) => (
-        <div key={idx} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-          {/* Year header */}
-          <div className="flex items-center gap-3 px-7 py-5 border-b border-slate-100 bg-slate-50">
-            <div className="w-2 h-2 rounded-full bg-navy" />
-            <h2 className="text-lg font-medium text-slate-900 tracking-tight">
-              {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
-            </h2>
-          </div>
-          {/* Semester links */}
-          <div className="px-6 py-5 flex flex-col items-start gap-3">
-            {section.links.map((link, i) => (
-              <LinkRow key={i} label={link.label} url={link.url} />
-            ))}
-          </div>
-        </div>
+        <SectionBlock key={idx} section={section} />
       ))}
     </div>
   );
@@ -102,25 +102,9 @@ function CurriculaLayout({ sections }: { sections: AcademicSection[] }) {
   if (depts.length === 0) return <EmptyState />;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <div>
       {depts.map((section, idx) => (
-        <div
-          key={idx}
-          className="bg-white rounded-2xl border border-slate-100 border-l-4 border-l-[#0A2540] shadow-sm hover:shadow-md transition-shadow"
-        >
-          {/* Dept header */}
-          <div className="px-6 pt-6 pb-4 border-b border-slate-100">
-            <h2 className="text-[15px] font-medium text-slate-900 leading-snug">
-              {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
-            </h2>
-          </div>
-          {/* Curriculum links */}
-          <div className="px-5 py-4 flex flex-col gap-2">
-            {section.links.map((link, i) => (
-              <LinkRow key={i} label={link.label} url={link.url} />
-            ))}
-          </div>
-        </div>
+        <SectionBlock key={idx} section={section} />
       ))}
     </div>
   );
@@ -132,18 +116,9 @@ function GenericLayout({ sections }: { sections: AcademicSection[] }) {
   if (meaningful.length === 0) return <EmptyState />;
 
   return (
-    <div className="space-y-6">
+    <div>
       {meaningful.map((section, idx) => (
-        <div key={idx} className="bg-white rounded-2xl border border-slate-100 border-l-4 border-l-[#0A2540] shadow-sm p-7 md:p-9">
-          <h2 className="text-xl md:text-2xl font-medium text-slate-900 mb-5 tracking-tight">
-            {fixSpelling(section.header.replace(/\n\s+/g, " ").trim())}
-          </h2>
-          <div className="flex flex-col gap-2">
-            {section.links.map((link, i) => (
-              <LinkRow key={i} label={link.label} url={link.url} />
-            ))}
-          </div>
-        </div>
+        <SectionBlock key={idx} section={section} />
       ))}
     </div>
   );
@@ -161,15 +136,15 @@ const DEPT_LINKS = [
 // ── Empty state ────────────────────────────────────────────────────
 function EmptyState() {
   return (
-    <div className="text-center py-20 bg-white rounded-2xl border border-slate-100 shadow-sm">
-      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
-        <FileText className="w-8 h-8 text-slate-300" />
+    <div className="py-16 text-center">
+      <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-tint-2">
+        <FileText className="text-accent" size={32} strokeWidth={1.5} aria-hidden="true" />
       </div>
-      <p className="text-slate-600 font-semibold text-lg">Nothing published here yet</p>
-      <p className="text-ink-subtle text-sm mt-2">Check back later, or browse the department pages for course and faculty details.</p>
-      <div className="mt-6 flex flex-wrap justify-center gap-2 px-6">
+      <p className="mt-6 font-serif text-[22px] font-normal leading-[30px] tracking-[-0.01em] text-head">Nothing published here yet</p>
+      <p className="mx-auto mt-3 max-w-[380px] text-[15px] leading-6 text-text-2">Check back later, or browse the department pages for course and faculty details.</p>
+      <div className="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-2 px-6">
         {DEPT_LINKS.map((d) => (
-          <Link key={d.code} to={`/departments/${d.code}`} className="px-3 py-1.5 rounded-full bg-navy-900/5 hover:bg-navy hover:text-white text-navy-900 text-sm font-semibold transition-colors">
+          <Link key={d.code} to={`/departments/${d.code}`} className="inline-flex min-h-11 items-center text-[15px] leading-6 text-link hover:underline">
             {d.name}
           </Link>
         ))}
@@ -188,8 +163,7 @@ export function AcademicsPage() {
   const meta = PAGE_META[key] ?? {
     displayName: pageName?.replace(/([A-Z])/g, " $1").trim() ?? "Academics",
     subtitle: "Academic resources and information at RGUKT Ongole.",
-    pill: "text-slate-300", pillBg: "bg-slate-400/10", pillBorder: "border-slate-400/30",
-    icon: <GraduationCap className="w-5 h-5" />,
+    eyebrow: "RGUKT Ongole · Academics",
   };
 
   usePageTitle(`${meta.displayName} · RGUKT Ongole`);
@@ -213,10 +187,10 @@ export function AcademicsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div>
       <HeroBanner meta={meta} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <Wrap className="pb-16">
         {/* Route to specific layout based on page */}
         {key === "academiccalender" && <CalendarLayout sections={data} />}
         {key === "curicula"         && <CurriculaLayout sections={data} />}
@@ -224,7 +198,7 @@ export function AcademicsPage() {
         {!["academiccalender", "curicula", "academicprograms", "academicregulations"].includes(key) && (
           <GenericLayout sections={data} />
         )}
-      </div>
+      </Wrap>
     </div>
   );
 }

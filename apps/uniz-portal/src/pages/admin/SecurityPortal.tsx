@@ -3,16 +3,19 @@ import { useState, useEffect } from "react";
 import {
   ScanLine,
   Search,
-  Clock,
   ArrowUpRight,
   ArrowDownLeft,
   Loader2,
   Shield,
   History,
-  Users,
   LayoutDashboard,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
+import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/tile";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import {
   SECURITY_SUMMARY,
   SECURITY_CHECKIN,
@@ -129,43 +132,17 @@ export default function SecurityPortal() {
   const renderContent = () => {
     if (activeTab === "logs") {
       return (
-        <div className="p-6 space-y-6 animate-in fade-in duration-500">
-          <div className="bg-white rounded-3xl border border-zinc-100 p-8 space-y-6 shadow-none">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <History size={22} className="text-zinc-400" />
-                <h3 className="text-xl font-semibold text-zinc-900 tracking-tight italic">
-                  Recent Activity Logs
-                </h3>
+        <div className="space-y-2">
+          <PageHeader title="Activity logs" meta="Recent gate records on this terminal." />
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex items-center justify-between gap-3 border-b border-border py-4">
+              <div className="min-w-0">
+                <p className="text-[15px] font-semibold leading-6 text-head tabular-nums">STUDENT_ID_{i}00{i}</p>
+                <p className="text-small text-text-2">Entry recorded · 14:2{i} · Gate 01</p>
               </div>
+              <Badge tone="success">Verified</Badge>
             </div>
-
-            <div className="space-y-4">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between py-5 border-b border-zinc-50 last:border-0"
-                >
-                  <div className="flex items-center gap-5">
-                    <div className="w-12 h-12 bg-zinc-50 rounded-xl flex items-center justify-center border border-zinc-100 shadow-none">
-                      <Clock size={16} className="text-zinc-400" />
-                    </div>
-                    <div>
-                      <p className="text-[15px] font-semibold text-zinc-900 tracking-tight">
-                        STUDENT_ID_{i}00{i}
-                      </p>
-                      <p className="text-[10px] font-bold text-zinc-400 mt-0.5">
-                        Entry Recorded • 14:2{i} • Gate 01
-                      </p>
-                    </div>
-                  </div>
-                  <div className="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-md text-[10px] font-semibold border border-emerald-100">
-                    Verified
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       );
     }
@@ -179,178 +156,91 @@ export default function SecurityPortal() {
     }
 
     return (
-      <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
-        {/* Welcome Card */}
-        <div className="bg-gradient-to-br from-navy-950 to-navy-900 rounded-3xl py-10 px-12 text-white shadow-none relative overflow-hidden group border border-white/10">
-          <div className="relative z-10 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-md border border-white/10 backdrop-blur-md">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span className="text-[10px] font-bold text-emerald-400">
-                Gate Security Operational • Terminal-A
-              </span>
-            </div>
-            <div>
-              <h1 className="text-4xl font-semibold tracking-tight mb-2 italic">
-                Access Control Terminal
-              </h1>
-              <p className="text-zinc-100/80 font-medium text-lg max-w-lg leading-relaxed">
-                Campus Security Engine. Orchestrate student entry and exit
-                protocols through your administrative terminal with precision.
-              </p>
-            </div>
-          </div>
-          <div className="absolute right-0 bottom-0 opacity-[0.05] translate-x-1/4 translate-y-1/4 transition-transform duration-1000">
-            <ScanLine size={400} />
-          </div>
+      <div className="space-y-6">
+        <PageHeader
+          title="Access control"
+          meta="Look up a student and record an entry or an exit."
+        />
+
+        <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
+          <StatTile label="Students outside" value={summary?.totalOutside || 0} />
+          <StatTile label="Today's check-ins" value={summary?.todayCheckins || 0} />
+          <StatTile label="Today's check-outs" value={summary?.todayCheckouts || 0} />
+          <StatTile label="Sync status" value="Active" line="Terminal is connected" status="success" icon={Shield} />
         </div>
 
-        {/* Stats Summary */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white p-7 rounded-3xl border border-zinc-100 shadow-none transition-[color,background-color,border-color,opacity,transform,box-shadow] hover:border-emerald-200">
-            <p className="text-[10px] font-semibold text-zinc-400 mb-1 leading-none">
-              Students Outside
-            </p>
-            <h3 className="text-4xl font-semibold text-zinc-900 leading-tight tracking-tight italic">
-              {summary?.totalOutside || 0}
-            </h3>
-          </div>
-          <div className="bg-white p-7 rounded-3xl border border-zinc-100 shadow-none transition-[color,background-color,border-color,opacity,transform,box-shadow] hover:border-emerald-200">
-            <p className="text-[10px] font-semibold text-zinc-400 mb-1 leading-none">
-              Today's Checkins
-            </p>
-            <h3 className="text-4xl font-semibold text-emerald-600 leading-tight tracking-tight italic">
-              {summary?.todayCheckins || 0}
-            </h3>
-          </div>
-          <div className="bg-white p-7 rounded-3xl border border-zinc-100 shadow-none transition-[color,background-color,border-color,opacity,transform,box-shadow] hover:border-emerald-200">
-            <p className="text-[10px] font-semibold text-zinc-400 mb-1 leading-none">
-              Today's Checkouts
-            </p>
-            <h3 className="text-4xl font-semibold text-amber-600 leading-tight tracking-tight italic">
-              {summary?.todayCheckouts || 0}
-            </h3>
-          </div>
-          <div className="bg-white p-7 rounded-3xl border border-zinc-100 shadow-none transition-[color,background-color,border-color,opacity,transform,box-shadow] hover:border-emerald-200">
-            <p className="text-[10px] font-semibold text-zinc-400 mb-1 leading-none">
-              Sync Status
-            </p>
-            <h3 className="text-4xl font-semibold text-zinc-900 leading-tight tracking-tight italic">
-              Active
-            </h3>
-          </div>
-        </div>
-
-        {/* Search / Scan Section */}
-        <div className="bg-white rounded-2xl border border-zinc-100 shadow-none p-10 space-y-10">
-          <form onSubmit={handleSearch} className="relative group">
-            <div className="absolute inset-y-0 left-8 flex items-center text-zinc-300 group-focus-within:text-zinc-900 transition-colors">
-              <Search size={26} />
-            </div>
+        <form onSubmit={handleSearch} className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative min-w-0 flex-1">
+            <Search size={16} strokeWidth={1.75} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-3" aria-hidden />
             <input
               type="text"
               value={scanQuery}
               onChange={(e) => setScanQuery(e.target.value.toUpperCase())}
-              placeholder="SCAN ID CARD OR ENTER UNIVERSITY ID..."
-              className="w-full bg-zinc-50 border-2 border-zinc-50 px-20 py-8 rounded-3xl font-semibold text-2xl tracking-tight focus:bg-white focus:border-emerald-950 outline-none transition-[color,background-color,border-color,opacity,transform,box-shadow] placeholder:text-zinc-300 shadow-none"
+              placeholder="Scan an ID card or enter a university ID"
+              aria-label="Student ID"
+              className="h-11 w-full rounded-md border border-border-strong bg-surface pl-11 pr-4 text-body text-text placeholder:text-text-3 focus:border-navy-600 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ring max-[639px]:h-12"
             />
-            <button
-              type="submit"
-              disabled={searching}
-              className="absolute inset-y-4 right-4 px-10 bg-emerald-950 text-white rounded-2xl font-semibold text-[11px] hover:bg-black transition-[color,background-color,border-color,opacity,transform,box-shadow] flex items-center gap-3 shadow-none active:scale-95 disabled:opacity-50"
-            >
-              {searching ? (
-                <Loader2 size={18} className="animate-spin" />
-              ) : (
-                <ScanLine size={18} />
-              )}
-              Initialize Scan
-            </button>
-          </form>
+          </div>
+          <Button type="submit" disabled={searching}>
+            {searching ? <Loader2 size={16} className="animate-spin" /> : <ScanLine size={16} />}
+            Search
+          </Button>
+        </form>
 
-          {/* Search Results */}
           {searchResults.length > 0 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
-              <div className="flex items-center gap-2 mb-6 ml-2">
-                <Users size={18} className="text-zinc-400" />
-                <h4 className="text-xs font-semibold text-zinc-400 leading-none">
-                  Personnel Records Identified ({searchResults.length})
-                </h4>
-              </div>
+            <div className="space-y-0">
+              <h2 className="mb-2 font-sans text-h3 text-head">
+                {searchResults.length} {searchResults.length === 1 ? "record" : "records"}
+              </h2>
               {searchResults.map((student) => (
                 <div
                   key={student.id}
-                  className="bg-zinc-50 rounded-3xl p-7 flex items-center justify-between group hover:bg-white border border-transparent hover:border-zinc-100 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none"
+                  className="flex flex-col gap-3 border-b border-border py-4 sm:flex-row sm:items-center sm:justify-between"
                 >
-                  <div className="flex items-center gap-7">
-                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-zinc-900 font-semibold text-2xl shadow-none border border-zinc-100 overflow-hidden ring-4 ring-zinc-100/50">
-                      {student.username[0]}
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-zinc-900 tracking-tight text-xl italic mb-1">
-                        {student.name}
-                      </h4>
-                      <p className="text-xs font-bold text-zinc-400">
-                        {student.username} • {student.branch} {student.year}
-                      </p>
-                    </div>
+                  <div className="min-w-0">
+                    <p className="text-[15px] font-semibold leading-6 text-head">{student.name}</p>
+                    <p className="text-small text-text-2 tabular-nums">
+                      {student.username} · {student.branch} {student.year}
+                    </p>
                   </div>
-
-                  <div className="flex items-center gap-4">
-                    <button
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="compact"
                       onClick={() => handleAction(student.username, "checkout")}
                       disabled={processingId === student.username}
-                      className="flex items-center gap-2.5 px-8 py-4 bg-amber-500 text-white rounded-2xl font-semibold text-[10px] hover:bg-amber-600 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none active:scale-95 disabled:opacity-50"
                     >
                       {processingId === student.username ? (
                         <Loader2 size={16} className="animate-spin" />
                       ) : (
                         <ArrowUpRight size={16} />
                       )}
-                      Log Exit
-                    </button>
-                    <button
+                      Log exit
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="compact"
                       onClick={() => handleAction(student.username, "checkin")}
                       disabled={processingId === student.username}
-                      className="flex items-center gap-2.5 px-8 py-4 bg-emerald-600 text-white rounded-2xl font-semibold text-[10px] hover:bg-emerald-700 transition-[color,background-color,border-color,opacity,transform,box-shadow] shadow-none active:scale-95 disabled:opacity-50"
                     >
                       {processingId === student.username ? (
                         <Loader2 size={16} className="animate-spin" />
                       ) : (
                         <ArrowDownLeft size={16} />
                       )}
-                      Log Entry
-                    </button>
+                      Log entry
+                    </Button>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
 
-        {/* Sync Info Banner */}
-        <div className="bg-gradient-to-br from-navy-800 to-navy-900 rounded-2xl p-10 text-white flex flex-col md:flex-row items-center justify-between relative overflow-hidden group border border-white/10 shadow-none">
-          <div className="relative z-10 space-y-3 text-center md:text-left">
-            <h3 className="text-3xl font-semibold tracking-tight leading-tight italic">
-              Gate Synchronization System
-            </h3>
-            <p className="text-emerald-100 font-medium text-lg max-w-xl opacity-90 leading-relaxed">
-              Terminal is actively synchronized with the central server. All
-              entry and exit movements are recorded with military-grade
-              precision and security.
-            </p>
-          </div>
-          <div className="relative z-10 mt-8 md:mt-0">
-            <div className="px-8 py-4 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center gap-5 border border-white/20">
-              <span className="font-semibold text-[11px]">
-                System Operational
-              </span>
-              <div className="w-3 h-3 rounded-full bg-emerald-300" />
-            </div>
-          </div>
-          <div className="absolute right-0 top-0 opacity-10 -translate-y-1/4 translate-x-1/4 transition-transform duration-1000">
-            <Shield size={300} />
-          </div>
-        </div>
+        <Alert tone="success" title="Gate sync" icon={Shield}>
+          The terminal is synchronized with the central server. Entry and exit records are saved as they happen.
+        </Alert>
       </div>
     );
   };

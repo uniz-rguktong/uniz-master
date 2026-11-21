@@ -1,6 +1,5 @@
-import { Sparkles, RefreshCw, ExternalLink } from "lucide-react";
-import { cn } from "@/utils/cn";
-import { adminGhostButtonClass } from "@/components/admin/admin-ui";
+import { RefreshCw, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const SECTION_LIVE_URL: Record<string, (page: string | null) => string> = {
   home: () => "https://rguktong.in/",
@@ -21,7 +20,6 @@ type LiveEditorChromeProps = {
 };
 
 export function LiveEditorChrome({
-  sectionLabel,
   pageLabel,
   description,
   onRefresh,
@@ -32,46 +30,35 @@ export function LiveEditorChrome({
   const liveUrl = SECTION_LIVE_URL[sectionId]?.(pageKey);
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)] mb-8">
-      <div className="px-6 py-7 md:px-9 md:py-8 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-[11px] font-semibold text-[#0B2A47]/70 mb-2">
-              RGUKT Ongole · {sectionLabel}
-            </p>
-            <h2 className="text-2xl md:text-[1.75rem] font-bold text-slate-900 tracking-tight">
-              {pageLabel}
-            </h2>
-            <p className="text-sm text-slate-500 mt-2 max-w-xl leading-relaxed">
-              {description}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#0B2A47]/5 text-[#0B2A47] border border-[#0B2A47]/10 text-[11px] font-semibold">
-              <Sparkles size={12} />
-              Live editor
-            </span>
-            <button
-              type="button"
-              onClick={onRefresh}
-              className={cn(adminGhostButtonClass, "h-9")}
-              title="Refresh from server"
-            >
-              <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
-            </button>
-          </div>
+    <div className="mb-8 rounded-lg border border-border bg-surface">
+      <div className="flex flex-col gap-4 px-6 py-6 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head">
+            {pageLabel}
+          </h2>
+          <p className="mt-2 max-w-xl text-body leading-6 text-text-2">{description}</p>
         </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="compact"
+          onClick={onRefresh}
+          title="Refresh from server"
+        >
+          <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+          Refresh
+        </Button>
       </div>
       {liveUrl && (
-        <div className="px-6 py-3 md:px-9 bg-slate-50/80 border-b border-slate-100 flex items-center gap-2 text-[11px] text-slate-500">
-          <ExternalLink size={12} className="text-[#0B2A47]/60 shrink-0" />
-          <span>
+        <div className="flex items-center gap-2 border-t border-border px-6 py-3 text-small text-text-2">
+          <ExternalLink size={14} className="shrink-0 text-text-3" />
+          <span className="min-w-0 truncate">
             Edits publish to{" "}
             <a
               href={liveUrl}
               target="_blank"
               rel="noreferrer"
-              className="font-semibold text-[#0B2A47] hover:underline"
+              className="font-medium text-head hover:underline"
             >
               {liveUrl.replace("https://", "")}
             </a>

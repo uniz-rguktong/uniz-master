@@ -1,40 +1,42 @@
 export default function StudentDashboardSkeleton() {
   return (
-    <div className="space-y-6 pb-10 animate-pulse">
+    <div className="space-y-6 pb-10">
       {/* Hero Skeleton */}
-      <div className="bg-white rounded-xl border border-zinc-100 p-10 flex flex-col items-center">
-        <div className="w-40 h-40 rounded-md bg-zinc-50 border border-zinc-100 mb-6" />
-        <div className="h-10 w-64 bg-zinc-100 rounded-lg mb-4" />
-        <div className="h-4 w-32 bg-zinc-50 rounded-lg mb-10" />
+      <div className="flex items-center gap-4">
+        <div className="h-16 w-16 animate-pulse rounded-md bg-tint" />
+        <div className="space-y-2">
+          <div className="h-8 w-48 animate-pulse rounded-md bg-tint" />
+          <div className="h-5 w-56 animate-pulse rounded-md bg-tint" />
+          <div className="h-6 w-24 animate-pulse rounded-md bg-tint" />
+        </div>
+      </div>
 
-        <div className="flex gap-10">
-          <div className="h-12 w-32 bg-zinc-50 rounded-lg" />
-          <div className="h-12 w-32 bg-zinc-50 rounded-lg" />
-          <div className="h-12 w-32 bg-zinc-50 rounded-lg" />
+      <div className="flex gap-2">
+        <div className="h-11 w-28 animate-pulse rounded-md bg-tint" />
+        <div className="h-11 w-36 animate-pulse rounded-md bg-tint" />
+        <div className="h-11 w-32 animate-pulse rounded-md bg-tint" />
+      </div>
+
+      <div className="rounded-xl border border-border bg-panel p-4 min-[821px]:p-8">
+        <div className="h-8 w-24 animate-pulse rounded-md bg-tint" />
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="space-y-2">
+              <div className="h-5 w-20 animate-pulse rounded-md bg-tint" />
+              <div className="h-6 w-32 animate-pulse rounded-md bg-tint" />
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Graph Skeleton */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="h-[340px] bg-white rounded-xl border border-zinc-100 p-8">
-          <div className="h-6 w-32 bg-zinc-100 rounded mb-4" />
-          <div className="h-full w-full bg-zinc-50 rounded-lg" />
-        </div>
-        <div className="h-[340px] bg-white rounded-xl border border-zinc-100 p-8">
-          <div className="h-6 w-32 bg-zinc-100 rounded mb-4" />
-          <div className="h-full w-full bg-zinc-50 rounded-lg" />
-        </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="h-[340px] animate-pulse rounded-md bg-tint" />
+        <div className="h-[340px] animate-pulse rounded-md bg-tint" />
       </div>
 
       {/* Stats Skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[1, 2, 3, 4].map((i) => (
-          <div
-            key={i}
-            className="h-28 bg-white rounded-xl border border-zinc-100"
-          />
-        ))}
-      </div>
+      <div className="h-28 animate-pulse rounded-md bg-tint" />
     </div>
   );
 }

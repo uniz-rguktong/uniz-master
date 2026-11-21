@@ -20,12 +20,13 @@ export function Layout({ children }: LayoutProps) {
   const shouldHideNavbar =
     location.pathname.startsWith("/student") ||
     location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/faculty") ||
     ["/studyspace", "/campushub"].includes(location.pathname);
 
   if (shouldHideNavbar) {
     return (
       <div
-        className={`min-h-screen bg-white overflow-x-hidden${location.pathname.includes("/admin") ? " min-w-[1280px]" : ""}`}
+        className="min-h-screen overflow-x-hidden bg-bg text-text"
       >
         {children}
       </div>
@@ -36,7 +37,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div
-      className={`flex flex-col ${isHomePage ? "min-h-screen bg-white" : "min-h-screen bg-white portal-page-shell pt-14"} text-navy-900 selection:bg-navy-100 selection:text-navy-900`}
+      className={`flex flex-col ${isHomePage ? "min-h-screen bg-bg" : "min-h-screen bg-bg pt-16"} text-text`}
     >
       <Suspense fallback={<LoadingAnim />}>
         <Navbar />
@@ -52,11 +53,6 @@ export function Layout({ children }: LayoutProps) {
 
 const LoadingAnim = () => {
   return (
-    <div className="flex h-screen items-center justify-center bg-white">
-      <div className="relative flex items-center justify-center">
-        <div className="h-12 w-12 rounded-full border-4 border-[#D4E8F5]" />
-        <div className="absolute h-12 w-12 animate-spin rounded-full border-4 border-[#0B2A47] border-t-transparent" />
-      </div>
-    </div>
+    <div className="h-16 border-b border-border bg-navy-900" aria-hidden />
   );
 };
