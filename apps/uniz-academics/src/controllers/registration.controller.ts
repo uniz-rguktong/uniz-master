@@ -31,6 +31,7 @@ import {
 } from "../services/semester-registration-import.service";
 import { validateRegistrationSubjectIds } from "../services/registration-validation.service";
 import { uploadRejected } from "../utils/excel-strict-validation.util";
+import { canListRegistrations } from "../utils/registration-list-access";
 
 /**
  * @desc Initialize a new semester with branch allocations
@@ -2492,6 +2493,15 @@ export const getRegistrations = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+  const role = resolveEffectiveRole(user);
+  // Students use /academics/student/current for their own subjects.
+  if (!canListRegistrations(role)) {
+    return res.status(403).json({ error: "Not authorized" });
+  }
+
   const { branch, semesterId, batch } = req.query;
 
   try {
@@ -2518,8 +2528,16 @@ export const getRegistrations = async (
     // department/batch are stored canonically uppercase (AIML/CE/CSE…, O21…),
     // so exact match hits the index instead of the seq scan that
     // mode:"insensitive" forced.
-    const branchKey =
+    let branchKey =
       branch && branch !== "all" ? (branch as string).toUpperCase() : undefined;
+    if (role === "hod") {
+      branchKey = resolveHodBranch(user);
+      if (!branchKey) {
+        return res
+          .status(400)
+          .json({ error: "Could not determine HOD branch" });
+      }
+    }
     if (branchKey) {
       where.subject = { department: branchKey };
     }
@@ -2533,7 +2551,7 @@ export const getRegistrations = async (
     // This admin list scans up to ~20k rows and is re-fetched on every filter
     // change / poll. A short Redis cache collapses the repeats; registrations
     // are eventually-consistent within 20s (fine for an admin overview).
-    const cacheKey = `academics:getRegistrations:v2:${resolvedSemesterId || "none"}:${branchKey || "all"}:${batchKey || "all"}`;
+    const cacheKey = `academics:getRegistrations:v3:${role}:${resolvedSemesterId || "none"}:${branchKey || "all"}:${batchKey || "all"}`;
     const cached = await redis.get(cacheKey).catch(() => null);
     if (cached) return res.json(JSON.parse(cached));
 

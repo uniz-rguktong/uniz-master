@@ -434,7 +434,8 @@ function CaptchaStatus({
     );
   }
 
-  if (hasToken || status === "ready") {
+  // "ready" without a token is a spent check (widget reset, callback not back yet).
+  if (hasToken) {
     return <Alert tone="success">Security check complete</Alert>;
   }
 
@@ -463,6 +464,24 @@ export default function Signin({ type }: SigninProps) {
     captchaTokenRef.current = token;
     setCaptchaToken(token);
   }, []);
+
+  const resetCaptchaAfterFailure = useCallback(() => {
+    // Clear before reset(). reset() can invoke onSuccess in the same turn
+    // (test keys, cached passes). Nulling the token afterwards drops that
+    // fresh token and the button stays on "Waiting for security check…".
+    syncCaptchaToken(null);
+    setCaptchaStatus("loading");
+    const widget = turnstileRef.current;
+    if (!widget) return;
+    if (typeof widget.reset === "function") {
+      widget.reset();
+      return;
+    }
+    // Older handles only expose remove + render. A fresh render is what
+    // actually mints the next token and re-enables the submit button.
+    widget.remove?.();
+    widget.render?.();
+  }, [syncCaptchaToken]);
   const [authState] = useRecoilState(is_authenticated);
   const setAdmin = useSetRecoilState<any>(adminUsername);
   const setAuth = useSetRecoilState(is_authenticated);
@@ -558,8 +577,7 @@ export default function Signin({ type }: SigninProps) {
       });
 
       if (!data) {
-        turnstileRef.current?.reset?.();
-        syncCaptchaToken(null);
+        resetCaptchaAfterFailure();
         return;
       }
 
@@ -655,8 +673,7 @@ export default function Signin({ type }: SigninProps) {
       }
     } catch (error: any) {
       console.error("Signin failed:", error);
-      turnstileRef.current?.reset();
-      syncCaptchaToken(null);
+      resetCaptchaAfterFailure();
     } finally {
       setIsLoading(false);
       setWaitingForCaptcha(false);
@@ -668,8 +685,8 @@ export default function Signin({ type }: SigninProps) {
     navigate,
     setAuth,
     setAdmin,
-    syncCaptchaToken,
     postLoginPath,
+    resetCaptchaAfterFailure,
   ]);
 
   const requestOtp = useCallback(async () => {
@@ -710,7 +727,7 @@ export default function Signin({ type }: SigninProps) {
         }),
       });
 
-      if (data && data.success) {
+      if (data?.success) {
         const channel =
           data.deliveryMethod === "push"
             ? "your registered device"
@@ -723,12 +740,15 @@ export default function Signin({ type }: SigninProps) {
         syncCaptchaToken(null);
         setCaptchaStatus("loading");
         setStep("verifyOtp");
+      } else {
+        // Single-use token is spent even when the request failed.
+        resetCaptchaAfterFailure();
       }
     } finally {
       setIsLoading(false);
       setWaitingForCaptcha(false);
     }
-  }, [username, type, syncCaptchaToken]);
+  }, [username, type, syncCaptchaToken, resetCaptchaAfterFailure]);
 
   const requestEmailOtp = useCallback(async () => {
     const idError = validateLoginIdentifier(username, type);
@@ -752,17 +772,19 @@ export default function Signin({ type }: SigninProps) {
         }),
       });
 
-      if (data && data.success) {
+      if (data?.success) {
         toast.success("Check your email for the security code.", {
           title: "Code sent",
           autoClose: 6000,
         });
+      } else {
+        resetCaptchaAfterFailure();
       }
     } finally {
       setIsLoading(false);
       setWaitingForCaptcha(false);
     }
-  }, [username, type]);
+  }, [username, type, resetCaptchaAfterFailure]);
 
   const handleVerifyOtp = useCallback(async () => {
     if (otp.trim().length !== 6) {

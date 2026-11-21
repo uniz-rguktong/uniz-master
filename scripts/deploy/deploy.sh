@@ -94,12 +94,8 @@ verify_deployment() {
       deps+=("$dep")
     done
     # Multi-service deploy on a small VPS: gate only the critical path.
-    # Secret-driven restarts stay in the set so a DB-host correction is verified.
     if [ "${#deps[@]}" -gt 3 ]; then
       local critical=(uniz-gateway-api uniz-auth-service uniz-user-service)
-      if [ "${UNIZ_SECRETS_CHANGED:-false}" = "true" ]; then
-        critical+=(uniz-academics-service uniz-notification-service uniz-outpass-service)
-      fi
       local filtered=() d c
       for c in "${critical[@]}"; do
         for d in "${deps[@]}"; do
@@ -107,11 +103,7 @@ verify_deployment() {
         done
       done
       deps=("${filtered[@]}")
-      if [ "${UNIZ_SECRETS_CHANGED:-false}" = "true" ]; then
-        echo "[Verify] Checking critical rollouts and DB-secret restarts: ${deps[*]}"
-      else
-        echo "[Verify] Full deploy — checking critical rollouts only: ${deps[*]}"
-      fi
+      echo "[Verify] Full deploy — checking critical rollouts only: ${deps[*]}"
     else
       echo "[Verify] Checking rollouts for updated workloads: ${deps[*]}"
     fi
@@ -347,15 +339,155 @@ PY
   rm -f "$raw" "$patched"
 }
 
+# Deployments that read Postgres from uniz-secrets. cron is included when the
+# Deployment object still exists (it may be scaled to 0).
+UNIZ_DB_DEPLOYMENTS=(
+  uniz-auth-service
+  uniz-user-service
+  uniz-academics-service
+  uniz-notification-service
+  uniz-outpass-service
+  uniz-gateway-api
+  uniz-cron-service
+  uniz-dbadmin-service
+)
+
+# Redact userinfo in any accidental database URL. Never print env or Secret data.
+scrub_deploy_output() {
+  sed -E 's#postgres(ql)?://[^@]*@#postgresql://***@#g'
+}
+
+# Hash is taken after the vault re-sync. Pods keep env from the template they
+# started with, so compare that hash to uniz.rguktong.in/secrets-hash and patch
+# when it is missing or different. The patch itself rolls the Deployment.
+roll_db_deployments_for_secret() {
+  local hash dep current
+  hash="$(uniz_secrets_data_hash)"
+  if [ -z "$hash" ]; then
+    echo "[Vault] uniz-secrets hash unavailable — skipping annotation rollout"
+    return 0
+  fi
+  echo "[Vault] Aligning DB deployments to uniz-secrets hash ${hash:0:12}"
+  for dep in "${UNIZ_DB_DEPLOYMENTS[@]}"; do
+    if ! kubectl get deployment "$dep" >/dev/null 2>&1; then
+      echo "[Vault] $dep absent — skip"
+      continue
+    fi
+    current=$(kubectl get deployment "$dep" -o go-template='{{if .spec.template.metadata.annotations}}{{index .spec.template.metadata.annotations "uniz.rguktong.in/secrets-hash"}}{{end}}' 2>/dev/null | tr -d '[:space:]' || true)
+    if [ "$current" = "$hash" ]; then
+      echo "[Vault] $dep secrets-hash matches"
+      continue
+    fi
+    echo "[Vault] $dep secrets-hash missing or stale — patching annotation"
+    kubectl patch deployment "$dep" --type=merge \
+      -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"uniz.rguktong.in/secrets-hash\":\"${hash}\"}}}}}" \
+      || true
+  done
+}
+
+verify_db_secret_rollouts() {
+  local dep timeout="${ROLLOUT_TIMEOUT:-300s}" failed=0
+  echo "[Verify] Waiting for DB-reading rollouts..."
+  for dep in "${UNIZ_DB_DEPLOYMENTS[@]}"; do
+    if ! kubectl get deployment "$dep" >/dev/null 2>&1; then
+      echo "[Verify] $dep absent — skip"
+      continue
+    fi
+    if kubectl rollout status "deployment/$dep" --timeout="$timeout"; then
+      echo "[Verify] $dep rolled out"
+    else
+      echo "[Verify] rollout failed for $dep"
+      failed=1
+    fi
+  done
+  return "$failed"
+}
+
+# Connectivity evidence after rollouts. Stdout is scrubbed; do not print URLs or env.
+diag_db_connectivity() {
+  local dep hp host port hba found pod_lines log_lines listen hba_lines
+  echo "[diag] DB connectivity"
+  echo "[diag] pods"
+  pod_lines=$(kubectl get pods -o wide 2>&1 \
+    | grep -E 'NAME|uniz-auth-service|uniz-user-service|uniz-academics-service|uniz-notification-service|uniz-outpass-service|uniz-gateway-api|uniz-cron-service' \
+    || true)
+  printf '%s\n' "$pod_lines" | scrub_deploy_output || true
+
+  for dep in uniz-auth-service uniz-user-service; do
+    echo "[diag] logs $dep (last 40 lines, filtered)"
+    log_lines=$(kubectl logs "deploy/$dep" --tail=40 2>&1 \
+      | grep -iE 'prisma|database|ECONNREFUSED|P1001|P1000|P1010|error' || true)
+    if [ -n "$log_lines" ]; then
+      printf '%s\n' "$log_lines" | scrub_deploy_output || true
+    else
+      echo "[diag] no matching log lines for $dep"
+    fi
+  done
+
+  echo "[diag] AUTH_DATABASE_URL host"
+  hp=$(
+    kubectl get secret uniz-secrets -n "${NAMESPACE:-default}" \
+      -o go-template='{{index .data "AUTH_DATABASE_URL"}}' 2>/dev/null \
+      | base64 -d 2>/dev/null \
+      | python3 -c '
+import sys
+from urllib.parse import urlparse
+raw = sys.stdin.read().strip()
+if not raw:
+    sys.exit(0)
+u = urlparse(raw)
+if not u.hostname:
+    sys.exit(0)
+print(f"{u.hostname}:{u.port or 5432}")
+' || true
+  )
+  hp=$(printf '%s' "$hp" | tr -d '[:space:]' | scrub_deploy_output)
+  echo "[diag] AUTH_DATABASE_URL ${hp:-unknown}"
+
+  host="${hp%%:*}"
+  port="${hp##*:}"
+  if [[ "$host" =~ ^[A-Za-z0-9._-]+$ ]] && [[ "$port" =~ ^[0-9]+$ ]]; then
+    echo "[diag] tcp probe ${host}:${port} from uniz-auth-service"
+    kubectl exec deploy/uniz-auth-service -- node -e \
+      "require('net').connect(${port}, '${host}').on('connect',()=>{console.log('tcp ok');process.exit(0)}).on('error',e=>{console.log('tcp fail',e.code);process.exit(0)})" \
+      2>&1 | scrub_deploy_output || true
+  else
+    echo "[diag] tcp probe skipped — host:port unavailable"
+  fi
+
+  echo "[diag] listeners :5432"
+  listen=$(ss -ltnp 2>/dev/null | grep 5432 | sed -E 's/users:.*//' || true)
+  if [ -n "$listen" ]; then
+    printf '%s\n' "$listen" | scrub_deploy_output || true
+  else
+    echo "[diag] ss unavailable or nothing listening on 5432"
+  fi
+
+  echo "[diag] pg_hba"
+  found=0
+  for hba in /etc/postgresql/*/main/pg_hba.conf /var/lib/pgsql/*/data/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf; do
+    if [ -r "$hba" ]; then
+      found=1
+      echo "[diag] $hba"
+      hba_lines=$(grep -vE '^[[:space:]]*#' "$hba" | grep -E '10\.42|0\.0\.0\.0' || true)
+      if [ -n "$hba_lines" ]; then
+        printf '%s\n' "$hba_lines" | scrub_deploy_output || true
+      else
+        echo "[diag] no non-comment 10.42 or 0.0.0.0 line in $hba"
+      fi
+    fi
+  done
+  if [ "$found" -eq 0 ]; then
+    echo "[diag] pg_hba not readable — skipped"
+  fi
+  return 0
+}
+
 # 16. Deploy Logic
 deploy_logic() {
   set -e
   echo "[CI/CD] Deployment Verified at $(date)"
   export DOCKER_BUILDKIT=1
-
-  # Before any vault sync or template apply. Compared again before rollout
-  # verify so a corrected Postgres host restarts pods even when no image changed.
-  UNIZ_SECRETS_HASH_BEFORE="$(uniz_secrets_data_hash)"
 
   CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
   echo "[Git] Branch: $CURRENT_BRANCH | Commit: $(git log -1 --format='%h - %s')"
@@ -659,47 +791,25 @@ deploy_logic() {
     VERIFY_DEPLOYMENTS+=("$dep")
   done
 
-  # Image-only deploys used to skip verify. A secret-data change still has to
-  # roll DB-reading pods onto the corrected host or production stays on 127.0.0.1.
-  UNIZ_SECRETS_CHANGED=false
-  SECRETS_HASH_AFTER="$(uniz_secrets_data_hash)"
-  if [ -n "${UNIZ_SECRETS_HASH_BEFORE:-}" ] && [ -n "${SECRETS_HASH_AFTER:-}" ] \
-    && [ "$UNIZ_SECRETS_HASH_BEFORE" != "$SECRETS_HASH_AFTER" ]; then
-    UNIZ_SECRETS_CHANGED=true
-    echo "[Vault] uniz-secrets data changed — restarting DB-reading deployments"
-    local dep existing skip
-    for dep in \
-      uniz-auth-service \
-      uniz-user-service \
-      uniz-academics-service \
-      uniz-notification-service \
-      uniz-outpass-service \
-      uniz-gateway-api \
-      uniz-dbadmin-service
-    do
-      kubectl rollout restart "deployment/$dep" || true
-      skip=false
-      for existing in "${VERIFY_DEPLOYMENTS[@]}"; do
-        if [ "$existing" = "$dep" ]; then
-          skip=true
-          break
-        fi
-      done
-      if [ "$skip" = false ]; then
-        VERIFY_DEPLOYMENTS+=("$dep")
-      fi
-    done
+  # Secret handling is finished (vault re-sync is the last writer). Roll any
+  # DB-reading pod whose template is not stamped with that secret hash, then
+  # always wait. A missing annotation (this deploy) restarts them once.
+  roll_db_deployments_for_secret
+  db_rollout_rc=0
+  verify_db_secret_rollouts || db_rollout_rc=$?
+  diag_db_connectivity || true
+  if [ "$db_rollout_rc" -ne 0 ]; then
+    echo "[Verify] DB-reading rollout failed — diagnostics above; not continuing to smoke."
+    exit 1
   fi
 
   if [ "$DEPLOY_CONTEXT" = "GITHUB_ACTIONS" ]; then
-    if [ "$REBUILT_COUNT" -eq 0 ] && [ "$UNIZ_SECRETS_CHANGED" != "true" ]; then
-      echo "[Verify] No images updated this deploy — skipping rollout verify."
+    if [ "$REBUILT_COUNT" -eq 0 ]; then
+      echo "[Verify] No images updated this deploy — skipping image rollout verify."
     elif ! verify_deployment; then
       echo "[Warn] Deploy verify failed — leaving rolled-out images in place (no GHCR rollback; old SHA tags may not exist in registry)."
       exit 1
     fi
-  elif [ "$UNIZ_SECRETS_CHANGED" = "true" ]; then
-    verify_deployment
   fi
 
   if [ "$USE_GHCR" != "true" ]; then
@@ -728,8 +838,8 @@ deploy_logic() {
     bash "$(dirname "$0")/configure-cloudflare-portal-cdn.sh" || true
   fi
 
-  if [ -f "$(dirname "$0")/vps-storage-cleanup.sh" ]; then
-    bash "$(dirname "$0")/vps-storage-cleanup.sh" || true
+  if [ -f "$(dirname "$0")/../ops/vps-storage-cleanup.sh" ]; then
+    bash "$(dirname "$0")/../ops/vps-storage-cleanup.sh" || true
   fi
 
   if [ "$USE_GHCR" == "true" ] && [ -n "${PREV_SHA:-}" ] && [ -n "${NEW_HEAD:-}" ]; then

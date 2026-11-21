@@ -8,6 +8,7 @@ import { redis } from "../utils/redis.util";
 import { randomUUID } from "crypto";
 import { resolveHodBranch } from "../utils/hod.util";
 import { resolveStudentBranch } from "@uniz/shared";
+import { canReadStaffBatches } from "../utils/staff-access";
 import { buildStudentCohortWhere } from "../utils/student-cohort.util";
 import {
   bootstrapCacheKey,
@@ -185,7 +186,17 @@ const mapAdminProfile = (profile: any) => {
   };
 };
 
-export const getAvailableBatches = async (req: Request, res: Response) => {
+export const getAvailableBatches = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
+  if (!canReadStaffBatches(user)) {
+    return res.status(403).json({ success: false, message: "Access denied" });
+  }
   try {
     // Collect first 3 chars of all students and unique them.
     const students = await prisma.studentProfile.findMany({
