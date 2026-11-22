@@ -4,7 +4,7 @@ description: "Same-day outing API. Disabled in production unless ENABLE_OUTPASS_
 ---
 
 ::: warning
-Production gateway returns **503** for outing routes while outpass is parked. See [Revive outpass](/howto/revive-outpass).
+**Parked / not enabled.** Outing routes are not a live API. The gateway returns **503** `OUTPASS_OUTING_DISABLED` while `ENABLE_OUTPASS_OUTING` is not `true`. Keep this page for a later revival — [Revive outpass](/howto/revive-outpass).
 :::
 
 An outing is a short-duration, same-day exit request. Unlike an [outpass](/api/requests/outpass) — which covers multi-day absences and requires a full approval chain — an outing covers a brief window on a single day with a simpler workflow.

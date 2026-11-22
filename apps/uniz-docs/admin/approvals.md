@@ -1,9 +1,13 @@
 ---
 title: "Approvals"
-description: "How caretakers, wardens, SWO, and directors review and act on student outpass and outing requests in uniZ."
+description: "Parked outpass and outing approval chain. Not enabled in production. Grievances are a separate live queue."
 ---
 
-Student outpass requests move through a fixed multi-level approval chain before the student is cleared to leave campus. Each admin role is responsible for a specific level in this chain.
+::: warning
+**Parked / not enabled in production.** Outpass and outing approval is not a current staff workflow. Non-grievance `/api/v1/requests/*` returns `503` with code `OUTPASS_OUTING_DISABLED` while `ENABLE_OUTPASS_OUTING` is not `true`. The steps below are the design to revive later. Grievances stay live on the user service: [Grievances](/api/requests/grievances).
+:::
+
+The parked outpass design uses a fixed multi-level approval chain before a student would be cleared to leave campus. Each admin role would own one level. Do not brief caretakers or wardens as if this queue is open today.
 
 ## Approval chain
 

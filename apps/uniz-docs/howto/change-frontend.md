@@ -12,13 +12,15 @@ description: "Edit portal or landing SPAs, local preview, production Pages deplo
 | Public home | `src/pages/home.tsx` — Elaya Layout A (Manrope, split hero + product preview, scrollable landing) |
 | Navbar | `src/components/Navbar.tsx` (floating on `/`) |
 | API client | `src/api/` |
-| Feature flags | `src/lib/featureFlags.ts` (or equivalent) |
+| Feature flags | `src/config/featureFlags.ts` |
+| Theme | Light-only. `src/lib/forceLightTheme.ts` drops a stored `dark` or `system` value. Navy `#0B2A47` is a light-UI token in `src/index.css`, `tailwind.config.js`, and `src/lib/portal-ui.ts`. |
 | SPA redirects | `public/_redirects` |
-| Brand palette | Dark navy `#0B2A47` + white + black — tokens in `src/index.css`, `tailwind.config.js`, `src/lib/portal-ui.ts` / `landing-ui.ts`. Wordmark uses Pattaya where already applied. |
 
 Prefer CSS tokens and established portal-ui patterns for most screens. The public home was intentionally redesigned (Elaya Layout A); do not revert it to the old single-viewport centered layout when changing colors or copy.
 
-Campus trainer UI inventory (screenshots + actions by role) lives in the repo at `docs/guides/UniZ-UI-Guidance.docx` — not duplicated on this Mintlify site.
+Campus trainer UI inventory (screenshots + actions by role) lives in the repo at `docs/guides/UniZ-UI-Guidance.docx` — not duplicated on this docs site.
+
+Layout sweep: [Responsive audit](/howto/responsive-audit). It does not replace a visual pass.
 
 ### Local
 

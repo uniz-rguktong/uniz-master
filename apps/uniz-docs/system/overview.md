@@ -27,6 +27,7 @@ flowchart TB
     User[uniz-user-service]
     Acad[uniz-academics-service]
     Notif[uniz-notification-service]
+    Db[uniz-dbadmin-service]
     Docs[uniz-docs-service]
     LandAPI["landing-backend\nFastAPI :8000"]
     PG[(Postgres host)]
@@ -44,12 +45,14 @@ flowchart TB
   GW --> User
   GW --> Acad
   GW --> Notif
+  GW --> Db
   GW --> Docs
   GW --> LandAPI
   Auth --> PG
   User --> PG
   Acad --> PG
   Notif --> PG
+  Db --> PG
   Acad --> Redis
   GW --> Redis
   Notif --> Redis
@@ -66,7 +69,7 @@ flowchart TB
 | Gate unused product | Outpass/outing off by flags; outpass Deployment at 0 |
 | Burst with HPA, not always-on | Auth/user/academics/gateway/notifications scale on CPU/memory |
 | DB not world-reachable | Postgres / landing DB / landing API bind loopback + cni0 only |
-| Portal brand | Navy `#0B2A47` + white + black across `uniz.rguktong.in`; public home is a brand-first conversion landing (not the college CMS site at `rguktong.in`) |
+| Portal brand | Light-only. Navy `#0B2A47` is a token in the light UI (`forceLightTheme`). There is no dark theme. Public home is the college site at `rguktong.in`, edited by the webadmin website editor. |
 
 ## Monorepo layout
 
@@ -80,8 +83,9 @@ flowchart TB
 | `apps/uniz-user` | Profiles, CMS notices, files, grievance |
 | `apps/uniz-academics` | Grades, attendance, registration |
 | `apps/uniz-notifications` | Push, inbox, mail |
-| `apps/uniz-docs` | This Mintlify site |
-| `apps/uniz-outpass` | Outpass/outing (parked in prod) |
+| `apps/uniz-docs` | This VitePress site |
+| `apps/uniz-dbadmin` | Webadmin database browser (live, not public) |
+| `apps/uniz-outpass` | Outpass/outing (parked, not a live box) |
 | `packages/uniz-shared` | Shared TypeScript types/utils |
 | `infra/kubernetes` | K3s manifests (source of truth for replicas) |
 | `scripts/deploy`, `scripts/ops` | Deploy + runbooks |

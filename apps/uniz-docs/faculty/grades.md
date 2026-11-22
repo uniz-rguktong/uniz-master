@@ -3,6 +3,10 @@ title: "Grades"
 description: "Upload, manage, and publish student grades for your subjects on uniZ."
 ---
 
+::: info
+Individual `firstname.lastname` faculty logins are **not issued yet**. Faculty who already have a login use admin sign-in (`POST /auth/login/admin`). If `mustChangePassword` is set, they complete the first-login email code on **Set a new password** before the dashboard. See [Login](/api/auth/login).
+:::
+
 Use this guide to upload grades for your assigned subjects, correct individual records, and download grade reports. Grade results are visible to students only after the Director triggers a publish.
 
 ::: info

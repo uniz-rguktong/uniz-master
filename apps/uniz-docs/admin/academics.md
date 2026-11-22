@@ -3,7 +3,7 @@ title: "Academic Management"
 description: "How deans, directors, and webadmins manage grades, semesters, student records, and banners in uniZ."
 ---
 
-The academic management section covers everything from viewing batch grades and running bulk updates to uploading new student cohorts and managing homepage banners. These features are available to the **dean**, **director**, and **webadmin** roles.
+The academic management section covers batch grades, bulk updates, student cohorts, and homepage banners. Dean, director, and the canonical webadmin account use these tools. The webadmin role is only username `webadmin` with mailbox `webadmin@rguktong.ac.in`. Any other account that still stores the role string is treated as faculty. See [Webadmin workspace](/admin/webadmin).
 
 ## Viewing batch grades
 
@@ -264,7 +264,7 @@ Content-Type: application/json
 ```
 
 ::: info
-Provisioning a new student automatically generates a default password: `{username.toLowerCase()}@rguktong`. The student can change this upon their first login.
+A new student is issued a campus password. At the next sign-in they set a new password after an email code. Previous sessions for that reset no longer work. This page does not record the issued password.
 :::
 
 ### Modifying an existing record
@@ -292,8 +292,7 @@ Content-Type: application/json
 Webadmins create and manage homepage banners visible to all students in the uniZ portal. Banners support a title, description text, and an image.
 
 ::: info
-Only the **webadmin** role can create and publish banners. The director and
-  dean can view banners but cannot modify them.
+Home banners can be created by the canonical webadmin account and by dean or director when their CMS role allows it (`WEBADMIN`, `DEAN`, `DIRECTOR` in `apps/uniz-user/src/controllers/cms.controller.ts`). The Roles screen can turn **Manage home banners** on or off for dean and director. It cannot edit the webadmin set. See [Roles screen](/admin/roles-directory).
 :::
 
 ### Creating a banner

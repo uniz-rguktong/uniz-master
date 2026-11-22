@@ -1,13 +1,16 @@
 ---
 title: "Login"
-description: "Authenticate students and administrators to obtain a JWT token for accessing protected endpoints."
+description: "Authenticate students and staff. Production requires Turnstile. The response includes mustChangePassword."
 ---
 
-All login endpoints are **unauthenticated**. On success, you receive a `token` that must be sent as `Authorization: Bearer <token>` on every subsequent request.
+Login endpoints are **unauthenticated**. On success you receive a `token` for `Authorization: Bearer <token>`. Students also receive `student_token`. Every other role receives `admin_token`. Both copies are the same JWT.
+
+The JWT carries `tokenVersion`. If that number does not match `AuthCredential.tokenVersion`, later calls return `401 AUTH_TOKEN_REVOKED` ("Your session has ended. Please sign in again.").
+
+If `mustChangePassword` is true, the portal opens **Set a new password**. Other APIs return `403 PASSWORD_CHANGE_REQUIRED` ("Set a new password before continuing.") until `POST /auth/password/change` succeeds. Exempt POSTs: `/password/change`, `/password/change/otp`, and `/logout`. See [Password](/api/auth/password).
 
 ::: warning
-Login endpoints are rate-limited per IP. Repeated failed attempts will result
-  in a `429 Too Many Requests` response.
+Production login checks Cloudflare Turnstile **before** the password. Send `"captchaToken": "<turnstile-token>"`. A curl without a valid token fails with `400 AUTH_CAPTCHA_FAILED`, even when the password is also wrong. Login is rate-limited: 50 attempts per 15 minutes per account (`429 RATE_LIMIT_EXCEEDED`).
 :::
 
 ---
@@ -16,28 +19,25 @@ Login endpoints are rate-limited per IP. Repeated failed attempts will result
 
 `POST /auth/login`
 
-Authenticates any user — student or admin — and returns a JWT with the caller's role. Use the role-specific endpoints (`/auth/login/student`, `/auth/login/admin`) when you need to restrict which account types are accepted.
+Accepts a student or a staff account. Prefer `/auth/login/student` or `/auth/login/admin` when the client must reject the other kind. Those two routes also accept the campus mailbox and a stored `realEmail` as the identifier (`allowEmailLogin`).
 
 **Auth required:** No
 
 ### Request body
 
-  The student roll number (e.g. `O210008`) or admin username (e.g. `director`).
-
-  The account password.
+- `username` — roll number (for example `O210008`) or staff username (for example `director` or `webadmin`).
+- `password` — the account password. Write `"<password>"` in examples.
+- `captchaToken` — Turnstile token. Required in production.
 
 ### Response
 
-- `success` — `true` on successful authentication.
-
-- `token` — Signed JWT. Pass this value in the `Authorization: Bearer` header for all
-  authenticated requests.
-
-- `role` — The role assigned to this account. Possible values: `student`, `director`,
-  `dean`, `warden_male`, `warden_female`, `caretaker_male`, `caretaker_female`,
-  `security`, `webadmin`.
-
-- `username` — The username that was authenticated.
+- `success` — `true` on success.
+- `token` — Signed JWT (7 days). Includes `tokenVersion`.
+- `role` — Effective role from `accessRole()`. A non-canonical `webadmin` role is returned as `faculty`.
+- `username` — Authenticated username, uppercased.
+- `mustChangePassword` — `true` when the user must set a new password before continuing.
+- `student_token` — Present when the stored role is `student`. Same value as `token`.
+- `admin_token` — Present for every non-student role. Same value as `token`.
 
 ### Example
 
@@ -47,7 +47,8 @@ curl --request POST \
   --header 'Content-Type: application/json' \
   --data '{
     "username": "O210008",
-    "password": "password123"
+    "password": "<password>",
+    "captchaToken": "<turnstile-token>"
   }'
 ```
 
@@ -58,28 +59,33 @@ curl --request POST \
   "success": true,
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "role": "student",
-  "username": "O210008"
+  "username": "O210008",
+  "mustChangePassword": true,
+  "student_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
-**200 OK — admin**
+**200 OK — staff**
 
 ```json
 {
   "success": true,
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "role": "director",
-  "username": "director"
+  "username": "DIRECTOR",
+  "mustChangePassword": false,
+  "admin_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
 ### Error responses
 
-| Status                  | Meaning                          |
-| ----------------------- | -------------------------------- |
-| `401 Unauthorized`      | Incorrect password.              |
-| `403 Forbidden`         | Account is suspended.            |
-| `429 Too Many Requests` | Rate limit exceeded for this IP. |
+| Status | Code | Meaning |
+|--------|------|---------|
+| `400` | `AUTH_CAPTCHA_FAILED` | Turnstile missing or failed. Checked first. |
+| `401` | `AUTH_INVALID_CREDENTIALS` | Unknown account or wrong password. |
+| `403` | `AUTH_SUSPENDED` | Account is disabled. |
+| `429` | `RATE_LIMIT_EXCEEDED` | 50 attempts in 15 minutes. |
 
 ---
 
@@ -87,15 +93,9 @@ curl --request POST \
 
 `POST /auth/login/student`
 
-Identical to general login but rejects credentials that do not belong to a `student` role. Use this endpoint in student-facing clients to prevent admins from signing in through the student app.
+Same handler as general login, with email identifiers allowed. Use it from the student portal.
 
 **Auth required:** No
-
-### Request body
-
-  Student roll number (e.g. `O210008`).
-
-  The student's password.
 
 ### Example
 
@@ -105,28 +105,21 @@ curl --request POST \
   --header 'Content-Type: application/json' \
   --data '{
     "username": "O210008",
-    "password": "password123"
+    "password": "<password>",
+    "captchaToken": "<turnstile-token>"
   }'
 ```
 
-**200 OK**
+The success body matches the student example above (`student_token`, `mustChangePassword`).
 
-```json
-{
-  "success": true,
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "role": "student",
-  "username": "O210008"
-}
-```
+| Status | Meaning |
+|--------|---------|
+| `400 AUTH_CAPTCHA_FAILED` | Captcha failed. |
+| `401` | Incorrect password or unknown account. |
+| `403 AUTH_SUSPENDED` | Account disabled. |
+| `429` | Rate limit exceeded. |
 
-### Error responses
-
-| Status                  | Meaning                                                             |
-| ----------------------- | ------------------------------------------------------------------- |
-| `401 Unauthorized`      | Incorrect password.                                                 |
-| `403 Forbidden`         | Account is suspended, or the account belongs to a non-student role. |
-| `429 Too Many Requests` | Rate limit exceeded for this IP.                                    |
+A non-student password can still authenticate on this route; the client decides where to send the role. The portal student sign-in is the supported caller.
 
 ---
 
@@ -134,16 +127,11 @@ curl --request POST \
 
 `POST /auth/login/admin`
 
-Authenticates administrative accounts only. Rejects student credentials.
+Staff and faculty sign-in. Same captcha and `mustChangePassword` behaviour. Non-students receive `admin_token`.
+
+Shared usernames that still exist include `director`, `dean`, `swo`, and `webadmin`. Individual `firstname.lastname` faculty logins are **not issued yet**. Do not assume every staff username looks like `dean_cse` or `security_admin`.
 
 **Auth required:** No
-
-### Request body
-
-  Admin username (e.g. `director`, `dean_cse`, `warden_male`,
-  `caretaker_female`, `security_admin`).
-
-  The admin's password.
 
 ### Example
 
@@ -153,28 +141,19 @@ curl --request POST \
   --header 'Content-Type: application/json' \
   --data '{
     "username": "director",
-    "password": "director@uniz"
+    "password": "<password>",
+    "captchaToken": "<turnstile-token>"
   }'
-```
-
-**200 OK**
-
-```json
-{
-  "success": true,
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "role": "director",
-  "username": "director"
-}
 ```
 
 ### Error responses
 
-| Status                  | Meaning                                                         |
-| ----------------------- | --------------------------------------------------------------- |
-| `401 Unauthorized`      | Incorrect password.                                             |
-| `403 Forbidden`         | Account is suspended, or the account belongs to a student role. |
-| `429 Too Many Requests` | Rate limit exceeded for this IP.                                |
+| Status | Meaning |
+|--------|---------|
+| `400 AUTH_CAPTCHA_FAILED` | Captcha failed before the password check. |
+| `401` | Incorrect password or unknown account. |
+| `403 AUTH_SUSPENDED` | Account disabled. |
+| `429` | Rate limit exceeded. |
 
 ---
 
@@ -182,22 +161,10 @@ curl --request POST \
 
 `POST /auth/logout`
 
-Clears the server-side session. The client should also discard the stored JWT.
-
-**Auth required:** No
-
-### Example
+Returns `{ "success": true }`. The client should drop the JWT. Logout stays allowed while `mustChangePassword` is set.
 
 ```bash
 curl --request POST \
   --url https://api-uniz.rguktong.in/api/v1/auth/logout \
   --header 'Authorization: Bearer <token>'
-```
-
-**200 OK**
-
-```json
-{
-  "success": true
-}
 ```

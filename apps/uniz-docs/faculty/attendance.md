@@ -3,6 +3,10 @@ title: "Attendance"
 description: "Upload and manage student attendance records for your subjects on uniZ."
 ---
 
+::: info
+Individual `firstname.lastname` faculty logins are **not issued yet**. Faculty who already have a login use admin sign-in (`POST /auth/login/admin`). If `mustChangePassword` is set, they complete the first-login email code on **Set a new password** before the dashboard. See [Login](/api/auth/login).
+:::
+
 Use this guide to submit attendance records for your subjects, correct individual entries, and download attendance reports. Once you upload attendance, students can immediately see their attendance percentage per subject in their portal.
 
 ::: info

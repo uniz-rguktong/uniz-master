@@ -22,8 +22,9 @@ https://api-uniz.rguktong.in/api/v1
 | `/mail` | notifications:3007 | Live (folded) |
 | `/files` | user:3002 | Live (folded) |
 | `/grievance` | user:3002 | Live |
-| `/requests` | outpass:3003 | **Gated** (503) |
+| `/requests` | outpass:3003 | **Gated** — `503 OUTPASS_OUTING_DISABLED` unless `ENABLE_OUTPASS_OUTING=true` |
 | `/requests/.../grievance*` | user:3002 | Live |
+| `/dbadmin` | dbadmin:3010 | Live, **webadmin-only**. Not a public API. |
 | `/analytics` | landing-backend | Live |
 | `/system/health` | gateway local | Live |
 | `/docs` (site root, not under /api/v1) | docs:3333 | Live |

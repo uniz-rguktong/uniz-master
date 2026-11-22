@@ -3,7 +3,7 @@ title: "Search index — find anything"
 description: "Keyword map: search this page (Ctrl/Cmd+K) or skim the tables to jump to how uniZ is built and how to change it."
 ---
 
-Use Mintlify search (**Ctrl/Cmd + K**) with the keywords below. Every row links to the page that explains **how it is implemented** and **what to change**.
+Use the local VitePress search (**Ctrl/Cmd + K**) with the keywords below. Every row links to the page that explains **how it is implemented** and **what to change**.
 
 ## Architecture & hosting
 
@@ -15,6 +15,15 @@ Use Mintlify search (**Ctrl/Cmd + K**) with the keywords below. Every row links 
 | Role action Mermaid maps | student, webadmin, HOD, dean, grievance, OTP | [Action flows](/system/action-flows) |
 | Postgres / Redis | database, redis, endpoints, backup | [Data stores](/system/data-stores) |
 | JWT, CORS, secrets | auth, INTERNAL_SECRET, CLIENT_URL | [Security](/system/security) |
+| First-login email code | password change otp, Set a new password | [Password](/api/auth/password), [Student login](/students/login) |
+| Session gate | mustChangePassword, tokenVersion, PASSWORD_CHANGE_REQUIRED, AUTH_TOKEN_REVOKED | [Security](/system/security), [Auth service](/services/auth) |
+| Light-only theme | forceLightTheme, no dark mode | [Introduction](/introduction), [Docs service](/services/docs) |
+| Database browser | dbadmin, /api/v1/dbadmin, webadmin SQL | [Database](/admin/database) |
+| Roles screen | role_mgmt, permission matrix, dean, director | [Roles screen](/admin/roles-directory) |
+| Website editor | rguktong.in preview, publish, discard | [Website editor](/admin/website-editor) |
+| Email layout | wordmark, otp template, plain_notice, suppressed | [Notifications](/services/notifications), [Mail](/api/comms/mail) |
+| Student password reset | login-revamp, already applied, campus mailbox | [Runbooks](/ops/runbooks), [Auth service](/services/auth) |
+| Responsive audit | viewports, audit:responsive | [Responsive audit](/howto/responsive-audit) |
 
 ## Services (code → runtime)
 
@@ -48,7 +57,7 @@ Use Mintlify search (**Ctrl/Cmd + K**) with the keywords below. Every row links 
 | Audience | Go to |
 |----------|--------|
 | Students | [Login](/students/login), [Academics](/students/academics), [Profile](/students/profile) |
-| Admins | [Overview](/admin/overview), [Semester registration](/admin/semester-registration) |
+| Admins | [Overview](/admin/overview), [Webadmin](/admin/webadmin), [Roles screen](/admin/roles-directory), [Database](/admin/database), [Website editor](/admin/website-editor), [Semester registration](/admin/semester-registration) |
 | Faculty | [Grades](/faculty/grades), [Attendance](/faculty/attendance) |
 | API consumers | [API gateway map](/api/platform/gateway), [Health](/api/platform/health) |
 
