@@ -6,8 +6,8 @@
 
 | Layer | Where | Hosts |
 |-------|--------|--------|
-| **Portal SPA** | Cloudflare Pages | `uniz.rguktong.in` (navy `#0B2A47` + white + black) |
-| **Landing SPA** | Cloudflare Pages | `rguktong.in` |
+| **Portal SPA** | Cloudflare Pages | `uniz.rguktong.in` |
+| **Landing SPA** | Cloudflare Pages | `rguktong.in` (RGUKT Ongole look: `#C00404`, `#1b262c`, `#0f3057`, `#f9f9f9`) |
 | **API gateway + services** | VPS (K3s) via host nginx → Traefik | `api-uniz.rguktong.in` |
 | **Landing CMS API** | VPS Docker + Traefik | `landing-api.rguktong.in` |
 | **Docs** | VPS `uniz-docs-service` (VitePress) | `api-uniz.rguktong.in/docs` |

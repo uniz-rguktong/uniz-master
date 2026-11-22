@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  Student &amp; admin portals · academics · grades · grievances · notifications · Android TWA<br/>
+  Exam cell, attendance and admin · student &amp; faculty portals · grades · grievances · notifications · Android TWA<br/>
   TypeScript monorepo · Cloudflare Pages + single VPS (k3s) · PostgreSQL · Prisma · Redis · GitHub Actions
 </p>
 
@@ -19,9 +19,9 @@
 | **[uniz-hall-ticket](https://github.com/uniz-rguktong/uniz-hall-ticket)** | Standalone hall-ticket utility |
 | **[.github](https://github.com/uniz-rguktong/.github)** | Organization profile & community defaults |
 
-Production: **Cloudflare Pages** for portal/landing; **VPS** for `gateway-api` → microservices, Postgres (localhost/cni0 only), Redis, VitePress docs, SSH-tunnel observability. Legacy `uniz-api` monolith and the old `uniz-app` Android repo are gone — the TWA lives in `uniz-master/apps/uniz-android-twa`.
+Production: **Cloudflare Pages** for the UniZ portal (`uniz.rguktong.in`) and the college site (`rguktong.in`); **VPS** for `gateway-api` → microservices, Postgres (localhost/cni0 only), Redis, VitePress docs, SSH-tunnel observability. Legacy `uniz-api` monolith and the old `uniz-app` Android repo are gone — the TWA lives in `uniz-master/apps/uniz-android-twa`.
 
-Portal brand chrome: **dark navy `#0B2A47` + white + black**. Public home is Elaya Layout A (Manrope, split hero + product preview). Sign-in uses Cloudflare Turnstile when configured (script prefetched from home / Get started).
+`rguktong.in` keeps the official RGUKT Ongole look (primary `#C00404`, nav/footer `#1b262c`, titles `#0f3057`, page `#f9f9f9`). UniZ is a small text link there, not the site brand. Webadmin can update that site from the UniZ portal. Portal sign-in uses Cloudflare Turnstile when configured.
 
 ### Start here
 

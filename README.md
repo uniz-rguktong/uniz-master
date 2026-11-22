@@ -10,11 +10,13 @@
 
 ### What you are looking at
 
+UniZ is the exam-cell, attendance, and campus admin platform for RGUKT Ongole. The public college website is [rguktong.in](https://rguktong.in); UniZ itself lives at [uniz.rguktong.in](https://uniz.rguktong.in). Outpass is parked.
+
 UniZ runs on a **single VPS + Cloudflare free**:
 
 | Layer | Owns |
 |---|---|
-| **Cloudflare Pages** | Portal (`uniz.rguktong.in` — Elaya Layout A home, navy `#0B2A47` + white + black, Turnstile on sign-in) and Landing (`rguktong.in`) SPAs |
+| **Cloudflare Pages** | Portal (`uniz.rguktong.in`, Turnstile on sign-in) and the college site (`rguktong.in` — official RGUKT Ongole look: primary `#C00404`, nav/footer `#1b262c`, titles `#0f3057`, page `#f9f9f9`). UniZ is a small text link on the college site, not the site brand. |
 | **VPS (k3s)** | APIs, VitePress docs, landing-api, Postgres, Redis, uploads, observability |
 | **Off-box** | AWS SES for mail only |
 
@@ -53,7 +55,7 @@ In-house docs are a static VitePress site on the VPS — not Cloudflare Pages.
 
 ### Backend services
 
-Auth issues JWT. User holds profiles, campus CMS, grievances, and file uploads. Academics is results and registration. Notifications owns inbox, web push, and email. Landing-backend (FastAPI) powers the public website CMS. Docs is VitePress under `/docs`.
+Auth issues JWT (faculty sign in as `firstname.lastname`; a first password change needs an email code). User holds profiles, campus CMS, grievances, and file uploads. Academics is results and registration. Notifications owns inbox, web push, and email — password-reset and first-login codes go by **email only**, not push. Landing-backend (FastAPI) powers the public website CMS; webadmin can edit rguktong.in from a live preview in the portal and browse Postgres in the database page. Docs is VitePress under `/docs`.
 
 ### Self-hosted images and AWS SES
 
@@ -68,11 +70,12 @@ Postgres is source of truth. Redis is short-lived (gateway cache, BullMQ). DB / 
 | Role | Shell | Main actions |
 |------|-------|----------------|
 | Student | `/student` | Login, profile, grades, attendance, registration, PDF, notices, grievance, inbox |
-| Webadmin / COE / Director | Admin dashboards | Students, uploads, semester, CMS, push, resets |
+| Webadmin | Admin dashboards | Only `webadmin@rguktong.ac.in`. Students, uploads, semester, website editor, database browser, CMS, push, resets |
+| COE / Director | Admin dashboards | Students, uploads, semester, CMS, push, resets |
 | Dean | DeanDashboard | Allocations, advance, academics, CMS |
 | HOD | DeanDashboard slim | Branch approval, registration tracking |
 | SWO | SWODashboard | Grievance list / resolve / delete |
-| Faculty | `/faculty` | Profile, student search, password |
+| Faculty | `/faculty` | `firstname.lastname` login, profile, student search, first password change |
 
 Canonical layout: **[STRUCTURE.md](STRUCTURE.md)** · Infra: **[infra/README.md](infra/README.md)** · Ops: **[docs/ops/INDEX.md](docs/ops/INDEX.md)**.
 
@@ -104,7 +107,7 @@ make up && make seed
 |------|--------|
 | Portal | http://localhost:8080 (or `WEB_PORT`) |
 | API (via portal) | http://localhost:8080/api/v1 |
-| Sign-in | `webadmin` / `password123` |
+| Sign-in | `webadmin@rguktong.ac.in` / `password123` (local seed only) |
 
 Details: [docker/README.md](docker/README.md).
 
@@ -122,7 +125,7 @@ npm run dev:all
 | Portal | http://localhost:5173 |
 | API gateway | http://localhost:3000/api/v1 |
 | Docs (optional) | `npm run docs:dev` → http://localhost:3333/docs/ |
-| Sign-in (after seed) | `webadmin` / `password123` |
+| Sign-in (after seed) | `webadmin@rguktong.ac.in` / `password123` (local seed only) |
 
 Full guide: [docs/local/LOCAL_SETUP.md](docs/local/LOCAL_SETUP.md) · [CONTRIBUTING.md](CONTRIBUTING.md).
 

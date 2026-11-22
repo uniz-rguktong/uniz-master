@@ -1,36 +1,48 @@
-# UniZ Production URLs (Updated 2026-02-07)
+# UniZ production URLs
 
-## API Gateway
+Updated 22 November 2026. Canonical topology: [`PRODUCTION_TOPOLOGY.md`](PRODUCTION_TOPOLOGY.md). All application code lives in [`uniz-rguktong/uniz-master`](https://github.com/uniz-rguktong/uniz-master). The old per-service Vercel apps and separate `uniz-*` service repos are gone.
 
-- **Production Gateway**: `https://api-uniz.rguktong.in/api/v1`
-- **Legacy (broken edge SSL)**: `api-uniz.rguktong.in` — nested subdomain, do not use
+## Public sites
 
-## Microservices
+| Site | URL | Hosted on |
+|------|-----|-----------|
+| College website | https://rguktong.in | Cloudflare Pages (`apps/uniz-landing`) |
+| UniZ portal | https://uniz.rguktong.in | Cloudflare Pages (`apps/uniz-portal`) |
+| API gateway | https://api-uniz.rguktong.in/api/v1 | VPS: host nginx → Traefik → `uniz-gateway-api` |
+| Landing CMS API | https://landing-api.rguktong.in | VPS: Traefik → landing-backend (FastAPI) |
+| Docs | https://api-uniz.rguktong.in/docs | VPS: `uniz-docs-service` (VitePress) |
 
-| Service       | Production URL                                       | GitHub Repo                      |
-| ------------- | ---------------------------------------------------- | -------------------------------- |
-| Auth          | `https://uniz-auth.vercel.app`                       | uniz-rguktong/uniz-auth          |
-| User          | `https://uniz-user-service-five.vercel.app`          | uniz-rguktong/uniz-user          |
-| Outpass       | `https://uniz-outpass-service-snowy.vercel.app`      | uniz-rguktong/uniz-outpass       |
-| Academics     | `https://uniz-academics-service-beryl.vercel.app`    | uniz-rguktong/uniz-academics     |
-| Mail          | `https://uniz-mail-service-phi.vercel.app`           | uniz-rguktong/uniz-mail          |
-| Notifications | `https://uniz-notification-service-sandy.vercel.app` | uniz-rguktong/uniz-notifications |
-| Files         | `https://uniz-files-service-blush.vercel.app`        | uniz-rguktong/uniz-files         |
-| Cron          | `https://uniz-cron-service-theta.vercel.app`         | uniz-rguktong/uniz-cron          |
+The college site uses the official RGUKT Ongole look. UniZ is a small text link on that site, not the site brand.
 
-## Health Check Endpoints
+## Services behind the gateway
 
-Each service has a `/health` endpoint for monitoring.
+These are Kubernetes services on the VPS, reached through `https://api-uniz.rguktong.in/api/v1`. They are not separate GitHub repos and are not on Vercel.
 
-## Environment Variables
+| Service | App in this monorepo | Notes |
+|---------|----------------------|--------|
+| Gateway | `apps/uniz-gateway` | Routes `/api/v1` to the services below |
+| Auth | `apps/uniz-auth` | Login, email OTP / reset codes |
+| User | `apps/uniz-user` | Profiles, campus CMS, grievances, uploads |
+| Academics | `apps/uniz-academics` | Grades, attendance, registration |
+| Notifications | `apps/uniz-notifications` | Inbox, web push, SES email |
+| Landing CMS | `apps/uniz-landing-backend` | Public website content; edited from the portal |
+| Docs | `apps/uniz-docs` | VitePress |
 
-The following environment variables should be set in each service:
+Outpass routes are parked / gated (`503`) until explicitly re-enabled.
 
-- `GATEWAY_URL` - Points to the production gateway
-- `INTERNAL_SECRET` - Shared secret for internal service communication
-- `DATABASE_URL` - PostgreSQL connection string
-- `JWT_SECURITY_KEY` - JWT signing key
+## Health
 
-## GitHub Organization
+```bash
+curl -fsS https://api-uniz.rguktong.in/api/v1/system/health
+```
 
-All repositories are under the `uniz-rguktong` organization.
+Each service also exposes `/health` on the cluster network. Day-to-day checks: [`docs/ops/INDEX.md`](../ops/INDEX.md).
+
+## Configuration
+
+Frontend build-time URLs:
+
+- Portal: `VITE_API_URL=https://api-uniz.rguktong.in/api/v1`
+- Landing: `VITE_LANDING_API_URL=https://landing-api.rguktong.in`
+
+Server secrets and connection strings belong in the VPS Kubernetes secret and in GitHub Actions — not in this file. Use `secrets.env.example` for local development only.
