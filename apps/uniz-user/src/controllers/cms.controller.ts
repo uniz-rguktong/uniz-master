@@ -15,10 +15,22 @@ import { ErrorCode } from "../shared/error-codes";
  * PUBLIC ENDPOINTS
  */
 
+function publicReadCacheControl(req: Request): string {
+  const authorization = String(req.headers.authorization || "").trim();
+  const cookie = String(req.headers.cookie || "").trim();
+  if (authorization || cookie) return "private, no-store";
+  return "public, max-age=0, s-maxage=10, stale-while-revalidate=60";
+}
+
+function setPublicReadCache(req: Request, res: Response): void {
+  res.setHeader("Cache-Control", publicReadCacheControl(req));
+  res.setHeader("Vary", "Authorization, Cookie");
+}
+
 // Consolidated public banners
 export const getPublicBanners = async (req: Request, res: Response) => {
   try {
-    res.setHeader("Cache-Control", "s-maxage=10, stale-while-revalidate=60");
+    setPublicReadCache(req, res);
 
     const cacheKey = publicBannersCacheKey();
     const cached = await redis.get(cacheKey);
@@ -50,7 +62,7 @@ export const getPublicBanners = async (req: Request, res: Response) => {
 // Consolidated notifications (Updates only, Tenders removed)
 export const getPublicNotifications = async (req: Request, res: Response) => {
   try {
-    res.setHeader("Cache-Control", "s-maxage=10, stale-while-revalidate=60");
+    setPublicReadCache(req, res);
 
     const cacheKey = publicNotificationsCacheKey();
     const cached = await redis.get(cacheKey);

@@ -99,7 +99,57 @@ PY
   done
 }
 
+# True when secret/uniz-secrets has a non-empty CLOUDFLARE_TUNNEL_TOKEN.
+# The value is never printed.
+cloudflared_secret_present() {
+  command -v kubectl >/dev/null 2>&1 || return 1
+  local b64
+  b64="$(kubectl get secret uniz-secrets -n "${NAMESPACE:-default}" -o jsonpath='{.data.CLOUDFLARE_TUNNEL_TOKEN}' 2>/dev/null || true)"
+  [[ -n "$b64" ]] || return 1
+  printf '%s' "$b64" | base64 -d 2>/dev/null | grep -q '[^[:space:]]'
+}
+
+# Ready when both in-cluster connectors have registered with Cloudflare.
+# Pod logs are not printed. Host systemd keeps the tunnel up until this passes.
+wait_for_in_cluster_connectors() {
+  command -v kubectl >/dev/null 2>&1 || return 1
+  kubectl get deploy cloudflared -n "${NAMESPACE:-default}" >/dev/null 2>&1 || return 1
+  if ! cloudflared_secret_present; then
+    echo "[tunnel] CLOUDFLARE_TUNNEL_TOKEN is absent from secret/uniz-secrets. Leaving the host connector in place."
+    kubectl scale deploy/cloudflared -n "${NAMESPACE:-default}" --replicas=0 >/dev/null 2>&1 || true
+    return 1
+  fi
+  echo "[tunnel] Waiting for 2 in-cluster cloudflared connectors to register..."
+  kubectl rollout status deploy/cloudflared -n "${NAMESPACE:-default}" --timeout=180s || return 1
+  local attempt pod ready registered
+  ready=0
+  for attempt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+    ready="$(kubectl get deploy cloudflared -n "${NAMESPACE:-default}" -o jsonpath='{.status.readyReplicas}' 2>/dev/null || true)"
+    registered=0
+    while IFS= read -r pod; do
+      [[ -z "$pod" ]] && continue
+      if kubectl logs "pod/${pod}" -n "${NAMESPACE:-default}" --tail=200 2>/dev/null | grep -q "Registered tunnel connection"; then
+        registered=$((registered + 1))
+      fi
+    done < <(kubectl get pods -n "${NAMESPACE:-default}" -l app=cloudflared --field-selector=status.phase=Running -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' 2>/dev/null || true)
+    if [[ "${ready:-0}" -ge 2 && "$registered" -ge 2 ]]; then
+      echo "[tunnel] In-cluster connectors registered: ${registered}"
+      return 0
+    fi
+    sleep 4
+  done
+  echo "[tunnel] In-cluster connectors did not register (ready=${ready:-0}). Host cloudflared stays up."
+  return 1
+}
+
 start_token_tunnel() {
+  if wait_for_in_cluster_connectors; then
+    echo "[tunnel] 2 in-cluster connectors are registered. Stopping the host cloudflared service."
+    if command -v systemctl >/dev/null 2>&1; then
+      systemctl disable --now cloudflared >/dev/null 2>&1 || true
+    fi
+    return 0
+  fi
   echo "[tunnel] Installing connector via CLOUDFLARE_TUNNEL_TOKEN..."
   cloudflared service uninstall 2>/dev/null || true
   cloudflared service install "$CLOUDFLARE_TUNNEL_TOKEN"

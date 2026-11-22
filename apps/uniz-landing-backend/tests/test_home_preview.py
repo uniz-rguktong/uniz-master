@@ -131,6 +131,51 @@ class PreviewAuthTests(unittest.TestCase):
         self.assertNotIn("token", allowed.json())
 
 
+class PublicCacheHeaderTests(unittest.TestCase):
+    def test_anonymous_public_reads_are_edge_cacheable(self):
+        home = client.get("/api/home/")
+        self.assertEqual(home.status_code, 200)
+        self.assertEqual(
+            home.headers["cache-control"],
+            "public, max-age=0, s-maxage=60, stale-while-revalidate=60",
+        )
+        self.assertIn("Authorization", home.headers["vary"])
+        self.assertIn("Cookie", home.headers["vary"])
+
+        notes = client.get("/api/notifications/?type=news_updates")
+        self.assertEqual(notes.status_code, 200)
+        self.assertIn("s-maxage=60", notes.headers["cache-control"])
+
+    def test_authorization_and_cookies_are_not_cached(self):
+        webadmin = token(username="webadmin", role="webadmin")
+        authed = client.get("/api/home/", headers=auth(webadmin))
+        self.assertEqual(authed.headers["cache-control"], "private, no-store")
+
+        cookied = client.get("/api/home/", headers={"Cookie": "session=1"})
+        self.assertEqual(cookied.headers["cache-control"], "private, no-store")
+
+        write = client.put(
+            "/api/home/",
+            headers=auth(webadmin),
+            json={"announcements": [{"text": "Cache check", "link": None}]},
+        )
+        self.assertEqual(write.status_code, 200, write.text)
+        self.assertEqual(write.headers["cache-control"], "private, no-store")
+
+    def test_missing_and_private_routes_are_not_public(self):
+        missing = client.get("/api/institute/does-not-exist")
+        self.assertEqual(missing.status_code, 404)
+        self.assertEqual(missing.headers["cache-control"], "private, no-store")
+
+        preview = client.get("/api/preview/session")
+        self.assertEqual(preview.status_code, 401)
+        self.assertEqual(preview.headers["cache-control"], "private, no-store")
+
+        health = client.get("/health")
+        self.assertEqual(health.status_code, 200)
+        self.assertNotIn("s-maxage", health.headers.get("cache-control", ""))
+
+
 class NotificationAliasTests(unittest.TestCase):
     def test_old_news_key_is_readable_as_news_updates(self):
         webadmin = token(username="webadmin", role="webadmin")

@@ -5,7 +5,13 @@ metadata:
   labels:
     app: uniz-gateway-api
 spec:
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      # Stay serving on the current pod until the replacement is ready.
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app: uniz-gateway-api
@@ -27,12 +33,14 @@ spec:
             - secretRef:
                 name: uniz-secrets
           resources:
-            # Single 4-vCPU node: honest requests, HPA headroom in limits.
+            # Single 4-vCPU node. 250m × min 2 leaves room for Postgres,
+            # Redis, cloudflared, and Traefik. HPA targets 60% of this
+            # request so a small spike does not scale on 45% of 200m.
             limits:
               cpu: "1000m"
               memory: "768Mi"
             requests:
-              cpu: "200m"
+              cpu: "250m"
               memory: "256Mi"
           livenessProbe:
             httpGet:
@@ -75,15 +83,16 @@ spec:
     kind: Deployment
     name: uniz-gateway-api
   # Single 4-vCPU VPS: keep gateway as the primary scale absorber.
-  minReplicas: 1
-  maxReplicas: 3
+  # Floor of 2 matches the Deployment so a rollout never starts from one pod.
+  minReplicas: 2
+  maxReplicas: 4
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 45
+          averageUtilization: 60
     - type: Resource
       resource:
         name: memory
@@ -103,3 +112,13 @@ spec:
         - type: Percent
           value: 10
           periodSeconds: 60
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: uniz-gateway-api
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: uniz-gateway-api

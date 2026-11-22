@@ -36,7 +36,7 @@ spec:
               cpu: "500m"
               memory: "512Mi"
             requests:
-              cpu: "50m"
+              cpu: "100m"
               memory: "128Mi"
           livenessProbe:
             httpGet:
@@ -76,9 +76,10 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-notification-service
-  # Websocket/event spikes — modest max on single node.
+  # Websocket/event spikes stay on one replica so the 4-vCPU node
+  # can keep gateway at 2 and still schedule auth, user, and academics.
   minReplicas: 1
-  maxReplicas: 2
+  maxReplicas: 1
   metrics:
     - type: Resource
       resource:

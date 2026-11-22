@@ -9,6 +9,11 @@ import httpProxy from "http-proxy";
 import http from "http";
 import dotenv from "dotenv";
 import { enforceCredentialSession } from "./credential-session";
+import {
+  applyEdgeCacheToHeaderMap,
+  copyResponseHeaders,
+  pathOnly,
+} from "./edge-cache";
 dotenv.config({ override: true });
 
 function cacheIdentityKey(req: express.Request): string {
@@ -62,6 +67,13 @@ proxy.on("proxyRes", (proxyRes: any, req: any, res: any) => {
   // from reading PDF/binary bodies even when CORS ACAO is present.
   if (proxyRes.headers) {
     delete proxyRes.headers["cross-origin-resource-policy"];
+    applyEdgeCacheToHeaderMap(proxyRes.headers, {
+      method: String(req.method || "GET"),
+      path: pathOnly(String(req.originalUrl || req.url || "/")),
+      authorization: req.headers?.authorization,
+      cookie: req.headers?.cookie,
+      status: Number(proxyRes.statusCode || 0),
+    });
   }
   applyCorsHeaders(req, res);
 });
@@ -501,8 +513,16 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
         res.setHeader("X-Cache", "HIT");
         res.setHeader("X-Response-Time", "sub-1ms");
 
+        const outgoing = copyResponseHeaders(headers);
+        applyEdgeCacheToHeaderMap(outgoing, {
+          method: req.method,
+          path: pathOnly(String(req.originalUrl || req.url || "/")),
+          authorization: req.headers.authorization,
+          cookie: req.headers.cookie,
+          status: Number(status || 0),
+        });
         // Restore all headers from cache
-        Object.entries(headers).forEach(([k, v]) =>
+        Object.entries(outgoing).forEach(([k, v]) =>
           res.setHeader(k, v as string),
         );
         return res.status(status).send(body);
@@ -520,6 +540,15 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
       const contentType = String(response.headers["content-type"] ?? "");
       const isJson = contentType.includes("application/json");
 
+      const outgoing = copyResponseHeaders(response.headers);
+      applyEdgeCacheToHeaderMap(outgoing, {
+        method: req.method,
+        path: pathOnly(String(req.originalUrl || req.url || "/")),
+        authorization: req.headers.authorization,
+        cookie: req.headers.cookie,
+        status: response.status,
+      });
+
       if (response.status === 200 && isJson) {
         // Public CMS is genuinely shared/cacheable (30s). For unauth non-CMS
         // GETs use 10s — the old 2s barely earned a hit while still buffering.
@@ -531,7 +560,7 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
             cacheTtlSeconds,
             JSON.stringify({
               body: Buffer.from(response.data).toString("utf8"),
-              headers: response.headers,
+              headers: outgoing,
               status: response.status,
             }),
           )
@@ -540,8 +569,7 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
 
       // Restore headers from upstream (drop CORP so browser can read
       // cross-origin PDF/JSON from api-uniz when portal is on another host).
-      Object.entries(response.headers).forEach(([k, v]) => {
-        if (String(k).toLowerCase() === "cross-origin-resource-policy") return;
+      Object.entries(outgoing).forEach(([k, v]) => {
         res.setHeader(k, v as string);
       });
       return res.status(response.status).send(response.data);
