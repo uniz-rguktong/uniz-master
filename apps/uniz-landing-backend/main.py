@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 from contextlib import asynccontextmanager
 from database import engine, Base
+from cache_headers import cache_control_for, vary_header
 from routers import home, institute, academics, departments, notifications, analytics, preview
 from home_migrate import ensure_home_copy_columns
 from content_defaults import DEFAULT_CONTACT, DEFAULT_HERO
@@ -35,6 +37,24 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Uniz-Landing-Page-API", lifespan=lifespan)
 
 
+class PublicEdgeCacheMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        decision = cache_control_for(
+            request.method,
+            request.url.path,
+            request.headers.get("authorization", ""),
+            request.headers.get("cookie", ""),
+            response.status_code,
+            "set-cookie" in response.headers,
+        )
+        if decision:
+            response.headers["Cache-Control"] = decision
+            response.headers["Vary"] = vary_header(response.headers.get("vary", ""))
+        return response
+
+
+app.add_middleware(PublicEdgeCacheMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

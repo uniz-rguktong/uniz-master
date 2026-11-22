@@ -6,11 +6,11 @@ Node profile: **4 vCPU / ~15Gi RAM**. HPA reshuffles capacity — it does not in
 
 | HPA | Deployment | min→max | CPU |
 |---|---|---|---|
-| uniz-gateway-api-hpa | uniz-gateway-api | 1→3 | 45% |
-| uniz-auth-service-hpa | uniz-auth-service | 1→2 | 50% |
+| uniz-gateway-api-hpa | uniz-gateway-api | 2→4 | 60% |
+| uniz-auth-service-hpa | uniz-auth-service | 1→3 | 60% |
 | uniz-user-service-hpa | uniz-user-service | 1→3 | 70% |
 | uniz-academics-service-hpa | uniz-academics-service | 1→3 | 70% |
-| uniz-notification-service-hpa | uniz-notification-service | 1→2 | 70% |
+| uniz-notification-service-hpa | uniz-notification-service | 1→1 | 70% |
 
 ## Drill
 

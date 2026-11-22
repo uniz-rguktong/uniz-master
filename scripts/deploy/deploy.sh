@@ -832,6 +832,14 @@ deploy_logic() {
       echo "DB_NAME=${DB_NAME:-uniz_db}" >> .env
 
       docker compose -f docker-compose.yml.vps up -d --build
+      # Two uvicorn workers need a moment before smoke hits landing-api.
+      for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+        if curl -sf --max-time 2 http://127.0.0.1:8000/health >/dev/null; then
+          echo "[Compose] landing-backend is answering /health"
+          break
+        fi
+        sleep 2
+      done
       cd "$BASE_DIR"
     fi
   fi
@@ -890,6 +898,7 @@ deploy_logic() {
     bash "$(dirname "$0")/ensure-nginx-api-uniz.sh" 2>/dev/null || true
     bash "$(dirname "$0")/ensure-nginx-dbadmin.sh" 2>/dev/null || true
     bash "$(dirname "$0")/configure-cloudflare-portal-cdn.sh" || true
+    bash "$(dirname "$0")/ensure-public-edge-cache.sh" || true
   fi
 
   if [ -f "$(dirname "$0")/../ops/vps-storage-cleanup.sh" ]; then

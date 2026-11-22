@@ -27,6 +27,9 @@ spec:
                 secretKeyRef:
                   name: uniz-secrets
                   key: ACADEMICS_DATABASE_URL
+            # Same pool cap as user-service: 8 × max 3 replicas.
+            - name: PRISMA_CONNECTION_LIMIT
+              value: "8"
           envFrom:
             - configMapRef:
                 name: uniz-config
@@ -37,7 +40,7 @@ spec:
               cpu: "1000m"
               memory: "1024Mi"
             requests:
-              cpu: "150m"
+              cpu: "200m"
               memory: "256Mi"
           livenessProbe:
             httpGet:

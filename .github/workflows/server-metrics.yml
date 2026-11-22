@@ -1,0 +1,40 @@
+# Read-only capacity snapshot. workflow_dispatch only, so it never deploys.
+# Uses the self-hosted runner's existing kubeconfig. Prints kubectl top and
+# HPA status. Does not print Secret data or the kubeconfig.
+name: Server metrics
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+
+jobs:
+  metrics:
+    name: kubectl top and HPA
+    runs-on: [self-hosted, linux, uniz-vps]
+    timeout-minutes: 5
+    steps:
+      - name: Print capacity snapshot
+        run: |
+          set +x
+          set -euo pipefail
+          export KUBECONFIG="${KUBECONFIG:-/etc/rancher/k3s/k3s.yaml}"
+          if ! command -v kubectl >/dev/null 2>&1; then
+            echo "kubectl is not available on this runner"
+            exit 1
+          fi
+          top_nodes=0
+          top_pods=0
+          echo "== nodes =="
+          kubectl top nodes || top_nodes=$?
+          echo
+          echo "== pods =="
+          kubectl top pods -A || top_pods=$?
+          echo
+          echo "== hpa =="
+          kubectl get hpa -A
+          if [[ "$top_nodes" -ne 0 || "$top_pods" -ne 0 ]]; then
+            echo "kubectl top failed"
+            exit 1
+          fi

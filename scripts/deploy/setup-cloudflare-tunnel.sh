@@ -99,6 +99,53 @@ PY
   done
 }
 
+# True when secret/uniz-secrets has a non-empty CLOUDFLARE_TUNNEL_TOKEN.
+# The value is never printed.
+cloudflared_secret_present() {
+  command -v kubectl >/dev/null 2>&1 || return 1
+  local b64
+  b64="$(kubectl get secret uniz-secrets -n "${NAMESPACE:-default}" -o jsonpath='{.data.CLOUDFLARE_TUNNEL_TOKEN}' 2>/dev/null || true)"
+  [[ -n "$b64" ]] || return 1
+  printf '%s' "$b64" | base64 -d 2>/dev/null | grep -q '[^[:space:]]'
+}
+
+# Ready when both in-cluster connectors have registered with Cloudflare.
+# Pod logs are not printed. The host systemd connector is never stopped here:
+# it stays up as the fallback, so the tunnel survives if the pods fail later.
+# The manifest ships replicas: 0; this scales to 2 only when the token is in
+# secret/uniz-secrets, so a missing token never leaves pods crash-looping.
+wait_for_in_cluster_connectors() {
+  command -v kubectl >/dev/null 2>&1 || return 1
+  kubectl get deploy cloudflared -n "${NAMESPACE:-default}" >/dev/null 2>&1 || return 1
+  if ! cloudflared_secret_present; then
+    echo "[tunnel] CLOUDFLARE_TUNNEL_TOKEN is absent from secret/uniz-secrets. Leaving the host connector in place."
+    kubectl scale deploy/cloudflared -n "${NAMESPACE:-default}" --replicas=0 >/dev/null 2>&1 || true
+    return 1
+  fi
+  kubectl scale deploy/cloudflared -n "${NAMESPACE:-default}" --replicas=2 >/dev/null 2>&1 || return 1
+  echo "[tunnel] Waiting for 2 in-cluster cloudflared connectors to register..."
+  kubectl rollout status deploy/cloudflared -n "${NAMESPACE:-default}" --timeout=180s || return 1
+  local attempt pod ready registered
+  ready=0
+  for attempt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+    ready="$(kubectl get deploy cloudflared -n "${NAMESPACE:-default}" -o jsonpath='{.status.readyReplicas}' 2>/dev/null || true)"
+    registered=0
+    while IFS= read -r pod; do
+      [[ -z "$pod" ]] && continue
+      if kubectl logs "pod/${pod}" -n "${NAMESPACE:-default}" --tail=200 2>/dev/null | grep -q "Registered tunnel connection"; then
+        registered=$((registered + 1))
+      fi
+    done < <(kubectl get pods -n "${NAMESPACE:-default}" -l app=cloudflared --field-selector=status.phase=Running -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' 2>/dev/null || true)
+    if [[ "${ready:-0}" -ge 2 && "$registered" -ge 2 ]]; then
+      echo "[tunnel] In-cluster connectors registered: ${registered}"
+      return 0
+    fi
+    sleep 4
+  done
+  echo "[tunnel] In-cluster connectors did not register (ready=${ready:-0}). Host cloudflared stays up."
+  return 1
+}
+
 start_token_tunnel() {
   echo "[tunnel] Installing connector via CLOUDFLARE_TUNNEL_TOKEN..."
   cloudflared service uninstall 2>/dev/null || true
@@ -255,6 +302,12 @@ print(json.dumps({"config": config}))
 
 main() {
   install_cloudflared
+
+  # In-cluster connectors are extra capacity next to the host connector.
+  # Runs in every mode; a missing token keeps them at 0 replicas.
+  if wait_for_in_cluster_connectors; then
+    echo "[tunnel] 2 in-cluster connectors registered. Host cloudflared stays up as the fallback."
+  fi
 
   if [[ -n "${CLOUDFLARE_TUNNEL_TOKEN:-}" ]]; then
     start_token_tunnel

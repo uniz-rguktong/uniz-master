@@ -44,6 +44,10 @@ spec:
             # served back through the gateway at /api/v1/files/img/*.
             - name: UPLOADS_DIR
               value: "/data/uploads"
+            # 8 connections × max 3 replicas. Auth stays at 5 and notifications
+            # at 5, so the Prisma total stays near 70 of max_connections=200.
+            - name: PRISMA_CONNECTION_LIMIT
+              value: "8"
           envFrom:
             - configMapRef:
                 name: uniz-config
@@ -54,8 +58,8 @@ spec:
               cpu: "800m"
               memory: "768Mi"
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: "150m"
+              memory: "192Mi"
           readinessProbe:
             httpGet:
               path: /health
