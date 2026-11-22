@@ -39,7 +39,7 @@ bash scripts/ops/backup-postgres.sh
 | Portal loads, API CORS error | `CLIENT_URL` missing Pages origin | Patch ConfigMap, restart gateway-api |
 | Custom domain Verifying on Pages | DNS not CNAME to Pages | Run cutover DNS script |
 | System health `down` but apps work | Stale Redis health / wrong FILES/MAIL URLs | Flush key + fix ConfigMap |
-| Outpass 503 | Expected when flag false | [Revive](/howto/revive-outpass) if intentional |
+| Outpass 503 | Expected. The feature is not on. | Leave it. [Revive](/howto/revive-outpass) only if you intend to enable it. |
 | Deploy cancelled mid-run | `cancel-in-progress: true` on new push | Avoid pushing until run finishes |
 
 ## Useful scripts
@@ -51,3 +51,9 @@ bash scripts/ops/backup-postgres.sh
 | `scripts/ops/vps-storage-cleanup.sh` | Disk |
 | `scripts/ops/migrate-grievances-to-user.sh` | One-time grievance copy |
 | `scripts/ops/mint-student-token.sh` | Dev JWT helper |
+
+## Student password reset (already applied)
+
+The one-off student reset has already been applied (2,711 student accounts). Each of those students must set a new password at the next sign-in, after an email code to the campus mailbox `<id>@rguktong.ac.in`. Previous student sessions no longer work (`tokenVersion` bumped, `mustChangePassword` set). Admin, webadmin, and the shared role accounts were not touched. Faculty `firstname.lastname` logins were not created. That is a later, separate step.
+
+Script: `scripts/ops/login-revamp.js`. Dry-run is the default and writes nothing. Apply is not a routine action and should not be run again from this note. Workflow: `.github/workflows/login-revamp.yml`. Job manifest: `infra/kubernetes/base/core/login-revamp-job.yaml` (not wired into the core kustomization). The script never prints passwords. Do not add one here.

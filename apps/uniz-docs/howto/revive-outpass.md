@@ -3,7 +3,7 @@ title: "Revive outpass / outing"
 description: "Bring parked outpass back safely — flags, Deployment scale, portal rebuild, smoke."
 ---
 
-Outpass/outing is **disabled in production** by design. Grievance remains on **user-service**.
+Outpass and outing are **not enabled** in production. This page is only the way they would be turned on later. Do not run the checklist as part of a normal deploy. Grievance remains on **user-service** and does not need this flag.
 
 ## Enable checklist
 

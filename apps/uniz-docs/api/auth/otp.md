@@ -1,9 +1,11 @@
 ---
 title: "OTP Verification"
-description: "Request and verify an email one-time password to obtain a reset token for password recovery."
+description: "Request and verify a forgot-password email code. Not the first-login code."
 ---
 
-OTP verification is the first step of the password reset flow. Codes are sent by email only. Push notifications are not an OTP channel.
+OTP verification is the first step of the **forgot-password** flow. Codes are sent by email only. Push notifications are not an OTP channel.
+
+This is not the first-login code. Signed-in users who must set a new password call `POST /auth/password/change/otp` instead. That route uses only the stored mailbox and is documented on [Password](/api/auth/password).
 
   ### Request an OTP
 
@@ -39,10 +41,9 @@ OTP endpoints are rate-limited. Each account may request 2 new codes per
 
 `POST /auth/otp/request`
 
-Sends a 6-digit OTP to the email address on the account. A stored profile
-email is used when it is present. Otherwise the campus mailbox
-`username@rguktong.ac.in` is used. If neither address exists, the request
-fails and nothing is sent.
+Sends a 6-digit OTP. Address selection, in order: stored `realEmail`, then the profile email, then the campus mailbox `<id>@rguktong.ac.in`. If none are deliverable the response is `400 OTP_EMAIL_MISSING` and nothing is sent. The campus mailbox is an inbox, not a password.
+
+Production requires a Turnstile `captchaToken`, same as login. A curl without a valid token fails with `400 AUTH_CAPTCHA_FAILED`.
 
 **Auth required:** No
 
@@ -50,7 +51,7 @@ fails and nothing is sent.
 
 ### Request body
 
-  The student roll number or staff username that needs to reset their password.
+  The student roll number or staff username that needs to reset their password, plus `captchaToken` in production.
 
 ### Response
 
@@ -69,7 +70,8 @@ curl --request POST \
   --url https://api-uniz.rguktong.in/api/v1/auth/otp/request \
   --header 'Content-Type: application/json' \
   --data '{
-    "username": "O210008"
+    "username": "O210008",
+    "captchaToken": "<turnstile-token>"
   }'
 ```
 
@@ -84,11 +86,13 @@ curl --request POST \
 }
 ```
 
+The masked address is an example of the response shape.
+
 ### Error responses
 
 | Status                  | Meaning                                                        |
 | ----------------------- | -------------------------------------------------------------- |
-| `400 Bad Request`       | Captcha failed, or no email address is on file (`OTP_EMAIL_MISSING`). |
+| `400 Bad Request`       | `AUTH_CAPTCHA_FAILED`, or no deliverable address (`OTP_EMAIL_MISSING`). |
 | `404 Not Found`         | No account found for the given username.                       |
 | `429 Too Many Requests` | Per-minute or hourly limit exceeded.                           |
 | `502 Bad Gateway`       | The email could not be queued.                                 |
@@ -103,6 +107,8 @@ Emails the same unexpired code again. It does not create a new code and does
 not send a push notification. Call `POST /auth/otp/request` first.
 
 **Auth required:** No
+
+**Captcha:** not required. The active code means Turnstile already passed on `/otp/request`.
 
 **Rate limits:** 4 per 2 minutes and the shared hourly limit of 15
 

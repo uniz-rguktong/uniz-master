@@ -17,6 +17,7 @@ flowchart LR
   User --> EP
   Acad[Academics] --> EP
   Notif[Notifications] --> EP
+  Db[dbadmin] --> EP
   EP --> PG[(uniz-postgres Docker)]
   Land[Landing FastAPI] --> LandDB[(landing compose db 127.0.0.1:5433)]
   Land -.->|analytics DB_HOST| EP
@@ -24,10 +25,11 @@ flowchart LR
 
 | Consumer | Typical DB usage |
 |----------|------------------|
-| Auth | Users, credentials, OTP state |
-| User | Profiles, CMS banners/notices, grievances, file metadata |
+| Auth | Credentials (`mustChangePassword`, `tokenVersion`, `realEmail`), OTP rows |
+| User | Profiles, CMS banners/notices, grievances, file metadata, role directory |
 | Academics | Grades, attendance, subjects, semester registration |
 | Notifications | Push subscriptions, inbox, mail attribution |
+| dbadmin | Reads and writes Postgres for the webadmin [database browser](/admin/database). No connection string belongs in docs. |
 | Landing backend | CMS on landing DB; analytics may query main uniZ DB via `DB_*` |
 
 Prisma schemas live per service under `apps/uniz-*/prisma/`. Migrations: [Database migrations](/howto/database-migrations).

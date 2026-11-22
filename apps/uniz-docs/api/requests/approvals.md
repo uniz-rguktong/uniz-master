@@ -4,7 +4,7 @@ description: "Approve or reject outpass/outing requests and security check-in/ou
 ---
 
 ::: warning
-These endpoints live under `/api/v1/requests/*` and return **503** while `ENABLE_OUTPASS_OUTING` is false. See [Revive outpass](/howto/revive-outpass).
+**Parked / not enabled.** These approval and gate endpoints are outpass-only. They return **503** `OUTPASS_OUTING_DISABLED` while `ENABLE_OUTPASS_OUTING` is false. Grievance resolve is a different, live route. See [Revive outpass](/howto/revive-outpass).
 :::
 
 Requests flow through a sequential approval chain. Each role can only act at the level assigned to them. Approving a request moves it to the next level; rejecting it ends the chain.

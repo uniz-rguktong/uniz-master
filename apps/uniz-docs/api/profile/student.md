@@ -35,7 +35,7 @@ Returns the profile of the authenticated student.
 
     - `profile_url` — URL of the student's profile photo.
 
-    - `has_pending_requests` — `true` if the student has an outpass or outing request awaiting approval.
+    - `has_pending_requests` — parked outpass/outing flag. Not a live student workflow while outpass is disabled.
 
     - `is_in_campus` — `true` if the student is currently recorded as present on campus.
 

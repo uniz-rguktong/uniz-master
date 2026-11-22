@@ -15,6 +15,8 @@ flowchart LR
   Visitor --> Pages[uniz-landing Pages]
   Pages -->|VITE_LANDING_API_URL| API[landing-backend :8000]
   Portal -->|/api/v1/analytics| GW --> API
+  Webadmin[Webadmin website editor] -->|preview iframe + publish| Pages
+  Webadmin -->|PUT /api/home and notices| API
   API --> PG[(Postgres)]
 ```
 
@@ -32,6 +34,17 @@ flowchart LR
 - Compose (VPS): `docker-compose.yml.vps`
 - Env refresh: `scripts/deploy/refresh-landing-backend-env.sh`
 - K8s: Service + Endpoints → host IP `:8000` (`landing-backend.yaml`)
+
+## Webadmin live preview
+
+The portal **Website editor** is how webadmin changes `rguktong.in`. It is not the student portal.
+
+- Iframe: `VITE_LANDING_PREVIEW_URL` or `https://rguktong.in/?preview=1`
+- Publish writes the live site (`PUT /api/home/`, notices, banners, updates). Discard drops the draft.
+- The Website Updates live-editor chrome can auto-publish section edits. The UI says "Edits auto-publish to the live RGUKT landing site".
+- Preview messages: `apps/uniz-portal/src/lib/preview-protocol.ts` and `apps/uniz-landing/src/lib/preview-protocol.ts`, rendered through `apps/uniz-landing/src/components/preview/EditRegion.tsx`.
+
+Guide: [Website editor](/admin/website-editor).
 
 ## Gateway bridges
 

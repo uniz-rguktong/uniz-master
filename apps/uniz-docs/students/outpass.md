@@ -4,17 +4,16 @@ description: "How to submit outpass and outing requests, track their status, and
 ---
 
 ::: warning
-**Production status:** Outpass/outing UI and APIs are **disabled** (`VITE_ENABLE_OUTPASS_OUTING` / `ENABLE_OUTPASS_OUTING` default false; `uniz-outpass-service` replicas 0). Grievances still work via user-service. To re-enable, see [Revive outpass](/howto/revive-outpass).
+**Parked / not enabled in production.** Students cannot submit an outpass or an outing. The portal hides those menus unless `VITE_ENABLE_OUTPASS_OUTING` is on. The gateway returns `503` with code `OUTPASS_OUTING_DISABLED` for non-grievance `/api/v1/requests/*`. Grievances still work via the user service. To turn this back on later, see [Revive outpass](/howto/revive-outpass). The steps below are the parked design, not a current guide.
 :::
 
-uniZ handles two types of campus exit permissions:
+When the feature is enabled, uniZ would handle two campus exit permissions:
 
 - **Outpass** — multi-day leave (overnight or longer). Requires full multi-level approval before you can leave.
 - **Outing** — short-duration leave on the same day. Used for trips that start and end on the same day (e.g., going to town for a few hours).
 
 ::: info
-You can only have one pending request at a time. You cannot submit a new
-  outpass or outing while a previous request is still awaiting approval.
+In the parked design you could only have one pending request at a time.
 :::
 
 ---
@@ -95,9 +94,9 @@ Tap **Request Outing**.
 
 ---
 
-## Approval workflow
+## Approval chain (parked design)
 
-Both outpass and outing requests go through a multi-level approval chain before you can leave campus.
+When outpass is enabled, both outpass and outing requests go through a multi-level approval chain before a student can leave campus. That chain is not running in production.
 
 ```
 You submit → Caretaker → Warden → SWO / Dean / Director (final approval)

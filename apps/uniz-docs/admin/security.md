@@ -1,9 +1,13 @@
 ---
 title: "Security Portal"
-description: "How security staff use the uniZ Security Portal to verify students at the campus gate, log entry and exit, and monitor who is currently outside."
+description: "Parked gate check-in and outpass verification. Not a current production workflow."
 ---
 
-The Security Portal gives security staff at the campus gate a dedicated interface for verifying approved passes, logging student entry and exit, and tracking who is currently outside campus.
+::: warning
+**Parked / not enabled in production.** Gate verification on this page depends on approved outpass and outing records. Those APIs return `503 OUTPASS_OUTING_DISABLED` until the feature is revived. Do not describe the terminal below as current production. See [Revive outpass](/howto/revive-outpass).
+:::
+
+The Security Portal design gives gate staff a screen for verifying approved passes, logging entry and exit, and listing who is recorded as outside campus. It is role-restricted in code. It is not switched on.
 
 ::: info
 Log in with the `security_admin` username. The Security Portal is

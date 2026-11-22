@@ -1,9 +1,11 @@
 ---
 title: "Profile"
-description: "View and update your personal details, manage your profile photo, and check your request history."
+description: "View and update your personal details and profile photo."
 ---
 
-Your profile page is the central view of your student record in uniZ. It shows your personal details, academic information, family details, and your outpass/outing history.
+Your profile page is the central view of your student record in uniZ. It shows your personal details, academic information, and family details.
+
+Outpass and outing history is **not a current feature**. Those requests are parked. Do not look for a Permissions queue in the production portal.
 
 ---
 
@@ -16,8 +18,6 @@ Your profile is divided into tabs:
   - **[Academic](#)**
 
   - **[Family](#)**
-
-  - **[Permissions](#)**
 
 **API response example — your profile:**
 
@@ -112,62 +112,29 @@ Use a clear, recent photo — it may be used for identification purposes in
 
 ## Campus presence status
 
-The `is_in_campus` field on your profile reflects whether you are currently recorded as present on campus.
+The `is_in_campus` field on your profile is a stored presence flag.
 
 | Value   | Meaning                                     |
 | ------- | ------------------------------------------- |
-| `true`  | You are currently on campus                 |
-| `false` | You have checked out and are outside campus |
+| `true`  | You are currently recorded as on campus     |
+| `false` | You are recorded as outside campus          |
 
-This status is updated by security at the gate:
-
-- When you leave on an approved outpass or outing, security marks you as **out** (`is_in_campus: false`).
-- When you return, security marks you as **in** (`is_in_campus: true`).
-
-You cannot change this status yourself. If there's a discrepancy, contact the security office or your warden.
+You cannot change this flag yourself. Gate check-in that depends on an approved outpass is **parked** and is not how presence is updated in production today. If the flag looks wrong, contact administration.
 
 ---
 
-## Request history
+## Exit-request history (parked)
 
-Your outpass and outing history is available in the **Permissions** tab. It shows a paginated list of all past requests with:
-
-- Request type (outpass or outing)
-- Date and duration
-- Reason you submitted
-- Final status (Pending, Approved, Rejected, or Expired)
-
-**API response example:**
-
-```json
-{
-  "success": true,
-  "history": [
-    {
-      "_id": "req-123",
-      "type": "outpass",
-      "status": "pending",
-      "reason": "Home visit",
-      "requested_time": "2026-02-10T10:00:00Z"
-    }
-  ],
-  "pagination": { "page": 1, "total": 5 }
-}
-```
-
-Results are paginated at 5 per page. Use the pagination controls at the bottom to navigate older records.
+Outpass and outing history is not shown as a current student feature. The parked reference, including the old history payload, stays on [Outpass](/students/outpass).
 
 ---
 
 ## Grievances and support
 
-If you have a complaint or need help with something not covered in the portal, use the **Help & Support** section accessible from the main navigation.
+If you have a complaint, use the **Help & Support** section from the main navigation. Grievances are live. Outpass is not.
 
-Submit a brief description of your issue. It will be routed to the appropriate administrative staff.
+Submit a short description. It is routed to the Student Welfare Office.
 
 ::: info
-For urgent matters — such as a rejected leave request you believe is
-  incorrect, or a discrepancy in your academic record — contact your caretaker,
-  warden, or academic section directly rather than waiting for a grievance
-  response.
+For a discrepancy in your academic record, contact your academic section as well as filing a grievance.
 :::

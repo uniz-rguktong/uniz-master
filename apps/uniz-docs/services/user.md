@@ -39,7 +39,8 @@ flowchart TB
 | Faculty / admin | `/faculty/me`, `/admin/me`, student search, promote, status |
 | CMS | `/banners/public`, `/notifications`, admin banner CRUD |
 | Files | `POST /image/upload` (was files-service) |
-| Grievance | `/submit`, `/list` (+ gateway aliases) |
+| Grievance | `/submit`, `/list` (+ gateway aliases). Live while outpass stays scaled to 0. |
+| Roles directory | `/admin/roles`, `/admin/getadmins` — webadmin, dean, director only |
 
 ## Env
 

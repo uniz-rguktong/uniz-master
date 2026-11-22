@@ -27,13 +27,20 @@ sequenceDiagram
   participant PG as Postgres
 
   B->>GW: POST /api/v1/auth/login/student
+  Note over B,GW: captchaToken required in production
   GW->>A: proxy
-  A->>PG: verify credentials
-  PG-->>A: AuthCredential
-  A-->>B: JWT student_token
+  alt captcha failed
+    A-->>B: 400 AUTH_CAPTCHA_FAILED
+  else password ok
+    A->>PG: verify credentials
+    PG-->>A: AuthCredential
+    A-->>B: JWT student_token plus mustChangePassword
+  end
 ```
 
 ### Admin / faculty login
+
+Staff sign-in is `POST /api/v1/auth/login/admin`. The response uses `admin_token` for every non-student role. Individual `firstname.lastname` faculty logins are not issued yet.
 
 ```mermaid
 sequenceDiagram
@@ -43,12 +50,36 @@ sequenceDiagram
   participant PG as Postgres
 
   B->>GW: POST /api/v1/auth/login/admin
+  Note over B,GW: captchaToken required in production
   GW->>A: proxy
   A->>PG: verify staff credentials
-  A-->>B: admin_token or faculty_token
+  A-->>B: admin_token plus mustChangePassword
+```
+
+### First-login email code
+
+When `mustChangePassword` is true, other APIs return `403 PASSWORD_CHANGE_REQUIRED`. The portal opens **Set a new password**, which requests a code and then changes the password in one call. The code goes to the stored mailbox only.
+
+```mermaid
+sequenceDiagram
+  participant B as Browser
+  participant GW as gateway-api
+  participant A as Auth
+  participant N as Notifications
+
+  B->>GW: POST /auth/password/change/otp
+  GW->>A: session still valid for this path
+  A->>N: email code to stored mailbox
+  A-->>B: maskedEmail expiresInMinutes 10
+  B->>GW: POST /auth/password/change with otp and newPassword
+  A->>A: consume OTP clear flag bump tokenVersion
+  A-->>B: new token mustChangePassword false
+  Note over B: Portal stores the token and continues
 ```
 
 ### Password reset via OTP
+
+Forgot-password is a different code. Address order: `realEmail`, profile email, then the campus mailbox. `/otp/request` needs `captchaToken`. `/otp/request-email` does not.
 
 ```mermaid
 sequenceDiagram
@@ -73,16 +104,19 @@ sequenceDiagram
   B->>GW: POST /auth/otp/verify
   GW->>A: accept email OTP only
   B->>GW: POST /auth/password/reset
-  GW->>A: update password hash
+  GW->>A: update hash clear flag bump tokenVersion
 ```
 
 ### Logged-in password change
+
+Ordinary change sends `currentPassword` and `newPassword` (minimum 8). No email code. Success returns a new `token` and increments `tokenVersion`, so older sessions stop. The first-login screen stores that token. The student Reset Password page clears the browser and asks for a fresh sign-in.
 
 ```mermaid
 flowchart LR
   UI[Reset password page] --> GW[gateway-api]
   GW --> Auth
   Auth --> PG[(Postgres)]
+  Auth --> Tok[new token]
 ```
 
 ---
@@ -199,7 +233,9 @@ Shared admin shell. COE uses Webadmin dashboard; Director is nearly identical (n
 | Campus banners / updates | `/cms/admin/…` | User |
 | Website CMS | `/cms/api/…` | Landing FastAPI |
 | Push broadcast | `/notifications/push/send` | Notifications → BullMQ |
-| Reset student password | `/auth/admin/global-reset-password` | Auth |
+| Roles directory | `/profile/admin/roles` | User. Webadmin permissions are locked (403). |
+| Database browser | `/dbadmin` | dbadmin. Canonical webadmin only. |
+| Website editor | landing `/api/home` and notices | Landing FastAPI. Publish writes `rguktong.in`. |
 
 ### Student bulk upload
 
@@ -262,6 +298,22 @@ flowchart LR
   Q --> PDF[PDFKit bulk]
   PDF --> Redis[(result TTL)]
   UI --> DL[poll + download]
+```
+
+### Database, Roles, and Website editor
+
+Short paths for the three webadmin tools. None of them are student features.
+
+```mermaid
+flowchart LR
+  UI[Webadmin shell] --> Roles[Roles screen]
+  UI --> Db[Database browser]
+  UI --> Site[Website editor]
+  Roles --> User[User directory API]
+  Db --> GW[gateway /dbadmin]
+  GW --> Svc[uniz-dbadmin-service]
+  Site --> Frame[rguktong.in preview=1]
+  Site --> Land[landing-backend publish]
 ```
 
 ### Campus CMS and push
@@ -392,18 +444,23 @@ sequenceDiagram
 
 ```mermaid
 flowchart LR
-  Login[Admin signin] --> FT[faculty_token]
+  Login[Admin signin] --> Gate{mustChangePassword?}
+  Gate -->|yes| Set[Set a new password]
+  Gate -->|no| FT[admin_token]
+  Set --> FT
   FT --> Dash[/faculty dashboard]
   Dash --> Me[GET /profile/faculty/me]
   Dash --> Search[POST /profile/student/search]
   Dash --> PW[POST /auth/password/change]
 ```
 
+Individual `firstname.lastname` faculty logins are not issued. This diagram is for faculty accounts that already exist.
+
 ---
 
 ## Security / Caretaker / Warden
 
-Outpass gate actions are **parked** unless `ENABLE_OUTPASS_OUTING=true`.
+Outpass and outing gate actions are **not enabled**. The diagram is the parked design. It runs only if `ENABLE_OUTPASS_OUTING=true`, which production does not set.
 
 ```mermaid
 flowchart TB

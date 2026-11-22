@@ -45,16 +45,23 @@ export default defineConfig({
       ['link', { rel: 'canonical', href: url }],
     ]
   },
+  appearance: false,
   cleanUrls: true,
   ignoreDeadLinks: true,
   srcExclude: ['**/node_modules/**', 'README.md', 'AGENTS.md', 'CONTRIBUTING.md', '_sidebar.md'],
   themeConfig: {
-    logo: {
-      light: "/logo.svg",
-      dark: "/logo-white.svg",
-    },
+    logo: '/logo.svg',
     nav: [
       { text: 'Documentation', link: '/' },
+      {
+        text: 'Webadmin',
+        items: [
+          { text: 'Workspace', link: '/admin/webadmin' },
+          { text: 'Roles', link: '/admin/roles-directory' },
+          { text: 'Database', link: '/admin/database' },
+          { text: 'Website editor', link: '/admin/website-editor' },
+        ],
+      },
       { text: 'API Reference', link: '/api/platform/gateway' },
       {
         text: 'GitHub',
@@ -113,9 +120,10 @@ export default defineConfig({
             { text: 'Find anything', link: '/howto/find-anything' },
             { text: 'Add an API route', link: '/howto/add-api-route' },
             { text: 'Change frontend', link: '/howto/change-frontend' },
+            { text: 'Responsive audit', link: '/howto/responsive-audit' },
             { text: 'Database migrations', link: '/howto/database-migrations' },
             { text: 'Scale and HPA', link: '/howto/scale-and-hpa' },
-            { text: 'Revive outpass', link: '/howto/revive-outpass' },
+            { text: 'Revive outpass (not enabled)', link: '/howto/revive-outpass' },
           ],
         },
         {
@@ -124,17 +132,20 @@ export default defineConfig({
             { text: 'Login', link: '/students/login' },
             { text: 'Academics', link: '/students/academics' },
             { text: 'Profile', link: '/students/profile' },
-            { text: 'Outpass', link: '/students/outpass' },
           ],
         },
         {
           text: 'Admin Guide',
           items: [
             { text: 'Overview', link: '/admin/overview' },
-            { text: 'Approvals', link: '/admin/approvals' },
+            { text: 'Webadmin workspace', link: '/admin/webadmin' },
+            { text: 'Roles screen', link: '/admin/roles-directory' },
+            { text: 'Database browser', link: '/admin/database' },
+            { text: 'Website editor', link: '/admin/website-editor' },
+            { text: 'Approvals (parked)', link: '/admin/approvals' },
             { text: 'Semester registration', link: '/admin/semester-registration' },
             { text: 'Academics', link: '/admin/academics' },
-            { text: 'Security', link: '/admin/security' },
+            { text: 'Security (parked)', link: '/admin/security' },
           ],
         },
         {
@@ -164,9 +175,15 @@ export default defineConfig({
             { text: 'Mail', link: '/api/comms/mail' },
             { text: 'Files', link: '/api/comms/files' },
             { text: 'Grievances', link: '/api/requests/grievances' },
-            { text: 'Outpass', link: '/api/requests/outpass' },
-            { text: 'Outing', link: '/api/requests/outing' },
-            { text: 'Approvals', link: '/api/requests/approvals' },
+            { text: 'Outpass (parked)', link: '/api/requests/outpass' },
+            { text: 'Outing (parked)', link: '/api/requests/outing' },
+            { text: 'Approvals (parked)', link: '/api/requests/approvals' },
+          ],
+        },
+        {
+          text: 'Parked',
+          items: [
+            { text: 'Student outpass (not enabled)', link: '/students/outpass' },
           ],
         },
       ],
