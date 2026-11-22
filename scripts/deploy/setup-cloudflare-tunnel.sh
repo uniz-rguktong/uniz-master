@@ -110,7 +110,10 @@ cloudflared_secret_present() {
 }
 
 # Ready when both in-cluster connectors have registered with Cloudflare.
-# Pod logs are not printed. Host systemd keeps the tunnel up until this passes.
+# Pod logs are not printed. The host systemd connector is never stopped here:
+# it stays up as the fallback, so the tunnel survives if the pods fail later.
+# The manifest ships replicas: 0; this scales to 2 only when the token is in
+# secret/uniz-secrets, so a missing token never leaves pods crash-looping.
 wait_for_in_cluster_connectors() {
   command -v kubectl >/dev/null 2>&1 || return 1
   kubectl get deploy cloudflared -n "${NAMESPACE:-default}" >/dev/null 2>&1 || return 1
@@ -119,6 +122,7 @@ wait_for_in_cluster_connectors() {
     kubectl scale deploy/cloudflared -n "${NAMESPACE:-default}" --replicas=0 >/dev/null 2>&1 || true
     return 1
   fi
+  kubectl scale deploy/cloudflared -n "${NAMESPACE:-default}" --replicas=2 >/dev/null 2>&1 || return 1
   echo "[tunnel] Waiting for 2 in-cluster cloudflared connectors to register..."
   kubectl rollout status deploy/cloudflared -n "${NAMESPACE:-default}" --timeout=180s || return 1
   local attempt pod ready registered
@@ -143,13 +147,6 @@ wait_for_in_cluster_connectors() {
 }
 
 start_token_tunnel() {
-  if wait_for_in_cluster_connectors; then
-    echo "[tunnel] 2 in-cluster connectors are registered. Stopping the host cloudflared service."
-    if command -v systemctl >/dev/null 2>&1; then
-      systemctl disable --now cloudflared >/dev/null 2>&1 || true
-    fi
-    return 0
-  fi
   echo "[tunnel] Installing connector via CLOUDFLARE_TUNNEL_TOKEN..."
   cloudflared service uninstall 2>/dev/null || true
   cloudflared service install "$CLOUDFLARE_TUNNEL_TOKEN"
@@ -305,6 +302,12 @@ print(json.dumps({"config": config}))
 
 main() {
   install_cloudflared
+
+  # In-cluster connectors are extra capacity next to the host connector.
+  # Runs in every mode; a missing token keeps them at 0 replicas.
+  if wait_for_in_cluster_connectors; then
+    echo "[tunnel] 2 in-cluster connectors registered. Host cloudflared stays up as the fallback."
+  fi
 
   if [[ -n "${CLOUDFLARE_TUNNEL_TOKEN:-}" ]]; then
     start_token_tunnel

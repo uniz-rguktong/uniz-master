@@ -10,7 +10,7 @@ resources:
   # Files folded into user-service (FILES_SERVICE_URL → user)
   # - files-service.yaml
   - gateway-api.yaml
-  # Two connectors for the existing tunnel. Host systemd stays until they register.
+  # Two connectors for the existing tunnel. Host systemd stays up as the fallback.
   - cloudflared.yaml
   # PARKED replicas:0 — nginx hop removed (Traefik → gateway-api). Keep for rollback.
   - gateway.yaml

@@ -4,6 +4,8 @@
 # anti-affinity does not block scheduling on the one node. No metrics port:
 # hostNetwork shares the host namespace, and two listeners would collide.
 # The tunnel token is TUNNEL_TOKEN from the existing uniz-secrets key.
+# Ships at replicas: 0. setup-cloudflare-tunnel.sh scales to 2 only when that
+# key is non-empty, and never stops the host systemd connector (the fallback).
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -11,7 +13,7 @@ metadata:
   labels:
     app: cloudflared
 spec:
-  replicas: 2
+  replicas: 0
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -51,6 +53,7 @@ spec:
                 secretKeyRef:
                   name: uniz-secrets
                   key: CLOUDFLARE_TUNNEL_TOKEN
+                  optional: true
           resources:
             requests:
               cpu: 20m
