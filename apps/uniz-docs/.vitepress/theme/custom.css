@@ -23,7 +23,8 @@
 }
 
 .mermaid {
-  background: #111;
+  background: #f7f8fa;
+  border: 1px solid #e3e5e9;
   border-radius: 8px;
   padding: 1rem;
   overflow-x: auto;

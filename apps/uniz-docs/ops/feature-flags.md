@@ -1,7 +1,11 @@
 ---
 title: "Feature flags"
-description: "Production toggles — outpass/outing, maintenance mode — where they live and how to flip them safely."
+description: "Production toggles — outpass/outing is not on, maintenance mode — where they live and how to flip them safely."
 ---
+
+::: warning
+Outpass and outing are **not on**. Both flags below default to false. Do not document the approval chain as a live student or staff workflow. Grievances do not use these flags.
+:::
 
 | Flag | Layer | Default | Effect |
 |------|-------|---------|--------|
@@ -16,9 +20,9 @@ flowchart LR
   Grievance[grievance paths] -->|always user-service| User
 ```
 
-## How to enable outpass (full)
+## How to enable outpass (not a current step)
 
-See [Revive outpass](/howto/revive-outpass) — both flags + scale Deployment + rebuild portal.
+Outpass is **not enabled**. The checklist in [Revive outpass](/howto/revive-outpass) is how it would be turned on later. It is not an operating procedure for today. Both flags, a scaled Deployment, and a portal rebuild are required together.
 
 ## Where configured
 

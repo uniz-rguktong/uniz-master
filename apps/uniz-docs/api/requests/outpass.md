@@ -4,7 +4,7 @@ description: "Submit and manage multi-day leave requests. Disabled in production
 ---
 
 ::: warning
-In current production the gateway returns **503** for `/api/v1/requests/*` (except grievance). Scale outpass and set flags before using these endpoints — [Revive outpass](/howto/revive-outpass).
+**Parked / not enabled.** Do not call these routes in production. The gateway returns **503** `OUTPASS_OUTING_DISABLED` for `/api/v1/requests/*` except grievance. This page is a reference for when outpass is revived — [Revive outpass](/howto/revive-outpass). It is not a live API.
 :::
 
 An outpass is a multi-day leave request. After you submit one, it moves through a chain of approvers before the student is permitted to exit. Use the [Approvals](/api/requests/approvals) endpoints to advance or reject a request at each level.

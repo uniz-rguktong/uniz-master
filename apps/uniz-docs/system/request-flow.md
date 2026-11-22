@@ -67,8 +67,9 @@ flowchart TD
 | `/api/v1/mail/*` | notifications `:3007` | Folded |
 | `/api/v1/files/*` | user `:3002` | Folded |
 | `/api/v1/grievance/*` | user `:3002` | |
-| `/api/v1/requests/*` | outpass `:3003` | **503** unless `ENABLE_OUTPASS_OUTING=true` |
-| `/api/v1/requests/.../grievance*` | **forced to user** | Works while outpass parked |
+| `/api/v1/requests/*` | outpass `:3003` | **503** `OUTPASS_OUTING_DISABLED` unless `ENABLE_OUTPASS_OUTING=true`. Not live. |
+| `/api/v1/requests/.../grievance*` | **forced to user** | Works while outpass is parked |
+| `/api/v1/dbadmin/*` | `uniz-dbadmin-service:3010` | Live, webadmin-only |
 | `/api/v1/analytics/*` | landing-backend | |
 | `/docs` | `uniz-docs-service:3333` | |
 

@@ -24,6 +24,8 @@ Docker multi-stage build:
 3. Gateway / Traefik proxies `/docs` → docs Service
 4. Health: `GET /health` returns JSON immediately
 
+The docs chrome is **light-only**, matching the product. `appearance: false` hides the theme toggle. The nav mark is the light M1 wordmark. Mermaid uses the default light theme and a light diagram background (`.vitepress/theme/index.ts`, `custom.css`).
+
 Cold compile is ~15–20s locally. Runtime is static — no live MDX compiler.
 
 ## How to edit these docs

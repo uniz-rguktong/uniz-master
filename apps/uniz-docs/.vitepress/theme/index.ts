@@ -19,7 +19,7 @@ export default {
     onMounted(() => {
       mermaid.initialize({
         startOnLoad: false,
-        theme: 'dark',
+        theme: 'default',
         securityLevel: 'loose',
       })
       render()

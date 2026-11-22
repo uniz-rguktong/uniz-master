@@ -1,52 +1,36 @@
 ---
 title: "Login"
-description: "How to access the uniZ portal (including Turnstile when enabled), manage your password, and install the app on your device."
+description: "Student sign-in, the first-login email code, forgot-password OTP, and browser-menu install."
 ---
 
-The uniZ portal is your central hub for academics, leave requests, and your student profile. Your login credentials are your RGUKT roll number and a password set by the administration.
+The uniZ portal is the hub for academics and your student profile. Sign in with your RGUKT roll number and password. Leave requests are not a current feature.
 
 ## Sign in
 
-  ### Open the portal
+### Open the portal
 
-Navigate to the uniZ student portal URL provided by your institution.
+Go to [https://uniz.rguktong.in](https://uniz.rguktong.in) and choose **Student Portal**.
 
-  ### Enter your credentials
+### Enter your credentials
 
-- **Username** — your roll number (e.g., `O210008`) - **Password** — your
-    current password
+- **Username** — your roll number (for example `O210008`)
+- **Password** — your current password
 
-  ### Complete Turnstile (when enabled)
+### Complete Turnstile
 
-When `VITE_TURNSTILE_SITE_KEY` is set, student and admin sign-in show a
-    Cloudflare Turnstile check before **Continue** enables. The portal warms
-    the Turnstile script on app boot and on home / **Get started** hover or
-    focus via `apps/uniz-portal/src/utils/prefetchTurnstile.ts`, so the widget
-    is usually ready by the time you reach `/student/signin` or
-    `/admin/signin`. Env keys and trust boundaries: [Security model](/system/security).
+Production sign-in shows Cloudflare Turnstile before **Continue** enables. The portal warms the script on boot (`apps/uniz-portal/src/utils/prefetchTurnstile.ts`). A missing or failed check returns `400 AUTH_CAPTCHA_FAILED` before the password is judged.
 
-  ### Tap Continue / Sign In
+### Continue
 
-On success, you are redirected to your profile dashboard. The portal stores
-    your session securely in the browser — you do not need to enter your
-    credentials again until you log out or your session expires.
+On success the API returns a JWT, `role`, `mustChangePassword`, and `student_token` (the same token). The portal stores the session in the browser.
+
+If `mustChangePassword` is true, you are not taken to the dashboard. You go to **Set a new password**.
 
 ::: info
-Your username is always your roll number in uppercase (e.g., `O210008`). It
-  never changes.
+Your roll number is the username (for example `O210008`). The campus mailbox for mail is `<id>@rguktong.ac.in`. That address is an inbox, not a password.
 :::
 
-### How authentication works
-
-When you sign in, the server issues a JWT (JSON Web Token) that the portal stores in your browser. Every subsequent request automatically includes this token — you don't need to do anything extra in the portal.
-
-If you are building on top of the API directly, include the token in every request:
-
-```bash
-Authorization: Bearer <your-token>
-```
-
-**Login endpoint (for API use):**
+**Login endpoint:**
 
 ```bash
 POST https://api-uniz.rguktong.in/api/v1/auth/login/student
@@ -55,156 +39,72 @@ POST https://api-uniz.rguktong.in/api/v1/auth/login/student
 ```json
 {
   "username": "O210008",
-  "password": "password123"
+  "password": "<password>",
+  "captchaToken": "<turnstile-token>"
 }
 ```
 
-**Success response:**
+A curl without a valid `captchaToken` fails in production.
 
-```json
-{
-  "success": true,
-  "token": "eyJhbGciOiJIUz...",
-  "role": "student",
-  "username": "O210008"
-}
-```
+## Set a new password (first login)
 
----
+Students were issued a campus password. That reset is already applied: previous student sessions no longer work, and each student sets a new password at the next sign-in. Admin, webadmin, and the shared role accounts were not part of that reset.
 
-## Reset your password
+The screen is `apps/uniz-portal/src/pages/auth/SetPassword.tsx`. On open it calls `POST /api/v1/auth/password/change/otp`.
 
-Use this flow if you've forgotten your password. You'll need access to the email address registered with your account.
+You will see:
 
-  ### Go to the login page
+- The masked mailbox
+- A 6-digit code field
+- **Resend** (60 second cooldown)
+- New password and confirmation (at least 8 characters, and not the issued campus password)
+- **Save password**
+- **Sign out**
 
-Tap **Forgot Password** on the sign-in screen.
+While the flag is set, other APIs return `403 PASSWORD_CHANGE_REQUIRED` ("Set a new password before continuing."). Logout and the two password-change calls stay available.
 
-  ### Enter your roll number
+If no mailbox is stored, the screen shows `OTP_EMAIL_MISSING` and tells you to contact webadmin. This code goes only to `realEmail` or the profile email. It does not invent `<id>@rguktong.ac.in`.
 
-Submit your username (`O210008`). The system sends a 6-digit OTP to your registered email address.
+On success the API clears the flag, invalidates older tokens, and returns a new `token`. The portal stores that token and opens the app. You do **not** sign in again after this first-login change.
 
-    ```json
-    POST /auth/otp/request
-    { "username": "O210008" }
-    ```
+Full request shapes: [Password](/api/auth/password).
 
-  ### Enter the OTP
+## Forgot your password
 
-Check your inbox and enter the 6-digit code in the verification field.
+This is a different email code from the first-login code. It does not require you to be signed in.
 
-    ```json
-    POST /auth/otp/verify
-    {
-      "username": "O210008",
-      "otp": "123456"
-    }
-    ```
+1. Tap **Forgot Password** and submit your roll number.
+2. `POST /auth/otp/request` emails a 6-digit code. The address is chosen in this order: stored `realEmail`, then profile email, then the campus mailbox `<id>@rguktong.ac.in`. The response includes the address masked (`deliveryMethod: "email"`).
+3. Verify with `POST /auth/otp/verify`.
+4. `POST /auth/password/reset` with the `resetToken`. The new password must be at least 6 characters and must not be the issued campus password.
 
-  ### Set a new password
+Codes expire in 10 minutes and are single-use. Push is not an OTP channel. Production `/otp/request` needs `captchaToken`. Resend (`/otp/request-email`) does not need a fresh captcha.
 
-Enter and confirm your new password. The reset requires a valid OTP and the same username.
+Limits: 2 new codes per minute and 15 per hour. Resend allows 4 requests per 2 minutes and shares the hourly cap. See [OTP](/api/auth/otp).
 
-    ```json
-    POST /auth/password/reset
-    {
-      "username": "O210008",
-      "resetToken": "123456",
-      "newPassword": "newSecurePassword123"
-    }
-    ```
+## Change a password you already know
 
-::: warning
-OTP requests are rate-limited. If you request too many OTPs in a short period,
-  you'll be temporarily blocked. Wait a few minutes before trying again.
-:::
+From the signed-in **Reset Password** page you send `currentPassword` and `newPassword` (at least 8 characters on the API). That call does not use the email code.
 
----
+The API returns a new `token` and ends older sessions. The student Reset Password page then clears the browser session and asks you to sign in again. That is only this voluntary page. The first-login screen keeps you signed in.
 
-## Change your password
+The portal strength meter (length, a number, a special character) is a client check. The API enforces length and rejects the issued campus password.
 
-Once logged in, you can change your password from the **Reset Password** page in the portal. You'll need your current password.
+## Install from the browser
 
-A strong password must meet all three criteria:
+The portal does not show an install banner. Chrome, Edge, and Safari can still install the PWA from the browser menu because the manifest and service worker are still served.
 
-- At least 8 characters
-- Contains at least one number
-- Contains at least one special character (e.g., `!@#$%`)
-
-::: warning
-After a successful password change, all active sessions are immediately logged
-  out for security. You'll need to sign in again with your new password.
-:::
-
-The portal evaluates your new password in real time and shows a strength indicator (Weak / Moderate / Strong). Weak and Moderate passwords are rejected.
-
----
-
-## Install as a PWA
-
-uniZ is a Progressive Web App (PWA). You can install it on your phone or desktop so it opens like a native app — no app store required.
-
-  #### Android
-
-### Open the portal in Chrome
-
-Navigate to the uniZ portal URL.
-
-      ### Tap the install prompt
-
-Chrome shows an **Add to Home Screen** banner at the bottom, or you can
-        tap the three-dot menu and select **Install app** / **Add to Home
-        Screen**.
-
-      ### Confirm
-
-Tap **Install**. The app icon appears on your home screen and opens in
-        standalone mode.
-
-  #### iOS (Safari)
-
-### Open the portal in Safari
-
-PWA installation on iOS only works in Safari.
-
-      ### Tap the Share button
-
-Tap the share icon at the bottom of the screen (the box with an arrow
-        pointing up).
-
-      ### Select Add to Home Screen
-
-Scroll down in the share sheet and tap **Add to Home Screen**, then tap
-        **Add**.
-
-  #### Desktop (Chrome/Edge)
-
-### Open the portal
-
-Navigate to the uniZ portal URL in Chrome or Edge.
-
-      ### Click the install icon
-
-Look for an install icon in the address bar (a monitor with a download
-        arrow), or open the browser menu and select **Install uniZ**.
-
-      ### Confirm
-
-Click **Install**. The app opens in its own window.
-
-::: tip
-Installing the PWA gives you a faster experience and keeps your session active
-  between visits without navigating to the URL each time.
-:::
-
----
+- **Android (Chrome):** browser menu → **Install app** or **Add to Home Screen**.
+- **iOS:** Safari share sheet → **Add to Home Screen**.
+- **Desktop (Chrome/Edge):** address-bar install icon, or the browser menu → **Install uniZ**.
 
 ## Common errors
 
-- **[Invalid credentials](#)**
-
-  - **[Account suspended](#)**
-
-  - **[OTP not received](#)**
-
-  - **[Session expired](#)**
+| What you see | What it means |
+|--------------|----------------|
+| `AUTH_CAPTCHA_FAILED` | Turnstile missing or failed. Checked before the password. |
+| Invalid credentials | Username or password did not match, after captcha passed. |
+| Account suspended | `403 AUTH_SUSPENDED`. Contact administration. |
+| `OTP_EMAIL_MISSING` | No deliverable mailbox for that flow. First-login: contact webadmin. |
+| `PASSWORD_CHANGE_REQUIRED` | Finish **Set a new password** before calling other APIs. |
+| `AUTH_TOKEN_REVOKED` | This token's `tokenVersion` is stale. Sign in again. |

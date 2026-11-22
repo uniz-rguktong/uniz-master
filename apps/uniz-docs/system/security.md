@@ -23,10 +23,12 @@ flowchart TB
 
 | Mechanism | Where |
 |-----------|--------|
-| JWT (`JWT_SECURITY_KEY`) | Issued by auth; validated by services + gateway as needed |
-| Role claims | Student / faculty / admin / security / etc. — see [Roles](/roles) |
-| Turnstile | Login/abuse paths when `TURNSTILE_SECRET_KEY` / `VITE_TURNSTILE_SITE_KEY` set. Portal also prefetches the Turnstile script on boot and home CTA hover/focus (`apps/uniz-portal/src/utils/prefetchTurnstile.ts`) so `/student/signin` and `/admin/signin` load the widget faster — no extra secrets. |
-| Internal secret | `INTERNAL_SECRET` for `/internal/*` and mail send |
+| JWT (`JWT_SECURITY_KEY`) | Issued by auth; validated by services. Claim `tokenVersion` must match `AuthCredential.tokenVersion` or the call is `401 AUTH_TOKEN_REVOKED`. |
+| Password-change gate | While `mustChangePassword` is set, gateway and auth return `403 PASSWORD_CHANGE_REQUIRED` except POST `/password/change`, `/password/change/otp`, and `/logout`. Code: `packages/uniz-shared/src/session-gate.ts`. |
+| Single webadmin | `isWebadmin()` is only username `webadmin` with mailbox `webadmin@rguktong.ac.in`. Any other `webadmin` role string is `faculty` via `accessRole()`. |
+| Role claims | Student / faculty / admin / security / etc. — see [Roles](/roles). Gate roles are parked. |
+| Turnstile | Production **login** and **`POST /auth/otp/request`** require `captchaToken`. Failure is `400 AUTH_CAPTCHA_FAILED` and is checked before the password. `/otp/request-email` does not need a fresh captcha. Portal prefetch: `apps/uniz-portal/src/utils/prefetchTurnstile.ts`. |
+| Internal secret | `INTERNAL_SECRET` for `/internal/*` and mail send. Header name only; never a value in docs. |
 
 ## Secrets management
 

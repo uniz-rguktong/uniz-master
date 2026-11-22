@@ -43,6 +43,7 @@ flowchart LR
 | `uniz-academics-service` | 1 | 3 | Grades, attendance, registration |
 | `uniz-notification-service` | 1 | 2 | Push + inbox + mail |
 | `uniz-docs-service` | 1 | — | VitePress (this site) |
+| `uniz-dbadmin-service` | 1 | — | Webadmin database browser, port 3010 |
 | `uniz-redis` | 1 | — | Cache / queues |
 
 Landing FastAPI runs as **Docker Compose on the host**, published on `127.0.0.1` + `10.42.0.1:8000`, exposed into the cluster via Endpoints Service `uniz-landing-backend-svc:8000`.
