@@ -13,7 +13,7 @@ export function useNotificationUnread(pollMs = 90_000) {
 
   const refresh = useCallback(async () => {
     try {
-      const data = await apiClient<InboxResponse>(NOTIFICATION_INBOX);
+      const data = await apiClient<InboxResponse>(NOTIFICATION_INBOX, {}, false);
       if (data?.success) {
         setUnreadCount(data.unreadCount ?? 0);
       }

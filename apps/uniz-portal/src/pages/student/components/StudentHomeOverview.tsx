@@ -1,17 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Bell,
-  BookOpen,
-  CalendarCheck,
-  ClipboardList,
-  Pencil,
-} from "lucide-react";
+import { Check, AlertTriangle } from "lucide-react";
 import { STUDENT_HOME_SUMMARY } from "../../../api/endpoints";
-import { StatTile } from "@/components/ui/tile";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/Button";
 import { Panel } from "@/components/ui/panel";
-import { EmptyState } from "@/components/ui/empty-state";
-import { Skeleton } from "@/components/ui/Skeleton";
+import {
+  InlineRetry,
+  ListSkeleton,
+  OverviewBusy,
+  OverviewLink,
+  OverviewStat,
+  OverviewTextButton,
+  SectionHead,
+  StatGrid,
+  StatSkeleton,
+  overviewCardClass,
+} from "@/components/ui/overview";
 
 type HomeSummary = {
   cgpa: number | null;
@@ -39,13 +44,6 @@ type HomeSummary = {
   };
 };
 
-const actions = [
-  { href: "/student/gradehub", label: "Results", icon: BookOpen },
-  { href: "/student/attendance", label: "Attendance", icon: CalendarCheck },
-  { href: "/student/registration", label: "Registration", icon: ClipboardList },
-  { href: "/student/notifications", label: "Notices", icon: Bell },
-];
-
 function formatWhen(iso?: string) {
   if (!iso) return "";
   const date = new Date(iso);
@@ -53,25 +51,28 @@ function formatWhen(iso?: string) {
   return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
 }
 
-export default function StudentHomeOverview({
-  onEdit,
-}: {
-  onEdit?: () => void;
-}) {
+export default function StudentHomeOverview() {
   const [data, setData] = useState<HomeSummary | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [attempt, setAttempt] = useState(0);
+  const [retrying, setRetrying] = useState(false);
+  const dataRef = useRef<HomeSummary | null>(null);
+  const statusRef = useRef(status);
+  dataRef.current = data;
+  statusRef.current = status;
 
   useEffect(() => {
     const token = (localStorage.getItem("student_token") || "").replace(/"/g, "");
     if (!token) {
       setStatus("error");
+      setRetrying(false);
       return;
     }
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 8000);
     let live = true;
-    setStatus("loading");
+    const keepVisible = dataRef.current != null || statusRef.current === "error";
+    if (!keepVisible) setStatus("loading");
     fetch(STUDENT_HOME_SUMMARY, {
       headers: { Authorization: `Bearer ${token}` },
       signal: controller.signal,
@@ -84,10 +85,12 @@ export default function StudentHomeOverview({
         if (!live) return;
         setData(json.data);
         setStatus("ready");
+        setRetrying(false);
       })
       .catch(() => {
         if (!live) return;
-        setStatus("error");
+        if (!dataRef.current) setStatus("error");
+        setRetrying(false);
       })
       .finally(() => clearTimeout(timer));
     return () => {
@@ -97,163 +100,204 @@ export default function StudentHomeOverview({
     };
   }, [attempt]);
 
+  const retry = () => {
+    setRetrying(true);
+    setAttempt((n) => n + 1);
+  };
+
   if (status === "loading") {
     return (
-      <div className="grid grid-cols-1 gap-3 min-[521px]:grid-cols-2" aria-hidden>
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-36 rounded-lg" />
-        ))}
-      </div>
+      <OverviewBusy>
+        <StatGrid>
+          {Array.from({ length: 4 }).map((_, index) => (
+            <StatSkeleton key={index} />
+          ))}
+        </StatGrid>
+        <div className="grid grid-cols-1 gap-6 min-[821px]:hidden">
+          <ListSkeleton rows={1} panel />
+          <ListSkeleton rows={5} />
+          <ListSkeleton rows={3} />
+        </div>
+        <div className="hidden min-[821px]:grid min-[821px]:grid-cols-12 min-[821px]:items-start min-[821px]:gap-6">
+          <div className="col-span-7">
+            <ListSkeleton rows={5} />
+          </div>
+          <div className="col-span-5 space-y-6">
+            <ListSkeleton rows={1} panel />
+            <ListSkeleton rows={3} />
+          </div>
+        </div>
+      </OverviewBusy>
     );
   }
 
   if (status === "error" || !data) {
     return (
-      <EmptyState
-        tone="error"
-        title="Overview unavailable"
-        body="Attendance, results and registration couldn't be loaded."
-        action={
-          <button
-            type="button"
-            onClick={() => setAttempt((n) => n + 1)}
-            className="text-dense font-medium text-link"
-          >
-            Try again
-          </button>
-        }
+      <InlineRetry
+        title="Overview didn't load"
+        body="Attendance, results and registration are unavailable right now. Your profile is below."
+        onRetry={retry}
+        busy={retrying}
       />
     );
   }
 
-  const attendanceLow = data.attendancePct !== null && data.attendancePct < 75;
+  const attendancePartial = data.partial.attendance;
+  const attendanceLow = !attendancePartial && data.attendancePct !== null && data.attendancePct < 75;
+  const attendanceValue = attendancePartial || data.attendancePct === null
+    ? "—"
+    : `${data.attendancePct.toFixed(1)}%`;
+  const attendanceLine = attendancePartial
+    ? "Couldn't load"
+    : data.attendancePct === null
+      ? "None uploaded yet"
+      : attendanceLow
+        ? "Below 75%"
+        : "Recorded classes";
+
+  const resultsSub = [
+    data.latestSemester,
+    data.latestSgpa !== null && data.latestSgpa !== undefined
+      ? `SGPA ${Number(data.latestSgpa).toFixed(2)}`
+      : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  const registration = () => (
+    <Panel className="min-[640px]:p-6">
+      <SectionHead title="Registration" />
+      {data.partial.registration ? (
+        <InlineRetry bare title="Registration didn't load" onRetry={retry} busy={retrying} />
+      ) : data.registration.empty ? (
+        <p className="text-body text-text-2">{data.registration.detail}</p>
+      ) : (
+        <div>
+          <Badge
+            tone={data.registration.registered ? "success" : "warning"}
+            icon={data.registration.registered ? Check : AlertTriangle}
+            className="h-7"
+          >
+            {data.registration.registered ? "Registered" : "Not registered"}
+          </Badge>
+          <p className="mt-2 text-body text-text-2">{data.registration.detail}</p>
+          <Button variant="outline" asChild className="mt-4 w-full min-[640px]:w-auto">
+            <Link to="/student/registration">View registration</Link>
+          </Button>
+        </div>
+      )}
+    </Panel>
+  );
+
+  const results = () => (
+    <section className={overviewCardClass}>
+      <SectionHead
+        title="Latest results"
+        sub={resultsSub || undefined}
+        action={
+          data.latestResults.length > 0 ? (
+            <OverviewLink to="/student/gradehub">All results</OverviewLink>
+          ) : null
+        }
+      />
+      {data.partial.results ? (
+        <div className="flex flex-wrap items-center gap-x-1 text-body text-text-2">
+          <span>Results didn&apos;t load.</span>
+          <OverviewTextButton onClick={retry} busy={retrying} chevron={false}>
+            {retrying ? "Trying again…" : "Try again"}
+          </OverviewTextButton>
+        </div>
+      ) : data.latestResults.length === 0 ? (
+        <p className="text-body text-text-2">
+          No results published yet. They appear here once the exam cell publishes them.
+        </p>
+      ) : (
+        <ul className="divide-y divide-border">
+          {data.latestResults.map((row, index) => (
+            <li key={`${row.subject}-${index}`} className="flex items-start justify-between gap-3 py-3 first:pt-1">
+              <span className="min-w-0 break-words text-body text-head">{row.subject}</span>
+              <span className="shrink-0 font-semibold tabular-nums text-head">
+                {Number(row.grade).toFixed(1)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+
+  const notices = () => (
+    <section className={overviewCardClass}>
+      <SectionHead
+        title="Notices"
+        action={<OverviewLink to="/student/notifications">All notices</OverviewLink>}
+      />
+      {data.notifications.length === 0 ? (
+        <p className="text-body text-text-2">No campus notices right now.</p>
+      ) : (
+        <ul className="divide-y divide-border">
+          {data.notifications.slice(0, 3).map((notice) => (
+            <li key={notice.id} className="py-3 first:pt-1">
+              <p className="text-body font-medium text-head [overflow-wrap:anywhere]">{notice.title}</p>
+              {notice.content ? (
+                <p className="mt-0.5 line-clamp-2 text-dense text-text-2 [overflow-wrap:anywhere]">
+                  {notice.content}
+                </p>
+              ) : null}
+              {notice.createdAt ? (
+                <p className="mt-1 text-small text-text-3">{formatWhen(notice.createdAt)}</p>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-3 min-[521px]:grid-cols-2">
-        <StatTile
+    <div className="min-w-0 space-y-6 min-[821px]:space-y-8">
+      <StatGrid>
+        <OverviewStat
           label="Attendance"
-          value={
-            data.partial.attendance || data.attendancePct === null
-              ? "—"
-              : `${data.attendancePct.toFixed(1)}%`
-          }
-          line={
-            data.partial.attendance
-              ? "Couldn't load attendance"
-              : data.attendancePct === null
-                ? "No attendance uploaded yet"
-                : attendanceLow
-                  ? "Below 75%"
-                  : "Recorded classes"
-          }
+          value={attendanceValue}
+          line={attendanceLine}
           status={attendanceLow ? "warning" : undefined}
         />
-        <StatTile
+        <OverviewStat
           label="CGPA"
-          value={data.cgpa === null ? "—" : data.cgpa.toFixed(2)}
-          line={
-            data.latestSgpa !== null
-              ? `Latest ${data.latestSgpa.toFixed(2)}${data.latestSemester ? ` · ${data.latestSemester}` : ""}`
-              : data.cgpa === null
-                ? "Appears after results are published"
-                : data.backlogs
-                  ? `${data.backlogs} backlog${data.backlogs === 1 ? "" : "s"}`
-                  : "No backlogs"
-          }
-          status={data.backlogs > 0 ? "warning" : undefined}
+          value={data.cgpa === null || data.cgpa === undefined ? "—" : Number(data.cgpa).toFixed(2)}
+          line={data.cgpa === null || data.cgpa === undefined ? "After results" : "All semesters"}
         />
+        <OverviewStat
+          label="Latest SGPA"
+          value={
+            data.latestSgpa === null || data.latestSgpa === undefined
+              ? "—"
+              : Number(data.latestSgpa).toFixed(2)
+          }
+          line={
+            data.latestSgpa === null || data.latestSgpa === undefined
+              ? "After results"
+              : data.latestSemester || "Latest semester"
+          }
+        />
+        <OverviewStat
+          label="Backlogs"
+          value={String(data.backlogs ?? 0)}
+          line={data.backlogs > 0 ? "Clear before next sem" : "None"}
+          status={data.backlogs > 0 ? "warning" : "success"}
+        />
+      </StatGrid>
+      <div className="grid grid-cols-1 gap-6 min-[821px]:hidden">
+        {registration()}
+        {results()}
+        {notices()}
       </div>
-
-      <div className="grid grid-cols-1 gap-3 min-[821px]:grid-cols-2">
-        <Panel title="Latest results">
-          {data.partial.results ? (
-            <p className="text-body text-text-2">Couldn&apos;t load results.</p>
-          ) : data.latestResults.length === 0 ? (
-            <p className="text-body text-text-2">No results published yet.</p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {data.latestResults.map((row) => (
-                <li
-                  key={`${row.subject}-${row.grade}`}
-                  className="flex items-center justify-between gap-3 py-2"
-                >
-                  <span className="min-w-0 text-body text-head">{row.subject}</span>
-                  <span className="font-sans text-body font-semibold tabular-nums text-head">
-                    {row.grade.toFixed(1)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Panel>
-
-        <Panel title="Semester registration">
-          {data.partial.registration || data.registration.empty ? (
-            <p className="text-body text-text-2">
-              {data.partial.registration
-                ? "Couldn't load registration."
-                : data.registration.detail}
-            </p>
-          ) : (
-            <div>
-              <p className="font-sans text-[28px] font-semibold leading-9 text-head">
-                {data.registration.label}
-              </p>
-              <p className="mt-2 text-body text-text-2">{data.registration.detail}</p>
-            </div>
-          )}
-        </Panel>
-      </div>
-
-      <Panel title="Notices">
-        {data.notifications.length === 0 ? (
-          <p className="text-body text-text-2">No campus notices right now.</p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {data.notifications.slice(0, 3).map((notice) => (
-              <li key={notice.id} className="py-3">
-                <p className="text-body font-medium text-head">{notice.title}</p>
-                {notice.content ? (
-                  <p className="mt-1 line-clamp-2 text-dense text-text-2">{notice.content}</p>
-                ) : null}
-                {notice.createdAt ? (
-                  <p className="mt-1 font-sans text-small tabular-nums text-text-3">
-                    {formatWhen(notice.createdAt)}
-                  </p>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        )}
-      </Panel>
-
-      <div>
-        <h2 className="font-serif text-[24px] font-normal leading-8 text-head">Quick actions</h2>
-        <div className="mt-3 grid grid-cols-2 gap-3">
-          {actions.map((action) => {
-            const Icon = action.icon;
-            return (
-              <Link
-                key={action.href}
-                to={action.href}
-                className="flex min-h-14 items-center gap-3 rounded-lg border border-border bg-surface px-4 py-3 text-body font-medium text-head hover:bg-tint"
-              >
-                <Icon size={18} strokeWidth={1.75} aria-hidden className="shrink-0 text-text-2" />
-                {action.label}
-              </Link>
-            );
-          })}
-          {onEdit ? (
-            <button
-              type="button"
-              onClick={onEdit}
-              className="flex min-h-14 items-center gap-3 rounded-lg border border-border bg-surface px-4 py-3 text-left text-body font-medium text-head hover:bg-tint"
-            >
-              <Pencil size={18} strokeWidth={1.75} aria-hidden className="shrink-0 text-text-2" />
-              Edit profile
-            </button>
-          ) : null}
+      <div className="hidden min-[821px]:grid min-[821px]:grid-cols-12 min-[821px]:items-start min-[821px]:gap-6">
+        <div className="col-span-7 min-w-0">{results()}</div>
+        <div className="col-span-5 min-w-0 space-y-6">
+          {registration()}
+          {notices()}
         </div>
       </div>
     </div>

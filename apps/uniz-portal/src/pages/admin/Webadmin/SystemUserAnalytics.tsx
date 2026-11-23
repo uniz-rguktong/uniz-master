@@ -1,32 +1,25 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import {
-  Users,
-  Shield,
-  UserCheck,
-  UserX,
-  GraduationCap,
-  BookOpen,
-  AlertTriangle,
-  CalendarClock,
-  Home,
-  MessageSquareWarning,
-} from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ADMIN_OVERVIEW_SUMMARY } from "../../../api/endpoints";
-import { KPICard, KPICardSkeleton } from "../AnalyticsUI";
-import { DonutChart } from "../../../components/ui/donut-chart";
-import IdentityInsightsPanel from "./IdentityInsightsPanel";
-import InstitutionAnalytics from "./InstitutionAnalytics";
-import { motion, AnimatePresence } from "framer-motion";
 import { formatDisplayText } from "@/utils/displayText";
-import { cn } from "../../../utils/cn";
 import { Panel } from "@/components/ui/panel";
+import {
+  InlineRetry,
+  ListSkeleton,
+  OverviewBusy,
+  OverviewStat,
+  OverviewTextButton,
+  SectionHead,
+  StatGrid,
+  StatSkeleton,
+  overviewCardClass,
+} from "@/components/ui/overview";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   systemUserAnalyticsAtom,
   webadminInstitutionAnalyticsAtom,
 } from "../../../store/atoms";
-
-const ROLE_COLORS = ["var(--navy-600)", "var(--navy-300)", "var(--navy-800)", "var(--text-3)"];
+import { getAdminSectionPath } from "@/utils/adminSectionRoutes";
 
 const STAFF_ROLES = [
   "webadmin",
@@ -62,65 +55,37 @@ type OverviewData = {
   partial: { academics: boolean; accounts: boolean };
 };
 
-function CardError({ title, onRetry }: { title: string; onRetry: () => void }) {
+function formatCount(value: number) {
+  return Number(value || 0).toLocaleString("en-IN");
+}
+
+function formatGpa(value: number | null | undefined) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return "—";
+  return Number(value).toFixed(2);
+}
+
+function MiniValue({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex min-h-[148px] flex-col rounded-lg border border-border bg-tile p-6">
-      <p className="text-dense leading-5 text-text-2">{title}</p>
-      <p className="mt-3 text-body text-head">Couldn&apos;t load</p>
-      <button
-        type="button"
-        onClick={onRetry}
-        className="mt-3 w-fit text-dense font-medium text-link"
-      >
-        Try again
-      </button>
+    <div className="min-w-0">
+      <p className="text-dense text-text-2">{label}</p>
+      <p className="font-sans text-[24px] font-semibold leading-8 text-head tabular-nums">{value}</p>
     </div>
   );
 }
 
-function CardRow({
-  loading,
-  failed,
-  onRetry,
-  titles,
-  children,
-}: {
-  loading: boolean;
-  failed: boolean;
-  onRetry: () => void;
-  titles: string[];
-  children: ReactNode;
-}) {
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {titles.map((title) => (
-          <KPICardSkeleton key={title} />
-        ))}
-      </div>
-    );
-  }
-  if (failed) {
-    return (
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {titles.map((title) => (
-          <CardError key={title} title={title} onRetry={onRetry} />
-        ))}
-      </div>
-    );
-  }
-  return <>{children}</>;
-}
-
 export default function SystemUserAnalytics() {
+  const navigate = useNavigate();
   const [cached, setCached] = useRecoilState(systemUserAnalyticsAtom);
   const institution = useRecoilValue(webadminInstitutionAnalyticsAtom);
   const [reloadKey, setReloadKey] = useState(0);
+  const [retrying, setRetrying] = useState(false);
   const forceFresh = useRef(false);
   const seenInstitution = useRef(institution.fetched);
-  const [chartsReady, setChartsReady] = useState(false);
-  const chartRef = useRef<HTMLDivElement>(null);
-  const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
+
+  const showReview = useMemo(() => {
+    const role = (localStorage.getItem("role") || "").toLowerCase().replace(/"/g, "");
+    return role === "swo" || role === "dsw";
+  }, []);
 
   useEffect(() => {
     if (seenInstitution.current && !institution.fetched) {
@@ -167,7 +132,10 @@ export default function SystemUserAnalytics() {
           error: "Couldn't load the overview",
         });
       })
-      .finally(() => clearTimeout(timer));
+      .finally(() => {
+        clearTimeout(timer);
+        if (live) setRetrying(false);
+      });
 
     return () => {
       live = false;
@@ -176,279 +144,247 @@ export default function SystemUserAnalytics() {
     };
   }, [reloadKey, cached.fetched, setCached]);
 
-  useEffect(() => {
-    const node = chartRef.current;
-    if (!node || !cached.data) return;
-    if (typeof IntersectionObserver === "undefined") {
-      setChartsReady(true);
-      return;
-    }
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setChartsReady(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "160px" },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [cached.data]);
-
   const data = (cached.data || null) as OverviewData | null;
-  const loading = !cached.fetched && !cached.error;
+  const loading = !cached.fetched && !cached.error && !retrying;
   const failed = Boolean(cached.error) || (cached.fetched && !data);
   const retry = () => {
+    setRetrying(true);
     forceFresh.current = true;
-    setCached({ fetched: false, data: null, error: null });
+    setCached((prev) => ({
+      fetched: false,
+      data: prev.data,
+      error: prev.error,
+    }));
     setReloadKey((n) => n + 1);
   };
 
-  const accounts = useMemo(() => data?.accounts || [], [data]);
-  const roleData = useMemo(() => {
-    const grouped = new Map<string, { label: string; value: number; color: string }>();
-    for (const row of accounts) {
-      const roleKey = (row.role || "unknown").toUpperCase();
-      const current = grouped.get(roleKey) || {
-        label: formatDisplayText(roleKey),
-        value: 0,
-        color: ROLE_COLORS[0],
-      };
-      current.value += (Number(row.active) || 0) + (Number(row.disabled) || 0);
-      grouped.set(roleKey, current);
-    }
-    return [...grouped.values()]
-      .sort((a, b) => b.value - a.value)
-      .map((item, index) => ({
-        ...item,
-        color: ROLE_COLORS[index % ROLE_COLORS.length],
-      }));
-  }, [accounts]);
+  if (loading || (!failed && !data)) {
+    return (
+      <OverviewBusy>
+        <StatGrid>
+          {Array.from({ length: 4 }).map((_, index) => (
+            <StatSkeleton key={index} />
+          ))}
+        </StatGrid>
+        <div className="grid grid-cols-1 gap-6 min-[821px]:hidden">
+          <ListSkeleton rows={4} />
+          <ListSkeleton rows={2} panel />
+          <ListSkeleton rows={5} />
+          <ListSkeleton rows={4} />
+        </div>
+        <div className="hidden min-[821px]:grid min-[821px]:grid-cols-12 min-[821px]:items-start min-[821px]:gap-6">
+          <div className="col-span-5 space-y-6">
+            <ListSkeleton rows={4} />
+            <ListSkeleton rows={2} panel />
+          </div>
+          <div className="col-span-7 space-y-6">
+            <ListSkeleton rows={5} />
+            <ListSkeleton rows={4} />
+          </div>
+        </div>
+      </OverviewBusy>
+    );
+  }
 
-  const totalUsersCount = roleData.reduce((sum, d) => sum + d.value, 0);
-  const activeSegment = roleData.find((s) => s.label === hoveredSegment);
+  if (failed || !data) {
+    return (
+      <InlineRetry
+        title="Campus figures didn't load"
+        body="Students, grievances and accounts are unavailable right now."
+        onRetry={retry}
+        busy={retrying}
+      />
+    );
+  }
+
+  const openByCategory = new Map<string, number>();
+  let openGrievances = 0;
+  let resolvedGrievances = 0;
+  for (const row of data.grievances || []) {
+    const count = Number(row.count) || 0;
+    if (String(row.status || "").toLowerCase() === "resolved") {
+      resolvedGrievances += count;
+    } else {
+      openGrievances += count;
+      const key = row.category || "Other";
+      openByCategory.set(key, (openByCategory.get(key) || 0) + count);
+    }
+  }
+  const grievanceRows = [...openByCategory.entries()]
+    .filter(([, count]) => count > 0)
+    .sort((a, b) => b[1] - a[1]);
+
+  const branches = [...(data.branches || [])].sort(
+    (a, b) => (Number(b.count) || 0) - (Number(a.count) || 0),
+  );
+  const branchMax = branches.reduce((max, row) => Math.max(max, Number(row.count) || 0), 0);
+
+  const accounts = data.accounts || [];
   const totalActive = accounts.reduce((sum, row) => sum + (Number(row.active) || 0), 0);
   const totalDisabled = accounts.reduce((sum, row) => sum + (Number(row.disabled) || 0), 0);
   const totalUsers = totalActive + totalDisabled;
   const staffTotal = accounts
     .filter((row) => STAFF_ROLES.includes((row.role || "").toLowerCase()))
     .reduce((sum, row) => sum + (Number(row.active) || 0) + (Number(row.disabled) || 0), 0);
-  const roleRows = accounts.map((row) => ({
-    role: row.role,
-    Active: row.active,
-    Disabled: row.disabled,
-  }));
 
-  const openGrievances = (data?.grievances || [])
-    .filter((row) => String(row.status || "").toLowerCase() !== "resolved")
-    .reduce((sum, row) => sum + (Number(row.count) || 0), 0);
-  const campusPct =
-    data && data.campus.activeStudents > 0
-      ? Math.round((data.campus.onCampus / data.campus.activeStudents) * 100)
-      : 0;
+  const academicsFailed = Boolean(data.partial?.academics);
+  const accountsFailed = Boolean(data.partial?.accounts) || data.accounts == null;
 
-  const academicTitles = ["Total Students", "Average GPA", "Backlogs", "Active Semesters"];
-  const campusTitles = ["Enrolled students", "On campus now", "Institution avg CGPA", "Open grievances"];
-  const accountTitles = ["Total accounts", "Active accounts", "Disabled accounts", "Staff accounts"];
+  const grievances = () => (
+    <section className={overviewCardClass}>
+      <SectionHead
+        title="Open grievances"
+        sub={`${formatCount(openGrievances)} open · ${formatCount(resolvedGrievances)} resolved`}
+        action={
+          showReview ? (
+            <OverviewTextButton onClick={() => navigate(getAdminSectionPath("grievances"))}>
+              Review
+            </OverviewTextButton>
+          ) : null
+        }
+      />
+      {grievanceRows.length === 0 ? (
+        <p className="text-body text-text-2">No open grievances.</p>
+      ) : (
+        <ul className="divide-y divide-border">
+          {grievanceRows.map(([category, count]) => (
+            <li key={category} className="flex items-start justify-between gap-3 py-3 first:pt-1">
+              <span className="min-w-0 break-words text-body text-head">
+                {formatDisplayText(category)}
+              </span>
+              <span className="shrink-0 font-semibold tabular-nums text-head">{formatCount(count)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
 
-  const displayValue = activeSegment?.value ?? totalUsersCount;
-  const displayLabel = activeSegment?.label ?? "Total Identities";
-  const displayPercentage =
-    activeSegment && totalUsersCount > 0
-      ? (activeSegment.value / totalUsersCount) * 100
-      : 100;
+  const semester = () => (
+    <Panel className="min-[640px]:p-6">
+      <SectionHead title="Current semester" sub={data.academics?.currentSemester || undefined} />
+      {academicsFailed ? (
+        <InlineRetry bare title="Semester figures didn't load" onRetry={retry} busy={retrying} />
+      ) : (
+        <div className="grid grid-cols-2 gap-4">
+          <MiniValue label="Students" value={data.academics ? formatCount(data.academics.totalStudents) : "—"} />
+          <MiniValue label="Average GPA" value={formatGpa(data.academics?.avgGPA)} />
+          <MiniValue label="Backlogs" value={data.academics ? formatCount(data.academics.backlogCount) : "—"} />
+          <MiniValue label="Active semesters" value={data.academics ? formatCount(data.academics.activeSemesters) : "—"} />
+        </div>
+      )}
+    </Panel>
+  );
+
+  const branchCard = () => (
+    <section className={overviewCardClass}>
+      <SectionHead title="Students by branch" />
+      {branches.length === 0 ? (
+        <p className="text-body text-text-2">No branch data yet.</p>
+      ) : (
+        <ul className="divide-y divide-border">
+          {branches.map((row) => {
+            const count = Number(row.count) || 0;
+            const width = branchMax > 0 ? (count / branchMax) * 100 : 0;
+            return (
+              <li key={row.branch} className="py-3 first:pt-1">
+                <div className="flex items-start justify-between gap-3">
+                  <span className="min-w-0 break-words text-body text-head">{row.branch}</span>
+                  <span className="shrink-0 font-semibold tabular-nums text-head">{formatCount(count)}</span>
+                </div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-tint" aria-hidden>
+                  <div className="h-full rounded-full bg-navy-600" style={{ width: `${width}%` }} />
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
+
+  const accountCard = () => (
+    <section className={overviewCardClass}>
+      <SectionHead title="Platform accounts" />
+      {accountsFailed ? (
+        <InlineRetry bare title="Account figures didn't load" onRetry={retry} busy={retrying} />
+      ) : (
+        <>
+          <div className="grid grid-cols-2 gap-4 min-[640px]:grid-cols-4">
+            <MiniValue label="Total" value={formatCount(totalUsers)} />
+            <MiniValue label="Active" value={formatCount(totalActive)} />
+            <MiniValue label="Disabled" value={formatCount(totalDisabled)} />
+            <MiniValue label="Staff" value={formatCount(staffTotal)} />
+          </div>
+          <table className="mt-4 w-full table-fixed border-collapse">
+            <thead>
+              <tr>
+                <th className="py-2 text-left text-small font-medium text-text-2">Role</th>
+                <th className="py-2 text-right text-small font-medium text-text-2">Active</th>
+                <th className="py-2 text-right text-small font-medium text-text-2">Disabled</th>
+              </tr>
+            </thead>
+            <tbody>
+              {accounts.map((row, index) => (
+                <tr key={`${row.role}-${index}`}>
+                  <td className="border-t border-border py-3 text-body text-head [overflow-wrap:anywhere]">
+                    {formatDisplayText(row.role)}
+                  </td>
+                  <td className="border-t border-border py-3 text-right font-semibold tabular-nums text-head">
+                    {formatCount(row.active)}
+                  </td>
+                  <td className="border-t border-border py-3 text-right font-semibold tabular-nums text-head">
+                    {formatCount(row.disabled)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+    </section>
+  );
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head min-[821px]:text-[28px] min-[821px]:leading-9">
-          {data?.academics?.currentSemester || "Current semester"}
-        </h2>
-        <CardRow
-          loading={loading}
-          failed={failed || Boolean(data?.partial.academics) || !data?.academics}
-          onRetry={retry}
-          titles={academicTitles}
-        >
-          {data?.academics ? (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <KPICard
-                title="Total Students"
-                value={data.academics.totalStudents.toLocaleString()}
-                icon={GraduationCap}
-                badge="Enrolled"
-              />
-              <KPICard
-                title="Average GPA"
-                value={data.academics.avgGPA ?? "—"}
-                icon={BookOpen}
-                badge="Institution"
-              />
-              <KPICard
-                title="Backlogs"
-                value={data.academics.backlogCount}
-                icon={AlertTriangle}
-                badge={data.academics.backlogCount ? "At Risk" : "Clear"}
-                iconColor={data.academics.backlogCount ? "text-warning" : "text-success"}
-              />
-              <KPICard
-                title="Active Semesters"
-                value={data.academics.activeSemesters}
-                icon={CalendarClock}
-                badge="Running"
-              />
-            </div>
-          ) : null}
-        </CardRow>
+    <div className="min-w-0 space-y-6 min-[821px]:space-y-8">
+      <StatGrid>
+        <OverviewStat
+          label="Students"
+          value={formatCount(data.campus?.activeStudents)}
+          line={`of ${formatCount(data.campus?.totalStudents)} on roll`}
+        />
+        <OverviewStat
+          label="Open grievances"
+          value={formatCount(openGrievances)}
+          line={openGrievances > 0 ? "Needs review" : "None open"}
+          status={openGrievances > 0 ? "warning" : "success"}
+        />
+        <OverviewStat
+          label="Average CGPA"
+          value={formatGpa(data.campus?.avgCgpa)}
+          line="Institution"
+        />
+        <OverviewStat
+          label="With backlogs"
+          value={formatCount(data.campus?.withBacklogs)}
+          line="Students"
+        />
+      </StatGrid>
+      <div className="grid grid-cols-1 gap-6 min-[821px]:hidden">
+        {grievances()}
+        {semester()}
+        {branchCard()}
+        {accountCard()}
       </div>
-
-      <div className="space-y-4">
-        <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head min-[821px]:text-[28px] min-[821px]:leading-9">
-          Campus & academic snapshot
-        </h2>
-        <CardRow
-          loading={loading}
-          failed={failed || !data}
-          onRetry={retry}
-          titles={campusTitles}
-        >
-          {data ? (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <KPICard
-                title="Enrolled students"
-                value={data.campus.activeStudents.toLocaleString()}
-                icon={Users}
-                badge="Active"
-                iconColor="text-link"
-              />
-              <KPICard
-                title="On campus now"
-                value={`${campusPct}%`}
-                icon={Home}
-                badge={`${data.campus.onCampus.toLocaleString()} present`}
-                iconColor="text-success"
-              />
-              <KPICard
-                title="Institution avg CGPA"
-                value={Number(data.campus.avgCgpa || 0).toFixed(2)}
-                icon={GraduationCap}
-                badge={`${Number(data.campus.withBacklogs || 0).toLocaleString()} with backlogs`}
-                iconColor="text-warning"
-              />
-              <KPICard
-                title="Open grievances"
-                value={openGrievances.toLocaleString()}
-                icon={MessageSquareWarning}
-                badge={openGrievances > 0 ? "Needs review" : "Clear"}
-                iconColor={openGrievances > 0 ? "text-error" : "text-success"}
-              />
-            </div>
-          ) : null}
-        </CardRow>
-        {data ? (
-          <InstitutionAnalytics
-            campus={data.campus}
-            branches={data.branches}
-            grievances={data.grievances}
-          />
-        ) : null}
-      </div>
-
-      <h2 className="font-serif text-[24px] font-normal leading-8 tracking-[-0.01em] text-head min-[821px]:text-[28px] min-[821px]:leading-9">
-        Platform accounts
-      </h2>
-      <CardRow
-        loading={loading}
-        failed={failed || Boolean(data?.partial.accounts) || !data?.accounts}
-        onRetry={retry}
-        titles={accountTitles}
-      >
-        {data?.accounts ? (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <KPICard title="Total accounts" value={totalUsers.toLocaleString()} icon={Users} badge="Registered" iconColor="text-link" iconBg="bg-tint" />
-            <KPICard title="Active accounts" value={totalActive.toLocaleString()} icon={UserCheck} badge="Enabled" iconColor="text-success" iconBg="bg-[color-mix(in_srgb,var(--success)_8%,var(--surface))]" />
-            <KPICard title="Disabled accounts" value={totalDisabled.toLocaleString()} icon={UserX} badge="Restricted" iconColor="text-error" iconBg="bg-[color-mix(in_srgb,var(--error)_8%,var(--surface))]" />
-            <KPICard title="Staff accounts" value={staffTotal.toLocaleString()} icon={Shield} badge="Admin roles" iconColor="text-text-2" iconBg="bg-surface-2" />
-          </div>
-        ) : null}
-      </CardRow>
-
-      <div ref={chartRef}>
-        {data?.accounts && chartsReady ? (
-          <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-12">
-            <div className="flex lg:col-span-4">
-              <Panel title="Accounts by role" className="h-full w-full">
-                <p className="text-center text-dense leading-5 text-text-2">
-                  Students, faculty & admin
-                </p>
-                <div className="relative mt-4 flex items-center justify-center">
-                  <DonutChart
-                    data={roleData}
-                    size={220}
-                    strokeWidth={25}
-                    animationDuration={0.8}
-                    highlightOnHover
-                    onSegmentHover={(s) => setHoveredSegment(s ? s.label : null)}
-                    centerContent={
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={displayLabel}
-                          initial={{ opacity: 0, y: 4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -4 }}
-                          transition={{ duration: 0.15 }}
-                          className="flex flex-col items-center justify-center text-center"
-                        >
-                          <p className="mb-1 max-w-[140px] truncate text-dense text-text-2">
-                            {displayLabel}
-                          </p>
-                          <p className="font-sans text-[28px] font-semibold leading-9 tracking-[-0.01em] text-head tabular-nums">
-                            {displayValue.toLocaleString()}
-                          </p>
-                          {activeSegment ? (
-                            <p className="mt-1.5 text-dense tabular-nums text-text-2">
-                              {displayPercentage.toFixed(1)}%
-                            </p>
-                          ) : null}
-                        </motion.div>
-                      </AnimatePresence>
-                    }
-                  />
-                </div>
-                <div className="mt-4 flex w-full flex-col space-y-1 border-t border-border pt-4">
-                  {roleData.map((segment) => (
-                    <div
-                      key={segment.label}
-                      className={cn(
-                        "flex cursor-pointer items-center justify-between rounded-md px-2.5 py-1.5",
-                        hoveredSegment === segment.label ? "bg-tint" : "hover:bg-tint",
-                      )}
-                      onMouseEnter={() => setHoveredSegment(segment.label)}
-                      onMouseLeave={() => setHoveredSegment(null)}
-                    >
-                      <div className="flex items-center space-x-2.5">
-                        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: segment.color }} />
-                        <span className="text-dense font-medium text-text-2">{segment.label}</span>
-                      </div>
-                      <span className="text-dense font-semibold tabular-nums text-head">
-                        {segment.value.toLocaleString()}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </Panel>
-            </div>
-            <div className="flex lg:col-span-8">
-              <IdentityInsightsPanel data={roleRows} />
-            </div>
-          </div>
-        ) : data?.accounts ? (
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-12" aria-hidden>
-            <div className="h-72 rounded-md bg-tint lg:col-span-4" />
-            <div className="h-72 rounded-md bg-tint lg:col-span-8" />
-          </div>
-        ) : null}
+      <div className="hidden min-[821px]:grid min-[821px]:grid-cols-12 min-[821px]:items-start min-[821px]:gap-6">
+        <div className="col-span-5 min-w-0 space-y-6">
+          {grievances()}
+          {semester()}
+        </div>
+        <div className="col-span-7 min-w-0 space-y-6">
+          {branchCard()}
+          {accountCard()}
+        </div>
       </div>
     </div>
   );

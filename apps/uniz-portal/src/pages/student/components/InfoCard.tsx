@@ -48,7 +48,7 @@ export const InfoCard = memo(
       <div
         className={cn(
           "border-b border-border py-3",
-          fullWidth && "min-[821px]:col-span-2",
+          fullWidth && "col-span-full",
         )}
       >
         <dt>

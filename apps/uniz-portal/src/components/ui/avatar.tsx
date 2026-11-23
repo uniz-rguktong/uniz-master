@@ -4,6 +4,7 @@ const sizes = {
   32: "h-8 w-8 text-caption",
   36: "h-9 w-9 text-small",
   56: "h-14 w-14 text-dense",
+  80: "h-20 w-20 font-serif text-[28px] font-medium",
   96: "h-24 w-24 text-[18px]",
 } as const;
 
