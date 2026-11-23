@@ -1,6 +1,6 @@
 # Secrets surface (VPS-first)
 
-Production secrets live on the VPS as an encrypted SOPS file, `/root/uniz-secrets.env.sops`. Do not commit plaintext or ciphertext; the repo must never hold either, or any keys.
+Production secrets live on the VPS as an encrypted SOPS file, `/root/uniz-secrets.env.sops`. A separate dev vault lives at `/root/uniz-secrets.dev.env.sops` with the same key names and non-production placeholder values. Do not commit plaintext or ciphertext; the repo must never hold either, or any keys.
 
 ## Getting started
 
@@ -9,15 +9,14 @@ New maintainers:
 1. You need SSH access via the `uniz-vps` alias (key auth).
 2. Run `scripts/secrets-onboard.sh` (macOS can `brew install sops age`). Private key stays at `~/.config/uniz/age.key` (600). Send only the public key to an admin.
 3. Admin runs `scripts/secrets-grant.sh age1...`.
-4. Run `scripts/secrets-pull.sh` (writes ./secrets.env, 600) or `--names` for key names only. The VPS only sends the encrypted file.
-
-Follow-up: a separate dev/staging vault is not split yet; today's file is production, so treat a pulled `secrets.env` as production-sensitive.
+4. Run `scripts/secrets-pull.sh` (defaults to the **dev** vault, writes ./secrets.env, 600) or `--names` for key names only. The VPS only sends the encrypted file. Pass `--env prod` only when you need production values, and treat that file as production-sensitive.
 
 ## Sources of truth
 
 | Layer | What |
 |---|---|
 | **VPS vault** `/root/uniz-secrets.env.sops` | Encrypted production secrets. Deploy decrypts this when the file and the `sops` binary are both present. |
+| **Dev vault** `/root/uniz-secrets.dev.env.sops` | Encrypted non-production placeholders (same key names, no prod credentials). `scripts/secrets-pull.sh` defaults to this file. |
 | **Plaintext fallback** `/root/uniz-secrets.env` | Used when the SOPS file or the `sops` binary is missing. Mode 600. |
 | **k8s Secret** `uniz-secrets` | Synced from the vault by `scripts/deploy/sync-k8s-secret-from-vault.sh` |
 | **GitHub Actions secrets** | Bootstrap/fallback + **Vite build-time** vars for GHCR/Pages (`VITE_*`, Cloudinary, Turnstile site key) |

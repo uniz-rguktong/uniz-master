@@ -44,3 +44,4 @@ echo
 echo "Send the public key above to a UniZ admin (Sreehari)."
 echo "Private key stays here: $KEY_FILE (mode 600). Do not copy it to chat or git."
 echo "After an admin grants you access, run:  scripts/secrets-pull.sh"
+echo "That defaults to the dev vault. Pass --env prod only when you need production."

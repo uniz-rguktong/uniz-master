@@ -3,28 +3,46 @@
 # No plaintext leaves the VPS. Requires your age private key (see secrets-onboard.sh).
 #
 # Usage:
-#   scripts/secrets-pull.sh                 # write ./secrets.env (mode 600)
+#   scripts/secrets-pull.sh                 # DEV vault (default) → ./secrets.env (mode 600)
+#   scripts/secrets-pull.sh --env dev       # same as the default
+#   scripts/secrets-pull.sh --env prod      # production vault
 #   scripts/secrets-pull.sh --names         # print key names only
 #   scripts/secrets-pull.sh --stdout        # decrypt to stdout (your terminal)
 #   scripts/secrets-pull.sh -o PATH
 set -euo pipefail
 
 KEY_FILE="${UNIZ_AGE_KEY:-$HOME/.config/uniz/age.key}"
-REMOTE_SOPS="${UNIZ_SOPS_REMOTE:-/root/uniz-secrets.env.sops}"
+PROD_REMOTE="${UNIZ_SOPS_REMOTE:-/root/uniz-secrets.env.sops}"
+DEV_REMOTE="${UNIZ_SOPS_DEV_REMOTE:-/root/uniz-secrets.dev.env.sops}"
+ENV="dev"
 OUT="secrets.env"
 NAMES=0
 STDOUT=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
+    --env)
+      ENV="${2:?}"
+      case "$ENV" in
+        dev|prod) ;;
+        *) echo "Usage: $0 --env dev|prod" >&2; exit 1 ;;
+      esac
+      shift
+      ;;
     --names|-n) NAMES=1 ;;
     --stdout) STDOUT=1 ;;
     -o|--out) OUT="${2:?}"; shift ;;
-    -h|--help) sed -n '2,12p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,15p' "$0"; exit 0 ;;
     *) echo "Unknown option: $1" >&2; exit 1 ;;
   esac
   shift
 done
+
+if [ "$ENV" = "prod" ]; then
+  REMOTE_SOPS="$PROD_REMOTE"
+else
+  REMOTE_SOPS="$DEV_REMOTE"
+fi
 
 command -v sops >/dev/null || { echo "Install sops (https://github.com/getsops/sops/releases)" >&2; exit 1; }
 command -v age >/dev/null || { echo "Install age (brew install age / apt-get install age)" >&2; exit 1; }
@@ -48,4 +66,4 @@ fi
 umask 077
 sops --input-type dotenv --output-type dotenv -d "$tmp" > "$OUT"
 chmod 600 "$OUT"
-echo "Wrote $OUT (mode 600). Do not commit this file."
+echo "Wrote $OUT from the $ENV vault (mode 600). Do not commit this file."
