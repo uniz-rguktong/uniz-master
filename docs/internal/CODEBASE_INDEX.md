@@ -73,7 +73,7 @@ All client traffic hits `/api/v1/:service/*`:
 | `files` | uniz-files-service:3005 | Uploads |
 | `mail` | uniz-mail-service:3006 | Internal mail |
 | `notifications` | uniz-notification-service:3007 | Push + inbox |
-| `cron` | uniz-cron-service:3008 | Cron triggers |
+| `cron` | gateway local | `GET /api/v1/cron/health` returns CronJob-only. Not proxied. |
 | `docs` | uniz-docs-service:3333 | Optional health probe |
 
 Special routes:

@@ -39,7 +39,7 @@ flowchart TB
 | outpass | Parked + flag off | Revive via [Revive outpass](/howto/revive-outpass); grievance on user |
 | mail | Parked | `apps/uniz-notifications/src/mail` |
 | files | Parked | `apps/uniz-user` `files.routes` |
-| cron Deployment | Parked | `cron-job.yaml` / storage cleanup CronJob |
+| cron Deployment | Parked | `cron-job.yaml` / storage cleanup CronJob. `GET /api/v1/cron/health` is gateway-local JSON, not a proxy. |
 | legacy `uniz-api` monolith | **Removed** | Traffic is microservices via gateway-api only |
 
 CI enforces zeros in `scripts/ci/ci-remote-deploy.sh`.

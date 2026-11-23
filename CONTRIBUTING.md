@@ -102,7 +102,7 @@ If deploy fails, check the **VPS Automated Deployment** workflow in GitHub Actio
 - **TypeScript** — type-safe code; avoid `any` where possible.
 - **Prettier** — run `npm run prettify` before committing.
 - **Modularity** — keep services decoupled; do not share databases across services.
-- **Secrets** — never commit `secrets.env`, `.env`, or production credentials.
+- **Secrets** — never commit `secrets.env`, `.env`, or production credentials. Production vault access for maintainers: [docs/ops/SECRETS.md](docs/ops/SECRETS.md).
 
 ---
 
@@ -114,6 +114,7 @@ The following are for **project maintainers** with VPS access. OSS contributors 
 |------------------|---------|
 | `npm run deploy` / `scripts/deploy/deploy.sh` | Production VPS deployment |
 | `npm run vault:vps-audit` | Compare VPS vault keys |
+| `scripts/secrets-onboard.sh`, `scripts/secrets-grant.sh`, `scripts/secrets-pull.sh` | Age key, grant a recipient, pull the encrypted vault ([docs/ops/SECRETS.md](docs/ops/SECRETS.md)) |
 | `npm run watch` | Live kubectl view on VPS (`VPS_HOST` env) |
 | `scripts/redeploy_all_vps.sh` | Full image rebuild on VPS |
 | `scripts/surefire_deploy.sh` | Force rebuild deploy |

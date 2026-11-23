@@ -44,6 +44,7 @@ ehthumbs.db
 !.env.example
 *.env
 *secrets.env
+# scripts/secrets-pull.sh writes this (mode 600). Never commit it.
 secrets.env
 secrets.yaml
 secrets.env.vps.backup

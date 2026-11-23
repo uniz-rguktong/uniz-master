@@ -25,6 +25,7 @@ LANDING_ANALYTICS_DB_HOST="${LANDING_ANALYTICS_DB_HOST:-172.17.0.1}"
 
 cd "$ROOT/$LANDING_BACKEND_DIR"
 
+umask 077
 {
   echo "DATABASE_URL=$LANDING_DATABASE_URL"
   echo "JWT_SECURITY_KEY=$LANDING_JWT_SECURITY_KEY"
@@ -39,7 +40,8 @@ cd "$ROOT/$LANDING_BACKEND_DIR"
   echo "DB_PORT=${DB_PORT:-5432}"
   echo "DB_NAME=${DB_NAME:-uniz_db}"
 } > .env
+chmod 600 .env
 
-echo "[refresh-landing] Wrote .env with DB_HOST=${LANDING_ANALYTICS_DB_HOST}"
+echo "[refresh-landing] Wrote .env (mode 600) with DB_HOST=${LANDING_ANALYTICS_DB_HOST}"
 docker compose -f docker-compose.yml.vps up -d --build
 echo "[refresh-landing] landing-backend restarted"

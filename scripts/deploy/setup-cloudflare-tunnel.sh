@@ -146,12 +146,45 @@ wait_for_in_cluster_connectors() {
   return 1
 }
 
-start_token_tunnel() {
-  echo "[tunnel] Installing connector via CLOUDFLARE_TUNNEL_TOKEN..."
-  cloudflared service uninstall 2>/dev/null || true
-  cloudflared service install "$CLOUDFLARE_TUNNEL_TOKEN"
+# Host unit reads the token from a mode-600 EnvironmentFile. ExecStart has no
+# --token, so the token is not on the process command line.
+install_host_connector() {
+  local token="$1"
+  local bin token_env tmp
+  bin="$(command -v cloudflared)"
+  cloudflared service uninstall >/dev/null 2>&1 || true
+  mkdir -p "$CF_DIR"
+  token_env="$CF_DIR/token.env"
+  tmp="$(mktemp)"
+  chmod 600 "$tmp"
+  printf 'TUNNEL_TOKEN=%s\n' "$token" >"$tmp"
+  mv "$tmp" "$token_env"
+  chmod 600 "$token_env"
+  cat > /etc/systemd/system/cloudflared.service <<EOF
+[Unit]
+Description=cloudflared
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+TimeoutStartSec=15
+Type=notify
+EnvironmentFile=/etc/cloudflared/token.env
+ExecStart=${bin} --no-autoupdate tunnel run
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+  systemctl daemon-reload
   systemctl enable cloudflared >/dev/null 2>&1 || true
   systemctl restart cloudflared
+}
+
+start_token_tunnel() {
+  echo "[tunnel] Installing host connector (EnvironmentFile=/etc/cloudflared/token.env, mode 600)..."
+  install_host_connector "$CLOUDFLARE_TUNNEL_TOKEN"
   echo "[tunnel] cloudflared service running (token mode)"
 }
 
@@ -186,10 +219,7 @@ create_api_tunnel() {
   write_local_config "$tunnel_id"
   upsert_tunnel_dns "$tunnel_id" "$zone_id"
 
-  cloudflared service uninstall 2>/dev/null || true
-  cloudflared service install "$tunnel_token"
-  systemctl enable cloudflared >/dev/null 2>&1 || true
-  systemctl restart cloudflared
+  install_host_connector "$tunnel_token"
   echo "[tunnel] API tunnel $tunnel_id active"
 }
 

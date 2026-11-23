@@ -6,8 +6,11 @@
 echo "[Push] Pushing code to GitHub..."
 MSG=${1:-"chore: deployment update $(date +'%Y-%m-%d %H:%M:%S')"}
 
-# Only try to commit/push if we are NOT on the VPS and NOT in CI/CD
-if [ ! -f "/root/uniz-secrets.env" ] && [ "$DEPLOY_CONTEXT" != "GITHUB_ACTIONS" ]; then
+# Only try to commit/push if we are NOT on the VPS and NOT in CI/CD.
+# The VPS has either the encrypted vault or the plaintext fallback.
+if [ ! -f "${UNIZ_PLAIN_VAULT:-/root/uniz-secrets.env}" ] \
+  && [ ! -f "${UNIZ_SOPS_VAULT:-/root/uniz-secrets.env.sops}" ] \
+  && [ "$DEPLOY_CONTEXT" != "GITHUB_ACTIONS" ]; then
   git add .
   git commit -m "$MSG" || echo "No changes to commit"
   git push origin main
@@ -15,6 +18,49 @@ fi
 
 # shellcheck source=deploy-common.sh
 source "$(dirname "$0")/deploy-common.sh"
+
+# Encrypted vault wins when the file and the sops binary both exist.
+# /root/uniz-secrets.env is the fallback otherwise.
+# CLOUDFLARE_TUNNEL_TOKEN is intentionally empty — never invent a value.
+UNIZ_SOPS_VAULT="${UNIZ_SOPS_VAULT:-/root/uniz-secrets.env.sops}"
+UNIZ_PLAIN_VAULT="${UNIZ_PLAIN_VAULT:-/root/uniz-secrets.env}"
+UNIZ_VAULT_TEMP=""
+UNIZ_VAULT_RESOLVED=""
+
+cleanup_uniz_vault_temp() {
+  if [ -n "${UNIZ_VAULT_TEMP:-}" ] && [ -f "$UNIZ_VAULT_TEMP" ]; then
+    shred -u "$UNIZ_VAULT_TEMP" 2>/dev/null || rm -f "$UNIZ_VAULT_TEMP"
+    UNIZ_VAULT_TEMP=""
+  fi
+}
+trap cleanup_uniz_vault_temp EXIT
+
+# Sets UNIZ_VAULT_RESOLVED. Decrypts SOPS into a mode-600 temp file in this shell
+# (do not call this inside a command substitution — the temp path would be lost).
+resolve_uniz_vault_file() {
+  UNIZ_VAULT_RESOLVED=""
+  if [ -f "$UNIZ_SOPS_VAULT" ] && command -v sops >/dev/null 2>&1; then
+    cleanup_uniz_vault_temp
+    UNIZ_VAULT_TEMP="$(mktemp)"
+    chmod 600 "$UNIZ_VAULT_TEMP"
+    if SOPS_AGE_KEY_FILE=/root/age/uniz-vault.key \
+      sops --input-type dotenv --output-type dotenv -d "$UNIZ_SOPS_VAULT" >"$UNIZ_VAULT_TEMP"; then
+      echo "[Vault] Decrypted SOPS vault"
+      UNIZ_VAULT_RESOLVED="$UNIZ_VAULT_TEMP"
+      return 0
+    fi
+    echo "[Vault] ERROR: sops decrypt failed" >&2
+    cleanup_uniz_vault_temp
+    return 1
+  elif [ -f "$UNIZ_SOPS_VAULT" ]; then
+    echo "[Vault] sops binary missing; using plaintext vault" >&2
+  fi
+  if [ -f "$UNIZ_PLAIN_VAULT" ]; then
+    UNIZ_VAULT_RESOLVED="$UNIZ_PLAIN_VAULT"
+    return 0
+  fi
+  return 1
+}
 
 # Latest local-<timestamp> tag for an image repo (docker first, then k3s ctr).
 latest_local_image_tag() {
@@ -243,8 +289,9 @@ uniz_secrets_data_hash() {
     | awk '{print $1}' || true
 }
 
-# envsubst writes raw vault DATABASE_URLs (127.0.0.1 / localhost) into secrets.yaml.
-# Pods cannot dial loopback. Rewrite those DB hosts before kubectl apply.
+# envsubst writes raw vault DATABASE_URLs (127.0.0.1 / localhost) into the
+# rendered secret manifest. Pods cannot dial loopback. Rewrite those DB hosts
+# before kubectl apply. The manifest stays in a mode-600 temp file.
 rewrite_rendered_secret_db_hosts() {
   local path="$1"
   local pod_host="${POD_PG_HOST:-10.42.0.1}"
@@ -581,31 +628,35 @@ deploy_logic() {
   ROLLBACK_TARGETS=()
   VERIFY_DEPLOYMENTS=()
 
-  # Fill a missing DBADMIN_DB_PASSWORD before any secret sync. Direct deploys
-  # do not pass through ci-remote-deploy.sh, which does the same step.
-  if [ -f "/root/uniz-secrets.env" ] && [ -f "scripts/deploy/ensure-dbadmin-password.sh" ]; then
-    dbadmin_pw_status="$(bash scripts/deploy/ensure-dbadmin-password.sh /root/uniz-secrets.env)"
+  VAULT_FILE=""
+  if ! resolve_uniz_vault_file; then
+    echo "[Vault] ERROR: no usable secrets vault" >&2
+    exit 1
+  fi
+  VAULT_FILE="$UNIZ_VAULT_RESOLVED"
+  # Password generation writes the plaintext vault. Skip it when SOPS is the
+  # source so a shredded temp file is not the only copy of a new password.
+  if [ "$VAULT_FILE" = "$UNIZ_PLAIN_VAULT" ] && [ -f "scripts/deploy/ensure-dbadmin-password.sh" ]; then
+    dbadmin_pw_status="$(bash scripts/deploy/ensure-dbadmin-password.sh "$UNIZ_PLAIN_VAULT")"
     printf '%s\n' "$dbadmin_pw_status"
     if [ "$dbadmin_pw_status" = "generated DBADMIN_DB_PASSWORD (new)" ]; then
       export DBADMIN_PASSWORD_JUST_SET=1
     fi
   fi
 
-  # LOAD SECRETS (Sanitized)
-  if [ -f "/root/uniz-secrets.env" ]; then
-    echo "[Vault] Loading sanitized secrets..."
-    while IFS= read -r line || [ -n "$line" ]; do
-      [[ "$line" =~ ^#.*$ ]] && continue
-      [[ -z "$line" ]] && continue
-      [[ "$line" != *"="* ]] && continue
-      eval "export $line"
-    done < /root/uniz-secrets.env
+  echo "[Vault] Loading sanitized secrets..."
+  while IFS= read -r line || [ -n "$line" ]; do
+    [[ "$line" =~ ^#.*$ ]] && continue
+    [[ -z "$line" ]] && continue
+    [[ "$line" != *"="* ]] && continue
+    eval "export $line"
+  done < "$VAULT_FILE"
 
-    # Unescape %q vault values + rewrite PG host for pods (cni0), then apply Secret
-    if [ -f "scripts/deploy/sync-k8s-secret-from-vault.sh" ]; then
-      echo "[Vault] Syncing Kubernetes uniz-secrets (pod Postgres host)..."
-      bash scripts/deploy/sync-k8s-secret-from-vault.sh /root/uniz-secrets.env || true
-    fi
+  # Unescape %q vault values + rewrite PG host for pods (cni0), then apply Secret.
+  # sync-k8s-secret-from-vault.sh decrypts SOPS itself when that file exists.
+  if [ -f "scripts/deploy/sync-k8s-secret-from-vault.sh" ]; then
+    echo "[Vault] Syncing Kubernetes uniz-secrets (pod Postgres host)..."
+    bash scripts/deploy/sync-k8s-secret-from-vault.sh "$UNIZ_PLAIN_VAULT" || true
   fi
 
   # Sync Prisma schemas before rolling out services (idempotent on every deploy).
@@ -614,11 +665,23 @@ deploy_logic() {
     bash scripts/deploy/prisma-migrate-deploy-all.sh
   fi
 
-  # Generate Infrastructure from templates
+  # Render the Secret outside the git work tree, apply it, then delete it.
+  if [ -f "infra/kubernetes/base/shared/secrets.yaml" ]; then
+    shred -u "infra/kubernetes/base/shared/secrets.yaml" 2>/dev/null \
+      || rm -f "infra/kubernetes/base/shared/secrets.yaml"
+  fi
   if [ -f "infra/kubernetes/base/shared/secrets.yaml.template" ]; then
-    echo "[Infra] Generating secrets.yaml..."
-    envsubst < infra/kubernetes/base/shared/secrets.yaml.template > infra/kubernetes/base/shared/secrets.yaml
-    rewrite_rendered_secret_db_hosts "infra/kubernetes/base/shared/secrets.yaml"
+    echo "[Infra] Rendering secrets manifest to a temporary file..."
+    secrets_manifest="$(mktemp)"
+    chmod 600 "$secrets_manifest"
+    if ! envsubst < infra/kubernetes/base/shared/secrets.yaml.template > "$secrets_manifest"; then
+      shred -u "$secrets_manifest" 2>/dev/null || rm -f "$secrets_manifest"
+      echo "[Infra] ERROR: envsubst failed for secrets manifest" >&2
+      exit 1
+    fi
+    rewrite_rendered_secret_db_hosts "$secrets_manifest"
+    kubectl apply -f "$secrets_manifest" || true
+    shred -u "$secrets_manifest" 2>/dev/null || rm -f "$secrets_manifest"
   fi
 
   # Apply Infrastructure
@@ -627,13 +690,13 @@ deploy_logic() {
   kubectl delete validatingwebhookconfiguration ingress-nginx-admission 2>/dev/null || true
   kubectl apply -k infra/kubernetes/base/shared/ || true
 
-  # The apply above replaces uniz-secrets with the rendered template (a subset
-  # of vault keys). Re-run the vault sync so it is the last writer: full key
-  # set, %q unescape, cni0 host. The earlier sync stays so host-side Prisma
-  # migrations still use loopback.
-  if [ -f "/root/uniz-secrets.env" ] && [ -f "scripts/deploy/sync-k8s-secret-from-vault.sh" ]; then
+  # The rendered template above replaces uniz-secrets with a subset of vault
+  # keys. shared/ does not include secrets.yaml. Re-run the vault sync so it
+  # is the last writer: full key set, %q unescape, cni0 host. The earlier sync
+  # stays so host-side Prisma migrations still use loopback.
+  if [ -n "${VAULT_FILE:-}" ] && [ -f "scripts/deploy/sync-k8s-secret-from-vault.sh" ]; then
     echo "[Vault] Re-syncing Kubernetes uniz-secrets after shared apply (pod Postgres host)..."
-    bash scripts/deploy/sync-k8s-secret-from-vault.sh /root/uniz-secrets.env || true
+    bash scripts/deploy/sync-k8s-secret-from-vault.sh "$UNIZ_PLAIN_VAULT" || true
     strip_loopback_db_hosts_in_secret || true
   fi
 
@@ -830,6 +893,7 @@ deploy_logic() {
       echo "DB_HOST=${LANDING_ANALYTICS_DB_HOST}" >> .env
       echo "DB_PORT=${DB_PORT:-5432}" >> .env
       echo "DB_NAME=${DB_NAME:-uniz_db}" >> .env
+      chmod 600 .env
 
       docker compose -f docker-compose.yml.vps up -d --build
       # Two uvicorn workers need a moment before smoke hits landing-api.
@@ -937,7 +1001,7 @@ deploy_logic() {
 }
 
 # Execution Entry Point
-if [ -f "/root/uniz-secrets.env" ]; then
+if [ -f "$UNIZ_SOPS_VAULT" ] || [ -f "$UNIZ_PLAIN_VAULT" ]; then
   deploy_logic "$@"
 else
   # On Local Machine -> Trigger VPS

@@ -11,14 +11,37 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
-# Load VPS secrets the same way deploy.sh does (values are shell-quoted).
-if [ -f "/root/uniz-secrets.env" ]; then
+load_vault_env() {
+  local file="$1"
+  local line
   while IFS= read -r line || [ -n "$line" ]; do
     [[ "$line" =~ ^#.*$ ]] && continue
     [[ -z "$line" ]] && continue
     [[ "$line" != *"="* ]] && continue
     eval "export $line"
-  done < /root/uniz-secrets.env
+  done < "$file"
+}
+
+# deploy.sh exports the chosen vault first (SOPS temp or plaintext). Do not
+# replace those values with a stale plaintext file.
+if [ -z "${AUTH_DATABASE_URL:-}" ]; then
+  sops_file="${UNIZ_SOPS_VAULT:-/root/uniz-secrets.env.sops}"
+  plain_file="${UNIZ_PLAIN_VAULT:-/root/uniz-secrets.env}"
+  if [ -f "$sops_file" ] && command -v sops >/dev/null 2>&1; then
+    vault_tmp="$(mktemp)"
+    chmod 600 "$vault_tmp"
+    if SOPS_AGE_KEY_FILE=/root/age/uniz-vault.key \
+      sops --input-type dotenv --output-type dotenv -d "$sops_file" >"$vault_tmp"; then
+      load_vault_env "$vault_tmp"
+    else
+      shred -u "$vault_tmp" 2>/dev/null || rm -f "$vault_tmp"
+      echo "[prisma] ERROR: sops decrypt failed" >&2
+      exit 1
+    fi
+    shred -u "$vault_tmp" 2>/dev/null || rm -f "$vault_tmp"
+  elif [ -f "$plain_file" ]; then
+    load_vault_env "$plain_file"
+  fi
 fi
 
 PRISMA_VERSION="${PRISMA_MIGRATE_VERSION:-6.19.3}"

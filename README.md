@@ -2,7 +2,7 @@
 
 [![VPS Automated Deployment](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml)
 
-**New here?** [Handover](docs/HANDOVER.md) · **Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Action flows:** [docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) · **UI guide (trainers):** [docs/guides/UniZ-UI-Guidance.docx](docs/guides/UniZ-UI-Guidance.docx) · **Ops:** [docs/ops/INDEX.md](docs/ops/INDEX.md)
+**New here?** [Handover](docs/HANDOVER.md) · **Live docs:** [api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs) · **Action flows:** [docs/system/action-flows](https://api-uniz.rguktong.in/docs/system/action-flows) · **UI guide (trainers):** [docs/guides/UniZ-UI-Guidance.docx](docs/guides/UniZ-UI-Guidance.docx) · **Ops:** [docs/ops/INDEX.md](docs/ops/INDEX.md) · **Secrets:** [docs/ops/SECRETS.md](docs/ops/SECRETS.md)
 
 ## Architecture
 

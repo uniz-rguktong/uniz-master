@@ -35,7 +35,7 @@ Removed dead grade/attendance Excel paths (portal already uses `uniz-academics` 
 Outpass expiry + pending-status sync now lives in `apps/uniz-outpass/src/jobs/maintenance.ts`.
 
 - HTTP trigger: `GET /api/cron` on outpass (internal secret in prod)
-- Gateway: `/api/v1/cron/*` → outpass service
+- Gateway: `GET /api/v1/cron/health` is local JSON (`maintenance: CronJob-only`). `/cron` is not proxied to outpass.
 - K8s `uniz-maintenance-job` uses **outpass image**
 
 `uniz-cron` is **deprecated** for maintenance; it remains only for VPS **storage cleanup** (`runStorageCleanup`).

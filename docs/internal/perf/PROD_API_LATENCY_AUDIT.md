@@ -110,6 +110,8 @@ Docs is marked optional in the aggregate, but **`Promise.all` still waits for it
 
 ### 1. `serviceMap.cron` bug
 
+**Update:** the gateway no longer proxies `cron`. `GET /api/v1/cron/health` is a local 200 (`maintenance: CronJob-only`). Do not point `serviceMap.cron` at outpass.
+
 Cron health may probe outpass instead of cron:
 
 ```typescript

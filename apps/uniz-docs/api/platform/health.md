@@ -23,7 +23,17 @@ Probes each entry in gateway `serviceMap` at `/health`. Results cached in Redis 
 | `degraded` | Critical OK, some non-critical issues |
 | `down` | Critical failure → HTTP 503 |
 
-**Optional** (treated healthy if down): `docs`, `requests`, `cron`.
+**Optional** (treated healthy if down): `docs`, `requests`.
+
+`GET /api/v1/cron/health` is not an upstream probe. The gateway answers it locally because maintenance is CronJob-only:
+
+```bash
+curl -s https://api-uniz.rguktong.in/api/v1/cron/health
+```
+
+```json
+{ "status": "ok", "maintenance": "CronJob-only" }
+```
 
 Per-service health examples:
 

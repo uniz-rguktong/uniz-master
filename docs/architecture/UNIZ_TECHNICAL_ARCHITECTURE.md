@@ -124,7 +124,7 @@ The system is organized into functional suites. Every request (except Public) re
 | :---------------- | :----- | :------------------------------------------------------ |
 | `/system/health`  | GET    | Master heartbeat check across all 9 microservices.      |
 | `/gateway-status` | GET    | Real-time Nginx throughput and worker statistics.       |
-| `/cron/api/cron`  | GET    | Manual maintenance trigger (Log rotation & DB pruning). |
+| `/cron/health`    | GET    | Gateway-local. Maintenance is CronJob-only (not proxied). |
 
 ---
 

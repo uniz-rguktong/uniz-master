@@ -5,4 +5,6 @@ resources:
   - cluster-issuer.yaml
   - cluster-issuer-dns.yaml
   - ingress.yaml
-  - secrets.yaml
+  # uniz-secrets is rendered from secrets.yaml.template into a mode-600 temp
+  # file by scripts/deploy/deploy.sh, applied, then deleted. Do not write
+  # secrets.yaml into this directory.

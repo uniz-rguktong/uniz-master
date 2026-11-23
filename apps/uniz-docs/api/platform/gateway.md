@@ -27,6 +27,7 @@ https://api-uniz.rguktong.in/api/v1
 | `/dbadmin` | dbadmin:3010 | Live, **webadmin-only**. Not a public API. |
 | `/analytics` | landing-backend | Live |
 | `/system/health` | gateway local | Live |
+| `/cron/health` | gateway local | Live. **200** `{ "status": "ok", "maintenance": "CronJob-only" }`. Not proxied to outpass. |
 | `/docs` (site root, not under /api/v1) | docs:3333 | Live |
 
 Implementation: `apps/uniz-gateway/src/index.ts`. Diagrams: [Request flow](/system/request-flow).
