@@ -79,6 +79,7 @@ services = [
     ("files", "/files/health"),
     ("mail", "/mail/health"),
     ("notifications", "/notifications/health"),
+    # Answered by the gateway (CronJob-only). Must not be proxied to outpass.
     ("cron", "/cron/health"),
     ("grievance", "/grievance/health"),
     ("docs", "/docs/health"),

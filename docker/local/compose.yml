@@ -26,6 +26,7 @@ x-common-env: &common-env
   FILES_SERVICE_URL: http://user:3002
   MAIL_SERVICE_URL: http://notifications:3007
   NOTIFICATION_SERVICE_URL: http://notifications:3007
+  # Gateway does not proxy /cron. GET /api/v1/cron/health is local (CronJob-only).
   CRON_SERVICE_URL: http://outpass:3003
   ENABLE_OUTPASS_OUTING: ${ENABLE_OUTPASS_OUTING:-false}
   CLIENT_URL: ${CLIENT_URL:-http://localhost:8080,http://127.0.0.1:8080,http://localhost:8081,http://127.0.0.1:8081,http://localhost:5173,http://127.0.0.1:5173}

@@ -69,6 +69,7 @@ flowchart TD
 | `/api/v1/grievance/*` | user `:3002` | |
 | `/api/v1/requests/*` | outpass `:3003` | **503** `OUTPASS_OUTING_DISABLED` unless `ENABLE_OUTPASS_OUTING=true`. Not live. |
 | `/api/v1/requests/.../grievance*` | **forced to user** | Works while outpass is parked |
+| `/api/v1/cron/health` | gateway local | **200** `{ "status": "ok", "maintenance": "CronJob-only" }`. Not proxied. Outpass and the cron Deployment stay off. |
 | `/api/v1/dbadmin/*` | `uniz-dbadmin-service:3010` | Live, webadmin-only |
 | `/api/v1/analytics/*` | landing-backend | |
 | `/docs` | `uniz-docs-service:3333` | |

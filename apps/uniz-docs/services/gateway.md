@@ -25,6 +25,7 @@ Single public API process for uniZ. Traefik sends `api-uniz.rguktong.in` traffic
 7. **Proxy dbadmin** `/api/v1/dbadmin` → `uniz-dbadmin-service:3010` (webadmin-only upstream; not response-cached)
 8. **CORS** from `CLIENT_URL`
 9. **Analytics / CMS API** bridge to landing-backend
+10. **Cron health** — `GET /api/v1/cron/health` returns `{ "status": "ok", "maintenance": "CronJob-only" }`. `/cron` is not proxied (the cron Deployment and outpass stay at 0 replicas).
 
 ```mermaid
 flowchart LR

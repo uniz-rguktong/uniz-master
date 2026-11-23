@@ -32,7 +32,7 @@ flowchart TB
 
 ## Secrets management
 
-- VPS: `/root/uniz-secrets.env` (never commit)
+- VPS: encrypted `/root/uniz-secrets.env.sops` (plaintext `/root/uniz-secrets.env` is the fallback). Never commit either. See `docs/ops/SECRETS.md`.
 - GitHub Actions: repository secrets for CI/deploy/Pages
 - Helpers: `scripts/ops/vps-vault.sh`, `scripts/deploy/render-vps-secrets.sh`
 - Example keys: `secrets.env.example`

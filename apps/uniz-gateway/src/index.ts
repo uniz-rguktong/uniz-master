@@ -14,6 +14,7 @@ import {
   copyResponseHeaders,
   pathOnly,
 } from "./edge-cache";
+import { handleCronHealth } from "./cron-health";
 dotenv.config({ override: true });
 
 function cacheIdentityKey(req: express.Request): string {
@@ -139,10 +140,6 @@ const serviceMap: Record<string, string> = {
   notifications:
     process.env.NOTIFICATION_SERVICE_URL ||
     "http://uniz-notification-service.default.svc.cluster.local:3007",
-  cron:
-    process.env.CRON_SERVICE_URL ||
-    process.env.OUTPASS_SERVICE_URL ||
-    "http://uniz-outpass-service.default.svc.cluster.local:3003",
   grievance:
     process.env.USER_SERVICE_URL ||
     "http://uniz-user-service.default.svc.cluster.local:3002",
@@ -225,7 +222,7 @@ const HEALTH_REDIS_KEY = "gateway:system_health_aggregate";
 const HEALTH_FRESH_MS = 30_000;
 const HEALTH_STALE_MS = 120_000;
 const HEALTH_REDIS_TTL_SEC = 120;
-const optionalServices = new Set(["docs", "requests", "cron"]);
+const optionalServices = new Set(["docs", "requests"]);
 
 interface HealthPayload {
   data: { status: string; services: unknown[]; cached?: boolean };
@@ -351,6 +348,10 @@ app.get(
     res.json({ status: "ok" });
   },
 );
+
+// Maintenance is CronJob-only. Do not proxy /cron to outpass (0 replicas):
+// that connection is refused and Cloudflare returns 502.
+app.get("/api/v1/cron/health", handleCronHealth);
 
 app.get(
   "/api/v1/system/health",

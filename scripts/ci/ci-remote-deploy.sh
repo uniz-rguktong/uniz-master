@@ -36,20 +36,28 @@ if [ "$(git rev-parse HEAD)" != "$GITHUB_SHA" ]; then
 fi
 
 # Prefer the on-box vault when present (narrows GH secret blast radius).
+# The encrypted SOPS file wins. Plaintext is the fallback when that file or
+# the sops binary is missing. CLOUDFLARE_TUNNEL_TOKEN stays empty.
 # Set UNIZ_USE_EXISTING_VAULT=false to force re-render from the Actions env.
-if [ "${UNIZ_USE_EXISTING_VAULT:-true}" = "true" ] \
+if [ -f "${UNIZ_SOPS_VAULT:-/root/uniz-secrets.env.sops}" ] && command -v sops >/dev/null 2>&1; then
+  echo "[Secrets] Using /root/uniz-secrets.env.sops (decrypted at sync time)"
+elif [ "${UNIZ_USE_EXISTING_VAULT:-true}" = "true" ] \
   && [ -f /root/uniz-secrets.env ] \
   && grep -qE '^[A-Za-z_][A-Za-z0-9_]*=' /root/uniz-secrets.env; then
   echo "[Secrets] Reusing existing /root/uniz-secrets.env (UNIZ_USE_EXISTING_VAULT=true)"
 else
   ./scripts/deploy/render-vps-secrets.sh /root/uniz-secrets.env
 fi
-# Fill DBADMIN_DB_PASSWORD before the secret sync. The hand-managed vault is
-# reused on every deploy, and nobody SSHes in to add the line.
-dbadmin_pw_status="$(./scripts/deploy/ensure-dbadmin-password.sh /root/uniz-secrets.env)"
-printf '%s\n' "$dbadmin_pw_status"
-if [ "$dbadmin_pw_status" = "generated DBADMIN_DB_PASSWORD (new)" ]; then
-  export DBADMIN_PASSWORD_JUST_SET=1
+# Fill DBADMIN_DB_PASSWORD before the secret sync. Skip when SOPS is the
+# source: that write only updates the plaintext file, which sync would ignore.
+if [ -f "${UNIZ_SOPS_VAULT:-/root/uniz-secrets.env.sops}" ] && command -v sops >/dev/null 2>&1; then
+  echo "[Secrets] Leaving the SOPS vault unchanged (no plaintext password write)"
+else
+  dbadmin_pw_status="$(./scripts/deploy/ensure-dbadmin-password.sh /root/uniz-secrets.env)"
+  printf '%s\n' "$dbadmin_pw_status"
+  if [ "$dbadmin_pw_status" = "generated DBADMIN_DB_PASSWORD (new)" ]; then
+    export DBADMIN_PASSWORD_JUST_SET=1
+  fi
 fi
 ./scripts/deploy/ensure-ghcr-pull-secret.sh
 # Keep k8s Secret in sync with the vault file used by pods.

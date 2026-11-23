@@ -1266,9 +1266,21 @@ async function run() {
 
   log.phase("Phase 13 - System Utilities");
 
-  log.step("Trigger Manual Maintenance (Cron)");
-  const cronRes = await request("GET", "/cron/api/cron");
-  log.pass(cronRes.duration, "CRON_EXECUTED");
+  log.step("Cron health (CronJob-only, not proxied)");
+  const cronRes = await request("GET", "/cron/health");
+  if (
+    cronRes.status === 200 &&
+    cronRes.data &&
+    cronRes.data.maintenance === "CronJob-only"
+  ) {
+    log.pass(cronRes.duration, "CRON_HEALTH_LOCAL");
+  } else {
+    log.fail(
+      "cron health should be gateway-local CronJob-only",
+      cronRes.duration,
+      cronRes.data,
+    );
+  }
 
   log.step("Internal Gateway Status Check");
   const startGwi = performance.now();

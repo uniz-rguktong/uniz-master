@@ -67,6 +67,15 @@ check "auth health" "$API_URL/auth/health" "*"
 # Some auth builds expose /health on the service directly via gateway path variants
 check "cms notifications" "$API_URL/cms/notifications" "*"
 check "outpass gated" "$API_URL/requests/outpass/all" "503"
+cron_tmp="$(mktemp)"
+cron_code="$(curl -sS -o "$cron_tmp" -w "%{http_code}" --max-time 20 "$API_URL/cron/health" || echo "000")"
+if [[ "$cron_code" == "200" ]] && grep -q "CronJob-only" "$cron_tmp"; then
+  echo "OK  cron health (CronJob-only) ($cron_code) $API_URL/cron/health"
+else
+  echo "FAIL cron health (got $cron_code, want 200 CronJob-only) $API_URL/cron/health"
+  FAIL=1
+fi
+rm -f "$cron_tmp"
 check "comms health" "$API_URL/notifications/health" "*"
 check "grievance list auth" "$API_URL/grievance/list" "*"
 

@@ -11,7 +11,8 @@ Single-VPS + Cloudflare Pages (free) production.
 | HPA drill | [HPA_DRILL.md](HPA_DRILL.md) |
 | Backups / restore | [BACKUP_RESTORE.md](BACKUP_RESTORE.md) |
 | Database editor / Adminer | [adminer.md](adminer.md) |
-| Vault | `npm run vault:vps:status` · `npm run vault:vps-audit` |
+| Vault | [SECRETS.md](SECRETS.md) · `scripts/secrets-onboard.sh` · `npm run vault:vps:status` |
+| Cloudflared pods | [cloudflared-pods.md](cloudflared-pods.md) (in-cluster connectors parked) |
 | Observability | See below (Netdata + Uptime Kuma via SSH tunnel) |
 | Infra overview | [infra/README.md](../../infra/README.md) |
 | GitHub governance | [github-governance.md](github-governance.md) |

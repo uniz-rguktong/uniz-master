@@ -22,6 +22,12 @@ Typical **200**:
 }
 ```
 
+`GET /api/v1/cron/health` is answered by the gateway itself (`maintenance: CronJob-only`), not by a cron or outpass pod.
+
+```bash
+curl -s https://api-uniz.rguktong.in/api/v1/cron/health
+```
+
 ## Platform aggregate
 
 ```bash
