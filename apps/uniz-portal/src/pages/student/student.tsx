@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRecoilValue } from "recoil";
 import { useSearchParams } from "react-router-dom";
-import { Camera, Loader2 } from "lucide-react";
+import { Camera, Loader2, Pencil } from "lucide-react";
 import { student, studentProfileError } from "../../store";
 import { useIsAuth } from "../../hooks/is_authenticated";
 import { useStudentData } from "../../hooks/student_info";
@@ -24,9 +24,7 @@ import ProfileSemesterSubjects from "./components/ProfileSemesterSubjects";
 import SeatingArrangement, {
   fetchSeatingOnce,
 } from "./components/SeatingArrangement";
-import NoticeBoard from "../../components/NoticeBoard";
 import { Student } from "../../types";
-import { InlineError } from "../../components/feedback/InlineError";
 import { enableOutingsAndOutpasses } from "@/config/featureFlags";
 import { Button } from "@/components/Button";
 import { Input, Textarea } from "../../components/Input";
@@ -36,6 +34,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Panel } from "@/components/ui/panel";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { InlineRetry, overviewSectionTitleClass } from "@/components/ui/overview";
 import StudentHomeOverview from "./components/StudentHomeOverview";
 import { Tabs } from "@/components/ui/tabs";
 
@@ -54,30 +53,32 @@ const sectionTitleClass =
 // ─────────────────────────────────────────────────────────────────
 function ProfileSkeleton() {
   return (
-    <div className="space-y-8" aria-hidden>
+    <div
+      className="space-y-4 rounded-xl border border-border bg-panel p-4 min-[640px]:p-6 min-[821px]:p-8"
+      aria-busy="true"
+    >
       {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
       {/* Avatar + name skeleton */}
       {/* Avatar ring */}
-      <div className="space-y-3">
-        <Skeleton className="h-10 w-72" />
-        <Skeleton className="h-5 w-48" />
-      </div>
-      <div className="flex items-center gap-4">
+      <span className="sr-only">Loading overview</span>
+      <Skeleton className="h-6 w-2/5" />
+      <div className="flex items-center gap-3">
         {/* Name */}
-        <Skeleton className="h-14 w-14 rounded-full" />
-        <Skeleton className="h-5 w-56" />
-      </div>
-      <div className="grid grid-cols-2 gap-3 min-[821px]:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-36 rounded-lg" />
-        ))}
+        <Skeleton className="h-20 w-20 rounded-full" />
+        <div className="min-w-0 flex-1 space-y-2">
+          <Skeleton className="h-5 w-40" />
+          <Skeleton className="h-4 w-56" />
+        </div>
       </div>
       {/* Tab bar skeleton */}
       <Skeleton className="h-11 w-full" />
       {/* Info cards skeleton */}
-      <div className="grid grid-cols-1 gap-3 min-[821px]:grid-cols-2">
+      <div className="grid grid-cols-2 gap-4 min-[821px]:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-14 w-full" />
+          <div key={i} className="space-y-2">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-5 w-full" />
+          </div>
         ))}
       </div>
     </div>
@@ -431,7 +432,6 @@ export default function StudentProfilePage() {
         <Button
           type="button"
           variant="outline"
-          size="compact"
           onClick={() => setActiveTab("seating")}
         >
           View seating
@@ -441,35 +441,16 @@ export default function StudentProfilePage() {
   };
 
   const hasToken = !!localStorage.getItem("student_token");
-
-  const home = <StudentHomeOverview onEdit={() => setIsEditing(true)} />;
-
-  if (hasToken && !user?._id && profileError) {
-    return (
-      <div className="w-full space-y-8 pt-6">
-        {home}
-        {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
-        <InlineError
-          title="Profile unavailable"
-          message={profileError}
-          onRetry={() => refetch()}
-        />
-      </div>
-    );
-  }
-
-  if (!user?._id) {
-    return (
-      <div className="w-full space-y-8">
-        {home}
-        <ProfileSkeleton />
-      </div>
-    );
-  }
+  const userReady = Boolean(user?._id);
+  const profileFailed = Boolean(hasToken && !userReady && profileError);
 
   const fullName = String(user?.name || "").trim();
   const firstName = fullName.split(/\s+/)[0] || fullName;
-  const metaBits = [user?.branch, user?.year].filter(Boolean);
+  const metaBits = [user?.branch, user?.year, user?.username].filter(Boolean);
+  const sectionLabel = user?.section ? `Section ${user.section}` : "Section A";
+  const roomLabel =
+    user?.roomno && user.roomno !== "N/A" ? `Room ${user.roomno}` : "";
+  const identityBits = [user?.username, sectionLabel, roomLabel].filter(Boolean);
 
   const bloodOptions = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "N/A"].map(
     (v) => ({ v, l: v }),
@@ -544,31 +525,322 @@ export default function StudentProfilePage() {
       : []),
   ];
 
+  const cancelEdit = () => {
+    setIsEditing(false);
+    refetch();
+  };
+
+  const headerAction = (
+    <div className="flex flex-wrap items-center gap-2">
+      {/* Actions - Top Right Absolute Position (Desktop Only) */}
+      {/* Mobile Actions */}
+      {isEditing ? (
+        <>
+          <Button type="button" variant="outline" onClick={cancelEdit}>
+            Cancel
+          </Button>
+          <Button
+            type="button"
+            variant="primary"
+            isLoading={isSubmitting}
+            onClick={handleSubmit}
+          >
+            Save
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button type="button" variant="outline" onClick={() => setIsEditing(true)}>
+            <Pencil size={16} strokeWidth={1.75} aria-hidden />
+            Edit profile
+          </Button>
+          {enableOutingsAndOutpasses ? (
+            <Button
+              type="button"
+              variant="primary"
+              disabled={Boolean(user?.has_pending_requests)}
+              onClick={() => setRequestType("outing")}
+            >
+              Request outing
+            </Button>
+          ) : null}
+        </>
+      )}
+    </div>
+  );
+
   return (
-    <div className="w-full min-w-0 space-y-8">
-      {home}
+    <div className="mx-auto w-full min-w-0 max-w-[1120px] space-y-6 min-[640px]:px-2 min-[640px]:py-2 min-[821px]:space-y-8 min-[821px]:px-0 min-[821px]:py-0">
       {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
       {/* Profile Header */}
       <PageHeader
-        className="mb-0"
-        title={firstName ? `Welcome back, ${firstName}` : "Welcome back"}
-        meta={metaBits.length ? metaBits.join(" · ") : undefined}
-        action={
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Actions - Top Right Absolute Position (Desktop Only) */}
-            {/* Mobile Actions */}
+        className={
+          userReady
+            ? "mb-0 max-[820px]:[&>div:last-child]:hidden"
+            : "mb-0"
+        }
+        title={
+          userReady ? (
+            firstName ? `Welcome back, ${firstName}` : "Welcome back"
+          ) : profileFailed ? (
+            "Welcome back"
+          ) : (
+            <span className="inline-block h-8 w-2/3 animate-pulse rounded-md bg-tint align-middle motion-reduce:animate-none" />
+          )
+        }
+        meta={
+          userReady ? (
+            metaBits.length ? metaBits.join(" · ") : undefined
+          ) : profileFailed ? undefined : (
+            <span className="mt-1 inline-block h-[18px] w-2/5 animate-pulse rounded-md bg-tint align-middle motion-reduce:animate-none" />
+          )
+        }
+        action={userReady ? headerAction : undefined}
+      />
+
+      <StudentHomeOverview />
+
+      {profileFailed ? (
+        <InlineRetry
+          title="Profile didn't load"
+          body="Your details are unavailable right now."
+          onRetry={() => refetch()}
+        />
+      ) : !userReady ? (
+        <ProfileSkeleton />
+      ) : (
+        <Panel className="min-[640px]:p-6">
+          <h2 className={overviewSectionTitleClass}>Your profile</h2>
+          {/* Centered Avatar and Info */}
+          <div className="mt-4 flex items-center gap-4">
+            {/* Avatar with upload state */}
+            <div className="relative h-20 w-20 shrink-0" aria-busy={isUploadingImage || undefined}>
+              {/* Profile image or initial */}
+              <Avatar
+                size={80}
+                src={user?.profile_url}
+                alt={user?.name ? `${user.name} profile photo` : "Profile photo"}
+                name={user?.name || "Student"}
+                className="border border-border"
+              />
+              {/* Dark blurry overlay - contained fully inside the circle */}
+              {isUploadingImage ? (
+                <span className="absolute inset-0 flex items-center justify-center rounded-full bg-surface/80">
+                  <Loader2 className="h-5 w-5 animate-spin text-head" aria-hidden />
+                </span>
+              ) : null}
+              {/* Camera Icon Button */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploadingImage}
+                title="Update Profile Photo"
+                aria-label="Update Profile Photo"
+                className="absolute -bottom-1.5 -right-1.5 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-text-2 hover:bg-tint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Camera className="h-4 w-4" strokeWidth={1.75} />
+              </button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
+            </div>
+            <div className="min-w-0">
+              <p className="font-semibold text-head [overflow-wrap:anywhere]">
+                {user?.name || "Student"}
+              </p>
+              <p className="text-small text-text-3 [overflow-wrap:anywhere]">
+                {identityBits.join(" · ")}
+              </p>
+              {/* Badges */}
+              {user?.has_pending_requests ? (
+                <div className="mt-2">
+                  <Badge tone="warning">Pending action</Badge>
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="mt-4">
+            {/* Tab Navigation */}
+            <Tabs
+              tabs={dashboardTabs}
+              value={activeTab}
+              onChange={setActiveTab}
+              label="Profile sections"
+            />
+          </div>
+
+          {/* Tab Content */}
+          <div
+            id={`panel-${activeTab}`}
+            role="tabpanel"
+            aria-labelledby={`tab-${activeTab}`}
+            className="mt-2"
+          >
+            {activeTab === "personal" && (
+              <div>
+                <dl className="grid grid-cols-2 gap-x-4 min-[821px]:grid-cols-3">
+                  {profileRows.map((row) => (
+                    <InfoCard
+                      key={row.name}
+                      {...row}
+                      isEditing={isEditing}
+                      isLoading={isLoading}
+                      onValueChange={handleFieldChange}
+                    />
+                  ))}
+                </dl>
+                <SeatingSummaryWidget />
+                {/* Modern Analytics Section integrated into Personal view */}
+                {user?.username &&
+                  /* <StudentAnalytics studentId={user.username} /> */
+                  null}
+              </div>
+            )}
+
+            {activeTab === "academic" && (
+              <div className="space-y-8">
+                {user?.username ? (
+                  <ProfileSemesterSubjects studentId={user.username} />
+                ) : null}
+                {/* AcademicRecord will render its own grid/tables if data exists */}
+                <AcademicRecord student={user} />
+              </div>
+            )}
+
+            {activeTab === "seating" && <SeatingArrangement />}
+
+            {activeTab === "family" && (
+              <div className="grid gap-8 min-[821px]:grid-cols-2">
+                <div>
+                  <h2 className={sectionTitleClass}>Father&apos;s details</h2>
+                  <dl className="mt-2">
+                    <InfoCard
+                      key="fatherName"
+                      label="Name"
+                      name="fatherName"
+                      value={fields.fatherName}
+                      isEditing={isEditing}
+                      onValueChange={handleFieldChange}
+                      editable
+                    />
+                    <InfoCard
+                      key="fatherOccupation"
+                      label="Occupation"
+                      name="fatherOccupation"
+                      value={fields.fatherOccupation}
+                      isEditing={isEditing}
+                      onValueChange={handleFieldChange}
+                      editable
+                    />
+                    <InfoCard
+                      key="fatherEmail"
+                      label="Email"
+                      name="fatherEmail"
+                      type="email"
+                      value={fields.fatherEmail}
+                      isEditing={isEditing}
+                      onValueChange={handleFieldChange}
+                      editable
+                    />
+                  </dl>
+                </div>
+                <div>
+                  <h2 className={sectionTitleClass}>Mother&apos;s details</h2>
+                  <dl className="mt-2">
+                    <InfoCard
+                      key="motherName"
+                      label="Name"
+                      name="motherName"
+                      value={fields.motherName}
+                      isEditing={isEditing}
+                      onValueChange={handleFieldChange}
+                      editable
+                    />
+                    <InfoCard
+                      key="motherOccupation"
+                      label="Occupation"
+                      name="motherOccupation"
+                      value={fields.motherOccupation}
+                      isEditing={isEditing}
+                      onValueChange={handleFieldChange}
+                      editable
+                    />
+                    <InfoCard
+                      key="motherEmail"
+                      label="Email"
+                      name="motherEmail"
+                      type="email"
+                      value={fields.motherEmail}
+                      isEditing={isEditing}
+                      onValueChange={handleFieldChange}
+                      editable
+                    />
+                  </dl>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "permissions" && (
+              <div className="space-y-8">
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setRequestType("outing")}
+                    disabled={user.has_pending_requests}
+                  >
+                    Request outing
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setRequestType("outpass")}
+                    disabled={user.has_pending_requests}
+                  >
+                    Request outpass
+                  </Button>
+                </div>
+
+                <h2 className={sectionTitleClass}>Request history</h2>
+
+                {isHistoryLoading ? (
+                  <div className="space-y-3" aria-hidden>
+                    <Skeleton className="h-16 w-full" />
+                    <Skeleton className="h-16 w-full" />
+                    <Skeleton className="h-16 w-full" />
+                  </div>
+                ) : history.length > 0 ? (
+                  <>
+                    <div>
+                      {history.map((req: any) => (
+                        <RequestCard key={req._id} request={req} type={req.type} />
+                      ))}
+                    </div>
+                    <Pagination
+                      currentPage={historyPagination.page}
+                      totalPages={historyPagination.totalPages}
+                      onPageChange={(p) => fetchHistory(p)}
+                      className="mt-6"
+                    />
+                  </>
+                ) : (
+                  <EmptyState
+                    title="No history found"
+                    body="Your past requests will appear here."
+                  />
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4 min-[821px]:hidden">
             {isEditing ? (
-              <>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setIsEditing(false);
-                    refetch();
-                  }}
-                >
-                  Cancel
-                </Button>
+              <div className="flex flex-col gap-3">
                 <Button
                   type="button"
                   variant="primary"
@@ -577,265 +849,24 @@ export default function StudentProfilePage() {
                 >
                   Save
                 </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit profile
+                <Button type="button" variant="outline" onClick={cancelEdit}>
+                  Cancel
                 </Button>
-                {enableOutingsAndOutpasses ? (
-                  <Button
-                    type="button"
-                    variant="primary"
-                    disabled={Boolean(user?.has_pending_requests)}
-                    onClick={() => setRequestType("outing")}
-                  >
-                    Request outing
-                  </Button>
-                ) : null}
-              </>
-            )}
-          </div>
-        }
-      />
-
-      {/* Centered Avatar and Info */}
-      <div className="flex items-center gap-4">
-        {/* Avatar with upload state */}
-        <div className="relative" aria-busy={isUploadingImage || undefined}>
-          {/* Profile image or initial */}
-          <Avatar
-            size={56}
-            src={user?.profile_url}
-            alt={user?.name ? `${user.name} profile photo` : "Profile photo"}
-            name={user?.name || "Student"}
-          />
-          {/* Dark blurry overlay - contained fully inside the circle */}
-          {isUploadingImage ? (
-            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-surface/80">
-              <Loader2 className="h-5 w-5 animate-spin text-head" aria-hidden />
-            </span>
-          ) : null}
-          {/* Camera Icon Button */}
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploadingImage}
-            title="Update Profile Photo"
-            aria-label="Update Profile Photo"
-            className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border border-border-strong bg-surface text-head hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Camera className="h-4 w-4" strokeWidth={1.75} />
-          </button>
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept="image/*"
-            onChange={handleImageUpload}
-          />
-        </div>
-        <div className="min-w-0">
-          <p className="truncate text-body text-text-2">
-            {user?.email || user?.username + "@rguktong.ac.in"}
-          </p>
-          {/* Badges */}
-          {user?.has_pending_requests ? (
-            <div className="mt-2">
-              <Badge tone="warning">Pending action</Badge>
-            </div>
-          ) : null}
-        </div>
-      </div>
-
-      <Panel
-        title="Profile"
-        lede={isEditing ? "Update the details below, then save." : undefined}
-      >
-        <dl className="grid grid-cols-1 min-[821px]:grid-cols-2 min-[821px]:gap-x-8">
-          {profileRows.map((row) => (
-            <InfoCard
-              key={row.name}
-              {...row}
-              isEditing={isEditing}
-              isLoading={isLoading}
-              onValueChange={handleFieldChange}
-            />
-          ))}
-        </dl>
-      </Panel>
-
-      <section>
-        <h2 className={sectionTitleClass}>This semester</h2>
-        <div className="mt-4">
-          {user?.username ? (
-            <ProfileSemesterSubjects studentId={user.username} />
-          ) : null}
-        </div>
-      </section>
-
-      <NoticeBoard />
-
-      {/* Tab Navigation */}
-      <Tabs
-        tabs={dashboardTabs}
-        value={activeTab}
-        onChange={setActiveTab}
-        label="Profile sections"
-      />
-
-      {/* Tab Content */}
-      <div
-        id={`panel-${activeTab}`}
-        role="tabpanel"
-        aria-labelledby={`tab-${activeTab}`}
-      >
-        {activeTab === "personal" && (
-          <div>
-            <SeatingSummaryWidget />
-            {/* Modern Analytics Section integrated into Personal view */}
-            {user?.username &&
-              /* <StudentAnalytics studentId={user.username} /> */
-              null}
-          </div>
-        )}
-
-        {activeTab === "academic" && (
-          <div className="space-y-8">
-            {/* AcademicRecord will render its own grid/tables if data exists */}
-            <AcademicRecord student={user} />
-          </div>
-        )}
-
-        {activeTab === "seating" && <SeatingArrangement />}
-
-        {activeTab === "family" && (
-          <div className="grid gap-8 min-[821px]:grid-cols-2">
-            <div>
-              <h2 className={sectionTitleClass}>Father&apos;s details</h2>
-              <dl className="mt-2">
-                <InfoCard
-                  key="fatherName"
-                  label="Name"
-                  name="fatherName"
-                  value={fields.fatherName}
-                  isEditing={isEditing}
-                  onValueChange={handleFieldChange}
-                  editable
-                />
-                <InfoCard
-                  key="fatherOccupation"
-                  label="Occupation"
-                  name="fatherOccupation"
-                  value={fields.fatherOccupation}
-                  isEditing={isEditing}
-                  onValueChange={handleFieldChange}
-                  editable
-                />
-                <InfoCard
-                  key="fatherEmail"
-                  label="Email"
-                  name="fatherEmail"
-                  type="email"
-                  value={fields.fatherEmail}
-                  isEditing={isEditing}
-                  onValueChange={handleFieldChange}
-                  editable
-                />
-              </dl>
-            </div>
-            <div>
-              <h2 className={sectionTitleClass}>Mother&apos;s details</h2>
-              <dl className="mt-2">
-                <InfoCard
-                  key="motherName"
-                  label="Name"
-                  name="motherName"
-                  value={fields.motherName}
-                  isEditing={isEditing}
-                  onValueChange={handleFieldChange}
-                  editable
-                />
-                <InfoCard
-                  key="motherOccupation"
-                  label="Occupation"
-                  name="motherOccupation"
-                  value={fields.motherOccupation}
-                  isEditing={isEditing}
-                  onValueChange={handleFieldChange}
-                  editable
-                />
-                <InfoCard
-                  key="motherEmail"
-                  label="Email"
-                  name="motherEmail"
-                  type="email"
-                  value={fields.motherEmail}
-                  isEditing={isEditing}
-                  onValueChange={handleFieldChange}
-                  editable
-                />
-              </dl>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "permissions" && (
-          <div className="space-y-8">
-            <div className="flex flex-wrap gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setRequestType("outing")}
-                disabled={user.has_pending_requests}
-              >
-                Request outing
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setRequestType("outpass")}
-                disabled={user.has_pending_requests}
-              >
-                Request outpass
-              </Button>
-            </div>
-
-            <h2 className={sectionTitleClass}>Request history</h2>
-
-            {isHistoryLoading ? (
-              <div className="space-y-3" aria-hidden>
-                <Skeleton className="h-16 w-full" />
-                <Skeleton className="h-16 w-full" />
-                <Skeleton className="h-16 w-full" />
               </div>
-            ) : history.length > 0 ? (
-              <>
-                <div>
-                  {history.map((req: any) => (
-                    <RequestCard key={req._id} request={req} type={req.type} />
-                  ))}
-                </div>
-                <Pagination
-                  currentPage={historyPagination.page}
-                  totalPages={historyPagination.totalPages}
-                  onPageChange={(p) => fetchHistory(p)}
-                  className="mt-6"
-                />
-              </>
             ) : (
-              <EmptyState
-                title="No history found"
-                body="Your past requests will appear here."
-              />
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => setIsEditing(true)}
+              >
+                <Pencil size={16} strokeWidth={1.75} aria-hidden />
+                Edit profile
+              </Button>
             )}
           </div>
-        )}
-      </div>
+        </Panel>
+      )}
 
       {/* Modals placed inside main content area to avoid z-index issues */}
       {requestType && (

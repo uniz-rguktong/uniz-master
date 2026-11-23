@@ -12,6 +12,9 @@ import {
   Pencil,
 } from "lucide-react";
 import { toast } from "@/utils/toast-ref";
+import { Button } from "@/components/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { OverviewTextButton, overviewSectionTitleClass } from "@/components/ui/overview";
 import { BASE_URL } from "../../../api/endpoints";
 import {
   adminPrimaryButtonClass,
@@ -20,6 +23,7 @@ import {
 } from "../../../components/admin/admin-ui";
 import { PageHeader } from "@/components/ui/page-header";
 import { Panel } from "@/components/ui/panel";
+import { Avatar } from "@/components/ui/avatar";
 import { formatDisplayText } from "@/utils/displayText";
 import SystemUserAnalytics from "./SystemUserAnalytics";
 import { uploadImage } from "../../../api/uploadImage";
@@ -58,6 +62,7 @@ export default function WebadminOverview({ username }: { username: string }) {
   const [isUploading, setIsUploading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [profileRetrying, setProfileRetrying] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -80,9 +85,14 @@ export default function WebadminOverview({ username }: { username: string }) {
     });
   }, [profile, isEditing]);
 
-  useEffect(() => {
-    if (profileError) toast.error("Failed to load profile");
-  }, [profileError]);
+  const retryProfile = async () => {
+    setProfileRetrying(true);
+    try {
+      await refresh();
+    } finally {
+      setProfileRetrying(false);
+    }
+  };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -157,192 +167,202 @@ export default function WebadminOverview({ username }: { username: string }) {
   };
 
   const displayName = profile?.name || username || "Webadmin";
-  const initials = displayName[0].toUpperCase();
   const email = (profile?.email || `${username}@rguktong.ac.in`).toLowerCase();
+  const metaLine = loading ? "" : identityMeta(profileError ? null : profile, email);
+  const showDash = Boolean(profileError) && !isEditing;
 
-  const metaLine = identityMeta(profile, email);
-
-  const fields: { key: "email" | "contact" | "designation" | "department"; label: string }[] = [
-    { key: "email", label: "Email" },
+  const detailFields: {
+    key: "contact" | "designation" | "department";
+    label: string;
+  }[] = [
     { key: "contact", label: "Contact" },
     { key: "designation", label: "Designation" },
     { key: "department", label: "Department" },
   ];
 
+  const resetForm = () => {
+    setIsEditing(false);
+    setFormData({
+      name: profile?.name || "",
+      email: profile?.email || "",
+      contact: profile?.contact || "",
+      designation: profile?.designation || "",
+      department: profile?.department || "",
+    });
+  };
+
   return (
-    <div className="space-y-6 py-8">
+    <div className="mx-auto w-full min-w-0 max-w-[1120px] space-y-6 min-[640px]:px-2 min-[640px]:py-2 min-[821px]:space-y-8 min-[821px]:px-0 min-[821px]:py-0">
       {/* Greeting + identity */}
       <PageHeader
-        title={
-          loading ? (
-            <span className="inline-block h-9 w-64 animate-pulse rounded-md bg-tint align-middle" />
-          ) : (
-            `${greeting()}, ${displayName}`
-          )
-        }
+        className="mb-0"
+        title={`${greeting()}, ${displayName}`}
         meta={
-          loading
-            ? undefined
-            : metaLine
+          loading ? (
+            <span className="inline-block h-[18px] w-2/5 animate-pulse rounded-md bg-tint align-middle motion-reduce:animate-none" />
+          ) : (
+            metaLine
+          )
         }
       />
 
-      <Panel title="Profile">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-          {/* Identity card */}
-          <div className="relative h-24 w-24 shrink-0">
-            {loading ? (
-              <div className="h-24 w-24 animate-pulse rounded-md bg-tint" />
-            ) : (
-              <div className="relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border border-border bg-tint text-head">
-                {profile?.profile_url ? (
-                  <img
-                    src={profile.profile_url}
-                    alt="Profile"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <span className="font-serif text-h2">{initials}</span>
-                )}
-                {isUploading && (
-                  <span className="absolute inset-0 animate-pulse rounded-full bg-tint" />
-                )}
-              </div>
-            )}
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading || loading}
-              title="Update photo"
-              className="absolute -bottom-1 -right-1 flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-text-2 hover:bg-tint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:opacity-[0.45]"
-            >
-              <Camera className="h-4 w-4" strokeWidth={1.75} />
-            </button>
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/*"
-              onChange={handlePhotoUpload}
-            />
-          </div>
-
-          <div className="min-w-0 flex-1">
-            {loading ? (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="space-y-2">
-                    <div className="h-5 w-24 animate-pulse rounded-md bg-tint" />
-                    <div className="h-6 w-40 animate-pulse rounded-md bg-tint" />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <>
-                {/* Edit panel */}
-                <dl className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
-                  <div>
-                    <dt className="text-dense leading-5 text-text-2">Name</dt>
-                    <dd className="mt-1 text-body text-head">{displayName}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-dense leading-5 text-text-2">Role</dt>
-                    <dd className="mt-1 text-body text-head">
-                      {profile?.role ? formatDisplayText(profile.role) : "—"}
-                    </dd>
-                  </div>
-                  {fields.map(({ key, label }) => (
-                    <div key={key} className="min-w-0">
-                      <dt className="text-dense leading-5 text-text-2">{label}</dt>
-                      <dd className="mt-1 min-w-0 text-body text-head">
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={formData[key]}
-                            onChange={(e) =>
-                              setFormData({ ...formData, [key]: e.target.value })
-                            }
-                            className={adminInputClass}
-                            placeholder={`Enter ${label.toLowerCase()}`}
-                            aria-label={label}
-                          />
-                        ) : key === "email" ? (
-                          <span className="block truncate" title={email}>{email}</span>
-                        ) : key === "designation" ? (
-                          formData.designation
-                            ? formatDisplayText(formData.designation)
-                            : "—"
-                        ) : (
-                          formData[key] || "—"
-                        )}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-
-                {profileError && !loading ? (
-                  <p className="mt-4 text-dense text-text-2">
-                    Couldn&apos;t load profile.{" "}
-                    <button
-                      type="button"
-                      onClick={() => refresh()}
-                      className="font-medium text-link"
-                    >
-                      Try again
-                    </button>
-                  </p>
-                ) : null}
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {isEditing ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={handleSave}
-                        disabled={isSaving}
-                        className={adminPrimaryButtonClass}
-                      >
-                        {isSaving ? (
-                          <Loader2 size={16} className="animate-spin" />
-                        ) : (
-                          <Check size={16} />
-                        )}
-                        Save changes
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsEditing(false);
-                          setFormData({
-                            name: profile?.name || "",
-                            email: profile?.email || "",
-                            contact: profile?.contact || "",
-                            designation: profile?.designation || "",
-                            department: profile?.department || "",
-                          });
-                        }}
-                        className={adminGhostButtonClass}
-                      >
-                        <X size={16} /> Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setIsEditing(true)}
-                      className={adminGhostButtonClass}
-                    >
-                      <Pencil size={16} /> Edit profile
-                    </button>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </Panel>
-
       {/* Analytics — independent of the profile request */}
       <SystemUserAnalytics />
+
+      <Panel className="min-[640px]:p-6">
+        <h2 className={overviewSectionTitleClass}>Your profile</h2>
+        {loading ? (
+          <div className="mt-4" aria-busy="true">
+            <span className="sr-only">Loading overview</span>
+            <div className="flex items-center gap-4">
+              <Skeleton className="h-20 w-20 rounded-full" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <Skeleton className="h-5 w-40" />
+                <Skeleton className="h-4 w-56" />
+              </div>
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-4 min-[821px]:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="space-y-2">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-6 w-full" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="mt-4 flex items-center gap-4">
+              {/* Identity card */}
+              <div className="relative h-20 w-20 shrink-0">
+                <Avatar
+                  size={80}
+                  src={profile?.profile_url}
+                  alt={displayName ? `${displayName} profile photo` : "Profile photo"}
+                  name={displayName}
+                  className="border border-border"
+                />
+                {isUploading ? (
+                  <span className="absolute inset-0 animate-pulse rounded-full bg-tint" />
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  title="Update photo"
+                  aria-label="Update photo"
+                  className="absolute -bottom-1.5 -right-1.5 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-text-2 hover:bg-tint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:opacity-[0.45]"
+                >
+                  <Camera className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className={adminInputClass}
+                    placeholder="Enter name"
+                    aria-label="Name"
+                  />
+                ) : (
+                  <p className="font-semibold text-head [overflow-wrap:anywhere]">{displayName}</p>
+                )}
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className={`${adminInputClass} mt-2`}
+                    placeholder="Enter email"
+                    aria-label="Email"
+                  />
+                ) : (
+                  <p className="text-small text-text-3 [overflow-wrap:anywhere]">{email}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Edit panel */}
+            <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4 min-[821px]:grid-cols-4">
+              <div className="min-w-0">
+                <dt className="text-small text-text-2">Role</dt>
+                <dd className="mt-1 text-body text-head [overflow-wrap:anywhere]">
+                  {showDash ? "—" : profile?.role ? formatDisplayText(profile.role) : "—"}
+                </dd>
+              </div>
+              {detailFields.map(({ key, label }) => (
+                <div key={key} className="min-w-0">
+                  <dt className="text-small text-text-2">{label}</dt>
+                  <dd className="mt-1 min-w-0 text-body text-head [overflow-wrap:anywhere]">
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={formData[key]}
+                        onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                        className={adminInputClass}
+                        placeholder={`Enter ${label.toLowerCase()}`}
+                        aria-label={label}
+                      />
+                    ) : showDash ? (
+                      "—"
+                    ) : key === "designation" ? (
+                      formData.designation ? formatDisplayText(formData.designation) : "—"
+                    ) : (
+                      formData[key] || "—"
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            {profileError ? (
+              <div className="mt-3 flex flex-wrap items-center gap-x-1 text-dense text-text-2">
+                <span>Some details didn&apos;t load.</span>
+                <OverviewTextButton onClick={retryProfile} busy={profileRetrying} chevron={false}>
+                  {profileRetrying ? "Trying again…" : "Try again"}
+                </OverviewTextButton>
+              </div>
+            ) : null}
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {isEditing ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className={adminPrimaryButtonClass}
+                  >
+                    {isSaving ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <Check size={16} />
+                    )}
+                    Save changes
+                  </button>
+                  <button type="button" onClick={resetForm} className={adminGhostButtonClass}>
+                    <X size={16} /> Cancel
+                  </button>
+                </>
+              ) : (
+                <Button type="button" variant="outline" onClick={() => setIsEditing(true)}>
+                  <Pencil size={16} strokeWidth={1.75} aria-hidden />
+                  Edit profile
+                </Button>
+              )}
+            </div>
+          </>
+        )}
+      </Panel>
     </div>
   );
 }

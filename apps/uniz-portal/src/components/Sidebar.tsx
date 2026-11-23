@@ -129,7 +129,7 @@ export default function Sidebar({ content }: MainContent) {
   const navItems: NavItem[] = [
     {
       id: "dashboard",
-      label: "My Profile",
+      label: "Home",
       href: "/student",
       content: "dashboard",
       icon: Home,
