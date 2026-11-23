@@ -249,7 +249,7 @@ export default function SystemUserAnalytics() {
         <ul className="divide-y divide-border">
           {grievanceRows.map(([category, count]) => (
             <li key={category} className="flex items-start justify-between gap-3 py-3 first:pt-1">
-              <span className="min-w-0 break-words text-body text-head">
+              <span className="min-w-0 break-words text-body text-text">
                 {formatDisplayText(category)}
               </span>
               <span className="shrink-0 font-semibold tabular-nums text-head">{formatCount(count)}</span>
@@ -289,7 +289,7 @@ export default function SystemUserAnalytics() {
             return (
               <li key={row.branch} className="py-3 first:pt-1">
                 <div className="flex items-start justify-between gap-3">
-                  <span className="min-w-0 break-words text-body text-head">{row.branch}</span>
+                  <span className="min-w-0 break-words text-body text-text">{row.branch}</span>
                   <span className="shrink-0 font-semibold tabular-nums text-head">{formatCount(count)}</span>
                 </div>
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-tint" aria-hidden>
@@ -327,7 +327,7 @@ export default function SystemUserAnalytics() {
             <tbody>
               {accounts.map((row, index) => (
                 <tr key={`${row.role}-${index}`}>
-                  <td className="border-t border-border py-3 text-body text-head [overflow-wrap:anywhere]">
+                  <td className="border-t border-border py-3 text-body text-text [overflow-wrap:anywhere]">
                     {formatDisplayText(row.role)}
                   </td>
                   <td className="border-t border-border py-3 text-right font-semibold tabular-nums text-head">

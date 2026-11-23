@@ -64,7 +64,7 @@ function ProfileSkeleton() {
       <Skeleton className="h-6 w-2/5" />
       <div className="flex items-center gap-3">
         {/* Name */}
-        <Skeleton className="h-14 w-14 rounded-full" />
+        <Skeleton className="h-20 w-20 rounded-full" />
         <div className="min-w-0 flex-1 space-y-2">
           <Skeleton className="h-5 w-40" />
           <Skeleton className="h-4 w-56" />
@@ -612,15 +612,16 @@ export default function StudentProfilePage() {
         <Panel className="min-[640px]:p-6">
           <h2 className={overviewSectionTitleClass}>Your profile</h2>
           {/* Centered Avatar and Info */}
-          <div className="mt-4 flex items-center gap-3">
+          <div className="mt-4 flex items-center gap-4">
             {/* Avatar with upload state */}
-            <div className="relative h-14 w-14 shrink-0" aria-busy={isUploadingImage || undefined}>
+            <div className="relative h-20 w-20 shrink-0" aria-busy={isUploadingImage || undefined}>
               {/* Profile image or initial */}
               <Avatar
-                size={56}
+                size={80}
                 src={user?.profile_url}
                 alt={user?.name ? `${user.name} profile photo` : "Profile photo"}
                 name={user?.name || "Student"}
+                className="border border-border"
               />
               {/* Dark blurry overlay - contained fully inside the circle */}
               {isUploadingImage ? (
