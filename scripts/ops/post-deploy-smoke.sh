@@ -11,6 +11,17 @@ API_URL="${API_URL:-https://api-uniz.rguktong.in/api/v1}"
 LANDING_API_URL="${LANDING_API_URL:-https://landing-api.rguktong.in}"
 FAIL=0
 
+# Staging must never smoke production hosts, nor fall back to them.
+if [[ "${UNIZ_ENV:-}" == "staging" ]]; then
+  for pair in "PORTAL_URL=https://uniz.rguktong.in" "API_URL=https://api-uniz.rguktong.in/api/v1" "LANDING_API_URL=https://landing-api.rguktong.in" "LANDING_URL=https://rguktong.in"; do
+    n="${pair%%=*}"; prod="${pair#*=}"
+    if [[ "${!n}" == "$prod" ]]; then
+      echo "[smoke] staging run is pointed at production ($n); refusing" >&2
+      exit 1
+    fi
+  done
+fi
+
 check() {
   local name="$1"
   local url="$2"
@@ -46,7 +57,7 @@ echo "LandingAPI: $LANDING_API_URL"
 echo
 
 # Optional vault key audit when run on the VPS with the remote helper present.
-if [[ "${UNIZ_SMOKE_VAULT_AUDIT:-1}" == "1" ]] && [[ -f /root/uniz-secrets.env ]]; then
+if [[ "${UNIZ_SMOKE_VAULT_AUDIT:-1}" == "1" ]] && [[ -f "${UNIZ_PLAIN_VAULT:-/root/uniz-secrets.env}" ]]; then
   ROOT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
   if [[ -f "$ROOT_DIR/scripts/ops/vps-vault-remote.sh" ]]; then
     echo "[vault] auditing required keys..."

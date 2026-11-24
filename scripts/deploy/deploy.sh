@@ -615,13 +615,14 @@ deploy_logic() {
   K_APPLY_PATH="$K_BASE"
   [ ! -d "$K_BASE" ] && K_BASE="infra/kubernetes/base"
 
-  MANIFEST_PATH="/root/.uniz_k8s_image_tags.json"
+  MANIFEST_PATH="${UNIZ_IMAGE_MANIFEST:-/root/.uniz_k8s_image_tags.json}"
+  K_OVERLAY="${UNIZ_K8S_OVERLAY:-infra/kubernetes/overlays/production}"
   if [ "$USE_GHCR" == "true" ] || [ -f "$MANIFEST_PATH" ]; then
     bash "$(dirname "$0")/generate-production-kustomize.sh" \
       "$MANIFEST_PATH" "${DEPLOY_SHA:-}" || true
-    if [ -f "infra/kubernetes/overlays/production/kustomization.yaml" ]; then
-      K_APPLY_PATH="infra/kubernetes/overlays/production"
-      echo "[Infra] Using production overlay (GHCR images from manifest)"
+    if [ -f "$K_OVERLAY/kustomization.yaml" ]; then
+      K_APPLY_PATH="$K_OVERLAY"
+      echo "[Infra] Using overlay $K_OVERLAY (GHCR images from manifest)"
     fi
   fi
 
@@ -994,7 +995,7 @@ deploy_logic() {
   fi
 
   if [ -f "$(dirname "$0")/dump-k8s-image-tags.sh" ]; then
-    bash "$(dirname "$0")/dump-k8s-image-tags.sh" /root/.uniz_k8s_image_tags.json || true
+    bash "$(dirname "$0")/dump-k8s-image-tags.sh" "${UNIZ_IMAGE_MANIFEST:-/root/.uniz_k8s_image_tags.json}" || true
   fi
 
   echo "$NEW_HEAD" > "$STATE_FILE"
