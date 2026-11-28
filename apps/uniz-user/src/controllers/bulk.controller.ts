@@ -329,7 +329,8 @@ export const uploadStudents = async (req: any, res: Response) => {
 /**
  * SELECTIVE STUDENT EXPORT
  * GET /api/v1/profile/admin/student/export
- * Query Params: branch, year, gender, section, fields (comma-separated list of fields)
+ * Query Params: branch, year, section, fields (comma-separated list of fields), batch
+ * Personal attributes such as gender are never accepted as filters on a GET query.
  */
 export const exportStudentsSelective = async (
   req: AuthenticatedRequest,
@@ -337,7 +338,7 @@ export const exportStudentsSelective = async (
 ) => {
   try {
     const user = req.user;
-    const { branch, year, gender, section, fields, batch } = req.query;
+    const { branch, year, section, fields, batch } = req.query;
 
     // Build filter
     const where: any = {};
@@ -354,7 +355,6 @@ export const exportStudentsSelective = async (
       where.branch = String(branch).toUpperCase();
     }
     if (year) where.year = String(year).toUpperCase();
-    if (gender) where.gender = String(gender);
     if (section) where.section = String(section).toUpperCase();
     if (batch) where.batch = String(batch).toUpperCase();
 
