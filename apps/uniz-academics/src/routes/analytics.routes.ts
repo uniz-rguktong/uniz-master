@@ -2,8 +2,10 @@ import { Router } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import prisma from "../utils/prisma.util";
 import { redis } from "../utils/redis.util";
+import { routerRateLimiter } from "../middlewares/router-limiter";
 
 const router = Router();
+router.use(routerRateLimiter);
 
 const ADMIN_SUMMARY_TTL_SEC = 60;
 

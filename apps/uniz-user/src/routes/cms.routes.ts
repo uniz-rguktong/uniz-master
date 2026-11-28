@@ -16,6 +16,7 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import { cmsPublicGuard } from "../middlewares/cms-auth.middleware";
 import { z } from "zod";
 import { NextFunction, Request, Response } from "express";
+import { routerRateLimiter } from "../middlewares/router-limiter";
 
 const validate =
   (schema: z.ZodSchema) =>
@@ -53,6 +54,7 @@ const TenderSchema = z.object({
 */
 
 const router = Router();
+router.use(routerRateLimiter);
 
 /**
  * PUBLIC ROUTES

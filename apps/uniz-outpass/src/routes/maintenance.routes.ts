@@ -1,7 +1,9 @@
 import { Router, Request, Response } from "express";
 import { runMaintenance } from "../jobs/maintenance";
+import { routerRateLimiter } from "../middlewares/router-limiter";
 
 const router = Router();
+router.use(routerRateLimiter);
 
 const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
 

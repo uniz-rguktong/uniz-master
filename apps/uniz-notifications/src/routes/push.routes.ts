@@ -4,11 +4,13 @@ import prisma from "../utils/prisma.util";
 import { requireAuth, requireAdmin } from "../middlewares/auth.middleware";
 import { sendWebPush } from "../services/push.service";
 import { enqueueNotificationJob } from "../utils/queue.util";
+import { routerRateLimiter } from "../middlewares/router-limiter";
 
 const USER_SERVICE_URL =
   process.env.USER_SERVICE_URL || "http://uniz-user-service:3002";
 
 const router = Router();
+router.use(routerRateLimiter);
 
 router.post("/subscribe", requireAuth, async (req: Request, res: Response) => {
   try {

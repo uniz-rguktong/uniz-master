@@ -10,6 +10,7 @@ import {
   isStorageConfigured,
   type CompressOptions,
 } from "../utils/storage.util";
+import { routerRateLimiter } from "../middlewares/router-limiter";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -17,6 +18,7 @@ const upload = multer({
 });
 
 const router = Router();
+router.use(routerRateLimiter);
 
 router.use(authMiddleware);
 
