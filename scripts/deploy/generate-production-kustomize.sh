@@ -7,9 +7,9 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 # shellcheck source=deploy-common.sh
 source "$(dirname "$0")/deploy-common.sh"
 
-MANIFEST="${1:-/root/.uniz_k8s_image_tags.json}"
+MANIFEST="${1:-${UNIZ_IMAGE_MANIFEST:-/root/.uniz_k8s_image_tags.json}}"
 DEPLOY_SHA="${2:-}"
-OVERLAY="$ROOT/infra/kubernetes/overlays/production"
+OVERLAY="$ROOT/${UNIZ_K8S_OVERLAY:-infra/kubernetes/overlays/production}"
 REGISTRY="${IMAGE_REGISTRY:-ghcr.io/uniz-rguktong}"
 
 mkdir -p "$OVERLAY"

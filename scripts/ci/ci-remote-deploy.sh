@@ -8,6 +8,13 @@ export KUBECONFIG="${KUBECONFIG:-/etc/rancher/k3s/k3s.yaml}"
 GITHUB_REF_NAME="${GITHUB_REF_NAME:-main}"
 GITHUB_SHA="${GITHUB_SHA:?GITHUB_SHA is required}"
 WORK_DIR="${WORK_DIR:-/root/uniz-master-${GITHUB_REF_NAME}}"
+export UNIZ_PLAIN_VAULT="${UNIZ_PLAIN_VAULT:-/root/uniz-secrets.env}"
+export UNIZ_IMAGE_MANIFEST="${UNIZ_IMAGE_MANIFEST:-/root/.uniz_k8s_image_tags.json}"
+export UNIZ_K8S_OVERLAY="${UNIZ_K8S_OVERLAY:-infra/kubernetes/overlays/production}"
+export NAMESPACE="${NAMESPACE:-default}"
+if [ -n "${UNIZ_ENV:-}" ]; then
+  bash "$(dirname "$0")/assert-deploy-env.sh"
+fi
 LOCK_FILE="/var/lock/uniz-deploy.lock"
 LOG_FILE="/var/log/uniz-deploy.log"
 EXIT_FILE="/var/run/uniz-deploy.exit"
@@ -42,18 +49,18 @@ fi
 if [ -f "${UNIZ_SOPS_VAULT:-/root/uniz-secrets.env.sops}" ] && command -v sops >/dev/null 2>&1; then
   echo "[Secrets] Using /root/uniz-secrets.env.sops (decrypted at sync time)"
 elif [ "${UNIZ_USE_EXISTING_VAULT:-true}" = "true" ] \
-  && [ -f /root/uniz-secrets.env ] \
-  && grep -qE '^[A-Za-z_][A-Za-z0-9_]*=' /root/uniz-secrets.env; then
-  echo "[Secrets] Reusing existing /root/uniz-secrets.env (UNIZ_USE_EXISTING_VAULT=true)"
+  && [ -f "$UNIZ_PLAIN_VAULT" ] \
+  && grep -qE '^[A-Za-z_][A-Za-z0-9_]*=' "$UNIZ_PLAIN_VAULT"; then
+  echo "[Secrets] Reusing existing $UNIZ_PLAIN_VAULT (UNIZ_USE_EXISTING_VAULT=true)"
 else
-  ./scripts/deploy/render-vps-secrets.sh /root/uniz-secrets.env
+  ./scripts/deploy/render-vps-secrets.sh "$UNIZ_PLAIN_VAULT"
 fi
 # Fill DBADMIN_DB_PASSWORD before the secret sync. Skip when SOPS is the
 # source: that write only updates the plaintext file, which sync would ignore.
 if [ -f "${UNIZ_SOPS_VAULT:-/root/uniz-secrets.env.sops}" ] && command -v sops >/dev/null 2>&1; then
   echo "[Secrets] Leaving the SOPS vault unchanged (no plaintext password write)"
 else
-  dbadmin_pw_status="$(./scripts/deploy/ensure-dbadmin-password.sh /root/uniz-secrets.env)"
+  dbadmin_pw_status="$(./scripts/deploy/ensure-dbadmin-password.sh "$UNIZ_PLAIN_VAULT")"
   printf '%s\n' "$dbadmin_pw_status"
   if [ "$dbadmin_pw_status" = "generated DBADMIN_DB_PASSWORD (new)" ]; then
     export DBADMIN_PASSWORD_JUST_SET=1
@@ -61,7 +68,7 @@ else
 fi
 ./scripts/deploy/ensure-ghcr-pull-secret.sh
 # Keep k8s Secret in sync with the vault file used by pods.
-./scripts/deploy/sync-k8s-secret-from-vault.sh /root/uniz-secrets.env || true
+./scripts/deploy/sync-k8s-secret-from-vault.sh "$UNIZ_PLAIN_VAULT" || true
 
 export DEPLOY_SHA="$GITHUB_SHA"
 export DEPLOY_BEFORE_SHA="${GITHUB_BEFORE_SHA:-}"
@@ -114,6 +121,7 @@ if [ "$ec" = "0" ]; then
   echo "[Smoke] Running post-deploy smoke checks (required)..."
   if ! PORTAL_URL="${PORTAL_URL:-https://uniz.rguktong.in}" \
     API_URL="${API_URL:-https://api-uniz.rguktong.in/api/v1}" \
+    LANDING_API_URL="${LANDING_API_URL:-https://landing-api.rguktong.in}" \
     bash ./scripts/ops/post-deploy-smoke.sh; then
     echo "[Smoke] FAILED — marking deploy unsuccessful"
     ec=1

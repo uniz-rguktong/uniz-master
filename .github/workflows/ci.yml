@@ -1,9 +1,9 @@
 name: CI
 
-# PR gate only — pushes to main are built and deployed by deploy.yml
+# PR gate only — pushes to main and staging are built and deployed by deploy.yml
 on:
   pull_request:
-    branches: [main]
+    branches: [main, staging]
 
 jobs:
   format:

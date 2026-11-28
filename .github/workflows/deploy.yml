@@ -1,4 +1,6 @@
-# Push to main → compile gate → GHCR image build/push → VPS pull + kubectl rollout.
+# Push to staging → staging stack. Push to main → production, only after the
+# `production` environment is approved. Any other ref is refused.
+# Compile gate → GHCR image build/push → VPS pull + kubectl rollout.
 name: VPS Automated Deployment
 
 permissions:
@@ -13,6 +15,7 @@ on:
   push:
     branches:
       - main
+      - staging
   workflow_dispatch:
     inputs:
       commit_message:
@@ -33,6 +36,7 @@ on:
 jobs:
   ci:
     name: Build monorepo
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -58,6 +62,11 @@ jobs:
     name: Plan GHCR image builds
     needs: ci
     runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+    env:
+      UNIZ_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+      WORK_DIR: ${{ github.ref == 'refs/heads/main' && '/root/uniz-master-main' || vars.UNIZ_WORK_DIR }}
+      UNIZ_IMAGE_MANIFEST: ${{ github.ref == 'refs/heads/main' && '/root/.uniz_k8s_image_tags.json' || vars.UNIZ_IMAGE_MANIFEST }}
     outputs:
       has_builds: ${{ steps.plan.outputs.has_builds }}
       matrix: ${{ steps.plan.outputs.matrix }}
@@ -86,6 +95,17 @@ jobs:
             echo "[Cache] No cached deploy SHA — will use VPS manifest / push fallback"
           fi
 
+      - name: Guard deploy target
+        env:
+          GITHUB_REF: ${{ github.ref }}
+          PORTAL_URL: ${{ github.ref == 'refs/heads/main' && 'https://uniz.rguktong.in' || vars.UNIZ_PORTAL_URL }}
+          API_URL: ${{ github.ref == 'refs/heads/main' && 'https://api-uniz.rguktong.in/api/v1' || vars.UNIZ_API_URL }}
+          LANDING_API_URL: ${{ github.ref == 'refs/heads/main' && 'https://landing-api.rguktong.in' || vars.UNIZ_LANDING_API_URL }}
+          UNIZ_PLAIN_VAULT: ${{ github.ref == 'refs/heads/main' && '/root/uniz-secrets.env' || vars.UNIZ_PLAIN_VAULT }}
+          UNIZ_K8S_OVERLAY: ${{ github.ref == 'refs/heads/main' && 'infra/kubernetes/overlays/production' || vars.UNIZ_K8S_OVERLAY }}
+          NAMESPACE: ${{ github.ref == 'refs/heads/main' && 'default' || vars.UNIZ_K8S_NAMESPACE }}
+        run: bash scripts/ci/assert-deploy-env.sh
+
       - name: Fetch live VPS image manifest
         continue-on-error: true
         env:
@@ -96,9 +116,9 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}" \
-            'WORK_DIR="/root/uniz-master-main"; [ -f /root/.uniz_k8s_image_tags.json ] || { [ -d "$WORK_DIR" ] && bash "$WORK_DIR/scripts/deploy/dump-k8s-image-tags.sh" /root/.uniz_k8s_image_tags.json || true; }'
+            "WORK_DIR=$(printf '%q' "$WORK_DIR"); MANIFEST=$(printf '%q' "$UNIZ_IMAGE_MANIFEST"); "'[ -f "$MANIFEST" ] || { [ -d "$WORK_DIR" ] && bash "$WORK_DIR/scripts/deploy/dump-k8s-image-tags.sh" "$MANIFEST" || true; }'
           scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
-            "${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/root/.uniz_k8s_image_tags.json" \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:${UNIZ_IMAGE_MANIFEST}" \
             .uniz-k8s-image-tags.json 2>/dev/null || true
           if [ ! -f .uniz-k8s-image-tags.json ]; then
             echo "{}" > .uniz-k8s-image-tags.json
@@ -156,6 +176,7 @@ jobs:
     needs: plan-build
     if: needs.plan-build.outputs.has_builds == 'true'
     runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
     strategy:
       fail-fast: false
       max-parallel: 6
@@ -173,6 +194,7 @@ jobs:
 
       - name: Build and push image
         env:
+          UNIZ_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
           DEPLOY_CONTEXT: GITHUB_ACTIONS
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
@@ -198,6 +220,7 @@ jobs:
       (needs.build-image.result == 'success' || needs.build-image.result == 'skipped')
     # Self-hosted runner on the VPS avoids SSH from GitHub cloud (Hostinger blocks many GHA IPs).
     runs-on: [self-hosted, linux, uniz-vps]
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -209,6 +232,16 @@ jobs:
           # Prefer existing /root/uniz-secrets.env on the VPS (see render-vps-secrets.sh).
           # GH secrets remain available as a bootstrap/fallback for first-time or recovery.
           UNIZ_USE_EXISTING_VAULT: "true"
+          UNIZ_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+          GITHUB_REF: ${{ github.ref }}
+          WORK_DIR: ${{ github.ref == 'refs/heads/main' && '/root/uniz-master-main' || vars.UNIZ_WORK_DIR }}
+          UNIZ_IMAGE_MANIFEST: ${{ github.ref == 'refs/heads/main' && '/root/.uniz_k8s_image_tags.json' || vars.UNIZ_IMAGE_MANIFEST }}
+          UNIZ_PLAIN_VAULT: ${{ github.ref == 'refs/heads/main' && '/root/uniz-secrets.env' || vars.UNIZ_PLAIN_VAULT }}
+          UNIZ_K8S_OVERLAY: ${{ github.ref == 'refs/heads/main' && 'infra/kubernetes/overlays/production' || vars.UNIZ_K8S_OVERLAY }}
+          NAMESPACE: ${{ github.ref == 'refs/heads/main' && 'default' || vars.UNIZ_K8S_NAMESPACE }}
+          PORTAL_URL: ${{ github.ref == 'refs/heads/main' && 'https://uniz.rguktong.in' || vars.UNIZ_PORTAL_URL }}
+          API_URL: ${{ github.ref == 'refs/heads/main' && 'https://api-uniz.rguktong.in/api/v1' || vars.UNIZ_API_URL }}
+          LANDING_API_URL: ${{ github.ref == 'refs/heads/main' && 'https://landing-api.rguktong.in' || vars.UNIZ_LANDING_API_URL }}
           JWT_SECURITY_KEY: ${{ secrets.JWT_SECURITY_KEY }}
           INTERNAL_SECRET: ${{ secrets.INTERNAL_SECRET }}
           INTERNAL_BOT_SECRET: ${{ secrets.INTERNAL_BOT_SECRET }}
@@ -274,16 +307,21 @@ jobs:
 
       - name: Post-deploy smoke (required)
         if: success() && steps.vps_deploy.outcome == 'success'
-        run: |
-          PORTAL_URL="${PORTAL_URL:-https://uniz.rguktong.in}" \
-          API_URL="${API_URL:-https://api-uniz.rguktong.in/api/v1}" \
-          bash scripts/ops/post-deploy-smoke.sh
+        env:
+          UNIZ_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+          PORTAL_URL: ${{ github.ref == 'refs/heads/main' && 'https://uniz.rguktong.in' || vars.UNIZ_PORTAL_URL }}
+          API_URL: ${{ github.ref == 'refs/heads/main' && 'https://api-uniz.rguktong.in/api/v1' || vars.UNIZ_API_URL }}
+          LANDING_API_URL: ${{ github.ref == 'refs/heads/main' && 'https://landing-api.rguktong.in' || vars.UNIZ_LANDING_API_URL }}
+          UNIZ_PLAIN_VAULT: ${{ github.ref == 'refs/heads/main' && '/root/uniz-secrets.env' || vars.UNIZ_PLAIN_VAULT }}
+        run: bash scripts/ops/post-deploy-smoke.sh
 
       - name: Fetch VPS image manifest after deploy
         if: success() && steps.vps_deploy.outcome == 'success'
         continue-on-error: true
+        env:
+          UNIZ_IMAGE_MANIFEST: ${{ github.ref == 'refs/heads/main' && '/root/.uniz_k8s_image_tags.json' || vars.UNIZ_IMAGE_MANIFEST }}
         run: |
-          cp /root/.uniz_k8s_image_tags.json .uniz-k8s-image-tags.json 2>/dev/null || echo "{}" > .uniz-k8s-image-tags.json
+          cp "$UNIZ_IMAGE_MANIFEST" .uniz-k8s-image-tags.json 2>/dev/null || echo "{}" > .uniz-k8s-image-tags.json
 
       - name: Record successful deploy SHA
         if: success() && steps.vps_deploy.outcome == 'success'
