@@ -121,7 +121,8 @@ export const getUploadProgress = async (
 
         if (isStuck) {
           console.log(
-            `[Academics] 🚨 Job ${uploadId} appears stuck. Jump-starting via Progress Poll (Direct)...`,
+            "[Academics] 🚨 Job %s appears stuck. Jump-starting via Progress Poll (Direct)...",
+            uploadId,
           );
           // Fire and forget direct call to prevent blocking the user
           // Using a recursive helper to handle the 'continued' state
@@ -187,7 +188,10 @@ export const getPublishProgress = async (
     const key = `publish:progress:${user.username}`;
     const progress = await redis.get(key);
     console.log(
-      `Fetching publish progress for ${user.username}, key: ${key}, found: ${!!progress}`,
+      "Fetching publish progress for %s, key: %s, found: %s",
+      user.username,
+      key,
+      !!progress,
     );
 
     return res.status(200).json({
@@ -226,9 +230,14 @@ export const getBatchGrades = async (
   const skip = (p - 1) * l;
 
   try {
+    // Query values can arrive as arrays or objects (?year[]=x); only plain
+    // strings are accepted so string methods below cannot be tricked.
+    const queryString = (v: unknown): string | undefined =>
+      typeof v === "string" ? v : undefined;
     let semesterIdFilter: any = undefined;
-    const sem = semesterId as string;
-    const y = year as string;
+    const sem = queryString(semesterId);
+    const y = queryString(year);
+    const branchFilter = queryString(branch);
 
     if (sem && y) {
       if (sem.includes(y)) {
@@ -247,8 +256,8 @@ export const getBatchGrades = async (
     const where: any = {
       semesterId: semesterIdFilter || undefined,
       subject: {
-        department: (branch as string) || undefined,
-        code: year ? { contains: `-${year}-` } : undefined,
+        department: branchFilter || undefined,
+        code: y ? { contains: `-${y}-` } : undefined,
       },
     };
 
@@ -579,7 +588,8 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
           );
         } catch (err: any) {
           console.warn(
-            `[Academics] Failed to sync stats for ${targetStudentId}:`,
+            "[Academics] Failed to sync stats for %s:",
+            targetStudentId,
             err.message,
           );
         }
@@ -1074,7 +1084,11 @@ export const publishResults = async (
   // Background process
   const processPublishing = async () => {
     try {
-      console.log(`[GRADES-PUBLISH] Starting for ${semesterId}, Year: ${year}`);
+      console.log(
+        "[GRADES-PUBLISH] Starting for %s, Year: %s",
+        semesterId,
+        year,
+      );
       const cleanYear = year
         ? String(year).toUpperCase().replace(/^0/, "O")
         : undefined;
@@ -1112,7 +1126,9 @@ export const publishResults = async (
 
       // 1. Fetch ALL grades for the target slice
       console.log(
-        `[Publish] Fetching grades for ${semesterId}, Year: ${year || "All"}...`,
+        "[Publish] Fetching grades for %s, Year: %s...",
+        semesterId,
+        year || "All",
       );
 
       const grades = await prisma.grade.findMany({
@@ -1137,7 +1153,8 @@ export const publishResults = async (
 
       // 2. Fetch Student Profiles in Bulk (Optimization)
       console.log(
-        `[Publish] Fetching student profiles in bulk for ${year || "All"}...`,
+        "[Publish] Fetching student profiles in bulk for %s...",
+        year || "All",
       );
       let profilesMap: Record<string, any> = {};
       try {
@@ -1159,7 +1176,8 @@ export const publishResults = async (
         }
       } catch (err: any) {
         console.warn(
-          `[Publish] Bulk profile fetch failed, falling back to defaults: ${err.message}`,
+          "[Publish] Bulk profile fetch failed, falling back to defaults: %s",
+          err.message,
         );
       }
 
@@ -1172,7 +1190,10 @@ export const publishResults = async (
 
       const students = Object.keys(studentGrades);
       const total = students.length;
-      console.log(`[Publish] Starting email dispatch for ${total} students...`);
+      console.log(
+        "[Publish] Starting email dispatch for %s students...",
+        total,
+      );
 
       // Initialize Progress
       await redis.setex(
@@ -1226,11 +1247,17 @@ export const publishResults = async (
 
               sentCount++;
               console.log(
-                `[Publish] Queued RESULTS email job for ${studentId} -> ${email} (jobId=${job.id}, attempts=${job.opts.attempts})`,
+                "[Publish] Queued RESULTS email job for %s -> %s (jobId=%s, attempts=%s)",
+                studentId,
+                email,
+                job.id,
+                job.opts.attempts,
               );
             } catch (e: any) {
               console.error(
-                `[Publish] Failed to queue RESULTS email for ${studentId}: ${e.message}`,
+                "[Publish] Failed to queue RESULTS email for %s: %s",
+                studentId,
+                e.message,
               );
             }
           }),
@@ -1250,7 +1277,7 @@ export const publishResults = async (
           }),
         );
       }
-      console.log(`[Publish] Completed. Sent: ${sentCount}/${total}`);
+      console.log("[Publish] Completed. Sent: %s/%s", sentCount, total);
     } catch (err: any) {
       console.error("[Publish] Fatal Error:", err);
       await redis.setex(
@@ -1316,7 +1343,9 @@ export const publishAttendance = async (
   const processPublishing = async () => {
     try {
       console.log(
-        `[ATTENDANCE-PUBLISH] Starting for ${semesterId}, Year: ${year}`,
+        "[ATTENDANCE-PUBLISH] Starting for %s, Year: %s",
+        semesterId,
+        year,
       );
       const cleanYear = year
         ? String(year).toUpperCase().replace(/^0/, "O")
@@ -1351,7 +1380,8 @@ export const publishAttendance = async (
       }
 
       console.log(
-        `[ATTENDANCE-PUBLISH] Querying DB with where: ${JSON.stringify(where)}`,
+        "[ATTENDANCE-PUBLISH] Querying DB with where: %s",
+        JSON.stringify(where),
       );
       // 1. Fetch data
       const attendance = await prisma.attendance.findMany({
@@ -1360,12 +1390,14 @@ export const publishAttendance = async (
       });
 
       console.log(
-        `[ATTENDANCE-PUBLISH] Found ${attendance.length} records in DB`,
+        "[ATTENDANCE-PUBLISH] Found %s records in DB",
+        attendance.length,
       );
 
       if (attendance.length === 0) {
         console.log(
-          `[ATTENDANCE-PUBLISH] No records found for ${JSON.stringify(where)}`,
+          "[ATTENDANCE-PUBLISH] No records found for %s",
+          JSON.stringify(where),
         );
         await redis.setex(
           `publish:progress:${user.username}`,
@@ -1405,7 +1437,10 @@ export const publishAttendance = async (
           });
         }
       } catch (err: any) {
-        console.warn(`[Publish-Att] Bulk profile fetch failed: ${err.message}`);
+        console.warn(
+          "[Publish-Att] Bulk profile fetch failed: %s",
+          err.message,
+        );
       }
 
       // 3. Group by Student
@@ -1419,9 +1454,12 @@ export const publishAttendance = async (
       const students = Object.keys(studentAttendance);
       const total = students.length;
       console.log(
-        `[ATTENDANCE-PUBLISH] Loaded ${attendance.length} attendance rows for ${total} students (semester=${displaySemester}, year=${
-          cleanYear || "ALL"
-        }, branch=${branch || "ALL"})`,
+        "[ATTENDANCE-PUBLISH] Loaded %s attendance rows for %s students (semester=%s, year=%s, branch=%s)",
+        attendance.length,
+        total,
+        displaySemester,
+        cleanYear || "ALL",
+        branch || "ALL",
       );
 
       // Initialize Progress
@@ -1474,11 +1512,16 @@ export const publishAttendance = async (
 
               sentCount++;
               console.log(
-                `[Publish-Att] Queued ATTENDANCE_REPORT job for ${studentId} -> ${email} (jobId=${job.id})`,
+                "[Publish-Att] Queued ATTENDANCE_REPORT job for %s -> %s (jobId=%s)",
+                studentId,
+                email,
+                job.id,
               );
             } catch (e: any) {
               console.error(
-                `[Publish-Att] Failed to queue ATTENDANCE_REPORT job for ${studentId}: ${e.message}`,
+                "[Publish-Att] Failed to queue ATTENDANCE_REPORT job for %s: %s",
+                studentId,
+                e.message,
               );
             }
           }),
@@ -1499,7 +1542,10 @@ export const publishAttendance = async (
         );
       }
       console.log(
-        `[ATTENDANCE-PUBLISH] Completed dispatch. Sent: ${sentCount}/${total} (semester=${displaySemester})`,
+        "[ATTENDANCE-PUBLISH] Completed dispatch. Sent: %s/%s (semester=%s)",
+        sentCount,
+        total,
+        displaySemester,
       );
     } catch (err: any) {
       console.error("[Publish-Att] Fatal Error:", err);
@@ -1958,7 +2004,12 @@ export const getGradesTemplate = async (
     const isAllSubjects = !subjectCode || subjectCodeStr === "ALL";
 
     console.log(
-      `[Academics] Grades Template: branch=${branch}, year=${year}, semesterId=${semesterId}, subjectCode=${subjectCode}, remedialsOnly=${remedialsOnly}`,
+      "[Academics] Grades Template: branch=%s, year=%s, semesterId=%s, subjectCode=%s, remedialsOnly=%s",
+      branch,
+      year,
+      semesterId,
+      subjectCode,
+      remedialsOnly,
     );
 
     if (remedialsOnly === "true" && !isAllSubjects) {
@@ -1966,7 +2017,7 @@ export const getGradesTemplate = async (
         where: { code: subjectCodeStr },
       });
       if (!subject) {
-        console.warn(`[Academics] Subject not found: ${subjectCodeStr}`);
+        console.warn("[Academics] Subject not found: %s", subjectCodeStr);
         return res.status(404).json({ message: "Subject not found" });
       }
 
@@ -1981,7 +2032,7 @@ export const getGradesTemplate = async (
         username: f.studentId,
         name: "REMEDIAL STUDENT",
       }));
-      console.log(`[Academics] Found ${students.length} remedial students.`);
+      console.log("[Academics] Found %s remedial students.", students.length);
     } else {
       const profilesRes = await axios.post(
         `${USER_SERVICE_URL}/student/search`,
@@ -2006,7 +2057,7 @@ export const getGradesTemplate = async (
         },
       );
       students = profilesRes.data.students || [];
-      console.log(`[Academics] Found ${students.length} students via search.`);
+      console.log("[Academics] Found %s students via search.", students.length);
     }
 
     const resolvedSemesterId = await resolveAcademicSemesterId(
@@ -2020,11 +2071,13 @@ export const getGradesTemplate = async (
       subjectCode: subjectCodeStr,
       approvedOnly: true,
     });
-    console.log(`[Academics] Found ${subjects.length} matching subjects.`);
+    console.log("[Academics] Found %s matching subjects.", subjects.length);
 
     const activeSubjects = subjects;
     console.log(
-      `[Academics] Processing template for ${students.length} students across ${activeSubjects.length} subjects.`,
+      "[Academics] Processing template for %s students across %s subjects.",
+      students.length,
+      activeSubjects.length,
     );
 
     const academicCodes = await loadAcademicCodesBySubject(
@@ -2067,11 +2120,12 @@ export const getGradesTemplate = async (
       });
     });
 
-    console.log(`[Academics] Final Template Rows: ${headers.length - 1}`);
+    console.log("[Academics] Final Template Rows: %s", headers.length - 1);
     return generateExcel(headers, `Grades_Template_${year}_${branch}`, res);
   } catch (e: any) {
     console.error(
-      `[Academics] Grades Template Error: ${e.message}`,
+      "[Academics] Grades Template Error: %s",
+      e.message,
       e.response?.data || e,
     );
     const msg =
@@ -2088,13 +2142,14 @@ export const getGradesTemplate = async (
 
 export const uploadGrades = async (req: any, res: Response) => {
   const user = req.user;
-  console.log(`[Academics] Upload Grades Request from ${user.username}`);
-  console.log(`[Academics] req.file present: ${!!req.file}`);
+  console.log("[Academics] Upload Grades Request from %s", user.username);
+  console.log("[Academics] req.file present: %s", !!req.file);
   if (req.file) {
-    console.log(`[Academics] req.file.originalname: ${req.file.originalname}`);
-    console.log(`[Academics] req.file.size: ${req.file.size}`);
+    console.log("[Academics] req.file.originalname: %s", req.file.originalname);
+    console.log("[Academics] req.file.size: %s", req.file.size);
     console.log(
-      `[Academics] req.file.buffer length: ${req.file.buffer?.length || 0}`,
+      "[Academics] req.file.buffer length: %s",
+      req.file.buffer?.length || 0,
     );
   }
 
@@ -2105,7 +2160,7 @@ export const uploadGrades = async (req: any, res: Response) => {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(req.file.buffer);
     const worksheet = workbook.getWorksheet(1);
-    console.log(`[Academics] Worksheets found: ${workbook.worksheets.length}`);
+    console.log("[Academics] Worksheets found: %s", workbook.worksheets.length);
     if (!worksheet) {
       console.warn(`[Academics] No worksheet found at index 1`);
       return res.status(400).json({ message: "Empty file" });
@@ -2243,7 +2298,8 @@ export const uploadGrades = async (req: any, res: Response) => {
       };
       runQuietly().catch((e) => {
         console.error(
-          `[Academics] Grades worker direct run failed: ${e.message}`,
+          "[Academics] Grades worker direct run failed: %s",
+          e.message,
         );
       });
     } catch (e) {
@@ -2289,7 +2345,11 @@ export const getAttendanceTemplate = async (
     ];
 
     console.log(
-      `[Academics] Attendance Template: branch=${branch}, year=${year}, semesterId=${semesterId}, batch=${batch}`,
+      "[Academics] Attendance Template: branch=%s, year=%s, semesterId=%s, batch=%s",
+      branch,
+      year,
+      semesterId,
+      batch,
     );
 
     const profilesRes = await axios.post(
@@ -2314,7 +2374,7 @@ export const getAttendanceTemplate = async (
     );
 
     const students = profilesRes.data.students || [];
-    console.log(`[Academics] Found ${students.length} students via search.`);
+    console.log("[Academics] Found %s students via search.", students.length);
 
     const resolvedSemesterId = await resolveAcademicSemesterId(
       semesterId as string | undefined,
@@ -2326,9 +2386,11 @@ export const getAttendanceTemplate = async (
       batch: batch as string | undefined,
       approvedOnly: true,
     });
-    console.log(`[Academics] Found ${subjects.length} subjects.`);
+    console.log("[Academics] Found %s subjects.", subjects.length);
     console.log(
-      `[Academics] Building attendance template for ${students.length} students x ${subjects.length} subjects.`,
+      "[Academics] Building attendance template for %s students x %s subjects.",
+      students.length,
+      subjects.length,
     );
 
     const academicCodes = await loadAcademicCodesBySubject(
@@ -2375,7 +2437,8 @@ export const getAttendanceTemplate = async (
     return generateExcel(headers, `Attendance_Template_${year}_${branch}`, res);
   } catch (e: any) {
     console.error(
-      `[Academics] Attendance Template Error: ${e.message}`,
+      "[Academics] Attendance Template Error: %s",
+      e.message,
       e.response?.data || e,
     );
     const msg =
@@ -2540,7 +2603,8 @@ export const uploadAttendance = async (req: any, res: Response) => {
       };
       runQuietly().catch((e) => {
         console.error(
-          `[Academics] Attendance worker direct run failed: ${e.message}`,
+          "[Academics] Attendance worker direct run failed: %s",
+          e.message,
         );
       });
     } catch (e) {
@@ -2567,7 +2631,9 @@ export const downloadGrades = async (
   res: Response,
 ) => {
   console.log(
-    `[PDF] Grade Download Requested: ${req.query.studentId} for ${req.params.semesterId}`,
+    "[PDF] Grade Download Requested: %s for %s",
+    req.query.studentId,
+    req.params.semesterId,
   );
   const user = req.user;
   if (!user) return res.status(401).json({ success: false });
@@ -2696,7 +2762,9 @@ export const downloadAttendance = async (
   res: Response,
 ) => {
   console.log(
-    `[PDF] Attendance Download Requested: ${req.query.studentId} for ${req.params.semesterId}`,
+    "[PDF] Attendance Download Requested: %s for %s",
+    req.query.studentId,
+    req.params.semesterId,
   );
   const user = req.user;
   if (!user) return res.status(401).json({ success: false });
@@ -2825,7 +2893,8 @@ export const purgeStudentRecords = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error(
-      `[Academics] purgeStudentRecords failed for ${studentId}:`,
+      "[Academics] purgeStudentRecords failed for %s:",
+      studentId,
       error.message,
     );
     return res.status(500).json({

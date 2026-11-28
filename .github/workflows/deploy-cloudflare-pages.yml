@@ -18,6 +18,9 @@ on:
         type: choice
         options: [all, portal, landing]
 
+permissions:
+  contents: read
+
 concurrency:
   group: cf-pages-${{ github.ref }}
   cancel-in-progress: true

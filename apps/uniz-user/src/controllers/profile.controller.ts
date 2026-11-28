@@ -7,7 +7,10 @@ import axios from "axios";
 import { redis } from "../utils/redis.util";
 import { randomUUID } from "crypto";
 import { resolveHodBranch } from "../utils/hod.util";
-import { resolveStudentBranch, webadminAssignmentRejection } from "@uniz/shared";
+import {
+  resolveStudentBranch,
+  webadminAssignmentRejection,
+} from "@uniz/shared";
 import { canReadStaffBatches } from "../utils/staff-access";
 import {
   normalizeEmail,
@@ -144,10 +147,11 @@ const sendPush = async (username: string, title: string, body: string) => {
         timeout: 5000,
       },
     );
-    console.log(`[USER] Successfully sent push notification to: ${username}`);
+    console.log("[USER] Successfully sent push notification to: %s", username);
   } catch (e: any) {
     console.error(
-      `[USER][ERROR] Failed to send push notification to ${username}:`,
+      "[USER][ERROR] Failed to send push notification to %s:",
+      username,
       e.message,
     );
   }
@@ -676,7 +680,8 @@ export const adminUpdateStudentProfile = async (
     return res.json({ success: true, student: mapStudentProfile(updated) });
   } catch (e: any) {
     console.error(
-      `[ERROR] adminUpdateStudentProfile failed for ${username}:`,
+      "[ERROR] adminUpdateStudentProfile failed for %s:",
+      username,
       e.message || e,
     );
     return res.status(500).json({
@@ -730,13 +735,15 @@ export const createIndividualStudent = async (
         },
       );
       console.log(
-        `[USER] Successfully synced auth for individual student: ${username}`,
+        "[USER] Successfully synced auth for individual student: %s",
+        username,
       );
     } catch (authErr: any) {
       // If student already exists in auth, that's fine, we continue to profile creation/update
       if (authErr.response?.status !== 409) {
         console.error(
-          `[USER][ERROR] Failed to sync auth for ${username}:`,
+          "[USER][ERROR] Failed to sync auth for %s:",
+          username,
           authErr.message,
         );
       }
@@ -770,7 +777,11 @@ export const createIndividualStudent = async (
       student: mapStudentProfile(updated),
     });
   } catch (e: any) {
-    console.error(`[ERROR] createIndividualStudent failed for ${username}:`, e);
+    console.error(
+      "[ERROR] createIndividualStudent failed for %s:",
+      username,
+      e,
+    );
     return res.status(500).json({
       success: false,
       message: "Failed to process student request",
@@ -1019,11 +1030,7 @@ export const getAdminProfile = async (
   res: Response,
 ) => {
   const user = req.user;
-  const targetUsername = (
-    req.params.username ||
-    user?.username ||
-    ""
-  ).trim();
+  const targetUsername = (req.params.username || user?.username || "").trim();
 
   // Check if role is any admin role
   const adminRoles = [
@@ -1229,10 +1236,11 @@ export const createFacultyProfile = async (
           timeout: 5000,
         },
       );
-      console.log(`[USER] Successfully synced auth for faculty: ${username}`);
+      console.log("[USER] Successfully synced auth for faculty: %s", username);
     } catch (authErr: any) {
       console.error(
-        `[USER][ERROR] Failed to sync auth for faculty ${username}:`,
+        "[USER][ERROR] Failed to sync auth for faculty %s:",
+        username,
         authErr.message,
       );
     }
@@ -1511,7 +1519,8 @@ export const toggleUserSuspension = async (
       );
     } catch (authError: any) {
       console.error(
-        `[USER-SERVICE] Failed to sync suspension with Auth Service for ${targetUsername}:`,
+        "[USER-SERVICE] Failed to sync suspension with Auth Service for %s:",
+        targetUsername,
         authError.message,
       );
     }
@@ -1539,7 +1548,8 @@ export const toggleUserSuspension = async (
     });
   } catch (e: any) {
     console.error(
-      `[ERROR] toggleUserSuspension failed for ${targetUsername}:`,
+      "[ERROR] toggleUserSuspension failed for %s:",
+      targetUsername,
       e,
     );
     return res.status(500).json({
@@ -1709,7 +1719,9 @@ export const updateFacultyProfile = async (
         where: { id: existingProfile.id },
         data: {
           ...updates,
-          ...(planned.data.email !== undefined ? { email: planned.data.email } : {}),
+          ...(planned.data.email !== undefined
+            ? { email: planned.data.email }
+            : {}),
           username: targetUsername,
         },
       });
@@ -1718,7 +1730,9 @@ export const updateFacultyProfile = async (
         where: { id: existingProfile.id },
         data: {
           ...updates,
-          ...(planned.data.email !== undefined ? { email: planned.data.email } : {}),
+          ...(planned.data.email !== undefined
+            ? { email: planned.data.email }
+            : {}),
           username: targetUsername.toUpperCase(), // Admin usually uppercase
         },
       })) as any;
@@ -1752,11 +1766,13 @@ export const updateFacultyProfile = async (
           },
         );
         console.log(
-          `[USER] Successfully synced auth update for faculty: ${targetUsername}`,
+          "[USER] Successfully synced auth update for faculty: %s",
+          targetUsername,
         );
       } catch (authErr: any) {
         console.error(
-          `[USER][ERROR] Failed to sync auth update for faculty ${targetUsername}:`,
+          "[USER][ERROR] Failed to sync auth update for faculty %s:",
+          targetUsername,
           authErr.message,
         );
       }
@@ -1875,7 +1891,8 @@ export const deleteStudentProfile = async (
     });
   } catch (e: any) {
     console.error(
-      `[ERROR] deleteStudentProfile failed for ${username}:`,
+      "[ERROR] deleteStudentProfile failed for %s:",
+      username,
       e.message || e,
     );
     return res.status(500).json({
@@ -1919,19 +1936,19 @@ async function purgeStudentAccount(
 
     const purgeResults = await Promise.allSettled([
       axios.delete(
-        `${AUTH_SERVICE_URL}/internal/user/${canonicalUsername}`,
+        `${AUTH_SERVICE_URL}/internal/user/${encodeURIComponent(canonicalUsername)}`,
         internalHeaders,
       ),
       axios.delete(
-        `${ACADEMICS_SERVICE_URL}/internal/student/${canonicalUsername}`,
+        `${ACADEMICS_SERVICE_URL}/internal/student/${encodeURIComponent(canonicalUsername)}`,
         internalHeaders,
       ),
       axios.delete(
-        `${OUTPASS_SERVICE_URL}/internal/student/${canonicalUsername}`,
+        `${OUTPASS_SERVICE_URL}/internal/student/${encodeURIComponent(canonicalUsername)}`,
         internalHeaders,
       ),
       axios.delete(
-        `${NOTIFICATION_SERVICE_URL}/internal/subscriptions/${canonicalUsername}`,
+        `${NOTIFICATION_SERVICE_URL}/internal/subscriptions/${encodeURIComponent(canonicalUsername)}`,
         internalHeaders,
       ),
     ]);
@@ -1940,7 +1957,9 @@ async function purgeStudentAccount(
       if (result.status === "rejected") {
         const labels = ["auth", "academics", "outpass", "notifications"];
         console.warn(
-          `[USER] Student purge partial failure (${labels[index]}) for ${canonicalUsername}:`,
+          "[USER] Student purge partial failure (%s) for %s:",
+          labels[index],
+          canonicalUsername,
           result.reason?.message || result.reason,
         );
       }
@@ -2509,7 +2528,8 @@ export const bulkUpdateFaculty = async (
           )
           .catch((err) => {
             console.error(
-              `[BULK-UPDATE] Failed to sync auth for ${existing.username}:`,
+              "[BULK-UPDATE] Failed to sync auth for %s:",
+              existing.username,
               err.message,
             );
           });
@@ -2517,7 +2537,7 @@ export const bulkUpdateFaculty = async (
 
       results.push({ username: rawUsername, status: "updated" });
     } catch (e: any) {
-      console.error(`[BULK-UPDATE] Error updating ${rawUsername}:`, e.message);
+      console.error("[BULK-UPDATE] Error updating %s:", rawUsername, e.message);
       results.push({
         username: rawUsername,
         status: "error",

@@ -16,7 +16,7 @@ def set_gh_secret(name, value):
     process = subprocess.Popen(['gh', 'secret', 'set', name], stdin=subprocess.PIPE, text=True)
     process.communicate(input=value)
     if process.returncode != 0:
-        print(f"Error setting secret {name}")
+        print("Error setting a secret")
 
 def delete_gh_secret(name):
     subprocess.run(['gh', 'secret', 'delete', name], check=True)
@@ -42,17 +42,15 @@ def main():
     
     print(f"Syncing {len(local_secrets)} secrets to GitHub...")
     for name, value in local_secrets.items():
-        print(f"Set: {name}")
         set_gh_secret(name, value)
 
     print("\nCleaning up legacy secrets...")
     for name in gh_secrets:
         if name not in local_secrets and name not in protected_secrets:
-            print(f"Delete: {name}")
             try:
                 delete_gh_secret(name)
             except:
-                print(f"Failed to delete {name}")
+                print("Failed to delete a legacy secret")
 
 if __name__ == "__main__":
     main()

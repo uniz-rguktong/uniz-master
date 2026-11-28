@@ -44,11 +44,13 @@ const sendPush = async (username: string, title: string, body: string) => {
       },
     );
     console.log(
-      `[OUTPASS] Successfully sent push notification to: ${username}`,
+      "[OUTPASS] Successfully sent push notification to: %s",
+      username,
     );
   } catch (e: any) {
     console.error(
-      `[OUTPASS] Failed to send push notification to ${username}:`,
+      "[OUTPASS] Failed to send push notification to %s:",
+      username,
       e.message,
     );
   }
@@ -260,7 +262,8 @@ export const createOutpass = async (
 
       if (!currentActive[0] && !currentActive[1]) {
         console.log(
-          `[OUTPASS] Self-healing: Clearing stuck pending status for ${studentId}`,
+          "[OUTPASS] Self-healing: Clearing stuck pending status for %s",
+          studentId,
         );
         await updateStudentProfileStatus(
           user.username,
@@ -466,7 +469,8 @@ export const createOuting = async (
 
       if (!currentActive[0] && !currentActive[1]) {
         console.log(
-          `[OUTING] Self-healing: Clearing stuck pending status for ${studentId}`,
+          "[OUTING] Self-healing: Clearing stuck pending status for %s",
+          studentId,
         );
         await updateStudentProfileStatus(
           user.username,
@@ -1619,7 +1623,8 @@ export const purgeStudentRequests = async (
     });
   } catch (e: any) {
     console.error(
-      `[OUTPASS] purgeStudentRequests failed for ${studentId}:`,
+      "[OUTPASS] purgeStudentRequests failed for %s:",
+      studentId,
       e.message,
     );
     return res.status(500).json({

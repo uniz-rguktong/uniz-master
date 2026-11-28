@@ -250,7 +250,8 @@ export const login = async (req: Request, res: Response) => {
 
     if (user.isDisabled) {
       console.warn(
-        `[AUTH-LOGIN] ⛔ Login blocked for suspended user: ${user.username}`,
+        "[AUTH-LOGIN] ⛔ Login blocked for suspended user: %s",
+        user.username,
       );
       return res.status(403).json({
         code: "AUTH_SUSPENDED",
@@ -399,7 +400,7 @@ export const requestOtp = async (req: Request, res: Response) => {
       });
     }
 
-    console.log(`[AUTH] OTP email queued for ${username}.`);
+    console.log("[AUTH] OTP email queued for %s.", username);
     return res.json({
       success: true,
       deliveryMethod: "email",
@@ -746,10 +747,7 @@ export const changePassword = async (
       });
     }
 
-    if (
-      confirmPassword !== undefined &&
-      confirmPassword !== newPassword
-    ) {
+    if (confirmPassword !== undefined && confirmPassword !== newPassword) {
       return res.status(400).json({
         code: "VALIDATION_ERROR",
         message: "New passwords do not match.",
@@ -907,7 +905,9 @@ export const toggleSuspension = async (
 
     // Log notification (Actual email util could be called here)
     console.log(
-      `[AUTH] Student ${targetUser.username} suspension status set to: ${suspended}`,
+      "[AUTH] Student %s suspension status set to: %s",
+      targetUser.username,
+      suspended,
     );
 
     return res.json({
@@ -959,9 +959,10 @@ export const adminResetPassword = async (req: Request, res: Response) => {
 
     // Send password change notification email as a courtesy
     if (!username.startsWith("O") && !username.startsWith("o")) {
-      sendPasswordChangeNotification(deliveryEmailFor(user), user.username).catch(
-        () => {},
-      );
+      sendPasswordChangeNotification(
+        deliveryEmailFor(user),
+        user.username,
+      ).catch(() => {});
     }
 
     return res.json({
@@ -1054,7 +1055,9 @@ export const signup = async (req: Request, res: Response) => {
         role: role || UserRole.STUDENT,
         realEmail,
         mustChangePassword:
-          String(username || "").trim().toLowerCase() !== "webadmin" &&
+          String(username || "")
+            .trim()
+            .toLowerCase() !== "webadmin" &&
           isIssuedPasswordTemplate(password, username),
       },
     });
@@ -1176,13 +1179,16 @@ export const globalAdminResetPassword = async (
       targetUser.username,
     ).catch((err) => {
       console.error(
-        `[AUTH] Background notification failed for ${targetUser.username}:`,
+        "[AUTH] Background notification failed for %s:",
+        targetUser.username,
         err.message,
       );
     });
 
     console.log(
-      `[AUTH] [ADMIN-RESET] Webadmin (${requester.username}) reset password for: ${targetUser.username}`,
+      "[AUTH] [ADMIN-RESET] Webadmin (%s) reset password for: %s",
+      requester.username,
+      targetUser.username,
     );
 
     return res.json({
@@ -1227,7 +1233,9 @@ export const getUserStatus = async (req: Request, res: Response) => {
     }
 
     console.log(
-      `[AUTH-INTERNAL] Providing status for ${user.username} (Disabled: ${user.isDisabled})`,
+      "[AUTH-INTERNAL] Providing status for %s (Disabled: %s)",
+      user.username,
+      user.isDisabled,
     );
 
     return res.json({
@@ -1243,7 +1251,8 @@ export const getUserStatus = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error(
-      `[AUTH-INTERNAL] Error fetching user status for ${id}:`,
+      "[AUTH-INTERNAL] Error fetching user status for %s:",
+      id,
       error.message,
     );
     return res.status(500).json({
@@ -1293,7 +1302,8 @@ export const deleteUserByUsername = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error(
-      `[AUTH-INTERNAL] Delete user failed for ${username}:`,
+      "[AUTH-INTERNAL] Delete user failed for %s:",
+      username,
       error.message,
     );
     return res.status(500).json({
