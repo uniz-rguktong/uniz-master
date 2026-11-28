@@ -87,3 +87,19 @@ test("omitting email leaves a phone update alone", () => {
   if (!result.ok) return;
   assert.deepEqual(result.data, { contact: "9000000000" });
 });
+
+test("ignores prototype-pollution keys in patch", () => {
+  const patch = JSON.parse('{"contact":"9000000000","__proto__":{"polluted":true},"constructor":"bad","prototype":"bad"}');
+  const result = planProfilePatch({
+    self,
+    patch,
+    owners: [self],
+  });
+
+  assert.equal(result.ok, true);
+  if (!result.ok) return;
+  assert.deepEqual(result.data, { contact: "9000000000" });
+  assert.equal(Object.prototype.hasOwnProperty.call(result.data, "__proto__"), false);
+  assert.equal(Object.prototype.hasOwnProperty.call(result.data, "constructor"), false);
+  assert.equal(Object.prototype.hasOwnProperty.call(result.data, "prototype"), false);
+});

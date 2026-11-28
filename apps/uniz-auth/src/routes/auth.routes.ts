@@ -22,11 +22,13 @@ import {
   otpEmailLimiter,
   otpHourLimiter,
 } from "../middlewares/ratelimit.middleware";
+import { routerRateLimiter } from "../middlewares/router-limiter";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { validateRequest } from "../middlewares/validation.middleware";
 import { z } from "zod";
 
 const router = Router();
+router.use(routerRateLimiter);
 
 const LoginSchema = z.object({
   username: z.string(),

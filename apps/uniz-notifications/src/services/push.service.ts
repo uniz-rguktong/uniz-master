@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import * as webpush from "web-push";
+import { sanitizeLog } from "@uniz/shared";
 import prisma from "../utils/prisma.util";
 import { createInboxEntry } from "./inbox.service";
 
@@ -50,7 +51,11 @@ async function persistInboxAndPath(
     return { notificationId: entry.id, path };
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
-    console.warn(`[Push] Inbox persist failed for ${username}: ${message}`);
+    console.warn(
+      "[Push] Inbox persist failed for %s: %s",
+      sanitizeLog(username),
+      sanitizeLog(message),
+    );
     return { path: "/notifications" };
   }
 }
@@ -130,7 +135,11 @@ export const sendWebPush = async (
 
     return results.filter((r) => r.status === "fulfilled").length;
   } catch (err: any) {
-    console.error(`[Push] Error for ${username}: ${err.message}`);
+    console.error(
+      "[Push] Error for %s: %s",
+      sanitizeLog(username),
+      sanitizeLog(err.message),
+    );
     return 0;
   }
 };

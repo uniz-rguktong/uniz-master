@@ -1,7 +1,5 @@
 import PDFDocument from "pdfkit";
 import axios from "axios";
-import fs from "fs";
-import path from "path";
 
 export interface ResultData {
   username: string;
@@ -35,8 +33,6 @@ export interface AttendanceData {
   }[];
 }
 
-const CACHE_DIR = path.join(process.cwd(), "cache");
-const CACHE_PATH = path.join(CACHE_DIR, "university_logo.jpg");
 let logoBuffer: Buffer | null = null;
 
 const fetchLogo = async () => {
@@ -45,16 +41,11 @@ const fetchLogo = async () => {
   if (!logoUrl) return null;
 
   try {
-    if (fs.existsSync(CACHE_PATH)) {
-      logoBuffer = fs.readFileSync(CACHE_PATH);
-      return logoBuffer;
+    const parsed = new URL(logoUrl);
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+      return null;
     }
-  } catch (err) {
-    console.error("Error reading logo cache:", err);
-  }
-
-  try {
-    const response = await axios.get(logoUrl, {
+    const response = await axios.get(parsed.toString(), {
       responseType: "arraybuffer",
       timeout: 10000,
       headers: {
@@ -62,10 +53,6 @@ const fetchLogo = async () => {
       },
     });
     logoBuffer = Buffer.from(response.data);
-    if (!fs.existsSync(CACHE_DIR)) {
-      fs.mkdirSync(CACHE_DIR, { recursive: true });
-    }
-    fs.writeFileSync(CACHE_PATH, logoBuffer);
     return logoBuffer;
   } catch (err) {
     console.error("Failed to fetch logo:", err);
@@ -105,7 +92,7 @@ const HEADER_TINT = "#FFF5F5";
 
 // Helper to clean subject name from codes
 const cleanSubjectName = (name: string) => {
-  return name.replace(/\s*\([\w-]+\)$/, "").trim();
+  return name.replace(/\([\w-]+\)$/, "").trim();
 };
 
 export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {

@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
+import { sanitizeLog } from "@uniz/shared";
 import requestRoutes from "../src/routes/request.routes";
 
 dotenv.config();
@@ -9,18 +10,31 @@ dotenv.config();
 const app = express();
 app.set("trust proxy", 1);
 
+const allowedOrigins = (
+  process.env.FRONTEND_URL ||
+  process.env.CLIENT_URL ||
+  "http://localhost:5173,http://localhost:3000"
+)
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 // Middleware
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "*",
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
 app.use(express.json());
 
 app.use((req, res, next) => {
-  console.log(`[OUTPASS-API] ${req.method} ${req.url}`);
+  console.log(
+    "[OUTPASS-API] %s %s",
+    sanitizeLog(req.method),
+    sanitizeLog(req.url),
+  );
   next();
 });
 

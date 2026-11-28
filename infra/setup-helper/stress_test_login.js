@@ -13,7 +13,7 @@ const stats = {
   minTime: Infinity,
   maxTime: 0,
   totalTime: 0,
-  errors: {},
+  errors: new Map(),
 };
 
 const startTime = process.hrtime();
@@ -53,8 +53,8 @@ function makeRequest(id) {
           if (duration > stats.maxTime) stats.maxTime = duration;
         } else {
           stats.failed++;
-          const code = res.statusCode;
-          stats.errors[code] = (stats.errors[code] || 0) + 1;
+          const code = String(res.statusCode);
+          stats.errors.set(code, (stats.errors.get(code) || 0) + 1);
         }
         resolve();
       });
@@ -62,8 +62,8 @@ function makeRequest(id) {
 
     req.on("error", (e) => {
       stats.failed++;
-      const msg = e.code || e.message;
-      stats.errors[msg] = (stats.errors[msg] || 0) + 1;
+      const msg = String(e.code || e.message);
+      stats.errors.set(msg, (stats.errors.get(msg) || 0) + 1);
       resolve();
     });
 
@@ -132,9 +132,9 @@ function printReport() {
   );
   console.log(`Max Latency:    ${stats.maxTime.toFixed(2)} ms`);
 
-  if (Object.keys(stats.errors).length > 0) {
+  if (stats.errors.size > 0) {
     console.log("\nErrors:");
-    console.table(stats.errors);
+    console.table(Object.fromEntries(stats.errors));
   }
 }
 

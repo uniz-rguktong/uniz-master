@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { applyApiAttribution } from "@uniz/shared";
+import { applyApiAttribution, sanitizeLog } from "@uniz/shared";
 
 /**
  * Attach a single top-level API attribution to JSON responses.
@@ -34,7 +34,11 @@ export const attributionMiddleware = (
 
       if (isMalformed) {
         console.warn(
-          `[SECURITY] Malformed activity detected. IP: ${req.ip}, Status: ${status}, URL: ${req.originalUrl}, Code: ${body.code || "N/A"}`,
+          "[SECURITY] Malformed activity detected. IP: %s, Status: %s, URL: %s, Code: %s",
+          sanitizeLog(req.ip),
+          status,
+          sanitizeLog(req.originalUrl),
+          sanitizeLog(body.code || "N/A"),
         );
 
         if (

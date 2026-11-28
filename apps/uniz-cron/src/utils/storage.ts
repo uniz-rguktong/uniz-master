@@ -1,12 +1,15 @@
-import { exec } from "child_process";
+import { execFile } from "child_process";
 import { promisify } from "util";
 import { access } from "fs/promises";
 import { constants } from "fs";
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 const CRI_SOCK = "/run/k3s/containerd/containerd.sock";
-const CRICTL_TIMEOUT = process.env.CRICTL_TIMEOUT || "10m";
+const RAW_CRICTL_TIMEOUT = (process.env.CRICTL_TIMEOUT || "10m").trim();
+const CRICTL_TIMEOUT = /^\d+[smh]$/.test(RAW_CRICTL_TIMEOUT)
+  ? RAW_CRICTL_TIMEOUT
+  : "10m";
 
 async function pathExists(path: string): Promise<boolean> {
   try {
@@ -35,7 +38,7 @@ export const runStorageCleanup = async () => {
 
   const checkTool = async (tool: string) => {
     try {
-      await execAsync(`command -v ${tool}`);
+      await execFileAsync("sh", ["-c", 'command -v "$1" >/dev/null 2>&1', "--", tool]);
       return true;
     } catch {
       return false;
@@ -45,73 +48,93 @@ export const runStorageCleanup = async () => {
   const hasDockerSock = await socketExists("/var/run/docker.sock");
   const hasCriSock = await socketExists(CRI_SOCK);
 
-  const commands: Array<{ name: string; tool: string; cmd: string; when?: boolean }> = [
+  const commands: Array<{
+    name: string;
+    tool: string;
+    bin: string;
+    args: string[];
+    env?: NodeJS.ProcessEnv;
+    when?: boolean;
+  }> = [
     {
       name: "K3s Image Prune (crictl)",
       tool: "crictl",
-      cmd: `CRICTL_TIMEOUT=${CRICTL_TIMEOUT} crictl --runtime-endpoint unix://${CRI_SOCK} rmi --prune`,
+      bin: "crictl",
+      args: ["--runtime-endpoint", `unix://${CRI_SOCK}`, "rmi", "--prune"],
+      env: { ...process.env, CRICTL_TIMEOUT },
       when: hasCriSock,
     },
     {
       name: "K3s Image Prune (k3s crictl)",
       tool: "k3s",
-      cmd: `CRICTL_TIMEOUT=${CRICTL_TIMEOUT} k3s crictl rmi --prune`,
+      bin: "k3s",
+      args: ["crictl", "rmi", "--prune"],
+      env: { ...process.env, CRICTL_TIMEOUT },
       when: hasCriSock,
     },
     {
       name: "K3s Containerd Prune (k3s ctr --all)",
       tool: "k3s",
-      cmd: "k3s ctr -n k8s.io images prune --all",
+      bin: "k3s",
+      args: ["ctr", "-n", "k8s.io", "images", "prune", "--all"],
       when: hasCriSock,
     },
     {
       name: "Docker System Prune",
       tool: "docker",
-      cmd: 'docker system prune -af --volumes --filter "until=24h"',
+      bin: "docker",
+      args: ["system", "prune", "-af", "--volumes", "--filter", "until=24h"],
       when: hasDockerSock,
     },
     {
       name: "Docker Image Prune",
       tool: "docker",
-      cmd: 'docker image prune -af --filter "until=24h"',
+      bin: "docker",
+      args: ["image", "prune", "-af", "--filter", "until=24h"],
       when: hasDockerSock,
     },
     {
       name: "Docker Build Cache Prune",
       tool: "docker",
-      cmd: 'docker builder prune -af --filter "until=24h"',
+      bin: "docker",
+      args: ["builder", "prune", "-af", "--filter", "until=24h"],
       when: hasDockerSock,
     },
     {
       name: "Container Log Truncation",
       tool: "find",
-      cmd: "find /var/lib/docker/containers/ -name '*-json.log' -exec truncate -s 0 {} \\;",
+      bin: "find",
+      args: ["/var/lib/docker/containers/", "-name", "*-json.log", "-exec", "truncate", "-s", "0", "{}", ";"],
       when: await pathExists("/var/lib/docker/containers"),
     },
     {
       name: "K3s Containerd Log Truncation",
       tool: "find",
-      cmd: "find /var/lib/rancher/k3s/agent/containerd -name '*.log' -size +10M -exec truncate -s 0 {} \\;",
+      bin: "find",
+      args: ["/var/lib/rancher/k3s/agent/containerd", "-name", "*.log", "-size", "+10M", "-exec", "truncate", "-s", "0", "{}", ";"],
       when: await pathExists("/var/lib/rancher/k3s/agent/containerd"),
     },
     {
       name: "Journal Log Vacuum",
       tool: "journalctl",
-      cmd: "journalctl --vacuum-time=2d",
+      bin: "journalctl",
+      args: ["--vacuum-time=2d"],
     },
     {
       name: "Apt Cleanup",
       tool: "apt-get",
-      cmd: "apt-get clean && apt-get autoremove -y",
+      bin: "sh",
+      args: ["-c", "apt-get clean && apt-get autoremove -y"],
     },
     {
       name: "Temp File Cleanup",
       tool: "rm",
-      cmd: "rm -rf /tmp/* /var/tmp/*",
+      bin: "sh",
+      args: ["-c", "rm -rf /tmp/* /var/tmp/*"],
     },
   ];
 
-  for (const { name, tool, cmd, when } of commands) {
+  for (const { name, tool, bin, args, env, when } of commands) {
     if (when === false) {
       console.log(`[STORAGE] Skipping ${name}: prerequisite not available.`);
       continue;
@@ -124,7 +147,7 @@ export const runStorageCleanup = async () => {
       }
 
       console.log(`[STORAGE] Executing: ${name}...`);
-      const { stderr } = await execAsync(cmd);
+      const { stderr } = await execFileAsync(bin, args, env ? { env } : undefined);
       if (stderr) console.warn(`[STORAGE] [${name}] Warning:`, stderr);
       console.log(`[STORAGE] [${name}] Success.`);
     } catch (error: any) {
@@ -133,7 +156,7 @@ export const runStorageCleanup = async () => {
   }
 
   try {
-    const { stdout } = await execAsync("df -h / /var 2>/dev/null || df -h /");
+    const { stdout } = await execFileAsync("sh", ["-c", "df -h / /var 2>/dev/null || df -h /"]);
     console.log("[STORAGE] Final disk status:\n", stdout);
   } catch (e) {
     // non-fatal

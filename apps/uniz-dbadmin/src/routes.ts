@@ -44,10 +44,13 @@ function castsFor(columns: ColumnInfo[]): Record<string, string> {
   return casts;
 }
 
+const BLOCKED_PROPERTY_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
 function coerceValues(columns: ColumnInfo[], input: Record<string, unknown>, mode: "insert" | "update"): Record<string, unknown> {
   const known = new Map(columns.map((column) => [column.name, column]));
-  const values: Record<string, unknown> = {};
+  const entries: Array<[string, unknown]> = [];
   for (const [key, raw] of Object.entries(input)) {
+    if (BLOCKED_PROPERTY_KEYS.has(key)) throw new DbAdminError(400, "That column was not found.");
     const column = known.get(key);
     if (!column) throw new DbAdminError(400, "That column was not found.");
     if (column.input === "binary") {
@@ -55,9 +58,9 @@ function coerceValues(columns: ColumnInfo[], input: Record<string, unknown>, mod
       throw new DbAdminError(400, "File fields cannot be edited here.");
     }
     if (mode === "insert" && (raw === undefined || raw === "")) continue;
-    values[key] = coerceColumnValue(column.input, raw, column.enumValues);
+    entries.push([key, coerceColumnValue(column.input, raw, column.enumValues)]);
   }
-  return values;
+  return Object.fromEntries(entries);
 }
 
 async function lockRow(

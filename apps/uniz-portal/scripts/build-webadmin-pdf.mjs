@@ -17,7 +17,6 @@ const sourcePath = resolve(portalRoot, "src/content/webadmin-guides.json");
 const pdfPath = resolve(portalRoot, "public/guides/uniz-webadmin-guide.pdf");
 // Older links used this filename. Keep serving the same PDF there.
 const legacyPdfPath = resolve(portalRoot, "public/guides/uniz-webmaster-guide.pdf");
-const htmlPath = resolve(tmpdir(), "uniz-webadmin-guide.print.html");
 
 const book = JSON.parse(readFileSync(sourcePath, "utf8"));
 
@@ -148,7 +147,6 @@ const html = `<!DOCTYPE html>
 </html>`;
 
 mkdirSync(dirname(pdfPath), { recursive: true });
-writeFileSync(htmlPath, html);
 
 const chromeCandidates = [
   process.env.CHROME_PATH,
@@ -162,25 +160,33 @@ if (!chrome) {
   process.exit(1);
 }
 
-const userDataDir = mkdtempSync(join(tmpdir(), "uniz-guide-chrome-"));
-const printed = spawnSync(
-  chrome,
-  [
-    "--headless=new",
-    "--disable-gpu",
-    "--no-sandbox",
-    "--disable-dev-shm-usage",
-    "--no-first-run",
-    "--disable-extensions",
-    "--no-pdf-header-footer",
-    `--user-data-dir=${userDataDir}`,
-    `--print-to-pdf=${pdfPath}`,
-    pathToFileURL(htmlPath).href,
-  ],
-  { encoding: "utf8", timeout: 60000 },
-);
-rmSync(htmlPath, { force: true });
-rmSync(userDataDir, { recursive: true, force: true });
+const workDir = mkdtempSync(join(tmpdir(), "uniz-guide-work-"));
+const htmlPath = join(workDir, "uniz-webadmin-guide.print.html");
+const userDataDir = join(workDir, "chrome-profile");
+mkdirSync(userDataDir, { recursive: true });
+
+let printed;
+try {
+  writeFileSync(htmlPath, html);
+  printed = spawnSync(
+    chrome,
+    [
+      "--headless=new",
+      "--disable-gpu",
+      "--no-sandbox",
+      "--disable-dev-shm-usage",
+      "--no-first-run",
+      "--disable-extensions",
+      "--no-pdf-header-footer",
+      `--user-data-dir=${userDataDir}`,
+      `--print-to-pdf=${pdfPath}`,
+      pathToFileURL(htmlPath).href,
+    ],
+    { encoding: "utf8", timeout: 60000 },
+  );
+} finally {
+  rmSync(workDir, { recursive: true, force: true });
+}
 
 if (printed.status !== 0) {
   console.error(printed.stdout);

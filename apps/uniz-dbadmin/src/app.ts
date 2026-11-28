@@ -1,5 +1,7 @@
 import express, { type ErrorRequestHandler, type Request, type Response } from "express";
+import rateLimitMiddleware from "express-rate-limit";
 import helmet from "helmet";
+import { routerLimiterOptions } from "@uniz/shared";
 import { insertRequest } from "./audit/store";
 import { requireWebadmin } from "./auth";
 import { loadTargets, withClient } from "./db";
@@ -9,6 +11,9 @@ import routes from "./routes";
 
 const reads = createRateLimiter({ windowMs: 60_000, max: 60 });
 const writes = createRateLimiter({ windowMs: 60_000, max: 30 });
+const routerRateLimiter = rateLimitMiddleware(
+  routerLimiterOptions,
+) as unknown as express.RequestHandler;
 
 function requestPath(req: Request): string {
   return String(req.originalUrl || req.url || "/").split("?")[0].slice(0, 300);
@@ -95,6 +100,7 @@ export function createApp(): express.Express {
     res.status(200).json({ status: "ok", service: "uniz-dbadmin" });
   });
   app.use(attachRequestLog);
+  app.use(routerRateLimiter);
   app.use(requireWebadmin);
   app.use(rateLimit);
   app.use(routes);

@@ -5,7 +5,11 @@ import { prisma } from "../utils/prisma";
 import { redis } from "../utils/redis.util";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { ErrorCode } from "../shared/error-codes";
-import { resolveEffectiveRole, webadminAssignmentRejection } from "@uniz/shared";
+import {
+  resolveEffectiveRole,
+  sanitizeLog,
+  webadminAssignmentRejection,
+} from "@uniz/shared";
 import {
   DIRECTORY_ROLES,
   canReadAdminDirectory,
@@ -242,7 +246,11 @@ export const addAdmin = async (req: AuthenticatedRequest, res: Response) => {
     if (e?.code === "P2002") {
       return res.status(409).json({ success: false, msg: "Admin already exists" });
     }
-    console.error(`[admin-directory] Failed to add admin ${username}:`, e?.message || e);
+    console.error(
+      "[admin-directory] Failed to add admin %s:",
+      sanitizeLog(username),
+      sanitizeLog(e?.message || e),
+    );
     return res.status(500).json({ success: false, msg: "Could not add admin" });
   }
 };
@@ -295,7 +303,11 @@ export const deleteAdmin = async (req: AuthenticatedRequest, res: Response) => {
     }
     return res.json({ success: true, msg: "Admin removed" });
   } catch (e: any) {
-    console.error(`[admin-directory] Failed to delete admin ${username}:`, e?.message || e);
+    console.error(
+      "[admin-directory] Failed to delete admin %s:",
+      sanitizeLog(username),
+      sanitizeLog(e?.message || e),
+    );
     return res.status(500).json({ success: false, msg: "Could not remove admin" });
   }
 };
@@ -344,7 +356,11 @@ export const assignAdminRole = async (
     await syncAuthRole(canonical, role, randomBytes(24).toString("base64url"));
     return res.json({ success: true, msg: "Role updated" });
   } catch (e: any) {
-    console.error(`[admin-directory] Failed to assign role for ${username}:`, e?.message || e);
+    console.error(
+      "[admin-directory] Failed to assign role for %s:",
+      sanitizeLog(username),
+      sanitizeLog(e?.message || e),
+    );
     return res.status(500).json({ success: false, msg: "Could not update role" });
   }
 };

@@ -9,6 +9,7 @@ import {
   ApprovalLogEntry,
 } from "../shared/outpass.schema";
 import { UserRole } from "../shared/roles.enum";
+import { sanitizeLog } from "@uniz/shared";
 import axios from "axios";
 
 // Helper to append log
@@ -1624,8 +1625,8 @@ export const purgeStudentRequests = async (
   } catch (e: any) {
     console.error(
       "[OUTPASS] purgeStudentRequests failed for %s:",
-      studentId,
-      e.message,
+      sanitizeLog(studentId),
+      sanitizeLog(e.message),
     );
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,

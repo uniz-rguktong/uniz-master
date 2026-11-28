@@ -27,6 +27,7 @@ import {
   formatGrievanceCategoryLabel,
   formatStudentDisplayName,
   isActionableGrievanceDescription,
+  sanitizeLog,
 } from "@uniz/shared";
 
 const emailUser = process.env.EMAIL_USER;
@@ -115,27 +116,36 @@ const sendEmailUnified = async (options: {
     });
 
     console.log(
-      `[MAIL-SUCCESS] [${provider}] ID=${info.messageId}, To=${options.to}, Subject="${options.subject}"`,
+      '[MAIL-SUCCESS] [%s] ID=%s, To=%s, Subject="%s"',
+      provider,
+      sanitizeLog(info.messageId),
+      sanitizeLog(options.to),
+      sanitizeLog(options.subject),
     );
     return true;
   } catch (err: any) {
     // Classification of errors for robustness during surges
     if (err.message?.includes("Throttling") || err.code === "Throttling") {
       console.error(
-        `[MAIL-CRITICAL] [${provider}] SES Rate Limit Exceeded. Surge protection active.`,
+        "[MAIL-CRITICAL] [%s] SES Rate Limit Exceeded. Surge protection active.",
+        provider,
       );
     } else if (
       err.message?.includes("Blacklisted") ||
       err.name === "MessageRejected"
     ) {
       console.error(
-        `[MAIL-BOUNCE] [${provider}] Recipient ${options.to} rejected/bounced. Flagging for review.`,
+        "[MAIL-BOUNCE] [%s] Recipient %s rejected/bounced. Flagging for review.",
+        provider,
+        sanitizeLog(options.to),
       );
       // TODO: Implement DB flag for invalid email if we add a persistence layer here
     } else {
       console.error(
-        `[MAIL-ERROR] [${provider}] Delivery failed for ${options.to}:`,
-        err.message,
+        "[MAIL-ERROR] [%s] Delivery failed for %s:",
+        provider,
+        sanitizeLog(options.to),
+        sanitizeLog(err.message),
       );
     }
     return false;
@@ -180,7 +190,7 @@ export const sendLoginNotification = async (
     void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
-    console.log(`[MAIL] Login notification suppressed for ${username}`);
+    console.log("[MAIL] Login notification suppressed for %s", sanitizeLog(username));
     return true;
   } catch (error) {
     console.error(`Failed to send login notification:`, error);
@@ -205,7 +215,7 @@ export const sendOutpassRequestNotification = async (
     void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
-    console.log(`[MAIL] Outpass notification suppressed for ${username}`);
+    console.log("[MAIL] Outpass notification suppressed for %s", sanitizeLog(username));
     return true;
   } catch (error) {
     console.error(`Failed to send outpass request notification:`, error);
@@ -230,7 +240,7 @@ export const sendOutingRequestNotification = async (
     void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
-    console.log(`[MAIL] Outing notification suppressed for ${username}`);
+    console.log("[MAIL] Outing notification suppressed for %s", sanitizeLog(username));
     return true;
   } catch (error) {
     console.error(`Failed to send outing request notification:`, error);
@@ -255,7 +265,7 @@ export const sendOutpassApprovalNotification = async (
     void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
-    console.log(`[MAIL] Outpass approval suppressed for ${username}`);
+    console.log("[MAIL] Outpass approval suppressed for %s", sanitizeLog(username));
     return true;
   } catch (error) {
     return false;
@@ -279,7 +289,7 @@ export const sendOutingApprovalNotification = async (
     void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
-    console.log(`[MAIL] Outing approval suppressed for ${username}`);
+    console.log("[MAIL] Outing approval suppressed for %s", sanitizeLog(username));
     return true;
   } catch (error) {
     return false;
@@ -298,7 +308,7 @@ export const sendCheckpointNotification = async (
     void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
-    console.log(`[MAIL] Checkpoint notification suppressed for ${username}`);
+    console.log("[MAIL] Checkpoint notification suppressed for %s", sanitizeLog(username));
     return true;
   } catch (error) {
     return false;
@@ -332,7 +342,7 @@ export const sendResultEmail = async (
     void pdfBuffer;
 
     // Disabled per user policy: only OTP-on-demand uses email
-    console.log(`[MAIL] Result email suppressed for ${username}`);
+    console.log("[MAIL] Result email suppressed for %s", sanitizeLog(username));
     return true;
   } catch (error: any) {
     console.error(`Failed to send result email:`, error.message);
@@ -367,7 +377,7 @@ export const sendAttendanceReportEmail = async (
     void pdfBuffer;
 
     // Disabled per user policy: only OTP-on-demand uses email
-    console.log(`[MAIL] Attendance email suppressed for ${username}`);
+    console.log("[MAIL] Attendance email suppressed for %s", sanitizeLog(username));
     return true;
   } catch (error: any) {
     console.error(`Failed to send attendance email:`, error.message);
@@ -484,7 +494,7 @@ export const sendPasswordChangeNotification = async (
     void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
-    console.log(`[MAIL] Password change alert suppressed for ${username}`);
+    console.log("[MAIL] Password change alert suppressed for %s", sanitizeLog(username));
     return true;
   } catch (error) {
     return false;
@@ -508,7 +518,7 @@ export const sendProfileUpdateNotification = async (
     void rendered;
 
     // Disabled per user policy: only OTP-on-demand uses email
-    console.log(`[MAIL] Profile update alert suppressed for ${username}`);
+    console.log("[MAIL] Profile update alert suppressed for %s", sanitizeLog(username));
     return true;
   } catch (error) {
     return false;

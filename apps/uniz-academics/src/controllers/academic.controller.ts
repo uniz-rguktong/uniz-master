@@ -5,6 +5,7 @@ import axios from "axios";
 import prisma from "../utils/prisma.util";
 import { invalidateStudentAcademicCaches } from "../utils/student-cache.util";
 import { ErrorCode } from "../shared/error-codes";
+import { sanitizeLog } from "@uniz/shared";
 
 const GATEWAY_URL = (
   (process.env.DOCKER_ENV === "true"
@@ -122,7 +123,7 @@ export const getUploadProgress = async (
         if (isStuck) {
           console.log(
             "[Academics] 🚨 Job %s appears stuck. Jump-starting via Progress Poll (Direct)...",
-            uploadId,
+            sanitizeLog(uploadId),
           );
           // Fire and forget direct call to prevent blocking the user
           // Using a recursive helper to handle the 'continued' state
@@ -189,8 +190,8 @@ export const getPublishProgress = async (
     const progress = await redis.get(key);
     console.log(
       "Fetching publish progress for %s, key: %s, found: %s",
-      user.username,
-      key,
+      sanitizeLog(user.username),
+      sanitizeLog(key),
       !!progress,
     );
 
@@ -589,8 +590,8 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
         } catch (err: any) {
           console.warn(
             "[Academics] Failed to sync stats for %s:",
-            targetStudentId,
-            err.message,
+            sanitizeLog(targetStudentId),
+            sanitizeLog(err.message),
           );
         }
       };
@@ -1086,8 +1087,8 @@ export const publishResults = async (
     try {
       console.log(
         "[GRADES-PUBLISH] Starting for %s, Year: %s",
-        semesterId,
-        year,
+        sanitizeLog(semesterId),
+        sanitizeLog(year),
       );
       const cleanYear = year
         ? String(year).toUpperCase().replace(/^0/, "O")
@@ -1127,8 +1128,8 @@ export const publishResults = async (
       // 1. Fetch ALL grades for the target slice
       console.log(
         "[Publish] Fetching grades for %s, Year: %s...",
-        semesterId,
-        year || "All",
+        sanitizeLog(semesterId),
+        sanitizeLog(year || "All"),
       );
 
       const grades = await prisma.grade.findMany({
@@ -1154,7 +1155,7 @@ export const publishResults = async (
       // 2. Fetch Student Profiles in Bulk (Optimization)
       console.log(
         "[Publish] Fetching student profiles in bulk for %s...",
-        year || "All",
+        sanitizeLog(year || "All"),
       );
       let profilesMap: Record<string, any> = {};
       try {
@@ -1344,8 +1345,8 @@ export const publishAttendance = async (
     try {
       console.log(
         "[ATTENDANCE-PUBLISH] Starting for %s, Year: %s",
-        semesterId,
-        year,
+        sanitizeLog(semesterId),
+        sanitizeLog(year),
       );
       const cleanYear = year
         ? String(year).toUpperCase().replace(/^0/, "O")
@@ -1457,9 +1458,9 @@ export const publishAttendance = async (
         "[ATTENDANCE-PUBLISH] Loaded %s attendance rows for %s students (semester=%s, year=%s, branch=%s)",
         attendance.length,
         total,
-        displaySemester,
-        cleanYear || "ALL",
-        branch || "ALL",
+        sanitizeLog(displaySemester),
+        sanitizeLog(cleanYear || "ALL"),
+        sanitizeLog(branch || "ALL"),
       );
 
       // Initialize Progress
@@ -1545,7 +1546,7 @@ export const publishAttendance = async (
         "[ATTENDANCE-PUBLISH] Completed dispatch. Sent: %s/%s (semester=%s)",
         sentCount,
         total,
-        displaySemester,
+        sanitizeLog(displaySemester),
       );
     } catch (err: any) {
       console.error("[Publish-Att] Fatal Error:", err);
@@ -2005,11 +2006,11 @@ export const getGradesTemplate = async (
 
     console.log(
       "[Academics] Grades Template: branch=%s, year=%s, semesterId=%s, subjectCode=%s, remedialsOnly=%s",
-      branch,
-      year,
-      semesterId,
-      subjectCode,
-      remedialsOnly,
+      sanitizeLog(branch),
+      sanitizeLog(year),
+      sanitizeLog(semesterId),
+      sanitizeLog(subjectCode),
+      sanitizeLog(remedialsOnly),
     );
 
     if (remedialsOnly === "true" && !isAllSubjects) {
@@ -2017,7 +2018,10 @@ export const getGradesTemplate = async (
         where: { code: subjectCodeStr },
       });
       if (!subject) {
-        console.warn("[Academics] Subject not found: %s", subjectCodeStr);
+        console.warn(
+          "[Academics] Subject not found: %s",
+          sanitizeLog(subjectCodeStr),
+        );
         return res.status(404).json({ message: "Subject not found" });
       }
 
@@ -2142,14 +2146,20 @@ export const getGradesTemplate = async (
 
 export const uploadGrades = async (req: any, res: Response) => {
   const user = req.user;
-  console.log("[Academics] Upload Grades Request from %s", user.username);
+  console.log(
+    "[Academics] Upload Grades Request from %s",
+    sanitizeLog(user.username),
+  );
   console.log("[Academics] req.file present: %s", !!req.file);
   if (req.file) {
-    console.log("[Academics] req.file.originalname: %s", req.file.originalname);
-    console.log("[Academics] req.file.size: %s", req.file.size);
+    console.log(
+      "[Academics] req.file.originalname: %s",
+      sanitizeLog(req.file.originalname),
+    );
+    console.log("[Academics] req.file.size: %s", sanitizeLog(req.file.size));
     console.log(
       "[Academics] req.file.buffer length: %s",
-      req.file.buffer?.length || 0,
+      sanitizeLog(req.file.buffer?.length || 0),
     );
   }
 
@@ -2346,10 +2356,10 @@ export const getAttendanceTemplate = async (
 
     console.log(
       "[Academics] Attendance Template: branch=%s, year=%s, semesterId=%s, batch=%s",
-      branch,
-      year,
-      semesterId,
-      batch,
+      sanitizeLog(branch),
+      sanitizeLog(year),
+      sanitizeLog(semesterId),
+      sanitizeLog(batch),
     );
 
     const profilesRes = await axios.post(
@@ -2632,8 +2642,8 @@ export const downloadGrades = async (
 ) => {
   console.log(
     "[PDF] Grade Download Requested: %s for %s",
-    req.query.studentId,
-    req.params.semesterId,
+    sanitizeLog(req.query.studentId),
+    sanitizeLog(req.params.semesterId),
   );
   const user = req.user;
   if (!user) return res.status(401).json({ success: false });
@@ -2763,8 +2773,8 @@ export const downloadAttendance = async (
 ) => {
   console.log(
     "[PDF] Attendance Download Requested: %s for %s",
-    req.query.studentId,
-    req.params.semesterId,
+    sanitizeLog(req.query.studentId),
+    sanitizeLog(req.params.semesterId),
   );
   const user = req.user;
   if (!user) return res.status(401).json({ success: false });
@@ -2894,8 +2904,8 @@ export const purgeStudentRecords = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error(
       "[Academics] purgeStudentRecords failed for %s:",
-      studentId,
-      error.message,
+      sanitizeLog(studentId),
+      sanitizeLog(error.message),
     );
     return res.status(500).json({
       success: false,

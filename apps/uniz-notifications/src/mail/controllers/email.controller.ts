@@ -1,10 +1,15 @@
 import { Request, Response } from "express";
+import { sanitizeLog } from "@uniz/shared";
 import { enqueueNotificationJob } from "../../utils/queue.util";
 import { preparePlainNotice } from "../services/plain-notice";
 
 export const sendEmail = async (req: Request, res: Response) => {
   const { type, to, data } = req.body;
-  console.log(`[MAIL] Queue request: type=${type}, to=${to}`);
+  console.log(
+    "[MAIL] Queue request: type=%s, to=%s",
+    sanitizeLog(type),
+    sanitizeLog(to),
+  );
 
   if (!type || !to) {
     return res
