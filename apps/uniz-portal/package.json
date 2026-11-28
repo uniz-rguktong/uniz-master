@@ -50,7 +50,7 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "@types/three": "^0.187.0",
     "@vercel/analytics": "^1.4.1",
-    "axios": "^1.18.1",
+    "axios": "^1.20.0",
     "chart.js": "^4.6.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
