@@ -13,8 +13,8 @@
     "redeploy": "bash redeploy.sh"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.1173.0",
-    "@aws-sdk/client-sesv2": "^3.1173.0",
+    "@aws-sdk/client-ses": "^3.1177.0",
+    "@aws-sdk/client-sesv2": "^3.1177.0",
     "axios": "^1.20.0",
     "bullmq": "^5.12.0",
     "compression": "^1.8.2",
@@ -25,7 +25,7 @@
     "helmet": "^7.1.0",
     "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.3",
-    "nodemailer": "^10.1.4",
+    "nodemailer": "^10.6.1",
     "pdfkit": "^0.21.0",
     "web-push": "^3.6.7",
     "zod": "^3.23.8",
@@ -37,7 +37,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^26.6.6",
+    "@types/node": "^26.6.10",
     "@types/nodemailer": "^6.4.15",
     "@types/pdfkit": "^0.17.7",
     "@types/web-push": "^3.6.4",
