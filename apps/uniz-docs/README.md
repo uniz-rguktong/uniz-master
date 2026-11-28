@@ -29,3 +29,8 @@ Output: `.vitepress/dist` (~15–20s). Served by nginx in Docker/K8s.
 3. Preview with `npm run dev`
 
 `docs.json` is legacy Mintlify config and is unused at runtime.
+
+
+## Live Screenshot
+
+![UniZ API Docs](../../docs/assets/screenshots/docs-home.png)

@@ -15,11 +15,11 @@
 
 | Repository | Purpose |
 |---|---|
-| **[uniz-master](https://github.com/uniz-rguktong/uniz-master)** | Entire product: APIs, portal, landing, docs, infra, Android TWA |
-| **[uniz-hall-ticket](https://github.com/uniz-rguktong/uniz-hall-ticket)** | Standalone hall-ticket utility |
+| **[uniz-master](https://github.com/uniz-rguktong/uniz-master)** | Entire platform: APIs, portal, landing, docs, infra, Android TWA |
+| **[uniz-app](https://github.com/uniz-rguktong/uniz-app)** | Dedicated repository for future native Android application development |
 | **[.github](https://github.com/uniz-rguktong/.github)** | Organization profile & community defaults |
 
-Production: **Cloudflare Pages** for the UniZ portal (`uniz.rguktong.in`) and the college site (`rguktong.in`); **VPS** for `gateway-api` → microservices, Postgres (localhost/cni0 only), Redis, VitePress docs, SSH-tunnel observability. Legacy `uniz-api` monolith and the old `uniz-app` Android repo are gone — the TWA lives in `uniz-master/apps/uniz-android-twa`.
+Production: **Cloudflare Pages** for the UniZ portal (`uniz.rguktong.in`) and the college site (`rguktong.in`); **VPS** for `gateway-api` → microservices, Postgres (localhost/cni0 only), Redis, VitePress docs, SSH-tunnel observability. Legacy `uniz-api` monolith is gone; the current Play Store TWA lives in `uniz-master/apps/uniz-android-twa`, and `uniz-app` is set aside for future native Android app development.
 
 `rguktong.in` keeps the official RGUKT Ongole look (primary `#C00404`, nav/footer `#1b262c`, titles `#0f3057`, page `#f9f9f9`). UniZ is a small text link there, not the site brand. Webadmin can update that site from the UniZ portal. Portal sign-in uses Cloudflare Turnstile when configured.
 

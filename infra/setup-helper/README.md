@@ -98,6 +98,4 @@ During peak load events (Result announcements):
 
 ---
 
-<p align="center">
-  Corporate Technical Infrastructure - internal Use Only
-</p>
+> Part of [`uniz-master`](../../README.md).

@@ -56,6 +56,4 @@ Refer to the `infra` documentation for orchestrated deployment instructions.
 
 ---
 
-<p align="center">
-  Corporate Technical Infrastructure - internal Use Only
-</p>
+> Part of [`uniz-master`](../../README.md). Also hosts grievance workflows (`/api/v1/grievance/*`), campus banners (`cms`), and image processing (`sharp`).

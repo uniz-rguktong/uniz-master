@@ -19,7 +19,7 @@ Technical API and flow docs (not this guide):
 
 ## Screenshots (public)
 
-Captured against a local Vite build of `apps/uniz-portal` (production `uniz.rguktong.in` may present a Cloudflare challenge). Last refresh: **15 November 2026** — Elaya Layout A home (`01-home.png` shows split hero + product preview). Authenticated role shots remain “Live screenshot pending test account.” Turnstile may be blank locally without `VITE_TURNSTILE_SITE_KEY`.
+Captured against live production (`https://uniz.rguktong.in`). Last refresh: **28 November 2026** — Portal home (`01-home.png`), Student sign-in (`02-student-signin.png`), Developers (`03-developers.png`), Privacy (`04-privacy.png`), and Admin sign-in (`05-admin-signin.png`). Authenticated role shots remain “Live screenshot pending test account.”
 
 ## Regenerate
 

@@ -1,60 +1,35 @@
-# UniZ Edge Gateway - High-Performance Routing Infrastructure
+# UniZ Gateway Service (`uniz-gateway`)
 
-![Nginx](https://img.shields.io/badge/Nginx-1.25-009639?style=for-the-badge&logo=nginx&logoColor=white)
-![Vercel](https://img.shields.io/badge/Vercel-Edge-000000?style=for-the-badge&logo=vercel&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![Redis](https://img.shields.io/badge/Redis-Edge-DC382D?style=for-the-badge&logo=redis&logoColor=white)
-
-> **UniZ Microservices Ecosystem**
-> _Providing centralized request orchestration, rate limiting, and edge security for the university network._
+High-performance API Gateway (`uniz-production-gateway`) sitting behind host Nginx and Traefik on the VPS, routing `/api/v1/*` traffic across all UniZ microservices.
 
 ## Architecture Overview
 
-The UniZ Edge Gateway is the intelligent entry point for the entire platform. In production, it leverages Vercel's Serverless Edge capabilities combined with dedicated Nginx instances on the VPS to provide high-speed request routing. It implements a "Fast-Pass" strategy using Redis to perform instant user suspension checks (<1ms) before forwarding requests to downstream microservices, effectively eliminating database bottlenecks at the entry point.
+- **Runtime:** Node.js + TypeScript + Express 5 (`express@^5.2.1`)
+- **Proxy Engine:** Pooled HTTP Keep-Alive `http-proxy` with binary-passthrough safeguards (PDFs, XLSX, ZIPs, images)
+- **Caching & State:** Redis (`ioredis`) edge response caching (`edge-cache.ts`) and rate limiting (`routerLimiterOptions` from `@uniz/shared`)
+- **Session Gate:** `enforceCredentialSession` validates stale/revoked tokens and mandatory password-change gates against `uniz-auth` + Redis before forwarding requests
+- **CORS & Security:** Explicit `CLIENT_URL` origin allowlist and sanitized upstream headers
 
-## Technology Stack
+## Routing Summary
 
-| Layer             | Technology           | Purpose                                                 |
-| :---------------- | :------------------- | :------------------------------------------------------ |
-| **Proxy**         | `Nginx` (Production) | Robust load balancing and TCP handshake buffering.      |
-| **Edge Compute**  | `Vercel / Node.js`   | Dynamic routing and authentication middleware.          |
-| **Cache**         | `Redis`              | Global state caching for instant security enforcement.  |
-| **Orchestration** | `Docker`             | Consistent containerized routing for local development. |
-| **Health**        | `Custom Heartbeat`   | Real-time status monitoring of all downstream nodes.    |
+| Path Prefix | Target | Notes |
+| :--- | :--- | :--- |
+| `/api/v1/auth/*` | `uniz-auth` | Identity, JWTs, OTP, credential status |
+| `/api/v1/user/*`, `/api/v1/grievance/*` | `uniz-user` | Profiles, banners, admin actions, grievance |
+| `/api/v1/academics/*` | `uniz-academics` | Grades, attendance, bulk Excel/PDF jobs |
+| `/api/v1/notifications/*`, `/api/v1/mail/*` | `uniz-notifications` | Web Push, inbox, and AWS SES mail |
+| `/api/v1/cms/api/*`, `/api/v1/analytics/*` | `uniz-landing-backend` | Public college site CMS & analytics |
+| `/api/v1/requests/grievance/*` | `uniz-user` | Backward-compatible grievance alias |
+| `/api/v1/requests/*` | `uniz-outpass` | **Parked** (`503 OUTPASS_OUTING_DISABLED` unless `ENABLE_OUTPASS_OUTING=true`) |
+| `/api/v1/system/*` | Gateway / K8s checks | Health & cron status (`cron-health.ts`) |
 
-## Key Innovations
+## Local Development
 
-- **Fast-Pass Authentication**: Redis-backed middleware that prevents suspended users from accessing APIs with zero database overhead.
-- **Dynamic Port Selection**: Seamlessly switches between local container ports (3001-3008) and production Vercel endpoints.
-- **Rate Limiting**: Hardened edge policing (20 requests/second per IP) to prevent abuse and brute-force attacks.
+```bash
+npm install
+npm test
+npm run build
+npm start   # default PORT=3000
+```
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 20+
-- Docker & Docker Compose
-- Redis Instance
-
-### Local Development
-
-1. **Configure Mode**:
-   ```bash
-   # From project root
-   bash scripts/system/gateway-config.sh local
-   ```
-2. **Run Service**:
-   ```bash
-   npm install && npm run dev
-   ```
-   The gateway will be available at `http://localhost:3000`, routing to local microservices on ports 3001-3008.
-
-### Docker Deployment
-
-Refer to the `infra` documentation for information on the Nginx-based Gateway container.
-
----
-
-<p align="center">
-  Corporate Technical Infrastructure - internal Use Only
-</p>
+> Part of [`uniz-master`](../../README.md).
