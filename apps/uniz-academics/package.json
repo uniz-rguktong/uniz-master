@@ -25,7 +25,7 @@
     "@types/multer": "^2.3.0",
     "@types/nodemailer": "^6.4.15",
     "@uniz/shared": "*",
-    "axios": "^1.18.1",
+    "axios": "^1.20.0",
     "bullmq": "^5.67.3",
     "cloudinary": "^2.11.0",
     "compression": "^1.8.2",
