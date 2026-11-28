@@ -2,7 +2,7 @@ name: Deploy Frontends to Cloudflare Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
     paths:
       - "apps/uniz-portal/**"
       - "apps/uniz-landing/**"
@@ -25,7 +25,10 @@ concurrency:
 jobs:
   pages:
     name: Cloudflare Pages
+    # Only main (production, approval-gated) and staging may deploy.
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
@@ -44,6 +47,8 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         env:
+          UNIZ_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+          PAGES_BRANCH: ${{ github.ref == 'refs/heads/main' && 'main' || vars.PAGES_BRANCH }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
@@ -58,9 +63,12 @@ jobs:
           VITE_ANALYTICS_API_KEY: ${{ secrets.VITE_ANALYTICS_API_KEY }}
           VITE_LANDING_API_URL: ${{ secrets.VITE_LANDING_API_URL }}
         run: |
-          # Production defaults if secrets empty
-          export VITE_API_URL="${VITE_API_URL:-https://api-uniz.rguktong.in/api/v1}"
-          export VITE_LANDING_API_URL="${VITE_LANDING_API_URL:-https://landing-api.rguktong.in}"
+          # Production-only defaults. Staging must supply its own URLs
+          # (deploy-cloudflare-pages.sh refuses to continue without them).
+          if [ "$UNIZ_ENV" = "production" ]; then
+            export VITE_API_URL="${VITE_API_URL:-https://api-uniz.rguktong.in/api/v1}"
+            export VITE_LANDING_API_URL="${VITE_LANDING_API_URL:-https://landing-api.rguktong.in}"
+          fi
           export VITE_MAINTENANCE_MODE="${VITE_MAINTENANCE_MODE:-false}"
           export VITE_ENABLE_OUTPASS_OUTING="${VITE_ENABLE_OUTPASS_OUTING:-false}"
           TARGET="${{ github.event.inputs.target || 'all' }}"

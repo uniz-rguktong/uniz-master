@@ -18,6 +18,21 @@ cd "$ROOT"
 
 TARGET="${1:-all}"
 
+# UNIZ_ENV=staging: deploy a non-production branch/alias only. Nothing falls
+# back to production URLs, production custom domains, or production DNS.
+UNIZ_ENV="${UNIZ_ENV:-production}"
+PAGES_BRANCH="${PAGES_BRANCH:-main}"
+if [[ "$UNIZ_ENV" == "staging" ]]; then
+  [[ "$PAGES_BRANCH" != "main" ]] || { echo "[pages] staging must deploy to a non-main Pages branch" >&2; exit 1; }
+  for v in VITE_API_URL VITE_LANDING_API_URL; do
+    [[ -n "${!v:-}" ]] || { echo "[pages] staging requires $v" >&2; exit 1; }
+  done
+  [[ "$VITE_API_URL" != "https://api-uniz.rguktong.in/api/v1" ]] || { echo "[pages] VITE_API_URL is the production API" >&2; exit 1; }
+  [[ "$VITE_LANDING_API_URL" != "https://landing-api.rguktong.in" ]] || { echo "[pages] VITE_LANDING_API_URL is the production landing API" >&2; exit 1; }
+elif [[ "$UNIZ_ENV" != "production" ]]; then
+  echo "[pages] UNIZ_ENV must be production or staging" >&2; exit 1
+fi
+
 if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   echo "[pages] CLOUDFLARE_API_TOKEN required" >&2
   exit 1
@@ -59,6 +74,10 @@ ensure_project() {
 attach_domain() {
   local project="$1"
   local domain="$2"
+  if [[ "$UNIZ_ENV" == "staging" ]]; then
+    echo "[pages] staging: skipping custom domain $domain"
+    return 0
+  fi
   echo "[pages] ensure custom domain $domain → $project"
   curl -sS -X POST \
     -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
@@ -82,7 +101,7 @@ deploy_portal() {
   npm run build -w uniz
   npx --yes wrangler@4 pages deploy apps/uniz-portal/dist \
     --project-name=uniz-portal \
-    --branch=main \
+    --branch="$PAGES_BRANCH" \
     --commit-dirty=true
   attach_domain "uniz-portal" "uniz.rguktong.in"
   attach_domain "uniz-portal" "www.uniz.rguktong.in"
@@ -96,7 +115,7 @@ deploy_landing() {
   npm run build -w uniz-landing
   npx --yes wrangler@4 pages deploy apps/uniz-landing/dist \
     --project-name=uniz-landing \
-    --branch=main \
+    --branch="$PAGES_BRANCH" \
     --commit-dirty=true
   attach_domain "uniz-landing" "rguktong.in"
   attach_domain "uniz-landing" "www.rguktong.in"
@@ -116,6 +135,9 @@ case "$TARGET" in
 esac
 
 # After successful upload + domain attach: DNS must leave the VPS.
-bash "$ROOT/scripts/deploy/cutover-frontends-to-pages-dns.sh"
+# Production only: staging never touches production DNS.
+if [[ "$UNIZ_ENV" == "production" ]]; then
+  bash "$ROOT/scripts/deploy/cutover-frontends-to-pages-dns.sh"
+fi
 
 echo "[pages] Frontend on Cloudflare Pages. Backend/DB/Redis remain on VPS."

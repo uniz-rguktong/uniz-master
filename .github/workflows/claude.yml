@@ -1,0 +1,67 @@
+# Owner-only implementation requests. Opens PRs against `staging`.
+# Runs only when both the triggering actor and the event author are the owner;
+# bots and every other user are ignored (allowed_bots is intentionally unset).
+#
+# Invoke by mentioning the trigger phrase in a comment or review, or by
+# applying the invocation label to an issue.
+name: Claude Code
+
+on:
+  issues:
+    types: [opened, assigned, labeled]
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+
+concurrency:
+  group: claude-${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  claude:
+    if: >-
+      github.actor == 'sreecharan-desu' && (
+        (github.event_name == 'issues' &&
+          github.event.issue.user.login == 'sreecharan-desu' &&
+          (
+            (github.event.action == 'labeled' && github.event.label.name == 'claude-implement') ||
+            (github.event.action != 'labeled' && contains(github.event.issue.body, '@claude'))
+          )) ||
+        (github.event_name == 'issue_comment' &&
+          github.event.comment.user.login == 'sreecharan-desu' &&
+          contains(github.event.comment.body, '@claude')) ||
+        (github.event_name == 'pull_request_review_comment' &&
+          github.event.comment.user.login == 'sreecharan-desu' &&
+          contains(github.event.comment.body, '@claude')) ||
+        (github.event_name == 'pull_request_review' &&
+          github.event.review.user.login == 'sreecharan-desu' &&
+          contains(github.event.review.body, '@claude'))
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          trigger_phrase: "@claude"
+          label_trigger: "claude-implement"
+          # Do not set allowed_bots: bots are ignored.
+          # Commits are authored as the repo owner, never as a bot or tool identity.
+          bot_name: sreecharan-desu
+          bot_id: "116901889"
+          use_commit_signing: false
+          claude_args: |
+            --append-system-prompt "Base every branch on staging and open pull requests against staging, never main. Use short neutral branch names such as fix/login-labels or feat/outpass-filter. Write commit messages and PR descriptions as ordinary owner work: no Co-Authored-By trailers, no 'Generated with' lines, no tool or vendor links, no mention of AI or Claude. Never use a claude or anthropic author email."
