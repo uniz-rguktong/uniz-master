@@ -72,12 +72,14 @@ import {
 } from "../controllers/faculty.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import multer from "multer";
+import { routerRateLimiter } from "../middlewares/router-limiter";
 
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
 });
 const router = Router();
+router.use(routerRateLimiter);
 
 router.use(authMiddleware);
 

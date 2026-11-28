@@ -74,3 +74,5 @@ export {
   DEFAULT_STUDENT_BRANCH,
   type EngineeringBranch,
 } from "./branches";
+
+export { routerLimiterOptions, clientKey } from "./router-limiter";

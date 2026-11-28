@@ -10,8 +10,10 @@ import {
   markAllInboxRead,
   markInboxRead,
 } from "../services/inbox.service";
+import { routerRateLimiter } from "../middlewares/router-limiter";
 
 const router = Router();
+router.use(routerRateLimiter);
 
 function inboxUsername(req: Request): string | null {
   const user = (req as AuthenticatedRequest).user;

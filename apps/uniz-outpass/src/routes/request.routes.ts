@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { routerRateLimiter } from "../middlewares/router-limiter";
 import {
   createOutpass,
   createOuting,
@@ -16,6 +17,7 @@ import {
 import { authMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();
+router.use(routerRateLimiter);
 
 router.use(authMiddleware);
 

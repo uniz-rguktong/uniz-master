@@ -61,6 +61,7 @@ import {
   getUploadHistory,
   recordExternalUpload,
 } from "../controllers/bulk.controller";
+import { routerRateLimiter } from "../middlewares/router-limiter";
 
 const validateRequest =
   (schema: ZodSchema<any>) =>
@@ -80,6 +81,7 @@ const validateRequest =
   };
 
 const router = Router();
+router.use(routerRateLimiter);
 
 // Helper to remove empty strings/nulls so they don't fail .min() checks
 const cleanData = (data: any) => {

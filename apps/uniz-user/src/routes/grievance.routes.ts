@@ -8,8 +8,10 @@ import {
   deleteAllGrievances,
 } from "../controllers/grievance.controller";
 import { submissionLimiter } from "../middlewares/grievance-ratelimit.middleware";
+import { routerRateLimiter } from "../middlewares/router-limiter";
 
 const router = Router();
+router.use(routerRateLimiter);
 
 router.post("/submit", authenticate, submissionLimiter, submitGrievance);
 router.get("/list", authenticate, getGrievances);
