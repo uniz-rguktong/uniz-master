@@ -56,6 +56,4 @@ Refer to the `infra` documentation for orchestrated deployment instructions.
 
 ---
 
-<p align="center">
-  Corporate Technical Infrastructure - internal Use Only
-</p>
+> Part of [`uniz-master`](../../README.md). Uses `@uniz/shared` for role normalization, JWT schemas, session-gate revocation, and rate limiting.

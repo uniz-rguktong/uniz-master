@@ -20,7 +20,7 @@ UniZ runs on a **single VPS + Cloudflare free**:
 | **VPS (k3s)** | APIs, VitePress docs, landing-api, Postgres, Redis, uploads, observability |
 | **Off-box** | AWS SES for mail only |
 
-There is no always-on legacy monolith (`uniz-api` is gone). Public API traffic is **host nginx → Traefik → `uniz-gateway-api` → microservices**. Org repos: **`uniz-master`** (product) + **`.github`** (profile); hall-ticket is a separate utility if present.
+There is no always-on legacy monolith (`uniz-api` is gone). Public API traffic is **host nginx → Traefik → `uniz-gateway-api` → microservices**. Org repos: **`uniz-master`** (platform monorepo), **`uniz-app`** (future native Android application development), and **`.github`** (org profile).
 
 ### Request path
 
@@ -46,7 +46,13 @@ HPA scales gateway / auth / user / academics / notifications within one 4-vCPU /
 
 In-house docs are a static VitePress site on the VPS — not Cloudflare Pages.
 
-<img width="1985" height="792" alt="image" src="https://github.com/user-attachments/assets/245c2962-e6f9-40a5-aa49-8538b277e02f" />
+![UniZ API Docs](docs/assets/screenshots/docs-home.png)
+
+## Live Screenshots
+
+| UniZ Portal (`uniz.rguktong.in`) | RGUKT Ongole Site (`rguktong.in`) |
+| :---: | :---: |
+| ![UniZ Portal](docs/assets/screenshots/portal-home.png) | ![RGUKT Ongole](docs/assets/screenshots/landing-home.png) |
 
 - App: `apps/uniz-docs`
 - Public: [https://api-uniz.rguktong.in/docs](https://api-uniz.rguktong.in/docs)

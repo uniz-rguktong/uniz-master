@@ -56,6 +56,4 @@ Refer to the `infra` documentation for orchestrated deployment instructions.
 
 ---
 
-<p align="center">
-  Corporate Technical Infrastructure - internal Use Only
-</p>
+> Part of [`uniz-master`](../../README.md). Uses `@uniz/shared` for engineering branch resolution, RBAC helpers, and bulk grade/attendance/PDF jobs.

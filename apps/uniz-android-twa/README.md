@@ -120,3 +120,6 @@ Run `sync-assetlinks.sh` again and redeploy the portal.
 | `.gitignore` | Keystore + generated `android/` |
 
 **Never commit** `*.jks`, `*.keystore`, or Play service-account JSON. Store in password manager / CI secrets.
+
+
+> **Native Android Roadmap:** While this Play Store TWA lives in `uniz-master`, the dedicated [`uniz-rguktong/uniz-app`](https://github.com/uniz-rguktong/uniz-app) repository is reserved for future native Android application development.

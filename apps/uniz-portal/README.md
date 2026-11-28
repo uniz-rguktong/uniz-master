@@ -35,3 +35,10 @@ http://localhost:5173 — monorepo setup: root [README](../../README.md) and [do
 ## Stack
 
 React 18 · Vite · Tailwind · Framer Motion · Radix · SWR / Recoil · Recharts
+
+
+## Live Screenshots
+
+| Portal Home (`uniz.rguktong.in`) | Student Sign-In |
+| :---: | :---: |
+| ![UniZ Portal Home](../../docs/assets/screenshots/portal-home.png) | ![Student Sign-In](../../docs/assets/screenshots/portal-student-signin.png) |
