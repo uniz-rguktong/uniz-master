@@ -37,7 +37,7 @@
     "nodemailer": "^10.1.4",
     "tar": "^7.5.23",
     "ua-parser-js": "^2.0.9",
-    "zod": "^3.23.8"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

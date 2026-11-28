@@ -25,7 +25,7 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^10.1.4",
     "pdfkit": "^0.21.0",
-    "zod": "^3.23.8"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

@@ -25,7 +25,7 @@ const validate =
       schema.parse(req.body);
       next();
     } catch (e: any) {
-      return res.status(400).json({ success: false, errors: e.errors });
+      return res.status(400).json({ success: false, errors: e.issues ?? e.errors });
     }
   };
 

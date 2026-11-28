@@ -123,7 +123,7 @@ export const submitGrievance = async (
   if (!parse.success) {
     return res
       .status(400)
-      .json({ code: ErrorCode.VALIDATION_ERROR, errors: parse.error.errors });
+      .json({ code: ErrorCode.VALIDATION_ERROR, errors: parse.error.issues });
   }
 
   const { category, description, isAnonymous } = parse.data;

@@ -11,7 +11,7 @@ export const NotificationEventSchema = z.object({
   recipient: z.string().email().or(z.string()), // Email or Phone/Device Token
   subject: z.string().optional(), // For Email
   body: z.string(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export type NotificationEvent = z.infer<typeof NotificationEventSchema>;

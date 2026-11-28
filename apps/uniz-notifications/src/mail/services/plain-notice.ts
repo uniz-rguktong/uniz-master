@@ -30,7 +30,7 @@ export function isSingleEmailAddress(value: string): boolean {
 const singleRecipientSchema = z.any().superRefine((value, ctx) => {
   if (typeof value !== "string" || !isSingleEmailAddress(value)) {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: "custom",
       message: RECIPIENT_MESSAGE,
     });
   }
@@ -39,28 +39,19 @@ const singleRecipientSchema = z.any().superRefine((value, ctx) => {
 const plainNoticeDataSchema = z.object(
   {
     subject: z
-      .string({
-        required_error: SUBJECT_MESSAGE,
-        invalid_type_error: SUBJECT_MESSAGE,
-      })
+      .string({ error: SUBJECT_MESSAGE })
       .max(200, SUBJECT_MESSAGE)
       .refine((value) => value.length > 0 && !/[\r\n]/.test(value), {
         message: SUBJECT_MESSAGE,
       }),
     text: z
-      .string({
-        required_error: TEXT_MESSAGE,
-        invalid_type_error: TEXT_MESSAGE,
-      })
+      .string({ error: TEXT_MESSAGE })
       .max(20000, TEXT_MESSAGE)
       .refine((value) => value.trim().length > 0, {
         message: TEXT_MESSAGE,
       }),
   },
-  {
-    required_error: TEXT_MESSAGE,
-    invalid_type_error: TEXT_MESSAGE,
-  },
+  { error: TEXT_MESSAGE },
 );
 
 export const plainNoticeSchema = z.object({

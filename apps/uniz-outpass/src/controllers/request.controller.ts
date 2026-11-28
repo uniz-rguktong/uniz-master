@@ -166,7 +166,7 @@ export const createOutpass = async (
   if (!parse.success) {
     return res
       .status(400)
-      .json({ code: ErrorCode.VALIDATION_ERROR, errors: parse.error.errors });
+      .json({ code: ErrorCode.VALIDATION_ERROR, errors: parse.error.issues });
   }
   const { reason, fromDay, toDay } = parse.data;
 
@@ -374,7 +374,7 @@ export const createOuting = async (
   if (!parse.success) {
     return res
       .status(400)
-      .json({ code: ErrorCode.VALIDATION_ERROR, errors: parse.error.errors });
+      .json({ code: ErrorCode.VALIDATION_ERROR, errors: parse.error.issues });
   }
   const { reason, fromTime, toTime } = parse.data;
 
