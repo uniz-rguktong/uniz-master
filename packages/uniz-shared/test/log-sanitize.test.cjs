@@ -6,10 +6,7 @@ const { sanitizeLog } = require("../dist/log-sanitize.js");
 
 describe("sanitizeLog", () => {
   it("strips carriage returns and newlines", () => {
-    assert.equal(
-      sanitizeLog("alice\nFAKE_LOG\r\nLINE"),
-      "alice FAKE_LOG  LINE",
-    );
+    assert.equal(sanitizeLog("alice\nFAKE_LOG\r\nLINE"), "aliceFAKE_LOGLINE");
   });
 
   it("handles non-string inputs safely", () => {
