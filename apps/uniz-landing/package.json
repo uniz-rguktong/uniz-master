@@ -6,10 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && node scripts/prerender-og.mjs",
-    "test": "node scripts/og-assert.mjs",
+    "test": "node --import ./test/register-ts.mjs --test test/*.test.ts && node scripts/og-assert.mjs",
     "lint": "eslint . && npm run lint:hex",
     "lint:hex": "node scripts/lint-hex.mjs",
-    "test": "node --import ./test/register-ts.mjs --test test/*.test.ts && node scripts/og-assert.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -27,7 +26,7 @@
     "lucide-react": "^0.577.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.13.1",
+    "react-router-dom": "^6.30.6",
     "tailwind-merge": "^3.7.1",
     "three": "^0.187.0"
   },
