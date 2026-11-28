@@ -9,6 +9,7 @@ import { randomUUID } from "crypto";
 import { resolveHodBranch } from "../utils/hod.util";
 import {
   resolveStudentBranch,
+  sanitizeLog,
   webadminAssignmentRejection,
 } from "@uniz/shared";
 import { canReadStaffBatches } from "../utils/staff-access";
@@ -147,12 +148,15 @@ const sendPush = async (username: string, title: string, body: string) => {
         timeout: 5000,
       },
     );
-    console.log("[USER] Successfully sent push notification to: %s", username);
+    console.log(
+      "[USER] Successfully sent push notification to: %s",
+      sanitizeLog(username),
+    );
   } catch (e: any) {
     console.error(
       "[USER][ERROR] Failed to send push notification to %s:",
-      username,
-      e.message,
+      sanitizeLog(username),
+      sanitizeLog(e.message),
     );
   }
 };
@@ -266,6 +270,16 @@ export const getStudentProfile = async (
   if (!user) return res.status(401).json({ code: ErrorCode.AUTH_UNAUTHORIZED });
 
   const targetUsername = (req.params.username || user.username).toUpperCase();
+  if (
+    !targetUsername ||
+    targetUsername === "." ||
+    targetUsername === ".." ||
+    /[/\\?#]/.test(targetUsername)
+  ) {
+    return res
+      .status(400)
+      .json({ code: ErrorCode.VALIDATION_ERROR, message: "Invalid username" });
+  }
   const isSelf = user.username === targetUsername;
 
   if (req.params.username && user.role === UserRole.STUDENT && !isSelf) {
@@ -321,21 +335,22 @@ export const getStudentProfile = async (
     const token = req.headers.authorization;
     if (token && req.params.username) {
       try {
+        const encodedUsername = encodeURIComponent(targetUsername);
         const [gradesRes, attendanceRes, historyRes] = await Promise.all([
           axios
             .get(
-              `${GATEWAY_URL}/academics/grades?studentId=${targetUsername}`,
+              `${GATEWAY_URL}/academics/grades?studentId=${encodedUsername}`,
               { headers: { Authorization: token }, timeout: 5000 },
             )
             .catch(() => ({ data: null })),
           axios
             .get(
-              `${GATEWAY_URL}/academics/attendance?studentId=${targetUsername}`,
+              `${GATEWAY_URL}/academics/attendance?studentId=${encodedUsername}`,
               { headers: { Authorization: token }, timeout: 5000 },
             )
             .catch(() => ({ data: null })),
           axios
-            .get(`${GATEWAY_URL}/requests/history/${targetUsername}`, {
+            .get(`${GATEWAY_URL}/requests/history/${encodedUsername}`, {
               headers: { Authorization: token },
               timeout: 5000,
             })
@@ -681,8 +696,8 @@ export const adminUpdateStudentProfile = async (
   } catch (e: any) {
     console.error(
       "[ERROR] adminUpdateStudentProfile failed for %s:",
-      username,
-      e.message || e,
+      sanitizeLog(username),
+      sanitizeLog(e.message || e),
     );
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
@@ -736,15 +751,15 @@ export const createIndividualStudent = async (
       );
       console.log(
         "[USER] Successfully synced auth for individual student: %s",
-        username,
+        sanitizeLog(username),
       );
     } catch (authErr: any) {
       // If student already exists in auth, that's fine, we continue to profile creation/update
       if (authErr.response?.status !== 409) {
         console.error(
           "[USER][ERROR] Failed to sync auth for %s:",
-          username,
-          authErr.message,
+          sanitizeLog(username),
+          sanitizeLog(authErr.message),
         );
       }
     }
@@ -779,8 +794,8 @@ export const createIndividualStudent = async (
   } catch (e: any) {
     console.error(
       "[ERROR] createIndividualStudent failed for %s:",
-      username,
-      e,
+      sanitizeLog(username),
+      sanitizeLog(e?.message || e),
     );
     return res.status(500).json({
       success: false,
@@ -1236,12 +1251,15 @@ export const createFacultyProfile = async (
           timeout: 5000,
         },
       );
-      console.log("[USER] Successfully synced auth for faculty: %s", username);
+      console.log(
+        "[USER] Successfully synced auth for faculty: %s",
+        sanitizeLog(username),
+      );
     } catch (authErr: any) {
       console.error(
         "[USER][ERROR] Failed to sync auth for faculty %s:",
-        username,
-        authErr.message,
+        sanitizeLog(username),
+        sanitizeLog(authErr.message),
       );
     }
 
@@ -1520,8 +1538,8 @@ export const toggleUserSuspension = async (
     } catch (authError: any) {
       console.error(
         "[USER-SERVICE] Failed to sync suspension with Auth Service for %s:",
-        targetUsername,
-        authError.message,
+        sanitizeLog(targetUsername),
+        sanitizeLog(authError.message),
       );
     }
 
@@ -1549,8 +1567,8 @@ export const toggleUserSuspension = async (
   } catch (e: any) {
     console.error(
       "[ERROR] toggleUserSuspension failed for %s:",
-      targetUsername,
-      e,
+      sanitizeLog(targetUsername),
+      sanitizeLog(e?.message || e),
     );
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
@@ -1767,13 +1785,13 @@ export const updateFacultyProfile = async (
         );
         console.log(
           "[USER] Successfully synced auth update for faculty: %s",
-          targetUsername,
+          sanitizeLog(targetUsername),
         );
       } catch (authErr: any) {
         console.error(
           "[USER][ERROR] Failed to sync auth update for faculty %s:",
-          targetUsername,
-          authErr.message,
+          sanitizeLog(targetUsername),
+          sanitizeLog(authErr.message),
         );
       }
     }
@@ -1892,8 +1910,8 @@ export const deleteStudentProfile = async (
   } catch (e: any) {
     console.error(
       "[ERROR] deleteStudentProfile failed for %s:",
-      username,
-      e.message || e,
+      sanitizeLog(username),
+      sanitizeLog(e.message || e),
     );
     return res.status(500).json({
       success: false,
@@ -2537,7 +2555,11 @@ export const bulkUpdateFaculty = async (
 
       results.push({ username: rawUsername, status: "updated" });
     } catch (e: any) {
-      console.error("[BULK-UPDATE] Error updating %s:", rawUsername, e.message);
+      console.error(
+        "[BULK-UPDATE] Error updating %s:",
+        sanitizeLog(rawUsername),
+        sanitizeLog(e.message),
+      );
       results.push({
         username: rawUsername,
         status: "error",
@@ -2806,12 +2828,178 @@ async function syncAuthSuspension(
   }
 }
 
+type CohortActionBody = {
+  action?: unknown;
+  branch?: string;
+  year?: string;
+  batch?: string;
+  fromYear?: string;
+  toYear?: string;
+  presence?: string;
+};
+
+type CohortActionHandler = (
+  user: NonNullable<AuthenticatedRequest["user"]>,
+  body: CohortActionBody,
+  res: Response,
+  actionKey: string,
+) => Promise<Response>;
+
+async function handleCohortPresenceAction(
+  user: NonNullable<AuthenticatedRequest["user"]>,
+  body: CohortActionBody,
+  res: Response,
+  actionKey: string,
+): Promise<Response> {
+  if (!CAMPUS_COHORT_ROLES.includes(user.role as UserRole)) {
+    return res.status(403).json({
+      success: false,
+      message: "Insufficient hierarchy for campus presence update",
+    });
+  }
+  const targetIn =
+    actionKey === "campus_in" ||
+    String(body.presence || "").toUpperCase() === "IN";
+  const where = buildStudentCohortWhere(
+    { branch: body.branch, year: body.year, batch: body.batch },
+    { isPresentInCampus: !targetIn },
+  );
+  const result = await prisma.studentProfile.updateMany({
+    where,
+    data: { isPresentInCampus: targetIn, updatedAt: new Date() },
+  });
+  const cachesCleared = await invalidateAllStudentProfileCaches();
+  return res.json({
+    success: true,
+    message: `Marked ${result.count} student(s) as ${targetIn ? "IN campus" : "OUT of campus"}`,
+    count: result.count,
+    cachesCleared,
+  });
+}
+
+async function handleCohortPromoteAction(
+  user: NonNullable<AuthenticatedRequest["user"]>,
+  body: CohortActionBody,
+  res: Response,
+): Promise<Response> {
+  if (!COHORT_ADMIN_ROLES.includes(user.role as UserRole)) {
+    return res.status(403).json({
+      success: false,
+      message: "Insufficient hierarchy for cohort promotion",
+    });
+  }
+  if (!body.fromYear || !body.toYear) {
+    return res.status(400).json({
+      success: false,
+      message: "fromYear and toYear are required",
+    });
+  }
+  const where = buildStudentCohortWhere(
+    { branch: body.branch, batch: body.batch },
+    { year: { equals: String(body.fromYear), mode: "insensitive" } },
+  );
+  const result = await prisma.studentProfile.updateMany({
+    where,
+    data: { year: String(body.toYear), updatedAt: new Date() },
+  });
+  return res.json({
+    success: true,
+    message: `Promoted ${result.count} student(s) from ${body.fromYear} to ${body.toYear}`,
+    count: result.count,
+  });
+}
+
+async function handleCohortClearPendingAction(
+  user: NonNullable<AuthenticatedRequest["user"]>,
+  body: CohortActionBody,
+  res: Response,
+): Promise<Response> {
+  if (!CAMPUS_COHORT_ROLES.includes(user.role as UserRole)) {
+    return res.status(403).json({
+      success: false,
+      message: "Insufficient hierarchy to clear pending flags",
+    });
+  }
+  const where = buildStudentCohortWhere(
+    { branch: body.branch, year: body.year, batch: body.batch },
+    { isApplicationPending: true },
+  );
+  const result = await prisma.studentProfile.updateMany({
+    where,
+    data: { isApplicationPending: false, updatedAt: new Date() },
+  });
+  await invalidateAllStudentProfileCaches();
+  return res.json({
+    success: true,
+    message: `Cleared pending request flag for ${result.count} student(s)`,
+    count: result.count,
+  });
+}
+
+async function handleCohortSuspendAction(
+  user: NonNullable<AuthenticatedRequest["user"]>,
+  body: CohortActionBody,
+  res: Response,
+  actionKey: string,
+): Promise<Response> {
+  if (!COHORT_ADMIN_ROLES.includes(user.role as UserRole)) {
+    return res.status(403).json({
+      success: false,
+      message: "Insufficient hierarchy for bulk suspension",
+    });
+  }
+  const suspended = actionKey === "suspend";
+  const where = buildStudentCohortWhere(
+    { branch: body.branch, year: body.year, batch: body.batch },
+    { isSuspended: !suspended },
+  );
+  const targets = await prisma.studentProfile.findMany({
+    where,
+    select: { username: true },
+  });
+  if (targets.length === 0) {
+    return res.json({
+      success: true,
+      message: `No students to ${suspended ? "suspend" : "restore"}`,
+      count: 0,
+    });
+  }
+  const result = await prisma.studentProfile.updateMany({
+    where: {
+      username: { in: targets.map((t) => t.username) },
+    },
+    data: { isSuspended: suspended, updatedAt: new Date() },
+  });
+  await syncAuthSuspension(
+    targets.map((t) => t.username),
+    suspended,
+  );
+  await invalidateAllStudentProfileCaches();
+  return res.json({
+    success: true,
+    message: `${suspended ? "Suspended" : "Restored"} ${result.count} student account(s)`,
+    count: result.count,
+  });
+}
+
+const COHORT_ACTION_HANDLERS = new Map<string, CohortActionHandler>([
+  ["campus_in", handleCohortPresenceAction],
+  ["campus_out", handleCohortPresenceAction],
+  ["promote", (user, body, res) => handleCohortPromoteAction(user, body, res)],
+  [
+    "clear_pending",
+    (user, body, res) => handleCohortClearPendingAction(user, body, res),
+  ],
+  ["suspend", handleCohortSuspendAction],
+  ["unsuspend", handleCohortSuspendAction],
+]);
+
 /** Unified bulk cohort actions: campus, promote, pending clear, suspend/unsuspend. */
 export const bulkStudentCohortAction = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { action, branch, year, batch, fromYear, toYear, presence } = req.body;
+  const { action } = req.body || {};
 
   const user = req.user;
   if (!user || !action) {
@@ -2821,130 +3009,17 @@ export const bulkStudentCohortAction = async (
     });
   }
 
-  const filters = { branch, year, batch };
   const actionKey = String(action).toLowerCase();
-
-  try {
-    if (actionKey === "campus_in" || actionKey === "campus_out") {
-      if (!CAMPUS_COHORT_ROLES.includes(user.role as UserRole)) {
-        return res.status(403).json({
-          success: false,
-          message: "Insufficient hierarchy for campus presence update",
-        });
-      }
-      const targetIn =
-        actionKey === "campus_in" ||
-        String(presence || "").toUpperCase() === "IN";
-      const where = buildStudentCohortWhere(filters, {
-        isPresentInCampus: !targetIn,
-      });
-      const result = await prisma.studentProfile.updateMany({
-        where,
-        data: { isPresentInCampus: targetIn, updatedAt: new Date() },
-      });
-      const cachesCleared = await invalidateAllStudentProfileCaches();
-      return res.json({
-        success: true,
-        message: `Marked ${result.count} student(s) as ${targetIn ? "IN campus" : "OUT of campus"}`,
-        count: result.count,
-        cachesCleared,
-      });
-    }
-
-    if (actionKey === "promote") {
-      if (!COHORT_ADMIN_ROLES.includes(user.role as UserRole)) {
-        return res.status(403).json({
-          success: false,
-          message: "Insufficient hierarchy for cohort promotion",
-        });
-      }
-      if (!fromYear || !toYear) {
-        return res.status(400).json({
-          success: false,
-          message: "fromYear and toYear are required",
-        });
-      }
-      const where = buildStudentCohortWhere(
-        { branch, batch },
-        { year: { equals: String(fromYear), mode: "insensitive" } },
-      );
-      const result = await prisma.studentProfile.updateMany({
-        where,
-        data: { year: toYear, updatedAt: new Date() },
-      });
-      return res.json({
-        success: true,
-        message: `Promoted ${result.count} student(s) from ${fromYear} to ${toYear}`,
-        count: result.count,
-      });
-    }
-
-    if (actionKey === "clear_pending") {
-      if (!CAMPUS_COHORT_ROLES.includes(user.role as UserRole)) {
-        return res.status(403).json({
-          success: false,
-          message: "Insufficient hierarchy to clear pending flags",
-        });
-      }
-      const where = buildStudentCohortWhere(filters, {
-        isApplicationPending: true,
-      });
-      const result = await prisma.studentProfile.updateMany({
-        where,
-        data: { isApplicationPending: false, updatedAt: new Date() },
-      });
-      await invalidateAllStudentProfileCaches();
-      return res.json({
-        success: true,
-        message: `Cleared pending request flag for ${result.count} student(s)`,
-        count: result.count,
-      });
-    }
-
-    if (actionKey === "suspend" || actionKey === "unsuspend") {
-      if (!COHORT_ADMIN_ROLES.includes(user.role as UserRole)) {
-        return res.status(403).json({
-          success: false,
-          message: "Insufficient hierarchy for bulk suspension",
-        });
-      }
-      const suspended = actionKey === "suspend";
-      const where = buildStudentCohortWhere(filters, {
-        isSuspended: !suspended,
-      });
-      const targets = await prisma.studentProfile.findMany({
-        where,
-        select: { username: true },
-      });
-      if (targets.length === 0) {
-        return res.json({
-          success: true,
-          message: `No students to ${suspended ? "suspend" : "restore"}`,
-          count: 0,
-        });
-      }
-      const result = await prisma.studentProfile.updateMany({
-        where: {
-          username: { in: targets.map((t) => t.username) },
-        },
-        data: { isSuspended: suspended, updatedAt: new Date() },
-      });
-      await syncAuthSuspension(
-        targets.map((t) => t.username),
-        suspended,
-      );
-      await invalidateAllStudentProfileCaches();
-      return res.json({
-        success: true,
-        message: `${suspended ? "Suspended" : "Restored"} ${result.count} student account(s)`,
-        count: result.count,
-      });
-    }
-
+  const handler = COHORT_ACTION_HANDLERS.get(actionKey);
+  if (!handler) {
     return res.status(400).json({
       success: false,
       message: `Unknown action: ${action}`,
     });
+  }
+
+  try {
+    return await handler(user, req.body, res, actionKey);
   } catch (err: any) {
     return res.status(500).json({ success: false, message: err.message });
   }

@@ -253,8 +253,10 @@ async function run() {
   if (!fs.existsSync("logs")) fs.mkdirSync("logs");
 
   // Clean academic log
-  if (fs.existsSync("logs/academics.log")) {
-    fs.writeFileSync("logs/academics.log", "");
+  try {
+    fs.truncateSync("logs/academics.log", 0);
+  } catch (err) {
+    if (err?.code !== "ENOENT") throw err;
   }
 
   // Ensure test_output directory exists

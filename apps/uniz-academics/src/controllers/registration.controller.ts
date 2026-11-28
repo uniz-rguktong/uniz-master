@@ -7,6 +7,7 @@ import {
   resolveEffectiveRole,
   isWebadmin,
   API_ATTRIBUTION,
+  sanitizeLog,
 } from "@uniz/shared";
 import axios from "axios";
 import * as ExcelJS from "exceljs";
@@ -2031,7 +2032,11 @@ export const registerSubjects = async (
             },
           );
           console.log(
-            `✅ Student ${user.username} profile updated to ${academicYear} ${academicSem} (${updateData.branch || "no branch update"})`,
+            "✅ Student %s profile updated to %s %s (%s)",
+            sanitizeLog(user.username),
+            sanitizeLog(academicYear),
+            sanitizeLog(academicSem),
+            sanitizeLog(updateData.branch || "no branch update"),
           );
         } catch (profileError: any) {
           console.warn("User Profile Update Failed:", profileError.message);

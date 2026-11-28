@@ -52,6 +52,8 @@ export function planEmailWrite(input: {
   return { status: "set", email: next };
 }
 
+const BLOCKED_PATCH_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
 export function planProfilePatch(input: {
   self: EmailAccount;
   patch: Record<string, unknown>;
@@ -59,11 +61,12 @@ export function planProfilePatch(input: {
 }):
   | { ok: true; data: Record<string, unknown> }
   | { ok: false; message: string } {
-  const data: Record<string, unknown> = {};
+  const entries: Array<[string, unknown]> = [];
   for (const [key, value] of Object.entries(input.patch)) {
-    if (key === "email") continue;
-    if (value !== undefined) data[key] = value;
+    if (key === "email" || BLOCKED_PATCH_KEYS.has(key)) continue;
+    if (value !== undefined) entries.push([key, value]);
   }
+  const data: Record<string, unknown> = Object.fromEntries(entries);
   if (!Object.prototype.hasOwnProperty.call(input.patch, "email")) {
     return { ok: true, data };
   }

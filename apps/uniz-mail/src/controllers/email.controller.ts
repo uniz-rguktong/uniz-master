@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { sanitizeLog } from "@uniz/shared";
 import {
   sendOtpEmail,
   sendResultEmail,
@@ -19,7 +20,11 @@ import {
 
 export const sendEmail = async (req: Request, res: Response) => {
   const { type, to, data } = req.body;
-  console.log(`[MAIL] Received request: type=${type}, to=${to}`);
+  console.log(
+    "[MAIL] Received request: type=%s, to=%s",
+    sanitizeLog(type),
+    sanitizeLog(to),
+  );
 
   try {
     let success = false;

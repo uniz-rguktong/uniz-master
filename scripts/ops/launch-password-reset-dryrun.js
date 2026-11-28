@@ -9,12 +9,15 @@
  * Flow: seed OTP in DB → verify → reset to SAME password → login confirm.
  * Does not call /otp/request (no Turnstile, no email).
  */
-const { execSync } = require("child_process");
+const { execFileSync, spawnSync } = require("child_process");
 const fs = require("fs");
 
 const BASE =
   process.env.API_URL || "https://api-uniz.rguktong.in/api/v1/auth";
 const USERNAME = (process.env.TEST_USERNAME || "o210008").toUpperCase();
+if (!/^[A-Z0-9_.-]+$/.test(USERNAME)) {
+  throw new Error("Invalid TEST_USERNAME");
+}
 const PASSWORD = process.env.TEST_PASSWORD || `${USERNAME.toLowerCase()}@rguktong`;
 
 let authDbUrl = process.env.AUTH_DATABASE_URL || "";
@@ -42,20 +45,32 @@ function pgUrlForCli(url) {
 
 function runDb(query) {
   const withSchema = `SET search_path TO uniz_auth; ${query}`;
-  const safe = withSchema.replace(/'/g, "'\\''");
   const cliUrl = pgUrlForCli(authDbUrl);
-  if (cliUrl && require("child_process").spawnSync("which", ["psql"]).status === 0) {
-    return execSync(`psql "${cliUrl}" -t -A -c '${safe}'`, { encoding: "utf8" }).trim();
+  if (cliUrl && spawnSync("which", ["psql"]).status === 0) {
+    return execFileSync("psql", [cliUrl, "-t", "-A", "-c", withSchema], {
+      encoding: "utf8",
+    }).trim();
   }
-  const pod = execSync(
-    "kubectl get pods -l app=uniz-auth-service -o jsonpath='{.items[?(@.status.phase==\"Running\")].metadata.name}'",
+  const pod = execFileSync(
+    "kubectl",
+    [
+      "get",
+      "pods",
+      "-l",
+      "app=uniz-auth-service",
+      "-o",
+      'jsonpath={.items[?(@.status.phase=="Running")].metadata.name}',
+    ],
     { encoding: "utf8" },
   )
     .trim()
     .split(" ")[0];
   if (!pod) throw new Error("No running auth pod");
-  const cmd = `kubectl exec -i ${pod} -- psql "${authDbUrl}" -t -A -c '${safe}'`;
-  return execSync(cmd, { encoding: "utf8" }).trim();
+  return execFileSync(
+    "kubectl",
+    ["exec", "-i", pod, "--", "psql", authDbUrl, "-t", "-A", "-c", withSchema],
+    { encoding: "utf8" },
+  ).trim();
 }
 
 function otp() {

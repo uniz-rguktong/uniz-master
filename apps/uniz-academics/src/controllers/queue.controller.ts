@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { sanitizeLog } from "@uniz/shared";
 import { processNextBatch } from "../services/upload.service";
 import axios from "axios";
 
@@ -10,10 +11,13 @@ export const processQueue = async (req: Request, res: Response) => {
 
   if (receivedSecret !== INTERNAL_SECRET) {
     console.warn(
-      `[Queue] Unauthorized trigger attempt. Received length: ${receivedSecret ? receivedSecret.length : 0}, Expected length: ${INTERNAL_SECRET.length}`,
+      "[Queue] Unauthorized trigger attempt. Received length: %s, Expected length: %s",
+      sanitizeLog(receivedSecret ? receivedSecret.length : 0),
+      INTERNAL_SECRET.length,
     );
     console.warn(
-      `[Queue] Received starts with: ${receivedSecret ? receivedSecret.substring(0, 3) : "NULL"}`,
+      "[Queue] Received starts with: %s",
+      sanitizeLog(receivedSecret ? receivedSecret.substring(0, 3) : "NULL"),
     );
     console.warn(
       `[Queue] Expected starts with: ${INTERNAL_SECRET.substring(0, 3)}`,

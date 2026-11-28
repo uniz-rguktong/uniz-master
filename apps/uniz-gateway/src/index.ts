@@ -8,6 +8,8 @@ import Redis from "ioredis";
 import httpProxy from "http-proxy";
 import http from "http";
 import dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
+import { routerLimiterOptions } from "@uniz/shared";
 import { enforceCredentialSession } from "./credential-session";
 import {
   applyEdgeCacheToHeaderMap,
@@ -377,14 +379,19 @@ function proxyPathFromParams(pathParam: unknown): string {
   return segments.length ? `/${segments.join("/")}` : "/";
 }
 
+const gatewayRateLimiter = rateLimit({
+  ...routerLimiterOptions,
+  limit: 3000,
+}) as unknown as express.RequestHandler;
+
 // Analytics (landing-api) — same-origin via gateway to avoid cross-subdomain CORS
-app.all("/api/v1/analytics/*path", (req: any, res: any) => {
+app.all("/api/v1/analytics/*path", gatewayRateLimiter, (req: any, res: any) => {
   req.url = `/api/analytics${proxyPathFromParams(req.params.path)}`;
   proxy.web(req, res, { target: landingApiTarget, changeOrigin: true });
 });
 
 // CMS split: `/api/*` → landing-backend (website pages); banners/notifications/admin → user-service
-app.all("/api/v1/cms/*path", async (req: any, res: any) => {
+app.all("/api/v1/cms/*path", gatewayRateLimiter, async (req: any, res: any) => {
   const subPath = proxyPathFromParams(req.params.path);
   const normalized = subPath.startsWith("/") ? subPath : `/${subPath}`;
   const queryStart = req.originalUrl.indexOf("?");
@@ -412,7 +419,7 @@ app.all("/api/v1/cms/*path", async (req: any, res: any) => {
 });
 
 // 5. Warp-Speed Proxy Engine (Express 5 / path-to-regexp v6+ wildcard syntax)
-app.all("/api/v1/:service/*path", async (req: any, res: any) => {
+app.all("/api/v1/:service/*path", gatewayRateLimiter, async (req: any, res: any) => {
   const service = (req.params.service as string).toLowerCase();
   const target = serviceMap[service];
 

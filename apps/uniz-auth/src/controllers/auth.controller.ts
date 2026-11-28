@@ -33,6 +33,7 @@ import {
   isIssuedPasswordTemplate,
 } from "../utils/password.util";
 import { ErrorCode } from "../shared/error-codes";
+import { sanitizeLog } from "@uniz/shared";
 import { UserRole, ADMIN_ROLES } from "../shared/roles.enum";
 import {
   accessRole,
@@ -906,7 +907,7 @@ export const toggleSuspension = async (
     // Log notification (Actual email util could be called here)
     console.log(
       "[AUTH] Student %s suspension status set to: %s",
-      targetUser.username,
+      sanitizeLog(targetUser.username),
       suspended,
     );
 
@@ -1252,8 +1253,8 @@ export const getUserStatus = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error(
       "[AUTH-INTERNAL] Error fetching user status for %s:",
-      id,
-      error.message,
+      sanitizeLog(id),
+      sanitizeLog(error.message),
     );
     return res.status(500).json({
       success: false,
@@ -1303,8 +1304,8 @@ export const deleteUserByUsername = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error(
       "[AUTH-INTERNAL] Delete user failed for %s:",
-      username,
-      error.message,
+      sanitizeLog(username),
+      sanitizeLog(error.message),
     );
     return res.status(500).json({
       success: false,

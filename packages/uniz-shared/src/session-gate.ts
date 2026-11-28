@@ -16,10 +16,11 @@ export type CredentialStatusSnapshot = {
 /** Password change and logout stay available while a new password is required. */
 export function isPasswordChangeExempt(method: string, path: string): boolean {
   if (String(method || "").toUpperCase() !== "POST") return false;
-  const bare = String(path || "")
-    .split("?")[0]
-    .replace(/\/+$/, "")
-    .toLowerCase();
+  let bare = String(path || "").split("?")[0];
+  while (bare.endsWith("/")) {
+    bare = bare.slice(0, -1);
+  }
+  bare = bare.toLowerCase();
   return (
     bare.endsWith("/password/change") ||
     bare.endsWith("/password/change/otp") ||

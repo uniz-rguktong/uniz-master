@@ -24,7 +24,7 @@ app.get("/health", (req, res) => {
 
 import requestRoutes from "./routes/request.routes";
 import maintenanceRoutes from "./routes/maintenance.routes";
-import { API_ATTRIBUTION } from "@uniz/shared";
+import { API_ATTRIBUTION, sanitizeLog } from "@uniz/shared";
 
 // Grievance moved to uniz-user-service. Outpass/outing remain here (parked via gateway flag).
 
@@ -36,7 +36,11 @@ app.use("/", maintenanceRoutes);
 
 // 404 Handler with internal path logging
 app.use((req, res) => {
-  console.log(`[Outpass] 404 - No route for: ${req.method} ${req.url}`);
+  console.log(
+    "[Outpass] 404 - No route for: %s %s",
+    sanitizeLog(req.method),
+    sanitizeLog(req.url),
+  );
   res.status(404).json({
     status: "error",
     message: `Route ${req.method} ${req.url} not found`,

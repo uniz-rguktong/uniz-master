@@ -49,7 +49,10 @@ export function portalRoutes() {
     if (raw.includes("*")) {
       if (raw === "/admin/*" || raw === "admin/*") concrete.push("/admin/not-a-section");
       else if (raw.startsWith("/blog")) concrete.push("/blog/campus-notes");
-      else concrete.push(raw.replace(/\/?\*$/, "/sample").replace(/^\//, "/") || "/sample");
+      else {
+        const replaced = raw.replace(/\/?\*$/, "/sample") || "/sample";
+        concrete.push(replaced.startsWith("/") ? replaced : `/${replaced}`);
+      }
       continue;
     }
     if (raw.includes(":")) continue;

@@ -31,10 +31,7 @@ describe("campus email layout", () => {
     ]);
     for (const sample of samples) {
       assert.match(sample.html, /alt="uniZ"/);
-      assert.match(
-        sample.html,
-        new RegExp(UNIZ_EMAIL_LOGO_URL.replace(/[.]/g, "\\.")),
-      );
+      assert.equal(sample.html.includes(UNIZ_EMAIL_LOGO_URL), true);
       assert.match(sample.html, /#0b1b3a/);
       assert.match(
         sample.html,

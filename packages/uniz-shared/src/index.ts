@@ -76,3 +76,4 @@ export {
 } from "./branches";
 
 export { routerLimiterOptions, clientKey } from "./router-limiter";
+export { sanitizeLog } from "./log-sanitize";
