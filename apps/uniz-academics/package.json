@@ -43,7 +43,7 @@
     "nodemailer": "^10.1.4",
     "pdfkit": "^0.21.0",
     "pg": "^8.23.1",
-    "zod": "^3.23.8"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/compression": "^1.8.1",

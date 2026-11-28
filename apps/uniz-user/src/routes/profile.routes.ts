@@ -73,7 +73,7 @@ const validateRequest =
       if (error instanceof z.ZodError) {
         return res.status(400).json({
           code: ErrorCode.VALIDATION_ERROR,
-          message: error.errors[0]?.message || "Validation failed",
+          message: error.issues[0]?.message || "Validation failed",
         });
       }
       next(error);
