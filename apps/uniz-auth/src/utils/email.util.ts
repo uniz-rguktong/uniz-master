@@ -61,7 +61,8 @@ const sendPush = async (
       return res.data?.sent || 0;
     } catch (err: any) {
       console.error(
-        `[AUTH] Failed to queue/send push to ${username}:`,
+        "[AUTH] Failed to queue/send push to %s:",
+        username,
         err.message || e.message,
       );
       return 0;
@@ -80,8 +81,8 @@ async function fetchProfileEmail(username: string): Promise<string | null> {
 
     const endpoints = [
       `student/${username}`,
-      `faculty/${username}`,
-      `admin/${username}`,
+      `faculty/${encodeURIComponent(username)}`,
+      `admin/${encodeURIComponent(username)}`,
     ];
 
     for (const endpoint of endpoints) {
@@ -172,7 +173,7 @@ export const sendOtpEmail = async (
     });
     return true;
   } catch (error: any) {
-    console.error(`[AUTH] Failed to queue OTP email for ${username}:`, {
+    console.error("[AUTH] Failed to queue OTP email for %s:", username, {
       error: error.message,
     });
     // Fallback to direct mail HTTP

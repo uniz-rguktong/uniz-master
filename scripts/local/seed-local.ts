@@ -19,7 +19,7 @@ async function seed() {
     const hash = await bcrypt.hash("password123", 10);
 
     const getUuid = (str: string) => {
-      const h = crypto.createHash("md5").update(str).digest("hex");
+      const h = crypto.createHash("sha256").update(str).digest("hex");
       return `${h.substring(0, 8)}-${h.substring(8, 12)}-4${h.substring(13, 16)}-8${h.substring(17, 20)}-${h.substring(20, 32)}`;
     };
 

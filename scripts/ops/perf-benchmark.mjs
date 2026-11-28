@@ -39,7 +39,12 @@ const SAVE = getArg("--save");
 const BASELINE = getArg("--baseline");
 
 if (process.env.INSECURE_SSL) {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  // TLS verification is never disabled here. For a self-signed staging or
+  // local host, trust its certificate instead: NODE_EXTRA_CA_CERTS=/path/ca.pem
+  console.error(
+    "INSECURE_SSL is no longer supported. Use NODE_EXTRA_CA_CERTS=/path/to/ca.pem to trust a self-signed certificate.",
+  );
+  process.exit(1);
 }
 
 // Endpoints exercised by the overhaul. `phase` tags which phase optimized it.

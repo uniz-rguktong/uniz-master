@@ -329,8 +329,8 @@ function maskEmail(email: string): string {
 async function getStaffEmail(username: string): Promise<string> {
   const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
   const endpoints = [
-    `faculty/${username.toUpperCase()}`,
-    `admin/${username.toUpperCase()}`,
+    `faculty/${encodeURIComponent(username.toUpperCase())}`,
+    `admin/${encodeURIComponent(username.toUpperCase())}`,
   ];
 
   for (const endpoint of endpoints) {
@@ -2021,7 +2021,7 @@ export const registerSubjects = async (
           }
 
           const updateRes = await axios.put(
-            `${GATEWAY_URL}/profile/admin/student/${user.username}`,
+            `${GATEWAY_URL}/profile/admin/student/${encodeURIComponent(user.username)}`,
             updateData,
             {
               headers: {

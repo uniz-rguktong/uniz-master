@@ -25,12 +25,12 @@ async function fetchJson<T>(endpoint: string): Promise<T | null> {
             headers: { accept: "application/json" }
         });
         if (!res.ok) {
-            console.warn(`Warn: Failed to fetch ${endpoint} - ${res.status}`);
+            console.warn("Warn: Failed to fetch %s - %s", endpoint, res.status);
             return null;
         }
         return await res.json();
     } catch (err) {
-        console.error(`Error fetching ${endpoint}:`, err);
+        console.error("Error fetching %s:", endpoint, err);
         return null;
     }
 }
