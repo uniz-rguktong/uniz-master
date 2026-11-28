@@ -908,7 +908,7 @@ export const toggleSuspension = async (
     console.log(
       "[AUTH] Student %s suspension status set to: %s",
       sanitizeLog(targetUser.username),
-      suspended,
+      suspended ? "true" : "false",
     );
 
     return res.json({
