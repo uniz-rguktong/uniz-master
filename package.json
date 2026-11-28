@@ -76,13 +76,12 @@
     "typescript": "^5.5.3"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-arm64-musl": "4.68.8",
-    "@rollup/rollup-linux-x64-gnu": "4.68.8",
-    "@rollup/rollup-linux-x64-musl": "4.68.8"
+    "@rollup/rollup-linux-arm64-musl": "4.68.7",
+    "@rollup/rollup-linux-x64-gnu": "4.68.7",
+    "@rollup/rollup-linux-x64-musl": "4.68.7"
   },
   "overrides": {
     "undici": "^6.22.1",
-    "path-to-regexp": "^6.3.0",
     "tar": "^7.5.17",
     "@mapbox/node-pre-gyp": {
       "tar": "^7.5.17"
