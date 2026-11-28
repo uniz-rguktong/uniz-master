@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import type { Transporter } from "nodemailer";
 import * as sesv2 from "@aws-sdk/client-sesv2";
 import * as SESv2Saves from "@aws-sdk/client-sesv2";
 import {
@@ -35,7 +36,7 @@ const emailPass = process.env.EMAIL_PASS;
 const isProduction = process.env.DOCKER_ENV === "true";
 const forceGmail = process.env.FORCE_GMAIL === "true";
 
-let sesTransporter: nodemailer.Transporter | null = null;
+let sesTransporter: Transporter | null = null;
 
 if (isProduction && !forceGmail) {
   try {

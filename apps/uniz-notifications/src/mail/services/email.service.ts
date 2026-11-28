@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import type { Transporter } from "nodemailer";
 import * as sesv2 from "@aws-sdk/client-sesv2";
 import {
   generateResultPdf,
@@ -44,7 +45,7 @@ const RESULT_EMAILS_ENABLED = process.env.ENABLE_RESULT_EMAILS === "true";
 const isProduction = process.env.DOCKER_ENV === "true";
 const forceGmail = process.env.FORCE_GMAIL === "true";
 
-let sesTransporter: nodemailer.Transporter | null = null;
+let sesTransporter: Transporter | null = null;
 
 if (isProduction && !forceGmail) {
   try {
@@ -87,7 +88,7 @@ if (isProduction && !forceGmail) {
 // Gmail is the non-production fallback. Without EMAIL_PASS it stays disabled;
 // production uses SES and does not substitute a built-in password.
 const gmailPass = (process.env.EMAIL_PASS || "").replace(/\s/g, "");
-const localGmailTransporter: nodemailer.Transporter | null =
+const localGmailTransporter: Transporter | null =
   gmailPass.length > 0
     ? nodemailer.createTransport({
         service: "gmail",
@@ -98,7 +99,7 @@ const localGmailTransporter: nodemailer.Transporter | null =
       })
     : null;
 
-const getTransporter = (): nodemailer.Transporter | null => {
+const getTransporter = (): Transporter | null => {
   if (sesTransporter) return sesTransporter;
   return localGmailTransporter;
 };

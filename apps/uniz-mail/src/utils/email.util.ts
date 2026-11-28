@@ -1,10 +1,11 @@
 import nodemailer from "nodemailer";
+import type { Transporter } from "nodemailer";
 import * as SES from "@aws-sdk/client-ses";
 
 // Environment-based Transporter Configuration
 const isProduction = process.env.DOCKER_ENV === "true";
 
-let transporter: nodemailer.Transporter;
+let transporter: Transporter;
 
 if (isProduction) {
   // Use AWS SES for Production
